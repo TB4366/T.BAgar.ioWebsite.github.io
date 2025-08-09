@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Custom skins — T.B Agar.io website</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; background:#0b1220; color:#fff; }
+    header { padding:18px; text-align:center; background:#0f172a; }
+    .grid { padding:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:16px; max-width:1100px; margin:0 auto; }
+    .skin { background:#071029; border-radius:12px; padding:12px; text-align:center; }
+    .skin img { width:100px; height:100px; object-fit:cover; border-radius:50%; display:block; margin:0 auto; }
+    .skin-name { margin-top:8px; font-size:0.95rem; color:#cbd5e1; }
+    a.btn { display:inline-block; margin:12px; padding:8px 12px; background:#1e293b; color:#fff; text-decoration:none; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Custom skins</h1>
+    <a class="btn" href="index.html">⬅️ Terug naar Home</a>
+  </header>
+
+  <div class="grid" id="gallery"></div>
+
+  <script>
+    const gallery = document.getElementById('gallery');
+
+    for (let i = 1; i <= 30; i++) {
+      const num = String(i).padStart(2, '0'); // 01, 02, ..., 30
+      const filename = `skins/skin${num}.png`;
+
+      const card = document.createElement('div');
+      card.className = 'skin';
+
+      const img = document.createElement('img');
+      img.src = filename;
+      img.alt = `Skin ${i}`;
+
+      // Als afbeelding niet bestaat: verberg de kaart
+      img.onerror = () => { card.style.display = 'none'; };
+
+      const name = document.createElement('div');
+      name.className = 'skin-name';
+      name.textContent = `Skin ${i}`;
+
+      card.appendChild(img);
+      card.appendChild(name);
+      gallery.appendChild(card);
+    }
+  </script>
+</body>
+</html>
