@@ -1,52 +1,96 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Custom skins — T.B Agar.io website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Custom Skins — T.B Agar.io Website</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin:0; background:#0b1220; color:#fff; }
-    header { padding:18px; text-align:center; background:#0f172a; }
-    .grid { padding:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:16px; max-width:1100px; margin:0 auto; }
-    .skin { background:#071029; border-radius:12px; padding:12px; text-align:center; }
-    .skin img { width:100px; height:100px; object-fit:cover; border-radius:50%; display:block; margin:0 auto; }
-    .skin-name { margin-top:8px; font-size:0.95rem; color:#cbd5e1; }
-    a.btn { display:inline-block; margin:12px; padding:8px 12px; background:#1e293b; color:#fff; text-decoration:none; border-radius:8px; }
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #0b1220;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    header {
+      padding: 20px 0;
+      background: #0f172a;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+    }
+    .btn-back {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 15px;
+      background: #1e293b;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
+      gap: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .skin {
+      background: #071029;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 8px #0f172a;
+    }
+    .skin img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
+      margin-bottom: 10px;
+      background: #1a202c;
+    }
+    .skin-name {
+      font-size: 1rem;
+      color: #cbd5e1;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>Custom skins</h1>
-    <a class="btn" href="index.html">⬅️ back to home</a>
+    <h1>Custom Skins</h1>
+    <a href="index.html" class="btn-back">⬅️ Back to Home</a>
   </header>
 
   <div class="grid" id="gallery"></div>
 
   <script>
+    // Hier voeg je skins toe door {name: "Naam", url: "Link naar skin"} te zetten.
+    const skins = [
+      {
+        name: "Blue Dragon",
+        url: "528256911_3112835632218984_400742714675475235_n.jpg"
+      },
+      {
+        name: "Red Fire",
+        url: "https://i.imgur.com/abcd123.png"
+      },
+      {
+        name: "Green Slime",
+        url: "https://example.com/green_slime.png"
+      }
+    ];
+
     const gallery = document.getElementById('gallery');
 
-    for (let i = 1; i <= 30; i++) {
-      const num = String(i).padStart(2, '0'); // 01, 02, ..., 30
-      const filename = `skins/skin${num}.png`;
-
+    skins.forEach(skin => {
       const card = document.createElement('div');
       card.className = 'skin';
 
-      const img = document.createElement('img');
-      img.src = filename;
-      img.alt = `Skin ${i}`;
-
-      // Als afbeelding niet bestaat: verberg de kaart
-      img.onerror = () => { card.style.display = 'none'; };
-
-      const name = document.createElement('div');
-      name.className = 'skin-name';
-      name.textContent = `Skin ${i}`;
-
-      card.appendChild(img);
-      card.appendChild(name);
-      gallery.appendChild(card);
-    }
-  </script>
-</body>
-</html>
+      const img = document.createElemen
