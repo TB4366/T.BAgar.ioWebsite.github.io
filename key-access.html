@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Special Custom Skins Access</title>
+<title>Enter Access Key</title>
 <style>
   body {
     background: #0b1220;
@@ -15,11 +15,9 @@
     padding: 40px 20px;
     min-height: 100vh;
   }
-
   h1 {
     margin-bottom: 10px;
   }
-
   input[type="text"] {
     padding: 12px;
     font-size: 1rem;
@@ -30,7 +28,6 @@
     letter-spacing: 2px;
     margin-bottom: 15px;
   }
-
   button {
     padding: 12px 24px;
     font-size: 1rem;
@@ -42,17 +39,15 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-
   button:hover {
     background-color: #334155;
   }
-
   .message {
     margin: 15px 0;
     font-weight: bold;
     min-height: 24px;
+    text-align: center;
   }
-
   .contact {
     margin-top: 40px;
     font-size: 0.9rem;
@@ -70,34 +65,33 @@
 <div class="message" id="message"></div>
 
 <script>
-  // Keys and their target pages
-  const keys = {
-    "A1B2C3D4E5F6G7H": "page1.html",
-    "B2C3D4E5F6G7H8I": "page2.html",
-    "C3D4E5F6G7H8I9J": "page3.html",
-    "D4E5F6G7H8I9J0K": "page4.html",
-    "E5F6G7H8I9J0K1L": "page5.html",
-    "F6G7H8I9J0K1L2M": "page6.html",
-    "G7H8I9J0K1L2M3N": "page7.html",
-    "H8I9J0K1L2M3N4O": "page8.html",
-    "I9J0K1L2M3N4O5P": "page9.html",
-    "J0K1L2M3N4O5P6Q": "page10.html",
-    "K1L2M3N4O5P6Q7R": "page11.html",
-    "L2M3N4O5P6Q7R8S": "page12.html",
-    "M3N4O5P6Q7R8S9T": "page13.html",
-    "N4O5P6Q7R8S9T0U": "page14.html",
-    "O5P6Q7R8S9T0U1V": "page15.html",
-    "P6Q7R8S9T0U1V2W": "page16.html",
-    "Q7R8S9T0U1V2W3X": "page17.html",
-    "R8S9T0U1V2W3X4Y": "page18.html",
-    "S9T0U1V2W3X4Y5Z": "page19.html",
-    "T0U1V2W3X4Y5Z6A": "page20.html"
+  // Keys and their corresponding redirect pages
+  const keyPages = {
+    "A1B2C3D4E5F6G7H": "speciale-custom-skins.html",
+    "B2C3D4E5F6G7H8I": "page-2.html",
+    "C3D4E5F6G7H8I9J": "page-3.html",
+    "D4E5F6G7H8I9J0K": "page-4.html",
+    "E5F6G7H8I9J0K1L": "page-5.html",
+    "F6G7H8I9J0K1L2M": "page-6.html",
+    "G7H8I9J0K1L2M3N": "page-7.html",
+    "H8I9J0K1L2M3N4O": "page-8.html",
+    "I9J0K1L2M3N4O5P": "page-9.html",
+    "J0K1L2M3N4O5P6Q": "page-10.html",
+    "K1L2M3N4O5P6Q7R": "page-11.html",
+    "L2M3N4O5P6Q7R8S": "page-12.html",
+    "M3N4O5P6Q7R8S9T": "page-13.html",
+    "N4O5P6Q7R8S9T0U": "page-14.html",
+    "O5P6Q7R8S9T0U1V": "page-15.html",
+    "P6Q7R8S9T0U1V2W": "page-16.html",
+    "Q7R8S9T0U1V2W3X": "page-17.html",
+    "R8S9T0U1V2W3X4Y": "page-18.html",
+    "S9T0U1V2W3X4Y5Z": "page-19.html",
+    "T0U1V2W3X4Y5Z6A": "page-20.html"
   };
 
   const STORAGE_KEY = "usedKeys";
-  const RESET_INTERVAL_MS = 2 * 24 * 60 * 60 * 1000; // 2 days in ms
+  const RESET_INTERVAL_MS = 2 * 24 * 60 * 60 * 1000; // 2 days
 
-  // Clean old keys that passed 2 days
   function cleanOldUsedKeys() {
     let used = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
     const now = Date.now();
@@ -115,7 +109,6 @@
     }
   }
 
-  // Check key usage and validity
   function checkKey() {
     cleanOldUsedKeys();
 
@@ -129,7 +122,7 @@
       return;
     }
 
-    if (!keys.hasOwnProperty(enteredKey)) {
+    if (!keyPages.hasOwnProperty(enteredKey)) {
       message.style.color = "red";
       message.textContent = "Invalid key. Please try again.";
       return;
@@ -143,15 +136,13 @@
       return;
     }
 
-    // Mark key as used with timestamp
     used[enteredKey] = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
 
-    // Show success message + unlock button
     message.style.color = "lime";
     message.innerHTML = `
       <p>Key accepted! Click the button below to unlock your item.</p>
-      <button onclick="window.location.href='${keys[enteredKey]}'">Unlock Your Item</button>
+      <button onclick="window.location.href='${keyPages[enteredKey]}'">Unlock Your Item</button>
     `;
   }
 </script>
