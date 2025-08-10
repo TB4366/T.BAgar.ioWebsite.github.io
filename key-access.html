@@ -65,7 +65,6 @@
 <div class="message" id="message"></div>
 
 <script>
-  // Keys and their corresponding redirect pages
   const keyPages = {
     "A1B2C3D4E5F6G7H": "speciale-custom-skins.html",
     "B2C3D4E5F6G7H8I": "page-2.html",
@@ -92,7 +91,6 @@
   const STORAGE_KEY = "usedKeys";
   const RESET_INTERVAL_MS = 1 * 60 * 1000; // 1 minuut
 
-  // Verwijder gebruikte keys die ouder zijn dan RESET_INTERVAL_MS
   function cleanOldUsedKeys() {
     let used = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
     const now = Date.now();
@@ -141,10 +139,11 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
 
     message.style.color = "lime";
-    message.innerHTML = `
-      <p>Key accepted! Click the button below to unlock your item.</p>
-      <button onclick="window.location.href='${keyPages[enteredKey]}'">Unlock Your Item</button>
-    `;
+    message.textContent = "Key accepted! Redirecting you now...";
+
+    setTimeout(() => {
+      window.location.href = keyPages[enteredKey];
+    }, 1000);
   }
 </script>
 
