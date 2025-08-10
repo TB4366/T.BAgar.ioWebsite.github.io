@@ -32,7 +32,6 @@
     position: relative;
     box-shadow: 0 0 10px #334155;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
@@ -41,35 +40,7 @@
     max-width: 100%;
     max-height: 100%;
     border-radius: 50%;
-  }
-  .upload-btn {
-    position: absolute;
-    bottom: 15px;
-    background: #334155;
-    border: none;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-    transition: background 0.3s ease;
-  }
-  .upload-btn:hover {
-    background: #556680;
-  }
-  input[type="file"] {
-    display: none;
-  }
-  .img-link {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    right: 5px;
-    font-size: 0.7rem;
-    color: #bbb;
-    word-break: break-all;
-    text-align: center;
+    object-fit: cover;
   }
 </style>
 </head>
@@ -78,67 +49,15 @@
 <h1>Special Custom Skins</h1>
 <div class="circles-container">
   <div class="circle" id="circle1">
-    <label class="upload-btn" for="upload1">Upload</label>
-    <input type="file" id="upload1" accept="image/*" />
-    <div class="img-link" id="link1"></div>
+    <img src="https://i.imgur.com/zAOoOR6.png" alt="Skin 1" />
   </div>
   <div class="circle" id="circle2">
-    <label class="upload-btn" for="upload2">Upload</label>
-    <input type="file" id="upload2" accept="image/*" />
-    <div class="img-link" id="link2"></div>
+    <!-- Leeg voor nu -->
   </div>
   <div class="circle" id="circle3">
-    <label class="upload-btn" for="upload3">Upload</label>
-    <input type="file" id="upload3" accept="image/*" />
-    <div class="img-link" id="link3"></div>
+    <!-- Leeg voor nu -->
   </div>
 </div>
-
-<script>
-  const CLIENT_ID = "YOUR_IMGUR_CLIENT_ID"; // Vervang met jouw Imgur Client-ID
-
-  function uploadImage(file, circleId, linkId) {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: `Client-ID ${CLIENT_ID}`
-      },
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        const imageUrl = data.data.link;
-        document.getElementById(circleId).innerHTML = `
-          <img src="${imageUrl}" alt="Uploaded Skin" />
-          <button class="upload-btn" onclick="document.getElementById('upload${circleId.slice(-1)}').click()">Change</button>
-          <div class="img-link" id="${linkId}"><a href="${imageUrl}" target="_blank" style="color:#bbb; text-decoration:none;">${imageUrl}</a></div>
-        `;
-      } else {
-        alert("Upload failed, probeer opnieuw.");
-      }
-    })
-    .catch(() => alert("Upload mislukt, controleer je internetverbinding."));
-  }
-
-  // Event listeners voor upload inputs
-  document.getElementById("upload1").addEventListener("change", e => {
-    uploadImage(e.target.files[0], "circle1", "link1");
-  });
-
-  document.getElementById("upload2").addEventListener("change", e => {
-    uploadImage(e.target.files[0], "circle2", "link2");
-  });
-
-  document.getElementById("upload3").addEventListener("change", e => {
-    uploadImage(e.target.files[0], "circle3", "link3");
-  });
-</script>
 
 </body>
 </html>
