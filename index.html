@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io Website</title>
 <style>
   body {
@@ -13,7 +13,6 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Dark mode styles */
   body.dark {
     background: #f0f0f0;
     color: #222;
@@ -52,7 +51,6 @@
     font-weight: bold;
   }
 
-  /* Toggle knop naast site-title */
   .toggle-btn-header {
     background: none;
     border: none;
@@ -69,7 +67,6 @@
     color: white;
   }
 
-  /* Dark mode styling voor toggle knop */
   body.dark .toggle-btn-header {
     color: #4dd0e1;
   }
@@ -79,7 +76,6 @@
     color: white;
   }
 
-  /* Hamburger menu button */
   .menu-btn {
     cursor: pointer;
     font-size: 24px;
@@ -92,7 +88,6 @@
     color: #222;
   }
 
-  /* Dropdown menu */
   .menu {
     display: none;
     position: absolute;
@@ -130,7 +125,6 @@
     background: #ddd;
   }
 
-  /* Video section */
   .main-video {
     display: flex;
     justify-content: center;
@@ -166,23 +160,12 @@
     text-decoration: none;
     border-radius: 8px;
     font-weight: bold;
-    transition: background-color 0.3s ease;
   }
 
   .youtube-link a:hover {
     background: #334155;
   }
 
-  body.dark .youtube-link a {
-    background: #ccc;
-    color: #222;
-  }
-
-  body.dark .youtube-link a:hover {
-    background: #bbb;
-  }
-
-  /* Button styling */
   .btn {
     padding: 12px 24px;
     background-color: #1e293b;
@@ -199,13 +182,59 @@
     background-color: #334155;
   }
 
-  body.dark .btn {
-    background-color: #ccc;
-    color: #222;
+  /* Nieuwe sectie voor custom skins highlight */
+  .divider {
+    max-width: 900px;
+    margin: 40px auto 10px auto;
+    border-top: 2px solid #48cae4;
   }
 
-  body.dark .btn:hover {
-    background-color: #bbb;
+  .highlight-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 20px 0 30px;
+    color: #48cae4;
+  }
+
+  body.dark .divider {
+    border-top: 2px solid #0077b6;
+  }
+
+  body.dark .highlight-title {
+    color: #0077b6;
+  }
+
+  .skins-circles {
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .circle-video-container {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    filter: brightness(0.8) saturate(1.2);
+    box-shadow: 0 0 15px #48cae4;
+    background: #000;
+    transition: filter 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  body.dark .circle-video-container {
+    filter: brightness(1) saturate(1);
+    box-shadow: 0 0 15px #0077b6;
+  }
+
+  .circle-video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(2px) brightness(0.7);
   }
 </style>
 </head>
@@ -213,7 +242,7 @@
 
 <header>
   <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <img src="IMG_2718.png" alt="Logo" class="logo">
     <span class="site-title">T.B Agar.io</span>
     <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
@@ -226,25 +255,33 @@
 </header>
 
 <main>
-  <!-- Large main video + buttons -->
   <div class="main-video">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
-
-    <!-- Nieuwe knop naar key-input.html -->
-    <button class="btn" onclick="location.href='key-access.html'">
-      Naar Key Input Pagina
-    </button>
+    <button class="btn" onclick="location.href='key-access.html'">Naar Key Input Pagina</button>
   </div>
 
-  <!-- YouTube channel link -->
   <div class="youtube-link">
     <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My YouTube Channel</a>
   </div>
 
-  <!-- Two smaller videos -->
   <div class="video-grid">
     <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
     <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
+  </div>
+
+  <!-- Nieuwe sectie -->
+  <div class="divider"></div>
+  <div class="highlight-title">The Best Custom Skins</div>
+  <div class="skins-circles">
+    <div class="circle-video-container">
+      <video id="circleVideo1" muted autoplay loop playsinline></video>
+    </div>
+    <div class="circle-video-container">
+      <video id="circleVideo2" muted autoplay loop playsinline></video>
+    </div>
+    <div class="circle-video-container">
+      <video id="circleVideo3" muted autoplay loop playsinline></video>
+    </div>
   </div>
 </main>
 
@@ -254,10 +291,10 @@
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
+  // Dark/light mode toggle code
   const toggleBtn = document.getElementById('themeToggleBtn');
   const body = document.body;
 
-  // Laad voorkeur uit localStorage (default licht)
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') {
     body.classList.add('dark');
@@ -276,6 +313,41 @@
       localStorage.setItem('theme', 'light');
     }
   });
+
+  // Video URLs voor skins (je kunt hier de video-bestanden vervangen door je eigen skin video URLs)
+  const skinsVideos = [
+    "skin1.mp4",
+    "skin2.mp4",
+    "skin3.mp4",
+    "skin4.mp4",
+    "skin5.mp4",
+    "skin6.mp4",
+    "skin7.mp4",
+    "skin8.mp4",
+    "skin9.mp4",
+    "skin10.mp4"
+  ];
+
+  // Functie om video steeds te wisselen in een video element
+  function cycleVideos(videoElement, interval) {
+    let index = 0;
+    videoElement.src = skinsVideos[index];
+    videoElement.play();
+    setInterval(() => {
+      index = (index + 1) % skinsVideos.length;
+      videoElement.src = skinsVideos[index];
+      videoElement.play();
+    }, interval);
+  }
+
+  // Start cycli met verschillende intervallen
+  const circleVideo1 = document.getElementById('circleVideo1');
+  const circleVideo2 = document.getElementById('circleVideo2');
+  const circleVideo3 = document.getElementById('circleVideo3');
+
+  cycleVideos(circleVideo1, 4000);  // elke 4 seconden
+  cycleVideos(circleVideo2, 7000);  // elke 7 seconden
+  cycleVideos(circleVideo3, 10000); // elke 10 seconden
 </script>
 
 </body>
