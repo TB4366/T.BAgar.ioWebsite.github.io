@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Specaile Custom Skins</title>
+  <style>
+    #content {
+      display: none;
+      margin-top: 20px;
+    }
+    #error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Voer je Key in om toegang te krijgen</h1>
+  <input type="password" id="keyInput" placeholder="Voer je key hier in" />
+  <button onclick="checkKey()">Check key</button>
+  <div id="error"></div>
+
+  <div id="content">
+    <h2>Welkom bij Specaile Custom Skins!</h2>
+    <p>Hier is de speciale inhoud die alleen zichtbaar is met de juiste key.</p>
+    <!-- Speciale inhoud hier -->
+  </div>
+
+  <script>
+    const validKeys = [
+      "A1B2C3D4E5F6G7H",
+      "X9Y8Z7W6V5U4T3S",
+      "123ABC456DEF789",
+      "QWERTY123ASDFG45",
+      "ZXCVBNM987LKJHGF"
+    ];
+
+    function checkKey() {
+      const inputKey = document.getElementById("keyInput").value.trim();
+      const errorDiv = document.getElementById("error");
+      const contentDiv = document.getElementById("content");
+
+      if (validKeys.includes(inputKey)) {
+        errorDiv.textContent = "";
+        contentDiv.style.display = "block";
+      } else {
+        contentDiv.style.display = "none";
+        errorDiv.textContent = "Onjuiste key, probeer het opnieuw.";
+      }
+    }
+  </script>
+</body>
+</html>
