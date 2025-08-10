@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paid Skins — T.B Agar.io Website</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #0b1220;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    header {
+      padding: 20px 0;
+      background: #0f172a;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+    }
+    .btn-back {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 15px;
+      background: #1e293b;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    #coins {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .buy-coins-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background: #22c55e;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .skin {
+      background: #071029;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 0 8px #0f172a;
+    }
+    .skin img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto 10px auto;
+      background: #1a202c;
+    }
+    .skin-name {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      background: #1e40af;
+    }
+    button:disabled {
+      background: #16a34a;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Paid Skins</h1>
+    <a href="index.html" class="btn-back">⬅️ Back to Home</a>
+  </header>
+
+  <div id="coins">💰 Coins: 100</div>
+  <a href="https://paypal.me/TBYTagario" target="_blank" class="buy-coins-btn">💳 Pay for More Coins</a>
+
+  <div class="grid" id="gallery"></div>
+
+  <script>
+    let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 100;
+    const boughtSkins = JSON.parse(localStorage.getItem('boughtSkins') || "[]");
+
+    const skins = [
+      {
+        name: "Blue Dragon",
+        url: "https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPO/main/IMG_4073.png",
+        price: 50
+      },
+      {
+        name: "Red Fire",
+        url: "https://i.imgur.com/abcd123.png",
+        price: 70
+      },
+      {
+        name: "Green Slime",
+        url: "https://i.imgur.com/x42G7Q0.png",
+        price: 40
+      }
+    ];
+
+    const coinsDiv = document.getElementById("coins");
+    const gallery = document.getElementById("gallery");
+
+    function updateCoins() {
+      coinsDiv.textContent = `💰 Coins: ${coins}`;
+      localStorage.setItem('coins', coins);
+    }
+
+    function buySkin(skin) {
+      if (boughtSkins.includes(skin.name)) {
+        alert("You already own this skin!");
+        return;
+      }
+      if (coins >= skin.price) {
+        coins -= skin.price;
+        boughtSkins.push(skin.name);
+        localStorage.setItem('boughtSkins', JSON.stringify(boughtSkins));
+        updateCoins();
+        renderGallery();
+        alert(`You purchased ${skin.name}!`);
+      } else {
+        alert("Not enough coins!");
+      }
+    }
+
+    function renderGallery() {
+      gallery.innerHTML = "";
+      skins.forEach(skin => {
+        const card = document.createElement('div');
+        card.className = 'skin';
+        const img = document.createElement('img');
+        img.src = skin.url;
+        img.alt = skin.name;
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'skin-name';
+        nameDiv.textContent = `${skin.name} — ${skin.price} coins`;
+        const button = document.createElement('button');
+        if (boughtSkins.includes(skin.name)) {
+          button.textContent = "✅ Purchased";
+          button.disabled = true;
+        } else {
+          button.textContent = "Buy";
+          button.onclick = () => buySkin(skin);
+        }
+        card.appendChild(img);
+        card.appendChild(nameDiv);
+        card.appendChild(button);
+        gallery.appendChild(card);
+      });
+    }
+
+    updateCoins();
+    renderGallery();
+  </script>
+
+</body>
+</html>
