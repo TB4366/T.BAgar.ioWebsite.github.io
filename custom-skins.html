@@ -5,12 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Custom Skins — T.B Agar.io Website</title>
 <style>
+  /* Vrolijke zomerstijl met Agar.io vibe */
+
   body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #a0d8f7, #ffffff);
+    color: #333;
     text-align: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Achtergrond bubbels (Agar.io stijl) */
+  body::before {
+    content: "";
+    position: fixed;
+    top: -150px;
+    left: -150px;
+    width: 1200px;
+    height: 1200px;
+    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6), transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.4), transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3), transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+    animation: bubble-move 20s linear infinite;
+  }
+
+  @keyframes bubble-move {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(100px, 100px);
+    }
   }
 
   /* Header + menu */
@@ -18,9 +47,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
-    background: #0f172a;
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: relative;
+    border-radius: 0 0 20px 20px;
   }
 
   .logo-container {
@@ -29,80 +60,138 @@
   }
 
   .logo {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 10px;
+    margin-right: 15px;
+    box-shadow: 0 0 10px #4dd0e1;
+    transition: transform 0.3s ease;
+  }
+
+  .logo:hover {
+    transform: rotate(10deg);
   }
 
   .site-title {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0077b6;
+    text-shadow: 1px 1px 3px #caf0f8;
   }
 
   .menu-btn {
     cursor: pointer;
-    font-size: 24px;
+    font-size: 28px;
     background: none;
     border: none;
-    color: white;
+    color: #0077b6;
+    transition: color 0.3s ease;
+  }
+
+  .menu-btn:hover {
+    color: #00b4d8;
   }
 
   .menu {
     display: none;
     position: absolute;
-    top: 60px;
-    right: 20px;
-    background: #1e293b;
-    border-radius: 8px;
+    top: 70px;
+    right: 30px;
+    background: #caf0f8;
+    border-radius: 15px;
     overflow: hidden;
-    min-width: 160px;
+    min-width: 180px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     z-index: 10;
   }
 
   .menu a {
     display: block;
-    padding: 12px;
+    padding: 14px 20px;
     text-decoration: none;
-    color: white;
-    border-bottom: 1px solid #334155;
+    color: #0077b6;
+    font-weight: 600;
+    border-bottom: 1px solid #90e0ef;
+    transition: background 0.3s ease;
+  }
+
+  .menu a:last-child {
+    border-bottom: none;
   }
 
   .menu a:hover {
-    background: #334155;
+    background: #48cae4;
+    color: white;
   }
 
   /* Skins grid */
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 skins per rij */
-    gap: 20px;
-    max-width: 900px; /* iets breder voor 3 skins */
-    margin: 20px auto;
-    padding: 0 10px;
+    gap: 25px;
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 0 15px;
   }
 
   .skin {
-    background: #071029;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 0 8px #0f172a;
+    background: #ade8f4;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .skin:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 25px rgba(0, 123, 255, 0.4);
   }
 
   .skin img {
     width: 140px;
     height: 140px;
-    object-fit: cover; /* voor goede vulling in cirkel */
-    border-radius: 50%; /* cirkelvorm */
+    object-fit: cover;
+    border-radius: 50%;
     display: block;
-    margin: 0 auto 10px;
-    background: #1a202c;
+    margin: 0 auto 15px;
+    background: #00b4d8;
+    box-shadow: 0 0 20px #00b4d8;
   }
 
   .skin-name {
-    font-size: 1rem;
-    color: #cbd5e1;
+    font-size: 1.2rem;
+    color: #023e8a;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px #90e0ef;
+  }
+
+  h1 {
+    margin-top: 40px;
+    font-size: 2.5rem;
+    color: #0077b6;
+    text-shadow: 1px 1px 3px #caf0f8;
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+      max-width: 600px;
+    }
+  }
+
+  @media (max-width: 450px) {
+    .grid {
+      grid-template-columns: 1fr;
+      max-width: 320px;
+    }
+
+    header {
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px;
+    }
   }
 </style>
 </head>
@@ -132,48 +221,17 @@
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
-  // Skins lijst
   const skins = [
-    {
-      name: "Baby Dragon",
-      url: "IMG_4073.png"
-    },
-    {
-      name: "Thor Hamer",
-      url: "IMG_4027.jpeg"
-    },
-    {
-      name: "Sting wasp",
-      url: "IMG_4028.jpeg"
-    },
-    {
-      name: "fire skeleton",
-      url: "IMG_4024.jpeg"
-    },
-    {
-      name: "fire wolf",
-      url: "IMG_4025.jpeg"
-    },
-    {
-      name: "captain jay",
-      url: "IMG_4026.jpeg"
-    },
-    {
-      name: "Fire Art",
-      url: "IMG_4022.jpeg"
-    },
-    {
-      name: "mouth fire art",
-      url: "IMG_3180.jpeg"
-    },
-    {
-      name: "fire snake",
-      url: "IMG_4032.jpeg"
-    },
-    {
-      name: "the tiger king",
-      url: "IMG_4037.jpeg"
-    }
+    { name: "Baby Dragon", url: "IMG_4073.png" },
+    { name: "Thor Hamer", url: "IMG_4027.jpeg" },
+    { name: "Sting wasp", url: "IMG_4028.jpeg" },
+    { name: "fire skeleton", url: "IMG_4024.jpeg" },
+    { name: "fire wolf", url: "IMG_4025.jpeg" },
+    { name: "captain jay", url: "IMG_4026.jpeg" },
+    { name: "Fire Art", url: "IMG_4022.jpeg" },
+    { name: "mouth fire art", url: "IMG_3180.jpeg" },
+    { name: "fire snake", url: "IMG_4032.jpeg" },
+    { name: "the tiger king", url: "IMG_4037.jpeg" }
   ];
 
   const gallery = document.getElementById('gallery');
