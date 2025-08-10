@@ -1,111 +1,172 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Custom Skins — T.B Agar.io Website</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      background: #0b1220;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    header {
-      padding: 20px 0;
-      background: #0f172a;
-      margin-bottom: 20px;
-    }
-    h1 {
-      margin: 0;
-    }
-    .btn-back {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 15px;
-      background: #1e293b;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(120px,1fr));
-      gap: 20px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    .skin {
-      background: #071029;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 0 8px #0f172a;
-    }
-    .skin img {
-      width: 100px;
-      height: 100px;
-      object-fit: contain;
-      border-radius: 12px;
-      display: block;
-      margin: 0 auto;
-      margin-bottom: 10px;
-      background: #1a202c;
-    }
-    .skin-name {
-      font-size: 1rem;
-      color: #cbd5e1;
-      text-align: center;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Custom Skins — T.B Agar.io Website</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: white;
+    text-align: center;
+  }
+
+  /* Header + menu */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #0f172a;
+    position: relative;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .site-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .menu-btn {
+    cursor: pointer;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+  }
+
+  .menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 10;
+  }
+
+  .menu a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid #334155;
+  }
+
+  .menu a:hover {
+    background: #334155;
+  }
+
+  /* Skins grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+
+  .skin {
+    background: #071029;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 0 8px #0f172a;
+  }
+
+  .skin img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
+    margin: 0 auto 10px;
+    background: #1a202c;
+  }
+
+  .skin-name {
+    font-size: 1rem;
+    color: #cbd5e1;
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>Custom Skins</h1>
-    <a href="index.html" class="btn-back">⬅️ Back to Home</a>
-  </header>
+<header>
+  <div class="logo-container">
+    <img src="IMG_2718.png" alt="Logo" class="logo">
+    <span class="site-title">T.B Agar.io</span>
+  </div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="index.html">🏠 Home Pagina</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+  </div>
+</header>
 
+<main>
+  <h1>Custom Skins</h1>
   <div class="grid" id="gallery"></div>
+</main>
 
-  <script>
-    // Zet hier alleen skins met een werkende URL of correct pad
-    const skins = [
-      {
-        name: "Derpy Carnotaurus",
-        url: "https://i.imgur.com/zAOoOR6.png"
-      },
-      {
-        name: "Baby Dragon",
-        url: "IMG_4073.png"
-      },
-      {
-        name: "Green Slime",
-        url: "https://imgur.com/gallery/baby-dragon-KPlU1z5"
-      }
-    ];
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  }
 
-    const gallery = document.getElementById('gallery');
+  // Skins lijst
+  const skins = [
+    {
+      name: "Derpy Carnotaurus",
+      url: "https://i.imgur.com/zAOoOR6.png"
+    },
+    {
+      name: "Baby Dragon",
+      url: "https://i.imgur.com/G6n1s8j.png" // voorbeeld directe link
+    },
+    {
+      name: "Green Slime",
+      url: "https://i.imgur.com/t3y3bFY.png" // voorbeeld directe link
+    }
+  ];
 
-    skins.forEach(skin => {
-      const card = document.createElement('div');
-      card.className = 'skin';
+  const gallery = document.getElementById('gallery');
 
-      const img = document.createElement('img');
-      img.src = skin.url;
-      img.alt = skin.name;
+  skins.forEach(skin => {
+    const card = document.createElement('div');
+    card.className = 'skin';
 
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'skin-name';
-      nameDiv.textContent = skin.name;
+    const img = document.createElement('img');
+    img.src = skin.url;
+    img.alt = skin.name;
 
-      card.appendChild(img);
-      card.appendChild(nameDiv);
-      gallery.appendChild(card);
-    });
-  </script>
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'skin-name';
+    nameDiv.textContent = skin.name;
+
+    card.appendChild(img);
+    card.appendChild(nameDiv);
+    gallery.appendChild(card);
+  });
+</script>
 
 </body>
 </html>
