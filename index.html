@@ -1,67 +1,132 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>T.B Agar.io Website</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      background: #0b1220;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-    header {
-      padding: 20px 0;
-      background: #0f172a;
-      margin-bottom: 20px;
-    }
-    h1 {
-      margin: 0;
-    }
-    .btn-link {
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 20px;
-      background: #1e293b;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-    .btn-link:hover {
-      background: #334155;
-    }
-    .video-section {
-      margin-top: 30px;
-    }
-    iframe {
-      border: none;
-      border-radius: 12px;
-      margin: 10px;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.B Agar.io Website</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: white;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #0f172a;
+    position: relative;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .site-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  /* Hamburger menu button */
+  .menu-btn {
+    cursor: pointer;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+  }
+
+  /* Dropdown menu */
+  .menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 160px;
+  }
+
+  .menu a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid #334155;
+  }
+
+  .menu a:hover {
+    background: #334155;
+  }
+
+  /* Video section */
+  .main-video {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .video-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px;
+  }
+
+  iframe {
+    border: none;
+    border-radius: 12px;
+  }
+</style>
 </head>
 <body>
 
-  <header>
-    <h1>Welcome to T.B Agar.io</h1>
-  </header>
-
-  <!-- Navigation buttons -->
-  <a href="custom-skins.html" class="btn-link">🎨 Custom Skins</a>
-  <a href="paid-skins.html" class="btn-link">💎 Paid Skins Shop</a>
-  <a href="https://www.youtube.com/@T.B6/featured" target="_blank" class="btn-link">📺 My YouTube Channel</a>
-
-  <!-- Example video section -->
-  <div class="video-section">
-    <h2>Gameplay Videos</h2>
-    <iframe width="360" height="215" src="https://youtu.be/diAuO3IC8Hg?si=HZckfUycbfUT54mm" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://youtu.be/OEkurL8aaZk?si=wfti6yUpxeADinm-" allowfullscreen></iframe>
+<header>
+  <div class="logo-container">
+    <img src="IMG_2718.png" alt="Logo" class="logo">
+    <span class="site-title">T.B Agar.io</span>
   </div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="https://www.youtube.com/@T.B6/featured" target="_blank">📺 Home (YouTube)</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+  </div>
+</header>
+
+<main>
+  <!-- Large main video -->
+  <div class="main-video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
+  </div>
+
+  <!-- Two smaller videos -->
+  <div class="video-grid">
+    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
+    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
+  </div>
+</main>
+
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  }
+</script>
 
 </body>
 </html>
