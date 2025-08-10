@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>T.B Agar.io Website</title>
 <style>
   body {
@@ -12,12 +12,10 @@
     color: white;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-
   body.dark {
     background: #f0f0f0;
     color: #222;
   }
-
   header {
     display: flex;
     align-items: center;
@@ -27,17 +25,14 @@
     position: relative;
     transition: background-color 0.3s ease;
   }
-
   body.dark header {
     background: #e0e0e0;
   }
-
   .logo-container {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
   .logo {
     width: 50px;
     height: 50px;
@@ -45,12 +40,10 @@
     object-fit: cover;
     margin-right: 10px;
   }
-
   .site-title {
     font-size: 1.2rem;
     font-weight: bold;
   }
-
   .toggle-btn-header {
     background: none;
     border: none;
@@ -61,21 +54,17 @@
     border-radius: 8px;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
-
   .toggle-btn-header:hover {
     background-color: #48cae4;
     color: white;
   }
-
   body.dark .toggle-btn-header {
     color: #4dd0e1;
   }
-
   body.dark .toggle-btn-header:hover {
     background-color: #0077b6;
     color: white;
   }
-
   .menu-btn {
     cursor: pointer;
     font-size: 24px;
@@ -83,11 +72,9 @@
     border: none;
     color: white;
   }
-
   body.dark .menu-btn {
     color: #222;
   }
-
   .menu {
     display: none;
     position: absolute;
@@ -99,11 +86,9 @@
     min-width: 160px;
     z-index: 10;
   }
-
   body.dark .menu {
     background: #ccc;
   }
-
   .menu a {
     display: block;
     padding: 12px;
@@ -111,20 +96,16 @@
     color: white;
     border-bottom: 1px solid #334155;
   }
-
   body.dark .menu a {
     color: #222;
     border-bottom: 1px solid #aaa;
   }
-
   .menu a:hover {
     background: #334155;
   }
-
   body.dark .menu a:hover {
     background: #ddd;
   }
-
   .main-video {
     display: flex;
     justify-content: center;
@@ -133,7 +114,6 @@
     align-items: center;
     gap: 12px;
   }
-
   .video-grid {
     display: flex;
     justify-content: center;
@@ -141,17 +121,14 @@
     flex-wrap: wrap;
     margin: 20px;
   }
-
   iframe {
     border: none;
     border-radius: 12px;
   }
-
   .youtube-link {
     text-align: center;
     margin-top: 20px;
   }
-
   .youtube-link a {
     display: inline-block;
     padding: 12px 20px;
@@ -161,11 +138,9 @@
     border-radius: 8px;
     font-weight: bold;
   }
-
   .youtube-link a:hover {
     background: #334155;
   }
-
   .btn {
     padding: 12px 24px;
     background-color: #1e293b;
@@ -177,7 +152,6 @@
     border: none;
     transition: background-color 0.3s ease;
   }
-
   .btn:hover {
     background-color: #334155;
   }
@@ -188,7 +162,6 @@
     margin: 40px auto 10px auto;
     border-top: 2px solid #48cae4;
   }
-
   .highlight-title {
     text-align: center;
     font-size: 1.8rem;
@@ -196,15 +169,12 @@
     margin: 20px 0 30px;
     color: #48cae4;
   }
-
   body.dark .divider {
     border-top: 2px solid #0077b6;
   }
-
   body.dark .highlight-title {
     color: #0077b6;
   }
-
   .skins-circles {
     max-width: 900px;
     margin: 0 auto 50px auto;
@@ -212,29 +182,47 @@
     justify-content: center;
     gap: 40px;
   }
-
-  .circle-video-container {
+  .circle {
     width: 180px;
     height: 180px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    filter: brightness(0.8) saturate(1.2);
-    box-shadow: 0 0 15px #48cae4;
     background: #000;
+    box-shadow: 0 0 15px #48cae4;
+    filter: brightness(0.8) saturate(1.2);
+    cursor: pointer;
     transition: filter 0.3s ease, box-shadow 0.3s ease;
   }
-
-  body.dark .circle-video-container {
+  body.dark .circle {
     filter: brightness(1) saturate(1);
     box-shadow: 0 0 15px #0077b6;
   }
-
-  .circle-video-container video {
+  .circle img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(2px) brightness(0.7);
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .circle img.active {
+    opacity: 1;
+  }
+
+  /* Animations */
+  @keyframes zoomInOut {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  @keyframes rotate360 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { filter: brightness(0.8); }
+    50% { filter: brightness(1.2); }
   }
 </style>
 </head>
@@ -242,7 +230,7 @@
 
 <header>
   <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo">
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
     <span class="site-title">T.B Agar.io</span>
     <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
@@ -273,15 +261,9 @@
   <div class="divider"></div>
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="skins-circles">
-    <div class="circle-video-container">
-      <video id="circleVideo1" muted autoplay loop playsinline></video>
-    </div>
-    <div class="circle-video-container">
-      <video id="circleVideo2" muted autoplay loop playsinline></video>
-    </div>
-    <div class="circle-video-container">
-      <video id="circleVideo3" muted autoplay loop playsinline></video>
-    </div>
+    <div class="circle" id="circle1"></div>
+    <div class="circle" id="circle2"></div>
+    <div class="circle" id="circle3"></div>
   </div>
 </main>
 
@@ -314,34 +296,58 @@
     }
   });
 
-  // Video URLs voor skins (je kunt hier de video-bestanden vervangen door je eigen skin video URLs)
-  const skinsVideos = [
-    "FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png.mp4",
-    "IMG_2978.jpeg.mp4",
-    "skin3.mp4",
+  // Afbeeldingen per cirkel (inclusief jouw afbeelding in cirkel1)
+  const skinsCircle1 = [
+    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
+    'https://i.imgur.com/8J3S4kC.png',
+    'https://i.imgur.com/VZJecHL.png'
+  ];
+  const skinsCircle2 = [
+    'https://i.imgur.com/It5aoyQ.png',
+    'https://i.imgur.com/7rIpNPZ.png',
+    'https://i.imgur.com/4R6vdkZ.png'
+  ];
+  const skinsCircle3 = [
+    'https://i.imgur.com/Exl65gP.png',
+    'https://i.imgur.com/7F8OqDl.png',
+    'https://i.imgur.com/p9wO9lQ.png'
   ];
 
-  // Functie om video steeds te wisselen in een video element
-  function cycleVideos(videoElement, interval) {
-    let index = 0;
-    videoElement.src = skinsVideos[index];
-    videoElement.play();
+  // Intervals in ms voor elke cirkel
+  const intervals = [4000, 7000, 10000];
+
+  // Animaties per cirkel
+  const animations = [
+    'zoomInOut 10s ease-in-out infinite',
+    'rotate360 15s linear infinite',
+    'pulse 8s ease-in-out infinite'
+  ];
+
+  // Functie om cirkel op te bouwen met afbeeldingen en animaties
+  function setupCircle(id, images, interval, animation) {
+    const circle = document.getElementById(id);
+    circle.style.animation = animation;
+
+    images.forEach((src, idx) => {
+      const img = document.createElement('img');
+      img.src = src;
+      if (idx === 0) img.classList.add('active');
+      circle.appendChild(img);
+    });
+
+    let currentIndex = 0;
     setInterval(() => {
-      index = (index + 1) % skinsVideos.length;
-      videoElement.src = skinsVideos[index];
-      videoElement.play();
+      const imgs = circle.querySelectorAll('img');
+      imgs[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % imgs.length;
+      imgs[currentIndex].classList.add('active');
     }, interval);
   }
 
-  // Start cycli met verschillende intervallen
-  const circleVideo1 = document.getElementById('circleVideo1');
-  const circleVideo2 = document.getElementById('circleVideo2');
-  const circleVideo3 = document.getElementById('circleVideo3');
+  setupCircle('circle1', skinsCircle1, intervals[0], animations[0]);
+  setupCircle('circle2', skinsCircle2, intervals[1], animations[1]);
+  setupCircle('circle3', skinsCircle3, intervals[2], animations[2]);
 
-  cycleVideos(circleVideo1, 4000);  // elke 4 seconden
-  cycleVideos(circleVideo2, 7000);  // elke 7 seconden
-  cycleVideos(circleVideo3, 10000); // elke 10 seconden
 </script>
-
 </body>
 </html>
