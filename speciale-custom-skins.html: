@@ -1,34 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Speciale Custom Skins</title>
-<style>
-  body {
-    background: #0b1220;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
-    text-align: center;
-  }
-  h1 {
-    font-size: 2rem;
-  }
-  p {
-    margin-top: 20px;
-    font-size: 1.2rem;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Special Custom Skins Access</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b1220;
+      color: white;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 300px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px;
+      background-color: #1e293b;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #334155;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #f87171; /* rood voor foutmelding */
+      min-height: 24px;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Welcome to Speciale Custom Skins</h1>
-<p>Thank you for unlocking this special page with your key!</p>
+  <h1>Enter Access Key for Special Custom Skins</h1>
+
+  <form id="keyForm">
+    <input type="text" id="keyInput" placeholder="Enter your access key" required />
+    <button type="submit">Submit</button>
+  </form>
+
+  <div class="message" id="message"></div>
+
+  <script>
+    const form = document.getElementById('keyForm');
+    const input = document.getElementById('keyInput');
+    const message = document.getElementById('message');
+
+    // Keys gekoppeld aan skin pagina's
+    const keyMap = {
+      "skin123": "custom-skin-123.html",
+      "skin456": "custom-skin-456.html",
+      "specialkey": "special-skin.html"
+    };
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const key = input.value.trim();
+      if(!key) {
+        message.textContent = "Please enter an access key.";
+        return;
+      }
+      const destination = keyMap[key.toLowerCase()];
+      if(destination) {
+        // Key is correct, redirect naar de juiste pagina
+        window.location.href = destination;
+      } else {
+        // Key is fout
+        message.textContent = "Invalid key. Please try again.";
+      }
+    });
+  </script>
 
 </body>
 </html>
