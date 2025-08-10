@@ -1,97 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Special Custom Skins Access</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0b1220;
-      color: white;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 300px;
-    }
-    input[type="text"] {
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      font-size: 16px;
-    }
-    button {
-      padding: 12px;
-      background-color: #1e293b;
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #334155;
-    }
-    .message {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #f87171; /* rood voor foutmelding */
-      min-height: 24px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Special Custom Skins</title>
+<style>
+  body {
+    background: #0b1220;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+  }
+  .circles-container {
+    display: flex;
+    gap: 40px;
+  }
+  .circle {
+    background: #1e293b;
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    position: relative;
+    box-shadow: 0 0 10px #334155;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  .circle img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 50%;
+  }
+  .upload-btn {
+    position: absolute;
+    bottom: 15px;
+    background: #334155;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+  }
+  .upload-btn:hover {
+    background: #556680;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  .img-link {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    font-size: 0.7rem;
+    color: #bbb;
+    word-break: break-all;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Enter Access Key for Special Custom Skins</h1>
+<h1>Special Custom Skins</h1>
+<div class="circles-container">
+  <div class="circle" id="circle1">
+    <label class="upload-btn" for="upload1">Upload</label>
+    <input type="file" id="upload1" accept="image/*" />
+    <div class="img-link" id="link1"></div>
+  </div>
+  <div class="circle" id="circle2">
+    <label class="upload-btn" for="upload2">Upload</label>
+    <input type="file" id="upload2" accept="image/*" />
+    <div class="img-link" id="link2"></div>
+  </div>
+  <div class="circle" id="circle3">
+    <label class="upload-btn" for="upload3">Upload</label>
+    <input type="file" id="upload3" accept="image/*" />
+    <div class="img-link" id="link3"></div>
+  </div>
+</div>
 
-  <form id="keyForm">
-    <input type="text" id="keyInput" placeholder="Enter your access key" required />
-    <button type="submit">Submit</button>
-  </form>
+<script>
+  const CLIENT_ID = "YOUR_IMGUR_CLIENT_ID"; // Vervang met jouw Imgur Client-ID
 
-  <div class="message" id="message"></div>
+  function uploadImage(file, circleId, linkId) {
+    if (!file) return;
 
-  <script>
-    const form = document.getElementById('keyForm');
-    const input = document.getElementById('keyInput');
-    const message = document.getElementById('message');
+    const formData = new FormData();
+    formData.append("image", file);
 
-    // Keys gekoppeld aan skin pagina's
-    const keyMap = {
-      "skin123": "custom-skin-123.html",
-      "skin456": "custom-skin-456.html",
-      "specialkey": "special-skin.html"
-    };
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      const key = input.value.trim();
-      if(!key) {
-        message.textContent = "Please enter an access key.";
-        return;
-      }
-      const destination = keyMap[key.toLowerCase()];
-      if(destination) {
-        // Key is correct, redirect naar de juiste pagina
-        window.location.href = destination;
+    fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${CLIENT_ID}`
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const imageUrl = data.data.link;
+        document.getElementById(circleId).innerHTML = `
+          <img src="${imageUrl}" alt="Uploaded Skin" />
+          <button class="upload-btn" onclick="document.getElementById('upload${circleId.slice(-1)}').click()">Change</button>
+          <div class="img-link" id="${linkId}"><a href="${imageUrl}" target="_blank" style="color:#bbb; text-decoration:none;">${imageUrl}</a></div>
+        `;
       } else {
-        // Key is fout
-        message.textContent = "Invalid key. Please try again.";
+        alert("Upload failed, probeer opnieuw.");
       }
-    });
-  </script>
+    })
+    .catch(() => alert("Upload mislukt, controleer je internetverbinding."));
+  }
+
+  // Event listeners voor upload inputs
+  document.getElementById("upload1").addEventListener("change", e => {
+    uploadImage(e.target.files[0], "circle1", "link1");
+  });
+
+  document.getElementById("upload2").addEventListener("change", e => {
+    uploadImage(e.target.files[0], "circle2", "link2");
+  });
+
+  document.getElementById("upload3").addEventListener("change", e => {
+    uploadImage(e.target.files[0], "circle3", "link3");
+  });
+</script>
 
 </body>
 </html>
