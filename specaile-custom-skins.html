@@ -70,7 +70,7 @@
 <div class="message" id="message"></div>
 
 <script>
-  // Define keys and their redirect URLs
+  // Keys and their target pages
   const keys = {
     "A1B2C3D4E5F6G7H": "page1.html",
     "B2C3D4E5F6G7H8I": "page2.html",
@@ -94,7 +94,31 @@
     "T0U1V2W3X4Y5Z6A": "page20.html"
   };
 
+  const STORAGE_KEY = "usedKeys";
+  const RESET_INTERVAL_MS = 2 * 24 * 60 * 60 * 1000; // 2 days in ms
+
+  // Clean old keys that passed 2 days
+  function cleanOldUsedKeys() {
+    let used = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+    const now = Date.now();
+    let changed = false;
+
+    for (const key in used) {
+      if (now - used[key] > RESET_INTERVAL_MS) {
+        delete used[key];
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
+    }
+  }
+
+  // Check key usage and validity
   function checkKey() {
+    cleanOldUsedKeys();
+
     const input = document.getElementById("keyInput");
     const message = document.getElementById("message");
     const enteredKey = input.value.trim().toUpperCase();
@@ -105,17 +129,30 @@
       return;
     }
 
-    if (keys.hasOwnProperty(enteredKey)) {
-      message.style.color = "lime";
-      // Show unlock button with link to the assigned page
-      message.innerHTML = `
-        <p>Key accepted! Click the button below to unlock your item.</p>
-        <button onclick="window.location.href='${keys[enteredKey]}'">Unlock Your Item</button>
-      `;
-    } else {
+    if (!keys.hasOwnProperty(enteredKey)) {
       message.style.color = "red";
       message.textContent = "Invalid key. Please try again.";
+      return;
     }
+
+    let used = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+
+    if (used.hasOwnProperty(enteredKey)) {
+      message.style.color = "red";
+      message.textContent = "This key has already been used. Please wait for reset.";
+      return;
+    }
+
+    // Mark key as used with timestamp
+    used[enteredKey] = Date.now();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(used));
+
+    // Show success message + unlock button
+    message.style.color = "lime";
+    message.innerHTML = `
+      <p>Key accepted! Click the button below to unlock your item.</p>
+      <button onclick="window.location.href='${keys[enteredKey]}'">Unlock Your Item</button>
+    `;
   }
 </script>
 
