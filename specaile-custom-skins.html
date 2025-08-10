@@ -1,53 +1,128 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Specaile Custom Skins</title>
-  <style>
-    #content {
-      display: none;
-      margin-top: 20px;
-    }
-    #error {
-      color: red;
-      margin-top: 10px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Special Custom Skins Access</title>
+<style>
+  body {
+    background: #0b1220;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  input[type="text"] {
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    width: 280px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+  }
+
+  button {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #1e293b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #334155;
+  }
+
+  .message {
+    margin: 15px 0;
+    font-weight: bold;
+    min-height: 24px;
+  }
+
+  .contact {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #888;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
-  <h1>Voer je Key in om toegang te krijgen</h1>
-  <input type="password" id="keyInput" placeholder="Voer je key hier in" />
-  <button onclick="checkKey()">Check key</button>
-  <div id="error"></div>
 
-  <div id="content">
-    <h2>Welkom bij Specaile Custom Skins!</h2>
-    <p>Hier is de speciale inhoud die alleen zichtbaar is met de juiste key.</p>
-    <!-- Speciale inhoud hier -->
-  </div>
+<h1>Enter Your Access Key</h1>
+<input type="text" id="keyInput" maxlength="15" placeholder="Enter your 15-character key" autocomplete="off" />
+<button onclick="checkKey()">Submit Key</button>
 
-  <script>
-    const validKeys = [
-      "A1B2C3D4E5F6G7H",
-      "X9Y8Z7W6V5U4T3S",
-      "123ABC456DEF789",
-      "QWERTY123ASDFG45",
-      "ZXCVBNM987LKJHGF"
-    ];
+<div class="message" id="message"></div>
 
-    function checkKey() {
-      const inputKey = document.getElementById("keyInput").value.trim();
-      const errorDiv = document.getElementById("error");
-      const contentDiv = document.getElementById("content");
+<script>
+  // Define keys and their redirect URLs
+  const keys = {
+    "A1B2C3D4E5F6G7H": "page1.html",
+    "B2C3D4E5F6G7H8I": "page2.html",
+    "C3D4E5F6G7H8I9J": "page3.html",
+    "D4E5F6G7H8I9J0K": "page4.html",
+    "E5F6G7H8I9J0K1L": "page5.html",
+    "F6G7H8I9J0K1L2M": "page6.html",
+    "G7H8I9J0K1L2M3N": "page7.html",
+    "H8I9J0K1L2M3N4O": "page8.html",
+    "I9J0K1L2M3N4O5P": "page9.html",
+    "J0K1L2M3N4O5P6Q": "page10.html",
+    "K1L2M3N4O5P6Q7R": "page11.html",
+    "L2M3N4O5P6Q7R8S": "page12.html",
+    "M3N4O5P6Q7R8S9T": "page13.html",
+    "N4O5P6Q7R8S9T0U": "page14.html",
+    "O5P6Q7R8S9T0U1V": "page15.html",
+    "P6Q7R8S9T0U1V2W": "page16.html",
+    "Q7R8S9T0U1V2W3X": "page17.html",
+    "R8S9T0U1V2W3X4Y": "page18.html",
+    "S9T0U1V2W3X4Y5Z": "page19.html",
+    "T0U1V2W3X4Y5Z6A": "page20.html"
+  };
 
-      if (validKeys.includes(inputKey)) {
-        errorDiv.textContent = "";
-        contentDiv.style.display = "block";
-      } else {
-        contentDiv.style.display = "none";
-        errorDiv.textContent = "Onjuiste key, probeer het opnieuw.";
-      }
+  function checkKey() {
+    const input = document.getElementById("keyInput");
+    const message = document.getElementById("message");
+    const enteredKey = input.value.trim().toUpperCase();
+
+    if (enteredKey.length !== 15) {
+      message.style.color = "red";
+      message.textContent = "Please enter a 15-character key.";
+      return;
     }
-  </script>
+
+    if (keys.hasOwnProperty(enteredKey)) {
+      message.style.color = "lime";
+      // Show unlock button with link to the assigned page
+      message.innerHTML = `
+        <p>Key accepted! Click the button below to unlock your item.</p>
+        <button onclick="window.location.href='${keys[enteredKey]}'">Unlock Your Item</button>
+      `;
+    } else {
+      message.style.color = "red";
+      message.textContent = "Invalid key. Please try again.";
+    }
+  }
+</script>
+
+<div class="contact">
+  <p>DM T.B for a key</p>
+  <p>Contact: <strong>@tbagar.io</strong></p>
+</div>
+
 </body>
 </html>
