@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>T.B Agar.io Website</title>
 <style>
   body {
@@ -38,6 +38,7 @@
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
+    margin-right: 10px;
   }
   .site-title {
     font-size: 1.2rem;
@@ -140,6 +141,22 @@
   .youtube-link a:hover {
     background: #334155;
   }
+  .btn {
+    padding: 12px 24px;
+    background-color: #1e293b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  .btn:hover {
+    background-color: #334155;
+  }
+
+  /* Nieuwe sectie voor custom skins highlight */
   .divider {
     max-width: 900px;
     margin: 40px auto 10px auto;
@@ -165,26 +182,60 @@
     justify-content: center;
     gap: 40px;
   }
-  .circle-video-container {
+  .circle {
     width: 180px;
     height: 180px;
     border-radius: 50%;
     overflow: hidden;
     position: relative;
-    filter: brightness(0.8) saturate(1.2);
-    box-shadow: 0 0 15px #48cae4;
     background: #000;
+    box-shadow: 0 0 15px #48cae4;
+    filter: brightness(0.8) saturate(1.2);
+    cursor: pointer;
     transition: filter 0.3s ease, box-shadow 0.3s ease;
   }
-  body.dark .circle-video-container {
+  body.dark .circle {
     filter: brightness(1) saturate(1);
     box-shadow: 0 0 15px #0077b6;
   }
-  .circle-video-container video {
+  .circle img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(2px) brightness(0.7);
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .circle img.active {
+    opacity: 1;
+  }
+
+  /* Animations */
+  @keyframes zoomInOut {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  @keyframes rotate360 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { filter: brightness(0.8); }
+    50% { filter: brightness(1.2); }
+  }
+
+  /* Keys sectie */
+  .keys-link {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  body.dark .keys-link .btn {
+    background-color: #ccc;
+    color: #222;
+  }
+  body.dark .keys-link .btn:hover {
+    background-color: #aaa;
   }
 </style>
 </head>
@@ -192,7 +243,7 @@
 
 <header>
   <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo">
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
     <span class="site-title">T.B Agar.io</span>
     <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
@@ -218,26 +269,20 @@
     <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
   </div>
 
-  <!-- Skins Sectie -->
+  <!-- Skins sectie -->
   <div class="divider"></div>
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="skins-circles">
-    <div class="circle-video-container">
-      <video id="circleVideo1" muted autoplay loop playsinline></video>
-    </div>
-    <div class="circle-video-container">
-      <video id="circleVideo2" muted autoplay loop playsinline></video>
-    </div>
-    <div class="circle-video-container">
-      <video id="circleVideo3" muted autoplay loop playsinline></video>
-    </div>
+    <div class="circle" id="circle1"></div>
+    <div class="circle" id="circle2"></div>
+    <div class="circle" id="circle3"></div>
   </div>
 
-  <!-- Keys Sectie -->
+  <!-- Keys sectie -->
   <div class="divider"></div>
   <div class="highlight-title">T.B Keys</div>
-  <div class="youtube-link">
-    <a href="#" onclick="location.href='key-access.html'">Ga naar Keys</a>
+  <div class="keys-link">
+    <a href="key-access.html" class="btn">🔑 Ga naar Keys</a>
   </div>
 </main>
 
@@ -268,26 +313,50 @@
     }
   });
 
-  // Video cycli
-  const skinsVideos = [
-    "FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png.mp4",
-    "IMG_2978.jpeg.mp4",
-    "skin3.mp4",
+  // Skins afbeeldingen
+  const skinsCircle1 = [
+    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
+    'https://i.imgur.com/8J3S4kC.png',
+    'https://i.imgur.com/VZJecHL.png'
   ];
-  function cycleVideos(videoElement, interval) {
-    let index = 0;
-    videoElement.src = skinsVideos[index];
-    videoElement.play();
+  const skinsCircle2 = [
+    'https://i.imgur.com/It5aoyQ.png',
+    'https://i.imgur.com/7rIpNPZ.png',
+    'https://i.imgur.com/4R6vdkZ.png'
+  ];
+  const skinsCircle3 = [
+    'https://i.imgur.com/Exl65gP.png',
+    'https://i.imgur.com/7F8OqDl.png',
+    'https://i.imgur.com/p9wO9lQ.png'
+  ];
+  const intervals = [4000, 7000, 10000];
+  const animations = [
+    'zoomInOut 10s ease-in-out infinite',
+    'rotate360 15s linear infinite',
+    'pulse 8s ease-in-out infinite'
+  ];
+
+  function setupCircle(id, images, interval, animation) {
+    const circle = document.getElementById(id);
+    circle.style.animation = animation;
+    images.forEach((src, idx) => {
+      const img = document.createElement('img');
+      img.src = src;
+      if (idx === 0) img.classList.add('active');
+      circle.appendChild(img);
+    });
+    let currentIndex = 0;
     setInterval(() => {
-      index = (index + 1) % skinsVideos.length;
-      videoElement.src = skinsVideos[index];
-      videoElement.play();
+      const imgs = circle.querySelectorAll('img');
+      imgs[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % imgs.length;
+      imgs[currentIndex].classList.add('active');
     }, interval);
   }
-  cycleVideos(document.getElementById('circleVideo1'), 4000);
-  cycleVideos(document.getElementById('circleVideo2'), 7000);
-  cycleVideos(document.getElementById('circleVideo3'), 10000);
-</script>
 
+  setupCircle('circle1', skinsCircle1, intervals[0], animations[0]);
+  setupCircle('circle2', skinsCircle2, intervals[1], animations[1]);
+  setupCircle('circle3', skinsCircle3, intervals[2], animations[2]);
+</script>
 </body>
 </html>
