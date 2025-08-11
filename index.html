@@ -403,22 +403,20 @@
   const intervals = [4000, 4500, 5000];
 
   function cycleImages(circleId, images, interval) {
-    const container = document.getElementById(circleId);
-    let index = 0;
-
-    images.forEach(src => {
+    const circle = document.getElementById(circleId);
+    let currentIndex = 0;
+    // Voeg img element toe
+    images.forEach((src, i) => {
       const img = document.createElement('img');
       img.src = src;
-      container.appendChild(img);
+      if (i === 0) img.classList.add('active');
+      circle.appendChild(img);
     });
-
-    const imgs = container.querySelectorAll('img');
-    imgs[0].classList.add('active');
-
     setInterval(() => {
-      imgs[index].classList.remove('active');
-      index = (index + 1) % imgs.length;
-      imgs[index].classList.add('active');
+      const imgs = circle.querySelectorAll('img');
+      imgs[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % imgs.length;
+      imgs[currentIndex].classList.add('active');
     }, interval);
   }
 
@@ -426,40 +424,38 @@
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
 
-  // Video slideshow array zoals gevraagd:
-const videoSlides = [
-  { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
-  { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
-  { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
-  { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 }
-];
+  // Video slideshow data
+  const videoSlides = [
+    { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
+    { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
+    { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
+    { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 },
+    { id: "QWERTY12345", text: "Epic Battle", anim: "slideUp", time: 7000 },
+    { id: "ABCDE12345", text: "Funny Moments", anim: "zoomIn", time: 6000 },
+    { id: "FGHIJ67890", text: "Pro Gameplay", anim: "fadeIn", time: 5000 },
+    { id: "KLMNO54321", text: "Custom Skins Showcase", anim: "slideUp", time: 7000 },
+    { id: "PQRST98765", text: "Top 10 Plays", anim: "zoomIn", time: 5000 },
+    { id: "UVWXY19283", text: "Extreme Battle", anim: "fadeIn", time: 6000 }
+  ];
 
-const slideImg = document.getElementById("slideshow-img");
-const slideText = document.getElementById("slideshow-text");
+  let slideIndex = 0;
+  const slideshowImg = document.getElementById('slideshow-img');
+  const slideshowText = document.getElementById('slideshow-text');
 
-// Fallback afbeelding als thumbnail niet laadt
-slideImg.onerror = function() {
-  slideImg.src = 'fallback-image.png'; // Vervang dit door een pad naar jouw fallback-afbeelding
-};
+  function showSlide() {
+    const slide = videoSlides[slideIndex];
+    // Gebruik YouTube thumbnail (hqdefault.jpg)
+    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
+    slideshowText.textContent = slide.text;
+    slideshowText.className = 'slideshow-text ' + slide.anim;
 
-let currentSlide = 0;
-
-function showSlide(index) {
-  const video = videoSlides[index];
-  slideImg.src = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
-  slideImg.classList.add("active");
-  slideText.textContent = video.text;
-  slideText.className = `slideshow-text ${video.anim}`;
-  slideText.style.opacity = 1;
-
-  setTimeout(() => {
-    slideImg.classList.remove("active");
-    slideText.style.opacity = 0;
     setTimeout(() => {
-      currentSlide = (currentSlide + 1) % videoSlides.length;
-      showSlide(currentSlide);
-    }, 1000);
-  }, video.time);
-}
+      slideIndex = (slideIndex + 1) % videoSlides.length;
+      showSlide();
+    }, slide.time);
+  }
+  showSlide();
+</script>
 
-showSlide(currentSlide);
+</body>
+</html>
