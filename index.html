@@ -427,47 +427,39 @@
   cycleImages('circle3', skinsCircle3, intervals[2]);
 
   // Video slideshow array zoals gevraagd:
-  const videoSlides = [
-    { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
-    { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
-    { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
-    { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 },
-    { id: "QWERTY12345", text: "Epic Battle", anim: "slideUp", time: 7000 },
-    { id: "ABCDE12345", text: "Funny Moments", anim: "zoomIn", time: 6000 },
-    { id: "FGHIJ67890", text: "Pro Gameplay", anim: "fadeIn", time: 5000 },
-    { id: "KLMNO54321", text: "Custom Skins Showcase", anim: "slideUp", time: 7000 },
-    { id: "PQRST98765", text: "Top 10 Plays", anim: "zoomIn", time: 5000 },
-    { id: "UVWXY19283", text: "Extreme Battle", anim: "fadeIn", time: 6000 }
-  ];
+const videoSlides = [
+  { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
+  { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
+  { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
+  { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 }
+];
 
-  // Slideshow logic
-  const slideshowImg = document.getElementById('slideshow-img');
-  const slideshowText = document.getElementById('slideshow-text');
-  let slideIndex = 0;
+const slideImg = document.getElementById("slideshow-img");
+const slideText = document.getElementById("slideshow-text");
 
-  function showSlide(index) {
-    const slide = videoSlides[index];
-    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/maxresdefault.jpg`;
-    slideshowText.textContent = slide.text;
-    slideshowText.className = 'slideshow-text ' + slide.anim;
-  }
+// Fallback afbeelding als thumbnail niet laadt
+slideImg.onerror = function() {
+  slideImg.src = 'fallback-image.png'; // Vervang dit door een pad naar jouw fallback-afbeelding
+};
 
-  function nextSlide() {
-    slideIndex = (slideIndex + 1) % videoSlides.length;
-    showSlide(slideIndex);
-  }
+let currentSlide = 0;
 
-  showSlide(slideIndex);
-  setInterval(nextSlide, videoSlides[slideIndex].time);
+function showSlide(index) {
+  const video = videoSlides[index];
+  slideImg.src = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
+  slideImg.classList.add("active");
+  slideText.textContent = video.text;
+  slideText.className = `slideshow-text ${video.anim}`;
+  slideText.style.opacity = 1;
 
-  // Zorg dat de interval telkens bijgesteld wordt op basis van de huidige slide tijd
-  let slideInterval = setInterval(() => {
-    nextSlide();
-    clearInterval(slideInterval);
-    slideInterval = setInterval(nextSlide, videoSlides[slideIndex].time);
-  }, videoSlides[slideIndex].time);
+  setTimeout(() => {
+    slideImg.classList.remove("active");
+    slideText.style.opacity = 0;
+    setTimeout(() => {
+      currentSlide = (currentSlide + 1) % videoSlides.length;
+      showSlide(currentSlide);
+    }, 1000);
+  }, video.time);
+}
 
-</script>
-
-</body>
-</html>
+showSlide(currentSlide);
