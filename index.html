@@ -426,10 +426,10 @@
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
 
-  // Slideshow video thumbnails met animaties
+  // Video slideshow array zoals gevraagd:
   const videoSlides = [
-    { id: "https://youtu.be/3LvyGPqJS54?si=k8awkqHgin_Nr9k_", text: "New video!!", anim: "fadeIn", time: 7000 },
-    { id: "https://youtu.be/diAuO3IC8Hg?si=RB0Q_txoA-yALY-h", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
+    { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
+    { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
     { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
     { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 },
     { id: "QWERTY12345", text: "Epic Battle", anim: "slideUp", time: 7000 },
@@ -440,30 +440,34 @@
     { id: "UVWXY19283", text: "Extreme Battle", anim: "fadeIn", time: 6000 }
   ];
 
-  const slideImg = document.getElementById("slideshow-img");
-  const slideText = document.getElementById("slideshow-text");
-
-  let currentSlide = 0;
+  // Slideshow logic
+  const slideshowImg = document.getElementById('slideshow-img');
+  const slideshowText = document.getElementById('slideshow-text');
+  let slideIndex = 0;
 
   function showSlide(index) {
-    const video = videoSlides[index];
-    slideImg.src = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
-    slideImg.classList.add("active");
-    slideText.textContent = video.text;
-    slideText.className = `slideshow-text ${video.anim}`;
-    slideText.style.opacity = 1;
-
-    setTimeout(() => {
-      slideImg.classList.remove("active");
-      slideText.style.opacity = 0;
-      setTimeout(() => {
-        currentSlide = (currentSlide + 1) % videoSlides.length;
-        showSlide(currentSlide);
-      }, 1000);
-    }, video.time);
+    const slide = videoSlides[index];
+    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/maxresdefault.jpg`;
+    slideshowText.textContent = slide.text;
+    slideshowText.className = 'slideshow-text ' + slide.anim;
   }
 
-  showSlide(currentSlide);
+  function nextSlide() {
+    slideIndex = (slideIndex + 1) % videoSlides.length;
+    showSlide(slideIndex);
+  }
+
+  showSlide(slideIndex);
+  setInterval(nextSlide, videoSlides[slideIndex].time);
+
+  // Zorg dat de interval telkens bijgesteld wordt op basis van de huidige slide tijd
+  let slideInterval = setInterval(() => {
+    nextSlide();
+    clearInterval(slideInterval);
+    slideInterval = setInterval(nextSlide, videoSlides[slideIndex].time);
+  }, videoSlides[slideIndex].time);
+
 </script>
+
 </body>
 </html>
