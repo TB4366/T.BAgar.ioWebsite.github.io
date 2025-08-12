@@ -238,65 +238,27 @@
     background-color: #aaa;
   }
 
-  /* Slideshow sectie */
+  /* Slideshow container for YouTube videos */
   .slideshow-container {
-    position: relative;
-    max-width: 900px;
+    max-width: 640px;
     margin: 40px auto;
-    height: 500px;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #48cae4;
-  }
-  body.dark .slideshow-container {
-    box-shadow: 0 0 20px #0077b6;
-  }
-  .slideshow-image {
     position: relative;
-    width: 100%;
-    height: 100%;
   }
-  .slideshow-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    position: absolute;
-    top: 0; left: 0;
-    transition: opacity 1s ease;
-  }
-  .slideshow-image img.active {
+  .fade {
+    transition: opacity 0.5s ease;
     opacity: 1;
   }
-  .slideshow-text {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border-radius: 8px;
+  .fade.hidden {
     opacity: 0;
   }
-  /* Animatie types */
-  .fadeIn { animation: fadeIn 1s forwards; }
-  .slideUp { animation: slideUp 1s forwards; }
-  .zoomIn { animation: zoomIn 1s forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  #video-caption {
+    color: white;
+    text-align: center;
+    margin-top: 8px;
+    font-weight: bold;
   }
-  @keyframes slideUp {
-    from { transform: translate(-50%, 20px); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-  }
-  @keyframes zoomIn {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
-    to { transform: translateX(-50%) scale(1); opacity: 1; }
+  body.dark #video-caption {
+    color: #222;
   }
 </style>
 </head>
@@ -346,14 +308,12 @@
     <a href="key-access.html" class="btn">🔑 Go to the keys</a>
   </div>
 
-  <!-- Slideshow sectie -->
+  <!-- Nieuwe YouTube Video Slideshow -->
   <div class="divider"></div>
   <div class="highlight-title">Latest Videos</div>
   <div class="slideshow-container">
-    <div class="slideshow-image">
-      <img id="slideshow-img" src="" alt="Video Thumbnail">
-      <div class="slideshow-text" id="slideshow-text"></div>
-    </div>
+    <iframe id="youtube-player" width="640" height="360" src="" frameborder="0" allowfullscreen class="fade"></iframe>
+    <div id="video-caption"></div>
   </div>
 </main>
 
@@ -424,38 +384,29 @@
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
 
-  // Video slideshow data
-  const videoSlides = [
-    { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
-    { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
-    { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
-    { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 },
-    { id: "QWERTY12345", text: "Epic Battle", anim: "slideUp", time: 7000 },
-    { id: "ABCDE12345", text: "Funny Moments", anim: "zoomIn", time: 6000 },
-    { id: "FGHIJ67890", text: "Pro Gameplay", anim: "fadeIn", time: 5000 },
-    { id: "KLMNO54321", text: "Custom Skins Showcase", anim: "slideUp", time: 7000 },
-    { id: "PQRST98765", text: "Top 10 Plays", anim: "zoomIn", time: 5000 },
-    { id: "UVWXY19283", text: "Extreme Battle", anim: "fadeIn", time: 6000 }
+  // Nieuwe YouTube video slideshow code
+  const videos = [
+    { id: "OEkurL8aaZk", caption: "Best Agar.io Moments" },
+    { id: "diAuO3IC8Hg", caption: "PRO VS PRO" },
+    { id: "m0DEe4RhgSw", caption: "INSANE Tricks!" },
+    { id: "3LvyGPqJS54", caption: "New video!!" },
+    { id: "QWERTY12345", caption: "Epic Battle" }
   ];
 
-  let slideIndex = 0;
-  const slideshowImg = document.getElementById('slideshow-img');
-  const slideshowText = document.getElementById('slideshow-text');
+  let currentIndex = 0;
+  const player = document.getElementById('youtube-player');
+  const caption = document.getElementById('video-caption');
 
-  function showSlide() {
-    const slide = videoSlides[slideIndex];
-    // Gebruik YouTube thumbnail (hqdefault.jpg)
-    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
-    slideshowText.textContent = slide.text;
-    slideshowText.className = 'slideshow-text ' + slide.anim;
-
+  function showVideo(index) {
+    const video = videos[index];
+    player.classList.add('hidden');
     setTimeout(() => {
-      slideIndex = (slideIndex + 1) % videoSlides.length;
-      showSlide();
-    }, slide.time);
+      player.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&mute=1&rel=0&controls=1`;
+      caption.textContent = video.caption;
+      player.classList.remove('hidden');
+    }, 500);
   }
-  showSlide();
-</script>
 
-</body>
-</html>
+  function nextVideo() {
+    currentIndex = (currentIndex + 1) % videos.length;
+    show
