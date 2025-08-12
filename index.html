@@ -313,6 +313,9 @@
     <a href="index.html">🏠 Home Pagina</a>
     <a href="custom-skins.html">🎨 Custom Skins</a>
     <a href="mod-menu.html">🛠️ Mod Menu</a>
+    <a href="key-access.html">🔑 Keys</a>
+    <a href="buy-account.html">💰 Buy Account</a>
+    <a href="sell-account.html">📤 Sell Account</a>
   </div>
 </header>
 
@@ -426,36 +429,30 @@
 
   // Video slideshow data
   const videoSlides = [
-    { id: "3LvyGPqJS54", text: "New video!!", anim: "fadeIn", time: 7000 },
-    { id: "diAuO3IC8Hg", text: "PRO VS PRO", anim: "slideUp", time: 5000 },
-    { id: "m0DEe4RhgSw", text: "INSANE Tricks!", anim: "zoomIn", time: 6000 },
-    { id: "OEkurL8aaZk", text: "Best Agar.io Moments", anim: "fadeIn", time: 5000 },
-    { id: "QWERTY12345", text: "Epic Battle", anim: "slideUp", time: 7000 },
-    { id: "ABCDE12345", text: "Funny Moments", anim: "zoomIn", time: 6000 },
-    { id: "FGHIJ67890", text: "Pro Gameplay", anim: "fadeIn", time: 5000 },
-    { id: "KLMNO54321", text: "Custom Skins Showcase", anim: "slideUp", time: 7000 },
-    { id: "PQRST98765", text: "Top 10 Plays", anim: "zoomIn", time: 5000 },
-    { id: "UVWXY19283", text: "Extreme Battle", anim: "fadeIn", time: 6000 }
+    { id: "OEkurL8aaZk", title: "T.B Agar.io Main Video", animation: "fadeIn" },
+    { id: "diAuO3IC8Hg", title: "Custom Skins Showcase", animation: "slideUp" },
+    { id: "m0DEe4RhgSw", title: "Mod Menu Demo", animation: "zoomIn" }
   ];
 
   let slideIndex = 0;
   const slideshowImg = document.getElementById('slideshow-img');
   const slideshowText = document.getElementById('slideshow-text');
 
-  function showSlide() {
-    const slide = videoSlides[slideIndex];
-    // Gebruik YouTube thumbnail (hqdefault.jpg)
-    slideshowImg.src = https://img.youtube.com/vi/${slide.id}/hqdefault.jpg;
-    slideshowText.textContent = slide.text;
-    slideshowText.className = 'slideshow-text ' + slide.anim;
-
-    setTimeout(() => {
-      slideIndex = (slideIndex + 1) % videoSlides.length;
-      showSlide();
-    }, slide.time);
+  function showSlide(index) {
+    const slide = videoSlides[index];
+    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
+    slideshowText.textContent = slide.title;
+    slideshowText.className = `slideshow-text ${slide.animation}`;
   }
-  showSlide();
+
+  function nextSlide() {
+    slideIndex = (slideIndex + 1) % videoSlides.length;
+    showSlide(slideIndex);
+  }
+
+  showSlide(slideIndex);
+  setInterval(nextSlide, 7000);
 </script>
 
 </body>
-</html
+</html>
