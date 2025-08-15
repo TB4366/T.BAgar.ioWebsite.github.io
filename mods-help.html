@@ -49,8 +49,13 @@
       width: 100%;
       height: 180px;
       border-radius: 8px;
-      object-fit: contain; /* Hele afbeelding zichtbaar */
-      background-color: #0b1220; /* Achtergrondkleur rondom */
+      object-fit: contain;
+      background-color: #0b1220;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .step-card img:hover {
+      transform: scale(1.02);
     }
     .step-card iframe {
       width: 100%;
@@ -86,6 +91,25 @@
     .button-container a button:hover {
       background: #2563eb;
     }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -101,14 +125,14 @@ For questions or if it doesn't work, you can always contact us: @t.bagar.io</p>
 
 <div class="steps">
   <div class="step-card">
-    <img src="IMG_4228.png" alt="Step 1 image">
+    <img src="IMG_4228.png" alt="Step 1 image" onclick="openLightbox(this.src)">
     <h2>Step 1</h2>
     <p>First, install the DNS profile.</p>
   </div>
 
   <div class="step-card">
-    <img src="FD1D4F4E-19B2-4CCE-9B88-71832F31A85B.png" alt="Step 2 image 1">
-    <img src="6478ED82-61D9-4FD7-90A5-539FDE9C0290.png" alt="Step 2 image 2">
+    <img src="FD1D4F4E-19B2-4CCE-9B88-71832F31A85B.png" alt="Step 2 image 1" onclick="openLightbox(this.src)">
+    <img src="6478ED82-61D9-4FD7-90A5-539FDE9C0290.png" alt="Step 2 image 2" onclick="openLightbox(this.src)">
     <h2>Step 2</h2>
     <p>Go to your settings and click on "download profile" then click on install.</p>
   </div>
@@ -131,6 +155,21 @@ For questions or if it doesn't work, you can always contact us: @t.bagar.io</p>
     <button>Go Back To Home Page</button>
   </a>
 </div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Large view">
+</div>
+
+<script>
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').style.display = 'flex';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+  }
+</script>
 
 </body>
 </html>
