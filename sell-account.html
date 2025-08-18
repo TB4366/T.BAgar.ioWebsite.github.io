@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script>
         (function(){
-            emailjs.init('YOUR_USER_ID'); // <-- Vervang met je EmailJS user ID
+            emailjs.init('YOUR_USER_ID'); // <-- Vervang met je EmailJS User ID
         })();
     </script>
     <style>
@@ -19,7 +19,7 @@
         main { max-width: 600px; margin: 40px auto; padding: 20px; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
         h2 { margin-top: 0; }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
         .description { font-size: 12px; color: gray; margin-bottom: 10px; }
         button { margin-top: 20px; padding: 10px 15px; background-color: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
         button:hover { background-color: #555; }
@@ -42,47 +42,37 @@
             <input type="email" id="email" name="email" required>
 
             <label for="paidSkins">Paid Skins:</label>
-            <select id="paidSkins" name="paidSkins">
-                ${Array.from({length: 100}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-            </select>
+            <input type="number" id="paidSkins" name="paidSkins">
 
             <label for="allSkins">All Skins:</label>
             <div class="description">Excluding custom skins and mystery skins</div>
-            <select id="allSkins" name="allSkins">
-                ${Array.from({length: 750}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-            </select>
+            <input type="number" id="allSkins" name="allSkins">
 
             <label for="customSkins">Custom Skins:</label>
-            <select id="customSkins" name="customSkins">
-                ${Array.from({length: 450}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-            </select>
+            <input type="number" id="customSkins" name="customSkins">
 
             <label for="level">Level:</label>
-            <input type="number" id="level" name="level" required>
+            <input type="number" id="level" name="level">
 
             <label for="emojis">Emojis:</label>
-            <input type="number" id="emojis" name="emojis" required>
+            <input type="number" id="emojis" name="emojis">
 
             <label for="coins">Coins:</label>
-            <input type="number" id="coins" name="coins" required>
+            <input type="number" id="coins" name="coins">
 
             <label for="dna">DNA:</label>
-            <input type="number" id="dna" name="dna" required>
+            <input type="number" id="dna" name="dna">
 
             <label for="specialSkins">Special Skins:</label>
             <div class="description">Quest skins</div>
-            <select id="specialSkins" name="specialSkins">
-                ${Array.from({length: 7}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-            </select>
+            <input type="number" id="specialSkins" name="specialSkins">
 
             <label for="mysterySkins">Mystery Skins:</label>
-            <select id="mysterySkins" name="mysterySkins">
-                ${Array.from({length: 75}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
-            </select>
+            <input type="number" id="mysterySkins" name="mysterySkins">
 
             <label for="price">Your Price:</label>
             <div class="description">How much do you want for it?</div>
-            <input type="number" id="price" name="price" required>
+            <input type="number" id="price" name="price">
 
             <button type="submit">Submit</button>
         </form>
@@ -96,25 +86,23 @@
             let data = {};
             formData.forEach((value, key) => data[key] = value);
 
-            // Send email to admin
+            // Admin email
             emailjs.send('YOUR_SERVICE_ID', 'ADMIN_TEMPLATE_ID', data)
-                .then(() => {
-                    console.log('Admin email sent');
-                }, (err) => {
-                    console.error('Admin email failed', err);
-                });
+                .then(() => console.log('Admin email sent'))
+                .catch(err => console.error('Error sending admin email:', err));
 
-            // Send email to user
+            // User email
             const userEmailData = {
                 to_name: data.name,
                 to_email: data.email,
-                message: "Thank you for submitting your account! We will review your form and contact you soon. \n\nBest regards, \nT.B Agar.io Team"
+                message: "Thank you for submitting your account! We will review your form and contact you soon.\n\nBest regards,\nT.B Agar.io Team"
             };
             emailjs.send('YOUR_SERVICE_ID', 'USER_TEMPLATE_ID', userEmailData)
                 .then(() => {
                     alert('Form submitted successfully! Check your email for confirmation.');
                     window.location.href = 'index.html';
-                }, (err) => {
+                })
+                .catch(err => {
                     alert('Failed to send confirmation email.');
                     console.error(err);
                 });
