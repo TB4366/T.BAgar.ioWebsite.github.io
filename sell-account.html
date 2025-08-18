@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Account - T.B Agar.io</title>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init('YOUR_USER_ID'); // <-- Vervang met je EmailJS user ID
+        })();
+    </script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
+        header { background-color: #333; color: white; padding: 15px; display: flex; align-items: center; }
+        header img { height: 40px; margin-right: 10px; }
+        header h1 { margin: 0 20px 0 0; font-size: 20px; }
+        header p { margin: 0; font-size: 16px; }
+        main { max-width: 600px; margin: 40px auto; padding: 20px; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+        h2 { margin-top: 0; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        .description { font-size: 12px; color: gray; margin-bottom: 10px; }
+        button { margin-top: 20px; padding: 10px 15px; background-color: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #555; }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo">
+        <h1>T.B Agar.io</h1>
+        <p>Sell Your Account Here!</p>
+    </header>
+    <main>
+        <h2>Sell Your Account</h2>
+        <hr>
+        <form id="sellAccountForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="paidSkins">Paid Skins:</label>
+            <select id="paidSkins" name="paidSkins">
+                ${Array.from({length: 100}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+
+            <label for="allSkins">All Skins:</label>
+            <div class="description">Excluding custom skins and mystery skins</div>
+            <select id="allSkins" name="allSkins">
+                ${Array.from({length: 750}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+
+            <label for="customSkins">Custom Skins:</label>
+            <select id="customSkins" name="customSkins">
+                ${Array.from({length: 450}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+
+            <label for="level">Level:</label>
+            <input type="number" id="level" name="level" required>
+
+            <label for="emojis">Emojis:</label>
+            <input type="number" id="emojis" name="emojis" required>
+
+            <label for="coins">Coins:</label>
+            <input type="number" id="coins" name="coins" required>
+
+            <label for="dna">DNA:</label>
+            <input type="number" id="dna" name="dna" required>
+
+            <label for="specialSkins">Special Skins:</label>
+            <div class="description">Quest skins</div>
+            <select id="specialSkins" name="specialSkins">
+                ${Array.from({length: 7}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+
+            <label for="mysterySkins">Mystery Skins:</label>
+            <select id="mysterySkins" name="mysterySkins">
+                ${Array.from({length: 75}, (_, i) => `<option value="${i+1}">${i+1}</option>`).join('')}
+            </select>
+
+            <label for="price">Your Price:</label>
+            <div class="description">How much do you want for it?</div>
+            <input type="number" id="price" name="price" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('sellAccountForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            let data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            // Send email to admin
+            emailjs.send('YOUR_SERVICE_ID', 'ADMIN_TEMPLATE_ID', data)
+                .then(() => {
+                    console.log('Admin email sent');
+                }, (err) => {
+                    console.error('Admin email failed', err);
+                });
+
+            // Send email to user
+            const userEmailData = {
+                to_name: data.name,
+                to_email: data.email,
+                message: "Thank you for submitting your account! We will review your form and contact you soon. \n\nBest regards, \nT.B Agar.io Team"
+            };
+            emailjs.send('YOUR_SERVICE_ID', 'USER_TEMPLATE_ID', userEmailData)
+                .then(() => {
+                    alert('Form submitted successfully! Check your email for confirmation.');
+                    window.location.href = 'index.html';
+                }, (err) => {
+                    alert('Failed to send confirmation email.');
+                    console.error(err);
+                });
+        });
+    </script>
+</body>
+</html>
