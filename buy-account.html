@@ -11,7 +11,86 @@
     font-family: Arial, sans-serif;
     padding: 20px;
     margin: 0;
+    transition: background 0.3s, color 0.3s;
   }
+
+  /* Navbar */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    padding: 10px 20px;
+    box-shadow: 0 0 15px #48cae4;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #48cae4;
+  }
+  .logo img {
+    width: 40px;
+    height: 40px;
+  }
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 5px;
+  }
+  .menu-toggle div {
+    width: 25px;
+    height: 3px;
+    background: white;
+  }
+  nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .theme-toggle {
+    cursor: pointer;
+    background: #48cae4;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #0b1220;
+  }
+
+  /* Responsive menu */
+  @media (max-width: 768px) {
+    nav {
+      display: none;
+      flex-direction: column;
+      background: #0f172a;
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #48cae4;
+    }
+    nav.active {
+      display: flex;
+    }
+    .menu-toggle {
+      display: flex;
+    }
+  }
+
+  /* Pagina content */
   h1 {
     text-align: center;
     margin-bottom: 40px;
@@ -36,7 +115,7 @@
   }
   .video-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 kolommen */
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   .account-video {
@@ -67,6 +146,28 @@
 </style>
 </head>
 <body>
+
+<!-- Navbar -->
+<header>
+  <div class="logo">
+    <img src="https://via.placeholder.com/40" alt="Logo" />
+    T.B Agar.io
+  </div>
+  <div class="menu-toggle" id="menu-toggle">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <nav id="nav-menu">
+    <a href="index.html">Home</a>
+    <a href="custom-skins.html">Custom Skins</a>
+    <a href="mod-menu.html">Mod Menu</a>
+    <a href="key-access.html">Keys</a>
+    <a href="buy-account.html">Buy Account</a>
+    <a href="sell-account.html">Sell Account</a>
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+  </nav>
+</header>
 
 <h1>Buy Your Account!</h1>
 
@@ -148,29 +249,32 @@
   <strong>Interested? Contact Us At: Instagram: @t.bagar.io or the support: @tbagariosupprtteam </strong>
 </div>
 
-<!-- Script om lege accounts of $0 price te verbergen -->
+<!-- Script voor menu toggle, dark/light mode en lege accounts verbergen -->
 <script>
-  const accounts = document.querySelectorAll('.account-card');
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
 
-  accounts.forEach(account => {
-    const infoDivs = account.querySelectorAll('.account-info div');
+  menuToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+  });
 
-    const descriptionDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Description:'));
-    const priceDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Price:'));
-
-    const description = descriptionDiv?.textContent.split(':')[1]?.trim() || '';
-    let priceText = priceDiv?.textContent.split(':')[1]?.trim() || '';
-
-    let price = 0;
-    if (priceText.startsWith('$')) {
-      price = parseFloat(priceText.slice(1)) || 0;
-    }
-
-    if (!description || price <= 0) {
-      account.style.display = 'none';
+  themeToggle.addEventListener('click', () => {
+    if(body.style.background === 'white') {
+      body.style.background = '#0b1220';
+      body.style.color = 'white';
+      themeToggle.textContent = '🌙';
+    } else {
+      body.style.background = 'white';
+      body.style.color = 'black';
+      themeToggle.textContent = '☀️';
     }
   });
-</script>
 
-</body>
-</html>
+  // Verberg accounts zonder description of met $0 price
+  const accounts = document.querySelectorAll('.account-card');
+  accounts.forEach(account => {
+    const infoDivs = account.querySelectorAll('.account-info div');
+    const descriptionDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Description:'));
+    const priceDiv = Array.from(infoDivs).find(div => div.textContent
