@@ -148,5 +148,29 @@
   <strong>Interested? Contact Us At: Instagram: @t.bagar.io or the support: @tbagariosupprtteam </strong>
 </div>
 
+<!-- Script om lege accounts of $0 price te verbergen -->
+<script>
+  const accounts = document.querySelectorAll('.account-card');
+
+  accounts.forEach(account => {
+    const infoDivs = account.querySelectorAll('.account-info div');
+
+    const descriptionDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Description:'));
+    const priceDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Price:'));
+
+    const description = descriptionDiv?.textContent.split(':')[1]?.trim() || '';
+    let priceText = priceDiv?.textContent.split(':')[1]?.trim() || '';
+
+    let price = 0;
+    if (priceText.startsWith('$')) {
+      price = parseFloat(priceText.slice(1)) || 0;
+    }
+
+    if (!description || price <= 0) {
+      account.style.display = 'none';
+    }
+  });
+</script>
+
 </body>
 </html>
