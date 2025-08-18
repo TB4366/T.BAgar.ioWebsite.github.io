@@ -42,37 +42,37 @@
             <input type="email" id="email" name="email" required>
 
             <label for="paidSkins">Paid Skins:</label>
-            <input type="number" id="paidSkins" name="paidSkins">
+            <input type="text" id="paidSkins" name="paidSkins">
 
             <label for="allSkins">All Skins:</label>
             <div class="description">Excluding custom skins and mystery skins</div>
-            <input type="number" id="allSkins" name="allSkins">
+            <input type="text" id="allSkins" name="allSkins">
 
             <label for="customSkins">Custom Skins:</label>
-            <input type="number" id="customSkins" name="customSkins">
+            <input type="text" id="customSkins" name="customSkins">
 
             <label for="level">Level:</label>
-            <input type="number" id="level" name="level">
+            <input type="text" id="level" name="level">
 
             <label for="emojis">Emojis:</label>
-            <input type="number" id="emojis" name="emojis">
+            <input type="text" id="emojis" name="emojis">
 
             <label for="coins">Coins:</label>
-            <input type="number" id="coins" name="coins">
+            <input type="text" id="coins" name="coins">
 
             <label for="dna">DNA:</label>
-            <input type="number" id="dna" name="dna">
+            <input type="text" id="dna" name="dna">
 
             <label for="specialSkins">Special Skins:</label>
             <div class="description">Quest skins</div>
-            <input type="number" id="specialSkins" name="specialSkins">
+            <input type="text" id="specialSkins" name="specialSkins">
 
             <label for="mysterySkins">Mystery Skins:</label>
-            <input type="number" id="mysterySkins" name="mysterySkins">
+            <input type="text" id="mysterySkins" name="mysterySkins">
 
             <label for="price">Your Price:</label>
             <div class="description">How much do you want for it?</div>
-            <input type="number" id="price" name="price">
+            <input type="text" id="price" name="price">
 
             <button type="submit">Submit</button>
         </form>
@@ -86,9 +86,12 @@
             let data = {};
             formData.forEach((value, key) => data[key] = value);
 
+            // Voeg admin email toe
+            data.admin_email = 'tbkantoor@gmail.com';
+
             // Admin email
             emailjs.send('YOUR_SERVICE_ID', 'ADMIN_TEMPLATE_ID', data)
-                .then(() => console.log('Admin email sent'))
+                .then(() => console.log('Admin email sent to tbkantoor@gmail.com'))
                 .catch(err => console.error('Error sending admin email:', err));
 
             // User email
