@@ -1,105 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sell Account - T.B Agar.io</title>
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-    <script>
-        emailjs.init('YOUR_USER_ID'); // Vul hier je EmailJS User ID in
-    </script>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
-        header { background-color: #333; color: white; padding: 15px; display: flex; align-items: center; }
-        header img { height: 40px; margin-right: 10px; }
-        header h1 { margin: 0 20px 0 0; font-size: 20px; }
-        header p { margin: 0; font-size: 16px; }
-        main { max-width: 600px; margin: 40px auto; padding: 20px; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
-        h2 { margin-top: 0; }
-        label { display: block; margin-top: 15px; font-weight: bold; }
-        input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-        .description { font-size: 12px; color: gray; margin-bottom: 10px; }
-        button { margin-top: 20px; padding: 10px 15px; background-color: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background-color: #555; }
-    </style>
-</head>
-<body>
-    <header>
-        <img src="logo.png" alt="Logo">
-        <h1>T.B Agar.io</h1>
-        <p>Sell Your Account Here!</p>
-    </header>
-    <main>
-        <h2>Sell Your Account</h2>
-        <hr>
-        <form id="sellAccountForm">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" name="name" required>
+<script>
+document.getElementById('sellAccountForm').addEventListener('submit', function(e){
+    e.preventDefault();
 
-            <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
+    const formData = new FormData(this);
+    let data = {};
+    formData.forEach((value, key) => data[key] = value);
 
-            <label for="paidSkins">Paid Skins:</label>
-            <input type="text" id="paidSkins" name="paidSkins">
+    // Data die naar jouw e-mail gaat
+    const emailData = {
+        to_email: "tbkantoor@gmail.com", // Jouw e-mail
+        name: data.name,
+        email: data.email,
+        paidSkins: data.paidSkins,
+        allSkins: data.allSkins,
+        customSkins: data.customSkins,
+        level: data.level,
+        emojis: data.emojis,
+        coins: data.coins,
+        dna: data.dna,
+        specialSkins: data.specialSkins,
+        mysterySkins: data.mysterySkins,
+        price: data.price
+    };
 
-            <label for="allSkins">All Skins:</label>
-            <div class="description">Excluding custom skins and mystery skins</div>
-            <input type="text" id="allSkins" name="allSkins">
-
-            <label for="customSkins">Custom Skins:</label>
-            <input type="text" id="customSkins" name="customSkins">
-
-            <label for="level">Level:</label>
-            <input type="text" id="level" name="level">
-
-            <label for="emojis">Emojis:</label>
-            <input type="text" id="emojis" name="emojis">
-
-            <label for="coins">Coins:</label>
-            <input type="text" id="coins" name="coins">
-
-            <label for="dna">DNA:</label>
-            <input type="text" id="dna" name="dna">
-
-            <label for="specialSkins">Special Skins:</label>
-            <div class="description">Quest skins</div>
-            <input type="text" id="specialSkins" name="specialSkins">
-
-            <label for="mysterySkins">Mystery Skins:</label>
-            <input type="text" id="mysterySkins" name="mysterySkins">
-
-            <label for="price">Your Price:</label>
-            <div class="description">How much do you want for it?</div>
-            <input type="text" id="price" name="price">
-
-            <button type="submit">Submit</button>
-        </form>
-    </main>
-
-    <script>
-        document.getElementById('sellAccountForm').addEventListener('submit', function(e){
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            let data = {};
-            formData.forEach((value, key) => data[key] = value);
-
-            const userEmailData = {
-                to_name: data.name,
-                to_email: data.email, // E-mail van de gebruiker
-                message: `Hi ${data.name},\n\nThank you for submitting your account! We will review your form and contact you soon.\n\nBest regards,\nT.B Agar.io Team`
-            };
-
-            emailjs.send('YOUR_SERVICE_ID', 'USER_TEMPLATE_ID', userEmailData)
-                .then(() => {
-                    alert("Check your email!"); // Engelse bevestiging
-                    window.location.href = 'index.html'; // Redirect
-                })
-                .catch(err => {
-                    alert('Failed to send confirmation email.');
-                    console.error(err);
-                });
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailData)
+        .then(() => {
+            // Bedanktbericht tonen
+            const form = document.getElementById('sellAccountForm');
+            form.innerHTML = "<p>Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.</p>";
+        })
+        .catch(err => {
+            alert('Er is iets misgegaan bij het verzenden van het formulier.');
+            console.error(err);
         });
-    </script>
-</body>
-</html>
+});
+</script>
