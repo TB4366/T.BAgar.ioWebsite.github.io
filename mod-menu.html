@@ -254,15 +254,31 @@
   <a href="mods-help.html" class="help-button">Help Mods</a>
 </div>
 
-<!-- Script om lege mods te verbergen -->
+<!-- Script om lege mods te verbergen en automatisch te tonen -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  function checkCards() {
     document.querySelectorAll(".card").forEach(card => {
       const link = card.querySelector("a");
-      if (link && (link.getAttribute("href") === "#" || link.getAttribute("href").trim() === "")) {
-        card.style.display = "none"; // verberg lege mods
+      if (link) {
+        const href = link.getAttribute("href")?.trim();
+        if (!href || href === "#") {
+          card.style.display = "none"; // verberg lege mods
+        } else {
+          card.style.display = "block"; // toon ingevulde mods
+        }
       }
     });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    checkCards(); // eerste check bij laden
+
+    // Monitor veranderingen (href aanpassen, nieuwe cards, etc.)
+    const grid = document.querySelector(".grid");
+    if (grid) {
+      const observer = new MutationObserver(() => checkCards());
+      observer.observe(grid, { attributes: true, subtree: true, childList: true });
+    }
   });
 </script>
 
