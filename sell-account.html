@@ -1,102 +1,41 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sell Account - T.B Agar.io</title>
-<style>
-    body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; }
-    header { background-color: #333; color: white; padding: 15px; display: flex; align-items: center; }
-    header img { height: 40px; margin-right: 10px; }
-    header h1 { margin: 0 20px 0 0; font-size: 20px; }
-    header p { margin: 0; font-size: 16px; }
-    main { max-width: 600px; margin: 40px auto; padding: 20px; background-color: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
-    h2 { margin-top: 0; }
-    label { display: block; margin-top: 15px; font-weight: bold; }
-    input, textarea { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-    .description { font-size: 12px; color: gray; margin-bottom: 10px; }
-    button { margin-top: 20px; padding: 10px 15px; background-color: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
-    button:hover { background-color: #555; }
-</style>
-</head>
-<body>
-<header>
-    <img src="logo.png" alt="Logo">
-    <h1>T.B Agar.io</h1>
-    <p>Sell Your Account Here!</p>
-</header>
-<main>
-    <h2>Sell Your Account</h2>
-    <hr>
-    <?php
-    if(isset($_POST['submit'])){
-        $to = "tbkantoor@gmail.com"; // Jouw e-mail
-        $subject = "Nieuw account te koop";
-        $message = "Naam: ".$_POST['name']."\n";
-        $message .= "E-mail: ".$_POST['email']."\n";
-        $message .= "Paid Skins: ".$_POST['paidSkins']."\n";
-        $message .= "All Skins: ".$_POST['allSkins']."\n";
-        $message .= "Custom Skins: ".$_POST['customSkins']."\n";
-        $message .= "Level: ".$_POST['level']."\n";
-        $message .= "Emojis: ".$_POST['emojis']."\n";
-        $message .= "Coins: ".$_POST['coins']."\n";
-        $message .= "DNA: ".$_POST['dna']."\n";
-        $message .= "Special Skins: ".$_POST['specialSkins']."\n";
-        $message .= "Mystery Skins: ".$_POST['mysterySkins']."\n";
-        $message .= "Price: ".$_POST['price']."\n";
+<?php
+if(isset($_POST['submit'])){
+    $to = "tbkantoor@gmail.com";
+    $subject = "Nieuw account te koop";
+    $message = "Naam: ".$_POST['name']."\n".
+               "Email: ".$_POST['email']."\n".
+               "Paid Skins: ".$_POST['paidSkins']."\n".
+               "All Skins: ".$_POST['allSkins']."\n".
+               "Custom Skins: ".$_POST['customSkins']."\n".
+               "Level: ".$_POST['level']."\n".
+               "Emojis: ".$_POST['emojis']."\n".
+               "Coins: ".$_POST['coins']."\n".
+               "DNA: ".$_POST['dna']."\n".
+               "Special Skins: ".$_POST['specialSkins']."\n".
+               "Mystery Skins: ".$_POST['mysterySkins']."\n".
+               "Price: ".$_POST['price'];
 
-        $headers = "From: no-reply@jouwdomein.nl";
+    $headers = "From: no-reply@jouwdomein.nl";
 
-        if(mail($to, $subject, $message, $headers)){
-            echo "<p>Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.</p>";
-        } else {
-            echo "<p>Er is iets misgegaan bij het verzenden. Probeer het later opnieuw.</p>";
-        }
+    if(mail($to, $subject, $message, $headers)){
+        echo "<p>Bedankt voor je bericht! We nemen zo snel mogelijk contact met je op.</p>";
     } else {
-    ?>
-    <form method="post" action="">
-        <label for="name">Your Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="email">Your Email:</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="paidSkins">Paid Skins:</label>
-        <input type="text" id="paidSkins" name="paidSkins">
-
-        <label for="allSkins">All Skins:</label>
-        <div class="description">Excluding custom skins and mystery skins</div>
-        <input type="text" id="allSkins" name="allSkins">
-
-        <label for="customSkins">Custom Skins:</label>
-        <input type="text" id="customSkins" name="customSkins">
-
-        <label for="level">Level:</label>
-        <input type="text" id="level" name="level">
-
-        <label for="emojis">Emojis:</label>
-        <input type="text" id="emojis" name="emojis">
-
-        <label for="coins">Coins:</label>
-        <input type="text" id="coins" name="coins">
-
-        <label for="dna">DNA:</label>
-        <input type="text" id="dna" name="dna">
-
-        <label for="specialSkins">Special Skins:</label>
-        <div class="description">Quest skins</div>
-        <input type="text" id="specialSkins" name="specialSkins">
-
-        <label for="mysterySkins">Mystery Skins:</label>
-        <input type="text" id="mysterySkins" name="mysterySkins">
-
-        <label for="price">Your Price:</label>
-        <div class="description">How much do you want for it?</div>
-        <input type="text" id="price" name="price">
-
-        <button type="submit" name="submit">Submit</button>
-    </form>
-    <?php } ?>
-</main>
-</body>
-</html>
+        echo "<p>Er is iets misgegaan bij het verzenden.</p>";
+    }
+}
+?>
+<form method="post" action="">
+    <input type="text" name="name" placeholder="Naam" required>
+    <input type="email" name="email" placeholder="E-mail" required>
+    <input type="text" name="paidSkins" placeholder="Paid Skins">
+    <input type="text" name="allSkins" placeholder="All Skins">
+    <input type="text" name="customSkins" placeholder="Custom Skins">
+    <input type="text" name="level" placeholder="Level">
+    <input type="text" name="emojis" placeholder="Emojis">
+    <input type="text" name="coins" placeholder="Coins">
+    <input type="text" name="dna" placeholder="DNA">
+    <input type="text" name="specialSkins" placeholder="Special Skins">
+    <input type="text" name="mysterySkins" placeholder="Mystery Skins">
+    <input type="text" name="price" placeholder="Price">
+    <button type="submit" name="submit">Verstuur</button>
+</form>
