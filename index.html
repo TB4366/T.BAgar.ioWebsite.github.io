@@ -155,8 +155,6 @@
   .btn:hover {
     background-color: #334155;
   }
-
-  /* Nieuwe sectie voor custom skins highlight */
   .divider {
     max-width: 900px;
     margin: 40px auto 10px auto;
@@ -210,94 +208,6 @@
   .circle img.active {
     opacity: 1;
   }
-
-  /* Animations */
-  @keyframes zoomInOut {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-  @keyframes rotate360 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  @keyframes pulse {
-    0%, 100% { filter: brightness(0.8); }
-    50% { filter: brightness(1.2); }
-  }
-
-  /* Keys sectie */
-  .keys-link {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  body.dark .keys-link .btn {
-    background-color: #ccc;
-    color: #222;
-  }
-  body.dark .keys-link .btn:hover {
-    background-color: #aaa;
-  }
-
-  /* Slideshow sectie */
-  .slideshow-container {
-    position: relative;
-    max-width: 900px;
-    margin: 40px auto;
-    height: 500px;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #48cae4;
-  }
-  body.dark .slideshow-container {
-    box-shadow: 0 0 20px #0077b6;
-  }
-  .slideshow-image {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .slideshow-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    position: absolute;
-    top: 0; left: 0;
-    transition: opacity 1s ease;
-  }
-  .slideshow-image img.active {
-    opacity: 1;
-  }
-  .slideshow-text {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border-radius: 8px;
-    opacity: 0;
-  }
-  /* Animatie types */
-  .fadeIn { animation: fadeIn 1s forwards; }
-  .slideUp { animation: slideUp 1s forwards; }
-  .zoomIn { animation: zoomIn 1s forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { transform: translate(-50%, 20px); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-  }
-  @keyframes zoomIn {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
-    to { transform: translateX(-50%) scale(1); opacity: 1; }
-  }
 </style>
 </head>
 <body>
@@ -348,14 +258,39 @@
     <a href="key-access.html" class="btn">🔑 Go to the keys</a>
   </div>
 
-  <!-- Slideshow sectie -->
+  <!-- Nieuwe video's sectie -->
   <div class="divider"></div>
-  <div class="highlight-title">Latest Videos</div>
-  <div class="slideshow-container">
-    <div class="slideshow-image">
-      <img id="slideshow-img" src="" alt="Video Thumbnail">
-      <div class="slideshow-text" id="slideshow-text"></div>
-    </div>
+  <div class="highlight-title">🎥 New Video’s</div>
+  <div class="video-grid">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" allowfullscreen></iframe>
+  </div>
+
+  <div class="highlight-title">🤝 The Best Duo</div>
+  <div class="video-grid">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" allowfullscreen></iframe>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Social buttons -->
+  <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:30px 0;">
+    <!-- Discord -->
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="btn" style="display:flex; align-items:center; gap:8px;">
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" style="width:20px; height:20px; filter:invert(1);" />
+      JOIN My Discord Server
+    </a>
+
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" class="btn" style="display:flex; align-items:center; gap:8px;">
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" style="width:20px; height:20px; filter:invert(1);" />
+      Follow me on Instagram
+    </a>
+
+    <!-- YouTube -->
+    <a href="https://www.youtube.com/@T.B6" target="_blank" class="btn" style="display:flex; align-items:center; gap:8px;">
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" style="width:20px; height:20px; filter:invert(1);" />
+      Subscribe to my YouTube Channel
+    </a>
   </div>
 </main>
 
@@ -407,7 +342,6 @@
   function cycleImages(circleId, images, interval) {
     const circle = document.getElementById(circleId);
     let currentIndex = 0;
-    // Voeg img element toe
     images.forEach((src, i) => {
       const img = document.createElement('img');
       img.src = src;
@@ -425,32 +359,6 @@
   cycleImages('circle1', skinsCircle1, intervals[0]);
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
-
-  // Video slideshow data
-  const videoSlides = [
-    { id: "OEkurL8aaZk", title: "T.B Agar.io Main Video", animation: "fadeIn" },
-    { id: "diAuO3IC8Hg", title: "Custom Skins Showcase", animation: "slideUp" },
-    { id: "m0DEe4RhgSw", title: "Mod Menu Demo", animation: "zoomIn" }
-  ];
-
-  let slideIndex = 0;
-  const slideshowImg = document.getElementById('slideshow-img');
-  const slideshowText = document.getElementById('slideshow-text');
-
-  function showSlide(index) {
-    const slide = videoSlides[index];
-    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
-    slideshowText.textContent = slide.title;
-    slideshowText.className = `slideshow-text ${slide.animation}`;
-  }
-
-  function nextSlide() {
-    slideIndex = (slideIndex + 1) % videoSlides.length;
-    showSlide(slideIndex);
-  }
-
-  showSlide(slideIndex);
-  setInterval(nextSlide, 7000);
 </script>
 
 </body>
