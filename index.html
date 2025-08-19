@@ -1,467 +1,198 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="nl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>T.B Agar.io Website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T.B Agar.io</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  body.dark {
-    background: #f0f0f0;
-    color: #222;
-  }
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: #0f172a;
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  body.dark header {
-    background: #e0e0e0;
-  }
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-  }
-  .site-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  .toggle-btn-header {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 22px;
-    color: #0077b6;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .toggle-btn-header:hover {
-    background-color: #48cae4;
-    color: white;
-  }
-  body.dark .toggle-btn-header {
-    color: #4dd0e1;
-  }
-  body.dark .toggle-btn-header:hover {
-    background-color: #0077b6;
-    color: white;
-  }
-  .menu-btn {
-    cursor: pointer;
-    font-size: 24px;
-    background: none;
-    border: none;
-    color: white;
-  }
-  body.dark .menu-btn {
-    color: #222;
-  }
-  .menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background: #1e293b;
-    border-radius: 8px;
-    overflow: hidden;
-    min-width: 160px;
-    z-index: 10;
-  }
-  body.dark .menu {
-    background: #ccc;
-  }
-  .menu a {
-    display: block;
-    padding: 12px;
-    text-decoration: none;
-    color: white;
-    border-bottom: 1px solid #334155;
-  }
-  body.dark .menu a {
-    color: #222;
-    border-bottom: 1px solid #aaa;
-  }
-  .menu a:hover {
-    background: #334155;
-  }
-  body.dark .menu a:hover {
-    background: #ddd;
-  }
-  .main-video {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  }
-  .video-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin: 20px;
-  }
-  iframe {
-    border: none;
-    border-radius: 12px;
-  }
-  .youtube-link {
-    text-align: center;
-    margin-top: 20px;
-  }
-  .youtube-link a {
-    display: inline-block;
-    padding: 12px 20px;
-    background: #1e293b;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-  }
-  .youtube-link a:hover {
-    background: #334155;
-  }
-  .btn {
-    padding: 12px 24px;
-    background-color: #1e293b;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s ease;
-  }
-  .btn:hover {
-    background-color: #334155;
-  }
-
-  /* Nieuwe sectie voor custom skins highlight */
-  .divider {
-    max-width: 900px;
-    margin: 40px auto 10px auto;
-    border-top: 2px solid #48cae4;
-  }
-  .highlight-title {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin: 20px 0 30px;
-    color: #48cae4;
-  }
-  body.dark .divider {
-    border-top: 2px solid #0077b6;
-  }
-  body.dark .highlight-title {
-    color: #0077b6;
-  }
-  .skins-circles {
-    max-width: 900px;
-    margin: 0 auto 50px auto;
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-  }
-  .circle {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-    background: #000;
-    box-shadow: 0 0 15px #48cae4;
-    filter: brightness(0.8) saturate(1.2);
-    cursor: pointer;
-    transition: filter 0.3s ease, box-shadow 0.3s ease;
-  }
-  body.dark .circle {
-    filter: brightness(1) saturate(1);
-    box-shadow: 0 0 15px #0077b6;
-  }
-  .circle img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0; left: 0;
-    opacity: 0;
-    transition: opacity 1.2s ease;
-  }
-  .circle img.active {
-    opacity: 1;
-  }
-
-  /* Animations */
-  @keyframes zoomInOut {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-  @keyframes rotate360 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  @keyframes pulse {
-    0%, 100% { filter: brightness(0.8); }
-    50% { filter: brightness(1.2); }
-  }
-
-  /* Keys sectie */
-  .keys-link {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  body.dark .keys-link .btn {
-    background-color: #ccc;
-    color: #222;
-  }
-  body.dark .keys-link .btn:hover {
-    background-color: #aaa;
-  }
-
-  /* Slideshow sectie */
-  .slideshow-container {
-    position: relative;
-    max-width: 900px;
-    margin: 40px auto;
-    height: 500px;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #48cae4;
-  }
-  body.dark .slideshow-container {
-    box-shadow: 0 0 20px #0077b6;
-  }
-  .slideshow-image {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .slideshow-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    position: absolute;
-    top: 0; left: 0;
-    transition: opacity 1s ease;
-  }
-  .slideshow-image img.active {
-    opacity: 1;
-  }
-  .slideshow-text {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border-radius: 8px;
-    opacity: 0;
-  }
-  /* Animatie types */
-  .fadeIn { animation: fadeIn 1s forwards; }
-  .slideUp { animation: slideUp 1s forwards; }
-  .zoomIn { animation: zoomIn 1s forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { transform: translate(-50%, 20px); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-  }
-  @keyframes zoomIn {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
-    to { transform: translateX(-50%) scale(1); opacity: 1; }
-  }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0b1220;
+        color: white;
+        transition: background 0.3s, color 0.3s;
+    }
+    body.light {
+        background: #f0f0f0;
+        color: #111;
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background: #1f2a3a;
+    }
+    header.light {
+        background: #ddd;
+    }
+    .logo {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 15px;
+        margin: 0;
+        padding: 0;
+    }
+    nav ul li {
+        cursor: pointer;
+    }
+    button {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    main {
+        padding: 20px;
+    }
+    .video-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    iframe {
+        flex: 1 1 300px;
+        min-height: 200px;
+    }
+    .skins-circles {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.3s;
+    }
+    .circle:hover {
+        transform: scale(1.1);
+    }
+    .social-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .slideshow-container {
+        position: relative;
+        max-width: 600px;
+        margin: 20px auto;
+        text-align: center;
+    }
+    .slide-video {
+        width: 100%;
+        height: 300px;
+    }
+    .slide-title {
+        margin-top: 10px;
+        font-size: 1.2em;
+    }
+    /* Animaties */
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+    .fadeIn { animation: fadeIn 1s; }
 </style>
 </head>
 <body>
-
-<header>
-  <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
-    <span class="site-title">T.B Agar.io</span>
-    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-  </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Pagina</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-  </div>
+<header id="header">
+    <div class="logo">T.B Agar.io</div>
+    <nav>
+        <ul>
+            <li>Home</li>
+            <li>Skins</li>
+            <li>Keys</li>
+            <li>Video’s</li>
+        </ul>
+    </nav>
+    <button id="darkModeBtn">Donker/Licht</button>
 </header>
 
 <main>
-  <div class="main-video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
-  </div>
+    <h1>Hoofdvideo</h1>
+    <div class="slideshow-container">
+        <iframe id="slideVideo" class="slide-video" src="" frameborder="0" allowfullscreen></iframe>
+        <div id="slideTitle" class="slide-title"></div>
+    </div>
 
-  <div class="youtube-link">
-    <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My YouTube Channel</a>
-  </div>
+    <h2>Skins</h2>
+    <div class="skins-circles">
+        <div class="circle" id="circle1"></div>
+        <div class="circle" id="circle2"></div>
+        <div class="circle" id="circle3"></div>
+    </div>
 
-  <div class="video-grid">
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
-  </div>
+    <h2>Keys</h2>
+    <a href="#">Bekijk keys</a>
 
-  <!-- Skins sectie -->
-  <div class="divider"></div>
-  <div class="highlight-title">The Best Custom Skins</div>
-  <div class="skins-circles">
-    <div class="circle" id="circle1"></div>
-    <div class="circle" id="circle2"></div>
-    <div class="circle" id="circle3"></div>
-  </div>
+    <h2>Nieuwe Video’s</h2>
+    <div class="video-grid">
+        <iframe src="https://www.youtube.com/embed/OEkurL8aaZk" frameborder="0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/diAuO3IC8Hg" frameborder="0" allowfullscreen></iframe>
+    </div>
 
-  <!-- Keys sectie -->
-  <div class="divider"></div>
-  <div class="highlight-title">T.B Keys</div>
-  <div class="keys-link">
-    <a href="key-access.html" class="btn">🔑 Go to the keys</a>
-  </div>
-
-  <!-- Nieuwe sectie onderaan -->
-<div class="divider"></div>
-<div class="highlight-title">New Video’s</div>
-<div class="youtube-link">
-  <a href="https://youtu.be/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" target="_blank">Watch Now</a>
-</div>
-
-<div class="highlight-title">The Best Duo</div>
-<div class="youtube-link">
-  <a href="https://youtu.be/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" target="_blank">Watch Now</a>
-</div>
-
-<div class="divider"></div>
-
-<div class="social-buttons" style="text-align:center; margin-bottom:50px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-  <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="btn" style="background-color:#5865F2; display:flex; align-items:center; gap:8px;">
-    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" style="width:20px; height:20px;"> JOIN My Discord server
-  </a>
-  <a href="https://www.instagram.com/t.bagar.io/" target="_blank" class="btn" style="background-color:#E1306C; display:flex; align-items:center; gap:8px;">
-    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" style="width:20px; height:20px;"> Follow me on Instagram
-  </a>
-  <a href="https://www.youtube.com/@T.B6" target="_blank" class="btn" style="background-color:#FF0000; display:flex; align-items:center; gap:8px;">
-    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg" alt="YouTube" style="width:20px; height:20px;"> Subscribe to my YouTube channel
-  </a>
-</div>
-
+    <div class="social-buttons">
+        <a href="#">Discord</a>
+        <a href="#">Instagram</a>
+        <a href="#">YouTube</a>
+    </div>
+</main>
 
 <script>
-  function toggleMenu() {
-    const menu = document.getElementById('menu');
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-  }
-
-  // Dark/light mode toggle
-  const toggleBtn = document.getElementById('themeToggleBtn');
-  const body = document.body;
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark') {
-    body.classList.add('dark');
-    toggleBtn.textContent = '☀️';
-  } else {
-    toggleBtn.textContent = '🌙';
-  }
-  toggleBtn.addEventListener('click', () => {
-    body.classList.toggle('dark');
-    if (body.classList.contains('dark')) {
-      toggleBtn.textContent = '☀️';
-      localStorage.setItem('theme', 'dark');
-    } else {
-      toggleBtn.textContent = '🌙';
-      localStorage.setItem('theme', 'light');
+    // Dark/light mode
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    const body = document.body;
+    const header = document.getElementById('header');
+    if(localStorage.getItem('theme') === 'light') {
+        body.classList.add('light');
+        header.classList.add('light');
     }
-  });
-
-  // Skins afbeeldingen
-  const skinsCircle1 = [
-    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
-    'IMG_2978.jpeg',
-    'IMG_3164.png'
-  ];
-  const skinsCircle2 = [
-    'IMG_3156.jpeg',
-    'IMG_2718.png',
-    'IMG_2819.png'
-  ];
-  const skinsCircle3 = [
-    'IMG_3520.png',
-    'IMG_3533.png',
-    'IMG_3512.webp'
-  ];
-  const intervals = [4000, 4500, 5000];
-
-  function cycleImages(circleId, images, interval) {
-    const circle = document.getElementById(circleId);
-    let currentIndex = 0;
-    // Voeg img element toe
-    images.forEach((src, i) => {
-      const img = document.createElement('img');
-      img.src = src;
-      if (i === 0) img.classList.add('active');
-      circle.appendChild(img);
+    darkModeBtn.addEventListener('click', () => {
+        body.classList.toggle('light');
+        header.classList.toggle('light');
+        localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
     });
+
+    // Skins cirkels
+    const circles = [
+        {el: document.getElementById('circle1'), images: ['https://via.placeholder.com/100/ff0000', 'https://via.placeholder.com/100/00ff00', 'https://via.placeholder.com/100/0000ff']},
+        {el: document.getElementById('circle2'), images: ['https://via.placeholder.com/100/f0f0f0', 'https://via.placeholder.com/100/0f0f0f', 'https://via.placeholder.com/100/ff00ff']},
+        {el: document.getElementById('circle3'), images: ['https://via.placeholder.com/100/ffff00', 'https://via.placeholder.com/100/00ffff', 'https://via.placeholder.com/100/ff8800']}
+    ];
+    circles.forEach((c, idx) => {
+        let i = 0;
+        setInterval(() => {
+            c.el.style.backgroundImage = `url('${c.images[i]}')`;
+            i = (i + 1) % c.images.length;
+        }, 2000 + idx*500);
+    });
+
+    // Slideshow
+    const videoSlides = [
+        {id: 'OEkurL8aaZk', title: 'Mijn eerste video'},
+        {id: 'diAuO3IC8Hg', title: 'Mijn tweede video'}
+    ];
+    let currentSlide = 0;
+    const slideVideo = document.getElementById('slideVideo');
+    const slideTitle = document.getElementById('slideTitle');
+
+    function showSlide(index) {
+        const slide = videoSlides[index];
+        slideVideo.src = `https://www.youtube.com/embed/${slide.id}`;
+        slideTitle.textContent = slide.title;
+        slideTitle.className = 'slide-title fadeIn';
+    }
+    showSlide(currentSlide);
     setInterval(() => {
-      const imgs = circle.querySelectorAll('img');
-      imgs[currentIndex].classList.remove('active');
-      currentIndex = (currentIndex + 1) % imgs.length;
-      imgs[currentIndex].classList.add('active');
-    }, interval);
-  }
-
-  cycleImages('circle1', skinsCircle1, intervals[0]);
-  cycleImages('circle2', skinsCircle2, intervals[1]);
-  cycleImages('circle3', skinsCircle3, intervals[2]);
-
-
-  let slideIndex = 0;
-  const slideshowImg = document.getElementById('slideshow-img');
-  const slideshowText = document.getElementById('slideshow-text');
-
-  function showSlide(index) {
-    const slide = videoSlides[index];
-    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
-    slideshowText.textContent = slide.title;
-    slideshowText.className = `slideshow-text ${slide.animation}`;
-  }
-
-  function nextSlide() {
-    slideIndex = (slideIndex + 1) % videoSlides.length;
-    showSlide(slideIndex);
-  }
-
-  showSlide(slideIndex);
-  setInterval(nextSlide, 7000);
+        currentSlide = (currentSlide + 1) % videoSlides.length;
+        showSlide(currentSlide);
+    }, 5000);
 </script>
-
 </body>
 </html>
