@@ -56,6 +56,10 @@
         flex: 1 1 300px;
         min-height: 200px;
     }
+    .large-video {
+        width: 100%;
+        height: 500px;
+    }
     .skins-circles {
         display: flex;
         gap: 15px;
@@ -80,19 +84,14 @@
     }
     .slideshow-container {
         position: relative;
-        max-width: 600px;
+        max-width: 800px;
         margin: 20px auto;
         text-align: center;
-    }
-    .slide-video {
-        width: 100%;
-        height: 300px;
     }
     .slide-title {
         margin-top: 10px;
         font-size: 1.2em;
     }
-    /* Animaties */
     @keyframes fadeIn {
         from {opacity: 0;}
         to {opacity: 1;}
@@ -117,7 +116,7 @@
 <main>
     <h1>Hoofdvideo</h1>
     <div class="slideshow-container">
-        <iframe id="slideVideo" class="slide-video" src="" frameborder="0" allowfullscreen></iframe>
+        <iframe id="slideVideo" class="slide-video large-video" src="" frameborder="0" allowfullscreen></iframe>
         <div id="slideTitle" class="slide-title"></div>
     </div>
 
@@ -132,9 +131,15 @@
     <a href="#">Bekijk keys</a>
 
     <h2>Nieuwe Video’s</h2>
-    <div class="video-grid">
-        <iframe src="https://www.youtube.com/embed/OEkurL8aaZk" frameborder="0" allowfullscreen></iframe>
-        <iframe src="https://www.youtube.com/embed/diAuO3IC8Hg" frameborder="0" allowfullscreen></iframe>
+    <div class="slideshow-container">
+        <iframe id="newVideo" class="slide-video large-video" src="https://www.youtube.com/embed/OEkurL8aaZk" frameborder="0" allowfullscreen></iframe>
+        <div id="newVideoTitle" class="slide-title">Mijn eerste video</div>
+    </div>
+
+    <h2>The Best Duo</h2>
+    <div class="slideshow-container">
+        <iframe id="bestDuoVideo" class="slide-video large-video" src="https://www.youtube.com/embed/diAuO3IC8Hg" frameborder="0" allowfullscreen></iframe>
+        <div id="bestDuoTitle" class="slide-title">The Best Duo</div>
     </div>
 
     <div class="social-buttons">
@@ -173,7 +178,7 @@
         }, 2000 + idx*500);
     });
 
-    // Slideshow
+    // Hoofdvideo slideshow
     const videoSlides = [
         {id: 'OEkurL8aaZk', title: 'Mijn eerste video'},
         {id: 'diAuO3IC8Hg', title: 'Mijn tweede video'}
@@ -184,15 +189,50 @@
 
     function showSlide(index) {
         const slide = videoSlides[index];
-        slideVideo.src = `https://www.youtube.com/embed/${slide.id}`;
-        slideTitle.textContent = slide.title;
-        slideTitle.className = 'slide-title fadeIn';
+        slideVideo.style.opacity = 0;
+        setTimeout(() => {
+            slideVideo.src = `https://www.youtube.com/embed/${slide.id}`;
+            slideTitle.textContent = slide.title;
+            slideVideo.style.opacity = 1;
+        }, 500);
     }
     showSlide(currentSlide);
     setInterval(() => {
         currentSlide = (currentSlide + 1) % videoSlides.length;
         showSlide(currentSlide);
     }, 5000);
+
+    // Nieuwe Video’s slideshow
+    const newVideos = [
+        {id: 'OEkurL8aaZk', title: 'Mijn eerste video'},
+        {id: 'diAuO3IC8Hg', title: 'Mijn tweede video'}
+    ];
+    let currentNew = 0;
+    const newVideo = document.getElementById('newVideo');
+    const newVideoTitle = document.getElementById('newVideoTitle');
+
+    setInterval(() => {
+        currentNew = (currentNew + 1) % newVideos.length;
+        const video = newVideos[currentNew];
+        newVideo.src = `https://www.youtube.com/embed/${video.id}`;
+        newVideoTitle.textContent = video.title;
+    }, 7000);
+
+    // The Best Duo slideshow
+    const bestDuoVideos = [
+        {id: 'diAuO3IC8Hg', title: 'The Best Duo'},
+        {id: 'OEkurL8aaZk', title: 'Top Duo Video'}
+    ];
+    let currentDuo = 0;
+    const bestDuoVideo = document.getElementById('bestDuoVideo');
+    const bestDuoTitle = document.getElementById('bestDuoTitle');
+
+    setInterval(() => {
+        currentDuo = (currentDuo + 1) % bestDuoVideos.length;
+        const video = bestDuoVideos[currentDuo];
+        bestDuoVideo.src = `https://www.youtube.com/embed/${video.id}`;
+        bestDuoTitle.textContent = video.title;
+    }, 9000);
 </script>
 </body>
 </html>
