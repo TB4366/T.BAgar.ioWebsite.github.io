@@ -238,48 +238,6 @@
     background-color: #aaa;
   }
 
-  /* Slideshow sectie */
-  .slideshow-container {
-    position: relative;
-    max-width: 900px;
-    margin: 40px auto;
-    height: 500px;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 0 20px #48cae4;
-  }
-  body.dark .slideshow-container {
-    box-shadow: 0 0 20px #0077b6;
-  }
-  .slideshow-image {
-    position: relative;
-    width: 100%;
-    height: 100%;
-  }
-  .slideshow-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    position: absolute;
-    top: 0; left: 0;
-    transition: opacity 1s ease;
-  }
-  .slideshow-image img.active {
-    opacity: 1;
-  }
-  .slideshow-text {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    border-radius: 8px;
-    opacity: 0;
   }
   /* Animatie types */
   .fadeIn { animation: fadeIn 1s forwards; }
@@ -348,16 +306,6 @@
     <a href="key-access.html" class="btn">🔑 Go to the keys</a>
   </div>
 
-  <!-- Slideshow sectie -->
-  <div class="divider"></div>
-  <div class="highlight-title">Latest Videos</div>
-  <div class="slideshow-container">
-    <div class="slideshow-image">
-      <img id="slideshow-img" src="" alt="Video Thumbnail">
-      <div class="slideshow-text" id="slideshow-text"></div>
-    </div>
-  </div>
-</main>
 
 <script>
   function toggleMenu() {
@@ -426,32 +374,45 @@
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
 
-  // Video slideshow data
-  const videoSlides = [
-    { id: "OEkurL8aaZk", title: "T.B Agar.io Main Video", animation: "fadeIn" },
-    { id: "diAuO3IC8Hg", title: "Custom Skins Showcase", animation: "slideUp" },
-    { id: "m0DEe4RhgSw", title: "Mod Menu Demo", animation: "zoomIn" }
-  ];
+<!-- Nieuwe sectie onderaan -->
+<div style="text-align:center; margin-top:50px;">
 
-  let slideIndex = 0;
-  const slideshowImg = document.getElementById('slideshow-img');
-  const slideshowText = document.getElementById('slideshow-text');
+  <!-- Nieuwe video's -->
+  <h2>New video’s</h2>
+  <p><a href="https://youtu.be/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" target="_blank">👉 Bekijk hier</a></p>
 
-  function showSlide(index) {
-    const slide = videoSlides[index];
-    slideshowImg.src = `https://img.youtube.com/vi/${slide.id}/hqdefault.jpg`;
-    slideshowText.textContent = slide.title;
-    slideshowText.className = `slideshow-text ${slide.animation}`;
-  }
+  <!-- Best Duo -->
+  <h2>The Best Duo</h2>
+  <p><a href="https://youtu.be/iXrJJT8u5P8?si=wAAOtD7up9UvqW0_" target="_blank">👉 Bekijk hier</a></p>
 
-  function nextSlide() {
-    slideIndex = (slideIndex + 1) % videoSlides.length;
-    showSlide(slideIndex);
-  }
+  <hr style="margin:30px 0;">
 
-  showSlide(slideIndex);
-  setInterval(nextSlide, 7000);
-</script>
+  <!-- Knoppen sectie -->
+  <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
 
-</body>
-</html>
+    <!-- Discord knop -->
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#5865F2; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
+      JOIN My Discord server
+    </a>
+
+    <!-- Instagram knop -->
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#E1306C; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
+      Follow me on Instagram
+    </a>
+
+    <!-- YouTube knop -->
+    <a href="https://www.youtube.com/@T.B6" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#FF0000; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
+      Subscribe to my YouTube channel
+    </a>
+
+  </div>
+</div>
