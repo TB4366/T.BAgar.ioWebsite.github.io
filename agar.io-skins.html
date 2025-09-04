@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.B Agar.io-skins</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px;
+      gap: 10px;
+      background: #fff;
+    }
+    .buttons button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .vip { background: black; }
+    .premium { background: orange; }
+    .custom { background: purple; }
+    .mystery { background: blue; }
+    .golden { background: gold; color: black; }
+    .adventure { background: deeppink; }
+    .veteran { background: lightblue; color: black; }
+    .quest { background: gray; }
+    .free { background: green; }
+    .youtube { background: red; }
+    .pokemon { background: limegreen; }
+    .thunder { background: brown; }
+
+    .skins {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .skin {
+      background: white;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .skin img {
+      width: 100%;
+      border-radius: 50%;
+    }
+    .skin h3 {
+      margin: 10px 0 5px;
+      font-size: 16px;
+    }
+    .skin a {
+      font-size: 12px;
+      color: blue;
+      text-decoration: none;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      gap: 8px;
+    }
+    .pagination button {
+      padding: 8px 12px;
+      border: 1px solid #007bff;
+      background: white;
+      color: #007bff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .pagination button.active {
+      background: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>T.B Agar.io-skins</header>
+
+  <div class="buttons">
+    <button class="vip" onclick="setCategory('vip')">VIP Skins</button>
+    <button class="premium" onclick="setCategory('premium')">Premium Skins</button>
+    <button class="custom" onclick="setCategory('custom')">Custom Skins</button>
+    <button class="mystery" onclick="setCategory('mystery')">Mystery Skins</button>
+    <button class="golden" onclick="setCategory('golden')">Golden Pass Skins</button>
+    <button class="adventure" onclick="setCategory('adventure')">Adventure Skins</button>
+    <button class="veteran" onclick="setCategory('veteran')">Veteran Skins</button>
+    <button class="quest" onclick="setCategory('quest')">Quest Skins</button>
+    <button class="free" onclick="setCategory('free')">Free Skins</button>
+    <button class="youtube" onclick="setCategory('youtube')">YouTuber Skins</button>
+    <button class="pokemon" onclick="setCategory('pokemon')">Pokémon Skins</button>
+    <button class="thunder" onclick="setCategory('thunder')">Thunderbirds Skins</button>
+  </div>
+
+  <div id="skins" class="skins"></div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    // Hier voeg je ALLE skins toe
+    // elke skin heeft: naam, url, category
+    const skins = [
+      // --- VIP Skins ---
+      {name: "Derpy Carnotaurus", url: "https://i.imgur.com/zAOoOR6.png", category: "vip"},
+      {name: "Derpy Spinosaurus", url: "https://i.imgur.com/yDG1S2F.png", category: "vip"},
+
+      // --- Premium Skins ---
+      {name: "Derpy Pterodactyl", url: "https://i.imgur.com/a3a7lbR.png", category: "premium"},
+
+      // --- Custom Skins ---
+      {name: "Cool Custom Dino", url: "https://i.imgur.com/xxxxxxx.png", category: "custom"},
+
+      // --- Mystery Skins ---
+      {name: "Mysterious Dragon", url: "https://i.imgur.com/yyyyyyy.png", category: "mystery"},
+
+      // --- Golden Pass Skins ---
+      {name: "Golden T-Rex", url: "https://i.imgur.com/zzzzzzz.png", category: "golden"},
+
+      // --- Adventure Skins ---
+      {name: "Jungle Explorer", url: "https://i.imgur.com/aaaaaaa.png", category: "adventure"},
+
+      // --- Veteran Skins ---
+      {name: "Old Warrior", url: "https://i.imgur.com/bbbbbbb.png", category: "veteran"},
+
+      // --- Quest Skins ---
+      {name: "Quest Knight", url: "https://i.imgur.com/ccccccc.png", category: "quest"},
+
+      // --- Free Skins ---
+      {name: "Free Alien", url: "https://i.imgur.com/ddddddd.png", category: "free"},
+
+      // --- YouTuber Skins ---
+      {name: "YT Hero", url: "https://i.imgur.com/eeeeeee.png", category: "youtube"},
+
+      // --- Pokémon Skins ---
+      {name: "Pikachu", url: "https://i.imgur.com/fffffff.png", category: "pokemon"},
+
+      // --- Thunderbirds Skins ---
+      {name: "Thunderbird Red", url: "https://i.imgur.com/ggggggg.png", category: "thunder"},
+    ];
+
+    const skinsPerPage = 100;
+    let currentPage = 1;
+    let currentCategory = "vip"; // standaard categorie bij openen
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      currentPage = 1;
+      renderSkins();
+    }
+
+    function renderSkins() {
+      const container = document.getElementById('skins');
+      container.innerHTML = '';
+
+      const filtered = skins.filter(s => s.category === currentCategory);
+
+      const start = (currentPage - 1) * skinsPerPage;
+      const end = start + skinsPerPage;
+      const pageSkins = filtered.slice(start, end);
+
+      pageSkins.forEach(skin => {
+        if (skin.name && skin.url) {
+          const div = document.createElement('div');
+          div.classList.add('skin');
+          div.innerHTML = `
+            <img src="${skin.url}" alt="${skin.name}">
+            <h3>${skin.name}</h3>
+            <a href="${skin.url}" target="_blank">${skin.url}</a>
+          `;
+          container.appendChild(div);
+        }
+      });
+
+      renderPagination(filtered.length);
+    }
+
+    function renderPagination(totalSkins) {
+      const totalPages = Math.ceil(totalSkins / skinsPerPage);
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        if (i === currentPage) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          currentPage = i;
+          renderSkins();
+        });
+        pagination.appendChild(btn);
+      }
+    }
+
+    // Start met vip skins
+    renderSkins();
+  </script>
+</body>
+</html>
