@@ -50,9 +50,11 @@
 
     .skins {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(3, 1fr); /* altijd 3 naast elkaar */
       gap: 20px;
       padding: 20px;
+      max-width: 1000px;
+      margin: auto;
     }
     .skin {
       background: white;
@@ -61,17 +63,20 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .skin img {
-      width: 100%;
+      width: 120px;  /* kleiner formaat */
+      height: 120px;
+      object-fit: cover;
       border-radius: 50%;
     }
     .skin h3 {
       margin: 10px 0 5px;
-      font-size: 16px;
+      font-size: 14px;
     }
     .skin a {
-      font-size: 12px;
+      font-size: 11px;
       color: blue;
       text-decoration: none;
+      word-break: break-all;
     }
     .pagination {
       display: flex;
@@ -90,6 +95,14 @@
     .pagination button.active {
       background: #007bff;
       color: white;
+    }
+
+    /* Responsief: op mobiel maar 1 of 2 skins per rij */
+    @media (max-width: 800px) {
+      .skins { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .skins { grid-template-columns: repeat(1, 1fr); }
     }
   </style>
 </head>
@@ -116,50 +129,26 @@
   <div class="pagination" id="pagination"></div>
 
   <script>
-    // Hier voeg je ALLE skins toe
-    // elke skin heeft: naam, url, category
+    // Skins toevoegen met categorie
     const skins = [
-      // --- VIP Skins ---
       {name: "Derpy Carnotaurus", url: "https://i.imgur.com/zAOoOR6.png", category: "vip"},
       {name: "Derpy Spinosaurus", url: "https://i.imgur.com/yDG1S2F.png", category: "vip"},
-
-      // --- Premium Skins ---
       {name: "Derpy Pterodactyl", url: "https://i.imgur.com/a3a7lbR.png", category: "premium"},
-
-      // --- Custom Skins ---
       {name: "Cool Custom Dino", url: "https://i.imgur.com/xxxxxxx.png", category: "custom"},
-
-      // --- Mystery Skins ---
       {name: "Mysterious Dragon", url: "https://i.imgur.com/yyyyyyy.png", category: "mystery"},
-
-      // --- Golden Pass Skins ---
       {name: "Golden T-Rex", url: "https://i.imgur.com/zzzzzzz.png", category: "golden"},
-
-      // --- Adventure Skins ---
       {name: "Jungle Explorer", url: "https://i.imgur.com/aaaaaaa.png", category: "adventure"},
-
-      // --- Veteran Skins ---
       {name: "Old Warrior", url: "https://i.imgur.com/bbbbbbb.png", category: "veteran"},
-
-      // --- Quest Skins ---
       {name: "Quest Knight", url: "https://i.imgur.com/ccccccc.png", category: "quest"},
-
-      // --- Free Skins ---
       {name: "Free Alien", url: "https://i.imgur.com/ddddddd.png", category: "free"},
-
-      // --- YouTuber Skins ---
       {name: "YT Hero", url: "https://i.imgur.com/eeeeeee.png", category: "youtube"},
-
-      // --- Pokémon Skins ---
       {name: "Pikachu", url: "https://i.imgur.com/fffffff.png", category: "pokemon"},
-
-      // --- Thunderbirds Skins ---
       {name: "Thunderbird Red", url: "https://i.imgur.com/ggggggg.png", category: "thunder"},
     ];
 
     const skinsPerPage = 100;
     let currentPage = 1;
-    let currentCategory = "vip"; // standaard categorie bij openen
+    let currentCategory = "vip";
 
     function setCategory(cat) {
       currentCategory = cat;
@@ -210,7 +199,6 @@
       }
     }
 
-    // Start met vip skins
     renderSkins();
   </script>
 </body>
