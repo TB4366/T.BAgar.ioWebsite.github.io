@@ -29,11 +29,16 @@
     }
     .buttons button {
       padding: 10px 15px;
-      border: none;
+      border: 2px solid transparent;
       border-radius: 6px;
       color: white;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.2s;
+    }
+    .buttons button.active {
+      filter: brightness(1.2); /* lichter bij klikken */
+      border: 2px solid black; /* zwarte rand */
     }
     .vip { background: black; }
     .premium { background: orange; }
@@ -50,9 +55,11 @@
 
     .skins {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(3, 1fr); /* 3 naast elkaar */
       gap: 20px;
       padding: 20px;
+      max-width: 1000px;
+      margin: auto;
     }
     .skin {
       background: white;
@@ -61,17 +68,20 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     .skin img {
-      width: 100%;
+      width: 160px;   /* kleiner gemaakt */
+      height: 160px;
+      object-fit: cover;
       border-radius: 50%;
     }
     .skin h3 {
       margin: 10px 0 5px;
-      font-size: 16px;
+      font-size: 14px;
     }
     .skin a {
-      font-size: 12px;
+      font-size: 11px;
       color: blue;
       text-decoration: none;
+      word-break: break-all;
     }
     .pagination {
       display: flex;
@@ -91,24 +101,32 @@
       background: #007bff;
       color: white;
     }
+
+    /* Responsief */
+    @media (max-width: 800px) {
+      .skins { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .skins { grid-template-columns: repeat(1, 1fr); }
+    }
   </style>
 </head>
 <body>
   <header>T.B Agar.io-skins</header>
 
   <div class="buttons">
-    <button class="vip" onclick="setCategory('vip')">VIP Skins</button>
-    <button class="premium" onclick="setCategory('premium')">Premium Skins</button>
-    <button class="custom" onclick="setCategory('custom')">Custom Skins</button>
-    <button class="mystery" onclick="setCategory('mystery')">Mystery Skins</button>
-    <button class="golden" onclick="setCategory('golden')">Golden Pass Skins</button>
-    <button class="adventure" onclick="setCategory('adventure')">Adventure Skins</button>
-    <button class="veteran" onclick="setCategory('veteran')">Veteran Skins</button>
-    <button class="quest" onclick="setCategory('quest')">Quest Skins</button>
-    <button class="free" onclick="setCategory('free')">Free Skins</button>
-    <button class="youtube" onclick="setCategory('youtube')">YouTuber Skins</button>
-    <button class="pokemon" onclick="setCategory('pokemon')">Pokémon Skins</button>
-    <button class="thunder" onclick="setCategory('thunder')">Thunderbirds Skins</button>
+    <button class="vip" onclick="setCategory('vip', this)">VIP Skins</button>
+    <button class="premium" onclick="setCategory('premium', this)">Premium Skins</button>
+    <button class="custom" onclick="setCategory('custom', this)">Custom Skins</button>
+    <button class="mystery" onclick="setCategory('mystery', this)">Mystery Skins</button>
+    <button class="golden" onclick="setCategory('golden', this)">Golden Pass Skins</button>
+    <button class="adventure" onclick="setCategory('adventure', this)">Adventure Skins</button>
+    <button class="veteran" onclick="setCategory('veteran', this)">Veteran Skins</button>
+    <button class="quest" onclick="setCategory('quest', this)">Quest Skins</button>
+    <button class="free" onclick="setCategory('free', this)">Free Skins</button>
+    <button class="youtube" onclick="setCategory('youtube', this)">YouTuber Skins</button>
+    <button class="pokemon" onclick="setCategory('pokemon', this)">Pokémon Skins</button>
+    <button class="thunder" onclick="setCategory('thunder', this)">Thunderbirds Skins</button>
   </div>
 
   <div id="skins" class="skins"></div>
@@ -116,54 +134,24 @@
   <div class="pagination" id="pagination"></div>
 
   <script>
-    // Hier voeg je ALLE skins toe
-    // elke skin heeft: naam, url, category
     const skins = [
-      // --- VIP Skins ---
       {name: "Derpy Carnotaurus", url: "https://i.imgur.com/zAOoOR6.png", category: "vip"},
       {name: "Derpy Spinosaurus", url: "https://i.imgur.com/yDG1S2F.png", category: "vip"},
-
-      // --- Premium Skins ---
       {name: "Derpy Pterodactyl", url: "https://i.imgur.com/a3a7lbR.png", category: "premium"},
-
-      // --- Custom Skins ---
-      {name: "Cool Custom Dino", url: "https://i.imgur.com/xxxxxxx.png", category: "custom"},
-
-      // --- Mystery Skins ---
-      {name: "Mysterious Dragon", url: "https://i.imgur.com/yyyyyyy.png", category: "mystery"},
-
-      // --- Golden Pass Skins ---
-      {name: "Golden T-Rex", url: "https://i.imgur.com/zzzzzzz.png", category: "golden"},
-
-      // --- Adventure Skins ---
-      {name: "Jungle Explorer", url: "https://i.imgur.com/aaaaaaa.png", category: "adventure"},
-
-      // --- Veteran Skins ---
-      {name: "Old Warrior", url: "https://i.imgur.com/bbbbbbb.png", category: "veteran"},
-
-      // --- Quest Skins ---
-      {name: "Quest Knight", url: "https://i.imgur.com/ccccccc.png", category: "quest"},
-
-      // --- Free Skins ---
-      {name: "Free Alien", url: "https://i.imgur.com/ddddddd.png", category: "free"},
-
-      // --- YouTuber Skins ---
-      {name: "YT Hero", url: "https://i.imgur.com/eeeeeee.png", category: "youtube"},
-
-      // --- Pokémon Skins ---
-      {name: "Pikachu", url: "https://i.imgur.com/fffffff.png", category: "pokemon"},
-
-      // --- Thunderbirds Skins ---
-      {name: "Thunderbird Red", url: "https://i.imgur.com/ggggggg.png", category: "thunder"},
     ];
 
     const skinsPerPage = 100;
     let currentPage = 1;
-    let currentCategory = "vip"; // standaard categorie bij openen
+    let currentCategory = "vip";
 
-    function setCategory(cat) {
+    function setCategory(cat, btn) {
       currentCategory = cat;
       currentPage = 1;
+
+      // actieve knop highlighten
+      document.querySelectorAll('.buttons button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
       renderSkins();
     }
 
@@ -210,7 +198,8 @@
       }
     }
 
-    // Start met vip skins
+    // Startpagina = VIP actief
+    document.querySelector('.vip').classList.add('active');
     renderSkins();
   </script>
 </body>
