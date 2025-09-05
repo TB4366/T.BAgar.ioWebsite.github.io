@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,6 @@
       background: #f5f5f5;
       margin: 0;
       padding: 0;
-      text-align: center;
     }
     header {
       background: #007bff;
@@ -18,26 +17,21 @@
       padding: 20px;
       font-size: 24px;
       font-weight: bold;
+      text-align: center;
     }
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    .category {
+      margin: 30px auto;
+      max-width: 1100px;
       padding: 10px;
-      gap: 10px;
-      background: #fff;
     }
-    .buttons button {
-      padding: 10px 15px;
-      border: 2px solid black;   /* zwart randje bij alles */
+    .category h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      padding: 10px;
+      display: inline-block;
+      border: 2px solid black; /* black border */
       border-radius: 6px;
       color: white;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-    .buttons button.active {
-      filter: brightness(1.2); /* lichter bij klikken */
     }
     .vip { background: black; }
     .premium { background: orange; }
@@ -54,23 +48,24 @@
 
     .skins {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 naast elkaar */
+      grid-template-columns: repeat(3, 1fr); /* 3 per row */
       gap: 20px;
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
+      margin-top: 15px;
     }
     .skin {
       background: white;
+      border: 2px solid black; /* black border around skins */
       border-radius: 12px;
       padding: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      text-align: center;
     }
     .skin img {
-      width: 160px;   /* kleiner gemaakt */
+      width: 160px;
       height: 160px;
       object-fit: cover;
       border-radius: 50%;
+      border: 2px solid black; /* black border around images */
     }
     .skin h3 {
       margin: 10px 0 5px;
@@ -82,26 +77,8 @@
       text-decoration: none;
       word-break: break-all;
     }
-    .pagination {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0;
-      gap: 8px;
-    }
-    .pagination button {
-      padding: 8px 12px;
-      border: 1px solid #007bff;
-      background: white;
-      color: #007bff;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .pagination button.active {
-      background: #007bff;
-      color: white;
-    }
 
-    /* Responsief */
+    /* Responsive */
     @media (max-width: 800px) {
       .skins { grid-template-columns: repeat(2, 1fr); }
     }
@@ -113,93 +90,83 @@
 <body>
   <header>T.B Agar.io-skins</header>
 
-  <div class="buttons">
-    <button class="vip" onclick="setCategory('vip', this)">VIP Skins</button>
-    <button class="premium" onclick="setCategory('premium', this)">Premium Skins</button>
-    <button class="custom" onclick="setCategory('custom', this)">Custom Skins</button>
-    <button class="mystery" onclick="setCategory('mystery', this)">Mystery Skins</button>
-    <button class="golden" onclick="setCategory('golden', this)">Golden Pass Skins</button>
-    <button class="adventure" onclick="setCategory('adventure', this)">Adventure Skins</button>
-    <button class="veteran" onclick="setCategory('veteran', this)">Veteran Skins</button>
-    <button class="quest" onclick="setCategory('quest', this)">Quest Skins</button>
-    <button class="free" onclick="setCategory('free', this)">Free Skins</button>
-    <button class="youtube" onclick="setCategory('youtube', this)">YouTuber Skins</button>
-    <button class="pokemon" onclick="setCategory('pokemon', this)">Pokémon Skins</button>
-    <button class="thunder" onclick="setCategory('thunder', this)">Thunderbirds Skins</button>
-  </div>
-
-  <div id="skins" class="skins"></div>
-
-  <div class="pagination" id="pagination"></div>
+  <div id="categories"></div>
 
   <script>
     const skins = [
-      {name: "Derpy Carnotaurus", url: "https://i.imgur.com/zAOoOR6.png", category: "vip"},
-      {name: "Derpy Spinosaurus", url: "https://i.imgur.com/yDG1S2F.png", category: "vip"},
-      {name: "Derpy Pterodactyl", url: "https://i.imgur.com/a3a7lbR.png", category: "premium"},
+      /* VIP skins */
+      {name: "Cookie Mouse", url: "https://i.imgur.com/JQ7QwOB.png", category: "vip"},
+      {name: "Planet Cat", url: "https://i.imgur.com/ZMHaR8M.png", category: "vip"},
+      {name: "Poker Ace", url: "https://i.imgur.com/KoZTos3.png", category: "vip"},
+      {name: "Vampy", url: "https://i.imgur.com/UqRF8vY.png", category: "vip"},
+      {name: "Fox Mask", url: "https://i.imgur.com/SziRdrA.png", category: "vip"},
+      {name: "Love Cat", url: "https://i.imgur.com/kzsQf4r.png", category: "vip"},
+
+      /* Premium skins */
+      {name: "Blackout Bat", url: "https://i.imgur.com/eREzZFm.png", category: "premium"},
+      {name: "Sea Lamp", url: "https://i.imgur.com/xeJUDQ5.png", category: "premium"},
+      {name: "Night Stalker", url: "https://i.imgur.com/0wvNP2P.png", category: "premium"},
+      {name: "Derpy Raptor", url: "https://i.imgur.com/amLHijs.png", category: "premium"},
+      {name: "Derpy Ankylosaurus", url: "https://i.imgur.com/Wgw0tKz.png", category: "premium"},
+      {name: "Derpy Mosasaurus", url: "https://i.imgur.com/E6qqa3j.png", category: "premium"},
+
+      /* Custom skins */
+      {name: "Green Fish", url: "https://i.imgur.com/Kd2kafn.png", category: "custom"},
+      {name: "Yellow Fish", url: "https://i.imgur.com/MidVcZN.png", category: "custom"},
+      {name: "Black Mask", url: "https://i.imgur.com/1ytnLw0.png", category: "custom"},
+      {name: "Ant Head", url: "https://i.imgur.com/LVsxce1.jpeg", category: "custom"},
+      {name: "Alien in Bowl", url: "https://i.imgur.com/8Ufaic4.png", category: "custom"},
+      {name: "Scarred Shark", url: "https://i.imgur.com/0uYCv6u.png", category: "custom"},
     ];
 
-    const skinsPerPage = 100;
-    let currentPage = 1;
-    let currentCategory = "vip";
+    const categories = [
+      { key: "vip", label: "VIP Skins", class: "vip" },
+      { key: "premium", label: "Premium Skins", class: "premium" },
+      { key: "custom", label: "Custom Skins", class: "custom" },
+      { key: "mystery", label: "Mystery Skins", class: "mystery" },
+      { key: "golden", label: "Golden Pass Skins", class: "golden" },
+      { key: "adventure", label: "Adventure Skins", class: "adventure" },
+      { key: "veteran", label: "Veteran Skins", class: "veteran" },
+      { key: "quest", label: "Quest Skins", class: "quest" },
+      { key: "free", label: "Free Skins", class: "free" },
+      { key: "youtube", label: "YouTuber Skins", class: "youtube" },
+      { key: "pokemon", label: "Pokémon Skins", class: "pokemon" },
+      { key: "thunder", label: "Thunderbirds Skins", class: "thunder" },
+    ];
 
-    function setCategory(cat, btn) {
-      currentCategory = cat;
-      currentPage = 1;
+    function renderCategories() {
+      const container = document.getElementById("categories");
+      container.innerHTML = "";
 
-      // actieve knop highlighten
-      document.querySelectorAll('.buttons button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      categories.forEach(cat => {
+        const filtered = skins.filter(s => s.category === cat.key);
 
-      renderSkins();
-    }
+        if (filtered.length > 0) {
+          const div = document.createElement("div");
+          div.classList.add("category");
+          div.innerHTML = `<h2 class="${cat.class}">${cat.label}</h2>`;
 
-    function renderSkins() {
-      const container = document.getElementById('skins');
-      container.innerHTML = '';
+          const skinsDiv = document.createElement("div");
+          skinsDiv.classList.add("skins");
 
-      const filtered = skins.filter(s => s.category === currentCategory);
+          filtered.forEach(skin => {
+            const skinDiv = document.createElement("div");
+            skinDiv.classList.add("skin");
+            skinDiv.innerHTML = `
+              <img src="${skin.url}" alt="${skin.name}">
+              <h3>${skin.name}</h3>
+              <a href="${skin.url}" target="_blank">${skin.url}</a>
+            `;
+            skinsDiv.appendChild(skinDiv);
+          });
 
-      const start = (currentPage - 1) * skinsPerPage;
-      const end = start + skinsPerPage;
-      const pageSkins = filtered.slice(start, end);
-
-      pageSkins.forEach(skin => {
-        if (skin.name && skin.url) {
-          const div = document.createElement('div');
-          div.classList.add('skin');
-          div.innerHTML = `
-            <img src="${skin.url}" alt="${skin.name}">
-            <h3>${skin.name}</h3>
-            <a href="${skin.url}" target="_blank">${skin.url}</a>
-          `;
+          div.appendChild(skinsDiv);
           container.appendChild(div);
         }
       });
-
-      renderPagination(filtered.length);
     }
 
-    function renderPagination(totalSkins) {
-      const totalPages = Math.ceil(totalSkins / skinsPerPage);
-      const pagination = document.getElementById('pagination');
-      pagination.innerHTML = '';
-
-      for (let i = 1; i <= totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        if (i === currentPage) btn.classList.add('active');
-        btn.addEventListener('click', () => {
-          currentPage = i;
-          renderSkins();
-        });
-        pagination.appendChild(btn);
-      }
-    }
-
-    // Startpagina = VIP actief
-    document.querySelector('.vip').classList.add('active');
-    renderSkins();
+    renderCategories();
   </script>
 </body>
 </html>
