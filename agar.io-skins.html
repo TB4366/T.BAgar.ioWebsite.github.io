@@ -1,150 +1,235 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.B Agar.io-skins</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agar.io Custom Skins</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 0;
+    :root{
+      --blue:#1976d2;
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --muted:#9aa6bf;
     }
-    header {
-      background: #007bff;
-      color: white;
-      padding: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-    }
-    .category {
-      margin: 30px auto;
-      max-width: 1100px;
-      padding: 10px;
-    }
-    .category h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      padding: 10px;
-      display: inline-block;
-      border: 2px solid black; /* zwart randje */
-      border-radius: 6px;
-      color: white;
-    }
-    .vip { background: black; }
-    .premium { background: orange; }
-    .custom { background: purple; }
-    .mystery { background: blue; }
-    .golden { background: gold; color: black; }
-    .adventure { background: deeppink; }
-    .veteran { background: lightblue; color: black; }
-    .quest { background: gray; }
-    .free { background: green; }
-    .youtube { background: red; }
-    .pokemon { background: limegreen; }
-    .thunder { background: brown; }
-
-    .skins {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 naast elkaar */
-      gap: 20px;
-      margin-top: 15px;
-    }
-    .skin {
-      background: white;
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      text-align: center;
-    }
-    .skin img {
-      width: 160px;
-      height: 160px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-    .skin h3 {
-      margin: 10px 0 5px;
-      font-size: 14px;
-    }
-    .skin a {
-      font-size: 11px;
-      color: blue;
-      text-decoration: none;
-      word-break: break-all;
-    }
-
-    /* Responsief */
-    @media (max-width: 800px) {
-      .skins { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 500px) {
-      .skins { grid-template-columns: repeat(1, 1fr); }
-    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:var(--bg); color:#0b2340}
+    .topbar{background:var(--blue); color:white; padding:18px 20px}
+    .topbar h1{margin:0; font-size:20px}
+    .container{max-width:1100px; margin:22px auto; padding:0 16px}
+    .subtitle{color:var(--muted); margin:12px 0 20px}
+    .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    .controls input[type=text], .controls input[type=number]{padding:8px 10px; border-radius:8px; border:1px solid #dfe7f2; background:white}
+    .btn{background:var(--blue); color:white; border:none; padding:9px 12px; border-radius:8px; cursor:pointer}
+    .btn.secondary{background:#e6eefc; color:var(--blue)}
+    .panel{background:var(--card); padding:14px; border-radius:12px; box-shadow:0 6px 18px rgba(15,33,66,0.06); margin-top:18px}
+    .levels-grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:12px; margin-top:18px}
+    .level{position:relative; border-radius:10px; overflow:hidden; min-height:120px; display:flex; align-items:center; justify-content:center; color:white; font-weight:600}
+    .level.hidden{display:none}
+    .level .label{position:absolute; left:8px; top:8px; background:rgba(0,0,0,0.25); padding:4px 8px; border-radius:8px; font-size:12px}
+    .level.locked{filter:grayscale(30%) brightness(0.8);}
+    .lock{position:absolute; right:8px; top:8px; background:rgba(255,255,255,0.9); color:#223; padding:6px 8px; border-radius:999px; font-weight:700}
+    .level .skin-name{position:absolute; bottom:8px; left:8px; right:8px; font-size:12px; opacity:0.95}
+    .legend{display:flex; gap:10px; margin-top:10px; align-items:center}
+    .legend i{display:inline-block; width:14px; height:14px; border-radius:3px}
+    .admin{margin-top:16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .note{font-size:13px; color:var(--muted); margin-top:8px}
+    /* modal */
+    .modal-back{position:fixed; inset:0; background:rgba(6,12,28,0.45); display:none; align-items:center; justify-content:center}
+    .modal{background:white; border-radius:10px; width:420px; max-width:92%; padding:16px}
+    .modal h3{margin:0 0 10px}
+    .modal .row{display:flex; gap:8px}
+    @media (max-width:520px){ .controls{flex-direction:column} }
   </style>
 </head>
 <body>
-  <header>T.B Agar.io-skins</header>
+  <div class="topbar">
+    <h1>Agar.io Custom Skins</h1>
+  </div>
 
-  <div id="categories"></div>
+  <div class="container">
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap">
+        <div>
+          <div style="font-size:18px; font-weight:700">Complete the assignments and level up each time!</div>
+          <div class="subtitle">Vul je Agar.io UID in om je voortgang te laden. Gebruik de mass-invoer om automatisch opdrachten te claimen (voorbeeld: level 1 = >=50 mass, level 2 = >=100 mass ...)</div>
+        </div>
+        <div class="controls">
+          <input id="uid" type="text" placeholder="Voer je Agar.io UID in" />
+          <button id="loadBtn" class="btn">Laad</button>
+          <button id="saveBtn" class="btn secondary">Bewaar</button>
+          <input id="massInput" type="number" placeholder="Huidige mass (voor claim)" min="0" />
+          <button id="claimBtn" class="btn">Claim levels</button>
+        </div>
+      </div>
+
+      <div class="note">Let op: Deze pagina werkt lokaal en slaat voortgang op in je browser per UID. Voor echte Agar.io-koppeling is server-side verificatie en Agar.io API nodig.</div>
+
+      <div class="admin">
+        <input id="skinLevel" type="number" min="1" max="100" placeholder="Level nummer (1-100)" />
+        <input id="skinName" type="text" placeholder="Skin naam (bijv. 'Blue Blob')" />
+        <input id="skinColor" type="text" placeholder="CSS kleur / gradient (bijv. #ffcc00 of linear-gradient(...))" />
+        <button id="addSkinBtn" class="btn secondary">Toevoegen / Update skin</button>
+        <button id="clearSkinsBtn" class="btn secondary">Verwijder alle skins</button>
+      </div>
+
+      <div class="legend">
+        <div><i style="background:linear-gradient(135deg,#6ad,#3a8)" ></i> Skin aanwezig</div>
+        <div><i style="background:#000; opacity:.6"></i> Vergrendeld</div>
+        <div><i style="background:transparent; border:1px dashed #c6d3ea"></i> Geen skin (onzichtbaar)</div>
+      </div>
+
+      <div id="levels" class="levels-grid"></div>
+
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div id="modalBack" class="modal-back">
+    <div class="modal" role="dialog">
+      <h3 id="modalTitle">Level</h3>
+      <div id="modalBody"></div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px">
+        <button id="closeModal" class="btn secondary">Sluit</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const skins = [
-      {name: "Derpy Carnotaurus", url: "https://i.imgur.com/zAOoOR6.png", category: "vip"},
-      {name: "Derpy Spinosaurus", url: "https://i.imgur.com/yDG1S2F.png", category: "vip"},
-      {name: "Derpy Pterodactyl", url: "https://i.imgur.com/a3a7lbR.png", category: "premium"},
-    ];
+    // --- Data model
+    const LEVELS = 100;
+    // thresholds: level N requires N*50 mass (level1 = 50, level2 = 100 ...)
+    function thresholdFor(level){ return level * 50; }
 
-    const categories = [
-      { key: "vip", label: "VIP Skins", class: "vip" },
-      { key: "premium", label: "Premium Skins", class: "premium" },
-      { key: "custom", label: "Custom Skins", class: "custom" },
-      { key: "mystery", label: "Mystery Skins", class: "mystery" },
-      { key: "golden", label: "Golden Pass Skins", class: "golden" },
-      { key: "adventure", label: "Adventure Skins", class: "adventure" },
-      { key: "veteran", label: "Veteran Skins", class: "veteran" },
-      { key: "quest", label: "Quest Skins", class: "quest" },
-      { key: "free", label: "Free Skins", class: "free" },
-      { key: "youtube", label: "YouTuber Skins", class: "youtube" },
-      { key: "pokemon", label: "Pokémon Skins", class: "pokemon" },
-      { key: "thunder", label: "Thunderbirds Skins", class: "thunder" },
-    ];
+    // load skins and user data from localStorage
+    function storageKey(uid){ return 'agario_skins_progress_' + uid; }
 
-    function renderCategories() {
-      const container = document.getElementById("categories");
-      container.innerHTML = "";
+    // sample skins: we'll prefill a couple for demonstration
+    const sampleSkins = {
+      1: {name:'Starter Blue', color:'linear-gradient(135deg,#4facfe,#00f2fe)'},
+      2: {name:'Sunny', color:'linear-gradient(135deg,#fbc2eb,#a6c1ee)'},
+      5: {name:'Golden', color:'#ffdd57'}
+    };
 
-      categories.forEach(cat => {
-        const filtered = skins.filter(s => s.category === cat.key);
+    // --- UI elements
+    const levelsEl = document.getElementById('levels');
+    const uidInput = document.getElementById('uid');
+    const loadBtn = document.getElementById('loadBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const massInput = document.getElementById('massInput');
+    const claimBtn = document.getElementById('claimBtn');
+    const addSkinBtn = document.getElementById('addSkinBtn');
+    const skinLevel = document.getElementById('skinLevel');
+    const skinName = document.getElementById('skinName');
+    const skinColor = document.getElementById('skinColor');
+    const clearSkinsBtn = document.getElementById('clearSkinsBtn');
 
-        if (filtered.length > 0) { // alleen tonen als er skins zijn
-          const div = document.createElement("div");
-          div.classList.add("category");
-          div.innerHTML = `<h2 class="${cat.class}">${cat.label}</h2>`;
+    const modalBack = document.getElementById('modalBack');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const closeModal = document.getElementById('closeModal');
 
-          const skinsDiv = document.createElement("div");
-          skinsDiv.classList.add("skins");
+    // runtime data
+    let skins = JSON.parse(localStorage.getItem('agario_skins_catalog') || 'null') || sampleSkins;
+    let user = { uid: null, claimedLevels: [] };
 
-          filtered.forEach(skin => {
-            const skinDiv = document.createElement("div");
-            skinDiv.classList.add("skin");
-            skinDiv.innerHTML = `
-              <img src="${skin.url}" alt="${skin.name}">
-              <h3>${skin.name}</h3>
-              <a href="${skin.url}" target="_blank">${skin.url}</a>
-            `;
-            skinsDiv.appendChild(skinDiv);
-          });
+    function saveCatalog(){ localStorage.setItem('agario_skins_catalog', JSON.stringify(skins)); }
 
-          div.appendChild(skinsDiv);
-          container.appendChild(div);
+    function saveUser(){ if(!user.uid) return; localStorage.setItem(storageKey(user.uid), JSON.stringify(user)); }
+    function loadUser(uid){ const data = localStorage.getItem(storageKey(uid)); if(data) user = JSON.parse(data); else user = { uid: uid, claimedLevels: [] }; user.uid = uid; }
+
+    // build level tiles
+    function renderLevels(){ levelsEl.innerHTML = '';
+      for(let i=1;i<=LEVELS;i++){
+        const hasSkin = skins[i];
+        const isVisible = Boolean(hasSkin);
+        const tile = document.createElement('div');
+        tile.className = 'level' + (isVisible? '' : ' hidden');
+        tile.dataset.level = i;
+        // default background
+        if(hasSkin){ tile.style.background = hasSkin.color; }
+        else{ tile.style.background = 'linear-gradient(135deg,#f0f4ff,#eef6f9)'; tile.style.color = '#123'; }
+
+        const label = document.createElement('div'); label.className = 'label'; label.textContent = 'Level ' + i;
+        tile.appendChild(label);
+
+        if(hasSkin){
+          const skinLabel = document.createElement('div'); skinLabel.className='skin-name'; skinLabel.textContent = hasSkin.name || 'Untitled skin';
+          tile.appendChild(skinLabel);
+
+          const locked = !user.claimedLevels.includes(i);
+          if(locked){ tile.classList.add('locked'); const lock = document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; tile.appendChild(lock); }
+          else { const lock = document.createElement('div'); lock.className='lock'; lock.textContent='✓'; tile.appendChild(lock); }
+
+          tile.addEventListener('click', ()=> openModal(i));
         }
-      });
+
+        levelsEl.appendChild(tile);
+      }
     }
 
-    renderCategories();
+    function openModal(level){
+      const hasSkin = skins[level];
+      modalTitle.textContent = 'Level ' + level + (hasSkin? ' — ' + hasSkin.name : '');
+      const locked = !user.claimedLevels.includes(level);
+      modalBody.innerHTML = '';
+      if(!hasSkin){ modalBody.innerHTML = '<div>Geen skin ingesteld voor dit level. Gebruik de admin-controls om een skin toe te voegen (zichtbaar wordt alleen als er een skin is).</div>' }
+      else{
+        const info = document.createElement('div');
+        info.innerHTML = `<p>Opdracht: bereik ${thresholdFor(level)} mass om dit level te unlocken.</p>`;
+        modalBody.appendChild(info);
+        if(locked){
+          const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Claim (als je de opdracht hebt uitgevoerd)';
+          btn.addEventListener('click', ()=>{ user.claimedLevels.push(level); user.claimedLevels = Array.from(new Set(user.claimedLevels)); saveUser(); renderLevels(); closeModalFn(); });
+          modalBody.appendChild(btn);
+        } else {
+          modalBody.innerHTML += '<p style="margin-top:8px">Dit level is al ontgrendeld — je kunt deze skin toepassen in-game (niet automatisch toegepast door deze demo).</p>';
+        }
+      }
+      modalBack.style.display='flex';
+    }
+    function closeModalFn(){ modalBack.style.display='none'; }
+
+    // buttons
+    loadBtn.addEventListener('click', ()=>{ const uid = uidInput.value.trim(); if(!uid){ alert('Voer een UID in.'); return; } loadUser(uid); renderLevels(); alert('Voortgang geladen voor UID ' + uid + '.'); });
+    saveBtn.addEventListener('click', ()=>{ if(!user.uid){ alert('Laad eerst een UID om op te slaan.'); return; } saveUser(); saveCatalog(); alert('Voortgang opgeslagen.'); });
+    closeModal.addEventListener('click', closeModalFn);
+    modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) closeModalFn(); });
+
+    claimBtn.addEventListener('click', ()=>{
+      const m = Number(massInput.value || 0);
+      if(!user.uid){ alert('Laad eerst je UID (links).'); return; }
+      let unlocked = 0;
+      for(let i=1;i<=LEVELS;i++){
+        if(m >= thresholdFor(i) && skins[i]){
+          if(!user.claimedLevels.includes(i)){ user.claimedLevels.push(i); unlocked++; }
+        }
+      }
+      if(unlocked>0) { saveUser(); renderLevels(); alert('Je hebt ' + unlocked + ' nieuwe levels ontgrendeld.'); }
+      else alert('Geen nieuwe levels ontgrendeld op basis van die mass.');
+    });
+
+    addSkinBtn.addEventListener('click', ()=>{
+      const lvl = Number(skinLevel.value);
+      if(!lvl || lvl<1 || lvl>LEVELS){ alert('Voer een geldig level in (1-100).'); return; }
+      const name = skinName.value.trim() || ('Skin ' + lvl);
+      const color = skinColor.value.trim() || ('linear-gradient(135deg,#ccc,#eee)');
+      skins[lvl] = { name, color };
+      saveCatalog(); renderLevels(); alert('Skin toegevoegd/updated voor level ' + lvl + '.');
+    });
+
+    clearSkinsBtn.addEventListener('click', ()=>{
+      if(!confirm('Weet je zeker dat je alle skins wilt verwijderen uit de catalogus?')) return;
+      skins = {}; saveCatalog(); renderLevels(); });
+
+    // initialize: if user hasn't loaded a UID, create a temporary user to show locked tiles
+    function init(){
+      // populate tiles quickly
+      renderLevels();
+      // if no catalog saved, put sample skins
+      if(!localStorage.getItem('agario_skins_catalog')){ localStorage.setItem('agario_skins_catalog', JSON.stringify(skins)); }
+    }
+
+    init();
   </script>
 </body>
 </html>
