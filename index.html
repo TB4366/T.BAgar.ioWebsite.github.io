@@ -238,23 +238,74 @@
     background-color: #aaa;
   }
 
+  /* Overlay deals slider */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
   }
-  /* Animatie types */
-  .fadeIn { animation: fadeIn 1s forwards; }
-  .slideUp { animation: slideUp 1s forwards; }
-  .zoomIn { animation: zoomIn 1s forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  .slider {
+    background: #fff;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    color: #000;
   }
-  @keyframes slideUp {
-    from { transform: translate(-50%, 20px); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
+  .slide {
+    display: none;
+    text-align: center;
+    padding: 20px;
   }
-  @keyframes zoomIn {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
-    to { transform: translateX(-50%) scale(1); opacity: 1; }
+  .slide img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  .prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    transform: translateY(-50%);
+    user-select: none;
+  }
+  .prev { left: 10px; }
+  .next { right: 10px; }
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+  }
+  .countdown {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #e63946;
+  }
+  .open-deals {
+    margin: 20px;
+    padding: 10px 20px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
   }
 </style>
 </head>
@@ -278,6 +329,9 @@
 </header>
 
 <main>
+  <!-- Knop om deals menu weer te openen -->
+  <button class="open-deals">Bekijk Deals</button>
+
   <div class="main-video">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
   </div>
@@ -308,6 +362,34 @@
   </div>
 </main>
 
+<!-- Deals Overlay -->
+<div class="overlay" id="overlay">
+  <div class="slider">
+    <span class="close-btn" onclick="closeOverlay()">&times;</span>
+
+    <div class="slide">
+      <h2>Deal 1</h2>
+      <img src="https://via.placeholder.com/500x250?text=Deal+1" alt="Deal 1">
+      <p class="countdown" data-time="20"></p>
+    </div>
+
+    <div class="slide">
+      <h2>Deal 2</h2>
+      <img src="https://via.placeholder.com/500x250?text=Deal+2" alt="Deal 2">
+      <p class="countdown" data-time="15"></p>
+    </div>
+
+    <div class="slide">
+      <h2>Nieuws</h2>
+      <img src="https://via.placeholder.com/500x250?text=Nieuws" alt="Nieuws">
+      <p class="countdown" data-time="10"></p>
+    </div>
+
+    <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+    <a class="next" onclick="changeSlide(1)">&#10095;</a>
+  </div>
+</div>
+
 <script>
   function toggleMenu() {
     const menu = document.getElementById('menu');
@@ -336,27 +418,14 @@
   });
 
   // Skins afbeeldingen
-  const skinsCircle1 = [
-    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
-    'IMG_2978.jpeg',
-    'IMG_3164.png'
-  ];
-  const skinsCircle2 = [
-    'IMG_3156.jpeg',
-    'IMG_2718.png',
-    'IMG_2819.png'
-  ];
-  const skinsCircle3 = [
-    'IMG_3520.png',
-    'IMG_3533.png',
-    'IMG_3512.webp'
-  ];
+  const skinsCircle1 = ['FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png','IMG_2978.jpeg','IMG_3164.png'];
+  const skinsCircle2 = ['IMG_3156.jpeg','IMG_2718.png','IMG_2819.png'];
+  const skinsCircle3 = ['IMG_3520.png','IMG_3533.png','IMG_3512.webp'];
   const intervals = [4000, 4500, 5000];
 
   function cycleImages(circleId, images, interval) {
     const circle = document.getElementById(circleId);
     let currentIndex = 0;
-    // Voeg img element toe
     images.forEach((src, i) => {
       const img = document.createElement('img');
       img.src = src;
@@ -370,71 +439,75 @@
       imgs[currentIndex].classList.add('active');
     }, interval);
   }
-
   cycleImages('circle1', skinsCircle1, intervals[0]);
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
+
+  // Deals slider logic
+  let slideIndex = 0;
+  let slides = document.querySelectorAll(".slide");
+  let timers = [];
+
+  function showSlide(n) {
+    timers.forEach(t => clearInterval(t));
+    timers = [];
+    if (n >= slides.length) slideIndex = 0;
+    if (n < 0) slideIndex = slides.length - 1;
+    slides.forEach(s => s.style.display = "none");
+    slides[slideIndex].style.display = "block";
+    let countdownElem = slides[slideIndex].querySelector(".countdown");
+    let timeLeft = parseInt(countdownElem.dataset.time);
+    countdownElem.textContent = "Nog " + timeLeft + " sec";
+    let timer = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
+        countdownElem.textContent = "Nog " + timeLeft + " sec";
+      } else {
+        clearInterval(timer);
+        changeSlide(1);
+      }
+    }, 1000);
+    timers.push(timer);
+  }
+
+  function changeSlide(n) {
+    slideIndex += n;
+    showSlide(slideIndex);
+  }
+  function closeOverlay() {
+    document.getElementById("overlay").style.display = "none";
+  }
+  function openOverlay() {
+    document.getElementById("overlay").style.display = "flex";
+    slideIndex = 0;
+    showSlide(slideIndex);
+  }
+  document.querySelector(".open-deals").addEventListener("click", openOverlay);
+  window.onload = openOverlay;
 </script>
 
 <!-- Nieuwe sectie onderaan -->
 <div style="text-align:center; margin-top:50px;">
-
-  <!-- Nieuwe video's -->
   <h2>New video’s</h2>
   <div style="display:flex; justify-content:center; margin:20px 0;">
-    <iframe width="560" height="315" 
-      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
-      title="New video" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      allowfullscreen>
-    </iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
   </div>
-
-  <!-- Best Duo -->
   <h2>The Best Duo</h2>
   <div style="display:flex; justify-content:center; margin:20px 0;">
-    <iframe width="560" height="315" 
-      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
-      title="The Best Duo" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      allowfullscreen>
-    </iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
   </div>
-
   <hr style="margin:30px 0;">
-
-  <!-- Knoppen sectie -->
   <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-
-    <!-- Discord knop -->
-    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#5865F2; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
-      JOIN My Discord server
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" style="display:flex; align-items:center; gap:10px; background-color:#5865F2; color:white; padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20"> JOIN My Discord server
     </a>
-
-    <!-- Instagram knop -->
-    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#E1306C; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
-      Follow me on Instagram
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="display:flex; align-items:center; gap:10px; background-color:#E1306C; color:white; padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20"> Follow me on Instagram
     </a>
-
-    <!-- YouTube knop -->
-    <a href="https://www.youtube.com/@T.B6" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#FF0000; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
-      Subscribe to my YouTube channel
+    <a href="https://www.youtube.com/@T.B6" target="_blank" style="display:flex; align-items:center; gap:10px; background-color:#FF0000; color:white; padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20"> Subscribe to my YouTube channel
     </a>
-
   </div>
 </div>
-  
 </body>
 </html>
-  
