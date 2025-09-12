@@ -1,510 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Agar-Clone</title>
-<style>
-  :root{--bg:#0b1220;--panel:#0f1724;--accent:#2dd4bf;--muted:#9aa6bf}
-  html,body{height:100%; margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;}
-  body{background:linear-gradient(180deg,#071124, #07182b); color:#e6eefc; overflow:hidden;}
-  #ui{
-    position:fixed; left:12px; top:12px; z-index:30; background:rgba(10,16,28,0.6);
-    padding:10px;border-radius:10px;backdrop-filter: blur(6px); box-shadow:0 6px 20px rgba(2,6,23,0.6);
-  }
-  #ui input, #ui button, #ui select{margin:6px 6px 6px 0; padding:8px; border-radius:8px; border:none; background:#071a2b; color:#e6eefc}
-  #ui button{cursor:pointer; background:var(--accent); color:#022;}
-  #hud{position:fixed; right:12px; top:12px; z-index:30; background:rgba(6,10,18,0.55); padding:10px; border-radius:10px; min-width:180px}
-  canvas{display:block;}
-  .small{font-size:13px; color:var(--muted)}
-  .skin-thumb{display:inline-block; width:28px; height:28px; border-radius:999px; margin-right:6px; vertical-align:middle; border:2px solid rgba(255,255,255,0.06)}
-  .locked{opacity:.35; filter:grayscale(50%)}
-  .leader{font-weight:700; font-size:14px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deals Slider</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Overlay achtergrond */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    /* Slider container */
+    .slider {
+      background: #fff;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    /* Dia's */
+    .slide {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .slide img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    /* Navigatie knoppen */
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      padding: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 20px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      transform: translateY(-50%);
+      user-select: none;
+    }
+    .prev { left: 10px; }
+    .next { right: 10px; }
+
+    /* Sluitknop */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #333;
+    }
+
+    /* Timer */
+    .countdown {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #e63946;
+    }
+
+    /* Knop op website om menu te openen */
+    .open-deals {
+      margin: 20px;
+      padding: 10px 20px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <div id="ui">
-    <div style="font-weight:700">Agar-Clone</div>
-    <div class="small">Voer je player naam (UID) — voortgang lokaal opgeslagen</div>
-    <input id="uid" placeholder="Naam of UID" />
-    <button id="startBtn">Start spel</button>
-    <button id="resetBtn">Reset progress</button>
-    <div class="small" style="margin-top:8px">Controls: muis = bewegen · spatie = split · W = eject</div>
+
+  <!-- Knop om menu te openen -->
+  <button class="open-deals">Bekijk Deals</button>
+
+  <!-- Overlay met slider -->
+  <div class="overlay" id="overlay">
+    <div class="slider">
+      <span class="close-btn" onclick="closeOverlay()">&times;</span>
+
+      <!-- Slide 1 -->
+      <div class="slide">
+        <h2>Deal 1</h2>
+        <img src="https://via.placeholder.com/500x250?text=Deal+1" alt="Deal 1">
+        <p class="countdown" data-time="20"></p>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide">
+        <h2>Deal 2</h2>
+        <img src="https://via.placeholder.com/500x250?text=Deal+2" alt="Deal 2">
+        <p class="countdown" data-time="15"></p>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide">
+        <h2>Nieuws</h2>
+        <img src="https://via.placeholder.com/500x250?text=Nieuws" alt="Nieuws">
+        <p class="countdown" data-time="10"></p>
+      </div>
+
+      <!-- Navigatie -->
+      <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+      <a class="next" onclick="changeSlide(1)">&#10095;</a>
+    </div>
   </div>
 
-  <div id="hud">
-    <div>Mass: <span id="mass">0</span></div>
-    <div>Level: <span id="level">0</span></div>
-    <div style="margin-top:8px"><strong>Skins</strong></div>
-    <div id="skinsList" style="margin-top:6px"></div>
-    <div style="margin-top:8px"><strong>Leaderboard</strong></div>
-    <div id="leaderboard"></div>
-  </div>
+  <script>
+    let slideIndex = 0;
+    let slides = document.querySelectorAll(".slide");
+    let timers = [];
 
-  <canvas id="game"></canvas>
+    function showSlide(n) {
+      // Stop eerdere timers
+      timers.forEach(t => clearInterval(t));
+      timers = [];
 
-<script>
-/* -------------------------
-   Config
-   ------------------------- */
-const CONFIG = {
-  WORLD_W: 3000,
-  WORLD_H: 2000,
-  FOOD_COUNT: 350,
-  BOT_COUNT: 8,
-  FOOD_RADIUS: 6,
-  TICK: 1/60,
-  MASS_TO_RADIUS: m => Math.max(6, Math.sqrt(m) * 2), // visual radius
-  LEVEL_STEP: 50 // iedere 50 mass = 1 level (level 1 bij 50 mass)
-};
+      if (n >= slides.length) slideIndex = 0;
+      if (n < 0) slideIndex = slides.length - 1;
 
-/* Predefined skins mapped to level thresholds (unlock when mass >= level*LEVEL_STEP) */
-const SKINS = [
-  {level:1, name:'Blue Blob', style:'#4db8ff'},
-  {level:3, name:'Sunrise', style:'linear-gradient(135deg,#ffb86b,#ffd86b)'},
-  {level:5, name:'Vortex', style:'linear-gradient(135deg,#9b5cff,#4be1ff)'},
-  {level:8, name:'Gold', style:'#ffd54f'},
-  {level:12, name:'Toxic', style:'linear-gradient(135deg,#00f260,#0575e6)'}
-];
+      slides.forEach(s => s.style.display = "none");
+      slides[slideIndex].style.display = "block";
 
-/* -------------------------
-   Canvas & View
-   ------------------------- */
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-function fit() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', fit);
-fit();
+      // Countdown per slide
+      let countdownElem = slides[slideIndex].querySelector(".countdown");
+      let timeLeft = parseInt(countdownElem.dataset.time);
 
-/* -------------------------
-   Utility
-   ------------------------- */
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function dist(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); }
-function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
-
-/* -------------------------
-   Game objects
-   ------------------------- */
-class Food {
-  constructor(x,y){
-    this.x=x; this.y=y;
-    this.r = CONFIG.FOOD_RADIUS;
-    this.color = `hsl(${Math.floor(Math.random()*360)},70%,60%)`;
-  }
-  draw(vx,vy,zoom){
-    const screenX = (this.x - vx)*zoom + canvas.width/2;
-    const screenY = (this.y - vy)*zoom + canvas.height/2;
-    ctx.beginPath(); ctx.fillStyle=this.color;
-    ctx.arc(screenX, screenY, this.r*zoom, 0, Math.PI*2); ctx.fill();
-  }
-}
-
-class Cell {
-  constructor(opts){
-    this.x = opts.x; this.y = opts.y;
-    this.mass = opts.mass || 10;
-    this.r = CONFIG.MASS_TO_RADIUS(this.mass);
-    this.vx = 0; this.vy = 0;
-    this.color = opts.color || '#4af';
-    this.name = opts.name || 'Player';
-    this.isBot = !!opts.isBot;
-    this.parts = [this]; // for splits (array of cells owned)
-    this.mergeTimer = 0;
-  }
-  update(dt){
-    this.r = CONFIG.MASS_TO_RADIUS(this.mass);
-    if(this.mergeTimer>0) this.mergeTimer -= dt;
-  }
-  draw(vx,vy,zoom){
-    const screenX = (this.x - vx)*zoom + canvas.width/2;
-    const screenY = (this.y - vy)*zoom + canvas.height/2;
-    ctx.beginPath();
-    // fill style : allow gradient or plain color
-    if(this.color.startsWith('linear-gradient')){
-      // simple fallback: use parsed two colors for gradient
-      const parts = this.color.match(/linear-gradient\\(.*?,(#[0-9a-fA-F]{3,6}|[^,]+),(.+?)\\)/);
-      ctx.fillStyle = '#ccc';
-    } else ctx.fillStyle = this.color;
-    ctx.arc(screenX, screenY, this.r*zoom, 0, Math.PI*2);
-    ctx.fill();
-    // name
-    ctx.font = Math.max(10, 12*zoom) + 'px Inter';
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.textAlign = 'center';
-    ctx.fillText(this.name, screenX, screenY - this.r*zoom - 6);
-  }
-}
-
-/* -------------------------
-   Game state
-   ------------------------- */
-let foods = [];
-let bots = [];
-let player = null;
-let uid = '';
-let viewZoom = 1;
-let viewX = CONFIG.WORLD_W/2, viewY = CONFIG.WORLD_H/2;
-let mouse = {x: window.innerWidth/2, y: window.innerHeight/2};
-let lastTS = 0;
-let running = false;
-
-/* -------------------------
-   Persistence (localStorage)
-   ------------------------- */
-function saveProgress(){
-  if(!uid) return;
-  const key = 'agarclone_' + uid;
-  const data = { uid, mass: getPlayerMass(), unlocked: getUnlockedSkins() };
-  localStorage.setItem(key, JSON.stringify(data));
-}
-function loadProgress(id){
-  if(!id) return null;
-  const key = 'agarclone_' + id;
-  const raw = localStorage.getItem(key);
-  try { return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
-}
-function resetProgress(){
-  if(!uid) return;
-  localStorage.removeItem('agarclone_' + uid);
-}
-
-/* -------------------------
-   Init world
-   ------------------------- */
-function initWorld(){
-  foods = []; bots = [];
-  for(let i=0;i<CONFIG.FOOD_COUNT;i++) foods.push(new Food(rand(0,CONFIG.WORLD_W), rand(0,CONFIG.WORLD_H)));
-  for(let i=0;i<CONFIG.BOT_COUNT;i++){
-    const b = new Cell({x: rand(0,CONFIG.WORLD_W), y: rand(0,CONFIG.WORLD_H), mass: rand(8,80), color: `hsl(${Math.floor(rand(0,360))},60%,60%)`, name:'Bot'+(i+1), isBot:true });
-    bots.push(b);
-  }
-}
-
-/* -------------------------
-   Player control
-   ------------------------- */
-window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-window.addEventListener('keydown', e => {
-  if(!player) return;
-  if(e.code === 'Space'){ // split
-    e.preventDefault();
-    doSplit();
-  } else if(e.key.toLowerCase() === 'w'){ // eject
-    doEject();
-  }
-});
-
-function doSplit(){
-  if(player.mass < 20) return;
-  const splitMass = Math.floor(player.mass / 2);
-  player.mass = Math.max(10, player.mass - splitMass);
-  const angle = Math.atan2(mouse.y - canvas.height/2, mouse.x - canvas.width/2);
-  const child = new Cell({ x: player.x + Math.cos(angle)* (player.r + 20), y: player.y + Math.sin(angle)*(player.r + 20), mass: splitMass, color: player.color, name: player.name });
-  // give initial velocity
-  child.vx = Math.cos(angle) * 6;
-  child.vy = Math.sin(angle) * 6;
-  child.mergeTimer = 3.0;
-  player.mergeTimer = 3.0;
-  player.parts.push(child);
-}
-
-/* Eject a small mass pellet */
-function doEject(){
-  if(player.mass <= 12) return;
-  const eject = 4;
-  player.mass = Math.max(10, player.mass - eject);
-  const angle = Math.atan2(mouse.y - canvas.height/2, mouse.x - canvas.width/2);
-  // create a small food pellet moving forward
-  const pellet = new Food(player.x + Math.cos(angle)*(player.r + 10), player.y + Math.sin(angle)*(player.r + 10));
-  pellet.r = 4;
-  pellet.color = player.color;
-  pellet.vx = Math.cos(angle) * 5;
-  pellet.vy = Math.sin(angle) * 5;
-  foods.push(pellet);
-}
-
-/* -------------------------
-   Mechanics helpers
-   ------------------------- */
-function getPlayerMass(){
-  // combine parts mass
-  if(!player) return 0;
-  return Math.max(0, player.mass + (player.parts.length>1 ? player.parts.slice(1).reduce((s,p)=>s+p.mass,0):0));
-}
-function computeLevelFromMass(mass){ return Math.floor(mass / CONFIG.LEVEL_STEP); }
-function getUnlockedSkins(){
-  const m = getPlayerMass();
-  return SKINS.filter(s => m >= s.level * 1 * (CONFIG.LEVEL_STEP)).map(s => s.level);
-}
-
-/* -------------------------
-   Game tick
-   ------------------------- */
-function update(dt){
-  // player movement: move each part towards mouse with speed scaling inverse to size
-  if(player){
-    // center part behaves as main cell
-    const screenCenter = {x: canvas.width/2, y: canvas.height/2};
-    const targetWorld = {
-      x: viewX + (mouse.x - screenCenter.x)/viewZoom,
-      y: viewY + (mouse.y - screenCenter.y)/viewZoom
-    };
-    const dx = targetWorld.x - player.x, dy = targetWorld.y - player.y;
-    // speed depends inversely on mass
-    const speed = clamp(400 / (player.mass + 20), 0.6, 6);
-    player.vx += (dx * 0.1) * dt * speed;
-    player.vy += (dy * 0.1) * dt * speed;
-    // damping
-    player.vx *= 0.92; player.vy *= 0.92;
-    player.x += player.vx; player.y += player.vy;
-    player.update(dt);
-
-    // move other parts (from splits)
-    for(let i=1;i<player.parts.length;i++){
-      const p = player.parts[i];
-      p.x += p.vx; p.y += p.vy;
-      // slow down over time
-      p.vx *= 0.96; p.vy *= 0.96;
-      p.update(dt);
-      // attempt to merge automatically if close and timer expired
-      if(p.mergeTimer <= 0 && dist(p, player) < player.r * 0.9){
-        player.mass += p.mass;
-        // remove part
-        player.parts.splice(i,1); i--;
-      }
-    }
-
-    // camera zoom based on mass
-    viewZoom = clamp(1.2 - (Math.log(player.mass+10)/10), 0.45, 1.2);
-    viewX = player.x; viewY = player.y;
-  }
-
-  // foods movement (pellets)
-  for(const f of foods){
-    if(f.vx) { f.x += f.vx; f.y += f.vy; f.vx *= 0.95; f.vy *= 0.95; }
-  }
-
-  // bots AI: simple wandering and chase small food or flee bigger
-  for(const b of bots){
-    // wander
-    b.vx += rand(-0.6,0.6)*dt*30; b.vy += rand(-0.6,0.6)*dt*30;
-    // clamp speed by mass
-    const speed = clamp(200/(b.mass+10), 0.6, 4);
-    b.x += b.vx * speed * dt * 60;
-    b.y += b.vy * speed * dt * 60;
-    b.update(dt);
-
-    // eat food if colliding
-    for(let i = foods.length -1; i>=0; i--){
-      const f = foods[i];
-      const d = Math.hypot(b.x - f.x, b.y - f.y);
-      if(d < CONFIG.MASS_TO_RADIUS(b.mass) + f.r){
-        b.mass += 1.2;
-        foods.splice(i,1);
-      }
-    }
-  }
-
-  // collisions: player vs food
-  for(let i = foods.length -1; i>=0; i--){
-    const f = foods[i];
-    // check each player part
-    for(let p of (player ? player.parts : [])){
-      const d = Math.hypot(p.x - f.x, p.y - f.y);
-      if(d < CONFIG.MASS_TO_RADIUS(p.mass) + f.r){
-        p.mass += 1;
-        foods.splice(i,1);
-        break;
-      }
-    }
-  }
-
-  // player vs bots and bots vs bots: bigger eats smaller
-  const allCells = bots.concat(player ? player.parts : []);
-  // bots eating player parts
-  for(let bi = bots.length-1; bi>=0; bi--){
-    const b = bots[bi];
-    // bots eat other bots
-    for(let bj = bots.length-1; bj>=0; bj--){
-      if(bi===bj) continue;
-      const o = bots[bj];
-      const d = Math.hypot(b.x - o.x, b.y - o.y);
-      if(d < CONFIG.MASS_TO_RADIUS(b.mass) && b.mass > o.mass * 1.15){
-        b.mass += o.mass * 0.9;
-        bots.splice(bj,1);
-        if(bj < bi) bi--;
-      }
-    }
-    // bots eat player parts
-    if(player){
-      for(let pi = player.parts.length-1; pi>=0; pi--){
-        const ppart = player.parts[pi];
-        const d = Math.hypot(b.x - ppart.x, b.y - ppart.y);
-        if(d < CONFIG.MASS_TO_RADIUS(b.mass) && b.mass > ppart.mass * 1.15){
-          // bot eats that part -> player loses that part
-          b.mass += ppart.mass * 0.9;
-          if(pi === 0){
-            // main part eaten -> game over for player
-            endGame('Je bent opgegeten!');
-            return;
-          } else {
-            player.parts.splice(pi,1);
-          }
+      countdownElem.textContent = "Nog " + timeLeft + " sec";
+      let timer = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          countdownElem.textContent = "Nog " + timeLeft + " sec";
+        } else {
+          clearInterval(timer);
+          changeSlide(1);
         }
-      }
+      }, 1000);
+      timers.push(timer);
     }
-  }
 
-  // bots can collide with each other handled above; ensure minimum bots exist
-  while(bots.length < CONFIG.BOT_COUNT) bots.push(new Cell({x:rand(0,CONFIG.WORLD_W), y:rand(0,CONFIG.WORLD_H), mass:rand(10,40), color:`hsl(${Math.floor(rand(0,360))},60%,60%)`, name:'Bot'+(bots.length+1), isBot:true}));
-  // ensure food count
-  while(foods.length < CONFIG.FOOD_COUNT) foods.push(new Food(rand(0,CONFIG.WORLD_W), rand(0,CONFIG.WORLD_H)));
-}
+    function changeSlide(n) {
+      slideIndex += n;
+      showSlide(slideIndex);
+    }
 
-/* -------------------------
-   Rendering
-   ------------------------- */
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+    function closeOverlay() {
+      document.getElementById("overlay").style.display = "none";
+    }
 
-  // sky / background subtle grid
-  ctx.fillStyle = '#041321';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+    function openOverlay() {
+      document.getElementById("overlay").style.display = "flex";
+      slideIndex = 0;
+      showSlide(slideIndex);
+    }
 
-  // draw foods and bots relative to view
-  for(const f of foods) f.draw(viewX, viewY, viewZoom);
-  for(const b of bots){
-    b.draw(viewX, viewY, viewZoom);
-  }
+    document.querySelector(".open-deals").addEventListener("click", openOverlay);
 
-  // draw player parts on top
-  if(player){
-    for(const p of player.parts) p.draw(viewX, viewY, viewZoom);
-  }
+    // Automatisch openen bij laden van site
+    window.onload = openOverlay;
+  </script>
 
-  // UI overlays: crosshair at center
-  ctx.beginPath(); ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth=1;
-  ctx.arc(canvas.width/2, canvas.height/2, 12 * viewZoom, 0, Math.PI*2); ctx.stroke();
-}
-
-/* -------------------------
-   Game loop
-   ------------------------- */
-function loop(ts){
-  if(!running) return;
-  const dt = Math.min(0.05, (ts - lastTS) / 1000 || CONFIG.TICK);
-  lastTS = ts;
-  update(dt);
-  draw();
-  updateHUD();
-  requestAnimationFrame(loop);
-}
-
-/* -------------------------
-   HUD & Leaderboard
-   ------------------------- */
-const massEl = document.getElementById('mass');
-const levelEl = document.getElementById('level');
-const skinsListEl = document.getElementById('skinsList');
-const leaderboardEl = document.getElementById('leaderboard');
-
-function updateHUD(){
-  const mass = Math.round(getPlayerMass());
-  massEl.textContent = mass;
-  levelEl.textContent = computeLevelFromMass(mass);
-  // skins list
-  const unlocked = getUnlockedSkins();
-  skinsListEl.innerHTML = '';
-  for(const s of SKINS){
-    const div = document.createElement('div');
-    const unlockedNow = unlocked.includes(s.level);
-    const span = document.createElement('span');
-    span.className = 'skin-thumb' + (unlockedNow ? '' : ' locked');
-    // draw simple skin thumb
-    if(s.style.startsWith('#')) span.style.background = s.style;
-    else span.style.background = s.style;
-    div.appendChild(span);
-    const txt = document.createElement('span');
-    txt.textContent = s.name + (unlockedNow ? ' (ontgrendeld)' : ` — level ${s.level}`);
-    txt.style.fontSize='13px'; txt.style.marginLeft='6px';
-    div.appendChild(txt);
-    skinsListEl.appendChild(div);
-  }
-
-  // leaderboard: top by mass among bots + player
-  const table = [];
-  for(const b of bots) table.push({name: b.name, mass: Math.round(b.mass)});
-  if(player) table.push({name: player.name, mass: Math.round(getPlayerMass())});
-  table.sort((a,b)=>b.mass - a.mass);
-  leaderboardEl.innerHTML = '';
-  table.slice(0,5).forEach((row,i)=>{
-    const r = document.createElement('div');
-    r.className = 'leader';
-    r.textContent = `${i+1}. ${row.name} — ${row.mass}`;
-    leaderboardEl.appendChild(r);
-  });
-}
-
-/* -------------------------
-   Start / End
-   ------------------------- */
-function startGame(name){
-  if(!name) { alert('Voer een naam of UID in'); return; }
-  uid = name;
-  const pre = loadProgress(uid);
-  initWorld();
-  player = new Cell({ x: CONFIG.WORLD_W/2, y: CONFIG.WORLD_H/2, mass: pre ? pre.mass : 12, color:'#4db8ff', name: uid });
-  // restore unlocked skins if any (they are shown via mass anyway)
-  running = true;
-  lastTS = performance.now();
-  requestAnimationFrame(loop);
-}
-function endGame(msg){
-  running = false;
-  alert(msg || 'Spel gestopt');
-  saveProgress();
-}
-
-/* -------------------------
-   UI events
-   ------------------------- */
-document.getElementById('startBtn').addEventListener('click', ()=> {
-  const name = document.getElementById('uid').value.trim();
-  startGame(name);
-});
-document.getElementById('resetBtn').addEventListener('click', ()=> {
-  const name = document.getElementById('uid').value.trim();
-  if(!name) return alert('Voer je UID in om te resetten');
-  if(!confirm('Reset voortgang voor ' + name + '?')) return;
-  uid = name;
-  resetProgress();
-  alert('Voortgang verwijderd');
-});
-
-/* Auto-save every 8 seconds */
-setInterval(()=>{ if(uid) saveProgress(); }, 8000);
-
-/* init UI skins display once */
-(function initUI(){
-  skinsListEl.innerHTML = '';
-  for(const s of SKINS){
-    const div = document.createElement('div');
-    const span = document.createElement('span');
-    span.className='skin-thumb locked';
-    span.style.background = s.style;
-    span.title = s.name;
-    div.appendChild(span);
-    const txt = document.createElement('span');
-    txt.textContent = `${s.name} — level ${s.level}`;
-    txt.style.marginLeft='6px'; txt.style.color='#cfe7ff';
-    div.appendChild(txt);
-    skinsListEl.appendChild(div);
-  }
-})();
-</script>
 </body>
 </html>
