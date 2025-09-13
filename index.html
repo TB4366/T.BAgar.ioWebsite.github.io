@@ -1,97 +1,19 @@
-<!doctype html>
-<html lang="nl">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>T.B Agar.io Website</title>
+<!-- Event balkje onderaan -->
+<div id="eventBar" class="event-bar"></div>
+
+<!-- Popup overlay voor deals -->
+<div id="dealPopup" class="popup-overlay">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closePopup()">✖</span>
+    <div class="deal-slider">
+      <button class="nav-btn left" onclick="prevSlide()">◀</button>
+      <div class="deal-slide-container" id="dealSlides"></div>
+      <button class="nav-btn right" onclick="nextSlide()">▶</button>
+    </div>
+  </div>
+</div>
+
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  body.dark {
-    background: #f0f0f0;
-    color: #222;
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: #0f172a;
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  body.dark header { background: #e0e0e0; }
-
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-  .site-title { font-size: 1.2rem; font-weight: bold; }
-
-  .toggle-btn-header {
-    background: none; border: none; cursor: pointer; font-size: 22px; color: #0077b6;
-    padding: 6px 10px; border-radius: 8px; transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .toggle-btn-header:hover { background-color: #48cae4; color: white; }
-  body.dark .toggle-btn-header { color: #4dd0e1; }
-  body.dark .toggle-btn-header:hover { background-color: #0077b6; color: white; }
-
-  .menu-btn { cursor: pointer; font-size: 24px; background: none; border: none; color: white; }
-  body.dark .menu-btn { color: #222; }
-
-  .menu {
-    display: none; position: absolute; top: 60px; right: 20px; background: #1e293b;
-    border-radius: 8px; overflow: hidden; min-width: 160px; z-index: 10;
-  }
-  body.dark .menu { background: #ccc; }
-  .menu a {
-    display: block; padding: 12px; text-decoration: none; color: white; border-bottom: 1px solid #334155;
-  }
-  body.dark .menu a { color: #222; border-bottom: 1px solid #aaa; }
-  .menu a:hover { background: #334155; }
-  body.dark .menu a:hover { background: #ddd; }
-
-  .main-video { display: flex; justify-content: center; margin-top: 20px; flex-direction: column; align-items: center; gap: 12px; }
-  .video-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px; }
-  iframe { border: none; border-radius: 12px; max-width:100%; }
-
-  .youtube-link { text-align: center; margin-top: 20px; }
-  .youtube-link a {
-    display: inline-block; padding: 12px 20px; background: #1e293b; color: white;
-    text-decoration: none; border-radius: 8px; font-weight: bold;
-  }
-  .youtube-link a:hover { background: #334155; }
-
-  .btn {
-    padding: 12px 24px; background-color: #1e293b; color: white; text-decoration: none;
-    border-radius: 8px; font-weight: bold; cursor: pointer; border: none;
-    transition: background-color 0.3s ease;
-  }
-  .btn:hover { background-color: #334155; }
-  body.dark .btn { background-color: #ccc; color: #222; }
-  body.dark .btn:hover { background-color: #aaa; }
-
-  .divider { max-width: 900px; margin: 40px auto 10px auto; border-top: 2px solid #48cae4; }
-  .highlight-title { text-align: center; font-size: 1.8rem; font-weight: bold; margin: 20px 0 30px; color: #48cae4; }
-  body.dark .divider { border-top: 2px solid #0077b6; }
-  body.dark .highlight-title { color: #0077b6; }
-
-  .skins-circles { max-width: 900px; margin: 0 auto 50px auto; display: flex; justify-content: center; gap: 40px; }
-  .circle { width: 180px; height: 180px; border-radius: 50%; overflow: hidden; position: relative;
-    background: #000; box-shadow: 0 0 15px #48cae4;
-    filter: brightness(0.8) saturate(1.2); cursor: pointer; transition: filter 0.3s ease, box-shadow 0.3s ease; }
-  body.dark .circle { filter: brightness(1) saturate(1); box-shadow: 0 0 15px #0077b6; }
-  .circle img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 1.2s ease; }
-  .circle img.active { opacity: 1; }
-
   /* Event balkje */
   .event-bar {
     position: fixed;
@@ -106,118 +28,97 @@
     gap: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     cursor: pointer;
+    font-family: Arial, sans-serif;
     font-weight: bold;
     z-index: 900;
   }
-  .event-bar img { width: 40px; height: 40px; border-radius: 8px; }
-  .event-info { display: flex; flex-direction: column; font-size: 14px; }
+  .event-bar img {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+  }
+  .event-info {
+    display: flex; flex-direction: column;
+    font-size: 14px;
+  }
   .event-title { font-size: 14px; }
   .countdown { font-size: 12px; color: #ffd700; }
 
   /* Popup */
   .popup-overlay {
-    display: none; position: fixed; top: 0; left: 0;
+    display: none;
+    position: fixed; top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.7);
-    z-index: 999; justify-content: center; align-items: center;
+    z-index: 999;
+    justify-content: center; align-items: center;
   }
   .popup-content {
-    background: #222; color: #fff; width: 90%; max-width: 800px;
-    border-radius: 12px; position: relative; padding: 20px;
+    background: #222;
+    color: #fff;
+    width: 90%; max-width: 800px;
+    border-radius: 12px;
+    position: relative;
+    padding: 20px;
   }
-  .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; }
-
-  .deal-slide-container { width: 100%; overflow: hidden; position: relative; }
-  .deal-slide { position: absolute; top: 0; left: 0; width: 100%; text-align: center; opacity: 0; transition: opacity 0.5s ease-in-out; }
-  .deal-slide.active { opacity: 1; }
-  .deal-slide img { max-width: 100%; border-radius: 12px; margin-bottom: 10px; }
+  .close-btn {
+    position: absolute; top: 15px; right: 20px;
+    font-size: 24px; cursor: pointer;
+  }
+  .deal-slider {
+    display: flex; align-items: center; justify-content: center;
+  }
+  .deal-slide-container {
+    width: 100%; overflow: hidden;
+  }
+  .deal-slide {
+    display: none;
+    text-align: center;
+  }
+  .deal-slide img {
+    max-width: 100%; border-radius: 12px; margin-bottom: 10px;
+  }
   .deal-title { font-size: 22px; margin: 10px 0; }
   .deal-desc { font-size: 14px; margin-bottom: 8px; }
-  .deal-price { display: inline-block; background: #28a745; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 18px; cursor: pointer; margin-top: 12px; }
-  .nav-btn { background: none; border: none; font-size: 28px; cursor: pointer; color: white; margin: 0 10px; }
+  .deal-price {
+    display: inline-block;
+    background: #28a745; color: #fff;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 18px; cursor: pointer;
+    margin-top: 12px;
+  }
+  .nav-btn {
+    background: none; border: none;
+    font-size: 28px; cursor: pointer;
+    color: white; margin: 0 10px;
+  }
 </style>
-</head>
-<body>
-
-<header>
-  <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
-    <span class="site-title">T.B Agar.io</span>
-    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-  </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Pagina</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-  </div>
-</header>
-
-<main>
-  <button class="btn open-deals" onclick="renderEventBar()">Bekijk Deals</button>
-
-  <div class="main-video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
-  </div>
-
-  <div class="youtube-link">
-    <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Bezoek mijn YouTube kanaal</a>
-  </div>
-
-  <div class="video-grid">
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
-  </div>
-
-  <!-- Skins sectie -->
-  <div class="divider"></div>
-  <div class="highlight-title">De Beste Custom Skins</div>
-  <div class="skins-circles">
-    <div class="circle" id="circle1"></div>
-    <div class="circle" id="circle2"></div>
-    <div class="circle" id="circle3"></div>
-  </div>
-
-  <!-- Keys sectie -->
-  <div class="divider"></div>
-  <div class="highlight-title">T.B Keys</div>
-  <div class="keys-link">
-    <a href="key-access.html" class="btn">🔑 Ga naar de keys</a>
-  </div>
-</main>
-
-<!-- Event Balk & Popup -->
-<div id="eventBar" class="event-bar" style="display:none;"></div>
-
-<div id="dealPopup" class="popup-overlay">
-  <div class="popup-content">
-    <span class="close-btn" onclick="closePopup()">×</span>
-    <div class="deal-slide-container" id="dealSlides"></div>
-    <button class="nav-btn prev" onclick="prevSlide()">‹</button>
-    <button class="nav-btn next" onclick="nextSlide()">›</button>
-  </div>
-</div>
 
 <script>
   const events = [
     {
-      title: "Skins Ketel",
-      img: "IMG_5287.png",
+      title: "Skins Cauldron",
+      img: "IMG_5287.png", // kleine versie
       start: "2025-09-13T10:00:00",
       end: "2025-09-17T18:00:00",
       deals: [
-        { img: "IMG_5289.png", title: "Nuturcuse Pack", desc: "24.000 Coins, 1400 DNA, 3x Mass Boost 24u, Skin Nutcurse", price: "$14.99" },
-        { img: "IMG_5288.png", title: "Jaws Potion Pack", desc: "12.000 Coins, 800 DNA, 3x XP Boost 24u, Skin Jaws Potion", price: "$9.99" }
+        {
+          img: "IMG_5289.png",
+          title: "Nuturcuse Pack",
+          desc: "24.000 Coins, 1400 DNA, 3x Mass Boost 24h, Skin Nutcurse",
+          price: "$14.99"
+        },
+        {
+          img: "IMG_5288.png",
+          title: "Jaws Potion Pack",
+          desc: "12.000 Coins, 800 DNA, 3x XP Boost 24h, Skin Jaws Potion",
+          price: "$9.99"
+        }
       ]
     }
   ];
 
   let currentEventDeals = [];
   let currentSlide = 0;
-  let countdownInterval;
 
   function formatTime(ms) {
     let sec = Math.floor(ms / 1000);
@@ -225,18 +126,17 @@
     let h = Math.floor((sec % 86400) / 3600);
     let m = Math.floor((sec % 3600) / 60);
     let s = sec % 60;
-    return `${d}d ${h}u ${m}m ${s}s`;
+    return `${d}d ${h}h ${m}m ${s}s`;
   }
 
   function renderEventBar() {
     const bar = document.getElementById("eventBar");
     const now = Date.now();
-    const ev = events[0];
+    const ev = events[0]; // voor nu maar 1 event
     const start = new Date(ev.start).getTime();
     const end = new Date(ev.end).getTime();
 
     if (now >= start && now <= end) {
-      bar.style.display = "flex";
       bar.innerHTML = `
         <img src="${ev.img}" alt="${ev.title}">
         <div class="event-info">
@@ -247,14 +147,12 @@
       bar.onclick = () => openPopup(ev);
 
       const countdownElem = document.getElementById("countdown");
-      clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
+      setInterval(() => {
         const now = Date.now();
         if (now <= end) {
           countdownElem.textContent = formatTime(end - now);
         } else {
           bar.style.display = "none";
-          clearInterval(countdownInterval);
         }
       }, 1000);
     } else {
@@ -276,17 +174,17 @@
   function showSlide() {
     const container = document.getElementById("dealSlides");
     container.innerHTML = "";
-    currentEventDeals.forEach((deal, index) => {
-      const slide = document.createElement("div");
-      slide.className = "deal-slide" + (index === currentSlide ? " active" : "");
-      slide.innerHTML = `
-        <img src="${deal.img}" alt="${deal.title}">
-        <div class="deal-title">${deal.title}</div>
-        <div class="deal-desc">${deal.desc}</div>
-        <div class="deal-price">${deal.price}</div>
-      `;
-      container.appendChild(slide);
-    });
+    const deal = currentEventDeals[currentSlide];
+    const slide = document.createElement("div");
+    slide.className = "deal-slide";
+    slide.style.display = "block";
+    slide.innerHTML = `
+      <img src="${deal.img}" alt="${deal.title}">
+      <div class="deal-title">${deal.title}</div>
+      <div class="deal-desc">${deal.desc}</div>
+      <div class="deal-price">${deal.price}</div>
+    `;
+    container.appendChild(slide);
   }
 
   function nextSlide() {
@@ -299,21 +197,6 @@
     showSlide();
   }
 
-  // Donker/licht toggle
-  const themeToggleBtn = document.getElementById("themeToggleBtn");
-  themeToggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    themeToggleBtn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-  });
-
-  // Menu toggle
-  function toggleMenu() {
-    const menu = document.getElementById("menu");
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-  }
-
   window.onload = renderEventBar;
 </script>
-
-</body>
-</html>
+Voeg deze script erbij in en verwijder het oude script over de event en stuur het hele script weer terug
