@@ -1,4 +1,4 @@
-Voeg dit script hier in toe: <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -434,7 +434,87 @@ Voeg dit script hier in toe: <!doctype html>
 
   </div>
 </div>
+
+<!-- Event Balk + Popup -->
+<style>
+  .event-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #1e293b;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+  body.dark .event-bar {
+    background: #ccc;
+    color: #222;
+  }
+
+  .event-popup {
+    display: none;
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    width: 300px;
+    background: #0f172a;
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    padding: 16px;
+    z-index: 1001;
+    animation: fadeIn 0.3s ease;
+  }
+  body.dark .event-popup {
+    background: #f0f0f0;
+    color: #222;
+  }
+  .event-popup img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .event-popup .close-btn {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
+
+<div class="event-bar" id="eventBar">
+  ⏰ Tijd: <span id="liveClock"></span> – Klik hier voor event info
+</div>
+
+<div class="event-popup" id="eventPopup">
+  <span class="close-btn" onclick="document.getElementById('eventPopup').style.display='none'">×</span>
+  <img src="IMG_2718.png" alt="Event afbeelding">
+  <p><strong>Event Start:</strong> <span id="eventStart">2025-09-20 18:00</span></p>
+  <p><strong>Event Eindigt:</strong> <span id="eventEnd">2025-09-22 23:59</span></p>
+</div>
+
+<script>
+  // Live klok
+  function updateClock() {
+    const now = new Date();
+    document.getElementById("liveClock").textContent =
+      now.toLocaleTimeString("nl-NL", {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Balk klik → popup
+  document.getElementById("eventBar").addEventListener("click", () => {
+    document.getElementById("eventPopup").style.display = "block";
+  });
+</script>
   
 </body>
 </html>
-  
