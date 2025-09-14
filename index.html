@@ -156,7 +156,7 @@
     background-color: #334155;
   }
 
-  /* Nieuwe sectie voor custom skins highlight */
+  /* Custom skins highlight */
   .divider {
     max-width: 900px;
     margin: 40px auto 10px auto;
@@ -212,70 +212,25 @@
   }
 
   /* Animations */
-  @keyframes zoomInOut {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-  @keyframes rotate360 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  @keyframes pulse {
-    0%, 100% { filter: brightness(0.8); }
-    50% { filter: brightness(1.2); }
-  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* Keys sectie */
-  .keys-link {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-  body.dark .keys-link .btn {
-    background-color: #ccc;
-    color: #222;
-  }
-  body.dark .keys-link .btn:hover {
-    background-color: #aaa;
-  }
-
-  }
-  /* Animatie types */
-  .fadeIn { animation: fadeIn 1s forwards; }
-  .slideUp { animation: slideUp 1s forwards; }
-  .zoomIn { animation: zoomIn 1s forwards; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { transform: translate(-50%, 20px); opacity: 0; }
-    to { transform: translate(-50%, 0); opacity: 1; }
-  }
-  @keyframes zoomIn {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
-    to { transform: translateX(-50%) scale(1); opacity: 1; }
-  }
-
-  /* Event Balk + Popup */
+  /* Event Bar & Popup */
   .event-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+    background: #0f172a;
     color: white;
     text-align: center;
-    padding: 6px;
+    padding: 5px;
     font-size: 13px;
+    font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+    box-shadow: 0 -2px 6px rgba(0,0,0,0.5);
     z-index: 1000;
   }
-  body.dark .event-bar {
-    background: #ccc;
-    color: #222;
-  }
+  .event-bar:hover { background: #1e293b; }
 
   .event-popup {
     display: none;
@@ -283,34 +238,41 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
+    width: 300px;
     background: #0f172a;
     color: white;
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-    padding: 16px;
+    padding: 12px;
     z-index: 1001;
-    animation: fadeIn 0.3s ease;
     text-align: center;
-  }
-  body.dark .event-popup {
-    background: #f0f0f0;
-    color: #222;
   }
   .event-popup img {
     width: 100%;
     border-radius: 8px;
-    margin-bottom: 12px;
-    display: none; /* standaard verborgen */
+    margin-bottom: 10px;
+    display: none;
   }
   .event-popup .close-btn {
     position: absolute;
-    top: 6px;
-    right: 10px;
+    top: 5px;
+    right: 8px;
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
   }
+  #buyBtn {
+    margin-top: 10px;
+    background-color: #48cae4;
+    color: #0f172a;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #buyBtn:hover { background-color: #00b4d8; }
+
 </style>
 </head>
 <body>
@@ -346,7 +308,6 @@
     <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
   </div>
 
-  <!-- Skins sectie -->
   <div class="divider"></div>
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="skins-circles">
@@ -355,7 +316,6 @@
     <div class="circle" id="circle3"></div>
   </div>
 
-  <!-- Keys sectie -->
   <div class="divider"></div>
   <div class="highlight-title">T.B Keys</div>
   <div class="keys-link">
@@ -369,143 +329,62 @@
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
-  // Dark/light mode toggle
+  // Theme toggle
   const toggleBtn = document.getElementById('themeToggleBtn');
   const body = document.body;
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark') {
-    body.classList.add('dark');
-    toggleBtn.textContent = '☀️';
-  } else {
-    toggleBtn.textContent = '🌙';
-  }
-  toggleBtn.addEventListener('click', () => {
+  if (savedTheme === 'dark') { body.classList.add('dark'); toggleBtn.textContent='☀️'; } 
+  else { toggleBtn.textContent='🌙'; }
+  toggleBtn.addEventListener('click', ()=>{
     body.classList.toggle('dark');
-    if (body.classList.contains('dark')) {
-      toggleBtn.textContent = '☀️';
-      localStorage.setItem('theme', 'dark');
-    } else {
-      toggleBtn.textContent = '🌙';
-      localStorage.setItem('theme', 'light');
-    }
+    if(body.classList.contains('dark')){ toggleBtn.textContent='☀️'; localStorage.setItem('theme','dark'); } 
+    else { toggleBtn.textContent='🌙'; localStorage.setItem('theme','light'); }
   });
 
-  // Skins afbeeldingen
-  const skinsCircle1 = [
-    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
-    'IMG_2978.jpeg',
-    'IMG_3164.png'
-  ];
-  const skinsCircle2 = [
-    'IMG_3156.jpeg',
-    'IMG_2718.png',
-    'IMG_2819.png'
-  ];
-  const skinsCircle3 = [
-    'IMG_3520.png',
-    'IMG_3533.png',
-    'IMG_3512.webp'
-  ];
-  const intervals = [4000, 4500, 5000];
+  // Skins cycling
+  const skinsCircle1=['FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png','IMG_2978.jpeg','IMG_3164.png'];
+  const skinsCircle2=['IMG_3156.jpeg','IMG_2718.png','IMG_2819.png'];
+  const skinsCircle3=['IMG_3520.png','IMG_3533.png','IMG_3512.webp'];
+  const intervals=[4000,4500,5000];
 
-  function cycleImages(circleId, images, interval) {
-    const circle = document.getElementById(circleId);
-    let currentIndex = 0;
-    images.forEach((src, i) => {
-      const img = document.createElement('img');
-      img.src = src;
-      if (i === 0) img.classList.add('active');
+  function cycleImages(circleId, images, interval){
+    const circle=document.getElementById(circleId);
+    let currentIndex=0;
+    images.forEach((src,i)=>{
+      const img=document.createElement('img');
+      img.src=src;
+      if(i===0) img.classList.add('active');
       circle.appendChild(img);
     });
-    setInterval(() => {
-      const imgs = circle.querySelectorAll('img');
+    setInterval(()=>{
+      const imgs=circle.querySelectorAll('img');
       imgs[currentIndex].classList.remove('active');
-      currentIndex = (currentIndex + 1) % imgs.length;
+      currentIndex=(currentIndex+1)%imgs.length;
       imgs[currentIndex].classList.add('active');
-    }, interval);
+    },interval);
   }
-
-  cycleImages('circle1', skinsCircle1, intervals[0]);
-  cycleImages('circle2', skinsCircle2, intervals[1]);
-  cycleImages('circle3', skinsCircle3, intervals[2]);
+  cycleImages('circle1',skinsCircle1,intervals[0]);
+  cycleImages('circle2',skinsCircle2,intervals[1]);
+  cycleImages('circle3',skinsCircle3,intervals[2]);
 </script>
 
-<!-- Nieuwe sectie onderaan -->
-<div style="text-align:center; margin-top:50px;">
-
-  <!-- Nieuwe video's -->
-  <h2>New video’s</h2>
-  <div style="display:flex; justify-content:center; margin:20px 0;">
-    <iframe width="560" height="315" 
-      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
-      title="New video" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      allowfullscreen>
-    </iframe>
-  </div>
-
-  <!-- Best Duo -->
-  <h2>The Best Duo</h2>
-  <div style="display:flex; justify-content:center; margin:20px 0;">
-    <iframe width="560" height="315" 
-      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
-      title="The Best Duo" 
-      frameborder="0" 
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-      allowfullscreen>
-    </iframe>
-  </div>
-
-  <hr style="margin:30px 0;">
-
-  <!-- Knoppen sectie -->
-  <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
-
-    <!-- Discord knop -->
-    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#5865F2; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
-      JOIN My Discord server
-    </a>
-
-    <!-- Instagram knop -->
-    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#E1306C; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
-      Follow me on Instagram
-    </a>
-
-    <!-- YouTube knop -->
-    <a href="https://www.youtube.com/@T.B6" target="_blank" 
-       style="display:flex; align-items:center; gap:10px; background-color:#FF0000; color:white; 
-              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
-      Subscribe to my YouTube channel
-    </a>
-
-  </div>
-</div>
-
-<!-- Event Balk + Popup -->
+<!-- Agar.io Pathchair Event -->
 <div class="event-bar" id="eventBar">
-  ⏰ <span id="eventCountdown"></span> – Klik hier voor event info
+  🪑 Pathchair Event – <span id="eventCountdown">Loading...</span>
 </div>
 
 <div class="event-popup" id="eventPopup">
   <span class="close-btn" onclick="document.getElementById('eventPopup').style.display='none'">×</span>
-  <img src="IMG_2718.png" alt="Event afbeelding" id="eventImage">
+  <img src="pathchair.png" alt="Pathchair Event" id="eventImage">
   <p id="eventText"></p>
   <p><strong>Start:</strong> <span id="eventStartText"></span></p>
-  <p><strong>Einde:</strong> <span id="eventEndText"></span></p>
+  <p><strong>End:</strong> <span id="eventEndText"></span></p>
+  <button id="buyBtn" class="btn">Buy this item</button>
 </div>
 
 <script>
-  // Stel start- en eindtijd in
-  const eventStart = new Date("2025-09-14T18:00:00");
-  const eventEnd   = new Date("2025-09-20T20:00:00");
+  const eventStart = new Date("2025-09-20T18:00:00");
+  const eventEnd = new Date("2025-09-22T23:59:00");
 
   const countdownEl = document.getElementById("eventCountdown");
   const eventText = document.getElementById("eventText");
@@ -516,35 +395,36 @@
   startText.textContent = eventStart.toLocaleString();
   endText.textContent = eventEnd.toLocaleString();
 
-  function updateCountdown() {
-    const now = new Date();
-    if (now < eventStart) {
-      const diff = eventStart - now;
-      const h = Math.floor(diff / (1000*60*60));
-      const m = Math.floor((diff % (1000*60*60)) / (1000*60));
-      const s = Math.floor((diff % (1000*60)) / 1000);
-      countdownEl.textContent = `Start in ${h}u ${m}m ${s}s`;
-      eventText.textContent = "⏳ Event is nog niet begonnen.";
-      eventImage.style.display = "none";
-    } else if (now >= eventStart && now <= eventEnd) {
-      const diff = eventEnd - now;
-      const h = Math.floor(diff / (1000*60*60));
-      const m = Math.floor((diff % (1000*60*60)) / (1000*60));
-      const s = Math.floor((diff % (1000*60)) / 1000);
-      countdownEl.textContent = `Eindigt in ${h}u ${m}m ${s}s`;
-      eventText.textContent = "🎉 Het event is bezig!";
-      eventImage.style.display = "block";
-    } else {
-      countdownEl.textContent = "Event afgelopen";
-      eventText.textContent = "❌ Het event is voorbij.";
-      eventImage.style.display = "none";
+  function updateCountdown(){
+    const now=new Date();
+    if(now<eventStart){
+      const diff=eventStart-now;
+      const h=Math.floor(diff/(1000*60*60));
+      const m=Math.floor((diff%(1000*60*60))/(1000*60));
+      const s=Math.floor((diff%(1000*60))/1000);
+      countdownEl.textContent=`Starts in ${h}h ${m}m ${s}s`;
+      eventText.textContent="⏳ Event is coming soon!";
+      eventImage.style.display="none";
+    } else if(now>=eventStart && now<=eventEnd){
+      const diff=eventEnd-now;
+      const h=Math.floor(diff/(1000*60*60));
+      const m=Math.floor((diff%(1000*60*60))/(1000*60));
+      const s=Math.floor((diff%(1000*60))/1000);
+      countdownEl.textContent=`Ends in ${h}h ${m}m ${s}s`;
+      eventText.textContent="🎉 Event is live!";
+      eventImage.style.display="block";
+    } else{
+      countdownEl.textContent="Event ended";
+      eventText.textContent="❌ This event has finished.";
+      eventImage.style.display="none";
     }
   }
-  setInterval(updateCountdown, 1000);
+
+  setInterval(updateCountdown,1000);
   updateCountdown();
 
-  document.getElementById("eventBar").addEventListener("click", () => {
-    document.getElementById("eventPopup").style.display = "block";
+  document.getElementById("eventBar").addEventListener("click",()=>{
+    document.getElementById("eventPopup").style.display="block";
   });
 </script>
 
