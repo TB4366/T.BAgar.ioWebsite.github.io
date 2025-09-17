@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin - Skin Shop</title>
+<title>Admin Panel - Skin Shop</title>
 <style>
 body { font-family: Arial; background:#111; color:#fff; padding:20px; }
 h1 { color:#0af; }
-input, button { padding:6px; margin:3px; border-radius:4px; border:none; }
+input, button { padding:6px; margin:5px; border-radius:4px; border:none; }
 button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
@@ -45,9 +45,9 @@ function loadAllKeys(){
       const data = JSON.parse(localStorage.getItem(k));
       const row = table.insertRow();
       row.insertCell(0).innerText = k.replace('skinshop_','');
-      row.insertCell(1).innerText = data.name||'';
-      row.insertCell(2).innerText = data.coins||0;
-      row.insertCell(3).innerText = data.owned?data.owned.join(', '):'';
+      row.insertCell(1).innerText = data.name || '';
+      row.insertCell(2).innerText = data.coins || 0;
+      row.insertCell(3).innerText = data.owned ? data.owned.join(', ') : '';
       const actions = row.insertCell(4);
       actions.innerHTML=`
         <button onclick="editKey('${k}')">Edit</button>
@@ -57,7 +57,9 @@ function loadAllKeys(){
   }
 }
 
-function showMessage(msg){ document.getElementById('message').textContent=msg; }
+function showMessage(msg){
+  document.getElementById('message').textContent=msg;
+}
 
 // Add coins to a key
 function addCoins(){
@@ -65,17 +67,17 @@ function addCoins(){
   const amount = parseInt(document.getElementById('adminCoins').value);
   if(!key || !amount) return showMessage('Enter key and amount');
   const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
-  if(!data.name) return showMessage('Invalid key');
-  data.coins = (data.coins||0)+amount;
+  if(!data) return showMessage('Invalid key');
+  data.coins = (data.coins||0) + amount;
   localStorage.setItem('skinshop_'+key, JSON.stringify(data));
   showMessage('✅ Coins added');
   loadAllKeys();
 }
 
-// Edit key: name or key
+// Edit key and name
 function editKey(storageKey){
   const data = JSON.parse(localStorage.getItem(storageKey));
-  const newName = prompt('Enter new name:', data.name);
+  const newName = prompt('Enter new name:', data.name || '');
   if(newName===null) return;
   const newKey = prompt('Enter new key (leave blank to keep same):', storageKey.replace('skinshop_',''));
   if(newKey===null) return;
@@ -84,7 +86,7 @@ function editKey(storageKey){
     newStorageKey = 'skinshop_'+newKey;
     localStorage.removeItem(storageKey);
   }
-  data.name=newName;
+  data.name = newName;
   localStorage.setItem(newStorageKey, JSON.stringify(data));
   showMessage('✅ Key updated');
   loadAllKeys();
