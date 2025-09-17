@@ -1,235 +1,272 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agar.io Custom Skins</title>
-  <style>
-    :root{
-      --blue:#1976d2;
-      --bg:#f4f6fb;
-      --card:#ffffff;
-      --muted:#9aa6bf;
-    }
-    *{box-sizing:border-box}
-    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:var(--bg); color:#0b2340}
-    .topbar{background:var(--blue); color:white; padding:18px 20px}
-    .topbar h1{margin:0; font-size:20px}
-    .container{max-width:1100px; margin:22px auto; padding:0 16px}
-    .subtitle{color:var(--muted); margin:12px 0 20px}
-    .controls{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-    .controls input[type=text], .controls input[type=number]{padding:8px 10px; border-radius:8px; border:1px solid #dfe7f2; background:white}
-    .btn{background:var(--blue); color:white; border:none; padding:9px 12px; border-radius:8px; cursor:pointer}
-    .btn.secondary{background:#e6eefc; color:var(--blue)}
-    .panel{background:var(--card); padding:14px; border-radius:12px; box-shadow:0 6px 18px rgba(15,33,66,0.06); margin-top:18px}
-    .levels-grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap:12px; margin-top:18px}
-    .level{position:relative; border-radius:10px; overflow:hidden; min-height:120px; display:flex; align-items:center; justify-content:center; color:white; font-weight:600}
-    .level.hidden{display:none}
-    .level .label{position:absolute; left:8px; top:8px; background:rgba(0,0,0,0.25); padding:4px 8px; border-radius:8px; font-size:12px}
-    .level.locked{filter:grayscale(30%) brightness(0.8);}
-    .lock{position:absolute; right:8px; top:8px; background:rgba(255,255,255,0.9); color:#223; padding:6px 8px; border-radius:999px; font-weight:700}
-    .level .skin-name{position:absolute; bottom:8px; left:8px; right:8px; font-size:12px; opacity:0.95}
-    .legend{display:flex; gap:10px; margin-top:10px; align-items:center}
-    .legend i{display:inline-block; width:14px; height:14px; border-radius:3px}
-    .admin{margin-top:16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .note{font-size:13px; color:var(--muted); margin-top:8px}
-    /* modal */
-    .modal-back{position:fixed; inset:0; background:rgba(6,12,28,0.45); display:none; align-items:center; justify-content:center}
-    .modal{background:white; border-radius:10px; width:420px; max-width:92%; padding:16px}
-    .modal h3{margin:0 0 10px}
-    .modal .row{display:flex; gap:8px}
-    @media (max-width:520px){ .controls{flex-direction:column} }
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <h1>Agar.io Custom Skins</h1>
-  </div>
+import React, { useEffect, useState } from "react";
 
-  <div class="container">
-    <div class="panel">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap">
-        <div>
-          <div style="font-size:18px; font-weight:700">Complete the assignments and level up each time!</div>
-          <div class="subtitle">Vul je Agar.io UID in om je voortgang te laden. Gebruik de mass-invoer om automatisch opdrachten te claimen (voorbeeld: level 1 = >=50 mass, level 2 = >=100 mass ...)</div>
+/**
+ * SkinShop.jsx
+ * A single-file React component (default export) implementing the behavior you asked for:
+ * - skins shown as greyed-out cards with lock icon
+ * - clicking a skin gives visible feedback (brighter / scale) so user sees they pressed it
+ * - below the skin name we show the price
+ * - top-right shows current coins
+ * - top-left shows: "Contact T.B to buy more coins!"
+ * - under the top bar there is an input for the user's Key (theirKey). When they enter it and press "Load key",
+ *   the system will show how many coins belong to that key.
+ * - The component supports a simple mock backend (localStorage) so you can test it locally; in production
+ *   replace the mock functions (validateKey, purchaseSkin, ownerAddCoins) with calls to your real server endpoints.
+ *
+ * Notes important to your text:
+ * - Everything starts at 0 coins until a key is loaded or the owner adds coins in the owner panel.
+ * - Keys are single-use per account: this UI enforces that a key maps to a single owner (simulated). Only the owner
+ *   can add coins to keys via the owner panel (set isOwner={true} when rendering for the owner during testing).
+ *
+ * Usage:
+ * <SkinShop isOwner={false} initialSkins={optionalArray} />
+ * If you want to test owner-only actions locally, render with isOwner={true}.
+ */
+
+const defaultSkins = [
+  { id: "skin_01", name: "Stealth Ops", price: 100 },
+  { id: "skin_02", name: "Crimson Viper", price: 250 },
+  { id: "skin_03", name: "Glacier", price: 500 },
+  { id: "skin_04", name: "Midnight", price: 750 },
+  { id: "skin_05", name: "Solar Flare", price: 1200 },
+];
+
+// ---------- Mock backend (replace these with real API calls) ----------
+// We store keys data in localStorage under 'skinshop_keys' as JSON: { keyValue: { coins: number, usedBy: userId|null } }
+// We store purchases per-key in localStorage under 'skinshop_owned_<keyValue>' as array of skin ids.
+
+function readKeysStore() {
+  try {
+    const raw = localStorage.getItem("skinshop_keys");
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+function writeKeysStore(obj) {
+  localStorage.setItem("skinshop_keys", JSON.stringify(obj));
+}
+
+async function validateKey(key) {
+  // Simulate server validation. Returns { valid, coins, ownedSkins: [], keyOwnerId }
+  const store = readKeysStore();
+  if (!store[key]) return { valid: false };
+  const data = store[key];
+  const owned = JSON.parse(localStorage.getItem(`skinshop_owned_${key}`) || "[]");
+  return { valid: true, coins: data.coins || 0, ownedSkins: owned, ownerId: data.ownerId || null };
+}
+
+async function purchaseSkin(key, skinId, price) {
+  // Server would deduct coins and add skin to owned list atomically.
+  const store = readKeysStore();
+  if (!store[key]) return { success: false, error: "Invalid key" };
+  if ((store[key].coins || 0) < price) return { success: false, error: "Insufficient coins" };
+  store[key].coins -= price;
+  writeKeysStore(store);
+  const owned = JSON.parse(localStorage.getItem(`skinshop_owned_${key}`) || "[]");
+  if (!owned.includes(skinId)) owned.push(skinId);
+  localStorage.setItem(`skinshop_owned_${key}`, JSON.stringify(owned));
+  return { success: true, coins: store[key].coins, ownedSkins: owned };
+}
+
+async function ownerAddCoins(key, amount) {
+  const store = readKeysStore();
+  if (!store[key]) store[key] = { coins: 0, ownerId: key }; // set ownerId to key for demo
+  store[key].coins = (store[key].coins || 0) + amount;
+  writeKeysStore(store);
+  return { success: true, coins: store[key].coins };
+}
+
+async function ownerCreateKey(key, initialCoins = 0) {
+  const store = readKeysStore();
+  if (store[key]) return { success: false, error: "Key exists" };
+  store[key] = { coins: initialCoins, ownerId: key };
+  writeKeysStore(store);
+  return { success: true };
+}
+
+// ---------------------------------------------------------------------
+
+export default function SkinShop({ isOwner = false, initialSkins = defaultSkins }) {
+  const [skins] = useState(initialSkins);
+  const [hovered, setHovered] = useState(null);
+  const [pressed, setPressed] = useState(null);
+  const [keyInput, setKeyInput] = useState("");
+  const [currentKey, setCurrentKey] = useState(null);
+  const [coins, setCoins] = useState(0);
+  const [owned, setOwned] = useState([]);
+  const [message, setMessage] = useState("");
+  const [loadingKey, setLoadingKey] = useState(false);
+  const [ownerAmount, setOwnerAmount] = useState(100);
+  const [ownerKeyCreate, setOwnerKeyCreate] = useState("");
+
+  useEffect(() => {
+    // initial state: everything is 0 and locked (as you said)
+    setCoins(0);
+    setOwned([]);
+  }, []);
+
+  async function handleLoadKey() {
+    setMessage("");
+    if (!keyInput) return setMessage("Please enter a key.");
+    setLoadingKey(true);
+    const res = await validateKey(keyInput);
+    setLoadingKey(false);
+    if (!res.valid) return setMessage("Key not found. Contact the owner (T.B).");
+    setCurrentKey(keyInput);
+    setCoins(res.coins || 0);
+    setOwned(res.ownedSkins || []);
+    setMessage("Key loaded.");
+  }
+
+  async function handlePurchase(skin) {
+    if (!currentKey) return setMessage("You must load your Key to purchase.");
+    if (owned.includes(skin.id)) return setMessage("You already own this skin.");
+    const res = await purchaseSkin(currentKey, skin.id, skin.price);
+    if (!res.success) return setMessage(res.error || "Purchase failed.");
+    setCoins(res.coins);
+    setOwned(res.ownedSkins);
+    setMessage(`Purchased ${skin.name}!`);
+  }
+
+  async function handleOwnerAdd() {
+    if (!isOwner) return setMessage("Owner only action.");
+    if (!currentKey) return setMessage("Load a key first to add coins to it.");
+    const a = Number(ownerAmount) || 0;
+    const res = await ownerAddCoins(currentKey, a);
+    if (!res.success) return setMessage("Failed to add coins.");
+    setCoins(res.coins);
+    setMessage(`Added ${a} coins to key.`);
+  }
+
+  async function handleOwnerCreateKey() {
+    if (!isOwner) return setMessage("Owner only action.");
+    if (!ownerKeyCreate) return setMessage("Enter a new key value to create.");
+    const res = await ownerCreateKey(ownerKeyCreate, Number(ownerAmount) || 0);
+    if (!res.success) return setMessage(res.error || "Failed.");
+    setMessage(`Key ${ownerKeyCreate} created with ${ownerAmount} coins.`);
+    setOwnerKeyCreate("");
+  }
+
+  return (
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Top bar */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-sm">
+          <strong>Contact T.B</strong> to buy more coins!
         </div>
-        <div class="controls">
-          <input id="uid" type="text" placeholder="Voer je Agar.io UID in" />
-          <button id="loadBtn" class="btn">Laad</button>
-          <button id="saveBtn" class="btn secondary">Bewaar</button>
-          <input id="massInput" type="number" placeholder="Huidige mass (voor claim)" min="0" />
-          <button id="claimBtn" class="btn">Claim levels</button>
+        <div className="text-right">
+          <div className="text-xs text-gray-500">Your coins</div>
+          <div className="text-2xl font-bold">{coins}</div>
         </div>
       </div>
 
-      <div class="note">Let op: Deze pagina werkt lokaal en slaat voortgang op in je browser per UID. Voor echte Agar.io-koppeling is server-side verificatie en Agar.io API nodig.</div>
-
-      <div class="admin">
-        <input id="skinLevel" type="number" min="1" max="100" placeholder="Level nummer (1-100)" />
-        <input id="skinName" type="text" placeholder="Skin naam (bijv. 'Blue Blob')" />
-        <input id="skinColor" type="text" placeholder="CSS kleur / gradient (bijv. #ffcc00 of linear-gradient(...))" />
-        <button id="addSkinBtn" class="btn secondary">Toevoegen / Update skin</button>
-        <button id="clearSkinsBtn" class="btn secondary">Verwijder alle skins</button>
+      {/* Key input bar */}
+      <div className="bg-gray-800 text-white rounded p-3 flex items-center gap-3 mb-6">
+        <div className="flex-1">
+          <div className="text-xs text-gray-300">Enter your Key</div>
+          <input
+            value={keyInput}
+            onChange={(e) => setKeyInput(e.target.value)}
+            placeholder="Paste key here"
+            className="mt-1 w-full rounded px-2 py-1 text-black"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={handleLoadKey} className="px-3 py-1 rounded bg-sky-600 text-white" disabled={loadingKey}>
+            {loadingKey ? "Loading..." : "Load key"}
+          </button>
+        </div>
       </div>
 
-      <div class="legend">
-        <div><i style="background:linear-gradient(135deg,#6ad,#3a8)" ></i> Skin aanwezig</div>
-        <div><i style="background:#000; opacity:.6"></i> Vergrendeld</div>
-        <div><i style="background:transparent; border:1px dashed #c6d3ea"></i> Geen skin (onzichtbaar)</div>
+      {/* skins grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {skins.map((skin) => {
+          const isOwned = owned.includes(skin.id);
+          return (
+            <div
+              key={skin.id}
+              onMouseEnter={() => setHovered(skin.id)}
+              onMouseLeave={() => setHovered(null)}
+              onMouseDown={() => setPressed(skin.id)}
+              onMouseUp={() => setPressed(null)}
+              onClick={() => handlePurchase(skin)}
+              className={`relative rounded-lg p-4 cursor-pointer transform transition-all duration-150 select-none
+                ${pressed === skin.id ? "scale-98" : ""}`}
+            >
+              {/* Visual "greyed out" card background */}
+              <div
+                className={`rounded-lg h-32 flex items-center justify-center border p-2
+                  ${isOwned ? "bg-white/10 border-gray-600" : "bg-gray-300/30 border-gray-400"}`}
+                style={{ filter: pressed === skin.id || hovered === skin.id ? "brightness(1.15)" : "grayscale(60%)" }}
+              >
+                {/* Image placeholder */}
+                <div className="text-center">
+                  <div className="text-sm font-semibold">{skin.name}</div>
+                  <div className="text-xs mt-2">Preview</div>
+                </div>
+              </div>
+
+              {/* lock icon top-left */}
+              <div className="absolute left-2 top-2 text-sm flex items-center gap-1">
+                {!isOwned ? (
+                  <span className="inline-block bg-black/60 text-white rounded px-2 py-0.5 text-xs">🔒</span>
+                ) : (
+                  <span className="inline-block bg-green-600 text-white rounded px-2 py-0.5 text-xs">✓</span>
+                )}
+              </div>
+
+              {/* price and name area */}
+              <div className="mt-3 flex items-center justify-between">
+                <div className="text-sm font-medium">{skin.name}</div>
+                <div className="text-sm font-semibold">{skin.price} 💠</div>
+              </div>
+
+              {/* subtle overlay when clickable */}
+              <div className="absolute inset-0 rounded-lg pointer-events-none" />
+            </div>
+          );
+        })}
       </div>
 
-      <div id="levels" class="levels-grid"></div>
+      {/* message area */}
+      <div className="mt-4 text-sm text-yellow-300">{message}</div>
 
+      {/* Owner panel (only visible if isOwner=true) */}
+      {isOwner && (
+        <div className="mt-6 border-t pt-4">
+          <h3 className="font-bold mb-2">Owner panel (for T.B)</h3>
+          <div className="flex gap-2 items-center mb-2">
+            <input
+              value={ownerKeyCreate}
+              onChange={(e) => setOwnerKeyCreate(e.target.value)}
+              placeholder="new key value"
+              className="px-2 py-1 rounded text-black"
+            />
+            <input
+              value={ownerAmount}
+              onChange={(e) => setOwnerAmount(e.target.value)}
+              className="px-2 py-1 rounded text-black w-24"
+            />
+            <button onClick={handleOwnerCreateKey} className="px-3 py-1 rounded bg-indigo-600 text-white">
+              Create Key
+            </button>
+          </div>
+
+          <div className="flex gap-2 items-center">
+            <div className="text-sm">Add coins to currently loaded key:</div>
+            <input value={ownerAmount} onChange={(e) => setOwnerAmount(e.target.value)} className="px-2 py-1 rounded text-black w-28" />
+            <button onClick={handleOwnerAdd} className="px-3 py-1 rounded bg-emerald-600 text-white">
+              Add coins
+            </button>
+          </div>
+
+          <div className="text-xs text-gray-400 mt-2">(Only for demo/testing. In production you must do this server-side. Keys are single-owner.)</div>
+        </div>
+      )}
+
+      <div className="mt-6 text-xs text-gray-500">Note: replace the mock functions in the top of this file with real API calls to enforce
+        single-user key ownership and server-side coin accounting.</div>
     </div>
-  </div>
-
-  <!-- modal -->
-  <div id="modalBack" class="modal-back">
-    <div class="modal" role="dialog">
-      <h3 id="modalTitle">Level</h3>
-      <div id="modalBody"></div>
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px">
-        <button id="closeModal" class="btn secondary">Sluit</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- Data model
-    const LEVELS = 100;
-    // thresholds: level N requires N*50 mass (level1 = 50, level2 = 100 ...)
-    function thresholdFor(level){ return level * 50; }
-
-    // load skins and user data from localStorage
-    function storageKey(uid){ return 'agario_skins_progress_' + uid; }
-
-    // sample skins: we'll prefill a couple for demonstration
-    const sampleSkins = {
-      1: {name:'Starter Blue', color:'linear-gradient(135deg,#4facfe,#00f2fe)'},
-      2: {name:'Sunny', color:'linear-gradient(135deg,#fbc2eb,#a6c1ee)'},
-      5: {name:'Golden', color:'#ffdd57'}
-    };
-
-    // --- UI elements
-    const levelsEl = document.getElementById('levels');
-    const uidInput = document.getElementById('uid');
-    const loadBtn = document.getElementById('loadBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const massInput = document.getElementById('massInput');
-    const claimBtn = document.getElementById('claimBtn');
-    const addSkinBtn = document.getElementById('addSkinBtn');
-    const skinLevel = document.getElementById('skinLevel');
-    const skinName = document.getElementById('skinName');
-    const skinColor = document.getElementById('skinColor');
-    const clearSkinsBtn = document.getElementById('clearSkinsBtn');
-
-    const modalBack = document.getElementById('modalBack');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalBody = document.getElementById('modalBody');
-    const closeModal = document.getElementById('closeModal');
-
-    // runtime data
-    let skins = JSON.parse(localStorage.getItem('agario_skins_catalog') || 'null') || sampleSkins;
-    let user = { uid: null, claimedLevels: [] };
-
-    function saveCatalog(){ localStorage.setItem('agario_skins_catalog', JSON.stringify(skins)); }
-
-    function saveUser(){ if(!user.uid) return; localStorage.setItem(storageKey(user.uid), JSON.stringify(user)); }
-    function loadUser(uid){ const data = localStorage.getItem(storageKey(uid)); if(data) user = JSON.parse(data); else user = { uid: uid, claimedLevels: [] }; user.uid = uid; }
-
-    // build level tiles
-    function renderLevels(){ levelsEl.innerHTML = '';
-      for(let i=1;i<=LEVELS;i++){
-        const hasSkin = skins[i];
-        const isVisible = Boolean(hasSkin);
-        const tile = document.createElement('div');
-        tile.className = 'level' + (isVisible? '' : ' hidden');
-        tile.dataset.level = i;
-        // default background
-        if(hasSkin){ tile.style.background = hasSkin.color; }
-        else{ tile.style.background = 'linear-gradient(135deg,#f0f4ff,#eef6f9)'; tile.style.color = '#123'; }
-
-        const label = document.createElement('div'); label.className = 'label'; label.textContent = 'Level ' + i;
-        tile.appendChild(label);
-
-        if(hasSkin){
-          const skinLabel = document.createElement('div'); skinLabel.className='skin-name'; skinLabel.textContent = hasSkin.name || 'Untitled skin';
-          tile.appendChild(skinLabel);
-
-          const locked = !user.claimedLevels.includes(i);
-          if(locked){ tile.classList.add('locked'); const lock = document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; tile.appendChild(lock); }
-          else { const lock = document.createElement('div'); lock.className='lock'; lock.textContent='✓'; tile.appendChild(lock); }
-
-          tile.addEventListener('click', ()=> openModal(i));
-        }
-
-        levelsEl.appendChild(tile);
-      }
-    }
-
-    function openModal(level){
-      const hasSkin = skins[level];
-      modalTitle.textContent = 'Level ' + level + (hasSkin? ' — ' + hasSkin.name : '');
-      const locked = !user.claimedLevels.includes(level);
-      modalBody.innerHTML = '';
-      if(!hasSkin){ modalBody.innerHTML = '<div>Geen skin ingesteld voor dit level. Gebruik de admin-controls om een skin toe te voegen (zichtbaar wordt alleen als er een skin is).</div>' }
-      else{
-        const info = document.createElement('div');
-        info.innerHTML = `<p>Opdracht: bereik ${thresholdFor(level)} mass om dit level te unlocken.</p>`;
-        modalBody.appendChild(info);
-        if(locked){
-          const btn = document.createElement('button'); btn.className='btn'; btn.textContent='Claim (als je de opdracht hebt uitgevoerd)';
-          btn.addEventListener('click', ()=>{ user.claimedLevels.push(level); user.claimedLevels = Array.from(new Set(user.claimedLevels)); saveUser(); renderLevels(); closeModalFn(); });
-          modalBody.appendChild(btn);
-        } else {
-          modalBody.innerHTML += '<p style="margin-top:8px">Dit level is al ontgrendeld — je kunt deze skin toepassen in-game (niet automatisch toegepast door deze demo).</p>';
-        }
-      }
-      modalBack.style.display='flex';
-    }
-    function closeModalFn(){ modalBack.style.display='none'; }
-
-    // buttons
-    loadBtn.addEventListener('click', ()=>{ const uid = uidInput.value.trim(); if(!uid){ alert('Voer een UID in.'); return; } loadUser(uid); renderLevels(); alert('Voortgang geladen voor UID ' + uid + '.'); });
-    saveBtn.addEventListener('click', ()=>{ if(!user.uid){ alert('Laad eerst een UID om op te slaan.'); return; } saveUser(); saveCatalog(); alert('Voortgang opgeslagen.'); });
-    closeModal.addEventListener('click', closeModalFn);
-    modalBack.addEventListener('click', (e)=>{ if(e.target === modalBack) closeModalFn(); });
-
-    claimBtn.addEventListener('click', ()=>{
-      const m = Number(massInput.value || 0);
-      if(!user.uid){ alert('Laad eerst je UID (links).'); return; }
-      let unlocked = 0;
-      for(let i=1;i<=LEVELS;i++){
-        if(m >= thresholdFor(i) && skins[i]){
-          if(!user.claimedLevels.includes(i)){ user.claimedLevels.push(i); unlocked++; }
-        }
-      }
-      if(unlocked>0) { saveUser(); renderLevels(); alert('Je hebt ' + unlocked + ' nieuwe levels ontgrendeld.'); }
-      else alert('Geen nieuwe levels ontgrendeld op basis van die mass.');
-    });
-
-    addSkinBtn.addEventListener('click', ()=>{
-      const lvl = Number(skinLevel.value);
-      if(!lvl || lvl<1 || lvl>LEVELS){ alert('Voer een geldig level in (1-100).'); return; }
-      const name = skinName.value.trim() || ('Skin ' + lvl);
-      const color = skinColor.value.trim() || ('linear-gradient(135deg,#ccc,#eee)');
-      skins[lvl] = { name, color };
-      saveCatalog(); renderLevels(); alert('Skin toegevoegd/updated voor level ' + lvl + '.');
-    });
-
-    clearSkinsBtn.addEventListener('click', ()=>{
-      if(!confirm('Weet je zeker dat je alle skins wilt verwijderen uit de catalogus?')) return;
-      skins = {}; saveCatalog(); renderLevels(); });
-
-    // initialize: if user hasn't loaded a UID, create a temporary user to show locked tiles
-    function init(){
-      // populate tiles quickly
-      renderLevels();
-      // if no catalog saved, put sample skins
-      if(!localStorage.getItem('agario_skins_catalog')){ localStorage.setItem('agario_skins_catalog', JSON.stringify(skins)); }
-    }
-
-    init();
-  </script>
-</body>
-</html>
+  );
+}
