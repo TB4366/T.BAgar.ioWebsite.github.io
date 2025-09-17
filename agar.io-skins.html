@@ -84,11 +84,18 @@ function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key) return showMessage('Please enter your key');
   const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
-  if(!data) return showMessage('Invalid key');
+  if(!data || data.coins===undefined){
+    showMessage('❌ Invalid key! Please check your key with the admin.');
+    currentKey = null;
+    coins = 0;
+    owned = [];
+    renderSkins();
+    return;
+  }
   currentKey = key;
   coins = data.coins||0;
   owned = data.owned||[];
-  showMessage('Key loaded successfully!');
+  showMessage('✅ Key loaded successfully!');
   renderSkins();
 }
 
