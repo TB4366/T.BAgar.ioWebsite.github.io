@@ -15,7 +15,7 @@ th { background:#333; }
 .skinRow { margin-bottom:20px; }
 .skinRow input, .skinRow label { margin:3px; }
 .previewContainer { border-radius:50%; overflow:hidden; position:relative; background:#333; margin-top:10px; }
-.skinPreview { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); min-width:100%; min-height:100%; object-fit:cover; border-radius:50%; }
+.skinPreview { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0.5); min-width:100%; min-height:100%; object-fit:cover; border-radius:50%; }
 </style>
 </head>
 <body>
@@ -23,7 +23,6 @@ th { background:#333; }
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
-<!-- Knop voor Skin Editor -->
 <div style="margin-top:20px;">
   <button onclick="openSkinEditor()">Edit Skins</button>
 </div>
@@ -43,7 +42,6 @@ th { background:#333; }
 </tr>
 </table>
 
-<!-- Skin Editor -->
 <div id="editor">
   <h2>Skin Editor</h2>
   <button onclick="saveSkins()">Save Skins</button>
@@ -138,7 +136,7 @@ function deleteKey(storageKey){
 loadAllKeys();
 
 // =======================
-// Skin Editor with Upload + Crop + Zoom + Circle Resize
+// Skin Editor with old & new upload + crop/zoom/circle size
 // =======================
 function openSkinEditor(){
   document.getElementById('editor').style.display='block';
@@ -194,6 +192,9 @@ function createSkinRow(id, name='', price='', image=''){
   div.innerHTML=`
     <input class="skinName" placeholder="Name" value="${name}">
     <input class="skinPrice" placeholder="Price" value="${price}">
+    <!-- Oude upload optie -->
+    <input type="text" class="skinImageURL" placeholder="Old URL upload" value="${image}">
+    <!-- Nieuwe crop/zoom upload -->
     <input type="file" accept="image/*" class="skinFile">
     <div class="previewContainer" style="width:150px;height:150px;border-radius:50%;overflow:hidden;margin-top:10px;position:relative;background:#333;">
       <img src="${image}" class="skinPreview">
@@ -201,7 +202,7 @@ function createSkinRow(id, name='', price='', image=''){
     <div>
       <label>Move X: <input type="range" class="posX" min="-50" max="50" value="0"></label>
       <label>Move Y: <input type="range" class="posY" min="-50" max="50" value="0"></label>
-      <label>Zoom: <input type="range" class="scale" min="0.5" max="3" step="0.01" value="1"></label>
+      <label>Zoom: <input type="range" class="scale" min="0.2" max="3" step="0.01" value="0.5"></label>
       <label>Circle size: <input type="range" class="circleSize" min="50" max="300" value="150"></label>
       <button onclick="this.parentElement.parentElement.remove()">Delete Skin</button>
     </div>
@@ -215,6 +216,10 @@ function createSkinRow(id, name='', price='', image=''){
   const scale = div.querySelector('.scale');
   const circleSize = div.querySelector('.circleSize');
   const previewContainer = div.querySelector('.previewContainer');
+  const oldURL = div.querySelector('.skinImageURL');
+
+  // Oude upload: URL kopiëren naar preview
+  oldURL.addEventListener('change', ()=>{ img.src = oldURL.value; });
 
   fileInput.addEventListener('change', e=>{
     const reader = new FileReader();
