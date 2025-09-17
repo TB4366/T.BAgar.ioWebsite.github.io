@@ -11,8 +11,8 @@ button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
-#websiteEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
-.editable { border:1px dashed #0af; padding:5px; margin:5px; cursor:text; }
+#editor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.skinRow input { margin:3px; }
 </style>
 </head>
 <body>
@@ -20,9 +20,9 @@ th { background:#333; }
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
-<!-- Knop voor Website Editor -->
+<!-- Knop voor Skin Editor -->
 <div style="margin-top:20px;">
-  <button onclick="openWebsiteEditor()">Edit Website</button>
+  <button onclick="openSkinEditor()">Edit Skins</button>
 </div>
 
 <h3>Add New Key</h3>
@@ -40,22 +40,17 @@ th { background:#333; }
 </tr>
 </table>
 
-<!-- Website Editor Sectie -->
-<div id="websiteEditor">
-  <h2>Website Editor</h2>
-  <button onclick="saveWebsite()">Save</button>
-  <button onclick="publishWebsite()">Publish</button>
-  <button onclick="addText()">Add Text</button>
-  <button onclick="addImage()">Add Image</button>
-  <button onclick="addLine()">Add Line</button>
-  <div id="websiteContent" style="margin-top:10px; background:#222; padding:10px; min-height:200px;">
-    <div class="editable" contenteditable="true">Welcome to the Skin Shop!</div>
-  </div>
+<!-- Skin Editor -->
+<div id="editor">
+  <h2>Skin Editor</h2>
+  <button onclick="saveSkins()">Save Skins</button>
+  <button onclick="addSkin()">Add Skin</button>
+  <div id="skinsEditor"></div>
 </div>
 
 <script>
 // =======================
-// Key management (bestaand)
+// Key management
 // =======================
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
@@ -96,7 +91,6 @@ function editKey(storageKey){
   const options = prompt('Choose an option:\n1 - Manage Coins\n2 - Change Key\n3 - Change Name');
   if(!options) return;
   const data = JSON.parse(localStorage.getItem(storageKey));
-
   switch(options){
     case '1':
       const action = prompt('Type "add" to add coins or "remove" to remove coins');
@@ -111,7 +105,6 @@ function editKey(storageKey){
       localStorage.setItem(storageKey, JSON.stringify(data));
       showMessage('✅ Coins updated');
       break;
-
     case '2':
       const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
       if(!newKey) return;
@@ -120,7 +113,6 @@ function editKey(storageKey){
       if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
       showMessage('✅ Key updated');
       break;
-
     case '3':
       const newName = prompt('Enter new name:', data.name);
       if(!newName) return;
@@ -128,12 +120,10 @@ function editKey(storageKey){
       localStorage.setItem(storageKey, JSON.stringify(data));
       showMessage('✅ Name updated');
       break;
-
     default:
       showMessage('Invalid option');
       break;
   }
-
   loadAllKeys();
 }
 
@@ -145,65 +135,76 @@ function deleteKey(storageKey){
   }
 }
 
-// Initial load
 loadAllKeys();
 
 // =======================
-// Website Editor functionaliteit
+// Skin Editor
 // =======================
-function openWebsiteEditor(){
-  document.getElementById('websiteEditor').style.display='block';
-  showMessage('Website Editor opened. Only admins can edit.');
+function openSkinEditor(){
+  document.getElementById('editor').style.display='block';
+  renderSkinEditor();
 }
 
-function saveWebsite(){
-  const content = document.getElementById('websiteContent').innerHTML;
-  localStorage.setItem('adminSavedContent', content);
-  showMessage('Website changes saved locally.');
+function getSkins(){
+  const skins = localStorage.getItem('skinsData');
+  return skins ? JSON.parse(skins) : [];
 }
 
-function publishWebsite(){
-  const content = document.getElementById('websiteContent').innerHTML;
-  localStorage.setItem('websitePublishedContent', content);
-  showMessage('Website changes published for all users.');
+function saveSkins(){
+  const container = document.getElementById('skinsEditor');
+  const skinElements = container.querySelectorAll('.skinRow');
+  const skinsArr = [];
+  skinElements.forEach(row=>{
+    skinsArr.push({
+      id: row.dataset.id,
+      name: row.querySelector('.skinName').value,
+      price: parseInt(row.querySelector('.skinPrice').value) || 0,
+      image: row.querySelector('.skinImage').value
+    });
+  });
+  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
+  showMessage('✅ Skins saved!');
 }
 
-function addText(){
-  const text = prompt('Enter text:');
-  if(text){
+function renderSkinEditor(){
+  const container = document.getElementById('skinsEditor');
+  container.innerHTML='';
+  const skins = getSkins();
+  skins.forEach(skin=>{
     const div = document.createElement('div');
-    div.className = 'editable';
-    div.contentEditable = "true";
-    div.textContent = text;
-    document.getElementById('websiteContent').appendChild(div);
-  }
+    div.className='skinRow';
+    div.dataset.id = skin.id;
+    div.innerHTML=`
+      <input class="skinName" value="${skin.name}" placeholder="Name">
+      <input class="skinPrice" value="${skin.price}" placeholder="Price">
+      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <button onclick="deleteSkin('${skin.id}')">Delete</button>
+    `;
+    container.appendChild(div);
+  });
 }
 
-function addImage(){
-  const url = prompt('Enter image URL:');
-  if(url){
-    const div = document.createElement('div');
-    div.className='editable';
-    div.contentEditable="false";
-    const img = document.createElement('img');
-    img.src = url;
-    img.style.maxWidth='300px';
-    img.style.margin='5px';
-    div.appendChild(img);
-    document.getElementById('websiteContent').appendChild(div);
-  }
+function addSkin(){
+  const id = 'skin'+Date.now();
+  const container = document.getElementById('skinsEditor');
+  const div = document.createElement('div');
+  div.className='skinRow';
+  div.dataset.id = id;
+  div.innerHTML=`
+    <input class="skinName" placeholder="Name">
+    <input class="skinPrice" placeholder="Price">
+    <input class="skinImage" placeholder="Image URL">
+    <button onclick="deleteSkin('${id}')">Delete</button>
+  `;
+  container.appendChild(div);
 }
 
-function addLine(){
-  const hr = document.createElement('hr');
-  document.getElementById('websiteContent').appendChild(hr);
+function deleteSkin(id){
+  const container = document.getElementById('skinsEditor');
+  const row = container.querySelector(`.skinRow[data-id='${id}']`);
+  if(row) row.remove();
 }
 
-// Optioneel: admin preview van opgeslagen content
-const savedContent = localStorage.getItem('adminSavedContent');
-if(savedContent){
-  document.getElementById('websiteContent').innerHTML = savedContent;
-}
 </script>
 
 </body>
