@@ -10,6 +10,7 @@ h1 { color:#0af; font-size:28px; margin-bottom:10px; }
 input, button { padding:10px; margin:5px; border-radius:50px; border:none; font-size:16px; }
 button { cursor:pointer; }
 
+/* Grote skins */
 .skins { display:flex; flex-wrap: wrap; gap:25px; justify-content:center; margin-top:20px; }
 .skinContainer { display:flex; flex-direction:column; align-items:center; margin:10px; }
 
@@ -48,11 +49,32 @@ button { cursor:pointer; }
 
 .skinName, .skinPrice { margin-top:5px; font-size:14px; }
 
+/* Key input en bericht */
 #keyInput { width:300px; font-size:18px; text-align:center; }
 #message { font-size:18px; margin-top:10px; color:yellow; }
+
+/* Kleine purchased skins */
 #purchasedTitle { margin-top:30px; font-size:20px; text-decoration:underline; }
 #purchasedSkins { display:flex; flex-wrap: wrap; justify-content:center; gap:20px; margin-top:10px;}
-#purchasedSkins img { width:100px; height:100px; border-radius:50%; border:2px solid #0af; }
+#purchasedSkins .smallSkin {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  border:2px solid #0af;
+  overflow:hidden;
+  position:relative;
+}
+
+#purchasedSkins .smallSkin img {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  min-width:100%;
+  min-height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
 </style>
 </head>
 <body>
@@ -114,6 +136,7 @@ function renderSkins(){
   skins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
 
+    // Grote skin
     const container = document.createElement('div');
     container.className='skinContainer';
     
@@ -148,12 +171,15 @@ function renderSkins(){
 
     grid.appendChild(container);
 
-    // Purchased section
+    // Kleine purchased skin
     if(isOwned){
-      const pImg = document.createElement('img');
-      pImg.src = skin.image;
-      pImg.alt = skin.name;
-      purchasedContainer.appendChild(pImg);
+      const smallDiv = document.createElement('div');
+      smallDiv.className='smallSkin';
+      const smallImg = document.createElement('img');
+      smallImg.src = skin.image;
+      smallImg.alt = skin.name;
+      smallDiv.appendChild(smallImg);
+      purchasedContainer.appendChild(smallDiv);
     }
   });
   
