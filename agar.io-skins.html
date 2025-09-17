@@ -5,16 +5,18 @@
 <title>Skin Shop</title>
 <style>
 body { font-family: Arial; background:#111; color:#fff; padding:20px; }
-h1 { color:#0af; }
+h1 { color:#0af; font-size:28px; }
 .top-bar { display:flex; justify-content: space-between; margin-bottom: 20px; }
-input, button { padding:6px; margin:3px; border-radius:4px; border:none; }
+input, button { padding:8px; margin:5px; border-radius:4px; border:none; font-size:16px; }
 button { cursor:pointer; }
-.skins { display:flex; flex-wrap: wrap; gap:10px; }
+.skins { display:flex; flex-wrap: wrap; gap:15px; margin-top:20px; }
 .skin { background:#333; padding:10px; border-radius:8px; width:150px; text-align:center; cursor:pointer; transition: transform 0.1s, filter 0.1s; position:relative;}
 .skin:hover { filter: brightness(1.2); }
 .skin:active { transform: scale(0.97); }
 .lock { position:absolute; top:5px; left:5px; font-size:14px; background:rgba(0,0,0,0.6); padding:2px 5px; border-radius:4px; }
 .grayed { filter: grayscale(100%); }
+#keyInput { width:300px; font-size:18px; text-align:center; }
+#message { font-size:18px; margin-top:10px; color:yellow; }
 </style>
 </head>
 <body>
@@ -22,30 +24,23 @@ button { cursor:pointer; }
 <h1>Skin Shop</h1>
 
 <div class="top-bar">
-  <div>Contact T.B to buy more coins!</div>
+  <div>Contact Admin to buy more coins!</div>
   <div>
-    <div style="font-size:12px;color:#aaa;">Your coins</div>
+    <div style="font-size:12px;color:#aaa;">Your Coins</div>
     <div id="coins">0</div>
   </div>
 </div>
 
-<div id="message" style="color:yellow;"></div>
+<div id="message">Enter your key below to load your coins and skins:</div>
 
-<h3>Create / Load Key</h3>
-<div id="keySection">
-  <input id="nameInput" placeholder="Enter your name">
-  <button onclick="createKey()">Create Key</button>
-</div>
-
-<div id="keyLoadSection" style="display:none;">
-  <input id="keyInput" placeholder="Enter your key">
-  <button onclick="loadKey()">Load Key</button>
-</div>
+<input id="keyInput" placeholder="Enter your key here">
+<button onclick="loadKey()">Load Key</button>
 
 <h3>Skins</h3>
 <div class="skins" id="skinsGrid"></div>
 
 <script>
+// Skin data
 const skins = [
   {id:'skin1', name:'Stealth Ops', price:100},
   {id:'skin2', name:'Crimson Viper', price:250},
@@ -57,13 +52,13 @@ const skins = [
 let currentKey = null;
 let coins = 0;
 let owned = [];
-let userName = '';
 
-function showMessage(msg){ document.getElementById('message').textContent = msg; }
+// Helper functions
+function showMessage(msg){ document.getElementById('message').textContent=msg; }
 
 function saveData(){
   if(!currentKey) return;
-  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, owned, name:userName}));
+  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, owned}));
 }
 
 function renderSkins(){
@@ -84,43 +79,20 @@ function renderSkins(){
   document.getElementById('coins').textContent=coins;
 }
 
-function createKey(){
-  const name = document.getElementById('nameInput').value.trim();
-  if(!name) return showMessage('Enter your name');
-  // check if name already has a key
-  for(let i=0;i<localStorage.length;i++){
-    const k = localStorage.key(i);
-    if(k.startsWith('skinshop_')){
-      const data = JSON.parse(localStorage.getItem(k));
-      if(data.name === name) return showMessage('You already have a key');
-    }
-  }
-  const key = Math.random().toString(36).substring(2,10);
-  currentKey = key;
-  coins=0;
-  owned=[];
-  userName=name;
-  localStorage.setItem('skinshop_'+key, JSON.stringify({coins, owned, name}));
-  showMessage('Your key: '+key);
-  document.getElementById('keySection').style.display='none';
-  document.getElementById('keyLoadSection').style.display='block';
-  document.getElementById('keyInput').value=key;
-  renderSkins();
-}
-
+// Load key
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
-  if(!key) return showMessage('Enter your key');
-  const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
-  if(!data.name) return showMessage('Invalid key');
+  if(!key) return showMessage('Please enter your key');
+  const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
+  if(!data) return showMessage('Invalid key');
   currentKey = key;
-  coins = data.coins;
-  owned = data.owned;
-  userName = data.name;
-  showMessage('Key loaded for '+userName);
+  coins = data.coins||0;
+  owned = data.owned||[];
+  showMessage('Key loaded successfully!');
   renderSkins();
 }
 
+// Buy skin
 function buySkin(id,price){
   if(!currentKey) return showMessage('Enter your key first');
   if(owned.includes(id)) return showMessage('You already own this skin');
@@ -132,7 +104,9 @@ function buySkin(id,price){
   renderSkins();
 }
 
+// Initial render
 renderSkins();
 </script>
+
 </body>
 </html>
