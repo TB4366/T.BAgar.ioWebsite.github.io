@@ -18,10 +18,9 @@ th { background:#333; }
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
-<h3>Add Coins</h3>
-<input id="adminKey" placeholder="Enter Key">
-<input id="adminCoins" type="number" placeholder="Amount">
-<button onclick="addCoins()">Add Coins</button>
+<h3>Add New Key</h3>
+<input id="newName" placeholder="Enter Name">
+<button onclick="addNewKey()">Add Key</button>
 
 <h3>All Keys</h3>
 <table id="keysTable">
@@ -61,34 +60,61 @@ function showMessage(msg){
   document.getElementById('message').textContent=msg;
 }
 
-// Add coins to a key
-function addCoins(){
-  const key = document.getElementById('adminKey').value.trim();
-  const amount = parseInt(document.getElementById('adminCoins').value);
-  if(!key || !amount) return showMessage('Enter key and amount');
-  const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
-  if(!data) return showMessage('Invalid key');
-  data.coins = (data.coins||0) + amount;
-  localStorage.setItem('skinshop_'+key, JSON.stringify(data));
-  showMessage('✅ Coins added');
+// Add new key
+function addNewKey(){
+  const name = document.getElementById('newName').value.trim();
+  if(!name) return showMessage('Enter a name');
+  // generate unique key
+  const key = Math.random().toString(36).substring(2,10);
+  localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, owned:[]}));
+  showMessage('✅ New key created: '+key);
+  document.getElementById('newName').value='';
   loadAllKeys();
 }
 
-// Edit key and name
+// Edit key menu
 function editKey(storageKey){
+  const options = prompt('Choose an option:\n1 - Manage Coins\n2 - Change Key\n3 - Change Name');
+  if(!options) return;
   const data = JSON.parse(localStorage.getItem(storageKey));
-  const newName = prompt('Enter new name:', data.name || '');
-  if(newName===null) return;
-  const newKey = prompt('Enter new key (leave blank to keep same):', storageKey.replace('skinshop_',''));
-  if(newKey===null) return;
-  let newStorageKey = storageKey;
-  if(newKey && newKey!==storageKey.replace('skinshop_','')){
-    newStorageKey = 'skinshop_'+newKey;
-    localStorage.removeItem(storageKey);
+
+  switch(options){
+    case '1': // Manage Coins
+      const action = prompt('Type "add" to add coins or "remove" to remove coins');
+      if(!action) return;
+      const amount = parseInt(prompt('Enter amount'));
+      if(isNaN(amount)) return showMessage('Invalid amount');
+      if(action.toLowerCase() === 'add'){
+        data.coins = (data.coins||0)+amount;
+      } else if(action.toLowerCase() === 'remove'){
+        data.coins = Math.max((data.coins||0)-amount,0);
+      } else return showMessage('Invalid action');
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Coins updated');
+      break;
+
+    case '2': // Change Key
+      const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
+      if(!newKey) return;
+      const newStorageKey = 'skinshop_'+newKey;
+      localStorage.setItem(newStorageKey, JSON.stringify(data));
+      if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
+      showMessage('✅ Key updated');
+      break;
+
+    case '3': // Change Name
+      const newName = prompt('Enter new name:', data.name);
+      if(!newName) return;
+      data.name = newName;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Name updated');
+      break;
+
+    default:
+      showMessage('Invalid option');
+      break;
   }
-  data.name = newName;
-  localStorage.setItem(newStorageKey, JSON.stringify(data));
-  showMessage('✅ Key updated');
+
   loadAllKeys();
 }
 
