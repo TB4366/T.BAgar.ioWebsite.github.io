@@ -10,17 +10,18 @@ h1 { color:#0af; font-size:28px; margin-bottom:10px; }
 input, button { padding:10px; margin:5px; border-radius:50px; border:none; font-size:16px; }
 button { cursor:pointer; }
 .skins { display:flex; flex-wrap: wrap; gap:25px; justify-content:center; margin-top:20px; }
-.skin { width:150px; height:150px; border-radius:50%; background:#333; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; position:relative; overflow:hidden; transition: transform 0.1s, filter 0.1s;}
+.skinContainer { display:flex; flex-direction:column; align-items:center; }
+.skin { width:150px; height:150px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; transition: transform 0.1s, filter 0.1s;}
 .skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; transition: filter 0.2s, opacity 0.2s; }
 .skin:hover { filter: brightness(1.2); }
 .lock { position:absolute; top:5px; left:5px; font-size:18px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%; }
-.grayed img { filter: grayscale(100%); opacity:0.5; }
+.grayed img { filter: grayscale(100%); opacity:0.5; pointer-events:none; }
+.skinName, .skinPrice { margin-top:5px; font-size:14px; }
 #keyInput { width:300px; font-size:18px; text-align:center; }
 #message { font-size:18px; margin-top:10px; color:yellow; }
 #purchasedTitle { margin-top:30px; font-size:20px; text-decoration:underline; }
 #purchasedSkins { display:flex; flex-wrap: wrap; justify-content:center; gap:20px; margin-top:10px;}
 #purchasedSkins img { width:100px; height:100px; border-radius:50%; border:2px solid #0af; }
-.skinName, .skinPrice { margin-top:5px; font-size:14px; }
 </style>
 </head>
 <body>
@@ -51,7 +52,7 @@ button { cursor:pointer; }
 <script>
 // Skin data - add image URLs
 const skins = [
-  {id:'skin1', name:'Stealth Ops', price:100, image:'https://i.imgur.com/zAOoOR6.png'},
+  {id:'skin1', name:'Stealth Ops', price:100, image:'https://i.imgur.com/8YpTQ0u.png'},
   {id:'skin2', name:'Crimson Viper', price:250, image:'https://i.imgur.com/YM4RyGU.png'},
   {id:'skin3', name:'Glacier', price:500, image:'https://i.imgur.com/0Pn5XqE.png'},
   {id:'skin4', name:'Midnight', price:750, image:'https://i.imgur.com/H0EzBJS.png'},
@@ -79,17 +80,40 @@ function renderSkins(){
   skins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
 
-    // Skin div
+    const container = document.createElement('div');
+    container.className='skinContainer';
+    
     const div = document.createElement('div');
     div.className='skin '+(isOwned?'':'grayed');
-    div.innerHTML=`
-      <img src="${skin.image}" alt="${skin.name}">
-      <div class="lock">${isOwned?'✓':'🔒'}</div>
-      <div class="skinName">${skin.name}</div>
-      <div class="skinPrice">Price: ${skin.price} 💠</div>
-      <button onclick="buySkin('${skin.id}',${skin.price})">Buy</button>
-    `;
-    grid.appendChild(div);
+    div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
+    
+    if(!isOwned){
+      const lock = document.createElement('div');
+      lock.className='lock';
+      lock.textContent='🔒';
+      div.appendChild(lock);
+    } else {
+      const lock = document.createElement('div');
+      lock.className='lock';
+      lock.textContent='✓';
+      div.appendChild(lock);
+      div.style.cursor='pointer';
+      div.onclick = ()=>buySkin(skin.id, skin.price);
+    }
+    
+    container.appendChild(div);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className='skinName';
+    nameDiv.textContent=skin.name;
+    container.appendChild(nameDiv);
+
+    const priceDiv = document.createElement('div');
+    priceDiv.className='skinPrice';
+    priceDiv.textContent='Price: '+skin.price+' 💠';
+    container.appendChild(priceDiv);
+
+    grid.appendChild(container);
 
     // Purchased section
     if(isOwned){
