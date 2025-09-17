@@ -165,7 +165,8 @@ function saveSkins(){
       id: row.dataset.id,
       name: row.querySelector('.skinName').value,
       price: parseInt(row.querySelector('.skinPrice').value)||0,
-      image: row.querySelector('.skinImage').value
+      image: row.querySelector('.skinImage').value,
+      visible: row.querySelector('.skinVisible').checked
     });
   });
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
@@ -174,8 +175,8 @@ function saveSkins(){
 }
 
 function publishSkins(){
-  // For simplicity, publish just uses the saved skins
-  localStorage.setItem('skinsDataPublished', JSON.stringify(getSkins()));
+  const skins = getSkins().filter(s=>s.visible);
+  localStorage.setItem('skinsDataPublished', JSON.stringify(skins));
   showMessage('✅ Skins published for users!');
   renderSkinShop();
 }
@@ -192,7 +193,11 @@ function renderSkinEditor(){
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <label><input type="checkbox" class="skinVisible" ${skin.visible ? 'checked':''}> Visible</label>
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
+      <div style="margin:5px 0;">
+        <img src="${skin.image}" style="width:50px; height:50px; border-radius:50%;">
+      </div>
     `;
     container.appendChild(div);
   });
@@ -208,6 +213,7 @@ function addSkin(){
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
+    <label><input type="checkbox" class="skinVisible"> Visible</label>
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
