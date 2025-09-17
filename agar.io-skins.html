@@ -50,14 +50,10 @@ button { cursor:pointer; }
 </div>
 
 <script>
-// Skin data - add image URLs
-const skins = [
-  {id:'skin1', name:'Stealth Ops', price:100, image: 'https://i.imgur.com/zAOoOR6.png'},
-  {id:'skin2', name:'Crimson Viper', price:250, image:'https://i.imgur.com/YM4RyGU.png'},
-  {id:'skin3', name:'Glacier', price:500, image:'https://i.imgur.com/0Pn5XqE.png'},
-  {id:'skin4', name:'Midnight', price:750, image:'https://i.imgur.com/H0EzBJS.png'},
-  {id:'skin5', name:'Solar Flare', price:1200, image:'https://i.imgur.com/Jp6kgmF.png'},
-];
+// Skins worden geladen vanuit admin publish
+function getPublishedSkins(){
+  return JSON.parse(localStorage.getItem("skinsDataPublished") || "[]");
+}
 
 let currentKey = null;
 let coins = 0;
@@ -72,11 +68,16 @@ function saveData(){
 }
 
 function renderSkins(){
+  const skins = getPublishedSkins();
   const grid = document.getElementById('skinsGrid');
   grid.innerHTML='';
   const purchasedContainer = document.getElementById('purchasedSkins');
   purchasedContainer.innerHTML='';
-  
+
+  if(skins.length === 0){
+    grid.innerHTML = "<p>No skins available. Contact the admin.</p>";
+  }
+
   skins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
 
@@ -92,13 +93,12 @@ function renderSkins(){
       lock.className='lock';
       lock.textContent='🔒';
       div.appendChild(lock);
+      div.onclick = ()=>buySkin(skin.id, skin.price);
     } else {
       const lock = document.createElement('div');
       lock.className='lock';
       lock.textContent='✓';
       div.appendChild(lock);
-      div.style.cursor='pointer';
-      div.onclick = ()=>buySkin(skin.id, skin.price);
     }
     
     container.appendChild(div);
