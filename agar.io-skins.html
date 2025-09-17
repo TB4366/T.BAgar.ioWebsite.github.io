@@ -10,12 +10,35 @@ h1 { color:#0af; font-size:28px; margin-bottom:10px; }
 input, button { padding:10px; margin:5px; border-radius:50px; border:none; font-size:16px; }
 button { cursor:pointer; }
 .skins { display:flex; flex-wrap: wrap; gap:25px; justify-content:center; margin-top:20px; }
-.skinContainer { display:flex; flex-direction:column; align-items:center; }
-.skin { width:150px; height:150px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; transition: transform 0.1s, filter 0.1s;}
-.skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; transition: filter 0.2s, opacity 0.2s; }
-.skin:hover { filter: brightness(1.2); }
-.lock { position:absolute; top:5px; left:5px; font-size:18px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%; }
+.skinContainer { display:flex; flex-direction:column; align-items:center; margin:10px; }
+.skin {
+  width:150px;
+  height:150px;
+  border-radius:50%;
+  overflow:hidden;
+  position:relative;
+  background: #333;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.skin img {
+  width:100%;
+  height:100%;
+  object-fit:cover; /* afbeelding vult netjes de cirkel */
+  border-radius:50%;
+  transition: filter 0.2s, opacity 0.2s;
+}
 .grayed img { filter: grayscale(100%); opacity:0.5; pointer-events:none; }
+.lock {
+  position:absolute;
+  top:5px;
+  left:5px;
+  font-size:18px;
+  background:rgba(0,0,0,0.6);
+  padding:3px 6px;
+  border-radius:50%;
+}
 .skinName, .skinPrice { margin-top:5px; font-size:14px; }
 #keyInput { width:300px; font-size:18px; text-align:center; }
 #message { font-size:18px; margin-top:10px; color:yellow; }
@@ -50,7 +73,9 @@ button { cursor:pointer; }
 </div>
 
 <script>
-// Skins worden geladen vanuit admin publish
+// =======================
+// User Side: Load published skins from admin
+// =======================
 function getPublishedSkins(){
   return JSON.parse(localStorage.getItem("skinsDataPublished") || "[]");
 }
@@ -67,6 +92,7 @@ function saveData(){
   localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, owned}));
 }
 
+// Render skins in circles
 function renderSkins(){
   const skins = getPublishedSkins();
   const grid = document.getElementById('skinsGrid');
@@ -86,21 +112,21 @@ function renderSkins(){
     
     const div = document.createElement('div');
     div.className='skin '+(isOwned?'':'grayed');
-    div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
-    
+
+    const img = document.createElement('img');
+    img.src = skin.image;
+    img.alt = skin.name;
+    div.appendChild(img);
+
+    const lock = document.createElement('div');
+    lock.className='lock';
+    lock.textContent = isOwned ? '✓' : '🔒';
+    div.appendChild(lock);
+
     if(!isOwned){
-      const lock = document.createElement('div');
-      lock.className='lock';
-      lock.textContent='🔒';
-      div.appendChild(lock);
       div.onclick = ()=>buySkin(skin.id, skin.price);
-    } else {
-      const lock = document.createElement('div');
-      lock.className='lock';
-      lock.textContent='✓';
-      div.appendChild(lock);
     }
-    
+
     container.appendChild(div);
 
     const nameDiv = document.createElement('div');
