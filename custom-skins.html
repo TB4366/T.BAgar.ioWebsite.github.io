@@ -6,30 +6,20 @@
 <style>
 body { font-family: Arial; background:#111; color:#fff; padding:20px; }
 h1 { color:#0af; }
-input, button { padding:6px; margin:5px; border-radius:4px; border:none; }
+input, button { padding:6px; margin:5px; border-radius:4px; border:none; font-size:14px; }
 button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
 #editor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.skinRow { margin-bottom:10px; }
 .skinRow input { margin:3px; }
-.skins { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:20px;}
-.skinContainer { display:flex; flex-direction:column; align-items:center;}
-.skin { width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; background:#333;}
-.skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; filter:grayscale(100%); opacity:0.5;}
-.lock { position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%;}
-.skinName, .skinPrice { margin-top:5px; font-size:14px; }
 </style>
 </head>
 <body>
 
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
-
-<!-- Knop voor Skin Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openSkinEditor()">Edit Skins</button>
-</div>
 
 <h3>Add New Key</h3>
 <input id="newName" placeholder="Enter Name">
@@ -47,6 +37,9 @@ th { background:#333; }
 </table>
 
 <!-- Skin Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openSkinEditor()">Edit Skins</button>
+</div>
 <div id="editor">
   <h2>Skin Editor</h2>
   <button onclick="saveSkins()">Save Skins</button>
@@ -55,12 +48,9 @@ th { background:#333; }
   <div id="skinsEditor"></div>
 </div>
 
-<h2>Skin Shop Preview</h2>
-<div class="skins" id="skinsGrid"></div>
-
 <script>
 // =======================
-// Key management
+// Key Management
 // =======================
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
@@ -105,11 +95,9 @@ function editKey(storageKey){
       if(!action) return;
       const amount = parseInt(prompt('Enter amount'));
       if(isNaN(amount)) return showMessage('Invalid amount');
-      if(action.toLowerCase() === 'add'){
-        data.coins = (data.coins||0)+amount;
-      } else if(action.toLowerCase() === 'remove'){
-        data.coins = Math.max((data.coins||0)-amount,0);
-      } else return showMessage('Invalid action');
+      if(action.toLowerCase() === 'add'){ data.coins = (data.coins||0)+amount; }
+      else if(action.toLowerCase() === 'remove'){ data.coins = Math.max((data.coins||0)-amount,0); }
+      else return showMessage('Invalid action');
       localStorage.setItem(storageKey, JSON.stringify(data));
       showMessage('✅ Coins updated');
       break;
@@ -151,41 +139,12 @@ function openSkinEditor(){
   renderSkinEditor();
 }
 
-function getSkins(){
-  const skins = localStorage.getItem('skinsData');
-  return skins ? JSON.parse(skins) : [];
-}
-
-function saveSkins(){
-  const container = document.getElementById('skinsEditor');
-  const skinElements = container.querySelectorAll('.skinRow');
-  const skinsArr = [];
-  skinElements.forEach(row=>{
-    skinsArr.push({
-      id: row.dataset.id,
-      name: row.querySelector('.skinName').value,
-      price: parseInt(row.querySelector('.skinPrice').value)||0,
-      image: row.querySelector('.skinImage').value,
-      visible: row.querySelector('.skinVisible').checked
-    });
-  });
-  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
-  showMessage('✅ Skins saved!');
-  renderSkinShop();
-}
-
-function publishSkins(){
-  const skins = getSkins().filter(s=>s.visible);
-  localStorage.setItem('skinsDataPublished', JSON.stringify(skins));
-  showMessage('✅ Skins published for users!');
-  renderSkinShop();
-}
+function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
 
 function renderSkinEditor(){
   const container = document.getElementById('skinsEditor');
   container.innerHTML='';
-  const skins = getSkins();
-  skins.forEach(skin=>{
+  getSkins().forEach(skin=>{
     const div = document.createElement('div');
     div.className='skinRow';
     div.dataset.id = skin.id;
@@ -193,11 +152,8 @@ function renderSkinEditor(){
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
-      <label><input type="checkbox" class="skinVisible" ${skin.visible ? 'checked':''}> Visible</label>
+      <input type="file" accept="image/*" onchange="uploadImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
-      <div style="margin:5px 0;">
-        <img src="${skin.image}" style="width:50px; height:50px; border-radius:50%;">
-      </div>
     `;
     container.appendChild(div);
   });
@@ -213,55 +169,48 @@ function addSkin(){
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
-    <label><input type="checkbox" class="skinVisible"> Visible</label>
+    <input type="file" accept="image/*" onchange="uploadImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
 }
 
-function deleteSkin(id){
+function uploadImage(input, id){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const row = document.querySelector(`.skinRow[data-id='${id}'] .skinImage`);
+    row.value = e.target.result;
+  }
+  reader.readAsDataURL(file);
+}
+
+function saveSkins(){
   const container = document.getElementById('skinsEditor');
-  const row = container.querySelector(`.skinRow[data-id='${id}']`);
+  const skinElements = container.querySelectorAll('.skinRow');
+  const skinsArr = [];
+  skinElements.forEach(row=>{
+    skinsArr.push({
+      id: row.dataset.id,
+      name: row.querySelector('.skinName').value,
+      price: parseInt(row.querySelector('.skinPrice').value)||0,
+      image: row.querySelector('.skinImage').value
+    });
+  });
+  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
+  alert('✅ Skins saved!');
+}
+
+function publishSkins(){
+  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData'));
+  alert('✅ Skins published for users!');
+}
+
+function deleteSkin(id){
+  const row = document.querySelector(`.skinRow[data-id='${id}']`);
   if(row) row.remove();
 }
-
-// =======================
-// Skin Shop Preview
-// =======================
-function renderSkinShop(){
-  const grid = document.getElementById('skinsGrid');
-  grid.innerHTML='';
-  const skins = JSON.parse(localStorage.getItem('skinsDataPublished')||'[]');
-  skins.forEach(skin=>{
-    const container = document.createElement('div');
-    container.className='skinContainer';
-    const div = document.createElement('div');
-    div.className='skin';
-    const img = document.createElement('img');
-    img.src = skin.image;
-    div.appendChild(img);
-    const lock = document.createElement('div');
-    lock.className='lock';
-    lock.textContent='🔒';
-    div.appendChild(lock);
-    container.appendChild(div);
-
-    const nameDiv = document.createElement('div');
-    nameDiv.className='skinName';
-    nameDiv.textContent = skin.name;
-    container.appendChild(nameDiv);
-
-    const priceDiv = document.createElement('div');
-    priceDiv.className='skinPrice';
-    priceDiv.textContent = 'Price: '+skin.price+' 💠';
-    container.appendChild(priceDiv);
-
-    grid.appendChild(container);
-  });
-}
-
-// Initial render
-renderSkinShop();
 </script>
 
 </body>
