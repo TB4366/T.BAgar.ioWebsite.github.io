@@ -1,4 +1,4 @@
-<!doctype html>
+Voeg dit script hier in toe: <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -156,7 +156,7 @@
     background-color: #334155;
   }
 
-  /* Custom skins highlight */
+  /* Nieuwe sectie voor custom skins highlight */
   .divider {
     max-width: 900px;
     margin: 40px auto 10px auto;
@@ -212,67 +212,50 @@
   }
 
   /* Animations */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes zoomInOut {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  @keyframes rotate360 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%, 100% { filter: brightness(0.8); }
+    50% { filter: brightness(1.2); }
+  }
 
-  /* Event Bar & Popup */
-  .event-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #0f172a;
-    color: white;
+  /* Keys sectie */
+  .keys-link {
     text-align: center;
-    padding: 5px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 -2px 6px rgba(0,0,0,0.5);
-    z-index: 1000;
+    margin-bottom: 40px;
   }
-  .event-bar:hover { background: #1e293b; }
+  body.dark .keys-link .btn {
+    background-color: #ccc;
+    color: #222;
+  }
+  body.dark .keys-link .btn:hover {
+    background-color: #aaa;
+  }
 
-  .event-popup {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    background: #0f172a;
-    color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-    padding: 12px;
-    z-index: 1001;
-    text-align: center;
   }
-  .event-popup img {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    display: none;
-  }
-  .event-popup .close-btn {
-    position: absolute;
-    top: 5px;
-    right: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  #buyBtn {
-    margin-top: 10px;
-    background-color: #48cae4;
-    color: #0f172a;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  #buyBtn:hover { background-color: #00b4d8; }
+  /* Animatie types */
+  .fadeIn { animation: fadeIn 1s forwards; }
+  .slideUp { animation: slideUp 1s forwards; }
+  .zoomIn { animation: zoomIn 1s forwards; }
 
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translate(-50%, 20px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+  }
+  @keyframes zoomIn {
+    from { transform: translateX(-50%) scale(0.8); opacity: 0; }
+    to { transform: translateX(-50%) scale(1); opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -308,6 +291,7 @@
     <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
   </div>
 
+  <!-- Skins sectie -->
   <div class="divider"></div>
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="skins-circles">
@@ -316,6 +300,7 @@
     <div class="circle" id="circle3"></div>
   </div>
 
+  <!-- Keys sectie -->
   <div class="divider"></div>
   <div class="highlight-title">T.B Keys</div>
   <div class="keys-link">
@@ -329,104 +314,127 @@
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
-  // Theme toggle
+  // Dark/light mode toggle
   const toggleBtn = document.getElementById('themeToggleBtn');
   const body = document.body;
   const savedTheme = localStorage.getItem('theme');
-  if (savedTheme === 'dark') { body.classList.add('dark'); toggleBtn.textContent='☀️'; } 
-  else { toggleBtn.textContent='🌙'; }
-  toggleBtn.addEventListener('click', ()=>{
+  if (savedTheme === 'dark') {
+    body.classList.add('dark');
+    toggleBtn.textContent = '☀️';
+  } else {
+    toggleBtn.textContent = '🌙';
+  }
+  toggleBtn.addEventListener('click', () => {
     body.classList.toggle('dark');
-    if(body.classList.contains('dark')){ toggleBtn.textContent='☀️'; localStorage.setItem('theme','dark'); } 
-    else { toggleBtn.textContent='🌙'; localStorage.setItem('theme','light'); }
+    if (body.classList.contains('dark')) {
+      toggleBtn.textContent = '☀️';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      toggleBtn.textContent = '🌙';
+      localStorage.setItem('theme', 'light');
+    }
   });
 
-  // Skins cycling
-  const skinsCircle1=['FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png','IMG_2978.jpeg','IMG_3164.png'];
-  const skinsCircle2=['IMG_3156.jpeg','IMG_2718.png','IMG_2819.png'];
-  const skinsCircle3=['IMG_3520.png','IMG_3533.png','IMG_3512.webp'];
-  const intervals=[4000,4500,5000];
+  // Skins afbeeldingen
+  const skinsCircle1 = [
+    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
+    'IMG_2978.jpeg',
+    'IMG_3164.png'
+  ];
+  const skinsCircle2 = [
+    'IMG_3156.jpeg',
+    'IMG_2718.png',
+    'IMG_2819.png'
+  ];
+  const skinsCircle3 = [
+    'IMG_3520.png',
+    'IMG_3533.png',
+    'IMG_3512.webp'
+  ];
+  const intervals = [4000, 4500, 5000];
 
-  function cycleImages(circleId, images, interval){
-    const circle=document.getElementById(circleId);
-    let currentIndex=0;
-    images.forEach((src,i)=>{
-      const img=document.createElement('img');
-      img.src=src;
-      if(i===0) img.classList.add('active');
+  function cycleImages(circleId, images, interval) {
+    const circle = document.getElementById(circleId);
+    let currentIndex = 0;
+    // Voeg img element toe
+    images.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      if (i === 0) img.classList.add('active');
       circle.appendChild(img);
     });
-    setInterval(()=>{
-      const imgs=circle.querySelectorAll('img');
+    setInterval(() => {
+      const imgs = circle.querySelectorAll('img');
       imgs[currentIndex].classList.remove('active');
-      currentIndex=(currentIndex+1)%imgs.length;
+      currentIndex = (currentIndex + 1) % imgs.length;
       imgs[currentIndex].classList.add('active');
-    },interval);
-  }
-  cycleImages('circle1',skinsCircle1,intervals[0]);
-  cycleImages('circle2',skinsCircle2,intervals[1]);
-  cycleImages('circle3',skinsCircle3,intervals[2]);
-</script>
-
-<!-- Agar.io Pathchair Event -->
-<div class="event-bar" id="eventBar">
-  🪑 Pathchair Event – <span id="eventCountdown">Loading...</span>
-</div>
-
-<div class="event-popup" id="eventPopup">
-  <span class="close-btn" onclick="document.getElementById('eventPopup').style.display='none'">×</span>
-  <img src="pathchair.png" alt="Pathchair Event" id="eventImage">
-  <p id="eventText"></p>
-  <p><strong>Start:</strong> <span id="eventStartText"></span></p>
-  <p><strong>End:</strong> <span id="eventEndText"></span></p>
-  <button id="buyBtn" class="btn">Buy this item</button>
-</div>
-
-<script>
-  const eventStart = new Date("2025-09-20T18:00:00");
-  const eventEnd = new Date("2025-09-22T23:59:00");
-
-  const countdownEl = document.getElementById("eventCountdown");
-  const eventText = document.getElementById("eventText");
-  const eventImage = document.getElementById("eventImage");
-  const startText = document.getElementById("eventStartText");
-  const endText = document.getElementById("eventEndText");
-
-  startText.textContent = eventStart.toLocaleString();
-  endText.textContent = eventEnd.toLocaleString();
-
-  function updateCountdown(){
-    const now=new Date();
-    if(now<eventStart){
-      const diff=eventStart-now;
-      const h=Math.floor(diff/(1000*60*60));
-      const m=Math.floor((diff%(1000*60*60))/(1000*60));
-      const s=Math.floor((diff%(1000*60))/1000);
-      countdownEl.textContent=`Starts in ${h}h ${m}m ${s}s`;
-      eventText.textContent="⏳ Event is coming soon!";
-      eventImage.style.display="none";
-    } else if(now>=eventStart && now<=eventEnd){
-      const diff=eventEnd-now;
-      const h=Math.floor(diff/(1000*60*60));
-      const m=Math.floor((diff%(1000*60*60))/(1000*60));
-      const s=Math.floor((diff%(1000*60))/1000);
-      countdownEl.textContent=`Ends in ${h}h ${m}m ${s}s`;
-      eventText.textContent="🎉 Event is live!";
-      eventImage.style.display="block";
-    } else{
-      countdownEl.textContent="Event ended";
-      eventText.textContent="❌ This event has finished.";
-      eventImage.style.display="none";
-    }
+    }, interval);
   }
 
-  setInterval(updateCountdown,1000);
-  updateCountdown();
-
-  document.getElementById("eventBar").addEventListener("click",()=>{
-    document.getElementById("eventPopup").style.display="block";
-  });
+  cycleImages('circle1', skinsCircle1, intervals[0]);
+  cycleImages('circle2', skinsCircle2, intervals[1]);
+  cycleImages('circle3', skinsCircle3, intervals[2]);
 </script>
 
+<!-- Nieuwe sectie onderaan -->
+<div style="text-align:center; margin-top:50px;">
+
+  <!-- Nieuwe video's -->
+  <h2>New video’s</h2>
+  <div style="display:flex; justify-content:center; margin:20px 0;">
+    <iframe width="560" height="315" 
+      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
+      title="New video" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- Best Duo -->
+  <h2>The Best Duo</h2>
+  <div style="display:flex; justify-content:center; margin:20px 0;">
+    <iframe width="560" height="315" 
+      src="https://www.youtube.com/embed/iXrJJT8u5P8" 
+      title="The Best Duo" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <hr style="margin:30px 0;">
+
+  <!-- Knoppen sectie -->
+  <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+
+    <!-- Discord knop -->
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#5865F2; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
+      JOIN My Discord server
+    </a>
+
+    <!-- Instagram knop -->
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#E1306C; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
+      Follow me on Instagram
+    </a>
+
+    <!-- YouTube knop -->
+    <a href="https://www.youtube.com/@T.B6" target="_blank" 
+       style="display:flex; align-items:center; gap:10px; background-color:#FF0000; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
+      Subscribe to my YouTube channel
+    </a>
+
+  </div>
+</div>
+  
 </body>
 </html>
+  
