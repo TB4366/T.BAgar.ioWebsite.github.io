@@ -13,6 +13,12 @@ th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
 #editor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
 .skinRow input { margin:3px; }
+.skins { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:20px;}
+.skinContainer { display:flex; flex-direction:column; align-items:center;}
+.skin { width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; background:#333;}
+.skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; filter:grayscale(100%); opacity:0.5;}
+.lock { position:absolute; top:5px; left:5px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%;}
+.skinName, .skinPrice { margin-top:5px; font-size:14px; }
 </style>
 </head>
 <body>
@@ -44,9 +50,13 @@ th { background:#333; }
 <div id="editor">
   <h2>Skin Editor</h2>
   <button onclick="saveSkins()">Save Skins</button>
+  <button onclick="publishSkins()">Publish Skins</button>
   <button onclick="addSkin()">Add Skin</button>
   <div id="skinsEditor"></div>
 </div>
+
+<h2>Skin Shop Preview</h2>
+<div class="skins" id="skinsGrid"></div>
 
 <script>
 // =======================
@@ -73,9 +83,7 @@ function loadAllKeys(){
   }
 }
 
-function showMessage(msg){
-  document.getElementById('message').textContent=msg;
-}
+function showMessage(msg){ document.getElementById('message').textContent=msg; }
 
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
@@ -120,9 +128,7 @@ function editKey(storageKey){
       localStorage.setItem(storageKey, JSON.stringify(data));
       showMessage('✅ Name updated');
       break;
-    default:
-      showMessage('Invalid option');
-      break;
+    default: showMessage('Invalid option'); break;
   }
   loadAllKeys();
 }
@@ -158,12 +164,20 @@ function saveSkins(){
     skinsArr.push({
       id: row.dataset.id,
       name: row.querySelector('.skinName').value,
-      price: parseInt(row.querySelector('.skinPrice').value) || 0,
+      price: parseInt(row.querySelector('.skinPrice').value)||0,
       image: row.querySelector('.skinImage').value
     });
   });
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
   showMessage('✅ Skins saved!');
+  renderSkinShop();
+}
+
+function publishSkins(){
+  // For simplicity, publish just uses the saved skins
+  localStorage.setItem('skinsDataPublished', JSON.stringify(getSkins()));
+  showMessage('✅ Skins published for users!');
+  renderSkinShop();
 }
 
 function renderSkinEditor(){
@@ -205,6 +219,43 @@ function deleteSkin(id){
   if(row) row.remove();
 }
 
+// =======================
+// Skin Shop Preview
+// =======================
+function renderSkinShop(){
+  const grid = document.getElementById('skinsGrid');
+  grid.innerHTML='';
+  const skins = JSON.parse(localStorage.getItem('skinsDataPublished')||'[]');
+  skins.forEach(skin=>{
+    const container = document.createElement('div');
+    container.className='skinContainer';
+    const div = document.createElement('div');
+    div.className='skin';
+    const img = document.createElement('img');
+    img.src = skin.image;
+    div.appendChild(img);
+    const lock = document.createElement('div');
+    lock.className='lock';
+    lock.textContent='🔒';
+    div.appendChild(lock);
+    container.appendChild(div);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className='skinName';
+    nameDiv.textContent = skin.name;
+    container.appendChild(nameDiv);
+
+    const priceDiv = document.createElement('div');
+    priceDiv.className='skinPrice';
+    priceDiv.textContent = 'Price: '+skin.price+' 💠';
+    container.appendChild(priceDiv);
+
+    grid.appendChild(container);
+  });
+}
+
+// Initial render
+renderSkinShop();
 </script>
 
 </body>
