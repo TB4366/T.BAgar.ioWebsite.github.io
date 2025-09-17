@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Admin - Skin Shop</title>
@@ -9,59 +9,99 @@ h1 { color:#0af; }
 input, button { padding:6px; margin:3px; border-radius:4px; border:none; }
 button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
-th, td { border:1px solid #555; padding:5px; }
+th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
 </style>
 </head>
 <body>
+
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
-<h3>Coins toevoegen</h3>
-<input id="adminKey" placeholder="Key">
-<input id="adminCoins" type="number" placeholder="Aantal coins">
-<button onclick="addCoins()">Voeg coins toe</button>
+<h3>Add Coins</h3>
+<input id="adminKey" placeholder="Enter Key">
+<input id="adminCoins" type="number" placeholder="Amount">
+<button onclick="addCoins()">Add Coins</button>
 
-<h3>Alle keys</h3>
+<h3>All Keys</h3>
 <table id="keysTable">
-<tr><th>Key</th><th>Owner</th><th>Coins</th><th>Gekochte skins</th></tr>
+<tr>
+  <th>Key</th>
+  <th>Name</th>
+  <th>Coins</th>
+  <th>Purchased Skins</th>
+  <th>Actions</th>
+</tr>
 </table>
 
 <script>
-function loadAllKeys() {
+// Load all keys from localStorage
+function loadAllKeys(){
   const table = document.getElementById('keysTable');
-  table.innerHTML = '<tr><th>Key</th><th>Owner</th><th>Coins</th><th>Gekochte skins</th></tr>';
+  table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Purchased Skins</th><th>Actions</th></tr>';
   for(let i=0;i<localStorage.length;i++){
     const k = localStorage.key(i);
     if(k.startsWith('skinshop_')){
       const data = JSON.parse(localStorage.getItem(k));
-      const owned = data.owned ? data.owned.join(', ') : '';
       const row = table.insertRow();
       row.insertCell(0).innerText = k.replace('skinshop_','');
-      row.insertCell(1).innerText = data.owner || '';
-      row.insertCell(2).innerText = data.coins || 0;
-      row.insertCell(3).innerText = owned;
+      row.insertCell(1).innerText = data.name||'';
+      row.insertCell(2).innerText = data.coins||0;
+      row.insertCell(3).innerText = data.owned?data.owned.join(', '):'';
+      const actions = row.insertCell(4);
+      actions.innerHTML=`
+        <button onclick="editKey('${k}')">Edit</button>
+        <button onclick="deleteKey('${k}')">Delete</button>
+      `;
     }
   }
 }
 
-function addCoins() {
+function showMessage(msg){ document.getElementById('message').textContent=msg; }
+
+// Add coins to a key
+function addCoins(){
   const key = document.getElementById('adminKey').value.trim();
   const amount = parseInt(document.getElementById('adminCoins').value);
-  if(!key || !amount) return showMessage('Vul key en coins in');
-  const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
-  if(!data.owner) return showMessage('Ongeldige key');
+  if(!key || !amount) return showMessage('Enter key and amount');
+  const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
+  if(!data.name) return showMessage('Invalid key');
   data.coins = (data.coins||0)+amount;
   localStorage.setItem('skinshop_'+key, JSON.stringify(data));
-  showMessage('✅ Coins toegevoegd');
+  showMessage('✅ Coins added');
   loadAllKeys();
 }
 
-function showMessage(msg){
-  document.getElementById('message').textContent = msg;
+// Edit key: name or key
+function editKey(storageKey){
+  const data = JSON.parse(localStorage.getItem(storageKey));
+  const newName = prompt('Enter new name:', data.name);
+  if(newName===null) return;
+  const newKey = prompt('Enter new key (leave blank to keep same):', storageKey.replace('skinshop_',''));
+  if(newKey===null) return;
+  let newStorageKey = storageKey;
+  if(newKey && newKey!==storageKey.replace('skinshop_','')){
+    newStorageKey = 'skinshop_'+newKey;
+    localStorage.removeItem(storageKey);
+  }
+  data.name=newName;
+  localStorage.setItem(newStorageKey, JSON.stringify(data));
+  showMessage('✅ Key updated');
+  loadAllKeys();
 }
 
+// Delete key
+function deleteKey(storageKey){
+  if(confirm('Are you sure you want to delete this key?')){
+    localStorage.removeItem(storageKey);
+    showMessage('✅ Key deleted');
+    loadAllKeys();
+  }
+}
+
+// Initial load
 loadAllKeys();
 </script>
+
 </body>
 </html>
