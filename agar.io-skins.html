@@ -1,117 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Skin Shop</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #111; color: #fff; margin: 0; padding: 20px; }
-    .top-bar { display: flex; justify-content: space-between; margin-bottom: 20px; }
-    .skins { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 15px; }
-    .skin { background: rgba(200,200,200,0.15); border: 1px solid #555; border-radius: 10px;
-            padding: 15px; position: relative; cursor: pointer; transition: transform 0.15s, filter 0.15s; }
-    .skin:hover { filter: brightness(1.2); }
-    .skin:active { transform: scale(0.97); }
-    .skin.locked { filter: grayscale(100%); }
-    .skin .lock { position: absolute; top: 8px; left: 8px; font-size: 14px; background: rgba(0,0,0,0.6);
-                  padding: 2px 6px; border-radius: 4px; }
-    .skin .price { margin-top: 8px; display: flex; justify-content: space-between; font-size: 14px; }
-    .key-bar { background: #333; padding: 10px; border-radius: 8px; display: flex; gap: 10px; margin-bottom: 20px; }
-    .key-bar input { flex: 1; padding: 6px; border-radius: 4px; border: none; }
-    .key-bar button { padding: 6px 12px; border: none; border-radius: 4px; background: #0af; color: #fff; cursor: pointer; }
-    .message { margin-top: 10px; font-size: 14px; color: gold; }
-  </style>
+<meta charset="UTF-8">
+<title>Skin Shop</title>
+<style>
+body { font-family: Arial; background:#111; color:#fff; padding:20px; }
+h1 { color: #0af; }
+.top-bar { display:flex; justify-content: space-between; margin-bottom: 20px; }
+input, button { padding:6px; margin:3px; border-radius:4px; border:none; }
+button { cursor:pointer; }
+.skins { display:flex; flex-wrap: wrap; gap:10px; }
+.skin { background:#333; padding:10px; border-radius:8px; width:150px; text-align:center; cursor:pointer; transition: transform 0.1s, filter 0.1s; }
+.skin:hover { filter: brightness(1.2); }
+.skin:active { transform: scale(0.97); }
+.lock { position:absolute; top:5px; left:5px; font-size:14px; background:rgba(0,0,0,0.6); padding:2px 5px; border-radius:4px; }
+</style>
 </head>
 <body>
 
-  <!-- Top bar -->
-  <div class="top-bar">
-    <div><strong>Contact T.B</strong> to buy more coins!</div>
-    <div>
-      <div style="font-size:12px;color:#aaa;">Your coins</div>
-      <div id="coins" style="font-size:20px;font-weight:bold;">0</div>
-    </div>
+<h1>Skin Shop</h1>
+
+<div class="top-bar">
+  <div>Contact T.B to buy more coins!</div>
+  <div>
+    <div style="font-size:12px;color:#aaa;">Your coins</div>
+    <div id="coins">0</div>
   </div>
+</div>
 
-  <!-- Key input -->
-  <div class="key-bar">
-    <input id="keyInput" placeholder="Enter your key...">
-    <button onclick="loadKey()">Load key</button>
-  </div>
+<div id="message" style="color:yellow;"></div>
 
-  <!-- Skins grid -->
-  <div class="skins" id="skinsGrid"></div>
+<h3>Key aanmaken / laden</h3>
+<input id="ownerInput" placeholder="Jouw email of naam">
+<button onclick="createKey()">Maak key</button>
+<br>
+<input id="keyInput" placeholder="Of voer bestaande key in">
+<button onclick="loadKey()">Load Key</button>
 
-  <!-- Message -->
-  <div class="message" id="message"></div>
+<h3>Skins</h3>
+<div class="skins" id="skinsGrid"></div>
 
 <script>
-  const skins = [
-    { id: "skin1", name: "Stealth Ops", price: 100 },
-    { id: "skin2", name: "Crimson Viper", price: 250 },
-    { id: "skin3", name: "Glacier", price: 500 },
-    { id: "skin4", name: "Midnight", price: 750 },
-    { id: "skin5", name: "Solar Flare", price: 1200 },
-  ];
+// ----- Data -----
+const skins = [
+  {id:'skin1', name:'Stealth Ops', price:100},
+  {id:'skin2', name:'Crimson Viper', price:250},
+  {id:'skin3', name:'Glacier', price:500},
+  {id:'skin4', name:'Midnight', price:750},
+  {id:'skin5', name:'Solar Flare', price:1200},
+];
 
-  let currentKey = null;
-  let coins = 0;
-  let owned = [];
+let currentKey = null;
+let coins = 0;
+let owned = [];
 
-  const coinsEl = document.getElementById("coins");
-  const messageEl = document.getElementById("message");
-  const skinsGrid = document.getElementById("skinsGrid");
+// ----- Helpers -----
+function showMessage(msg) {
+  document.getElementById('message').textContent = msg;
+}
+function saveData() {
+  if (!currentKey) return;
+  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, owned}));
+}
+function renderSkins() {
+  const grid = document.getElementById('skinsGrid');
+  grid.innerHTML = '';
+  skins.forEach(skin => {
+    const isOwned = owned.includes(skin.id);
+    const div = document.createElement('div');
+    div.className = 'skin';
+    div.innerHTML = `
+      <div style="position:relative;">
+        <div class="lock">${isOwned?'✓':'🔒'}</div>
+        <div style="margin-top:20px;">${skin.name}</div>
+        <div>Prijs: ${skin.price} 💠</div>
+        <button onclick="buySkin('${skin.id}',${skin.price})">Koop</button>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+  document.getElementById('coins').textContent = coins;
+}
 
-  function renderSkins() {
-    skinsGrid.innerHTML = "";
-    skins.forEach(skin => {
-      const isOwned = owned.includes(skin.id);
-      const div = document.createElement("div");
-      div.className = "skin " + (isOwned ? "" : "locked");
-      div.innerHTML = `
-        <div class="lock">${isOwned ? "✓" : "🔒"}</div>
-        <div style="text-align:center;margin-top:20px;">${skin.name}</div>
-        <div class="price"><span>${skin.name}</span><span>${skin.price} 💠</span></div>
-      `;
-      div.onclick = () => purchaseSkin(skin);
-      skinsGrid.appendChild(div);
-    });
+// ----- Key maken -----
+function createKey() {
+  const owner = document.getElementById('ownerInput').value.trim();
+  if (!owner) return showMessage('Vul je naam of email in.');
+  // check of er al een key is
+  for (let i=0;i<localStorage.length;i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith('skinshop_')) {
+      const data = JSON.parse(localStorage.getItem(key));
+      if (data.owner === owner) return showMessage('Je hebt al een key!');
+    }
   }
-
-  function showMessage(msg) {
-    messageEl.textContent = msg;
-  }
-
-  function loadKey() {
-    const key = document.getElementById("keyInput").value.trim();
-    if (!key) return showMessage("Please enter a key.");
-    // Simpel: key opgeslagen in localStorage
-    const data = JSON.parse(localStorage.getItem("skinshop_"+key) || "{}");
-    currentKey = key;
-    coins = data.coins || 0;
-    owned = data.owned || [];
-    coinsEl.textContent = coins;
-    renderSkins();
-    showMessage("Key loaded!");
-  }
-
-  function saveData() {
-    if (!currentKey) return;
-    localStorage.setItem("skinshop_"+currentKey, JSON.stringify({ coins, owned }));
-  }
-
-  function purchaseSkin(skin) {
-    if (!currentKey) return showMessage("Load your key first!");
-    if (owned.includes(skin.id)) return showMessage("You already own this skin.");
-    if (coins < skin.price) return showMessage("Not enough coins.");
-    coins -= skin.price;
-    owned.push(skin.id);
-    coinsEl.textContent = coins;
-    saveData();
-    renderSkins();
-    showMessage("Purchased "+skin.name+"!");
-  }
-
+  // maak nieuwe key
+  const key = Math.random().toString(36).substring(2,10);
+  currentKey = key;
+  coins = 0;
+  owned = [];
+  localStorage.setItem('skinshop_'+key, JSON.stringify({coins, owned, owner}));
+  document.getElementById('keyInput').value = key;
+  showMessage('Jouw nieuwe key: '+key);
   renderSkins();
+}
+
+// ----- Key laden -----
+function loadKey() {
+  const key = document.getElementById('keyInput').value.trim();
+  if (!key) return showMessage('Voer je key in.');
+  const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
+  if (!data || data.owner===undefined) return showMessage('Ongeldige key!');
+  currentKey = key;
+  coins = data.coins;
+  owned = data.owned;
+  showMessage('Key geladen!');
+  renderSkins();
+}
+
+// ----- Skin kopen -----
+function buySkin(id,price) {
+  if (!currentKey) return showMessage('Load je key eerst!');
+  if (owned.includes(id)) return showMessage('Skin al gekocht!');
+  if (coins<price) return showMessage('Niet genoeg coins!');
+  coins -= price;
+  owned.push(id);
+  saveData();
+  showMessage('Skin gekocht!');
+  renderSkins();
+}
+
+// ----- Init -----
+renderSkins();
 </script>
 
 </body>
