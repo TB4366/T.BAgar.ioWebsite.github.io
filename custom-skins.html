@@ -11,12 +11,19 @@ button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
+#websiteEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.editable { border:1px dashed #0af; padding:5px; margin:5px; cursor:text; }
 </style>
 </head>
 <body>
 
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
+
+<!-- Knop voor Website Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openWebsiteEditor()">Edit Website</button>
+</div>
 
 <h3>Add New Key</h3>
 <input id="newName" placeholder="Enter Name">
@@ -33,8 +40,23 @@ th { background:#333; }
 </tr>
 </table>
 
+<!-- Website Editor Sectie -->
+<div id="websiteEditor">
+  <h2>Website Editor</h2>
+  <button onclick="saveWebsite()">Save</button>
+  <button onclick="publishWebsite()">Publish</button>
+  <button onclick="addText()">Add Text</button>
+  <button onclick="addImage()">Add Image</button>
+  <button onclick="addLine()">Add Line</button>
+  <div id="websiteContent" style="margin-top:10px; background:#222; padding:10px; min-height:200px;">
+    <div class="editable" contenteditable="true">Welcome to the Skin Shop!</div>
+  </div>
+</div>
+
 <script>
-// Load all keys from localStorage
+// =======================
+// Key management (bestaand)
+// =======================
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
   table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Purchased Skins</th><th>Actions</th></tr>';
@@ -60,11 +82,9 @@ function showMessage(msg){
   document.getElementById('message').textContent=msg;
 }
 
-// Add new key
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
-  // generate unique key
   const key = Math.random().toString(36).substring(2,10);
   localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, owned:[]}));
   showMessage('✅ New key created: '+key);
@@ -72,14 +92,13 @@ function addNewKey(){
   loadAllKeys();
 }
 
-// Edit key menu
 function editKey(storageKey){
   const options = prompt('Choose an option:\n1 - Manage Coins\n2 - Change Key\n3 - Change Name');
   if(!options) return;
   const data = JSON.parse(localStorage.getItem(storageKey));
 
   switch(options){
-    case '1': // Manage Coins
+    case '1':
       const action = prompt('Type "add" to add coins or "remove" to remove coins');
       if(!action) return;
       const amount = parseInt(prompt('Enter amount'));
@@ -93,7 +112,7 @@ function editKey(storageKey){
       showMessage('✅ Coins updated');
       break;
 
-    case '2': // Change Key
+    case '2':
       const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
       if(!newKey) return;
       const newStorageKey = 'skinshop_'+newKey;
@@ -102,7 +121,7 @@ function editKey(storageKey){
       showMessage('✅ Key updated');
       break;
 
-    case '3': // Change Name
+    case '3':
       const newName = prompt('Enter new name:', data.name);
       if(!newName) return;
       data.name = newName;
@@ -118,7 +137,6 @@ function editKey(storageKey){
   loadAllKeys();
 }
 
-// Delete key
 function deleteKey(storageKey){
   if(confirm('Are you sure you want to delete this key?')){
     localStorage.removeItem(storageKey);
@@ -129,6 +147,63 @@ function deleteKey(storageKey){
 
 // Initial load
 loadAllKeys();
+
+// =======================
+// Website Editor functionaliteit
+// =======================
+function openWebsiteEditor(){
+  document.getElementById('websiteEditor').style.display='block';
+  showMessage('Website Editor opened. Only admins can edit.');
+}
+
+function saveWebsite(){
+  const content = document.getElementById('websiteContent').innerHTML;
+  localStorage.setItem('adminSavedContent', content);
+  showMessage('Website changes saved locally.');
+}
+
+function publishWebsite(){
+  const content = document.getElementById('websiteContent').innerHTML;
+  localStorage.setItem('websitePublishedContent', content);
+  showMessage('Website changes published for all users.');
+}
+
+function addText(){
+  const text = prompt('Enter text:');
+  if(text){
+    const div = document.createElement('div');
+    div.className = 'editable';
+    div.contentEditable = "true";
+    div.textContent = text;
+    document.getElementById('websiteContent').appendChild(div);
+  }
+}
+
+function addImage(){
+  const url = prompt('Enter image URL:');
+  if(url){
+    const div = document.createElement('div');
+    div.className='editable';
+    div.contentEditable="false";
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.maxWidth='300px';
+    img.style.margin='5px';
+    div.appendChild(img);
+    document.getElementById('websiteContent').appendChild(div);
+  }
+}
+
+function addLine(){
+  const hr = document.createElement('hr');
+  document.getElementById('websiteContent').appendChild(hr);
+}
+
+// Optioneel: admin preview van opgeslagen content
+const savedContent = localStorage.getItem('adminSavedContent');
+if(savedContent){
+  document.getElementById('websiteContent').innerHTML = savedContent;
+}
 </script>
 
 </body>
