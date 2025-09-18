@@ -14,6 +14,11 @@ th { background:#333; }
 #editor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
 .skinRow { margin-bottom:10px; }
 .skinRow input { margin:3px; }
+
+/* Event Editor Styles */
+#eventEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.eventRow { margin-bottom:10px; }
+.eventRow input { margin:3px; }
 </style>
 </head>
 <body>
@@ -46,6 +51,17 @@ th { background:#333; }
   <button onclick="publishSkins()">Publish Skins</button>
   <button onclick="addSkin()">Add Skin</button>
   <div id="skinsEditor"></div>
+</div>
+
+<!-- Event Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openEventEditor()">Manage Events</button>
+</div>
+<div id="eventEditor">
+  <h2>Event Editor</h2>
+  <button onclick="addEvent()">Add Event</button>
+  <button onclick="publishEvents()">Publish Events</button>
+  <div id="eventsList"></div>
 </div>
 
 <script>
@@ -210,6 +226,62 @@ function publishSkins(){
 function deleteSkin(id){
   const row = document.querySelector(`.skinRow[data-id='${id}']`);
   if(row) row.remove();
+}
+
+// =======================
+// Event Editor
+// =======================
+function openEventEditor(){
+  document.getElementById('eventEditor').style.display='block';
+  renderEventEditor();
+}
+
+function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
+
+function renderEventEditor(){
+  const container = document.getElementById('eventsList');
+  container.innerHTML='';
+  getEvents().forEach((event,index)=>{
+    const div = document.createElement('div');
+    div.className='eventRow';
+    div.dataset.index = index;
+    div.innerHTML=`
+      <input class="eventName" placeholder="Event Name" value="${event.name}">
+      <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
+      <input class="eventEnd" type="datetime-local" value="${new Date(event.endTime).toISOString().slice(0,16)}">
+      <button onclick="deleteEvent(${index})">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function addEvent(){
+  const events = getEvents();
+  events.push({name:'New Event', desc:'Description', endTime: Date.now() + 3600*1000});
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function deleteEvent(index){
+  const events = getEvents();
+  events.splice(index,1);
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function publishEvents(){
+  const container = document.getElementById('eventsList');
+  const events = [];
+  container.querySelectorAll('.eventRow').forEach(div=>{
+    events.push({
+      name: div.querySelector('.eventName').value,
+      desc: div.querySelector('.eventDesc').value,
+      endTime: new Date(div.querySelector('.eventEnd').value).getTime()
+    });
+  });
+  localStorage.setItem('eventData', JSON.stringify(events));
+  localStorage.setItem('eventDataPublished', JSON.stringify(events));
+  alert('✅ Events published for users!');
 }
 </script>
 
