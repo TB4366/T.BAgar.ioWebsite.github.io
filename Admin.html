@@ -240,13 +240,17 @@ function renderEventEditor(){
     const div = document.createElement('div');
     div.className='eventRow';
     div.dataset.index = index;
+
+    const startVal = new Date(event.startTime).toISOString().slice(0,16);
+    const endVal = new Date(event.endTime).toISOString().slice(0,16);
+
     div.innerHTML=`
       <input class="eventName" placeholder="Event Name" value="${event.name}">
       <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
       <label>Start:</label>
-      <input class="eventStart" type="datetime-local" value="${new Date(event.startTime).toISOString().slice(0,16)}">
+      <input class="eventStart" type="datetime-local" value="${startVal}">
       <label>End:</label>
-      <input class="eventEnd" type="datetime-local" value="${new Date(event.endTime).toISOString().slice(0,16)}">
+      <input class="eventEnd" type="datetime-local" value="${endVal}">
       <label>Active Image URL:</label>
       <input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
       <label>Coming Soon Image URL:</label>
@@ -282,17 +286,20 @@ function publishEvents(){
   const container = document.getElementById('eventsList');
   const events = [];
   container.querySelectorAll('.eventRow').forEach(div=>{
+    const startInput = div.querySelector('.eventStart').value;
+    const endInput = div.querySelector('.eventEnd').value;
     events.push({
       name: div.querySelector('.eventName').value,
       desc: div.querySelector('.eventDesc').value,
-      startTime: new Date(div.querySelector('.eventStart').value).getTime(),
-      endTime: new Date(div.querySelector('.eventEnd').value).getTime(),
+      startTime: new Date(startInput).getTime(),
+      endTime: new Date(endInput).getTime(),
       image: div.querySelector('.eventImage').value,
       comingImage: div.querySelector('.eventComingImage').value
     });
   });
-  localStorage.setItem('eventData', JSON.stringify(events));
-  localStorage.setItem('eventDataPublished', JSON.stringify(events));
+  // Publiceren naar users
+  localStorage.setItem('eventData', JSON.stringify(events)); // admin kopie
+  localStorage.setItem('eventDataPublished', JSON.stringify(events)); // gebruikerskopie
   alert('✅ Events published for users!');
 }
 </script>
