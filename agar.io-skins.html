@@ -217,33 +217,69 @@ function renderEventBar(){
   const container = document.getElementById('eventBarContainer');
   container.innerHTML='';
   const now = Date.now();
-  events.filter(e => e.endTime > now).forEach((event,index)=>{
+  events.forEach((event,index)=>{
     const div = document.createElement('div');
     div.className='eventItem';
     div.dataset.index=index;
     div.onclick = ()=>openEventPopup(index);
-    const timerSpan = document.createElement('span');
-    timerSpan.id = `eventTimer${index}`;
-    div.innerHTML=`<span>${event.name}</span> ⏳ `;
-    div.appendChild(timerSpan);
+
+    let timerText = '';
+    let imgUrl = '';
+
+    if(now < event.startTime){
+      // Event komt nog
+      const dist = event.startTime - now;
+      let m = Math.floor(dist/60000);
+      let s = Math.floor((dist%60000)/1000);
+      timerText = `${m}m ${s}s until start`;
+      imgUrl = event.comingImage;
+    } else if(now >= event.startTime && now <= event.endTime){
+      // Event is actief
+      const dist = event.endTime - now;
+      let h = Math.floor(dist/(1000*60*60));
+      let m = Math.floor((dist%(1000*60*60))/(1000*60));
+      let s = Math.floor((dist%(1000*60))/1000);
+      timerText = `${h}h ${m}m ${s}s`;
+      imgUrl = event.image;
+    } else {
+      // Event voorbij
+      return;
+    }
+
+    div.innerHTML = `<span>${event.name}</span> ⏳ <span>${timerText}</span>`;
+    if(imgUrl) {
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.style.height = '40px';
+      img.style.borderRadius = '10px';
+      img.style.marginLeft = '5px';
+      div.appendChild(img);
+    }
+
     container.appendChild(div);
   });
 }
 
 function updateEventTimers(){
   const now = Date.now();
-  events.forEach((event,index)=>{
-    const timerElem = document.getElementById(`eventTimer${index}`);
-    if(!timerElem) return;
-    const dist = event.endTime - now;
-    if(dist <= 0){
-      timerElem.textContent = "Ended";
-      return;
+  const container = document.getElementById('eventBarContainer');
+  container.querySelectorAll('.eventItem').forEach(div=>{
+    const index = div.dataset.index;
+    const event = events[index];
+    if(!event) return;
+    const span = div.querySelector('span:nth-child(2)');
+    if(now < event.startTime){
+      const dist = event.startTime - now;
+      let m = Math.floor(dist/60000);
+      let s = Math.floor((dist%60000)/1000);
+      span.textContent = `${m}m ${s}s until start`;
+    } else if(now >= event.startTime && now <= event.endTime){
+      const dist = event.endTime - now;
+      let h = Math.floor(dist/(1000*60*60));
+      let m = Math.floor((dist%(1000*60*60))/(1000*60));
+      let s = Math.floor((dist%(1000*60))/1000);
+      span.textContent = `${h}h ${m}m ${s}s`;
     }
-    let h = Math.floor(dist/(1000*60*60));
-    let m = Math.floor((dist%(1000*60*60))/(1000*60));
-    let s = Math.floor((dist%(1000*60))/1000);
-    timerElem.textContent = `${h}h ${m}m ${s}s`;
   });
 }
 
@@ -262,6 +298,11 @@ function togglePopup(){
 
 renderEventBar();
 setInterval(()=>{
+  events = JSON.parse(localStorage.getItem('eventDataPublished')||'[]');
   renderEventBar();
   updateEventTimers();
 },1000);
+</script>
+
+</body>
+</html>
