@@ -291,7 +291,7 @@ function addEvent(){
   const events = getEvents();
   const id = 'event'+Date.now();
   events.push({
-    id: id,
+    id:id,
     name:'New Event',
     desc:'Description',
     status:'active',
@@ -315,11 +315,12 @@ function deleteEvent(index){
 function publishEvents(){
   const container = document.getElementById('eventsList');
   const events = [];
-  container.querySelectorAll('.eventRow').forEach(div=>{
+  container.querySelectorAll('.eventRow').forEach((div,index)=>{
     const startInput = div.querySelector('.eventStart').value;
     const endInput = div.querySelector('.eventEnd').value;
+    const uniqueId = getEvents()[index]?.id || 'event'+Date.now();
     events.push({
-      id: div.dataset.index,
+      id: uniqueId,
       name: div.querySelector('.eventName').value,
       desc: div.querySelector('.eventDesc').value,
       status: div.querySelector('.eventStatus').value,
@@ -336,7 +337,7 @@ function publishEvents(){
 }
 
 // =======================
-// Deal Editor (with ID)
+// Deal Editor
 // =======================
 function openDealEditor(){
   document.getElementById('dealEditor').style.display='block';
@@ -354,7 +355,6 @@ function renderDealEditor(){
     const div = document.createElement('div');
     div.className='dealRow';
     div.dataset.index=index;
-    div.dataset.id = deal.id || ("deal"+Date.now()+"_"+index);
 
     const startVal = new Date(deal.startTime).toISOString().slice(0,16);
     const endVal = new Date(deal.endTime).toISOString().slice(0,16);
@@ -362,7 +362,6 @@ function renderDealEditor(){
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
 
     div.innerHTML=`
-      <strong>ID:</strong> ${div.dataset.id}<br>
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
       <label>Status:</label>
@@ -377,7 +376,7 @@ function renderDealEditor(){
       <input class="dealEnd" type="datetime-local" value="${endVal}">
       <label>Event:</label>
       <select class="dealEvent">${eventOptions}</select>
-      <label>Image URL:</label>
+      <label>Active Image URL:</label>
       <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
       <label>Price:</label>
@@ -392,9 +391,7 @@ function renderDealEditor(){
 
 function addDeal(){
   const deals = getDeals();
-  const id = "deal"+Date.now();
   deals.push({
-    id: id,
     name:'New Deal',
     desc:'Description',
     status:'coming',
@@ -436,7 +433,6 @@ function publishDeals(){
     const startTime = new Date(div.querySelector('.dealStart').value).getTime();
     const endTime = new Date(div.querySelector('.dealEnd').value).getTime();
     deals.push({
-      id: div.dataset.id || "deal"+Date.now()+"_"+index,
       name: div.querySelector('.dealName').value,
       desc: div.querySelector('.dealDesc').value,
       status: div.querySelector('.dealStatus').value,
