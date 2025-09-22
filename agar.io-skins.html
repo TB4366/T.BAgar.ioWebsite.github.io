@@ -45,14 +45,16 @@ button { cursor:pointer; }
 <h1>Skin Shop</h1>
 
 <div class="top-bar">
-  <div>Contact Admin to buy more coins!</div>
-  <div>
+  <div>Contact Admin to buy more coins or money!</div>
+  <div style="text-align:right;">
     <div style="font-size:12px;color:#aaa;">Your Coins</div>
     <div id="coins">0</div>
+    <div style="font-size:12px;color:#aaa;margin-top:5px;">Your Money (€)</div>
+    <div id="money">0.00</div>
   </div>
 </div>
 
-<div id="message">Enter your key below to load your coins and skins:</div>
+<div id="message">Enter your key below to load your coins, money and skins:</div>
 
 <input id="keyInput" placeholder="Enter your key here">
 <button onclick="loadKey()">Load Key</button>
@@ -73,7 +75,9 @@ button { cursor:pointer; }
   <img id="modalImage" src="" alt="Event Image">
   <h3 id="modalName"></h3>
   <p id="modalDesc"></p>
+  <div id="modalPrice"></div>
   <div id="modalTimer"></div>
+  <button id="buyDealBtn">Buy Now</button>
   <button onclick="closeModal()">Close</button>
 </div>
 
@@ -84,9 +88,10 @@ button { cursor:pointer; }
 const halloweenEvent = {
     id: 'halloween_horrors',
     name: '🔥 Halloween Horrors',
-    desc: 'Spooky deals straight from the haunted graveyard!\n\n💰 Coins: 12 000\n🧬 DNA: 950\n⚡ 3x Mass Boost 24h: x1\n🎃 Skin: Pumpkin Reaper\n💵 Price: €7,99',
-    image: 'https://i.imgur.com/1b6aZlG.png', // pompoen + vleermuizen
+    desc: 'Spooky deals straight from the haunted graveyard!\n\n💰 Coins: 12 000\n🧬 DNA: 950\n⚡ 3x Mass Boost 24h: x1\n🎃 Skin: Pumpkin Reaper',
+    image: 'https://i.imgur.com/1b6aZlG.png',
     comingImage: 'https://i.imgur.com/1b6aZlG.png',
+    price: 7.99,
     startTime: Date.now(),
     endTime: Date.now() + (2*24*60*60*1000 + 14*60*60*1000 + 36*60*1000)
 };
@@ -98,14 +103,17 @@ if(!events.some(e => e.id === halloweenEvent.id)){
 }
 
 // =======================
-// User / Skins
+// User / Skins & Money
 // =======================
 function getPublishedSkins(){ return JSON.parse(localStorage.getItem("skinsDataPublished") || "[]"); }
-let currentKey = null, coins = 0, owned = [];
+let currentKey = null, coins = 0, money = 0.00, owned = [], purchasedDeals = [];
 
 function showMessage(msg){ document.getElementById('message').textContent=msg; }
 
-function saveData(){ if(!currentKey) return; localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, owned})); }
+function saveData(){ 
+  if(!currentKey) return; 
+  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, money, owned, purchasedDeals})); 
+}
 
 function renderSkins(){
   const skins = getPublishedSkins();
@@ -139,14 +147,15 @@ function renderSkins(){
     }
   });
   document.getElementById('coins').textContent=coins;
+  document.getElementById('money').textContent=money.toFixed(2);
 }
 
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key) return showMessage('Please enter your key');
   const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
-  if(!data || data.coins===undefined){ showMessage('❌ Invalid key!'); currentKey=null; coins=0; owned=[]; renderSkins(); return; }
-  currentKey = key; coins = data.coins||0; owned = data.owned||[];
+  if(!data || data.coins===undefined){ showMessage('❌ Invalid key!'); currentKey=null; coins=0; money=0; owned=[]; purchasedDeals=[]; renderSkins(); return; }
+  currentKey = key; coins = data.coins||0; money = data.money||0; owned = data.owned||[]; purchasedDeals=data.purchasedDeals||[];
   showMessage('✅ Key loaded successfully!');
   renderSkins();
 }
@@ -191,6 +200,8 @@ function openModal(index){
   document.getElementById('modalName').textContent=event.name;
   document.getElementById('modalDesc').textContent=event.desc;
   document.getElementById('modalImage').src = event.image;
+  document.getElementById('modalPrice').textContent = "💵 Price: €"+event.price.toFixed(2);
+  document.getElementById('buyDealBtn').onclick = ()=>buyDeal(event);
   updateTimer();
   document.getElementById('eventModal').style.display='block';
 }
@@ -214,41 +225,24 @@ function updateTimer(){
   timerDiv.textContent = `Offer Ends: ${d}d ${h}h ${m}m ${s}s`;
 }
 
+// Deal kopen met Money
+function buyDeal(event){
+  if(!currentKey) return showMessage("Enter your key first");
+  if(purchasedDeals.includes(event.id)) return showMessage("You already bought this deal!");
+  if(money < event.price) return showMessage("Not enough money!");
+  money -= event.price;
+  purchasedDeals.push(event.id);
+  saveData();
+  showMessage("✅ Deal purchased successfully!");
+  renderSkins();
+  closeModal();
+}
+
 // update countdown elke seconde
 setInterval(()=>{
   renderEventBar();
   if(document.getElementById('eventModal').style.display==='block'){ updateTimer(); }
 },1000);
-
-// Swipe functionaliteit
-let startX = 0;
-document.getElementById('eventModal').addEventListener('touchstart', e=>{
-  startX = e.changedTouches[0].screenX;
-});
-document.getElementById('eventModal').addEventListener('touchend', e=>{
-  let endX = e.changedTouches[0].screenX;
-  if(endX - startX > 50) showPrevEvent();
-  else if(startX - endX > 50) showNextEvent();
-});
-
-// Keyboard support
-document.addEventListener('keydown', e=>{
-  if(document.getElementById('eventModal').style.display==='block'){
-    if(e.key==='ArrowLeft') showPrevEvent();
-    if(e.key==='ArrowRight') showNextEvent();
-  }
-});
-
-function showPrevEvent(){
-  let evs = getPublishedEvents();
-  if(currentEventIndex > 0){ openModal(currentEventIndex-1); }
-  else { openModal(evs.length-1); }
-}
-function showNextEvent(){
-  let evs = getPublishedEvents();
-  if(currentEventIndex < evs.length-1){ openModal(currentEventIndex+1); }
-  else { openModal(0); }
-}
 
 // initial render
 renderSkins();
