@@ -38,6 +38,7 @@ button { cursor:pointer; }
 #dealModal img { width:100%; border-radius:8px; margin:10px 0; }
 #dealCountdown { font-weight:bold; margin-top:10px; }
 #dealModal button { margin-top:10px; }
+#dealNav { display:flex; justify-content:space-between; margin-top:10px; }
 </style>
 </head>
 <body>
@@ -74,6 +75,10 @@ button { cursor:pointer; }
   <img id="dealModalImage" src="">
   <p id="dealModalDesc"></p>
   <p id="dealCountdown"></p>
+  <div id="dealNav">
+    <button onclick="prevDeal()">⬅ Previous</button>
+    <button onclick="nextDeal()">Next ➡</button>
+  </div>
   <button id="buyDealBtn">Buy Deal</button>
   <button onclick="closeDealModal()">Close</button>
 </div>
@@ -84,7 +89,8 @@ button { cursor:pointer; }
 // =======================
 function getPublishedSkins(){ return JSON.parse(localStorage.getItem("skinsDataPublished") || "[]"); }
 let currentKey = null, coins = 0, money = 0, owned = [];
-let currentDeal = null;
+let currentEventDeals = [];
+let currentDealIndex = 0;
 let dealCountdownInterval = null;
 
 function showMessage(msg){ document.getElementById('message').textContent=msg; }
@@ -212,10 +218,10 @@ function startEventCountdowns(){
 // =======================
 function openEventDeals(event){
   const allDeals = JSON.parse(localStorage.getItem("dealDataPublished") || "[]");
-  const eventDeals = allDeals.filter(d => String(d.eventId) === String(event.id) && d.status === 'active');
-  if(eventDeals.length===0){ alert("No active deals for this event."); return; }
-  currentDeal = eventDeals[0];
-  showDeal(currentDeal);
+  currentEventDeals = allDeals.filter(d => String(d.eventId) === String(event.id) && d.status === 'active');
+  if(currentEventDeals.length===0){ alert("No active deals for this event."); return; }
+  currentDealIndex = 0;
+  showDeal(currentEventDeals[currentDealIndex]);
 }
 
 function showDeal(deal){
@@ -252,6 +258,21 @@ function buyDeal(deal){
 function closeDealModal(){
   document.getElementById('dealModal').style.display='none';
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
+}
+
+// =======================
+// Deal Navigation
+// =======================
+function prevDeal(){
+  if(currentEventDeals.length===0) return;
+  currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length;
+  showDeal(currentEventDeals[currentDealIndex]);
+}
+
+function nextDeal(){
+  if(currentEventDeals.length===0) return;
+  currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length;
+  showDeal(currentEventDeals[currentDealIndex]);
 }
 
 // Initialize
