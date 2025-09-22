@@ -76,10 +76,14 @@ button { cursor:pointer; }
 <!-- Deal modal -->
 <div id="dealModal">
   <h3 id="dealModalTitle"></h3>
+  <img id="dealModalImage" src="" style="width:100%;border-radius:8px;margin:10px 0;">
   <p id="dealModalDesc"></p>
-  <p id="dealModalContents"></p>
   <p id="dealCountdown" style="font-weight:bold;"></p>
-  <button onclick="closeDealModal()">Close</button>
+  <div style="display:flex;justify-content:space-between;margin-top:10px;">
+    <button onclick="prevDeal()">⬅ Previous</button>
+    <button onclick="nextDeal()">Next ➡</button>
+  </div>
+  <button style="margin-top:10px;" onclick="closeDealModal()">Close</button>
 </div>
 
 <script>
@@ -193,7 +197,7 @@ function renderEventBar(){
     countdownDiv.className='eventCountdown';
     div.appendChild(countdownDiv);
 
-    div.onclick=()=>{ currentEventIndex=index; openModal(events[currentEventIndex]); };
+    div.onclick=()=>{ currentEventIndex=index; openEventDeals(events[currentEventIndex]); };
     container.appendChild(div);
   });
 }
@@ -226,46 +230,62 @@ function startCountdowns(){
   },1000);
 }
 
-// Event modal
-function openModal(event){
-  document.getElementById('modalName').textContent=event.name;
-  document.getElementById('modalDesc').textContent=event.desc;
-  document.getElementById('eventModal').style.display='block';
+// =======================
+// Deals per event
+// =======================
+let currentEventDeals = [];
+let currentDealIndex = 0;
+let dealCountdownInterval = null;
+
+function openEventDeals(event){
+  const allDeals = JSON.parse(localStorage.getItem("dealDataPublished") || "[]");
+  currentEventDeals = allDeals.filter(d => d.eventId === event.id && d.status === "active");
+
+  if(currentEventDeals.length === 0){
+    alert("No deals available for this event.");
+    return;
+  }
+
+  currentDealIndex = 0;
+  openDealModal(currentEventDeals[currentDealIndex]);
 }
-
-function closeModal(){ document.getElementById('eventModal').style.display='none'; }
-
-// Deal modal
-let currentDeal=null;
-let dealCountdownInterval=null;
 
 function openDealModal(deal){
-  currentDeal=deal;
-  document.getElementById('dealModalTitle').textContent=deal.name;
-  document.getElementById('dealModalDesc').textContent=deal.desc;
-  document.getElementById('dealModalContents').innerHTML=`
-    💰 Coins: ${deal.coins}<br>
-    🧬 DNA: ${deal.dna}<br>
-    ⚡ 3x Mass Boost 24h: x${deal.massBoost}<br>
-    🎃 Skin: ${deal.skin}<br>
-    💵 Price: €${deal.price.toFixed(2)}
-  `;
+  document.getElementById('dealModalTitle').textContent = deal.name;
+  document.getElementById('dealModalDesc').textContent = deal.desc;
+  document.getElementById('dealModalImage').src = deal.image || "";
+
   document.getElementById('dealModal').style.display='block';
-  updateDealCountdown();
+
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
-  dealCountdownInterval=setInterval(updateDealCountdown,1000);
+  updateDealCountdown(deal);
+  dealCountdownInterval = setInterval(()=>updateDealCountdown(deal),1000);
 }
 
-function updateDealCountdown(){
-  if(!currentDeal) return;
-  const now=Date.now();
-  let remaining=currentDeal.endTime - now;
-  if(remaining<0) remaining=0;
-  const days=Math.floor(remaining/86400000);
-  const hours=Math.floor((remaining%86400000)/3600000);
-  const mins=Math.floor((remaining%3600000)/60000);
-  const secs=Math.floor((remaining%60000)/1000);
-  document.getElementById('dealCountdown').textContent=`Offer Ends: ${days}d ${hours}h ${mins}m ${secs}s`;
+function prevDeal(){
+  if(currentEventDeals.length === 0) return;
+  currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length;
+  openDealModal(currentEventDeals[currentDealIndex]);
+}
+
+function nextDeal(){
+  if(currentEventDeals.length === 0) return;
+  currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length;
+  openDealModal(currentEventDeals[currentDealIndex]);
+}
+
+function updateDealCountdown(deal){
+  const now = Date.now();
+  let remaining = deal.endTime - now;
+  if(remaining < 0) remaining = 0;
+
+  const days = Math.floor(remaining / 86400000);
+  const hours = Math.floor((remaining % 86400000) / 3600000);
+  const mins = Math.floor((remaining % 3600000) / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+
+  document.getElementById('dealCountdown').textContent =
+    `Ends in: ${days}d ${hours}h ${mins}m ${secs}s`;
 }
 
 function closeDealModal(){
