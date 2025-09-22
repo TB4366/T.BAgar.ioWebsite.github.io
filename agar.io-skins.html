@@ -37,6 +37,7 @@ button { cursor:pointer; }
 #eventModal button { margin-top:10px; padding:10px 20px; border:none; border-radius:50px; background:#fff; color:#222; font-weight:bold; cursor:pointer; transition: transform 0.1s; }
 #eventModal button:hover { transform: scale(1.05); }
 #modalImage { max-width:100%; border-radius:10px; box-shadow:0 0 10px #000; }
+#modalTimer { font-size:18px; margin-top:5px; color:yellow; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -72,6 +73,7 @@ button { cursor:pointer; }
   <img id="modalImage" src="" alt="Event Image">
   <h3 id="modalName"></h3>
   <p id="modalDesc"></p>
+  <div id="modalTimer"></div>
   <button onclick="closeModal()">Close</button>
 </div>
 
@@ -82,11 +84,11 @@ button { cursor:pointer; }
 const halloweenEvent = {
     id: 'halloween_horrors',
     name: '🔥 Halloween Horrors',
-    desc: 'Spooky deals straight from the haunted graveyard!\n\n💰 Coins: 12 000\n🧬 DNA: 950\n⚡ 3x Mass Boost 24h: x1\n🎃 Skin: Pumpkin Reaper\n💵 Price: €7,99\n\nOffer Ends: 2d 14h 36m',
-    image: 'https://i.imgur.com/1b6aZlG.png',       // enge pompoen + vleermuizen
+    desc: 'Spooky deals straight from the haunted graveyard!\n\n💰 Coins: 12 000\n🧬 DNA: 950\n⚡ 3x Mass Boost 24h: x1\n🎃 Skin: Pumpkin Reaper\n💵 Price: €7,99',
+    image: 'https://i.imgur.com/1b6aZlG.png', // pompoen + vleermuizen
     comingImage: 'https://i.imgur.com/1b6aZlG.png',
     startTime: Date.now(),
-    endTime: Date.now() + 2*24*60*60*1000 + 14*60*60*1000 + 36*60*1000
+    endTime: Date.now() + (2*24*60*60*1000 + 14*60*60*1000 + 36*60*1000)
 };
 
 let events = JSON.parse(localStorage.getItem('eventDataPublished') || '[]');
@@ -157,8 +159,10 @@ function buySkin(id,price){
 }
 
 // =======================
-// Event bar
+// Event bar & Modal
 // =======================
+let currentEventIndex = 0;
+
 function getPublishedEvents(){ return JSON.parse(localStorage.getItem('eventDataPublished')||'[]'); }
 
 function renderEventBar(){
@@ -173,25 +177,78 @@ function renderEventBar(){
       const diff = Math.max(event.startTime-now,0);
       const mins = Math.floor(diff/60000), secs=Math.floor((diff%60000)/1000);
       countdownText=`${mins}m ${secs}s`;
-    } else { return; } // expired events niet tonen
+    } else { return; }
 
     div.innerHTML=`<img src="${imgSrc}"><div class="eventCountdown">${countdownText}</div>`;
-    div.onclick=()=>openModal(event);
+    div.onclick=()=>openModal(index);
     bar.appendChild(div);
   });
 }
 
-function openModal(event){
+function openModal(index){
+  const event = getPublishedEvents()[index];
+  currentEventIndex = index;
   document.getElementById('modalName').textContent=event.name;
   document.getElementById('modalDesc').textContent=event.desc;
   document.getElementById('modalImage').src = event.image;
+  updateTimer();
   document.getElementById('eventModal').style.display='block';
 }
 
 function closeModal(){ document.getElementById('eventModal').style.display='none'; }
 
+function updateTimer(){
+  const timerDiv = document.getElementById('modalTimer');
+  const events = getPublishedEvents();
+  const ev = events[currentEventIndex];
+  if(!ev) return;
+  const now = Date.now();
+  let diff = ev.endTime - now;
+  if(diff <= 0){ timerDiv.textContent = "Offer Ended"; return; }
+  const d = Math.floor(diff/(24*3600*1000));
+  diff%=24*3600*1000;
+  const h = Math.floor(diff/(3600*1000));
+  diff%=3600*1000;
+  const m = Math.floor(diff/(60*1000));
+  const s = Math.floor((diff%60000)/1000);
+  timerDiv.textContent = `Offer Ends: ${d}d ${h}h ${m}m ${s}s`;
+}
+
 // update countdown elke seconde
-setInterval(renderEventBar,1000);
+setInterval(()=>{
+  renderEventBar();
+  if(document.getElementById('eventModal').style.display==='block'){ updateTimer(); }
+},1000);
+
+// Swipe functionaliteit
+let startX = 0;
+document.getElementById('eventModal').addEventListener('touchstart', e=>{
+  startX = e.changedTouches[0].screenX;
+});
+document.getElementById('eventModal').addEventListener('touchend', e=>{
+  let endX = e.changedTouches[0].screenX;
+  if(endX - startX > 50) showPrevEvent();
+  else if(startX - endX > 50) showNextEvent();
+});
+
+// Keyboard support
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('eventModal').style.display==='block'){
+    if(e.key==='ArrowLeft') showPrevEvent();
+    if(e.key==='ArrowRight') showNextEvent();
+  }
+});
+
+function showPrevEvent(){
+  let evs = getPublishedEvents();
+  if(currentEventIndex > 0){ openModal(currentEventIndex-1); }
+  else { openModal(evs.length-1); }
+}
+function showNextEvent(){
+  let evs = getPublishedEvents();
+  if(currentEventIndex < evs.length-1){ openModal(currentEventIndex+1); }
+  else { openModal(0); }
+}
 
 // initial render
 renderSkins();
