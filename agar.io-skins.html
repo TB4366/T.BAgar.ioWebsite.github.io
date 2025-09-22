@@ -83,8 +83,6 @@ button { cursor:pointer; }
     <button onclick="prevDeal()">⬅ Previous</button>
     <button onclick="nextDeal()">Next ➡</button>
   </div>
-  <!-- Buy Button Added -->
-  <button id="buyDealButton" style="margin-top:10px;" onclick="buyDeal()">Buy Deal</button>
   <button style="margin-top:10px;" onclick="closeDealModal()">Close</button>
 </div>
 
@@ -197,8 +195,7 @@ function renderEventBar(){
     countdownDiv.style.textAlign='center';
     countdownDiv.style.padding='2px 0';
     countdownDiv.className='eventCountdown';
-    div.appendChild(countdown
-Div);
+    div.appendChild(countdownDiv);
 
     div.onclick=()=>{ currentEventIndex=index; openEventDeals(events[currentEventIndex]); };
     container.appendChild(div);
@@ -265,6 +262,18 @@ function openDealModal(deal){
   dealCountdownInterval = setInterval(()=>updateDealCountdown(deal),1000);
 }
 
+function prevDeal(){
+  if(currentEventDeals.length === 0) return;
+  currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length;
+  openDealModal(currentEventDeals[currentDealIndex]);
+}
+
+function nextDeal(){
+  if(currentEventDeals.length === 0) return;
+  currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length;
+  openDealModal(currentEventDeals[currentDealIndex]);
+}
+
 function updateDealCountdown(deal){
   const now = Date.now();
   let remaining = deal.endTime - now;
@@ -282,43 +291,6 @@ function updateDealCountdown(deal){
 function closeDealModal(){
   document.getElementById('dealModal').style.display='none';
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
-}
-
-// =======================
-// Buy Deal Function Added
-// =======================
-function buyDeal(){
-  if(!currentKey) return showMessage("Enter your key first!");
-  if(currentEventDeals.length === 0) return showMessage("No deal selected!");
-
-  const deal = currentEventDeals[currentDealIndex];
-  if(coins < (deal.price||0)) return showMessage("Not enough coins to buy this deal!");
-
-  coins -= deal.price || 0;
-
-  // If deal has a skin, add it to owned
-  if(deal.skin && deal.skin !== "None"){
-    const skins = getPublishedSkins();
-    const skin = skins.find(s => s.name === deal.skin);
-    if(skin && !owned.includes(skin.id)) owned.push(skin.id);
-  }
-
-  saveData();
-  showMessage(`✅ Deal purchased: ${deal.name}`);
-  renderSkins();
-}
-
-// Navigation buttons
-function prevDeal(){
-  if(currentEventDeals.length === 0) return;
-  currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length;
-  openDealModal(currentEventDeals[currentDealIndex]);
-}
-
-function nextDeal(){
-  if(currentEventDeals.length === 0) return;
-  currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length;
-  openDealModal(currentEventDeals[currentDealIndex]);
 }
 
 // Initialize
