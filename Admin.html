@@ -11,9 +11,9 @@ button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
-#editor, #eventEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
-.skinRow, .eventRow { margin-bottom:10px; }
-.skinRow input, .eventRow input, .eventRow select { margin:3px; }
+#eventEditor { margin-top:20px; border:1px solid #0af; padding:10px; }
+.eventRow { margin-bottom:10px; }
+.eventRow input, .eventRow select { margin:3px; }
 </style>
 </head>
 <body>
@@ -37,24 +37,8 @@ th { background:#333; }
 </tr>
 </table>
 
-<!-- Skin Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openSkinEditor()">Edit Skins</button>
-</div>
-<div id="editor">
-  <h2>Skin Editor</h2>
-  <button onclick="saveSkins()">Save Skins</button>
-  <button onclick="publishSkins()">Publish Skins</button>
-  <button onclick="addSkin()">Add Skin</button>
-  <div id="skinsEditor"></div>
-</div>
-
-<!-- Event Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openEventEditor()">Manage Events</button>
-</div>
+<h3>Manage Events / Deals</h3>
 <div id="eventEditor">
-  <h2>Event Editor</h2>
   <button onclick="addEvent()">Add Event</button>
   <button onclick="publishEvents()">Publish Events</button>
   <div id="eventsList"></div>
@@ -64,6 +48,8 @@ th { background:#333; }
 // =======================
 // Key Management
 // =======================
+function showMessage(msg){ document.getElementById('message').textContent=msg; }
+
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
   table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money (€)</th><th>Purchased Skins</th><th>Actions</th></tr>';
@@ -86,8 +72,6 @@ function loadAllKeys(){
   }
 }
 
-function showMessage(msg){ document.getElementById('message').textContent=msg; }
-
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
@@ -99,44 +83,20 @@ function addNewKey(){
 }
 
 function editKey(storageKey){
-  const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
-  if(!options) return;
   const data = JSON.parse(localStorage.getItem(storageKey));
-  switch(options){
-    case '1':
-      const type = prompt('Type "coins" or "money" to modify');
-      if(!type) return;
-      const action = prompt('Type "add" to add or "remove" to remove');
-      if(!action) return;
-      const amount = parseInt(prompt('Enter amount'));
-      if(isNaN(amount)) return showMessage('Invalid amount');
-      if(type.toLowerCase() === 'coins'){
-        if(action.toLowerCase() === 'add') data.coins=(data.coins||0)+amount;
-        else if(action.toLowerCase() === 'remove') data.coins=Math.max((data.coins||0)-amount,0);
-      } else if(type.toLowerCase()==='money'){
-        if(action.toLowerCase() === 'add') data.money=(data.money||0)+amount;
-        else if(action.toLowerCase() === 'remove') data.money=Math.max((data.money||0)-amount,0);
-      } else return showMessage('Invalid type');
-      localStorage.setItem(storageKey, JSON.stringify(data));
-      showMessage('✅ Updated');
-      break;
-    case '2':
-      const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
-      if(!newKey) return;
-      const newStorageKey = 'skinshop_'+newKey;
-      localStorage.setItem(newStorageKey, JSON.stringify(data));
-      if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
-      showMessage('✅ Key updated');
-      break;
-    case '3':
-      const newName = prompt('Enter new name:', data.name);
-      if(!newName) return;
-      data.name = newName;
-      localStorage.setItem(storageKey, JSON.stringify(data));
-      showMessage('✅ Name updated');
-      break;
-    default: showMessage('Invalid option'); break;
-  }
+  const type = prompt('Type "coins" or "money" to modify:');
+  if(!type) return;
+  const action = prompt('Type "add" or "remove":');
+  if(!action) return;
+  const amount = parseInt(prompt('Enter amount:'));
+  if(isNaN(amount)) return showMessage('Invalid amount');
+  if(type.toLowerCase() === 'coins'){
+    data.coins = action==='add'? (data.coins||0)+amount : Math.max((data.coins||0)-amount,0);
+  } else if(type.toLowerCase()==='money'){
+    data.money = action==='add'? (data.money||0)+amount : Math.max((data.money||0)-amount,0);
+  } else return showMessage('Invalid type');
+  localStorage.setItem(storageKey, JSON.stringify(data));
+  showMessage('✅ Updated '+type);
   loadAllKeys();
 }
 
@@ -151,94 +111,8 @@ function deleteKey(storageKey){
 loadAllKeys();
 
 // =======================
-// Skin Editor
+// Event Management
 // =======================
-function openSkinEditor(){
-  document.getElementById('editor').style.display='block';
-  renderSkinEditor();
-}
-
-function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
-
-function renderSkinEditor(){
-  const container = document.getElementById('skinsEditor');
-  container.innerHTML='';
-  getSkins().forEach(skin=>{
-    const div = document.createElement('div');
-    div.className='skinRow';
-    div.dataset.id = skin.id;
-    div.innerHTML=`
-      <input class="skinName" value="${skin.name}" placeholder="Name">
-      <input class="skinPrice" value="${skin.price}" placeholder="Price">
-      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadImage(this, '${skin.id}')">
-      <button onclick="deleteSkin('${skin.id}')">Delete</button>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function addSkin(){
-  const id = 'skin'+Date.now();
-  const container = document.getElementById('skinsEditor');
-  const div = document.createElement('div');
-  div.className='skinRow';
-  div.dataset.id = id;
-  div.innerHTML=`
-    <input class="skinName" placeholder="Name">
-    <input class="skinPrice" placeholder="Price">
-    <input class="skinImage" placeholder="Image URL">
-    <input type="file" accept="image/*" onchange="uploadImage(this, '${id}')">
-    <button onclick="deleteSkin('${id}')">Delete</button>
-  `;
-  container.appendChild(div);
-}
-
-function uploadImage(input, id){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const row = document.querySelector(`.skinRow[data-id='${id}'] .skinImage`);
-    row.value = e.target.result;
-  }
-  reader.readAsDataURL(file);
-}
-
-function saveSkins(){
-  const container = document.getElementById('skinsEditor');
-  const skinElements = container.querySelectorAll('.skinRow');
-  const skinsArr = [];
-  skinElements.forEach(row=>{
-    skinsArr.push({
-      id: row.dataset.id,
-      name: row.querySelector('.skinName').value,
-      price: parseInt(row.querySelector('.skinPrice').value)||0,
-      image: row.querySelector('.skinImage').value
-    });
-  });
-  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
-  alert('✅ Skins saved!');
-}
-
-function publishSkins(){
-  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData'));
-  alert('✅ Skins published for users!');
-}
-
-function deleteSkin(id){
-  const row = document.querySelector(`.skinRow[data-id='${id}']`);
-  if(row) row.remove();
-}
-
-// =======================
-// Event Editor with Status
-// =======================
-function openEventEditor(){
-  document.getElementById('eventEditor').style.display='block';
-  renderEventEditor();
-}
-
 function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
 
 function renderEventEditor(){
@@ -247,27 +121,27 @@ function renderEventEditor(){
   getEvents().forEach((event,index)=>{
     const div = document.createElement('div');
     div.className='eventRow';
-    div.dataset.index = index;
+    div.dataset.index=index;
 
     const startVal = new Date(event.startTime).toISOString().slice(0,16);
     const endVal = new Date(event.endTime).toISOString().slice(0,16);
 
     div.innerHTML=`
       <input class="eventName" placeholder="Event Name" value="${event.name}">
-      <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
+      <input class="eventDesc" placeholder="Description" value="${event.desc}">
       <input class="eventPrice" placeholder="Price (€)" value="${event.price||0}">
       <label>Status:</label>
       <select class="eventStatus">
-        <option value="coming">${event.status==='coming'?'selected':''}>Coming Soon</option>
-        <option value="active">${event.status==='active'?'selected':''}>Active</option>
-        <option value="inactive">${event.status==='inactive'?'selected':''}>Inactive</option>
+        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="active" ${event.status==='active'?'selected':''}>Active</option>
+        <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
       </select>
       <label>Start:</label>
-      <input class="eventStart" type="datetime-local" value="${startVal}">
+      <input type="datetime-local" class="eventStart" value="${startVal}">
       <label>End:</label>
-      <input class="eventEnd" type="datetime-local" value="${endVal}">
-      <label>Active Image URL:</label>
-      <input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
+      <input type="datetime-local" class="eventEnd" value="${endVal}">
+      <label>Image URL:</label>
+      <input class="eventImage" placeholder="Active Image" value="${event.image||''}">
       <label>Coming Soon Image URL:</label>
       <input class="eventComingImage" placeholder="Coming Soon Image" value="${event.comingImage||''}">
       <button onclick="deleteEvent(${index})">Delete</button>
@@ -283,8 +157,8 @@ function addEvent(){
     desc:'Description',
     price:0,
     status:'coming',
-    startTime: Date.now() + 60000,
-    endTime: Date.now() + 3600000,
+    startTime: Date.now()+60000,
+    endTime: Date.now()+3600000,
     image:'',
     comingImage:''
   });
@@ -316,11 +190,12 @@ function publishEvents(){
       comingImage: div.querySelector('.eventComingImage').value
     });
   });
-  // Publiceren naar users
-  localStorage.setItem('eventData', JSON.stringify(events)); // admin kopie
-  localStorage.setItem('eventDataPublished', JSON.stringify(events)); // gebruikerskopie
-  alert('✅ Events published for users!');
+  localStorage.setItem('eventData', JSON.stringify(events)); // admin copy
+  localStorage.setItem('eventDataPublished', JSON.stringify(events)); // user copy
+  alert('✅ Events published!');
 }
+
+renderEventEditor();
 </script>
 
 </body>
