@@ -32,9 +32,9 @@ button { cursor:pointer; }
 
 /* Deal modal */
 #dealModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#222; padding:20px; border:2px solid #0af; border-radius:10px; z-index:1000; max-width:400px; color:#fff; }
-#dealModal button { margin-top:10px; }
 #dealModal img { width:100%; border-radius:8px; margin:10px 0; }
 #dealCountdown { font-weight:bold; margin-top:10px; }
+#dealModal button { margin-top:10px; }
 </style>
 </head>
 <body>
@@ -182,14 +182,15 @@ function renderEventBar(){
 // =======================
 function openEventDeals(event){
   const allDeals = JSON.parse(localStorage.getItem("dealDataPublished") || "[]");
-  const eventDeals = allDeals.filter(d => d.eventId === event.id && d.status==='active');
+
+  const eventDeals = allDeals.filter(d => String(d.eventId) === String(event.id) && d.status === 'active');
 
   if(eventDeals.length===0){
     alert("No active deals for this event.");
     return;
   }
 
-  currentDeal = eventDeals[0]; // show first deal
+  currentDeal = eventDeals[0]; // toon eerste deal
   showDeal(currentDeal);
 }
 
