@@ -319,7 +319,7 @@ function publishEvents(){
     const startInput = div.querySelector('.eventStart').value;
     const endInput = div.querySelector('.eventEnd').value;
     events.push({
-      id: div.dataset.index, // of unieke id
+      id: div.dataset.index,
       name: div.querySelector('.eventName').value,
       desc: div.querySelector('.eventDesc').value,
       status: div.querySelector('.eventStatus').value,
@@ -336,7 +336,7 @@ function publishEvents(){
 }
 
 // =======================
-// Deal Editor
+// Deal Editor (with ID)
 // =======================
 function openDealEditor(){
   document.getElementById('dealEditor').style.display='block';
@@ -354,6 +354,7 @@ function renderDealEditor(){
     const div = document.createElement('div');
     div.className='dealRow';
     div.dataset.index=index;
+    div.dataset.id = deal.id || ("deal"+Date.now()+"_"+index);
 
     const startVal = new Date(deal.startTime).toISOString().slice(0,16);
     const endVal = new Date(deal.endTime).toISOString().slice(0,16);
@@ -361,6 +362,7 @@ function renderDealEditor(){
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
 
     div.innerHTML=`
+      <strong>ID:</strong> ${div.dataset.id}<br>
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
       <label>Status:</label>
@@ -375,7 +377,7 @@ function renderDealEditor(){
       <input class="dealEnd" type="datetime-local" value="${endVal}">
       <label>Event:</label>
       <select class="dealEvent">${eventOptions}</select>
-      <label>Active Image URL:</label>
+      <label>Image URL:</label>
       <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
       <label>Price:</label>
@@ -390,7 +392,9 @@ function renderDealEditor(){
 
 function addDeal(){
   const deals = getDeals();
+  const id = "deal"+Date.now();
   deals.push({
+    id: id,
     name:'New Deal',
     desc:'Description',
     status:'coming',
@@ -432,6 +436,7 @@ function publishDeals(){
     const startTime = new Date(div.querySelector('.dealStart').value).getTime();
     const endTime = new Date(div.querySelector('.dealEnd').value).getTime();
     deals.push({
+      id: div.dataset.id || "deal"+Date.now()+"_"+index,
       name: div.querySelector('.dealName').value,
       desc: div.querySelector('.dealDesc').value,
       status: div.querySelector('.dealStatus').value,
