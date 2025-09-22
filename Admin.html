@@ -372,11 +372,14 @@ function renderDealEditor(){
       <label>Coming Soon Image URL:</label>
       <input class="dealComingImage" placeholder="Coming Soon Image URL" value="${deal.comingImage||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'coming')">
-      <input class="dealCoins" placeholder="Coins" value="${deal.coins||0}">
-      <input class="dealDNA" placeholder="DNA" value="${deal.dna||0}">
-      <input class="dealMassBoost" placeholder="MassBoost x" value="${deal.massBoost||1}">
-      <input class="dealSkin" placeholder="Skin" value="${deal.skin||'None'}">
-      <input class="dealPrice" placeholder="Price" value="${deal.price||0}">
+      <label>Price:</label>
+      <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
+      <label>Image Format:</label>
+      <select class="dealFormat">
+        <option value="small" ${deal.format==='small'?'selected':''}>Small</option>
+        <option value="medium" ${deal.format==='medium'?'selected':''}>Medium</option>
+        <option value="large" ${deal.format==='large'?'selected':''}>Large</option>
+      </select>
       <button onclick="deleteDeal(${index})">Delete</button>
     `;
     container.appendChild(div);
@@ -397,7 +400,8 @@ function addDeal(){
     dna:0,
     massBoost:1,
     skin:'None',
-    price:0
+    price:0,
+    format:'medium'
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   renderDealEditor();
@@ -438,11 +442,12 @@ function publishDeals(){
       endTime: endTime,
       image: div.querySelector('.dealImage').value,
       comingImage: div.querySelector('.dealComingImage').value,
-      coins: parseInt(div.querySelector('.dealCoins').value)||0,
-      dna: parseInt(div.querySelector('.dealDNA').value)||0,
-      massBoost: parseInt(div.querySelector('.dealMassBoost').value)||1,
-      skin: div.querySelector('.dealSkin').value,
-      price: parseFloat(div.querySelector('.dealPrice').value)||0
+      coins: parseInt(div.querySelector('.dealCoins')?.value)||0,
+      dna: parseInt(div.querySelector('.dealDNA')?.value)||0,
+      massBoost: parseInt(div.querySelector('.dealMassBoost')?.value)||1,
+      skin: div.querySelector('.dealSkin')?.value || 'None',
+      price: parseFloat(div.querySelector('.dealPrice').value)||0,
+      format: div.querySelector('.dealFormat').value || 'medium'
     });
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
