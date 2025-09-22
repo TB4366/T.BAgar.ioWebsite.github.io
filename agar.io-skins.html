@@ -31,11 +31,12 @@ button { cursor:pointer; }
 .eventCountdown { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.7); color:#fff; font-size:12px; text-align:center; border-top:1px solid orange; border-radius:0 0 50% 50%; }
 
 /* Event modal */
-#eventModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background: linear-gradient(145deg, #ff7f50, #8b00ff); padding:20px; border:2px solid #fff; border-radius:15px; z-index:1000; max-width:400px; color:#fff; box-shadow: 0 0 20px purple; }
-#eventModal h3 { margin-top:0; color:#fffa65; }
-#eventModal p { white-space: pre-line; font-size:16px; }
+#eventModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background: linear-gradient(145deg, #ff7f50, #8b00ff); padding:20px; border:2px solid #fff; border-radius:15px; z-index:1000; max-width:400px; color:#fff; box-shadow: 0 0 20px purple; text-align:center; }
+#eventModal h3 { margin-top:10px; color:#fffa65; }
+#eventModal p { white-space: pre-line; font-size:16px; margin:10px 0; }
 #eventModal button { margin-top:10px; padding:10px 20px; border:none; border-radius:50px; background:#fff; color:#222; font-weight:bold; cursor:pointer; transition: transform 0.1s; }
 #eventModal button:hover { transform: scale(1.05); }
+#modalImage { max-width:100%; border-radius:10px; box-shadow:0 0 10px #000; }
 </style>
 </head>
 <body>
@@ -68,6 +69,7 @@ button { cursor:pointer; }
 
 <!-- Event modal -->
 <div id="eventModal">
+  <img id="modalImage" src="" alt="Event Image">
   <h3 id="modalName"></h3>
   <p id="modalDesc"></p>
   <button onclick="closeModal()">Close</button>
@@ -182,6 +184,7 @@ function renderEventBar(){
 function openModal(event){
   document.getElementById('modalName').textContent=event.name;
   document.getElementById('modalDesc').textContent=event.desc;
+  document.getElementById('modalImage').src = event.image;
   document.getElementById('eventModal').style.display='block';
 }
 
