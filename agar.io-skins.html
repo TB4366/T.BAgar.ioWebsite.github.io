@@ -254,7 +254,6 @@ function openDealModal(deal){
   document.getElementById('dealModalTitle').textContent = deal.name;
   document.getElementById('dealModalDesc').textContent = deal.desc;
   document.getElementById('dealModalImage').src = deal.image || "";
-
   document.getElementById('dealModal').style.display='block';
 
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
@@ -281,11 +280,11 @@ function updateDealCountdown(deal){
 
   const days = Math.floor(remaining / 86400000);
   const hours = Math.floor((remaining % 86400000) / 3600000);
-  const mins = Math.floor((remaining % 3600000) / 60000);
-  const secs = Math.floor((remaining % 60000) / 1000);
+  const mins = Math.floor((remaining % 3600000) /60000);
+  const secs = Math.floor((remaining %60000)/1000);
 
   document.getElementById('dealCountdown').textContent =
-    `Ends in: ${days}d ${hours}h ${mins}m ${secs}s`;
+    `Ends in: ${days}d ${hours}h ${mins}m ${secs}s - Price: ${deal.price} 💠`;
 }
 
 function closeDealModal(){
