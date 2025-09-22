@@ -289,7 +289,9 @@ function renderEventEditor(){
 
 function addEvent(){
   const events = getEvents();
+  const id = 'event'+Date.now();
   events.push({
+    id: id,
     name:'New Event',
     desc:'Description',
     status:'active',
@@ -317,6 +319,7 @@ function publishEvents(){
     const startInput = div.querySelector('.eventStart').value;
     const endInput = div.querySelector('.eventEnd').value;
     events.push({
+      id: div.dataset.index, // of unieke id
       name: div.querySelector('.eventName').value,
       desc: div.querySelector('.eventDesc').value,
       status: div.querySelector('.eventStatus').value,
@@ -345,6 +348,8 @@ function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); 
 function renderDealEditor(){
   const container = document.getElementById('dealsList');
   container.innerHTML='';
+  const events = getEvents();
+
   getDeals().forEach((deal,index)=>{
     const div = document.createElement('div');
     div.className='dealRow';
@@ -352,6 +357,8 @@ function renderDealEditor(){
 
     const startVal = new Date(deal.startTime).toISOString().slice(0,16);
     const endVal = new Date(deal.endTime).toISOString().slice(0,16);
+
+    let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
 
     div.innerHTML=`
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
@@ -366,20 +373,15 @@ function renderDealEditor(){
       <input class="dealStart" type="datetime-local" value="${startVal}">
       <label>End:</label>
       <input class="dealEnd" type="datetime-local" value="${endVal}">
+      <label>Event:</label>
+      <select class="dealEvent">${eventOptions}</select>
       <label>Active Image URL:</label>
       <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
-      <label>Coming Soon Image URL:</label>
-      <input class="dealComingImage" placeholder="Coming Soon Image URL" value="${deal.comingImage||''}">
-      <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'coming')">
       <label>Price:</label>
       <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
-      <label>Image Format:</label>
-      <select class="dealFormat">
-        <option value="small" ${deal.format==='small'?'selected':''}>Small</option>
-        <option value="medium" ${deal.format==='medium'?'selected':''}>Medium</option>
-        <option value="large" ${deal.format==='large'?'selected':''}>Large</option>
-      </select>
+      <label>URL Link:</label>
+      <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
       <button onclick="deleteDeal(${index})">Delete</button>
     `;
     container.appendChild(div);
@@ -395,13 +397,9 @@ function addDeal(){
     startTime:Date.now() + 60000,
     endTime:Date.now() + 3600000,
     image:'',
-    comingImage:'',
-    coins:0,
-    dna:0,
-    massBoost:1,
-    skin:'None',
     price:0,
-    format:'medium'
+    url:'',
+    eventId:''
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   renderDealEditor();
@@ -413,8 +411,7 @@ function uploadDealImage(input, index, type){
   const reader = new FileReader();
   reader.onload = function(e){
     const deals = getDeals();
-    if(type==='active') deals[index].image = e.target.result;
-    if(type==='coming') deals[index].comingImage = e.target.result;
+    deals[index].image = e.target.result;
     localStorage.setItem('dealData', JSON.stringify(deals));
     renderDealEditor();
   }
@@ -441,13 +438,9 @@ function publishDeals(){
       startTime: startTime,
       endTime: endTime,
       image: div.querySelector('.dealImage').value,
-      comingImage: div.querySelector('.dealComingImage').value,
-      coins: parseInt(div.querySelector('.dealCoins')?.value)||0,
-      dna: parseInt(div.querySelector('.dealDNA')?.value)||0,
-      massBoost: parseInt(div.querySelector('.dealMassBoost')?.value)||1,
-      skin: div.querySelector('.dealSkin')?.value || 'None',
       price: parseFloat(div.querySelector('.dealPrice').value)||0,
-      format: div.querySelector('.dealFormat').value || 'medium'
+      url: div.querySelector('.dealURL').value || '',
+      eventId: div.querySelector('.dealEvent').value
     });
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
@@ -455,6 +448,5 @@ function publishDeals(){
   alert('✅ Deals published for users!');
 }
 </script>
-
 </body>
 </html>
