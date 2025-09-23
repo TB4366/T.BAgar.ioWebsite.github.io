@@ -219,9 +219,23 @@ function startEventCountdowns(){
 // =======================
 function openEventDeals(event){
   const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
-  currentEventDeals = allDeals.filter(d=>d.eventId===event.id && d.status==='active');
-  if(currentEventDeals.length===0){ alert("No active deals for this event."); return; }
-  currentDealIndex=0;
+  
+  // Filter deals die actief zijn of een eventId missen
+  const activeDeals = allDeals.filter(d => d.status === 'active');
+  const eventDeals = activeDeals.filter(d => d.eventId === event.id);
+  
+  if(activeDeals.length === 0){
+    alert("No deals are active. Check if deals are published and their status is 'active'.");
+    return;
+  }
+  
+  if(eventDeals.length === 0){
+    alert("No deals are linked to this event. Check the deal's Event selection in Admin.");
+    return;
+  }
+  
+  currentEventDeals = eventDeals;
+  currentDealIndex = 0;
   showDeal(currentEventDeals[currentDealIndex]);
 }
 
@@ -265,7 +279,7 @@ function showPaymentSuccess(deal){
   },1500);
 }
 
-function prevDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex-1+currentEventDeals.length)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+function prevDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealDeals-1+currentEventDeals.length)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 function nextDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 function updateDealCountdown(deal){
   const now = Date.now(); let remaining = deal.endTime-now; if(remaining<0) remaining=0;
