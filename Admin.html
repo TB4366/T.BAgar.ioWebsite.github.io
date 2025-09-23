@@ -361,7 +361,12 @@ function renderDealEditor(){
 
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
 
+    // markeer rood als geen eventId
+    let rowStyle = '';
+    if(!deal.eventId || deal.eventId.trim() === '') rowStyle='background:#440000; padding:5px; border-radius:5px;';
+
     div.innerHTML=`
+      <div style="${rowStyle}">
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
       <label>Status:</label>
@@ -384,6 +389,7 @@ function renderDealEditor(){
       <label>URL Link:</label>
       <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
       <button onclick="deleteDeal(${index})">Delete</button>
+      </div>
     `;
     container.appendChild(div);
   });
@@ -444,6 +450,14 @@ function publishDeals(){
       eventId: div.querySelector('.dealEvent').value
     });
   });
+
+  // Check of alle deals een event hebben
+  let missingEvent = deals.filter(d => !d.eventId || d.eventId.trim() === '');
+  if(missingEvent.length > 0){
+    alert(`⚠ ${missingEvent.length} deal(s) hebben geen event geselecteerd. Kies een event voor elke deal voordat je publiceert.`);
+    return;
+  }
+
   localStorage.setItem('dealData', JSON.stringify(deals));
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published for users!');
