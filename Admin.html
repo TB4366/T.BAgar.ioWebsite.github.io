@@ -22,6 +22,10 @@ th { background:#333; }
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
+<h3>Add New Key</h3>
+<input id="newName" placeholder="Enter Name">
+<button onclick="addNewKey()">Add Key</button>
+
 <h3>All Keys</h3>
 <table id="keysTable">
 <tr>
@@ -70,22 +74,27 @@ th { background:#333; }
 
 <script>
 // =======================
+// Admin Key & Mode
+// =======================
+let adminMode = true; // Admin altijd actief
+
+// =======================
 // Key Management
 // =======================
 function loadAllKeys(){
-  const table=document.getElementById('keysTable');
+  const table = document.getElementById('keysTable');
   table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
   for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
+    const k = localStorage.key(i);
     if(k.startsWith('skinshop_')){
-      const data=JSON.parse(localStorage.getItem(k));
-      const row=table.insertRow();
-      row.insertCell(0).innerText=k.replace('skinshop_','');
-      row.insertCell(1).innerText=data.name||'';
-      row.insertCell(2).innerText=data.coins||0;
-      row.insertCell(3).innerText=data.money||0;
-      row.insertCell(4).innerText=data.owned?data.owned.join(', '):'';
-      const actions=row.insertCell(5);
+      const data = JSON.parse(localStorage.getItem(k));
+      const row = table.insertRow();
+      row.insertCell(0).innerText = k.replace('skinshop_','');
+      row.insertCell(1).innerText = data.name || '';
+      row.insertCell(2).innerText = data.coins || 0;
+      row.insertCell(3).innerText = data.money ? data.money.toFixed(2) : '0.00';
+      row.insertCell(4).innerText = data.owned ? data.owned.join(', ') : '';
+      const actions = row.insertCell(5);
       actions.innerHTML=`
         <button onclick="editKey('${k}')">Edit</button>
         <button onclick="deleteKey('${k}')">Delete</button>
@@ -93,79 +102,117 @@ function loadAllKeys(){
     }
   }
 }
-function showMessage(msg){ document.getElementById('message').textContent=msg; }
+
+function addNewKey(){
+  const name = document.getElementById('newName').value.trim();
+  if(!name) return alert('Enter a name');
+  const key = Math.random().toString(36).substring(2,10);
+  localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, money:0, owned:[]}));
+  document.getElementById('newName').value='';
+  loadAllKeys();
+}
+
 function editKey(storageKey){
-  const data=JSON.parse(localStorage.getItem(storageKey));
-  const newName=prompt('Enter new name:', data.name);
-  if(newName) data.name=newName;
-  const coins=parseFloat(prompt('Enter coins:', data.coins||0));
-  if(!isNaN(coins)) data.coins=coins;
-  const money=parseFloat(prompt('Enter money:', data.money||0));
-  if(!isNaN(money)) data.money=money;
+  const data = JSON.parse(localStorage.getItem(storageKey));
+  const option = prompt('Choose:\n1 - Coins/Money\n2 - Change Key\n3 - Change Name');
+  switch(option){
+    case '1':
+      const type = prompt('Coins or Money?').toLowerCase();
+      const action = prompt('Add or Remove?').toLowerCase();
+      const amount = parseFloat(prompt('Amount:'));
+      if(type==='coins'){
+        if(action==='add') data.coins += amount; else data.coins = Math.max(0, data.coins - amount);
+      } else if(type==='money'){
+        if(action==='add') data.money += amount; else data.money = Math.max(0, data.money - amount);
+      }
+      break;
+    case '2':
+      const newKey = prompt('New Key:', storageKey.replace('skinshop_',''));
+      localStorage.setItem('skinshop_'+newKey, JSON.stringify(data));
+      localStorage.removeItem(storageKey);
+      break;
+    case '3':
+      const newName = prompt('New Name:', data.name);
+      data.name = newName;
+      break;
+    default: return alert('Invalid option');
+  }
   localStorage.setItem(storageKey, JSON.stringify(data));
   loadAllKeys();
 }
-function deleteKey(storageKey){ if(confirm('Delete key?')){ localStorage.removeItem(storageKey); loadAllKeys(); } }
+
+function deleteKey(storageKey){
+  if(confirm('Are you sure?')) { localStorage.removeItem(storageKey); loadAllKeys(); }
+}
+
 loadAllKeys();
 
 // =======================
 // Skin Editor
 // =======================
-function openSkinEditor(){ document.getElementById('editor').style.display='block'; renderSkinEditor(); }
+function openSkinEditor(){
+  document.getElementById('editor').style.display='block';
+  renderSkinEditor();
+}
 function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
 function renderSkinEditor(){
   const container=document.getElementById('skinsEditor'); container.innerHTML='';
   getSkins().forEach(skin=>{
-    const div=document.createElement('div'); div.className='skinRow';
+    const div=document.createElement('div'); div.className='skinRow'; div.dataset.id=skin.id;
     div.innerHTML=`
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
+      <input class="skinStart" type="datetime-local" value="${new Date(skin.startTime).toISOString().slice(0,16)}">
+      <input class="skinEnd" type="datetime-local" value="${new Date(skin.endTime).toISOString().slice(0,16)}">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
       <input type="file" onchange="uploadSkinImage(this,'${skin.id}')">
-      <input type="datetime-local" class="skinStart" value="${skin.startTime?new Date(skin.startTime).toISOString().slice(0,16):''}">
-      <input type="datetime-local" class="skinEnd" value="${skin.endTime?new Date(skin.endTime).toISOString().slice(0,16):''}">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
   });
 }
+
 function addSkin(){
   const id='skin'+Date.now();
   const container=document.getElementById('skinsEditor');
-  const div=document.createElement('div'); div.className='skinRow';
+  const div=document.createElement('div'); div.className='skinRow'; div.dataset.id=id;
   div.innerHTML=`
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
+    <input class="skinStart" type="datetime-local">
+    <input class="skinEnd" type="datetime-local">
     <input class="skinImage" placeholder="Image URL">
     <input type="file" onchange="uploadSkinImage(this,'${id}')">
-    <input type="datetime-local" class="skinStart">
-    <input type="datetime-local" class="skinEnd">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
 }
+
 function uploadSkinImage(input,id){
   const file=input.files[0]; if(!file) return;
-  const reader=new FileReader(); reader.onload=e=>{ const row=document.querySelector(`.skinRow[data-id='${id}'] .skinImage`); if(row) row.value=e.target.result; }; reader.readAsDataURL(file);
+  const reader=new FileReader();
+  reader.onload=e=>document.querySelector(`.skinRow[data-id='${id}'] .skinImage`).value=e.target.result;
+  reader.readAsDataURL(file);
 }
+
 function saveSkins(){
-  const container=document.getElementById('skinsEditor'); const skinsArr=[];
-  container.querySelectorAll('.skinRow').forEach(row=>{
-    const id=row.dataset.id||'skin'+Date.now();
-    skinsArr.push({
-      id:id,
-      name:row.querySelector('.skinName').value,
-      price:parseFloat(row.querySelector('.skinPrice').value)||0,
-      image:row.querySelector('.skinImage').value,
-      startTime:new Date(row.querySelector('.skinStart').value).getTime(),
-      endTime:new Date(row.querySelector('.skinEnd').value).getTime()
+  const container=document.getElementById('skinsEditor'); const arr=[];
+  container.querySelectorAll('.skinRow').forEach(div=>{
+    arr.push({
+      id: div.dataset.id,
+      name: div.querySelector('.skinName').value,
+      price: parseInt(div.querySelector('.skinPrice').value)||0,
+      startTime: new Date(div.querySelector('.skinStart').value).getTime(),
+      endTime: new Date(div.querySelector('.skinEnd').value).getTime(),
+      image: div.querySelector('.skinImage').value
     });
   });
-  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
-  alert('✅ Skins saved!');
+  localStorage.setItem('skinsData', JSON.stringify(arr));
+  alert('Skins saved!');
 }
-function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published!'); }
-function deleteSkin(id){ const row=document.querySelector(`.skinRow[data-id='${id}']`); if(row) row.remove(); }
+
+function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('Skins published!'); }
+function deleteSkin(id){ document.querySelector(`.skinRow[data-id='${id}']`).remove(); }
 
 // =======================
 // Event Editor
@@ -174,30 +221,54 @@ function openEventEditor(){ document.getElementById('eventEditor').style.display
 function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
 function renderEventEditor(){
   const container=document.getElementById('eventsList'); container.innerHTML='';
-  getEvents().forEach((event,index)=>{
-    const div=document.createElement('div'); div.className='eventRow';
+  getEvents().forEach((event,i)=>{
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=i;
     div.innerHTML=`
-      <input class="eventName" value="${event.name}" placeholder="Event Name">
+      <input class="eventName" value="${event.name}" placeholder="Name">
       <input class="eventDesc" value="${event.desc}" placeholder="Description">
-      <input class="eventBarImage" value="${event.barImage||''}" placeholder="Bar Image URL">
-      <input class="eventImage" value="${event.image||''}" placeholder="Active Image URL">
-      <input class="eventComingImage" value="${event.comingImage||''}" placeholder="Coming Soon Image URL">
-      <input class="eventComingBg" value="${event.comingBg||''}" placeholder="Coming Soon Background URL">
       <select class="eventStatus">
         <option value="active" ${event.status==='active'?'selected':''}>Active</option>
         <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
         <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <input type="datetime-local" class="eventStart" value="${event.startTime?new Date(event.startTime).toISOString().slice(0,16):''}">
-      <input type="datetime-local" class="eventEnd" value="${event.endTime?new Date(event.endTime).toISOString().slice(0,16):''}">
-      <button onclick="deleteEvent(${index})">Delete</button>
+      <input class="eventStart" type="datetime-local" value="${new Date(event.startTime).toISOString().slice(0,16)}">
+      <input class="eventEnd" type="datetime-local" value="${new Date(event.endTime).toISOString().slice(0,16)}">
+      <input class="eventBarImage" value="${event.barImage||''}" placeholder="Bar Image URL">
+      <input class="eventImage" value="${event.image||''}" placeholder="Active Image URL">
+      <input class="eventComingImage" value="${event.comingImage||''}" placeholder="Coming Soon Image URL">
+      <input class="eventComingBg" value="${event.comingBg||''}" placeholder="Coming Soon Background URL">
+      <button onclick="deleteEvent(${i})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-function addEvent(){ const events=getEvents(); events.push({name:'New Event',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+86400000,barImage:'',image:'',comingImage:'',comingBg:''}); localStorage.setItem('eventData',JSON.stringify(events)); renderEventEditor(); }
-function publishEvents(){ localStorage.setItem('eventDataPublished', localStorage.getItem('eventData')); alert('✅ Events published!'); }
-function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData',JSON.stringify(events)); renderEventEditor(); }
+function addEvent(){
+  const events=getEvents();
+  events.push({id:'event'+Date.now(),name:'New Event',desc:'Desc',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,barImage:'',image:'',comingImage:'',comingBg:''});
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+function deleteEvent(i){ const events=getEvents(); events.splice(i,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+function publishEvents(){
+  const container=document.getElementById('eventsList'); const arr=[];
+  container.querySelectorAll('.eventRow').forEach(div=>{
+    arr.push({
+      id: getEvents()[div.dataset.index]?.id || 'event'+Date.now(),
+      name: div.querySelector('.eventName').value,
+      desc: div.querySelector('.eventDesc').value,
+      status: div.querySelector('.eventStatus').value,
+      startTime: new Date(div.querySelector('.eventStart').value).getTime(),
+      endTime: new Date(div.querySelector('.eventEnd').value).getTime(),
+      barImage: div.querySelector('.eventBarImage').value,
+      image: div.querySelector('.eventImage').value,
+      comingImage: div.querySelector('.eventComingImage').value,
+      comingBg: div.querySelector('.eventComingBg').value
+    });
+  });
+  localStorage.setItem('eventData', JSON.stringify(arr));
+  localStorage.setItem('eventDataPublished', JSON.stringify(arr));
+  alert('Events published!');
+}
 
 // =======================
 // Deal Editor
@@ -207,32 +278,65 @@ function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); 
 function renderDealEditor(){
   const container=document.getElementById('dealsList'); container.innerHTML='';
   const events=getEvents();
-  getDeals().forEach((deal,index)=>{
+  getDeals().forEach((deal,i)=>{
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=i;
     let eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
-    const div=document.createElement('div'); div.className='dealRow';
     div.innerHTML=`
-      <input class="dealName" value="${deal.name}" placeholder="Deal Name">
+      <input class="dealName" value="${deal.name}" placeholder="Name">
       <input class="dealDesc" value="${deal.desc}" placeholder="Description">
-      <input class="dealPrice" value="${deal.price}" placeholder="Price">
-      <input class="dealImage" value="${deal.image}" placeholder="Image URL">
-      <input type="file" onchange="uploadDealImage(this,${index})">
-      <input type="datetime-local" class="dealStart" value="${deal.startTime?new Date(deal.startTime).toISOString().slice(0,16):''}">
-      <input type="datetime-local" class="dealEnd" value="${deal.endTime?new Date(deal.endTime).toISOString().slice(0,16):''}">
-      <select class="dealEvent">${eventOptions}</select>
       <select class="dealStatus">
         <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
         <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
         <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <button onclick="deleteDeal(${index})">Delete</button>
+      <input class="dealStart" type="datetime-local" value="${new Date(deal.startTime).toISOString().slice(0,16)}">
+      <input class="dealEnd" type="datetime-local" value="${new Date(deal.endTime).toISOString().slice(0,16)}">
+      <select class="dealEvent">${eventOptions}</select>
+      <input class="dealImage" value="${deal.image||''}" placeholder="Active Image URL">
+      <input type="file" onchange="uploadDealImage(this,${i})">
+      <input class="dealPrice" value="${deal.price||0}" placeholder="Price">
+      <input class="dealURL" value="${deal.url||''}" placeholder="Link URL">
+      <button onclick="deleteDeal(${i})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-function addDeal(){ const deals=getDeals(); deals.push({name:'',desc:'',price:0,image:'',startTime:Date.now(),endTime:Date.now()+86400000,eventId:'',status:'inactive'}); localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }
-function uploadDealImage(input,index){ const file=input.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=e=>{ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }; reader.readAsDataURL(file); }
-function publishDeals(){ localStorage.setItem('dealDataPublished', localStorage.getItem('dealData')); alert('✅ Deals published!'); }
-function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }
+
+function addDeal(){
+  const deals=getDeals();
+  deals.push({name:'New Deal',desc:'Desc',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,eventId:'',image:'',price:0,url:''});
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function uploadDealImage(input,i){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ const deals=getDeals(); deals[i].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); };
+  reader.readAsDataURL(file);
+}
+
+function deleteDeal(i){ const deals=getDeals(); deals.splice(i,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function publishDeals(){
+  const container=document.getElementById('dealsList'); const arr=[];
+  container.querySelectorAll('.dealRow').forEach(div=>{
+    arr.push({
+      name: div.querySelector('.dealName').value,
+      desc: div.querySelector('.dealDesc').value,
+      status: div.querySelector('.dealStatus').value,
+      startTime: new Date(div.querySelector('.dealStart').value).getTime(),
+      endTime: new Date(div.querySelector('.dealEnd').value).getTime(),
+      eventId: div.querySelector('.dealEvent').value,
+      image: div.querySelector('.dealImage').value,
+      price: parseFloat(div.querySelector('.dealPrice').value)||0,
+      url: div.querySelector('.dealURL').value
+    });
+  });
+  localStorage.setItem('dealData', JSON.stringify(arr));
+  localStorage.setItem('dealDataPublished', JSON.stringify(arr));
+  alert('Deals published!');
+}
+
 </script>
 </body>
 </html>
