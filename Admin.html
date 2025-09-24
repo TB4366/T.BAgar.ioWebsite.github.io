@@ -349,7 +349,7 @@ function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); 
 function renderDealEditor(){
   const container = document.getElementById('dealsList');
   container.innerHTML='';
-  const events = getEvents();
+  const events = JSON.parse(localStorage.getItem('eventDataPublished')||'[]'); // Alleen gepubliceerde events
 
   getDeals().forEach((deal,index)=>{
     const div = document.createElement('div');
@@ -361,17 +361,8 @@ function renderDealEditor(){
 
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
 
-    // validations
     let rowStyle = '';
-    let warnings = [];
-    if(!deal.eventId || deal.eventId.trim() === ''){
-      rowStyle='background:#440000; padding:5px; border-radius:5px;';
-      warnings.push("❌ Geen event gekoppeld");
-    }
-    if(deal.endTime <= deal.startTime){
-      rowStyle='background:#442200; padding:5px; border-radius:5px;';
-      warnings.push("⏰ Eindtijd moet later zijn dan starttijd");
-    }
+    if(!deal.eventId || deal.eventId.trim() === '') rowStyle='background:#440000; padding:5px; border-radius:5px;';
 
     div.innerHTML=`
       <div style="${rowStyle}">
@@ -388,7 +379,7 @@ function renderDealEditor(){
       <label>End:</label>
       <input class="dealEnd" type="datetime-local" value="${endVal}">
       <label>Event:</label>
-      <select class="dealEvent"><option value="">-- Select Event --</option>${eventOptions}</select>
+      <select class="dealEvent">${eventOptions}</select>
       <label>Active Image URL:</label>
       <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
@@ -397,7 +388,6 @@ function renderDealEditor(){
       <label>URL Link:</label>
       <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
       <button onclick="deleteDeal(${index})">Delete</button>
-      ${warnings.length>0 ? `<p style="color:orange;font-weight:bold;">${warnings.join('<br>')}</p>`:''}
       </div>
     `;
     container.appendChild(div);
@@ -444,19 +434,12 @@ function deleteDeal(index){
 function publishDeals(){
   const container = document.getElementById('dealsList');
   const deals = [];
-  let errors = [];
+  const publishedEvents = JSON.parse(localStorage.getItem('eventDataPublished')||'[]'); // Check alleen gepubliceerde events
 
   container.querySelectorAll('.dealRow').forEach((div,index)=>{
     const startTime = new Date(div.querySelector('.dealStart').value).getTime();
     const endTime = new Date(div.querySelector('.dealEnd').value).getTime();
-    const eventId = div.querySelector('.dealEvent').value;
-
-    if(!eventId || eventId.trim() === ''){
-      errors.push(`Deal ${index+1}: geen event gekoppeld`);
-    }
-    if(endTime <= startTime){
-      errors.push(`Deal ${index+1}: eindtijd moet later zijn dan starttijd`);
-    }
+    const selectedEventId = div.querySelector('.dealEvent').value;
 
     deals.push({
       name: div.querySelector('.dealName').value,
@@ -467,12 +450,14 @@ function publishDeals(){
       image: div.querySelector('.dealImage').value,
       price: parseFloat(div.querySelector('.dealPrice').value)||0,
       url: div.querySelector('.dealURL').value || '',
-      eventId: eventId
+      eventId: selectedEventId
     });
   });
 
-  if(errors.length > 0){
-    alert("⚠ Kan niet publiceren:\n\n" + errors.join("\n"));
+  // Controleer of elk deal een geldig eventId heeft dat bestaat in gepubliceerde events
+  const invalidDeals = deals.filter(d => !publishedEvents.some(e => e.id === d.eventId));
+  if(invalidDeals.length > 0){
+    alert(`⚠ ${invalidDeals.length} deal(s) hebben geen geldig event gekoppeld. Koppel eerst een gepubliceerde event.`);
     return;
   }
 
