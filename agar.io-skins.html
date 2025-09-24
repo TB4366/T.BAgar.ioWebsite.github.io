@@ -12,10 +12,10 @@ button { cursor:pointer; }
 .skins { display:flex; flex-wrap: wrap; gap:25px; justify-content:center; margin-top:20px; }
 .skinContainer { display:flex; flex-direction:column; align-items:center; }
 .skin { width:150px; height:150px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; transition: transform 0.1s, filter 0.1s;}
-.skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; transition: filter 0.2s, opacity 0.2s; }
+.skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; transition: filter 0.2s, opacity 0.2s; user-select:none; pointer-events:none;}
 .skin:hover { filter: brightness(1.2); }
-.grayed img { filter: grayscale(100%); opacity:0.5; pointer-events:none; user-select:none; }
 .lock { position:absolute; top:5px; left:5px; font-size:18px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%; }
+.grayed img { filter: grayscale(100%); opacity:0.5; }
 .skinName, .skinPrice { margin-top:5px; font-size:14px; }
 #keyInput { width:300px; font-size:18px; text-align:center; }
 #message { font-size:18px; margin-top:10px; color:yellow; }
@@ -35,7 +35,7 @@ button { cursor:pointer; }
 
 /* Deal modal */
 #dealModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#222; padding:20px; border:2px solid #0af; border-radius:10px; z-index:1000; max-width:400px; color:#fff; }
-#dealModal img { width:100%; border-radius:8px; margin:10px 0; }
+#dealModal img { width:100%; border-radius:8px; margin:10px 0; user-select:none; pointer-events:none; }
 #dealCountdown { font-weight:bold; margin-top:10px; }
 #dealNav { display:flex; justify-content:space-between; margin-top:10px; }
 </style>
@@ -96,31 +96,28 @@ function getPublishedSkins(){ return JSON.parse(localStorage.getItem('skinsDataP
 function renderSkins(){
   const skins=getPublishedSkins();
   const grid=document.getElementById('skinsGrid');
-  const purchasedContainer=document.getElementById('purchasedSkins');
   grid.innerHTML='';
+  const purchasedContainer=document.getElementById('purchasedSkins');
   purchasedContainer.innerHTML='';
 
   skins.forEach(skin=>{
     const isOwned=owned.includes(skin.id);
+    if(isOwned) return; // gekocht skins verdwijnen uit beschikbare skins
     const container=document.createElement('div'); container.className='skinContainer';
-    const div=document.createElement('div'); div.className='skin '+(isOwned?'':'grayed');
-    const img=document.createElement('img'); img.src=skin.image; img.alt=skin.name;
-
-    if(!isOwned){
-      // slotje en beperking kopiëren
-      const lock=document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
-      img.draggable=false; img.oncontextmenu = e => e.preventDefault();
-      img.onmousedown = e => e.preventDefault();
-      img.ondragstart = e => e.preventDefault();
-      div.onclick=()=>buySkin(skin.id, skin.price);
-    }
-
-    container.appendChild(div); div.appendChild(img);
+    const div=document.createElement('div'); div.className='skin grayed';
+    div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
+    const lock=document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
+    div.onclick=()=>buySkin(skin.id, skin.price);
+    container.appendChild(div);
     const nameDiv=document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent=skin.name; container.appendChild(nameDiv);
     const priceDiv=document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent='Price: '+skin.price+' 💠'; container.appendChild(priceDiv);
     grid.appendChild(container);
+  });
 
-    if(isOwned) addPurchasedItem(skin.image,skin.name);
+  // gekocht skins
+  owned.forEach(id=>{
+    const skin=getPublishedSkins().find(s=>s.id===id);
+    if(skin) addPurchasedItem(skin.image,skin.name,false);
   });
 
   purchasedDeals.forEach(did=>{
@@ -136,7 +133,9 @@ function renderSkins(){
 function addPurchasedItem(imgSrc,name,isDeal=false){
   const purchasedContainer=document.getElementById('purchasedSkins');
   const img=document.createElement('img');
-  img.src=imgSrc; img.alt=name; img.style.opacity='1'; // gekochte items normaal
+  img.src=imgSrc; img.alt=name; 
+  img.style.opacity='1';
+  img.style.pointerEvents='auto';
   purchasedContainer.appendChild(img);
 }
 
@@ -158,7 +157,7 @@ function buySkin(id,price){
   coins-=price; owned.push(id); saveData(); showMessage('✅ Skin purchased!'); renderSkins();
 }
 
-// Events & Deals (zelfde als eerder, met grayed effect voor niet gekocht)
+// ================= Event & Deals =================
 function loadEvents(){
   events=JSON.parse(localStorage.getItem('eventDataPublished')||'[]');
   renderEventBar();
@@ -174,17 +173,15 @@ function renderEventBar(){
     div.style.overflow='hidden'; div.style.cursor='pointer'; div.style.flexShrink='0'; div.style.position='relative';
 
     const img=document.createElement('img');
+    img.src=event.barImage||event.image;
     img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
-    img.src=(event.status==='coming')?event.comingImage||event.image:event.barImage||event.image;
-
-    // niet-gekocht of komende events grijs
-    if(event.status!=='active'){
-      div.classList.add('grayed'); img.draggable=false; img.oncontextmenu=e=>e.preventDefault(); img.onmousedown=e=>e.preventDefault(); img.ondragstart=e=>e.preventDefault();
-    }
-
     div.appendChild(img);
-    const countdownDiv=document.createElement('div'); countdownDiv.className='eventCountdown'; div.appendChild(countdownDiv);
-    div.onclick=()=>openEventDeals(event); div.dataset.eventIndex=index;
+
+    const countdownDiv=document.createElement('div'); countdownDiv.className='eventCountdown';
+    div.appendChild(countdownDiv);
+
+    div.onclick=()=>openEventDeals(event);
+    div.dataset.eventIndex=index;
     container.appendChild(div);
   });
 }
@@ -224,12 +221,12 @@ function openEventDeals(event){
   showDeal(currentEventDeals[currentDealIndex]);
 }
 
+// ===== Deal modal functions =====
 function showDeal(deal){
   const isPurchased=purchasedDeals.includes(deal.id);
   document.getElementById('dealModalTitle').textContent=deal.name;
   document.getElementById('dealModalDesc').textContent=deal.desc;
-  const img=document.getElementById('dealModalImage'); img.src=deal.image; img.style.opacity=isPurchased?'1':'0.5';
-  if(!isPurchased){ img.draggable=false; img.oncontextmenu=e=>e.preventDefault(); img.onmousedown=e=>e.preventDefault(); img.ondragstart=e=>e.preventDefault(); }
+  const img=document.getElementById('dealModalImage'); img.src=deal.image; img.style.opacity='1';
   document.getElementById('dealModal').style.display='block';
   updateDealCountdown(deal);
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
