@@ -72,9 +72,9 @@ th { background:#333; }
 </div>
 
 <script>
-/* =======================
-   Key Management
-======================= */
+// =======================
+// Key Management
+// =======================
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
   table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
@@ -96,7 +96,9 @@ function loadAllKeys(){
     }
   }
 }
+
 function showMessage(msg){ document.getElementById('message').textContent=msg; }
+
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
@@ -106,6 +108,7 @@ function addNewKey(){
   document.getElementById('newName').value='';
   loadAllKeys();
 }
+
 function editKey(storageKey){
   const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
   if(!options) return;
@@ -146,6 +149,7 @@ function editKey(storageKey){
   }
   loadAllKeys();
 }
+
 function deleteKey(storageKey){
   if(confirm('Are you sure you want to delete this key?')){
     localStorage.removeItem(storageKey);
@@ -153,148 +157,327 @@ function deleteKey(storageKey){
     loadAllKeys();
   }
 }
+
 loadAllKeys();
 
-/* =======================
-   Skin Editor
-======================= */
-function openSkinEditor(){ document.getElementById('editor').style.display='block'; renderSkinEditor(); }
+// =======================
+// Skin Editor
+// =======================
+function openSkinEditor(){
+  document.getElementById('editor').style.display='block';
+  renderSkinEditor();
+}
+
 function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
+
 function renderSkinEditor(){
-  const container = document.getElementById('skinsEditor'); container.innerHTML='';
+  const container = document.getElementById('skinsEditor');
+  container.innerHTML='';
   getSkins().forEach(skin=>{
-    const div = document.createElement('div'); div.className='skinRow'; div.dataset.id = skin.id;
+    const div = document.createElement('div');
+    div.className='skinRow';
+    div.dataset.id = skin.id;
     div.innerHTML=`
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
       <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
-      <button onclick="deleteSkin('${skin.id}')">Delete</button>`;
+      <button onclick="deleteSkin('${skin.id}')">Delete</button>
+    `;
     container.appendChild(div);
   });
 }
+
 function addSkin(){
-  const id = 'skin'+Date.now(); const container = document.getElementById('skinsEditor');
-  const div = document.createElement('div'); div.className='skinRow'; div.dataset.id = id;
+  const id = 'skin'+Date.now();
+  const container = document.getElementById('skinsEditor');
+  const div = document.createElement('div');
+  div.className='skinRow';
+  div.dataset.id = id;
   div.innerHTML=`
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
     <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
-    <button onclick="deleteSkin('${id}')">Delete</button>`;
+    <button onclick="deleteSkin('${id}')">Delete</button>
+  `;
   container.appendChild(div);
 }
+
 function uploadSkinImage(input, id){
-  const file = input.files[0]; if(!file) return;
+  const file = input.files[0];
+  if(!file) return;
   const reader = new FileReader();
-  reader.onload = e=>{ const row = document.querySelector(\`.skinRow[data-id='${id}'] .skinImage\`); row.value = e.target.result; };
+  reader.onload = function(e){
+    const row = document.querySelector(`.skinRow[data-id='${id}'] .skinImage`);
+    row.value = e.target.result;
+  }
   reader.readAsDataURL(file);
 }
-function saveSkins(){
-  const container = document.getElementById('skinsEditor'); const skinsArr = [];
-  container.querySelectorAll('.skinRow').forEach(row=>{
-    skinsArr.push({ id: row.dataset.id, name: row.querySelector('.skinName').value, price: parseInt(row.querySelector('.skinPrice').value)||0, image: row.querySelector('.skinImage').value });
-  });
-  localStorage.setItem('skinsData', JSON.stringify(skinsArr)); alert('✅ Skins saved!');
-}
-function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published for users!'); }
-function deleteSkin(id){ const row = document.querySelector(\`.skinRow[data-id='${id}']\`); if(row) row.remove(); }
 
-/* =======================
-   Event Editor
-======================= */
-function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
+function saveSkins(){
+  const container = document.getElementById('skinsEditor');
+  const skinElements = container.querySelectorAll('.skinRow');
+  const skinsArr = [];
+  skinElements.forEach(row=>{
+    skinsArr.push({
+      id: row.dataset.id,
+      name: row.querySelector('.skinName').value,
+      price: parseInt(row.querySelector('.skinPrice').value)||0,
+      image: row.querySelector('.skinImage').value
+    });
+  });
+  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
+  alert('✅ Skins saved!');
+}
+
+function publishSkins(){
+  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData'));
+  alert('✅ Skins published for users!');
+}
+
+function deleteSkin(id){
+  const row = document.querySelector(`.skinRow[data-id='${id}']`);
+  if(row) row.remove();
+}
+
+// =======================
+// Event Editor
+// =======================
+function openEventEditor(){
+  document.getElementById('eventEditor').style.display='block';
+  renderEventEditor();
+}
+
 function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
+
 function renderEventEditor(){
-  const container = document.getElementById('eventsList'); container.innerHTML='';
+  const container = document.getElementById('eventsList');
+  container.innerHTML='';
   getEvents().forEach((event,index)=>{
-    const div = document.createElement('div'); div.className='eventRow'; div.dataset.index = index;
+    const div = document.createElement('div');
+    div.className='eventRow';
+    div.dataset.index = index;
+
     const startVal = new Date(event.startTime).toISOString().slice(0,16);
     const endVal = new Date(event.endTime).toISOString().slice(0,16);
+
     div.innerHTML=`
-      <input class="eventName" value="${event.name}">
-      <input class="eventDesc" value="${event.desc}">
+      <input class="eventName" placeholder="Event Name" value="${event.name}">
+      <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
       <label>Status:</label>
       <select class="eventStatus">
         <option value="active" ${event.status==='active'?'selected':''}>Active</option>
         <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
         <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <label>Start:</label><input class="eventStart" type="datetime-local" value="${startVal}">
-      <label>End:</label><input class="eventEnd" type="datetime-local" value="${endVal}">
-      <label>Bar Image:</label><input class="eventBarImage" value="${event.barImage||''}">
-      <label>Active Image:</label><input class="eventImage" value="${event.image||''}">
-      <label>Coming Soon Image:</label><input class="eventComingImage" value="${event.comingImage||''}">
-      <button onclick="deleteEvent(${index})">Delete</button>`;
+      <label>Start:</label>
+      <input class="eventStart" type="datetime-local" value="${startVal}">
+      <label>End:</label>
+      <input class="eventEnd" type="datetime-local" value="${endVal}">
+      <label>Bar Image URL:</label>
+      <input class="eventBarImage" placeholder="Bar Image URL" value="${event.barImage||''}">
+      <label>Active Image URL:</label>
+      <input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
+      <label>Coming Soon Image URL:</label>
+      <input class="eventComingImage" placeholder="Coming Soon Image" value="${event.comingImage||''}">
+      <button onclick="deleteEvent(${index})">Delete</button>
+    `;
     container.appendChild(div);
   });
 }
+
 function addEvent(){
-  const events = getEvents(); const id = 'event'+Date.now();
-  events.push({ id, name:'New Event', desc:'Description', status:'active', startTime: Date.now()+60000, endTime: Date.now()+3600000, barImage:'', image:'', comingImage:'' });
-  localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor();
-}
-function deleteEvent(index){ const events = getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
-function publishEvents(){
-  const container = document.getElementById('eventsList'); const events = [];
-  container.querySelectorAll('.eventRow').forEach((div,index)=>{
-    const startInput = div.querySelector('.eventStart').value; const endInput = div.querySelector('.eventEnd').value;
-    const uniqueId = getEvents()[index]?.id || 'event'+Date.now();
-    events.push({ id:uniqueId, name:div.querySelector('.eventName').value, desc:div.querySelector('.eventDesc').value, status:div.querySelector('.eventStatus').value,
-      startTime:new Date(startInput).getTime(), endTime:new Date(endInput).getTime(), barImage:div.querySelector('.eventBarImage').value,
-      image:div.querySelector('.eventImage').value, comingImage:div.querySelector('.eventComingImage').value });
+  const events = getEvents();
+  const id = 'event'+Date.now();
+  events.push({
+    id:id,
+    name:'New Event',
+    desc:'Description',
+    status:'active',
+    startTime: Date.now() + 60000,
+    endTime: Date.now() + 3600000,
+    barImage:'',
+    image:'',
+    comingImage:''
   });
-  localStorage.setItem('eventData', JSON.stringify(events)); localStorage.setItem('eventDataPublished', JSON.stringify(events));
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function deleteEvent(index){
+  const events = getEvents();
+  events.splice(index,1);
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function publishEvents(){
+  const container = document.getElementById('eventsList');
+  const events = [];
+  container.querySelectorAll('.eventRow').forEach((div,index)=>{
+    const startInput = div.querySelector('.eventStart').value;
+    const endInput = div.querySelector('.eventEnd').value;
+    const uniqueId = getEvents()[index]?.id || 'event'+Date.now();
+    events.push({
+      id: uniqueId,
+      name: div.querySelector('.eventName').value,
+      desc: div.querySelector('.eventDesc').value,
+      status: div.querySelector('.eventStatus').value,
+      startTime: new Date(startInput).getTime(),
+      endTime: new Date(endInput).getTime(),
+      barImage: div.querySelector('.eventBarImage').value,
+      image: div.querySelector('.eventImage').value,
+      comingImage: div.querySelector('.eventComingImage').value
+    });
+  });
+  localStorage.setItem('eventData', JSON.stringify(events));
+  localStorage.setItem('eventDataPublished', JSON.stringify(events));
   alert('✅ Events published for users!');
 }
 
-/* =======================
-   Deal Editor
-======================= */
-function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
+// =======================
+// Deal Editor
+// =======================
+function openDealEditor(){
+  document.getElementById('dealEditor').style.display='block';
+  renderDealEditor();
+}
+
 function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
+
 function renderDealEditor(){
-  const container = document.getElementById('dealsList'); container.innerHTML=''; const events = getEvents();
+  const container = document.getElementById('dealsList');
+  container.innerHTML='';
+  const events = getEvents();
+
   getDeals().forEach((deal,index)=>{
-    const div = document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
-    const startVal = new Date(deal.startTime).toISOString().slice(0,16); const endVal = new Date(deal.endTime).toISOString().slice(0,16);
+    const div = document.createElement('div');
+    div.className='dealRow';
+    div.dataset.index=index;
+
+    const startVal = new Date(deal.startTime).toISOString().slice(0,16);
+    const endVal = new Date(deal.endTime).toISOString().slice(0,16);
+
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
-    let rowStyle = (!deal.eventId || deal.eventId.trim()==='') ? 'background:#440000; padding:5px; border-radius:5px;' : '';
+
+    // validations
+    let rowStyle = '';
+    let warnings = [];
+    if(!deal.eventId || deal.eventId.trim() === ''){
+      rowStyle='background:#440000; padding:5px; border-radius:5px;';
+      warnings.push("❌ Geen event gekoppeld");
+    }
+    if(deal.endTime <= deal.startTime){
+      rowStyle='background:#442200; padding:5px; border-radius:5px;';
+      warnings.push("⏰ Eindtijd moet later zijn dan starttijd");
+    }
+
     div.innerHTML=`
       <div style="${rowStyle}">
-      <input class="dealName" value="${deal.name}">
-      <input class="dealDesc" value="${deal.desc}">
+      <input class="dealName" placeholder="Deal Name" value="${deal.name}">
+      <input class="dealDesc" placeholder="Description" value="${deal.desc}">
       <label>Status:</label>
       <select class="dealStatus">
         <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
         <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
         <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <label>Start:</label><input class="dealStart" type="datetime-local" value="${startVal}">
-      <label>End:</label><input class="dealEnd" type="datetime-local" value="${endVal}">
-      <label>Event:</label><select class="dealEvent">${eventOptions}</select>
-      <label>Image:</label><input class="dealImage" value="${deal.image||''}">
+      <label>Start:</label>
+      <input class="dealStart" type="datetime-local" value="${startVal}">
+      <label>End:</label>
+      <input class="dealEnd" type="datetime-local" value="${endVal}">
+      <label>Event:</label>
+      <select class="dealEvent"><option value="">-- Select Event --</option>${eventOptions}</select>
+      <label>Active Image URL:</label>
+      <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
-      <label>Price:</label><input class="dealPrice" type="number" value="${deal.price||0}">
-      <label>URL:</label><input class="dealURL" value="${deal.url||''}">
+      <label>Price:</label>
+      <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
+      <label>URL Link:</label>
+      <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
       <button onclick="deleteDeal(${index})">Delete</button>
-      </div>`;
+      ${warnings.length>0 ? `<p style="color:orange;font-weight:bold;">${warnings.join('<br>')}</p>`:''}
+      </div>
+    `;
     container.appendChild(div);
   });
 }
-function addDeal(){ const deals = getDeals(); deals.push({ name:'New Deal', desc:'Description', status:'coming', startTime:Date.now()+60000, endTime:Date.now()+3600000, image:'', price:0, url:'', eventId:'' });
-  localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
-function uploadDealImage(input,index){ const file = input.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = e=>{ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }; reader.readAsDataURL(file); }
-function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }
-function publishDeals(){
-  const container=document.getElementById('dealsList'); const deals=[];
-  container.querySelectorAll('.dealRow').forEach((div,index)=>{
-    deals.push({ name:div.querySelector('.dealName').value, desc:div.querySelector('.dealDesc').value, status:div.querySelector('.dealStatus').value,
-      startTime:new Date(div.querySelector('.dealStart').value).getTime(), endTime:new Date(div.querySelector('.dealEnd').value).getTime(),
-      image:div.querySelector('.dealImage').value, price:parseFloat(div.querySelector('.dealPrice').value)||0, url:div.querySelector('.dealURL').value||'', eventId:div.querySelector('.dealEvent').value });
+
+function addDeal(){
+  const deals = getDeals();
+  deals.push({
+    name:'New Deal',
+    desc:'Description',
+    status:'coming',
+    startTime:Date.now() + 60000,
+    endTime:Date.now() + 3600000,
+    image:'',
+    price:0,
+    url:'',
+    eventId:''
   });
-  let missingEvent=deals.filter(d=>!d.eventId||d.eventId.trim()===''); if(missingEvent.length>0){ alert(`⚠ ${missingEvent.length} deal(s) have no event linked. Please select an event before publishing.`); return; }
-  localStorage.setItem('dealData',JSON.stringify(deals)); localStorage.setItem('dealDataPublished',JSON.stringify(deals));
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function uploadDealImage(input, index, type){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const deals = getDeals();
+    deals[index].image = e.target.result;
+    localStorage.setItem('dealData', JSON.stringify(deals));
+    renderDealEditor();
+  }
+  reader.readAsDataURL(file);
+}
+
+function deleteDeal(index){
+  const deals = getDeals();
+  deals.splice(index,1);
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function publishDeals(){
+  const container = document.getElementById('dealsList');
+  const deals = [];
+  let errors = [];
+
+  container.querySelectorAll('.dealRow').forEach((div,index)=>{
+    const startTime = new Date(div.querySelector('.dealStart').value).getTime();
+    const endTime = new Date(div.querySelector('.dealEnd').value).getTime();
+    const eventId = div.querySelector('.dealEvent').value;
+
+    if(!eventId || eventId.trim() === ''){
+      errors.push(`Deal ${index+1}: geen event gekoppeld`);
+    }
+    if(endTime <= startTime){
+      errors.push(`Deal ${index+1}: eindtijd moet later zijn dan starttijd`);
+    }
+
+    deals.push({
+      name: div.querySelector('.dealName').value,
+      desc: div.querySelector('.dealDesc').value,
+      status: div.querySelector('.dealStatus').value,
+      startTime: startTime,
+      endTime: endTime,
+      image: div.querySelector('.dealImage').value,
+      price: parseFloat(div.querySelector('.dealPrice').value)||0,
+      url: div.querySelector('.dealURL').value || '',
+      eventId: eventId
+    });
+  });
+
+  if(errors.length > 0){
+    alert("⚠ Kan niet publiceren:\n\n" + errors.join("\n"));
+    return;
+  }
+
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published for users!');
 }
 </script>
