@@ -127,12 +127,11 @@ function renderSkins(){
     if(isOwned) addPurchasedItem(skin.image,skin.name);
   });
 
-  // =======================
   // Gekochte deals
-  // =======================
   purchasedDeals.forEach(did=>{
     const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
     const deal = allDeals.find(dd=>dd.id===did);
+    // 🔹 check event bestaat en actief
     if(deal && events.some(e=>e.id===deal.eventId && e.status==='active')){
       addPurchasedItem(deal.image,deal.name,true);
     }
@@ -142,6 +141,14 @@ function renderSkins(){
   document.getElementById('money').textContent=money.toFixed(2);
 }
 
+function addPurchasedItem(imgSrc,name,isDeal=false){
+  const purchasedContainer = document.getElementById('purchasedSkins');
+  const img = document.createElement('img');
+  img.src = imgSrc; img.alt = name; img.style.opacity = '0.5';
+  if(isDeal) img.title = 'Deal: '+name;
+  purchasedContainer.appendChild(img);
+}
+
 // =======================
 // Load / Buy Key
 // =======================
@@ -149,10 +156,18 @@ function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key) return showMessage('Please enter your key');
   const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
-  if(!data || data.coins===undefined){ showMessage('❌ Invalid key!'); currentKey=null; coins=0; money=0; owned=[]; purchasedDeals=[]; renderSkins(); return; }
+  if(!data || data.coins===undefined){ 
+    showMessage('❌ Invalid key!'); 
+    currentKey=null; coins=0; money=0; owned=[]; purchasedDeals=[]; 
+    renderSkins(); 
+    return; 
+  }
   currentKey = key; coins = data.coins||0; money = data.money||0; owned = data.owned||[];
   loadPurchasedDeals();
-  loadEvents(); // Zorg dat events geladen zijn voor deals
+
+  // 🔹 Eerst events laden
+  loadEvents(); 
+
   showMessage('✅ Key loaded successfully!');
   renderSkins();
 }
@@ -270,14 +285,6 @@ function updateDealCountdown(deal){
   document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
 }
 function closeDealModal(){ document.getElementById('dealModal').style.display='none'; if(dealCountdownInterval) clearInterval(dealCountdownInterval); }
-
-function addPurchasedItem(imgSrc,name,isDeal=false){
-  const purchasedContainer = document.getElementById('purchasedSkins');
-  const img = document.createElement('img');
-  img.src = imgSrc; img.alt = name; img.style.opacity = '0.5';
-  if(isDeal) img.title = 'Deal: '+name;
-  purchasedContainer.appendChild(img);
-}
 
 // =======================
 // Init
