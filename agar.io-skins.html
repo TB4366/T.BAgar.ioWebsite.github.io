@@ -28,21 +28,21 @@ button { cursor:pointer; }
 .currencyItem { display:flex; align-items:center; gap:5px; }
 
 /* Event bar */
-#eventBarContainer { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); height:2cm; display:flex; gap:5px; overflow:hidden; border-radius:5px; z-index:999; }
+#eventBarContainer { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); height:3cm; display:flex; gap:5px; overflow-x:auto; border-radius:5px; z-index:999; }
+
+/* Event circle */
+.eventCircle { width:70px; height:70px; border-radius:50%; border:2px solid #0af; overflow:hidden; display:flex; align-items:center; justify-content:center; margin:0 auto; }
+.eventCircle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
 /* Countdown overlay on event */
-.eventCountdown { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.6); color:#fff; font-size:12px; text-align:center; padding:2px 0; }
+.eventCountdown { font-size:12px; text-align:center; margin-top:5px; }
 
 /* Deal modal */
 #dealModal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#222; padding:20px; border:2px solid #0af; border-radius:10px; z-index:1000; max-width:400px; color:#fff; }
-#dealModal img { width:100%; border-radius:50%; margin:10px 0; }
+#dealModal img { width:100%; border-radius:8px; margin:10px 0; }
 #dealCountdown { font-weight:bold; margin-top:10px; }
 #dealModal button { margin-top:10px; }
 #dealNav { display:flex; justify-content:space-between; margin-top:10px; }
-
-/* Coming soon circle */
-.comingCircle { width:100px; height:100px; border-radius:50%; overflow:hidden; margin:0 auto 5px auto; border:3px solid #ff0; }
-.comingCircle img { width:100%; height:100%; object-fit:cover; }
 </style>
 </head>
 <body>
@@ -57,7 +57,7 @@ button { cursor:pointer; }
   </div>
 </div>
 
-<div id="message">Enter your key below to load your coins and skins:</div>
+<div id="message">Enter your key below to load your coins and skins (optional):</div>
 
 <input id="keyInput" placeholder="Enter your key here">
 <button onclick="loadKey()">Load Key</button>
@@ -75,8 +75,8 @@ button { cursor:pointer; }
 
 <!-- Deal modal -->
 <div id="dealModal">
-  <div class="comingCircle"><img id="dealModalImage" src=""></div>
   <h3 id="dealModalTitle"></h3>
+  <img id="dealModalImage" src="">
   <p id="dealModalDesc"></p>
   <p id="dealCountdown"></p>
   <div id="dealNav">
@@ -88,9 +88,6 @@ button { cursor:pointer; }
 </div>
 
 <script>
-// =======================
-// User / Skins / Deals
-// =======================
 let currentKey = null, coins=0, money=0, owned=[], purchasedDeals=[];
 let events=[], currentEventDeals=[], currentDealIndex=0, dealCountdownInterval=null;
 
@@ -114,18 +111,15 @@ function renderSkins(){
   skins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
     const container = document.createElement('div'); container.className='skinContainer';
-    const div = document.createElement('div'); div.className='skin '+(currentKey?(!isOwned?'grayed':''):'');
+    const div = document.createElement('div'); div.className='skin '+(isOwned?'':'grayed');
     div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
 
-    if(currentKey){
-      if(!isOwned){
-        const lock = document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
-        div.onclick = ()=>buySkin(skin.id, skin.price);
-      } else {
-        const lock = document.createElement('div'); lock.className='lock'; lock.textContent='✓'; div.appendChild(lock);
-      }
+    if(!isOwned && currentKey){
+      const lock = document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
+      div.onclick = ()=>buySkin(skin.id, skin.price);
+    } else if(isOwned){
+      const lock = document.createElement('div'); lock.className='lock'; lock.textContent='✓'; div.appendChild(lock);
     }
-
     container.appendChild(div);
     const nameDiv = document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent=skin.name; container.appendChild(nameDiv);
     const priceDiv = document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent='Price: '+skin.price+' 💠'; container.appendChild(priceDiv);
@@ -134,7 +128,6 @@ function renderSkins(){
     if(isOwned) addPurchasedItem(skin.image,skin.name);
   });
 
-  // Gekochte deals
   purchasedDeals.forEach(did=>{
     const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
     const deal = allDeals.find(dd=>dd.id===did);
@@ -158,7 +151,7 @@ function addPurchasedItem(imgSrc,name,isDeal=false){
 // =======================
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
-  if(!key) return showMessage('Please enter your key');
+  if(key===''){ showMessage('✅ Skins visible, key not loaded.'); renderSkins(); return; }
   const data = JSON.parse(localStorage.getItem('skinshop_'+key)||'{}');
   if(!data || data.coins===undefined){ showMessage('❌ Invalid key!'); currentKey=null; coins=0; money=0; owned=[]; purchasedDeals=[]; renderSkins(); return; }
   currentKey = key; coins = data.coins||0; money = data.money||0; owned = data.owned||[];
@@ -178,7 +171,7 @@ function buySkin(id,price){
 // Event Bar
 // =======================
 function loadEvents(){
-  events = JSON.parse(localStorage.getItem('eventDataPublished')||'[]').filter(e=>e.status==='active'||e.status==='coming');
+  events = JSON.parse(localStorage.getItem('eventDataPublished')||'[]');
   renderEventBar();
   startEventCountdowns();
 }
@@ -188,19 +181,19 @@ function renderEventBar(){
   container.innerHTML='';
   events.forEach((event,index)=>{
     const div=document.createElement('div');
-    div.style.width='5cm'; div.style.height='2cm'; div.style.border='2px solid #0af'; div.style.borderRadius='5px';
-    div.style.overflow='hidden'; div.style.cursor='pointer'; div.style.flexShrink='0'; div.style.position='relative';
+    div.style.width='100px'; div.style.margin='0 5px'; div.style.cursor='pointer'; div.dataset.index=index;
 
-    const img=document.createElement('img');
-    img.src=event.barImage||event.image;
-    img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
-    div.appendChild(img);
+    const circle=document.createElement('div'); circle.className='eventCircle';
+    const img = document.createElement('img');
+    img.src = event.barImage||event.image;
+    circle.appendChild(img);
+    div.appendChild(circle);
 
+    const label=document.createElement('div'); label.textContent=(event.status==='coming')?'Coming Soon':'Active'; div.appendChild(label);
     const countdownDiv = document.createElement('div'); countdownDiv.className='eventCountdown';
     div.appendChild(countdownDiv);
 
     div.onclick = ()=>openEventDeals(event);
-    div.dataset.eventIndex=index;
     container.appendChild(div);
   });
 }
@@ -210,13 +203,14 @@ function startEventCountdowns(){
     const now = Date.now();
     const container = document.getElementById('eventBarContainer');
     Array.from(container.children).forEach(div=>{
-      const idx = div.dataset.eventIndex;
+      const idx = div.dataset.index;
       const event = events[idx];
       const countdownDiv = div.querySelector('.eventCountdown');
-      let remaining = event.endTime - now;
+      if(event.status==='coming' && now>=event.startTime){ event.status='active'; localStorage.setItem('eventDataPublished', JSON.stringify(events)); div.querySelector('div:nth-child(2)').textContent='Active'; }
+      let remaining = (event.status==='coming')?event.startTime-now:event.endTime-now;
       if(remaining<0) remaining=0;
       const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
-      countdownDiv.textContent=`${d}d ${h}h ${m}m ${s}s`;
+      countdownDiv.textContent=(event.status==='coming'?'Starts in: ':'Ends in: ')+`${d}d ${h}h ${m}m ${s}s`;
     });
   },1000);
 }
@@ -226,29 +220,25 @@ function startEventCountdowns(){
 // =======================
 function openEventDeals(event){
   const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
-  currentEventDeals = allDeals.filter(d=>d.eventId===event.id);
-  if(currentEventDeals.length===0){ alert("No deals for this event."); return; }
+  currentEventDeals = allDeals.filter(d=>d.eventId===event.id && d.status==='active');
+  if(currentEventDeals.length===0){ alert("No active deals for this event."); return; }
   currentDealIndex=0;
   showDeal(currentEventDeals[currentDealIndex]);
 }
 
 function showDeal(deal){
-  const now = Date.now();
-  const isComing = deal.status==='coming' && now < deal.startTime;
+  const isPurchased = purchasedDeals.includes(deal.id);
   document.getElementById('dealModalTitle').textContent=deal.name;
   document.getElementById('dealModalDesc').textContent=deal.desc;
-  const img = document.getElementById('dealModalImage'); img.src=deal.image;
+  const img = document.getElementById('dealModalImage'); img.src=deal.image; img.style.opacity = isPurchased?'0.5':'1';
   document.getElementById('dealModal').style.display='block';
   updateDealCountdown(deal);
-
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
   dealCountdownInterval = setInterval(()=>updateDealCountdown(deal),1000);
 
   const buyBtn = document.getElementById('buyDealBtn');
-  if(currentKey && !isComing){
-    buyBtn.disabled=false;
-    buyBtn.onclick = ()=>buyDeal(deal);
-  } else buyBtn.disabled=true;
+  buyBtn.disabled = isPurchased;
+  buyBtn.onclick = ()=>buyDeal(deal);
 }
 
 function buyDeal(deal){
@@ -278,26 +268,11 @@ function showPaymentSuccess(deal){
 
 function prevDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex-1+currentEventDeals.length)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 function nextDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
-
 function updateDealCountdown(deal){
-  const now = Date.now(); 
-  let remaining = deal.endTime-now; 
-  if(remaining<0) remaining=0;
-  if(deal.status==='coming'){
-    let startRemaining = deal.startTime-now;
-    if(startRemaining>0){
-      const d=Math.floor(startRemaining/86400000), h=Math.floor((startRemaining%86400000)/3600000), m=Math.floor((startRemaining%3600000)/60000), s=Math.floor((startRemaining%60000)/1000);
-      document.getElementById('dealCountdown').textContent=`Coming Soon: ${d}d ${h}h ${m}m ${s}s`;
-    } else {
-      deal.status='active'; 
-      localStorage.setItem('dealDataPublished', JSON.stringify(JSON.parse(localStorage.getItem('dealDataPublished'))));
-    }
-  } else {
-    const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
-    document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
-  }
+  const now = Date.now(); let remaining = deal.endTime-now; if(remaining<0) remaining=0;
+  const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
+  document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
 }
-
 function closeDealModal(){ document.getElementById('dealModal').style.display='none'; if(dealCountdownInterval) clearInterval(dealCountdownInterval); }
 
 // =======================
