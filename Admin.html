@@ -15,7 +15,6 @@ th { background:#333; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
 .skinRow input, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
 .adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
-#calendarIcon { position:fixed; bottom:20px; right:20px; font-size:24px; cursor:pointer; display:none; }
 </style>
 </head>
 <body>
@@ -101,9 +100,6 @@ function loadAllKeys(){
   }
 }
 
-// =======================
-// Update functions
-// =======================
 function updateName(storageKey, newName){
   const data=JSON.parse(localStorage.getItem(storageKey));
   data.name=newName;
@@ -136,9 +132,6 @@ function updateKey(oldKey, newKey){
   showMessage('✅ Key updated');
 }
 
-// =======================
-// Add/Delete Key
-// =======================
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
@@ -223,21 +216,146 @@ function publishSkins(){
 }
 
 // =======================
-// Event & Deal editor placeholders
+// Event Editor
 // =======================
-function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; }
-function addEvent(){ alert('Add Event logic here'); }
-function publishEvents(){ alert('Publish Events logic here'); }
+function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
+function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
+function renderEventEditor(){
+  const container=document.getElementById('eventsList'); container.innerHTML='';
+  getEvents().forEach((event,index)=>{
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
+    const startVal = new Date(event.startTime).toISOString().slice(0,16);
+    const endVal = new Date(event.endTime).toISOString().slice(0,16);
+    div.innerHTML=`
+      <input class="eventName" placeholder="Event Name" value="${event.name}">
+      <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
+      <select class="eventStatus">
+        <option value="active" ${event.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <label>Start:</label><input class="eventStart" type="datetime-local" value="${startVal}">
+      <label>End:</label><input class="eventEnd" type="datetime-local" value="${endVal}">
+      <label>Bar Image:</label><input class="eventBarImage" placeholder="Bar Image URL" value="${event.barImage||''}">
+      <label>Active Image:</label><input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
+      <label>Coming Soon Image:</label><input class="eventComingImage" placeholder="Coming Soon Image" value="${event.comingImage||''}">
+      <label>Coming Soon BG:</label><input class="eventComingBg" placeholder="Coming Soon Background" value="${event.comingBg||''}">
+      <button onclick="deleteEvent(${index})">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
 
-function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; }
-function addDeal(){ alert('Add Deal logic here'); }
-function publishDeals(){ alert('Publish Deals logic here'); }
+function addEvent(){
+  const events=getEvents();
+  events.push({id:'event'+Date.now(),name:'New Event',desc:'Description',status:'active',startTime:Date.now(),endTime:Date.now()+3600000,barImage:'',image:'',comingImage:'',comingBg:''});
+  localStorage.setItem('eventData',JSON.stringify(events));
+  renderEventEditor();
+}
+
+function deleteEvent(index){
+  const events=getEvents();
+  events.splice(index,1);
+  localStorage.setItem('eventData',JSON.stringify(events));
+  renderEventEditor();
+}
+
+function publishEvents(){
+  const container=document.getElementById('eventsList'); const events=[];
+  container.querySelectorAll('.eventRow').forEach((div,index)=>{
+    const startTime=new Date(div.querySelector('.eventStart').value).getTime();
+    const endTime=new Date(div.querySelector('.eventEnd').value).getTime();
+    events.push({
+      id:getEvents()[index]?.id||'event'+Date.now(),
+      name:div.querySelector('.eventName').value,
+      desc:div.querySelector('.eventDesc').value,
+      status:div.querySelector('.eventStatus').value,
+      startTime,
+      endTime,
+      barImage:div.querySelector('.eventBarImage').value,
+      image:div.querySelector('.eventImage').value,
+      comingImage:div.querySelector('.eventComingImage').value,
+      comingBg:div.querySelector('.eventComingBg').value
+    });
+  });
+  localStorage.setItem('eventData',JSON.stringify(events));
+  localStorage.setItem('eventDataPublished',JSON.stringify(events));
+  showMessage('✅ Events published');
+}
 
 // =======================
-// Initialize
+// Deal Editor
+// =======================
+function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
+function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
+function renderDealEditor(){
+  const container=document.getElementById('dealsList'); container.innerHTML='';
+  const events=getEvents();
+  getDeals().forEach((deal,index)=>{
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
+    const startVal=new Date(deal.startTime).toISOString().slice(0,16);
+    const endVal=new Date(deal.endTime).toISOString().slice(0,16);
+    let eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
+    div.innerHTML=`
+      <input class="dealName" placeholder="Deal Name" value="${deal.name}">
+      <input class="dealDesc" placeholder="Description" value="${deal.desc}">
+      <select class="dealStatus">
+        <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <label>Start:</label><input class="dealStart" type="datetime-local" value="${startVal}">
+      <label>End:</label><input class="dealEnd" type="datetime-local" value="${endVal}">
+      <label>Event:</label><select class="dealEvent">${eventOptions}</select>
+      <label>Image:</label><input class="dealImage" value="${deal.image||''}">
+      <label>Price:</label><input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
+      <label>URL:</label><input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
+      <button onclick="deleteDeal(${index})">Delete</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function addDeal(){
+  const deals=getDeals();
+  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:'',price:0,url:'',eventId:''});
+  localStorage.setItem('dealData',JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function deleteDeal(index){
+  const deals=getDeals();
+  deals.splice(index,1);
+  localStorage.setItem('dealData',JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function publishDeals(){
+  const container=document.getElementById('dealsList'); const deals=[];
+  container.querySelectorAll('.dealRow').forEach((div,index)=>{
+    const startTime=new Date(div.querySelector('.dealStart').value).getTime();
+    const endTime=new Date(div.querySelector('.dealEnd').value).getTime();
+    deals.push({
+      name:div.querySelector('.dealName').value,
+      desc:div.querySelector('.dealDesc').value,
+      status:div.querySelector('.dealStatus').value,
+      startTime,
+      endTime,
+      image:div.querySelector('.dealImage').value,
+      price:parseFloat(div.querySelector('.dealPrice').value)||0,
+      url:div.querySelector('.dealURL').value||'',
+      eventId:div.querySelector('.dealEvent').value
+    });
+  });
+  localStorage.setItem('dealData',JSON.stringify(deals));
+  localStorage.setItem('dealDataPublished',JSON.stringify(deals));
+  showMessage('✅ Deals published');
+}
+
+// =======================
+// Initial Load
 // =======================
 loadAllKeys();
 </script>
-
 </body>
 </html>
