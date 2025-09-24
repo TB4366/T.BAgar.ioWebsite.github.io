@@ -181,6 +181,7 @@ function renderSkinEditor(){
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
@@ -197,9 +198,21 @@ function addSkin(){
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
+    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
+}
+
+function uploadSkinImage(input, id){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const row = document.querySelector(`.skinRow[data-id='${id}'] .skinImage`);
+    row.value = e.target.result;
+  }
+  reader.readAsDataURL(file);
 }
 
 function saveSkins(){
@@ -268,6 +281,8 @@ function renderEventEditor(){
       <input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
       <label>Coming Soon Image URL:</label>
       <input class="eventComingImage" placeholder="Coming Soon Image" value="${event.comingImage||''}">
+      <label>Coming Soon Background URL:</label>
+      <input class="eventComingBg" placeholder="Coming Soon Background" value="${event.comingBg||''}">
       <button onclick="deleteEvent(${index})">Delete</button>
     `;
     container.appendChild(div);
@@ -286,7 +301,8 @@ function addEvent(){
     endTime: Date.now() + 3600000,
     barImage:'',
     image:'',
-    comingImage:''
+    comingImage:'',
+    comingBg:''
   });
   localStorage.setItem('eventData', JSON.stringify(events));
   renderEventEditor();
@@ -315,7 +331,8 @@ function publishEvents(){
       endTime: new Date(endInput).getTime(),
       barImage: div.querySelector('.eventBarImage').value,
       image: div.querySelector('.eventImage').value,
-      comingImage: div.querySelector('.eventComingImage').value
+      comingImage: div.querySelector('.eventComingImage').value,
+      comingBg: div.querySelector('.eventComingBg').value
     });
   });
   localStorage.setItem('eventData', JSON.stringify(events));
@@ -324,7 +341,7 @@ function publishEvents(){
 }
 
 // =======================
-// Deal Editor
+// Deal Editor (blijft hetzelfde)
 // =======================
 function openDealEditor(){
   document.getElementById('dealEditor').style.display='block';
@@ -353,27 +370,28 @@ function renderDealEditor(){
 
     div.innerHTML=`
       <div style="${rowStyle}">
-        <input class="dealName" placeholder="Deal Name" value="${deal.name}">
-        <input class="dealDesc" placeholder="Description" value="${deal.desc}">
-        <label>Status:</label>
-        <select class="dealStatus">
-          <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
-          <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
-          <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
-        </select>
-        <label>Start:</label>
-        <input class="dealStart" type="datetime-local" value="${startVal}">
-        <label>End:</label>
-        <input class="dealEnd" type="datetime-local" value="${endVal}">
-        <label>Event:</label>
-        <select class="dealEvent">${eventOptions}</select>
-        <label>Image URL:</label>
-        <input class="dealImage" placeholder="Deal Image URL" value="${deal.image||''}">
-        <label>Price:</label>
-        <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
-        <label>URL Link:</label>
-        <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
-        <button onclick="deleteDeal(${index})">Delete</button>
+      <input class="dealName" placeholder="Deal Name" value="${deal.name}">
+      <input class="dealDesc" placeholder="Description" value="${deal.desc}">
+      <label>Status:</label>
+      <select class="dealStatus">
+        <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <label>Start:</label>
+      <input class="dealStart" type="datetime-local" value="${startVal}">
+      <label>End:</label>
+      <input class="dealEnd" type="datetime-local" value="${endVal}">
+      <label>Event:</label>
+      <select class="dealEvent">${eventOptions}</select>
+      <label>Active Image URL:</label>
+      <input class="dealImage" placeholder="Active Image URL" value="${deal.image||''}">
+      <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index}, 'active')">
+      <label>Price:</label>
+      <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
+      <label>URL Link:</label>
+      <input class="dealURL" placeholder="Enter URL" value="${deal.url||''}">
+      <button onclick="deleteDeal(${index})">Delete</button>
       </div>
     `;
     container.appendChild(div);
@@ -395,6 +413,19 @@ function addDeal(){
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   renderDealEditor();
+}
+
+function uploadDealImage(input, index, type){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const deals = getDeals();
+    deals[index].image = e.target.result;
+    localStorage.setItem('dealData', JSON.stringify(deals));
+    renderDealEditor();
+  }
+  reader.readAsDataURL(file);
 }
 
 function deleteDeal(index){
