@@ -1,378 +1,376 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-<meta charset="utf-8" />
+<meta charset="UTF-8">
 <title>Admin Panel - Skin Shop</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  :root{--bg:#0b0b0b;--panel:#121212;--accent:#0af;--muted:#888;}
-  body{background:var(--bg);color:#fff;font-family:Inter,Arial,Helvetica,sans-serif;margin:16px;}
-  h1{color:var(--accent);margin-bottom:8px;}
-  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
-  .section{border:1px solid rgba(10,170,255,0.18);padding:12px;margin:12px 0;border-radius:8px;background:var(--panel);}
-  label{display:block;font-size:13px;color:var(--muted);margin-top:6px;}
-  input[type="text"], input[type="number"], input[type="datetime-local"], textarea, select{
-    width:100%;padding:8px;border-radius:6px;border:none;background:#0f0f0f;color:#fff;font-size:14px;
-  }
-  textarea{min-height:60px;resize:vertical}
-  button{background:var(--accent);color:#0b0b0b;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;margin-top:8px}
-  .item{border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:6px;margin:8px 0;background:#0d0d0d;}
-  .flex{display:flex;gap:10px}
-  .small{width:160px}
-  .muted{color:var(--muted);font-size:13px}
-  .inline{display:inline-block;vertical-align:middle}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-  @media (max-width:900px){ .grid3{grid-template-columns:1fr} .row{flex-direction:column;align-items:stretch} }
+body { font-family: Arial; background:#111; color:#fff; padding:20px; }
+h1 { color:#0af; }
+input, button, select { padding:6px; margin:5px; border-radius:4px; border:none; font-size:14px; }
+button { cursor:pointer; }
+table { border-collapse: collapse; width:100%; margin-top:10px; }
+th, td { border:1px solid #555; padding:5px; text-align:left; }
+th { background:#333; }
+#editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.skinRow, .eventRow, .dealRow { margin-bottom:10px; }
+.skinRow input, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
+.adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
 </style>
 </head>
 <body>
 
-<h1>Admin Panel - Skin Shop</h1>
-<div class="muted">Alles staat lokaal in localStorage. Niets verwijderd — alleen toegevoegd.</div>
+<h1>Admin Panel</h1>
+<div id="message" style="color:yellow;"></div>
 
-<!-- KEYS -->
-<div class="section">
-  <h2>Keys</h2>
-  <div id="keysList"></div>
+<h3>Add New Key</h3>
+<input id="newName" placeholder="Enter Name">
+<button onclick="addNewKey()">Add Key</button>
 
-  <div style="margin-top:8px;">
-    <label>Nieuwe sleutel naam</label>
-    <input id="newKeyName" placeholder="Naam (bv. John#123)">
-    <button onclick="addKey()">Add Key</button>
-  </div>
+<h3>All Keys</h3>
+<table id="keysTable">
+<tr>
+  <th>Key</th>
+  <th>Name</th>
+  <th>Coins</th>
+  <th>Money</th>
+  <th>Purchased Skins</th>
+  <th>Actions</th>
+</tr>
+</table>
 
-  <div style="margin-top:8px;">
-    <button onclick="publishKeys()">Publish Keys (public)</button>
-  </div>
+<!-- Skin Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openSkinEditor()">Edit Skins</button>
+</div>
+<div id="editor">
+  <h2>Skin Editor</h2>
+  <button onclick="saveSkins()">Save Skins</button>
+  <button onclick="publishSkins()">Publish Skins</button>
+  <button onclick="addSkin()">Add Skin</button>
+  <div id="skinsEditor"></div>
 </div>
 
-<!-- SKINS -->
-<div class="section">
-  <h2>Skins</h2>
-  <div id="skinsList"></div>
-
-  <div style="margin-top:8px;">
-    <button onclick="addSkin()">Add Skin</button>
-    <button onclick="saveSkins()">Save Skins (local)</button>
-    <button onclick="publishSkins()">Publish Skins (public)</button>
-  </div>
-
-  <div class="muted" style="margin-top:8px;">Note: skins hebben geen start/einddatum (zoals gevraagd) — alleen naam, prijs en afbeelding (URL of upload).</div>
+<!-- Event Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openEventEditor()">Manage Events</button>
 </div>
-
-<!-- EVENTS -->
-<div class="section">
-  <h2>Events</h2>
+<div id="eventEditor">
+  <h2>Event Editor</h2>
+  <button onclick="addEvent()">Add Event</button>
+  <button onclick="publishEvents()">Publish Events</button>
   <div id="eventsList"></div>
-
-  <div style="margin-top:8px;">
-    <button onclick="addEvent()">Add Event</button>
-    <button onclick="saveEvents()">Save Events (local)</button>
-    <button onclick="publishEvents()">Publish Events (public)</button>
-  </div>
-
-  <div class="muted" style="margin-top:8px;">Events: voer Start & End in (datetime-local). Afbeelding via URL of upload (png/webp/jpg/gif).</div>
 </div>
 
-<!-- DEALS -->
-<div class="section">
-  <h2>Deals</h2>
+<!-- Deal Editor -->
+<div style="margin-top:20px;">
+  <button onclick="openDealEditor()">Manage Deals</button>
+</div>
+<div id="dealEditor">
+  <h2>Deal Editor</h2>
+  <button onclick="addDeal()">Add Deal</button>
+  <button onclick="publishDeals()">Publish Deals</button>
   <div id="dealsList"></div>
-
-  <div style="margin-top:8px;">
-    <button onclick="addDeal()">Add Deal</button>
-    <button onclick="saveDeals()">Save Deals (local)</button>
-    <button onclick="publishDeals()">Publish Deals (public)</button>
-  </div>
-
-  <div class="muted" style="margin-top:8px;">
-    Deals: vul price, start/end, koppel aan event, upload of plak image-URL, voeg meerdere skin-URL's toe (comma separated) — als gebruiker een deal koopt, kan de user-script die URL's als skins toekennen.
-    <br>Je kunt per deal ook kiezen of afbeeldingen voor niet-kopers grijs/doorzichtig moeten zijn (checkbox).
-  </div>
 </div>
 
 <script>
-/* ============================
-   Storage keys used in localStorage:
-   - keysData      (array of {key,name,coins,money,owned})
-   - skinsData     (array of {id,name,price,image})
-   - skinsDataPublished
-   - eventData     (array of {id,name,desc,status,startTime,endTime,image})
-   - eventDataPublished
-   - dealData      (array of {id,name,desc,price,status,startTime,endTime,eventId,image,skins:Array,gray})
-   - dealDataPublished
-   ============================ */
+// =======================
+// Key Management
+// =======================
+function loadAllKeys(){
+  const table = document.getElementById('keysTable');
+  table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith('skinshop_')){
+      const data = JSON.parse(localStorage.getItem(k));
+      const row = table.insertRow();
+      row.insertCell(0).innerText = k.replace('skinshop_','');
+      row.insertCell(1).innerText = data.name || '';
+      row.insertCell(2).innerText = data.coins || 0;
+      row.insertCell(3).innerText = data.money ? data.money.toFixed(2) : '0.00';
+      row.insertCell(4).innerText = data.owned ? data.owned.join(', ') : '';
+      const actions = row.insertCell(5);
+      actions.innerHTML=`
+        <button onclick="editKey('${k}')">Edit</button>
+        <button onclick="deleteKey('${k}')">Delete</button>
+      `;
+    }
+  }
+}
 
-const LS = {
-  keys: 'keysData',
-  skins: 'skinsData',
-  skinsPub: 'skinsDataPublished',
-  events: 'eventData',
-  eventsPub: 'eventDataPublished',
-  deals: 'dealData',
-  dealsPub: 'dealDataPublished'
-};
+function showMessage(msg){ document.getElementById('message').textContent=msg; }
 
-// helper: load or default
-function load(key, def){ try{ const v = localStorage.getItem(key); return v?JSON.parse(v):def; }catch(e){return def;} }
-function save(key, obj){ localStorage.setItem(key, JSON.stringify(obj)); }
+function addNewKey(){
+  const name = document.getElementById('newName').value.trim();
+  if(!name) return showMessage('Enter a name');
+  const key = Math.random().toString(36).substring(2,10);
+  localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, money:0, owned:[]}));
+  showMessage('✅ New key created: '+key);
+  document.getElementById('newName').value='';
+  loadAllKeys();
+}
 
-// init datasets
-let keys = load(LS.keys, []);
-let skins = load(LS.skins, []);
-let events = load(LS.events, []);
-let deals = load(LS.deals, []);
+function editKey(storageKey){
+  const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
+  if(!options) return;
+  const data = JSON.parse(localStorage.getItem(storageKey));
+  switch(options){
+    case '1':
+      const action = prompt('Type "add" to add or "remove" to remove');
+      if(!action) return;
+      const amount = parseFloat(prompt('Enter amount'));
+      if(isNaN(amount)) return showMessage('Invalid amount');
+      const type = prompt('Type "coins" or "money"');
+      if(type==='coins'){
+        if(action.toLowerCase() === 'add') data.coins = (data.coins||0)+amount;
+        else data.coins = Math.max((data.coins||0)-amount,0);
+      } else if(type==='money'){
+        if(action.toLowerCase() === 'add') data.money = (data.money||0)+amount;
+        else data.money = Math.max((data.money||0)-amount,0);
+      } else return showMessage('Invalid type');
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Coins/Money updated');
+      break;
+    case '2':
+      const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
+      if(!newKey) return;
+      const newStorageKey = 'skinshop_'+newKey;
+      localStorage.setItem(newStorageKey, JSON.stringify(data));
+      if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
+      showMessage('✅ Key updated');
+      break;
+    case '3':
+      const newName = prompt('Enter new name:', data.name);
+      if(!newName) return;
+      data.name = newName;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Name updated');
+      break;
+    default: showMessage('Invalid option'); break;
+  }
+  loadAllKeys();
+}
 
-// utility: generate id
-function genId(prefix='id'){ return prefix + Date.now() + Math.floor(Math.random()*9000); }
+function deleteKey(storageKey){
+  if(confirm('Are you sure you want to delete this key?')){
+    localStorage.removeItem(storageKey);
+    showMessage('✅ Key deleted');
+    loadAllKeys();
+  }
+}
 
-// ---------------- KEYS ----------------
-function renderKeys(){
-  const el = document.getElementById('keysList'); el.innerHTML='';
-  if(!keys.length){ el.innerHTML='<div class="muted">No keys yet.</div>'; return; }
-  keys.forEach((k,i)=>{
-    const d = document.createElement('div'); d.className='item';
-    d.innerHTML = `
-      <div class="grid3">
-        <div>
-          <label>Key</label>
-          <input type="text" value="${escapeHtml(k.key||'')}" onchange="keys[${i}].key=this.value;saveAll()">
-        </div>
-        <div>
-          <label>Name</label>
-          <input type="text" value="${escapeHtml(k.name||'')}" onchange="keys[${i}].name=this.value;saveAll()">
-        </div>
-        <div>
-          <label>Coins</label>
-          <input type="number" value="${k.coins||0}" onchange="keys[${i}].coins=parseInt(this.value)||0;saveAll()">
-        </div>
-      </div>
-      <div class="row" style="margin-top:8px;">
-        <div style="flex:1">
-          <label>Money</label>
-          <input type="number" step="0.01" value="${(k.money!==undefined?Number(k.money).toFixed(2):'0.00')}" onchange="keys[${i}].money=parseFloat(this.value)||0;saveAll()">
-        </div>
-        <div style="width:160px">
-          <label>Purchased skins</label>
-          <input type="text" value="${(k.owned||[]).join(', ')}" onchange="keys[${i}].owned=this.value.split(',').map(s=>s.trim()).filter(Boolean);saveAll()">
-        </div>
-        <div style="width:120px;align-self:end">
-          <button onclick="deleteKey(${i})">Delete</button>
-        </div>
-      </div>
+loadAllKeys();
+
+// =======================
+// Skin Editor
+// =======================
+function openSkinEditor(){ document.getElementById('editor').style.display='block'; renderSkinEditor(); }
+function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
+function renderSkinEditor(){
+  const container = document.getElementById('skinsEditor');
+  container.innerHTML='';
+  getSkins().forEach(skin=>{
+    const div = document.createElement('div'); div.className='skinRow'; div.dataset.id = skin.id;
+    div.innerHTML=`
+      <input class="skinName" value="${skin.name}" placeholder="Name">
+      <input class="skinPrice" value="${skin.price}" placeholder="Price">
+      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
+      <label>Start Date:</label>
+      <input type="datetime-local" class="skinStart" value="${new Date(skin.startTime||Date.now()).toISOString().slice(0,16)}">
+      <label>End Date:</label>
+      <input type="datetime-local" class="skinEnd" value="${new Date(skin.endTime||Date.now()+3600000).toISOString().slice(0,16)}">
+      <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
-    el.appendChild(d);
+    container.appendChild(div);
   });
 }
-function addKey(){
-  const name = document.getElementById('newKeyName')?.value?.trim() || '';
-  const keyVal = Math.random().toString(36).substring(2,10);
-  keys.push({key:keyVal,name:name,coins:0,money:0,owned:[]});
-  saveAll(); renderKeys();
-  if(document.getElementById('newKeyName')) document.getElementById('newKeyName').value='';
+function addSkin(){
+  const id = 'skin'+Date.now();
+  const container = document.getElementById('skinsEditor');
+  const div = document.createElement('div'); div.className='skinRow'; div.dataset.id = id;
+  div.innerHTML=`
+    <input class="skinName" placeholder="Name">
+    <input class="skinPrice" placeholder="Price">
+    <input class="skinImage" placeholder="Image URL">
+    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
+    <label>Start Date:</label>
+    <input type="datetime-local" class="skinStart" value="${new Date().toISOString().slice(0,16)}">
+    <label>End Date:</label>
+    <input type="datetime-local" class="skinEnd" value="${new Date(Date.now()+3600000).toISOString().slice(0,16)}">
+    <button onclick="deleteSkin('${id}')">Delete</button>
+  `;
+  container.appendChild(div);
 }
-function deleteKey(index){ if(!confirm('Delete this key?')) return; keys.splice(index,1); saveAll(); renderKeys(); }
-function publishKeys(){ save(LS.keys, keys); save(LS.keys+'Published', keys); alert('Keys published'); }
-
-// ---------------- SKINS ----------------
-function renderSkins(){
-  const el = document.getElementById('skinsList'); el.innerHTML='';
-  if(!skins.length){ el.innerHTML='<div class="muted">No skins yet.</div>'; return; }
-  skins.forEach((s,i)=>{
-    const d=document.createElement('div'); d.className='item';
-    d.innerHTML = `
-      <div class="grid3">
-        <div>
-          <label>Name</label>
-          <input type="text" value="${escapeHtml(s.name||'')}" onchange="skins[${i}].name=this.value;saveAll()">
-        </div>
-        <div>
-          <label>Price</label>
-          <input type="number" value="${s.price||0}" onchange="skins[${i}].price=parseInt(this.value)||0;saveAll()">
-        </div>
-        <div>
-          <label>Image URL (or data URL)</label>
-          <input type="text" value="${escapeHtml(s.image||'')}" onchange="skins[${i}].image=this.value;saveAll()">
-        </div>
-      </div>
-      <div class="row" style="margin-top:8px;">
-        <div style="flex:1">
-          <label>Upload image (png/webp/jpg/gif)</label>
-          <input type="file" accept="image/png,image/webp,image/jpeg,image/gif" onchange="uploadSkinFile(event, ${i})">
-        </div>
-        <div style="width:120px;align-self:end">
-          <button onclick="deleteSkin(${i})">Delete</button>
-        </div>
-      </div>
-    `;
-    el.appendChild(d);
-  });
-}
-function addSkin(){ skins.push({id:genId('skin'),name:'',price:0,image:''}); saveAll(); renderSkins(); }
-function deleteSkin(i){ if(!confirm('Delete skin?')) return; skins.splice(i,1); saveAll(); renderSkins(); }
-function uploadSkinFile(e, i){
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => { skins[i].image = ev.target.result; saveAll(); renderSkins(); };
+function uploadSkinImage(input,id){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){ document.querySelector(`.skinRow[data-id='${id}'] .skinImage`).value=e.target.result; }
   reader.readAsDataURL(file);
 }
-function saveSkins(){ save(LS.skins, skins); alert('Skins saved locally'); }
-function publishSkins(){ save(LS.skins, skins); save(LS.skinsPub, skins); alert('Skins published'); }
+function saveSkins(){
+  const container=document.getElementById('skinsEditor');
+  const skinElements=container.querySelectorAll('.skinRow');
+  const skinsArr=[];
+  skinElements.forEach(row=>{
+    skinsArr.push({
+      id: row.dataset.id,
+      name: row.querySelector('.skinName').value,
+      price: parseInt(row.querySelector('.skinPrice').value)||0,
+      image: row.querySelector('.skinImage').value,
+      startTime: new Date(row.querySelector('.skinStart').value).getTime(),
+      endTime: new Date(row.querySelector('.skinEnd').value).getTime()
+    });
+  });
+  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
+  alert('✅ Skins saved!');
+}
+function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published!'); }
 
-// ---------------- EVENTS ----------------
-function renderEvents(){
-  const el = document.getElementById('eventsList'); el.innerHTML='';
-  if(!events.length){ el.innerHTML='<div class="muted">No events yet.</div>'; return; }
-  events.forEach((ev,i)=>{
-    const d=document.createElement('div'); d.className='item';
-    const startVal = toLocalInputValue(ev.startTime);
-    const endVal = toLocalInputValue(ev.endTime);
-    d.innerHTML = `
-      <label>Name</label>
-      <input type="text" value="${escapeHtml(ev.name||'')}" onchange="events[${i}].name=this.value;saveAll()">
-      <label>Description</label>
-      <textarea onchange="events[${i}].desc=this.value;saveAll()">${escapeHtml(ev.desc||'')}</textarea>
-      <div class="grid3" style="margin-top:6px">
-        <div>
-          <label>Start</label>
-          <input type="datetime-local" value="${startVal}" onchange="events[${i}].startTime=this.value;saveAll()">
-        </div>
-        <div>
-          <label>End</label>
-          <input type="datetime-local" value="${endVal}" onchange="events[${i}].endTime=this.value;saveAll()">
-        </div>
-        <div>
-          <label>Status</label>
-          <select onchange="events[${i}].status=this.value;saveAll()">
-            <option value="coming" ${ev.status==='coming'?'selected':''}>Coming</option>
-            <option value="active" ${ev.status==='active'?'selected':''}>Active</option>
-            <option value="inactive" ${ev.status==='inactive'?'selected':''}>Inactive</option>
-          </select>
-        </div>
-      </div>
-      <label>Image URL (or data URL)</label>
-      <input type="text" value="${escapeHtml(ev.image||'')}" onchange="events[${i}].image=this.value;saveAll()">
-      <label>Upload image</label>
-      <input type="file" accept="image/png,image/webp,image/jpeg,image/gif" onchange="uploadEventFile(event, ${i})">
-      <div style="margin-top:8px"><button onclick="deleteEvent(${i})">Delete</button></div>
+// =======================
+// Event Editor
+// =======================
+function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
+function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
+function renderEventEditor(){
+  const container=document.getElementById('eventsList'); container.innerHTML='';
+  getEvents().forEach((event,index)=>{
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
+    const startVal=new Date(event.startTime).toISOString().slice(0,16);
+    const endVal=new Date(event.endTime).toISOString().slice(0,16);
+    div.innerHTML=`
+      <input class="eventName" placeholder="Event Name" value="${event.name}">
+      <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
+      <label>Status:</label>
+      <select class="eventStatus">
+        <option value="active" ${event.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <label>Start:</label>
+      <input class="eventStart" type="datetime-local" value="${startVal}">
+      <label>End:</label>
+      <input class="eventEnd" type="datetime-local" value="${endVal}">
+      <label>Image URL:</label>
+      <input class="eventImage" placeholder="Image URL" value="${event.image||''}">
+      <input type="file" accept="image/*" onchange="uploadEventImage(this, ${index})">
+      <button onclick="deleteEvent(${index})">Delete</button>
     `;
-    el.appendChild(d);
+    container.appendChild(div);
   });
 }
-function addEvent(){ events.push({id:genId('event'),name:'',desc:'',startTime:'',endTime:'',status:'coming',image:''}); saveAll(); renderEvents(); }
-function deleteEvent(i){ if(!confirm('Delete event?')) return; events.splice(i,1); saveAll(); renderEvents(); }
-function uploadEventFile(e,i){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ events[i].image=ev.target.result; saveAll(); renderEvents(); }; r.readAsDataURL(f); }
-function saveEvents(){ save(LS.events, events); alert('Events saved locally'); }
-function publishEvents(){ save(LS.events, events); save(LS.eventsPub, events); alert('Events published'); }
+function addEvent(){
+  const events=getEvents();
+  const id='event'+Date.now();
+  events.push({id:id,name:'New Event',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:''});
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+function uploadEventImage(input,index){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){ const events=getEvents(); events[index].image=e.target.result; localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+  reader.readAsDataURL(file);
+}
+function publishEvents(){
+  const container=document.getElementById('eventsList'); const events=[];
+  container.querySelectorAll('.eventRow').forEach((div,index)=>{
+    const startInput=div.querySelector('.eventStart').value;
+    const endInput=div.querySelector('.eventEnd').value;
+    const uniqueId=getEvents()[index]?.id || 'event'+Date.now();
+    events.push({
+      id:uniqueId,
+      name:div.querySelector('.eventName').value,
+      desc:div.querySelector('.eventDesc').value,
+      status:div.querySelector('.eventStatus').value,
+      startTime:new Date(startInput).getTime(),
+      endTime:new Date(endInput).getTime(),
+      image:div.querySelector('.eventImage').value
+    });
+  });
+  localStorage.setItem('eventData', JSON.stringify(events));
+  localStorage.setItem('eventDataPublished', JSON.stringify(events));
+  alert('✅ Events published!');
+}
 
-// ---------------- DEALS ----------------
-function renderDeals(){
-  const el = document.getElementById('dealsList'); el.innerHTML='';
-  if(!deals.length){ el.innerHTML='<div class="muted">No deals yet.</div>'; return; }
-  deals.forEach((d,i)=>{
-    const item = document.createElement('div'); item.className='item';
-    const startVal = toLocalInputValue(d.startTime);
-    const endVal = toLocalInputValue(d.endTime);
-    // build event options
-    const evOptions = events.map(ev => `<option value="${escapeHtml(ev.id||ev.name)}" ${d.eventId === (ev.id||ev.name) ? 'selected' : ''}>${escapeHtml(ev.name||ev.id||'')}</option>`).join('');
-    item.innerHTML = `
-      <label>Name</label>
-      <input type="text" value="${escapeHtml(d.name||'')}" onchange="deals[${i}].name=this.value;saveAll()">
-      <label>Description</label>
-      <textarea onchange="deals[${i}].desc=this.value;saveAll()">${escapeHtml(d.desc||'')}</textarea>
-
-      <div class="grid3" style="margin-top:6px">
-        <div>
-          <label>Price</label>
-          <input type="number" step="0.01" value="${d.price||0}" onchange="deals[${i}].price=parseFloat(this.value)||0;saveAll()">
-        </div>
-        <div>
-          <label>Start</label>
-          <input type="datetime-local" value="${startVal}" onchange="deals[${i}].startTime=this.value;saveAll()">
-        </div>
-        <div>
-          <label>End</label>
-          <input type="datetime-local" value="${endVal}" onchange="deals[${i}].endTime=this.value;saveAll()">
-        </div>
-      </div>
-
-      <div class="grid3" style="margin-top:6px">
-        <div>
-          <label>Status</label>
-          <select onchange="deals[${i}].status=this.value;saveAll()">
-            <option value="coming" ${d.status==='coming'?'selected':''}>Coming</option>
-            <option value="active" ${d.status==='active'?'selected':''}>Active</option>
-            <option value="inactive" ${d.status==='inactive'?'selected':''}>Inactive</option>
-          </select>
-        </div>
-        <div>
-          <label>Event</label>
-          <select onchange="deals[${i}].eventId=this.value;saveAll()">
-            <option value="">--None--</option>
-            ${evOptions}
-          </select>
-        </div>
-        <div>
-          <label>Gray/Transparent for non-buyers</label>
-          <input type="checkbox" ${d.gray? 'checked' : ''} onchange="deals[${i}].gray=this.checked;saveAll()">
-        </div>
-      </div>
-
-      <label>Image URL (or data URL)</label>
-      <input type="text" value="${escapeHtml(d.image||'')}" onchange="deals[${i}].image=this.value;saveAll()">
-      <label>Upload image</label>
-      <input type="file" accept="image/png,image/webp,image/jpeg,image/gif" onchange="uploadDealFile(event, ${i})">
-
-      <label>Skins (URLs, comma separated)</label>
-      <input type="text" value="${(d.skins||[]).join(', ')}" onchange="deals[${i}].skins=this.value.split(',').map(s=>s.trim()).filter(Boolean);saveAll()">
-
-      <div style="margin-top:8px">
-        <button onclick="deleteDeal(${i})">Delete</button>
-      </div>
+// =======================
+// Deal Editor
+// =======================
+function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
+function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
+function renderDealEditor(){
+  const container=document.getElementById('dealsList'); container.innerHTML='';
+  const events=getEvents();
+  getDeals().forEach((deal,index)=>{
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
+    const startVal=new Date(deal.startTime).toISOString().slice(0,16);
+    const endVal=new Date(deal.endTime).toISOString().slice(0,16);
+    const eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
+    div.innerHTML=`
+      <input class="dealName" placeholder="Deal Name" value="${deal.name}">
+      <input class="dealDesc" placeholder="Description" value="${deal.desc}">
+      <input class="dealPrice" type="number" placeholder="Price" value="${deal.price||0}">
+      <label>Status:</label>
+      <select class="dealStatus">
+        <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <label>Start:</label>
+      <input class="dealStart" type="datetime-local" value="${startVal}">
+      <label>End:</label>
+      <input class="dealEnd" type="datetime-local" value="${endVal}">
+      <label>Event:</label>
+      <select class="dealEvent">${eventOptions}</select>
+      <label>Image URL:</label>
+      <input class="dealImage" placeholder="Image URL" value="${deal.image||''}">
+      <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index})">
+      <label>Gray/Transparent:</label>
+      <select class="dealGray">
+        <option value="false" ${!deal.gray?'selected':''}>No</option>
+        <option value="true" ${deal.gray?'selected':''}>Yes</option>
+      </select>
+      <button onclick="deleteDeal(${index})">Delete</button>
     `;
-    el.appendChild(item);
+    container.appendChild(div);
   });
 }
-function addDeal(){ deals.push({id:genId('deal'),name:'',desc:'',price:0,status:'coming',startTime:'',endTime:'',eventId:'',image:'',skins:[],gray:false}); saveAll(); renderDeals(); }
-function deleteDeal(i){ if(!confirm('Delete deal?')) return; deals.splice(i,1); saveAll(); renderDeals(); }
-function uploadDealFile(e,i){ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ deals[i].image=ev.target.result; saveAll(); renderDeals(); }; r.readAsDataURL(f); }
-function saveDeals(){ save(LS.deals, deals); alert('Deals saved locally'); }
-function publishDeals(){ save(LS.deals, deals); save(LS.dealsPub, deals); alert('Deals published'); }
-
-// ---------------- General helpers ----------------
-function saveAll(){
-  save(LS.keys, keys);
-  save(LS.skins, skins);
-  save(LS.events, events);
-  save(LS.deals, deals);
+function addDeal(){
+  const deals=getDeals();
+  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false});
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
 }
-function escapeHtml(str){
-  return (str+'').replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+function uploadDealImage(input,index){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+  reader.readAsDataURL(file);
 }
-// convert stored value (ms / ISO / empty) -> datetime-local value or empty
-function toLocalInputValue(val){
-  if(!val) return '';
-  if(typeof val === 'number') {
-    const d = new Date(val);
-    return d.toISOString().slice(0,16);
-  }
-  // maybe string ISO or local value
-  try{
-    const parsed = new Date(val);
-    if(!isNaN(parsed)) return parsed.toISOString().slice(0,16);
-  }catch(e){}
-  return val||'';
+function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function publishDeals(){
+  const container=document.getElementById('dealsList'); const deals=[];
+  container.querySelectorAll('.dealRow').forEach((div,index)=>{
+    const startTime=new Date(div.querySelector('.dealStart').value).getTime();
+    const endTime=new Date(div.querySelector('.dealEnd').value).getTime();
+    deals.push({
+      name:div.querySelector('.dealName').value,
+      desc:div.querySelector('.dealDesc').value,
+      price:parseFloat(div.querySelector('.dealPrice').value)||0,
+      status:div.querySelector('.dealStatus').value,
+      startTime:startTime,
+      endTime:endTime,
+      eventId:div.querySelector('.dealEvent').value,
+      image:div.querySelector('.dealImage').value,
+      gray:div.querySelector('.dealGray').value==='true'
+    });
+  });
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  localStorage.setItem('dealDataPublished', JSON.stringify(deals));
+  alert('✅ Deals published!');
 }
-
-// ---------------- init render ----------------
-renderKeys();
-renderSkins();
-renderEvents();
-renderDeals();
-
-/* Expose functions to console for debugging */
-window._admin = { keys, skins, events, deals, saveAll };
-
 </script>
+
 </body>
 </html>
