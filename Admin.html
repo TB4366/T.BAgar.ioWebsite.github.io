@@ -14,7 +14,6 @@ th { background:#333; }
 #editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
 .skinRow input, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
-.adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
 </style>
 </head>
 <body>
@@ -150,10 +149,7 @@ loadAllKeys();
 // =======================
 // Skin Editor
 // =======================
-function openSkinEditor(){
-  document.getElementById('editor').style.display='block';
-  renderSkinEditor();
-}
+function openSkinEditor(){ document.getElementById('editor').style.display='block'; renderSkinEditor(); }
 function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
 function renderSkinEditor(){
   const container = document.getElementById('skinsEditor'); container.innerHTML='';
@@ -213,20 +209,20 @@ function renderEventEditor(){
         <option value="coming" ${event.status==='coming'?'selected':''}>Coming</option>
         <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <input class="eventStartTime" value="${event.startTime}" placeholder="StartTime(ms)">
-      <input class="eventEndTime" value="${event.endTime}" placeholder="EndTime(ms)">
-      <input class="eventImage" value="${event.image}" placeholder="Event Image URL">
+      <input type="datetime-local" class="eventStart" value="${event.startTime?new Date(event.startTime).toISOString().slice(0,16):''}">
+      <input type="datetime-local" class="eventEnd" value="${event.endTime?new Date(event.endTime).toISOString().slice(0,16):''}">
       <button onclick="deleteEvent(${index})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
 function addEvent(){
-  const events = getEvents(); events.push({name:'New Event', desc:'', status:'coming', startTime:Date.now(), endTime:Date.now()+86400000, image:''});
-  localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor();
+  const events=getEvents(); events.push({name:'',desc:'',status:'coming',startTime:Date.now(),endTime:Date.now()+86400000});
+  localStorage.setItem('eventData',JSON.stringify(events));
+  renderEventEditor();
 }
 function publishEvents(){ localStorage.setItem('eventDataPublished', localStorage.getItem('eventData')); alert('✅ Events published for users!'); }
-function deleteEvent(index){ const events = getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData',JSON.stringify(events)); renderEventEditor(); }
 
 // =======================
 // Deal Editor
@@ -242,20 +238,26 @@ function renderDealEditor(){
       <input class="dealDesc" value="${deal.desc}" placeholder="Description">
       <input class="dealPrice" value="${deal.price}" placeholder="Price">
       <input class="dealImage" value="${deal.image}" placeholder="Image URL">
+      <input type="datetime-local" class="dealStart" value="${deal.startTime?new Date(deal.startTime).toISOString().slice(0,16):''}">
+      <input type="datetime-local" class="dealEnd" value="${deal.endTime?new Date(deal.endTime).toISOString().slice(0,16):''}">
       <input class="dealEventId" value="${deal.eventId}" placeholder="Event ID">
       <select class="dealStatus">
         <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
         <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <input class="dealEndTime" value="${deal.endTime}" placeholder="EndTime(ms)">
       <button onclick="deleteDeal(${index})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-function addDeal(){ const deals=getDeals(); deals.push({name:'New Deal', desc:'', price:0, image:'', eventId:'', status:'inactive', endTime:Date.now()+86400000}); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function addDeal(){
+  const deals=getDeals(); deals.push({name:'',desc:'',price:0,image:'',startTime:Date.now(),endTime:Date.now()+86400000,eventId:'',status:'inactive'});
+  localStorage.setItem('dealData',JSON.stringify(deals));
+  renderDealEditor();
+}
 function publishDeals(){ localStorage.setItem('dealDataPublished', localStorage.getItem('dealData')); alert('✅ Deals published for users!'); }
-function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData',JSON.stringify(deals)); renderDealEditor(); }
+
 </script>
 </body>
 </html>
