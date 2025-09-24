@@ -22,6 +22,16 @@ th { background:#333; }
 <h1>Admin Panel</h1>
 <div id="message" style="color:yellow;"></div>
 
+<!-- Add New Key -->
+<h3>Add New Key</h3>
+<div>
+  <input id="newKey" placeholder="Key">
+  <input id="newName" placeholder="Name">
+  <input id="newCoins" type="number" placeholder="Coins">
+  <input id="newMoney" type="number" step="0.01" placeholder="Money">
+  <button onclick="addNewKey()">Add Key</button>
+</div>
+
 <h3>All Keys</h3>
 <table id="keysTable">
 <tr>
@@ -118,6 +128,23 @@ function deleteKey(storageKey){
   }
 }
 
+function addNewKey(){
+  const key = document.getElementById('newKey').value.trim();
+  const name = document.getElementById('newName').value.trim();
+  const coins = parseFloat(document.getElementById('newCoins').value) || 0;
+  const money = parseFloat(document.getElementById('newMoney').value) || 0;
+  if(!key) { alert('⚠ Please enter a key'); return; }
+  const storageKey = 'skinshop_'+key;
+  if(localStorage.getItem(storageKey)){ alert('⚠ Key already exists'); return; }
+  localStorage.setItem(storageKey, JSON.stringify({name:name, coins:coins, money:money, owned:[]})); 
+  alert('✅ New key added!');
+  loadAllKeys();
+  document.getElementById('newKey').value='';
+  document.getElementById('newName').value='';
+  document.getElementById('newCoins').value='';
+  document.getElementById('newMoney').value='';
+}
+
 loadAllKeys();
 
 // =======================
@@ -127,58 +154,34 @@ function openSkinEditor(){
   document.getElementById('editor').style.display='block';
   renderSkinEditor();
 }
-
 function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
-
 function renderSkinEditor(){
-  const container = document.getElementById('skinsEditor');
-  container.innerHTML='';
+  const container = document.getElementById('skinsEditor'); container.innerHTML='';
   getSkins().forEach(skin=>{
-    const div = document.createElement('div');
-    div.className='skinRow';
-    div.dataset.id = skin.id;
+    const div = document.createElement('div'); div.className='skinRow'; div.dataset.id=skin.id;
     div.innerHTML=`
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-
 function addSkin(){
-  const id = 'skin'+Date.now();
-  const container = document.getElementById('skinsEditor');
-  const div = document.createElement('div');
-  div.className='skinRow';
-  div.dataset.id = id;
+  const id = 'skin'+Date.now(); const container=document.getElementById('skinsEditor');
+  const div=document.createElement('div'); div.className='skinRow'; div.dataset.id=id;
   div.innerHTML=`
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
-    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
 }
-
-function uploadSkinImage(input, id){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const row = document.querySelector(`.skinRow[data-id='${id}'] .skinImage`);
-    row.value = e.target.result;
-  }
-  reader.readAsDataURL(file);
-}
-
 function saveSkins(){
-  const container = document.getElementById('skinsEditor');
-  const skinElements = container.querySelectorAll('.skinRow');
-  const skinsArr = [];
+  const container=document.getElementById('skinsEditor');
+  const skinElements=container.querySelectorAll('.skinRow'); const skinsArr=[];
   skinElements.forEach(row=>{
     skinsArr.push({
       id: row.dataset.id,
@@ -190,180 +193,69 @@ function saveSkins(){
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
   alert('✅ Skins saved!');
 }
-
-function publishSkins(){
-  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData'));
-  alert('✅ Skins published for users!');
-}
-
-function deleteSkin(id){
-  const row = document.querySelector(`.skinRow[data-id='${id}']`);
-  if(row) row.remove();
-}
+function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published for users!'); }
+function deleteSkin(id){ const row=document.querySelector(`.skinRow[data-id='${id}']`); if(row) row.remove(); }
 
 // =======================
 // Event Editor
 // =======================
-function openEventEditor(){
-  document.getElementById('eventEditor').style.display='block';
-  renderEventEditor();
-}
-
+function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
 function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
-
 function renderEventEditor(){
-  const container = document.getElementById('eventsList');
-  container.innerHTML='';
+  const container=document.getElementById('eventsList'); container.innerHTML='';
   getEvents().forEach((event,index)=>{
-    const div = document.createElement('div');
-    div.className='eventRow';
-    div.dataset.index = index;
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
     div.innerHTML=`
-      <input class="eventName" value="${event.name}">
-      <input class="eventDesc" value="${event.desc}">
+      <input class="eventName" value="${event.name}" placeholder="Event Name">
+      <input class="eventDesc" value="${event.desc}" placeholder="Description">
       <select class="eventStatus">
         <option value="active" ${event.status==='active'?'selected':''}>Active</option>
-        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="coming" ${event.status==='coming'?'selected':''}>Coming</option>
         <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <input class="eventStart" type="datetime-local" value="${new Date(event.startTime).toISOString().slice(0,16)}">
-      <input class="eventEnd" type="datetime-local" value="${new Date(event.endTime).toISOString().slice(0,16)}">
-      <input class="eventBarImage" placeholder="Bar Image URL" value="${event.barImage||''}">
-      <input class="eventImage" placeholder="Active Event Image" value="${event.image||''}">
-      <input class="eventComingImage" placeholder="Coming Soon Image" value="${event.comingImage||''}">
-      <input class="eventComingBg" placeholder="Coming Soon Background" value="${event.comingBg||''}">
+      <input class="eventStartTime" value="${event.startTime}" placeholder="StartTime(ms)">
+      <input class="eventEndTime" value="${event.endTime}" placeholder="EndTime(ms)">
+      <input class="eventImage" value="${event.image}" placeholder="Event Image URL">
       <button onclick="deleteEvent(${index})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-
 function addEvent(){
-  const events = getEvents();
-  const id = 'event'+Date.now();
-  events.push({
-    id:id, name:'New Event', desc:'Description', status:'active',
-    startTime: Date.now() + 60000, endTime: Date.now() + 3600000,
-    barImage:'', image:'', comingImage:'', comingBg:''
-  });
-  localStorage.setItem('eventData', JSON.stringify(events));
-  renderEventEditor();
+  const events = getEvents(); events.push({name:'New Event', desc:'', status:'coming', startTime:Date.now(), endTime:Date.now()+86400000, image:''});
+  localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor();
 }
-
-function deleteEvent(index){
-  const events = getEvents();
-  events.splice(index,1);
-  localStorage.setItem('eventData', JSON.stringify(events));
-  renderEventEditor();
-}
-
-function publishEvents(){
-  const container = document.getElementById('eventsList');
-  const events = [];
-  container.querySelectorAll('.eventRow').forEach((div,index)=>{
-    events.push({
-      id:getEvents()[index]?.id || 'event'+Date.now(),
-      name: div.querySelector('.eventName').value,
-      desc: div.querySelector('.eventDesc').value,
-      status: div.querySelector('.eventStatus').value,
-      startTime: new Date(div.querySelector('.eventStart').value).getTime(),
-      endTime: new Date(div.querySelector('.eventEnd').value).getTime(),
-      barImage: div.querySelector('.eventBarImage').value,
-      image: div.querySelector('.eventImage').value,
-      comingImage: div.querySelector('.eventComingImage').value,
-      comingBg: div.querySelector('.eventComingBg').value
-    });
-  });
-  localStorage.setItem('eventData', JSON.stringify(events));
-  localStorage.setItem('eventDataPublished', JSON.stringify(events));
-  alert('✅ Events published for users!');
-}
+function publishEvents(){ localStorage.setItem('eventDataPublished', localStorage.getItem('eventData')); alert('✅ Events published for users!'); }
+function deleteEvent(index){ const events = getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
 
 // =======================
 // Deal Editor
 // =======================
-function openDealEditor(){
-  document.getElementById('dealEditor').style.display='block';
-  renderDealEditor();
-}
-
+function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
 function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
-
 function renderDealEditor(){
-  const container = document.getElementById('dealsList');
-  container.innerHTML='';
-  const events = getEvents();
+  const container=document.getElementById('dealsList'); container.innerHTML='';
   getDeals().forEach((deal,index)=>{
-    const div = document.createElement('div');
-    div.className='dealRow';
-    div.dataset.index=index;
-    let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
     div.innerHTML=`
-      <input class="dealName" value="${deal.name}">
-      <input class="dealDesc" value="${deal.desc}">
+      <input class="dealName" value="${deal.name}" placeholder="Deal Name">
+      <input class="dealDesc" value="${deal.desc}" placeholder="Description">
+      <input class="dealPrice" value="${deal.price}" placeholder="Price">
+      <input class="dealImage" value="${deal.image}" placeholder="Image URL">
+      <input class="dealEventId" value="${deal.eventId}" placeholder="Event ID">
       <select class="dealStatus">
         <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
-        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
         <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
       </select>
-      <input class="dealStart" type="datetime-local" value="${new Date(deal.startTime).toISOString().slice(0,16)}">
-      <input class="dealEnd" type="datetime-local" value="${new Date(deal.endTime).toISOString().slice(0,16)}">
-      <select class="dealEvent">${eventOptions}</select>
-      <input class="dealImage" value="${deal.image||''}" placeholder="Active Image URL">
-      <input class="dealPrice" type="number" value="${deal.price||0}" placeholder="Price">
-      <input class="dealURL" value="${deal.url||''}" placeholder="Enter URL">
+      <input class="dealEndTime" value="${deal.endTime}" placeholder="EndTime(ms)">
       <button onclick="deleteDeal(${index})">Delete</button>
     `;
     container.appendChild(div);
   });
 }
-
-function addDeal(){
-  const deals = getDeals();
-  deals.push({
-    id:'deal'+Date.now(), name:'New Deal', desc:'Description', status:'coming',
-    startTime:Date.now() + 60000, endTime:Date.now() + 3600000,
-    image:'', price:0, url:'', eventId:''
-  });
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  renderDealEditor();
-}
-
-function deleteDeal(index){
-  const deals = getDeals();
-  deals.splice(index,1);
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  renderDealEditor();
-}
-
-function publishDeals(){
-  const container = document.getElementById('dealsList');
-  const deals = [];
-  container.querySelectorAll('.dealRow').forEach((div,index)=>{
-    deals.push({
-      id:getDeals()[index]?.id || 'deal'+Date.now(),
-      name: div.querySelector('.dealName').value,
-      desc: div.querySelector('.dealDesc').value,
-      status: div.querySelector('.dealStatus').value,
-      startTime: new Date(div.querySelector('.dealStart').value).getTime(),
-      endTime: new Date(div.querySelector('.dealEnd').value).getTime(),
-      image: div.querySelector('.dealImage').value,
-      price: parseFloat(div.querySelector('.dealPrice').value)||0,
-      url: div.querySelector('.dealURL').value,
-      eventId: div.querySelector('.dealEvent').value
-    });
-  });
-
-  let missingEvent = deals.filter(d => !d.eventId || d.eventId.trim() === '');
-  if(missingEvent.length > 0){
-    alert(`⚠ ${missingEvent.length} deal(s) have no event selected.`);
-    return;
-  }
-
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  localStorage.setItem('dealDataPublished', JSON.stringify(deals));
-  alert('✅ Deals published for users!');
-}
+function addDeal(){ const deals=getDeals(); deals.push({name:'New Deal', desc:'', price:0, image:'', eventId:'', status:'inactive', endTime:Date.now()+86400000}); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function publishDeals(){ localStorage.setItem('dealDataPublished', localStorage.getItem('dealData')); alert('✅ Deals published for users!'); }
+function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
 </script>
 </body>
 </html>
