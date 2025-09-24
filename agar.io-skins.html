@@ -127,23 +127,19 @@ function renderSkins(){
     if(isOwned) addPurchasedItem(skin.image,skin.name);
   });
 
+  // =======================
   // Gekochte deals
+  // =======================
   purchasedDeals.forEach(did=>{
     const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
     const deal = allDeals.find(dd=>dd.id===did);
-    if(deal) addPurchasedItem(deal.image,deal.name,true);
+    if(deal && events.some(e=>e.id===deal.eventId && e.status==='active')){
+      addPurchasedItem(deal.image,deal.name,true);
+    }
   });
 
   document.getElementById('coins').textContent=coins;
   document.getElementById('money').textContent=money.toFixed(2);
-}
-
-function addPurchasedItem(imgSrc,name,isDeal=false){
-  const purchasedContainer = document.getElementById('purchasedSkins');
-  const img = document.createElement('img');
-  img.src = imgSrc; img.alt = name; img.style.opacity = '0.5';
-  if(isDeal) img.title = 'Deal: '+name;
-  purchasedContainer.appendChild(img);
 }
 
 // =======================
@@ -156,6 +152,7 @@ function loadKey(){
   if(!data || data.coins===undefined){ showMessage('❌ Invalid key!'); currentKey=null; coins=0; money=0; owned=[]; purchasedDeals=[]; renderSkins(); return; }
   currentKey = key; coins = data.coins||0; money = data.money||0; owned = data.owned||[];
   loadPurchasedDeals();
+  loadEvents(); // Zorg dat events geladen zijn voor deals
   showMessage('✅ Key loaded successfully!');
   renderSkins();
 }
@@ -219,35 +216,9 @@ function startEventCountdowns(){
 // =======================
 function openEventDeals(event){
   const allDeals = JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
-  const now = Date.now();
-
-  // Alle deals van dit event
-  const eventDeals = allDeals.filter(d => d.eventId === event.id);
-
-  if(eventDeals.length === 0){
-    alert("❌ Geen deals gekoppeld aan dit event.");
-    return;
-  }
-
-  // Check status
-  const activeDeals = eventDeals.filter(d => d.status === 'active');
-  if(activeDeals.length === 0){
-    alert("⚠ Er zijn deals, maar geen enkele staat op ACTIVE.");
-    return;
-  }
-
-  // Check tijd
-  const timeFiltered = activeDeals.filter(d => {
-    return (!d.startTime || d.startTime <= now) && (!d.endTime || d.endTime >= now);
-  });
-  if(timeFiltered.length === 0){
-    alert("⏰ Er zijn active deals, maar (nog) niet binnen de geldige tijdsperiode.");
-    return;
-  }
-
-  // Alles goed → toon deals
-  currentEventDeals = timeFiltered;
-  currentDealIndex = 0;
+  currentEventDeals = allDeals.filter(d=>d.eventId===event.id && d.status==='active');
+  if(currentEventDeals.length===0){ alert("No active deals for this event."); return; }
+  currentDealIndex=0;
   showDeal(currentEventDeals[currentDealIndex]);
 }
 
@@ -299,6 +270,14 @@ function updateDealCountdown(deal){
   document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
 }
 function closeDealModal(){ document.getElementById('dealModal').style.display='none'; if(dealCountdownInterval) clearInterval(dealCountdownInterval); }
+
+function addPurchasedItem(imgSrc,name,isDeal=false){
+  const purchasedContainer = document.getElementById('purchasedSkins');
+  const img = document.createElement('img');
+  img.src = imgSrc; img.alt = name; img.style.opacity = '0.5';
+  if(isDeal) img.title = 'Deal: '+name;
+  purchasedContainer.appendChild(img);
+}
 
 // =======================
 // Init
