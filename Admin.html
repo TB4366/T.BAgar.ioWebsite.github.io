@@ -14,6 +14,8 @@ th { background:#333; }
 #editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
 .skinRow input, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
+.adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
+#calendarIcon { position:fixed; bottom:20px; right:20px; font-size:24px; cursor:pointer; display:none; }
 </style>
 </head>
 <body>
@@ -71,7 +73,40 @@ th { background:#333; }
   <div id="dealsList"></div>
 </div>
 
+<!-- Calendar Icon -->
+<div id="calendarIcon" title="Select Date 📅">📅</div>
+
 <script>
+// =======================
+// Admin Key & Mode
+// =======================
+const ADMIN_KEY = 'superadmin123'; // Pas hier de admin key aan
+let adminActiveUserKey = null;
+let adminMode = false;
+let selectedFutureDate = null;
+
+// Activeer admin mode voor een user
+function activateAdminMode(userKey){
+  const enteredKey = prompt('Enter Admin Key:');
+  if(enteredKey !== ADMIN_KEY) return alert('❌ Invalid admin key');
+  adminActiveUserKey = userKey;
+  adminMode = true;
+  showMessage(`🛠 Admin mode active for ${userKey}`);
+  showAdminControls();
+  document.getElementById('calendarIcon').style.display = 'block';
+}
+
+// Kalenderfunctionaliteit
+document.getElementById('calendarIcon').addEventListener('click', ()=>{
+  const dateInput = prompt('Enter date & time (YYYY-MM-DD HH:MM):');
+  if(!dateInput) return;
+  const parsed = new Date(dateInput.replace(' ', 'T'));
+  if(isNaN(parsed)) return alert('Invalid date format');
+  selectedFutureDate = parsed.getTime();
+  alert(`Showing events from ${parsed}`);
+  renderEventEditor(); // Her-render events vanaf geselecteerde datum
+});
+
 // =======================
 // Key Management
 // =======================
@@ -92,6 +127,7 @@ function loadAllKeys(){
       actions.innerHTML=`
         <button onclick="editKey('${k}')">Edit</button>
         <button onclick="deleteKey('${k}')">Delete</button>
+        <button onclick="activateAdminMode('${k}')">Admin</button>
       `;
     }
   }
@@ -184,8 +220,22 @@ function renderSkinEditor(){
       <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
+    if(adminMode) addAdminSkinControls(div);
     container.appendChild(div);
   });
+}
+
+// Extra Admin Buttons voor Skin Editor
+function addAdminSkinControls(div){
+  const adminDiv = document.createElement('div');
+  adminDiv.className = 'adminControls';
+  adminDiv.innerHTML = `
+    <button onclick="alert('Edit Image')">Edit Image</button>
+    <button onclick="alert('Add Text')">Add Text</button>
+    <button onclick="alert('Add Line')">Add Line</button>
+    <button onclick="alert('Add Button with Link')">Add Button</button>
+  `;
+  div.appendChild(adminDiv);
 }
 
 function addSkin(){
@@ -201,6 +251,7 @@ function addSkin(){
     <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
+  if(adminMode) addAdminSkinControls(div);
   container.appendChild(div);
 }
 
@@ -255,6 +306,9 @@ function renderEventEditor(){
   const container = document.getElementById('eventsList');
   container.innerHTML='';
   getEvents().forEach((event,index)=>{
+    // Filter op toekomstdatum als admin mode en datum geselecteerd
+    if(adminMode && selectedFutureDate && event.startTime < selectedFutureDate) return;
+
     const div = document.createElement('div');
     div.className='eventRow';
     div.dataset.index = index;
