@@ -176,10 +176,6 @@ function renderSkinEditor(){
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
       <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
-      <label>Start Date:</label>
-      <input type="datetime-local" class="skinStart" value="${new Date(skin.startTime||Date.now()).toISOString().slice(0,16)}">
-      <label>End Date:</label>
-      <input type="datetime-local" class="skinEnd" value="${new Date(skin.endTime||Date.now()+3600000).toISOString().slice(0,16)}">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
@@ -194,10 +190,6 @@ function addSkin(){
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
     <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
-    <label>Start Date:</label>
-    <input type="datetime-local" class="skinStart" value="${new Date().toISOString().slice(0,16)}">
-    <label>End Date:</label>
-    <input type="datetime-local" class="skinEnd" value="${new Date(Date.now()+3600000).toISOString().slice(0,16)}">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
@@ -217,9 +209,7 @@ function saveSkins(){
       id: row.dataset.id,
       name: row.querySelector('.skinName').value,
       price: parseInt(row.querySelector('.skinPrice').value)||0,
-      image: row.querySelector('.skinImage').value,
-      startTime: new Date(row.querySelector('.skinStart').value).getTime(),
-      endTime: new Date(row.querySelector('.skinEnd').value).getTime()
+      image: row.querySelector('.skinImage').value
     });
   });
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
@@ -302,11 +292,13 @@ function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); 
 function renderDealEditor(){
   const container=document.getElementById('dealsList'); container.innerHTML='';
   const events=getEvents();
+  const skins=getSkins();
   getDeals().forEach((deal,index)=>{
     const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
     const startVal=new Date(deal.startTime).toISOString().slice(0,16);
     const endVal=new Date(deal.endTime).toISOString().slice(0,16);
     const eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
+    const skinOptions=skins.map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
     div.innerHTML=`
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
@@ -331,6 +323,10 @@ function renderDealEditor(){
         <option value="false" ${!deal.gray?'selected':''}>No</option>
         <option value="true" ${deal.gray?'selected':''}>Yes</option>
       </select>
+      <label>Assign Skins:</label>
+      <select class="dealSkins" multiple style="width:200px;">
+        ${skinOptions}
+      </select>
       <button onclick="deleteDeal(${index})">Delete</button>
     `;
     container.appendChild(div);
@@ -338,7 +334,7 @@ function renderDealEditor(){
 }
 function addDeal(){
   const deals=getDeals();
-  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false});
+  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false,skins:[]});
   localStorage.setItem('dealData', JSON.stringify(deals));
   renderDealEditor();
 }
@@ -354,6 +350,7 @@ function publishDeals(){
   container.querySelectorAll('.dealRow').forEach((div,index)=>{
     const startTime=new Date(div.querySelector('.dealStart').value).getTime();
     const endTime=new Date(div.querySelector('.dealEnd').value).getTime();
+    const selectedSkins=[...div.querySelector('.dealSkins').selectedOptions].map(o=>o.value);
     deals.push({
       name:div.querySelector('.dealName').value,
       desc:div.querySelector('.dealDesc').value,
@@ -363,13 +360,38 @@ function publishDeals(){
       endTime:endTime,
       eventId:div.querySelector('.dealEvent').value,
       image:div.querySelector('.dealImage').value,
-      gray:div.querySelector('.dealGray').value==='true'
+      gray:div.querySelector('.dealGray').value==='true',
+      skins:selectedSkins
     });
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published!');
 }
+
+// =======================
+// Apply deal skins to user
+// =======================
+function applyDealSkinsToUser(storageKey, dealIndex) {
+    const userData = JSON.parse(localStorage.getItem(storageKey));
+    const deals = getDeals();
+    const deal = deals[dealIndex];
+    if (!deal) return showMessage('Deal not found');
+    
+    if (deal.skins && deal.skins.length > 0) {
+        userData.owned = userData.owned || [];
+        deal.skins.forEach(skinId => {
+            if (!userData.owned.includes(skinId)) {
+                userData.owned.push(skinId);
+            }
+        });
+    }
+    
+    localStorage.setItem(storageKey, JSON.stringify(userData));
+    showMessage(`✅ User now owns skins: ${userData.owned.join(', ')}`);
+    loadAllKeys();
+}
+
 </script>
 
 </body>
