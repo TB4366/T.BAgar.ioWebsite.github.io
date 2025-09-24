@@ -14,8 +14,8 @@ button { cursor:pointer; }
 .skin { width:150px; height:150px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; transition: transform 0.1s, filter 0.1s;}
 .skin img { width:100%; height:100%; object-fit:cover; border-radius:50%; transition: filter 0.2s, opacity 0.2s; }
 .skin:hover { filter: brightness(1.2); }
+.grayed img { filter: grayscale(100%); opacity:0.5; pointer-events:none; user-select:none; }
 .lock { position:absolute; top:5px; left:5px; font-size:18px; background:rgba(0,0,0,0.6); padding:3px 6px; border-radius:50%; }
-.grayed img { filter: grayscale(100%); opacity:0.5; pointer-events:none; }
 .skinName, .skinPrice { margin-top:5px; font-size:14px; }
 #keyInput { width:300px; font-size:18px; text-align:center; }
 #message { font-size:18px; margin-top:10px; color:yellow; }
@@ -65,8 +65,10 @@ button { cursor:pointer; }
   <div id="purchasedSkins"></div>
 </div>
 
+<!-- Event bar -->
 <div id="eventBarContainer"></div>
 
+<!-- Deal modal -->
 <div id="dealModal">
   <h3 id="dealModalTitle"></h3>
   <img id="dealModalImage" src="">
@@ -94,28 +96,31 @@ function getPublishedSkins(){ return JSON.parse(localStorage.getItem('skinsDataP
 function renderSkins(){
   const skins=getPublishedSkins();
   const grid=document.getElementById('skinsGrid');
-  grid.innerHTML='';
   const purchasedContainer=document.getElementById('purchasedSkins');
+  grid.innerHTML='';
   purchasedContainer.innerHTML='';
 
   skins.forEach(skin=>{
     const isOwned=owned.includes(skin.id);
-    if(!isOwned){
-      const container=document.createElement('div'); container.className='skinContainer';
-      const div=document.createElement('div'); div.className='skin';
-      div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
-      const lock=document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
-      div.onclick=()=>buySkin(skin.id, skin.price);
-      container.appendChild(div);
-      const nameDiv=document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent=skin.name; container.appendChild(nameDiv);
-      const priceDiv=document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent='Price: '+skin.price+' 💠'; container.appendChild(priceDiv);
-      grid.appendChild(container);
-    }
-  });
+    const container=document.createElement('div'); container.className='skinContainer';
+    const div=document.createElement('div'); div.className='skin '+(isOwned?'':'grayed');
+    const img=document.createElement('img'); img.src=skin.image; img.alt=skin.name;
 
-  owned.forEach(skinId=>{
-    const skin = getPublishedSkins().find(s=>s.id===skinId);
-    if(skin) addPurchasedItem(skin.image, skin.name);
+    if(!isOwned){
+      // slotje en beperking kopiëren
+      const lock=document.createElement('div'); lock.className='lock'; lock.textContent='🔒'; div.appendChild(lock);
+      img.draggable=false; img.oncontextmenu = e => e.preventDefault();
+      img.onmousedown = e => e.preventDefault();
+      img.ondragstart = e => e.preventDefault();
+      div.onclick=()=>buySkin(skin.id, skin.price);
+    }
+
+    container.appendChild(div); div.appendChild(img);
+    const nameDiv=document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent=skin.name; container.appendChild(nameDiv);
+    const priceDiv=document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent='Price: '+skin.price+' 💠'; container.appendChild(priceDiv);
+    grid.appendChild(container);
+
+    if(isOwned) addPurchasedItem(skin.image,skin.name);
   });
 
   purchasedDeals.forEach(did=>{
@@ -131,8 +136,7 @@ function renderSkins(){
 function addPurchasedItem(imgSrc,name,isDeal=false){
   const purchasedContainer=document.getElementById('purchasedSkins');
   const img=document.createElement('img');
-  img.src=imgSrc; img.alt=name; img.style.opacity='0.5';
-  if(isDeal) img.title='Deal: '+name;
+  img.src=imgSrc; img.alt=name; img.style.opacity='1'; // gekochte items normaal
   purchasedContainer.appendChild(img);
 }
 
@@ -154,8 +158,107 @@ function buySkin(id,price){
   coins-=price; owned.push(id); saveData(); showMessage('✅ Skin purchased!'); renderSkins();
 }
 
-// Event & deal functionality remains unchanged from your original script
-// ... startEventCountdowns, renderEventBar, openEventDeals, showDeal, buyDeal, showPaymentSuccess, prevDeal, nextDeal, updateDealCountdown, closeDealModal ...
+// Events & Deals (zelfde als eerder, met grayed effect voor niet gekocht)
+function loadEvents(){
+  events=JSON.parse(localStorage.getItem('eventDataPublished')||'[]');
+  renderEventBar();
+  startEventCountdowns();
+}
+
+function renderEventBar(){
+  const container=document.getElementById('eventBarContainer');
+  container.innerHTML='';
+  events.forEach((event,index)=>{
+    const div=document.createElement('div');
+    div.style.width='5cm'; div.style.height='2cm'; div.style.border='2px solid #0af'; div.style.borderRadius='5px';
+    div.style.overflow='hidden'; div.style.cursor='pointer'; div.style.flexShrink='0'; div.style.position='relative';
+
+    const img=document.createElement('img');
+    img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover';
+    img.src=(event.status==='coming')?event.comingImage||event.image:event.barImage||event.image;
+
+    // niet-gekocht of komende events grijs
+    if(event.status!=='active'){
+      div.classList.add('grayed'); img.draggable=false; img.oncontextmenu=e=>e.preventDefault(); img.onmousedown=e=>e.preventDefault(); img.ondragstart=e=>e.preventDefault();
+    }
+
+    div.appendChild(img);
+    const countdownDiv=document.createElement('div'); countdownDiv.className='eventCountdown'; div.appendChild(countdownDiv);
+    div.onclick=()=>openEventDeals(event); div.dataset.eventIndex=index;
+    container.appendChild(div);
+  });
+}
+
+function startEventCountdowns(){
+  setInterval(()=>{
+    const now=Date.now();
+    const container=document.getElementById('eventBarContainer');
+    Array.from(container.children).forEach(div=>{
+      const idx=div.dataset.eventIndex;
+      const event=events[idx];
+      const countdownDiv=div.querySelector('.eventCountdown');
+
+      let remaining=0;
+      if(event.status==='coming'){ remaining=event.startTime-now; }
+      else if(event.status==='active'){ remaining=event.endTime-now; }
+
+      if(remaining<0){
+        if(event.status==='coming'){ event.status='active'; }
+        if(event.status==='active'){ event.status='inactive'; }
+        localStorage.setItem('eventDataPublished',JSON.stringify(events));
+        renderEventBar();
+      } else {
+        const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
+        countdownDiv.textContent=`${d}d ${h}h ${m}m ${s}s`;
+      }
+    });
+  },1000);
+}
+
+function openEventDeals(event){
+  if(event.status==='coming'){ alert("⏳ This event is coming soon!"); return; }
+  const allDeals=JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
+  currentEventDeals=allDeals.filter(d=>d.eventId===event.id && d.status==='active');
+  if(currentEventDeals.length===0){ alert("No active deals for this event."); return; }
+  currentDealIndex=0;
+  showDeal(currentEventDeals[currentDealIndex]);
+}
+
+function showDeal(deal){
+  const isPurchased=purchasedDeals.includes(deal.id);
+  document.getElementById('dealModalTitle').textContent=deal.name;
+  document.getElementById('dealModalDesc').textContent=deal.desc;
+  const img=document.getElementById('dealModalImage'); img.src=deal.image; img.style.opacity=isPurchased?'1':'0.5';
+  if(!isPurchased){ img.draggable=false; img.oncontextmenu=e=>e.preventDefault(); img.onmousedown=e=>e.preventDefault(); img.ondragstart=e=>e.preventDefault(); }
+  document.getElementById('dealModal').style.display='block';
+  updateDealCountdown(deal);
+  if(dealCountdownInterval) clearInterval(dealCountdownInterval);
+  dealCountdownInterval=setInterval(()=>updateDealCountdown(deal),1000);
+
+  const buyBtn=document.getElementById('buyDealBtn');
+  buyBtn.disabled=isPurchased;
+  buyBtn.onclick=()=>buyDeal(deal);
+}
+
+function buyDeal(deal){
+  if(!currentKey) return showMessage('Enter key first');
+  if(money<deal.price) return showMessage('Not enough money!');
+  money-=deal.price; saveData();
+  if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
+  savePurchasedDeals();
+  addPurchasedItem(deal.image,deal.name,true);
+  renderSkins();
+  closeDealModal();
+}
+
+function prevDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex-1+currentEventDeals.length)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+function nextDeal(){ if(currentEventDeals.length===0) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+function updateDealCountdown(deal){
+  const now=Date.now(); let remaining=deal.endTime-now; if(remaining<0) remaining=0;
+  const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
+  document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
+}
+function closeDealModal(){ document.getElementById('dealModal').style.display='none'; if(dealCountdownInterval) clearInterval(dealCountdownInterval); }
 
 renderSkins();
 loadEvents();
