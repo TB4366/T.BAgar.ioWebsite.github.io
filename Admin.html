@@ -349,7 +349,7 @@ function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); 
 function renderDealEditor(){
   const container = document.getElementById('dealsList');
   container.innerHTML='';
-  const events = JSON.parse(localStorage.getItem('eventDataPublished')||'[]'); // Alleen gepubliceerde events
+  const events = getEvents();
 
   getDeals().forEach((deal,index)=>{
     const div = document.createElement('div');
@@ -360,9 +360,7 @@ function renderDealEditor(){
     const endVal = new Date(deal.endTime).toISOString().slice(0,16);
 
     let eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
-
-    let rowStyle = '';
-    if(!deal.eventId || deal.eventId.trim() === '') rowStyle='background:#440000; padding:5px; border-radius:5px;';
+    let rowStyle = (!deal.eventId || deal.eventId.trim()==='') ? 'background:#440000; padding:5px; border-radius:5px;' : '';
 
     div.innerHTML=`
       <div style="${rowStyle}">
@@ -397,6 +395,7 @@ function renderDealEditor(){
 function addDeal(){
   const deals = getDeals();
   deals.push({
+    id:'deal'+Date.now(),
     name:'New Deal',
     desc:'Description',
     status:'coming',
@@ -434,14 +433,11 @@ function deleteDeal(index){
 function publishDeals(){
   const container = document.getElementById('dealsList');
   const deals = [];
-  const publishedEvents = JSON.parse(localStorage.getItem('eventDataPublished')||'[]'); // Check alleen gepubliceerde events
-
   container.querySelectorAll('.dealRow').forEach((div,index)=>{
     const startTime = new Date(div.querySelector('.dealStart').value).getTime();
     const endTime = new Date(div.querySelector('.dealEnd').value).getTime();
-    const selectedEventId = div.querySelector('.dealEvent').value;
-
     deals.push({
+      id: getDeals()[index]?.id || 'deal'+Date.now(),
       name: div.querySelector('.dealName').value,
       desc: div.querySelector('.dealDesc').value,
       status: div.querySelector('.dealStatus').value,
@@ -450,14 +446,13 @@ function publishDeals(){
       image: div.querySelector('.dealImage').value,
       price: parseFloat(div.querySelector('.dealPrice').value)||0,
       url: div.querySelector('.dealURL').value || '',
-      eventId: selectedEventId
+      eventId: div.querySelector('.dealEvent').value
     });
   });
 
-  // Controleer of elk deal een geldig eventId heeft dat bestaat in gepubliceerde events
-  const invalidDeals = deals.filter(d => !publishedEvents.some(e => e.id === d.eventId));
-  if(invalidDeals.length > 0){
-    alert(`⚠ ${invalidDeals.length} deal(s) hebben geen geldig event gekoppeld. Koppel eerst een gepubliceerde event.`);
+  let missingEvent = deals.filter(d => !d.eventId || d.eventId.trim()==='');
+  if(missingEvent.length > 0){
+    alert(`⚠ ${missingEvent.length} deal(s) hebben geen event geselecteerd. Kies een event voor elke deal voordat je publiceert.`);
     return;
   }
 
