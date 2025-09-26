@@ -94,7 +94,7 @@ function loadPurchasedDeals(){ purchasedDeals=JSON.parse(localStorage.getItem('p
 function getPublishedSkins(){ return JSON.parse(localStorage.getItem('skinsDataPublished')||'[]'); }
 
 function renderSkins(){
-  const skins=getPublishedSkins();
+  const skins = getPublishedSkins().filter(s => s.useFor==='coins'); // alleen coins-skins
   const grid=document.getElementById('skinsGrid');
   grid.innerHTML='';
   const purchasedContainer=document.getElementById('purchasedSkins');
@@ -240,18 +240,17 @@ function showDeal(deal){
 function buyDeal(deal){
   if(!currentKey) return showMessage('Enter key first');
   if(money<deal.price) return showMessage('Not enough money!');
-  money-=deal.price; saveData();
+  money -= deal.price; saveData();
 
-  // voeg deal toe aan purchasedDeals
+  // Voeg deal toe aan gekochte deals
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
   savePurchasedDeals();
 
-  // geef skins die bij de deal horen
+  // Voeg skins van deal toe
   if(deal.skins && deal.skins.length>0){
     deal.skins.forEach(skinId=>{
-      if(!owned.includes(skinId)){
-        owned.push(skinId);
-      }
+      const skin=getPublishedSkins().find(s=>s.id===skinId);
+      if(skin && !owned.includes(skinId)) owned.push(skinId);
     });
     saveData();
   }
