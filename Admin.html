@@ -174,12 +174,12 @@ function renderSkinEditor(){
     div.innerHTML=`
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
-      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <select class="skinUseFor">
         <option value="coins" ${skin.useFor==='coins'?'selected':''}>Coins</option>
         <option value="deals" ${skin.useFor==='deals'?'selected':''}>Deals</option>
       </select>
+      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
@@ -192,12 +192,12 @@ function addSkin(){
   div.innerHTML=`
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
-    <input class="skinImage" placeholder="Image URL">
-    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <select class="skinUseFor">
       <option value="coins">Coins</option>
       <option value="deals">Deals</option>
     </select>
+    <input class="skinImage" placeholder="Image URL">
+    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
@@ -218,7 +218,7 @@ function saveSkins(){
       name: row.querySelector('.skinName').value,
       price: parseInt(row.querySelector('.skinPrice').value)||0,
       image: row.querySelector('.skinImage').value,
-      useFor: row.querySelector('.skinUseFor').value || 'coins'
+      useFor: row.querySelector('.skinUseFor').value
     });
   });
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
@@ -327,11 +327,6 @@ function renderDealEditor(){
       <label>Image URL:</label>
       <input class="dealImage" placeholder="Image URL" value="${deal.image||''}">
       <input type="file" accept="image/*" onchange="uploadDealImage(this, ${index})">
-      <label>Gray/Transparent:</label>
-      <select class="dealGray">
-        <option value="false" ${!deal.gray?'selected':''}>No</option>
-        <option value="true" ${deal.gray?'selected':''}>Yes</option>
-      </select>
       <label>Assign Skins:</label>
       <select class="dealSkins" multiple style="width:200px;">
         ${skinOptions}
@@ -343,7 +338,7 @@ function renderDealEditor(){
 }
 function addDeal(){
   const deals=getDeals();
-  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false,skins:[]});
+  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',skins:[]});
   localStorage.setItem('dealData', JSON.stringify(deals));
   renderDealEditor();
 }
@@ -369,7 +364,6 @@ function publishDeals(){
       endTime:endTime,
       eventId:div.querySelector('.dealEvent').value,
       image:div.querySelector('.dealImage').value,
-      gray:div.querySelector('.dealGray').value==='true',
       skins:selectedSkins
     });
   });
@@ -378,29 +372,6 @@ function publishDeals(){
   alert('✅ Deals published!');
 }
 
-// =======================
-// Apply deal skins to user
-// =======================
-function applyDealSkinsToUser(storageKey, dealIndex) {
-    const userData = JSON.parse(localStorage.getItem(storageKey));
-    const deals = getDeals();
-    const deal = deals[dealIndex];
-    if (!deal) return showMessage('Deal not found');
-    
-    if (deal.skins && deal.skins.length > 0) {
-        userData.owned = userData.owned || [];
-        deal.skins.forEach(skinId => {
-            if (!userData.owned.includes(skinId)) {
-                userData.owned.push(skinId);
-            }
-        });
-    }
-    
-    localStorage.setItem(storageKey, JSON.stringify(userData));
-    showMessage(`✅ User now owns skins: ${userData.owned.join(', ')}`);
-    loadAllKeys();
-}
 </script>
-
 </body>
 </html>
