@@ -13,7 +13,7 @@ th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
 #editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
-.skinRow input, .skinRow select, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
+.skinRow input, .eventRow input, .dealRow input, .dealRow select { margin:3px; }
 .adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
 </style>
 </head>
@@ -175,11 +175,12 @@ function renderSkinEditor(){
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
+      <label>Use For:</label>
       <select class="skinUseFor">
         <option value="coins" ${skin.useFor==='coins'?'selected':''}>Coins</option>
         <option value="deals" ${skin.useFor==='deals'?'selected':''}>Deals</option>
       </select>
-      <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
@@ -193,11 +194,12 @@ function addSkin(){
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
+    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
+    <label>Use For:</label>
     <select class="skinUseFor">
       <option value="coins">Coins</option>
       <option value="deals">Deals</option>
     </select>
-    <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
@@ -207,6 +209,9 @@ function uploadSkinImage(input,id){
   const reader=new FileReader();
   reader.onload=function(e){ document.querySelector(`.skinRow[data-id='${id}'] .skinImage`).value=e.target.result; }
   reader.readAsDataURL(file);
+}
+function deleteSkin(id){
+  const skins=getSkins(); const index=skins.findIndex(s=>s.id===id); if(index>=0){ skins.splice(index,1); localStorage.setItem('skinsData', JSON.stringify(skins)); renderSkinEditor(); }
 }
 function saveSkins(){
   const container=document.getElementById('skinsEditor');
@@ -258,40 +263,10 @@ function renderEventEditor(){
     container.appendChild(div);
   });
 }
-function addEvent(){
-  const events=getEvents();
-  const id='event'+Date.now();
-  events.push({id:id,name:'New Event',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:''});
-  localStorage.setItem('eventData', JSON.stringify(events));
-  renderEventEditor();
-}
+function addEvent(){ const events=getEvents(); const id='event'+Date.now(); events.push({id:id,name:'New Event',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:''}); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
 function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
-function uploadEventImage(input,index){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){ const events=getEvents(); events[index].image=e.target.result; localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
-  reader.readAsDataURL(file);
-}
-function publishEvents(){
-  const container=document.getElementById('eventsList'); const events=[];
-  container.querySelectorAll('.eventRow').forEach((div,index)=>{
-    const startInput=div.querySelector('.eventStart').value;
-    const endInput=div.querySelector('.eventEnd').value;
-    const uniqueId=getEvents()[index]?.id || 'event'+Date.now();
-    events.push({
-      id:uniqueId,
-      name:div.querySelector('.eventName').value,
-      desc:div.querySelector('.eventDesc').value,
-      status:div.querySelector('.eventStatus').value,
-      startTime:new Date(startInput).getTime(),
-      endTime:new Date(endInput).getTime(),
-      image:div.querySelector('.eventImage').value
-    });
-  });
-  localStorage.setItem('eventData', JSON.stringify(events));
-  localStorage.setItem('eventDataPublished', JSON.stringify(events));
-  alert('✅ Events published!');
-}
+function uploadEventImage(input,index){ const file=input.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=function(e){ const events=getEvents(); events[index].image=e.target.result; localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }; reader.readAsDataURL(file); }
+function publishEvents(){ const container=document.getElementById('eventsList'); const events=[]; container.querySelectorAll('.eventRow').forEach((div,index)=>{ const startInput=div.querySelector('.eventStart').value; const endInput=div.querySelector('.eventEnd').value; const uniqueId=getEvents()[index]?.id || 'event'+Date.now(); events.push({id:uniqueId,name:div.querySelector('.eventName').value,desc:div.querySelector('.eventDesc').value,status:div.querySelector('.eventStatus').value,startTime:new Date(startInput).getTime(),endTime:new Date(endInput).getTime(),image:div.querySelector('.eventImage').value}); }); localStorage.setItem('eventData', JSON.stringify(events)); localStorage.setItem('eventDataPublished', JSON.stringify(events)); alert('✅ Events published!'); }
 
 // =======================
 // Deal Editor
@@ -307,7 +282,7 @@ function renderDealEditor(){
     const startVal=new Date(deal.startTime).toISOString().slice(0,16);
     const endVal=new Date(deal.endTime).toISOString().slice(0,16);
     const eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
-    const skinOptions=skins.filter(s=>s.useFor==='deals').map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
+    const skinOptions=skins.map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
     div.innerHTML=`
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
@@ -341,18 +316,8 @@ function renderDealEditor(){
     container.appendChild(div);
   });
 }
-function addDeal(){
-  const deals=getDeals();
-  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false,skins:[]});
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  renderDealEditor();
-}
-function uploadDealImage(input,index){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
-  reader.readAsDataURL(file);
-}
+function addDeal(){ const deals=getDeals(); deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',gray:false,skins:[]}); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function uploadDealImage(input,index){ const file=input.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=function(e){ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }; reader.readAsDataURL(file); }
 function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
 function publishDeals(){
   const container=document.getElementById('dealsList'); const deals=[];
@@ -370,35 +335,13 @@ function publishDeals(){
       eventId:div.querySelector('.dealEvent').value,
       image:div.querySelector('.dealImage').value,
       gray:div.querySelector('.dealGray').value==='true',
-      skins:selectedSkins
+      skins:selectedSkins,
+      id:deals[index]?.id || 'deal'+Date.now()
     });
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published!');
-}
-
-// =======================
-// Apply deal skins to user
-// =======================
-function applyDealSkinsToUser(storageKey, dealIndex) {
-    const userData = JSON.parse(localStorage.getItem(storageKey));
-    const deals = getDeals();
-    const deal = deals[dealIndex];
-    if (!deal) return showMessage('Deal not found');
-    
-    if (deal.skins && deal.skins.length > 0) {
-        userData.owned = userData.owned || [];
-        deal.skins.forEach(skinId => {
-            if (!userData.owned.includes(skinId)) {
-                userData.owned.push(skinId);
-            }
-        });
-    }
-    
-    localStorage.setItem(storageKey, JSON.stringify(userData));
-    showMessage(`✅ User now owns skins: ${userData.owned.join(', ')}`);
-    loadAllKeys();
 }
 
 </script>
