@@ -241,8 +241,21 @@ function buyDeal(deal){
   if(!currentKey) return showMessage('Enter key first');
   if(money<deal.price) return showMessage('Not enough money!');
   money-=deal.price; saveData();
+
+  // voeg deal toe aan purchasedDeals
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
   savePurchasedDeals();
+
+  // geef skins die bij de deal horen
+  if(deal.skins && deal.skins.length>0){
+    deal.skins.forEach(skinId=>{
+      if(!owned.includes(skinId)){
+        owned.push(skinId);
+      }
+    });
+    saveData();
+  }
+
   addPurchasedItem(deal.image,deal.name,true);
   renderSkins();
   closeDealModal();
