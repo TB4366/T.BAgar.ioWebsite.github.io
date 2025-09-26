@@ -374,24 +374,31 @@ function publishDeals(){
 // =======================
 function applyDealSkinsToUser(storageKey, dealIndex) {
     const userData = JSON.parse(localStorage.getItem(storageKey));
+    const
     const deals = getDeals();
     const deal = deals[dealIndex];
     if (!deal) return showMessage('Deal not found');
     
+    if (userData.money < deal.price) {
+        return showMessage('❌ Not enough money to buy this deal');
+    }
+
+    // Trek geld af en voeg skins toe
+    userData.money -= deal.price;
+    userData.owned = userData.owned || [];
+
     if (deal.skins && deal.skins.length > 0) {
-        userData.owned = userData.owned || [];
         deal.skins.forEach(skinId => {
             if (!userData.owned.includes(skinId)) {
                 userData.owned.push(skinId);
             }
         });
     }
-    
+
     localStorage.setItem(storageKey, JSON.stringify(userData));
-    showMessage(`✅ User now owns skins: ${userData.owned.join(', ')}`);
+    showMessage(`✅ Deal purchased! User now owns skins: ${userData.owned.join(', ')}`);
     loadAllKeys();
 }
-
 </script>
 
 </body>
