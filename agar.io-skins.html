@@ -99,7 +99,7 @@ function renderSkins(){
   const purchasedContainer=document.getElementById('purchasedSkins');
   grid.innerHTML=''; purchasedContainer.innerHTML='';
 
-  // Available skins: only useFor === 'coins'
+  // Available skins: only coins
   skins.filter(s=>s.useFor==='coins').forEach(skin=>{
     const isOwned=owned.includes(skin.id);
     const container=document.createElement('div'); container.className='skinContainer';
@@ -111,26 +111,26 @@ function renderSkins(){
     const nameDiv=document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent=skin.name; container.appendChild(nameDiv);
     const priceDiv=document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent='Price: '+skin.price+' 💠'; container.appendChild(priceDiv);
     if(!isOwned) grid.appendChild(container);
-    else addPurchasedItem(skin.image, skin.name, false);
+    else addPurchasedItem(skin.image, skin.name);
+  });
+
+  // Purchased skins from deals
+  skins.filter(s=>s.useFor==='deals' && owned.includes(s.id)).forEach(skin=>{
+    addPurchasedItem(skin.image, skin.name);
   });
 
   // Purchased deals
   purchasedDeals.forEach(did=>{
     const allDeals=JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
     const deal=allDeals.find(dd=>dd.id===did);
-    if(deal) addPurchasedItem(deal.image,deal.name,true);
-  });
-
-  // Purchased skins from deals
-  skins.filter(s=>s.useFor==='deals' && owned.includes(s.id)).forEach(skin=>{
-    addPurchasedItem(skin.image,skin.name,false);
+    if(deal) addPurchasedItem(deal.image,deal.name);
   });
 
   document.getElementById('coins').textContent=coins;
   document.getElementById('money').textContent=money.toFixed(2);
 }
 
-function addPurchasedItem(imgSrc,name,isDeal=false){
+function addPurchasedItem(imgSrc,name){
   const purchasedContainer=document.getElementById('purchasedSkins');
   const img=document.createElement('img');
   img.src=imgSrc; img.alt=name; 
@@ -243,7 +243,7 @@ function buyDeal(deal){
   money-=deal.price; saveData();
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
 
-  // Auto-assign deal skins
+  // Auto-assign all skins of this deal
   if(deal.skins && deal.skins.length>0){
     deal.skins.forEach(skinId=>{
       if(!owned.includes(skinId)) owned.push(skinId);
