@@ -175,14 +175,11 @@ function renderSkinEditor(){
       <input class="skinName" value="${skin.name}" placeholder="Name">
       <input class="skinPrice" value="${skin.price}" placeholder="Price">
       <input class="skinImage" value="${skin.image}" placeholder="Image URL">
+      <select class="skinUseFor">
+        <option value="coins" ${skin.useFor==='coins'?'selected':''}>Coins</option>
+        <option value="deals" ${skin.useFor==='deals'?'selected':''}>Deals</option>
+      </select>
       <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${skin.id}')">
-      <div>
-        <label>Use for:</label>
-        <select class="skinUseFor">
-          <option value="coins" ${skin.useFor==='coins'?'selected':''}>Coins</option>
-          <option value="deal" ${skin.useFor==='deal'?'selected':''}>Deal</option>
-        </select>
-      </div>
       <button onclick="deleteSkin('${skin.id}')">Delete</button>
     `;
     container.appendChild(div);
@@ -196,14 +193,11 @@ function addSkin(){
     <input class="skinName" placeholder="Name">
     <input class="skinPrice" placeholder="Price">
     <input class="skinImage" placeholder="Image URL">
+    <select class="skinUseFor">
+      <option value="coins">Coins</option>
+      <option value="deals">Deals</option>
+    </select>
     <input type="file" accept="image/*" onchange="uploadSkinImage(this, '${id}')">
-    <div>
-      <label>Use for:</label>
-      <select class="skinUseFor">
-        <option value="coins">Coins</option>
-        <option value="deal">Deal</option>
-      </select>
-    </div>
     <button onclick="deleteSkin('${id}')">Delete</button>
   `;
   container.appendChild(div);
@@ -224,7 +218,7 @@ function saveSkins(){
       name: row.querySelector('.skinName').value,
       price: parseInt(row.querySelector('.skinPrice').value)||0,
       image: row.querySelector('.skinImage').value,
-      useFor: row.querySelector('.skinUseFor').value
+      useFor: row.querySelector('.skinUseFor').value // nieuwe property
     });
   });
   localStorage.setItem('skinsData', JSON.stringify(skinsArr));
@@ -232,10 +226,9 @@ function saveSkins(){
 }
 function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published!'); }
 
-// ================= Event & Deal Editors blijven gelijk =======================
-// ... (Hier komen de eerdere Event Editor & Deal Editor functies zoals in jouw script, zonder aanpassing)
-
+// =======================
+// Event Editor / Deal Editor blijft exact hetzelfde
+// =======================
 </script>
-
 </body>
 </html>
