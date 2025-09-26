@@ -91,23 +91,23 @@ function saveData(){ if(!currentKey) return; localStorage.setItem('skinshop_'+cu
 function savePurchasedDeals(){ if(!currentKey) return; localStorage.setItem('purchasedDeals_'+currentKey, JSON.stringify(purchasedDeals)); }
 function loadPurchasedDeals(){ purchasedDeals=JSON.parse(localStorage.getItem('purchasedDeals_'+currentKey)||'[]'); }
 
-// ================= Coins & Deal Skin Filtering =================
 function getPublishedSkins(){ 
-  const allSkins=JSON.parse(localStorage.getItem('skinsDataPublished')||'[]'); 
-  return allSkins.filter(skin=>skin.useFor==='coins'); // alleen coins skins tonen in shop
+  return (JSON.parse(localStorage.getItem('skinsDataPublished')||'[]')).filter(s=>s.useFor==='coins'); 
+}
+
+function getAllSkins(){ 
+  return JSON.parse(localStorage.getItem('skinsDataPublished')||'[]'); 
 }
 
 function renderSkins(){
-  const skins=getPublishedSkins(); // filter coins skins
+  const skins=getPublishedSkins();
   const grid=document.getElementById('skinsGrid');
   grid.innerHTML='';
   const purchasedContainer=document.getElementById('purchasedSkins');
   purchasedContainer.innerHTML='';
 
-  // Available skins (coins-skins)
   skins.forEach(skin=>{
-    const isOwned=owned.includes(skin.id);
-    if(isOwned) return; // gekocht skins verdwijnen uit beschikbare skins
+    if(owned.includes(skin.id)) return; // gekocht skins verdwijnen uit beschikbare skins
     const container=document.createElement('div'); container.className='skinContainer';
     const div=document.createElement('div'); div.className='skin grayed';
     div.innerHTML=`<img src="${skin.image}" alt="${skin.name}">`;
@@ -119,17 +119,22 @@ function renderSkins(){
     grid.appendChild(container);
   });
 
-  // Gekochte skins
+  // gekocht skins
   owned.forEach(id=>{
-    const skin=getPublishedSkins().find(s=>s.id===id);
+    const skin=getAllSkins().find(s=>s.id===id);
     if(skin) addPurchasedItem(skin.image,skin.name,false);
   });
 
-  // Gekochte deals
+  // gekochte deals skins
   purchasedDeals.forEach(did=>{
     const allDeals=JSON.parse(localStorage.getItem('dealDataPublished')||'[]');
     const deal=allDeals.find(dd=>dd.id===did);
-    if(deal) addPurchasedItem(deal.image,deal.name,true);
+    if(deal && deal.skins){
+      deal.skins.forEach(sid=>{
+        const skin=getAllSkins().find(s=>s.id===sid);
+        if(skin) addPurchasedItem(skin.image,skin.name,true);
+      });
+    }
   });
 
   document.getElementById('coins').textContent=coins;
@@ -250,15 +255,16 @@ function buyDeal(deal){
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
   savePurchasedDeals();
 
-  // Voeg skins van deal toe aan owned
-  if(deal.skins && deal.skins.length>0){
+  // Voeg deal skins automatisch toe
+  const allSkins=getAllSkins();
+  if(deal.skins){
     deal.skins.forEach(sid=>{
-      if(!owned.includes(sid)) owned.push(sid);
+      if(!owned.includes(sid)){
+        owned.push(sid);
+      }
     });
-    saveData();
   }
 
-  addPurchasedItem(deal.image,deal.name,true);
   renderSkins();
   closeDealModal();
 }
