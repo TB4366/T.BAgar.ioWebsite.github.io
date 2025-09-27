@@ -15,8 +15,7 @@ th { background:#333; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
 .skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select { margin:3px; }
 .adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
-.userSkinsContainer { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
-.userSkinsContainer img { width:48px; height:48px; border-radius:50%; border:1px solid #0af; cursor:pointer; }
+.skinPreview { width:50px; height:50px; object-fit:cover; border:1px solid #0af; border-radius:50%; margin-right:4px; }
 </style>
 </head>
 <body>
@@ -90,28 +89,23 @@ function loadAllKeys(){
       row.insertCell(1).innerText = data.name || '';
       row.insertCell(2).innerText = data.coins || 0;
       row.insertCell(3).innerText = data.money ? data.money.toFixed(2) : '0.00';
-      // show purchased skins as images
-      const skinsCell = row.insertCell(4);
-      const container = document.createElement('div'); container.className='userSkinsContainer';
-      (data.owned||[]).forEach(sid=>{
-        const skinData = getSkins().find(s=>s.id===sid);
-        if(skinData){
-          const img = document.createElement('img');
-          img.src = skinData.image || '';
-          img.alt = skinData.name || '';
-          container.appendChild(img);
-        }
-      });
-      skinsCell.appendChild(container);
-
+      row.insertCell(4).innerHTML = renderUserSkinsPreview(data.owned || []);
       const actions = row.insertCell(5);
       actions.innerHTML=`
         <button onclick="editKey('${k}')">Edit</button>
-        <button onclick="manageUserSkins('${k}')">Manage Skins</button>
         <button onclick="deleteKey('${k}')">Delete</button>
+        <button onclick="editUserSkins('${k}')">Edit User Skins</button>
       `;
     }
   }
+}
+
+function renderUserSkinsPreview(owned){
+  const allSkins = JSON.parse(localStorage.getItem('skinsDataPublished')||'[]');
+  return owned.map(id=>{
+    const s = allSkins.find(sk=>sk.id===id);
+    return s ? `<img src="${s.image}" class="skinPreview" title="${s.name}">` : '';
+  }).join('');
 }
 
 function showMessage(msg){ document.getElementById('message').textContent=msg; }
@@ -127,15 +121,43 @@ function addNewKey(){
 }
 
 function editKey(storageKey){
+  const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
+  if(!options) return;
   const data = JSON.parse(localStorage.getItem(storageKey));
-  const coinsVal = prompt('Coins:', data.coins||0);
-  const moneyVal = prompt('Money:', data.money||0);
-  const nameVal = prompt('Name:', data.name||'');
-  data.coins = parseFloat(coinsVal)||0;
-  data.money = parseFloat(moneyVal)||0;
-  data.name = nameVal||data.name;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  showMessage('✅ Key updated');
+  switch(options){
+    case '1':
+      const action = prompt('Type "add" to add or "remove" to remove');
+      if(!action) return;
+      const amount = parseFloat(prompt('Enter amount'));
+      if(isNaN(amount)) return showMessage('Invalid amount');
+      const type = prompt('Type "coins" or "money"');
+      if(type==='coins'){
+        if(action.toLowerCase() === 'add') data.coins = (data.coins||0)+amount;
+        else data.coins = Math.max((data.coins||0)-amount,0);
+      } else if(type==='money'){
+        if(action.toLowerCase() === 'add') data.money = (data.money||0)+amount;
+        else data.money = Math.max((data.money||0)-amount,0);
+      } else return showMessage('Invalid type');
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Coins/Money updated');
+      break;
+    case '2':
+      const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
+      if(!newKey) return;
+      const newStorageKey = 'skinshop_'+newKey;
+      localStorage.setItem(newStorageKey, JSON.stringify(data));
+      if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
+      showMessage('✅ Key updated');
+      break;
+    case '3':
+      const newName = prompt('Enter new name:', data.name);
+      if(!newName) return;
+      data.name = newName;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Name updated');
+      break;
+    default: showMessage('Invalid option'); break;
+  }
   loadAllKeys();
 }
 
@@ -148,48 +170,23 @@ function deleteKey(storageKey){
 }
 
 // =======================
-// Manage User Skins
+// User Skins Edit
 // =======================
-function manageUserSkins(storageKey){
+function editUserSkins(storageKey){
   const data = JSON.parse(localStorage.getItem(storageKey));
-  const allSkins = getSkins();
-  const selected = new Set(data.owned||[]);
-  const container = document.createElement('div');
-  container.style.position='fixed';
-  container.style.left='50%';
-  container.style.top='50%';
-  container.style.transform='translate(-50%,-50%)';
-  container.style.background='#222';
-  container.style.padding='16px';
-  container.style.border='2px solid #0af';
-  container.style.zIndex=10000;
-  container.style.maxHeight='80%';
-  container.style.overflow='auto';
-  container.innerHTML=`<h3>Manage Skins for ${data.name||storageKey.replace('skinshop_','')}</h3>`;
-  allSkins.forEach(skin=>{
-    const div=document.createElement('div'); div.style.display='flex'; div.style.alignItems='center'; div.style.margin='4px 0';
-    const img=document.createElement('img'); img.src=skin.image||''; img.width=48; img.height=48; img.style.borderRadius='50%';
-    const checkbox=document.createElement('input'); checkbox.type='checkbox'; checkbox.checked=selected.has(skin.id);
-    checkbox.style.marginLeft='8px';
-    checkbox.onchange=function(){ 
-      if(this.checked) selected.add(skin.id); else selected.delete(skin.id); 
-    };
-    const label=document.createElement('span'); label.innerText=skin.name||skin.id; label.style.marginLeft='6px';
-    div.appendChild(img); div.appendChild(checkbox); div.appendChild(label);
-    container.appendChild(div);
-  });
-  const saveBtn=document.createElement('button'); saveBtn.innerText='Save'; saveBtn.onclick=function(){
-    data.owned=[...selected];
-    localStorage.setItem(storageKey, JSON.stringify(data));
-    document.body.removeChild(container);
-    showMessage('✅ User skins updated');
-    loadAllKeys();
-  };
-  const closeBtn=document.createElement('button'); closeBtn.innerText='Close'; closeBtn.style.marginLeft='8px'; closeBtn.onclick=function(){
-    document.body.removeChild(container);
-  };
-  container.appendChild(saveBtn); container.appendChild(closeBtn);
-  document.body.appendChild(container);
+  if(!data) return;
+  const allSkins = JSON.parse(localStorage.getItem('skinsDataPublished')||'[]');
+  const choices = allSkins.map(s=>`${data.owned.includes(s.id)?'[x]':'[ ]'} ${s.name}`).join('\n');
+  const action = prompt(`User Skins:\n${choices}\n\nType skin name to toggle ownership`);
+  if(!action) return;
+  const skin = allSkins.find(s=>s.name.toLowerCase()===action.toLowerCase());
+  if(!skin) return showMessage('Skin not found');
+  const idx = data.owned.indexOf(skin.id);
+  if(idx>=0) data.owned.splice(idx,1);
+  else data.owned.push(skin.id);
+  localStorage.setItem(storageKey, JSON.stringify(data));
+  showMessage('✅ User skins updated');
+  loadAllKeys();
 }
 
 // =======================
@@ -256,6 +253,14 @@ function saveSkins(){
   alert('✅ Skins saved!');
 }
 function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published!'); }
+function deleteSkin(skinId){
+  if(!confirm('Are you sure you want to delete this skin?')) return;
+  const skins = getSkins();
+  const newSkins = skins.filter(s => s.id !== skinId);
+  localStorage.setItem('skinsData', JSON.stringify(newSkins));
+  renderSkinEditor();
+  showMessage('✅ Skin deleted (users who already have it keep it)');
+}
 
 // =======================
 // Event Editor
@@ -265,9 +270,9 @@ function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]')
 function renderEventEditor(){
   const container=document.getElementById('eventsList'); container.innerHTML='';
   getEvents().forEach((event,index)=>{
-    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
     const startVal=new Date(event.startTime).toISOString().slice(0,16);
     const endVal=new Date(event.endTime).toISOString().slice(0,16);
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
     div.innerHTML=`
       <input class="eventName" placeholder="Event Name" value="${event.name}">
       <input class="eventDesc" placeholder="Event Description" value="${event.desc}">
@@ -296,7 +301,12 @@ function addEvent(){
   localStorage.setItem('eventData', JSON.stringify(events));
   renderEventEditor();
 }
-function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+function deleteEvent(index){
+  if(!confirm('Are you sure you want to delete this event?')) return;
+  const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+  showMessage('✅ Event deleted (users keep purchased skins)');
+}
 function uploadEventImage(input,index){
   const file=input.files[0]; if(!file) return;
   const reader=new FileReader();
@@ -334,11 +344,11 @@ function renderDealEditor(){
   const events=getEvents();
   const skins=getSkins();
   getDeals().forEach((deal,index)=>{
-    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
     const startVal=new Date(deal.startTime).toISOString().slice(0,16);
     const endVal=new Date(deal.endTime).toISOString().slice(0,16);
     const eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
     const skinOptions=skins.map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
     div.innerHTML=`
       <input class="dealName" placeholder="Deal Name" value="${deal.name}">
       <input class="dealDesc" placeholder="Description" value="${deal.desc}">
@@ -379,7 +389,12 @@ function uploadDealImage(input,index){
   reader.onload=function(e){ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
   reader.readAsDataURL(file);
 }
-function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+function deleteDeal(index){
+  if(!confirm('Are you sure you want to delete this deal?')) return;
+  const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+  showMessage('✅ Deal deleted (users who bought it keep skins)');
+}
 function publishDeals(){
   const container=document.getElementById('dealsList'); const deals=[];
   container.querySelectorAll('.dealRow').forEach((div,index)=>{
@@ -403,6 +418,9 @@ function publishDeals(){
   alert('✅ Deals published!');
 }
 
+// =======================
+// Load keys initially
+// =======================
 loadAllKeys();
 </script>
 </body>
