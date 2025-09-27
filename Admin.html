@@ -15,6 +15,8 @@ th { background:#333; }
 .skinRow, .eventRow, .dealRow { margin-bottom:10px; }
 .skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select { margin:3px; }
 .adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
+#userSkinsContainer div { background:#222; padding:4px; border-radius:6px; }
+#userSkinsContainer img { display:block; margin:0 auto 4px; }
 </style>
 </head>
 <body>
@@ -37,6 +39,12 @@ th { background:#333; }
   <th>Actions</th>
 </tr>
 </table>
+
+<!-- User Skin Management -->
+<h3>Manage User Skins</h3>
+<input id="userSkinKey" placeholder="Enter user key">
+<button onclick="loadUserSkins()">Load User Skins</button>
+<div id="userSkinsContainer" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:10px;"></div>
 
 <!-- Skin Editor -->
 <div style="margin-top:20px;">
@@ -84,23 +92,16 @@ function loadAllKeys(){
     if(k.startsWith('skinshop_')){
       const data = JSON.parse(localStorage.getItem(k));
       const row = table.insertRow();
-
-      const keyCell = row.insertCell(0);
-      keyCell.innerHTML = `<input value="${k.replace('skinshop_','')}" style="width:80px" onchange="updateKey('${k}', this.value)">`;
-
-      const nameCell = row.insertCell(1);
-      nameCell.innerHTML = `<input value="${data.name}" style="width:100px" onchange="updateName('${k}', this.value)">`;
-
-      const coinsCell = row.insertCell(2);
-      coinsCell.innerHTML = `<input type="number" value="${data.coins||0}" style="width:60px" onchange="updateCoins('${k}', this.value)">`;
-
-      const moneyCell = row.insertCell(3);
-      moneyCell.innerHTML = `<input type="number" step="0.01" value="${data.money||0}" style="width:80px" onchange="updateMoney('${k}', this.value)">`;
-
+      row.insertCell(0).innerText = k.replace('skinshop_','');
+      row.insertCell(1).innerText = data.name || '';
+      row.insertCell(2).innerText = data.coins || 0;
+      row.insertCell(3).innerText = data.money ? data.money.toFixed(2) : '0.00';
       row.insertCell(4).innerText = data.owned ? data.owned.join(', ') : '';
-
       const actions = row.insertCell(5);
-      actions.innerHTML=`<button onclick="deleteKey('${k}')">Delete</button>`;
+      actions.innerHTML=`
+        <button onclick="editKey('${k}')">Edit</button>
+        <button onclick="deleteKey('${k}')">Delete</button>
+      `;
     }
   }
 }
@@ -117,34 +118,45 @@ function addNewKey(){
   loadAllKeys();
 }
 
-function updateKey(oldStorageKey, newKey){
-  const data = JSON.parse(localStorage.getItem(oldStorageKey));
-  const newStorageKey = 'skinshop_'+newKey;
-  localStorage.setItem(newStorageKey, JSON.stringify(data));
-  if(newStorageKey !== oldStorageKey) localStorage.removeItem(oldStorageKey);
-  showMessage('✅ Key updated');
+function editKey(storageKey){
+  const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
+  if(!options) return;
+  const data = JSON.parse(localStorage.getItem(storageKey));
+  switch(options){
+    case '1':
+      const action = prompt('Type "add" to add or "remove" to remove');
+      if(!action) return;
+      const amount = parseFloat(prompt('Enter amount'));
+      if(isNaN(amount)) return showMessage('Invalid amount');
+      const type = prompt('Type "coins" or "money"');
+      if(type==='coins'){
+        if(action.toLowerCase() === 'add') data.coins = (data.coins||0)+amount;
+        else data.coins = Math.max((data.coins||0)-amount,0);
+      } else if(type==='money'){
+        if(action.toLowerCase() === 'add') data.money = (data.money||0)+amount;
+        else data.money = Math.max((data.money||0)-amount,0);
+      } else return showMessage('Invalid type');
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Coins/Money updated');
+      break;
+    case '2':
+      const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
+      if(!newKey) return;
+      const newStorageKey = 'skinshop_'+newKey;
+      localStorage.setItem(newStorageKey, JSON.stringify(data));
+      if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
+      showMessage('✅ Key updated');
+      break;
+    case '3':
+      const newName = prompt('Enter new name:', data.name);
+      if(!newName) return;
+      data.name = newName;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      showMessage('✅ Name updated');
+      break;
+    default: showMessage('Invalid option'); break;
+  }
   loadAllKeys();
-}
-
-function updateName(storageKey, newName){
-  const data = JSON.parse(localStorage.getItem(storageKey));
-  data.name = newName;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  showMessage('✅ Name updated');
-}
-
-function updateCoins(storageKey, value){
-  const data = JSON.parse(localStorage.getItem(storageKey));
-  data.coins = parseInt(value) || 0;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  showMessage('✅ Coins updated');
-}
-
-function updateMoney(storageKey, value){
-  const data = JSON.parse(localStorage.getItem(storageKey));
-  data.money = parseFloat(value) || 0;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  showMessage('✅ Money updated');
 }
 
 function deleteKey(storageKey){
@@ -156,6 +168,65 @@ function deleteKey(storageKey){
 }
 
 loadAllKeys();
+
+// =======================
+// User Skin Management
+// =======================
+function loadUserSkins() {
+  const key = document.getElementById('userSkinKey').value.trim();
+  if(!key) return showMessage('Enter a key to manage user skins');
+  
+  const data = JSON.parse(localStorage.getItem('skinshop_' + key) || '{}');
+  if(!data || !data.coins) return showMessage('Invalid key');
+
+  const owned = data.owned || [];
+  const allSkins = JSON.parse(localStorage.getItem('skinsData') || '[]');
+
+  const container = document.getElementById('userSkinsContainer');
+  container.innerHTML = '';
+
+  allSkins.forEach(skin => {
+    const div = document.createElement('div');
+    div.style.width = '100px';
+    div.style.textAlign = 'center';
+    
+    const img = document.createElement('img');
+    img.src = skin.image || '';
+    img.alt = skin.name;
+    img.style.width = '80px';
+    img.style.height = '80px';
+    img.style.borderRadius = '50%';
+    img.style.border = owned.includes(skin.id) ? '2px solid #0af' : '2px solid #555';
+    div.appendChild(img);
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = skin.name;
+    div.appendChild(nameDiv);
+
+    const actionBtn = document.createElement('button');
+    if(owned.includes(skin.id)){
+      actionBtn.textContent = 'Remove';
+      actionBtn.onclick = () => {
+        const idx = owned.indexOf(skin.id);
+        if(idx !== -1) owned.splice(idx,1);
+        data.owned = owned;
+        localStorage.setItem('skinshop_' + key, JSON.stringify(data));
+        loadUserSkins();
+      };
+    } else {
+      actionBtn.textContent = 'Add';
+      actionBtn.onclick = () => {
+        if(!owned.includes(skin.id)) owned.push(skin.id);
+        data.owned = owned;
+        localStorage.setItem('skinshop_' + key, JSON.stringify(data));
+        loadUserSkins();
+      };
+    }
+    div.appendChild(actionBtn);
+
+    container.appendChild(div);
+  });
+}
 
 // =======================
 // Skin Editor
@@ -367,7 +438,6 @@ function publishDeals(){
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published!');
 }
-
 </script>
 </body>
 </html>
