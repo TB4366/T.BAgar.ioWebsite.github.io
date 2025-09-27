@@ -92,8 +92,8 @@
 <script>
 let currentKey = null;
 let coins = 0, money = 0;
-let owned = [];
-let purchasedDeals = [];
+let owned = [];            
+let purchasedDeals = [];   
 let events = [];
 let currentEventDeals = [];
 let currentDealIndex = 0;
@@ -128,7 +128,6 @@ function getPublishedEvents(){
   return JSON.parse(localStorage.getItem('eventDataPublished') || '[]');
 }
 
-/* --- Render Available Skins (coins only) --- */
 function renderSkins(){
   const allSkins = getPublishedSkinsAll() || [];
   const coinsSkins = allSkins.filter(s => s.useFor === 'coins');
@@ -171,9 +170,7 @@ function renderSkins(){
 
   purchasedDeals.forEach(did=>{
     const deal = getPublishedDeals().find(d => d.id === did);
-    if(deal){
-      // Do NOT add deal image; skins are already added above
-    }
+    if(deal) addPurchasedItem(null, null); // Deal image not shown
   });
 
   document.getElementById('coins').textContent = coins;
@@ -181,6 +178,7 @@ function renderSkins(){
 }
 
 function addPurchasedItem(imgSrc, name){
+  if(!imgSrc && !name) return; // skip deal image
   const container = document.getElementById('purchasedSkins');
   const img = document.createElement('img');
   img.src = imgSrc || '';
@@ -188,18 +186,14 @@ function addPurchasedItem(imgSrc, name){
   container.appendChild(img);
 }
 
-/* --- Key handling --- */
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key){ showMessage('Please enter your key'); return; }
   const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
   if(!data || data.coins === undefined){
-    currentKey = key; // Allow custom key editing
-    coins = data.coins || 0; money = data.money || 0; owned = data.owned || []; purchasedDeals = [];
-    loadPurchasedDeals();
-    showMessage('✅ Key loaded: ' + (data.name || key));
-    renderSkins(); renderEventBar();
-    return;
+    showMessage('❌ Invalid key!');
+    currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
+    renderSkins(); return;
   }
   currentKey = key;
   coins = data.coins || 0;
@@ -218,7 +212,6 @@ function clearKey(){
   renderSkins();
 }
 
-/* --- Buying a single coins-skin --- */
 function buySkin(skinId, price){
   if(!currentKey){ showMessage('Enter your key first'); return; }
   if(owned.includes(skinId)){ showMessage('You already own this skin'); return; }
@@ -230,7 +223,6 @@ function buySkin(skinId, price){
   renderSkins();
 }
 
-/* --- Events & Deals --- */
 function loadEvents(){
   events = getPublishedEvents() || [];
   renderEventBar();
@@ -280,11 +272,12 @@ function startEventCountdowns(){
   }, 1000);
 }
 
+// --- Open event deals with filtering purchased deals ---
 function openEventDeals(ev){
   if(ev.status === 'coming'){ alert('⏳ This event is coming soon'); return; }
   const allDeals = getPublishedDeals();
-  currentEventDeals = allDeals.filter(d => d.eventId === ev.id && d.status === 'active');
-  if(currentEventDeals.length === 0){ alert('No active deals for this event'); return; }
+  currentEventDeals = allDeals.filter(d => d.eventId === ev.id && d.status === 'active' && !purchasedDeals.includes(d.id));
+  if(currentEventDeals.length === 0){ alert('No active deals available for this event'); return; }
   currentDealIndex = 0;
   showDeal(currentEventDeals[currentDealIndex]);
 }
@@ -298,8 +291,7 @@ function showDeal(deal){
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
   dealCountdownInterval = setInterval(()=> updateDealCountdown(deal), 1000);
   const buyBtn = document.getElementById('buyDealBtn');
-  const isPurchased = purchasedDeals.includes(deal.id);
-  buyBtn.disabled = !!isPurchased;
+  buyBtn.disabled = purchasedDeals.includes(deal.id);
   buyBtn.onclick = ()=> buyDeal(deal);
 }
 
@@ -322,11 +314,9 @@ function closeDealModal(){
 function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 
-/* --- Buy Deal: only add selected skins, no duplicates, no deal image --- */
 function buyDeal(deal){
   if(!currentKey){ showMessage('Enter your key first'); return; }
   if(money < deal.price){ showMessage('Not enough money'); return; }
-
   money -= deal.price;
 
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
@@ -339,14 +329,13 @@ function buyDeal(deal){
 
   saveData();
   savePurchasedDeals();
-  showMessage('✅ Deal purchased — selected skins added only once');
+  showMessage('✅ Deal purchased — skins added to your inventory');
   renderSkins();
   closeDealModal();
 }
 
-/* Init on load */
 (function init(){
-  renderSkins();
+  renderSkins();    
   loadEvents();
 })();
 </script>
