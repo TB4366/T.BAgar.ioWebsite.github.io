@@ -23,20 +23,24 @@
   #purchasedSkins { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:10px; }
   #purchasedSkins img { width:96px; height:96px; border-radius:50%; border:2px solid #0af; object-fit:cover; }
 
+  /* currency and small layout */
   #currency { display:flex; gap:18px; align-items:center; justify-content:flex-end; font-size:16px; }
   .currencyItem { display:flex; gap:6px; align-items:center; background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; }
 
+  /* event bar */
   #eventBarContainer { position:fixed; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:999; max-width:90%; overflow:auto; padding:6px; }
   .eventCard { width:220px; height:2.2cm; border:2px solid #0af; border-radius:6px; overflow:hidden; position:relative; cursor:pointer; background:#111; }
   .eventCard img { width:100%; height:100%; object-fit:cover; display:block; }
   .eventCountdown { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.6); color:#fff; font-size:12px; text-align:center; padding:4px 2px; }
 
+  /* deal modal */
   #dealModal { display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:#151515; color:#fff; border:2px solid #0af; padding:18px; border-radius:10px; z-index:2000; width:320px; max-width:90%; }
   #dealModal img { width:100%; height:160px; object-fit:cover; border-radius:8px; }
   #dealCountdown { font-weight:600; margin-top:8px; }
   #dealNav { display:flex; justify-content:space-between; margin-top:10px; gap:8px; }
   #dealModal button { margin-top:10px; }
 
+  /* small responsiveness */
   @media (max-width:520px){ .skinContainer{ width:45%; } .eventCard{ width:160px; } }
 </style>
 </head>
@@ -68,8 +72,10 @@
   <div id="purchasedSkins"></div>
 </div>
 
+<!-- Event bar -->
 <div id="eventBarContainer"></div>
 
+<!-- Deal modal -->
 <div id="dealModal" role="dialog" aria-modal="true">
   <h3 id="dealModalTitle"></h3>
   <img id="dealModalImage" src="" alt="Deal image">
@@ -86,22 +92,43 @@
 <script>
 let currentKey = null;
 let coins = 0, money = 0;
-let owned = [];            
-let purchasedDeals = [];   
+let owned = [];
+let purchasedDeals = [];
 let events = [];
 let currentEventDeals = [];
 let currentDealIndex = 0;
 let dealCountdownInterval = null;
 
 function showMessage(msg){ document.getElementById('message').textContent = msg; }
-function saveData(){ if(!currentKey) return; localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, money, owned})); }
-function savePurchasedDeals(){ if(!currentKey) return; localStorage.setItem('purchasedDeals_'+currentKey, JSON.stringify(purchasedDeals)); }
-function loadPurchasedDeals(){ if(!currentKey){ purchasedDeals = []; return; } purchasedDeals = JSON.parse(localStorage.getItem('purchasedDeals_'+currentKey) || '[]'); }
-function getPublishedSkinsAll(){ return JSON.parse(localStorage.getItem('skinsDataPublished') || '[]'); }
-function getPublishedDeals(){ return JSON.parse(localStorage.getItem('dealDataPublished') || '[]'); }
-function getPublishedEvents(){ return JSON.parse(localStorage.getItem('eventDataPublished') || '[]'); }
 
-/* Render Available Skins */
+function saveData(){
+  if(!currentKey) return;
+  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, money, owned}));
+}
+
+function savePurchasedDeals(){
+  if(!currentKey) return;
+  localStorage.setItem('purchasedDeals_'+currentKey, JSON.stringify(purchasedDeals));
+}
+
+function loadPurchasedDeals(){
+  if(!currentKey){ purchasedDeals = []; return; }
+  purchasedDeals = JSON.parse(localStorage.getItem('purchasedDeals_'+currentKey) || '[]');
+}
+
+function getPublishedSkinsAll(){
+  return JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
+}
+
+function getPublishedDeals(){
+  return JSON.parse(localStorage.getItem('dealDataPublished') || '[]');
+}
+
+function getPublishedEvents(){
+  return JSON.parse(localStorage.getItem('eventDataPublished') || '[]');
+}
+
+/* --- Render Available Skins (coins only) --- */
 function renderSkins(){
   const allSkins = getPublishedSkinsAll() || [];
   const coinsSkins = allSkins.filter(s => s.useFor === 'coins');
@@ -113,7 +140,10 @@ function renderSkins(){
 
   coinsSkins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
-    if(isOwned){ addPurchasedItem(skin.image, skin.name); return; }
+    if(isOwned){
+      addPurchasedItem(skin.image, skin.name);
+      return;
+    }
 
     const container = document.createElement('div'); container.className = 'skinContainer';
     const card = document.createElement('div'); card.className = 'skin grayed';
@@ -132,6 +162,7 @@ function renderSkins(){
     const nameDiv = document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent = skin.name || '';
     const priceDiv = document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent = 'Price: '+(skin.price||0)+' 💠';
     container.appendChild(nameDiv); container.appendChild(priceDiv);
+
     grid.appendChild(container);
   });
 
@@ -141,9 +172,7 @@ function renderSkins(){
   purchasedDeals.forEach(did=>{
     const deal = getPublishedDeals().find(d => d.id === did);
     if(deal){
-      // Deal image not added to user, only skins
-      const dealSkins = allSkins.filter(s => deal.skins.includes(s.id) && owned.includes(s.id));
-      dealSkins.forEach(skin => addPurchasedItem(skin.image, skin.name));
+      // Do NOT add deal image; skins are already added above
     }
   });
 
@@ -159,11 +188,19 @@ function addPurchasedItem(imgSrc, name){
   container.appendChild(img);
 }
 
-/* Key handling */
+/* --- Key handling --- */
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key){ showMessage('Please enter your key'); return; }
   const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
+  if(!data || data.coins === undefined){
+    currentKey = key; // Allow custom key editing
+    coins = data.coins || 0; money = data.money || 0; owned = data.owned || []; purchasedDeals = [];
+    loadPurchasedDeals();
+    showMessage('✅ Key loaded: ' + (data.name || key));
+    renderSkins(); renderEventBar();
+    return;
+  }
   currentKey = key;
   coins = data.coins || 0;
   money = data.money || 0;
@@ -174,20 +211,35 @@ function loadKey(){
   renderEventBar();
 }
 
-function clearKey(){ currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = []; document.getElementById('keyInput').value = ''; showMessage('Key cleared (you can still browse available skins)'); renderSkins(); }
+function clearKey(){
+  currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
+  document.getElementById('keyInput').value = '';
+  showMessage('Key cleared (you can still browse available skins)');
+  renderSkins();
+}
 
-/* Buy coins-skin */
+/* --- Buying a single coins-skin --- */
 function buySkin(skinId, price){
   if(!currentKey){ showMessage('Enter your key first'); return; }
   if(owned.includes(skinId)){ showMessage('You already own this skin'); return; }
   if(coins < price){ showMessage('Not enough coins'); return; }
-  coins -= price; owned.push(skinId); saveData(); showMessage('✅ Skin purchased!'); renderSkins();
+  coins -= price;
+  owned.push(skinId);
+  saveData();
+  showMessage('✅ Skin purchased!');
+  renderSkins();
 }
 
-/* Events & Deals */
-function loadEvents(){ events = getPublishedEvents() || []; renderEventBar(); startEventCountdowns(); }
+/* --- Events & Deals --- */
+function loadEvents(){
+  events = getPublishedEvents() || [];
+  renderEventBar();
+  startEventCountdowns();
+}
+
 function renderEventBar(){
-  const container = document.getElementById('eventBarContainer'); container.innerHTML='';
+  const container = document.getElementById('eventBarContainer');
+  container.innerHTML = '';
   events.forEach((ev, idx) => {
     const card = document.createElement('div'); card.className = 'eventCard';
     const img = document.createElement('img'); img.src = ev.barImage || ev.image || ''; img.alt = ev.name || '';
@@ -208,10 +260,12 @@ function startEventCountdowns(){
       const idx = parseInt(card.dataset.eventIndex);
       const ev = events[idx];
       if(!ev) return;
-      let remaining = ev.status==='coming'?ev.startTime-now:(ev.status==='active'?ev.endTime-now:0);
+      let remaining = 0;
+      if(ev.status === 'coming') remaining = ev.startTime - now;
+      else if(ev.status === 'active') remaining = ev.endTime - now;
       if(remaining <= 0){
-        if(ev.status==='coming') ev.status = 'active';
-        else if(ev.status==='active') ev.status = 'inactive';
+        if(ev.status === 'coming') ev.status = 'active';
+        else if(ev.status === 'active') ev.status = 'inactive';
         localStorage.setItem('eventDataPublished', JSON.stringify(events));
         renderEventBar();
       } else {
@@ -227,52 +281,75 @@ function startEventCountdowns(){
 }
 
 function openEventDeals(ev){
-  if(ev.status==='coming'){ alert('⏳ This event is coming soon'); return; }
+  if(ev.status === 'coming'){ alert('⏳ This event is coming soon'); return; }
   const allDeals = getPublishedDeals();
-  currentEventDeals = allDeals.filter(d => d.eventId === ev.id && d.status==='active');
-  if(!currentEventDeals.length){ alert('No active deals for this event'); return; }
-  currentDealIndex=0; showDeal(currentEventDeals[currentDealIndex]);
+  currentEventDeals = allDeals.filter(d => d.eventId === ev.id && d.status === 'active');
+  if(currentEventDeals.length === 0){ alert('No active deals for this event'); return; }
+  currentDealIndex = 0;
+  showDeal(currentEventDeals[currentDealIndex]);
 }
 
 function showDeal(deal){
   document.getElementById('dealModalTitle').textContent = deal.name;
-  document.getElementById('dealModalDesc').textContent = deal.desc||'';
-  document.getElementById('dealModalImage').src = deal.image||'';
-  document.getElementById('dealModal').style.display='block';
+  document.getElementById('dealModalDesc').textContent = deal.desc || '';
+  document.getElementById('dealModalImage').src = deal.image || '';
+  document.getElementById('dealModal').style.display = 'block';
   updateDealCountdown(deal);
   if(dealCountdownInterval) clearInterval(dealCountdownInterval);
-  dealCountdownInterval = setInterval(()=>updateDealCountdown(deal),1000);
+  dealCountdownInterval = setInterval(()=> updateDealCountdown(deal), 1000);
   const buyBtn = document.getElementById('buyDealBtn');
-  buyBtn.disabled = purchasedDeals.includes(deal.id);
+  const isPurchased = purchasedDeals.includes(deal.id);
+  buyBtn.disabled = !!isPurchased;
   buyBtn.onclick = ()=> buyDeal(deal);
 }
 
 function updateDealCountdown(deal){
-  const now=Date.now(); let remaining=deal.endTime-now; if(remaining<0) remaining=0;
-  const d=Math.floor(remaining/86400000), h=Math.floor((remaining%86400000)/3600000), m=Math.floor((remaining%3600000)/60000), s=Math.floor((remaining%60000)/1000);
+  const now = Date.now();
+  let remaining = deal.endTime - now;
+  if(remaining < 0) remaining = 0;
+  const d = Math.floor(remaining / 86400000);
+  const h = Math.floor((remaining % 86400000) / 3600000);
+  const m = Math.floor((remaining % 3600000) / 60000);
+  const s = Math.floor((remaining % 60000) / 1000);
   document.getElementById('dealCountdown').textContent = `Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
 }
 
-function closeDealModal(){ document.getElementById('dealModal').style.display='none'; if(dealCountdownInterval){ clearInterval(dealCountdownInterval); dealCountdownInterval=null; } }
-function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealIndex-1+currentEventDeals.length)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
-function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealDeals[currentDealIndex]]); }
-
-/* BUY DEAL ONLY ASSIGNS SELECTED SKINS, NOT DEAL IMAGE */
-function buyDeal(deal){
-  if(!currentKey){ showMessage('Enter your key first'); return; }
-  if(money<deal.price){ showMessage('Not enough money'); return; }
-  money-=deal.price;
-  if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
-  if(Array.isArray(deal.skins)&&deal.skins.length){
-    deal.skins.forEach(sid=>{ if(!owned.includes(sid)) owned.push(sid); });
-  }
-  saveData(); savePurchasedDeals();
-  showMessage('✅ Deal purchased — only selected skins added to your inventory');
-  renderSkins(); closeDealModal();
+function closeDealModal(){
+  document.getElementById('dealModal').style.display = 'none';
+  if(dealCountdownInterval) { clearInterval(dealCountdownInterval); dealCountdownInterval = null; }
 }
 
-/* INIT */
-(function init(){ renderSkins(); loadEvents(); })();
+function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex = (currentDealIndex - 1 + currentEventDeals.length) % currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex = (currentDealIndex + 1) % currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+
+/* --- Buy Deal: only add selected skins, no duplicates, no deal image --- */
+function buyDeal(deal){
+  if(!currentKey){ showMessage('Enter your key first'); return; }
+  if(money < deal.price){ showMessage('Not enough money'); return; }
+
+  money -= deal.price;
+
+  if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
+
+  if(Array.isArray(deal.skins) && deal.skins.length){
+    deal.skins.forEach(sid => {
+      if(!owned.includes(sid)) owned.push(sid);
+    });
+  }
+
+  saveData();
+  savePurchasedDeals();
+  showMessage('✅ Deal purchased — selected skins added only once');
+  renderSkins();
+  closeDealModal();
+}
+
+/* Init on load */
+(function init(){
+  renderSkins();
+  loadEvents();
+})();
 </script>
+
 </body>
 </html>
