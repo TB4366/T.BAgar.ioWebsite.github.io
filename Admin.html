@@ -111,9 +111,10 @@ function addNewKey(){
 }
 
 function editKey(storageKey){
+  const data = JSON.parse(localStorage.getItem(storageKey));
   const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
   if(!options) return;
-  const data = JSON.parse(localStorage.getItem(storageKey));
+
   switch(options){
     case '1':
       const action = prompt('Type "add" to add or "remove" to remove');
@@ -371,7 +372,6 @@ function publishDeals(){
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published!');
 }
-
 </script>
 </body>
 </html>
