@@ -12,10 +12,9 @@ table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
 #editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
-.skinRow, .eventRow, .dealRow { margin-bottom:10px; }
+.skinRow, .eventRow, .dealRow { margin-bottom:10px; display:flex; align-items:center; gap:5px; }
 .skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select { margin:3px; }
-.adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
-.skinPreview { width:60px; height:60px; object-fit:cover; border:1px solid #0af; border-radius:6px; margin-right:4px; }
+.skinPreview { width:50px; height:50px; object-fit:cover; border:1px solid #0af; border-radius:6px; }
 </style>
 </head>
 <body>
@@ -173,7 +172,7 @@ function renderSkinEditor(){
       <input type="file" accept="image/*">
       <button>Delete</button>
     `;
-    // inline save for changes
+    // inline save
     div.querySelector('.skinName').onchange = ()=> saveSkinInline(skin.id, div);
     div.querySelector('.skinPrice').onchange = ()=> saveSkinInline(skin.id, div);
     div.querySelector('.skinUseFor').onchange = ()=> saveSkinInline(skin.id, div);
@@ -217,35 +216,153 @@ function addSkin(){
 }
 
 function deleteSkin(id){
-  if(!confirm('Delete this skin?')) return;
   const skins = getSkins().filter(s=>s.id!==id);
   localStorage.setItem('skinsData', JSON.stringify(skins));
   renderSkinEditor();
-  showMessage('✅ Skin deleted (users keep purchased skins)');
 }
 
 // =======================
-// Event Editor & Deal Editor (unchanged)
+// Event Editor
 // =======================
 function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
 function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
-function renderEventEditor(){ /* ... keep existing code ... */ }
-function addEvent(){ /* ... */ }
-function deleteEvent(index){ /* ... */ }
-function uploadEventImage(input,index){ /* ... */ }
-function publishEvents(){ /* ... */ }
+function renderEventEditor(){
+  const container=document.getElementById('eventsList'); container.innerHTML='';
+  getEvents().forEach((event,index)=>{
+    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
+    const startVal=new Date(event.startTime).toISOString().slice(0,16);
+    const endVal=new Date(event.endTime).toISOString().slice(0,16);
+    div.innerHTML=`
+      <input class="eventName" value="${event.name}">
+      <input class="eventDesc" value="${event.desc}">
+      <select class="eventStatus">
+        <option value="active" ${event.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <input class="eventStart" type="datetime-local" value="${startVal}">
+      <input class="eventEnd" type="datetime-local" value="${endVal}">
+      <input class="eventImage" value="${event.image||''}">
+      <input type="file">
+      <button>Delete</button>
+    `;
+    // inline save
+    div.querySelectorAll('input,select').forEach(inp=>{
+      inp.onchange = ()=> saveEventInline(index, div);
+    });
+    // file upload
+    div.querySelector('input[type=file]').onchange=(e)=> uploadEventImage(e,index,div);
+    // delete
+    div.querySelector('button').onclick = ()=> deleteEvent(index);
+    container.appendChild(div);
+  });
+}
 
+function saveEventInline(index,div){
+  const events = getEvents();
+  const ev = events[index];
+  ev.name = div.querySelector('.eventName').value;
+  ev.desc = div.querySelector('.eventDesc').value;
+  ev.status = div.querySelector('.eventStatus').value;
+  ev.startTime = new Date(div.querySelector('.eventStart').value).getTime();
+  ev.endTime = new Date(div.querySelector('.eventEnd').value).getTime();
+  ev.image = div.querySelector('.eventImage').value;
+  localStorage.setItem('eventData', JSON.stringify(events));
+}
+
+function uploadEventImage(input,index,div){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    div.querySelector('.eventImage').value=e.target.result;
+    saveEventInline(index,div);
+  }
+  reader.readAsDataURL(file);
+}
+
+function addEvent(){
+  const events=getEvents();
+  events.push({id:'event'+Date.now(),name:'New Event',desc:'Desc',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:''});
+  localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function deleteEvent(index){
+  const events = getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events));
+  renderEventEditor();
+}
+
+function publishEvents(){ localStorage.setItem('eventDataPublished', localStorage.getItem('eventData')); alert('✅ Events published'); }
+
+// =======================
+// Deal Editor
+// =======================
 function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
 function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
-function renderDealEditor(){ /* ... keep existing code ... */ }
-function addDeal(){ /* ... */ }
-function uploadDealImage(input,index){ /* ... */ }
-function deleteDeal(index){ /* ... */ }
-function publishDeals(){ /* ... */ }
+function renderDealEditor(){
+  const container = document.getElementById('dealsList'); container.innerHTML='';
+  const events = getEvents();
+  const skins = getSkins();
+  getDeals().forEach((deal,index)=>{
+    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
+    const startVal=new Date(deal.startTime).toISOString().slice(0,16);
+    const endVal=new Date(deal.endTime).toISOString().slice(0,16);
+    const eventOptions = events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
+    const skinOptions = skins.map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
+    div.innerHTML=`
+      <input class="dealName" value="${deal.name}">
+      <input class="dealDesc" value="${deal.desc}">
+      <input class="dealPrice" type="number" value="${deal.price||0}">
+      <select class="dealStatus">
+        <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
+        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
+        <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
+      </select>
+      <input class="dealStart" type="datetime-local" value="${startVal}">
+      <input class="dealEnd" type="datetime-local" value="${endVal}">
+      <select class="dealEvent">${eventOptions}</select>
+      <input class="dealImage" value="${deal.image||''}" disabled>
+      <label>Assign Skins:</label>
+      <select class="dealSkins" multiple style="width:200px;">${skinOptions}</select>
+      <button>Delete</button>
+    `;
+    // inline save
+    div.querySelectorAll('input,select').forEach(inp=>{
+      inp.onchange = ()=> saveDealInline(index,div);
+    });
+    div.querySelector('button').onclick = ()=> deleteDeal(index);
+    container.appendChild(div);
+  });
+}
 
-// =======================
-// Init
-// =======================
+function saveDealInline(index,div){
+  const deals = getDeals();
+  const deal = deals[index];
+  deal.name = div.querySelector('.dealName').value;
+  deal.desc = div.querySelector('.dealDesc').value;
+  deal.price = parseFloat(div.querySelector('.dealPrice').value)||0;
+  deal.status = div.querySelector('.dealStatus').value;
+  deal.startTime = new Date(div.querySelector('.dealStart').value).getTime();
+  deal.endTime = new Date(div.querySelector('.dealEnd').value).getTime();
+  deal.eventId = div.querySelector('.dealEvent').value;
+  deal.skins = [...div.querySelector('.dealSkins').selectedOptions].map(o=>o.value);
+  localStorage.setItem('dealData', JSON.stringify(deals));
+}
+
+function addDeal(){
+  const deals = getDeals();
+  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',skins:[]});
+  localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function deleteDeal(index){
+  const deals = getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals));
+  renderDealEditor();
+}
+
+function publishDeals(){ localStorage.setItem('dealDataPublished', localStorage.getItem('dealData')); alert('✅ Deals published'); }
+
 loadAllKeys();
 </script>
 </body>
