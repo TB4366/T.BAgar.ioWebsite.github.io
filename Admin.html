@@ -110,6 +110,7 @@ function addNewKey(){
   loadAllKeys();
 }
 
+// === FIXED editKey ===
 function editKey(storageKey){
   const data = JSON.parse(localStorage.getItem(storageKey));
   const options = prompt('Choose an option:\n1 - Manage Coins/Money\n2 - Change Key\n3 - Change Name');
@@ -136,6 +137,7 @@ function editKey(storageKey){
       const newKey = prompt('Enter new key:', storageKey.replace('skinshop_',''));
       if(!newKey) return;
       const newStorageKey = 'skinshop_'+newKey;
+      // Geen invalid key check meer, overschrijven direct
       localStorage.setItem(newStorageKey, JSON.stringify(data));
       if(newStorageKey!==storageKey) localStorage.removeItem(storageKey);
       showMessage('✅ Key updated');
@@ -372,6 +374,7 @@ function publishDeals(){
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
   alert('✅ Deals published!');
 }
+
 </script>
 </body>
 </html>
