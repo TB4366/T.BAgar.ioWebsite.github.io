@@ -11,12 +11,12 @@ button { cursor:pointer; }
 table { border-collapse: collapse; width:100%; margin-top:10px; }
 th, td { border:1px solid #555; padding:5px; text-align:left; }
 th { background:#333; }
-#editor, #eventEditor, #dealEditor, #userSkinEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
-.skinRow, .eventRow, .dealRow, .userSkinRow { margin-bottom:10px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-.skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select, .userSkinRow img { margin:3px; cursor:pointer; }
-.userSkinRow img { width:64px; height:64px; border-radius:50%; border:2px solid transparent; }
-.userSkinRow img.selected { border-color:#0af; opacity:1; }
-.userSkinRow img.locked { opacity:0.5; }
+.skinThumb { width:40px; height:40px; border-radius:50%; margin:2px; cursor:pointer; border:2px solid transparent; }
+.skinThumb.selected { border-color:#0af; opacity:1; }
+.skinThumb.locked { opacity:0.4; }
+#editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
+.skinRow, .eventRow, .dealRow { margin-bottom:10px; }
+.skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select { margin:3px; }
 .adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
 </style>
 </head>
@@ -40,18 +40,6 @@ th { background:#333; }
   <th>Actions</th>
 </tr>
 </table>
-
-<!-- User Skin Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openUserSkinEditor()">Manage User Skins</button>
-</div>
-<div id="userSkinEditor">
-  <h2>User Skins</h2>
-  <select id="userSelect" onchange="loadUserSkins()">
-    <option value="">Select User</option>
-  </select>
-  <div id="userSkinsContainer" class="userSkinRow"></div>
-</div>
 
 <!-- Skin Editor -->
 <div style="margin-top:20px;">
@@ -89,98 +77,108 @@ th { background:#333; }
 
 <script>
 // =======================
-// Key Management
+// Key Management (Inline Edit)
 // =======================
+function showMessage(msg){ document.getElementById('message').textContent = msg; }
+
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
-  const userSelect = document.getElementById('userSelect');
-  table.innerHTML='<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
-  userSelect.innerHTML='<option value="">Select User</option>';
+  table.innerHTML = '<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
+
+  const skinsData = JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
+
   for(let i=0;i<localStorage.length;i++){
     const k = localStorage.key(i);
     if(k.startsWith('skinshop_')){
       const data = JSON.parse(localStorage.getItem(k));
       const row = table.insertRow();
-      row.insertCell(0).innerText = k.replace('skinshop_','');
-      row.insertCell(1).innerText = data.name || '';
-      row.insertCell(2).innerText = data.coins || 0;
-      row.insertCell(3).innerText = data.money ? data.money.toFixed(2) : '0.00';
-      row.insertCell(4).innerText = data.owned ? data.owned.join(', ') : '';
+      row.dataset.storageKey = k;
+
+      // Key
+      const keyCell = row.insertCell(0);
+      keyCell.innerHTML = `<input value="${k.replace('skinshop_','')}" style="width:80px" onchange="updateKey('${k}', this.value)">`;
+
+      // Name
+      const nameCell = row.insertCell(1);
+      nameCell.innerHTML = `<input value="${data.name || ''}" onchange="updateField('${k}','name',this.value)">`;
+
+      // Coins
+      const coinsCell = row.insertCell(2);
+      coinsCell.innerHTML = `<input type="number" value="${data.coins||0}" style="width:60px" onchange="updateField('${k}','coins',parseInt(this.value))">`;
+
+      // Money
+      const moneyCell = row.insertCell(3);
+      moneyCell.innerHTML = `<input type="number" step="0.01" value="${data.money||0}" style="width:60px" onchange="updateField('${k}','money',parseFloat(this.value))">`;
+
+      // Purchased Skins
+      const skinsCell = row.insertCell(4);
+      skinsCell.innerHTML = '';
+      const userOwned = data.owned || [];
+      skinsData.forEach(skin=>{
+        const img = document.createElement('img');
+        img.src = skin.image || '';
+        img.title = skin.name;
+        img.className = 'skinThumb '+(userOwned.includes(skin.id)?'selected':'locked');
+        img.onclick = ()=> toggleUserSkin(k, skin.id, img);
+        skinsCell.appendChild(img);
+      });
+
+      // Actions
       const actions = row.insertCell(5);
-      actions.innerHTML=`
-        <button onclick="editKey('${k}')">Edit</button>
-        <button onclick="deleteKey('${k}')">Delete</button>
-      `;
-      userSelect.innerHTML += `<option value="${k}">${data.name || k.replace('skinshop_','')}</option>`;
+      actions.innerHTML = `<button onclick="deleteKey('${k}')">Delete</button>`;
     }
   }
 }
-
-function showMessage(msg){ document.getElementById('message').textContent=msg; }
 
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
   const key = Math.random().toString(36).substring(2,10);
   localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, money:0, owned:[]}));
-  showMessage('✅ New key created: '+key);
   document.getElementById('newName').value='';
+  showMessage('✅ New key created: '+key);
   loadAllKeys();
 }
 
-function editKey(storageKey){
-  const data = JSON.parse(localStorage.getItem(storageKey));
-  const coins = prompt('Enter coins:', data.coins||0);
-  if(coins!==null) data.coins=parseFloat(coins)||0;
-  const money = prompt('Enter money:', data.money||0);
-  if(money!==null) data.money=parseFloat(money)||0;
-  const name = prompt('Enter name:', data.name||'');
-  if(name!==null) data.name = name;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  loadAllKeys();
+function updateKey(oldKey, newKey){
+  if(!newKey) return showMessage('Key cannot be empty');
+  const data = JSON.parse(localStorage.getItem(oldKey));
+  const newStorageKey = 'skinshop_' + newKey;
+  localStorage.setItem(newStorageKey, JSON.stringify(data));
+  if(newStorageKey!==oldKey) localStorage.removeItem(oldKey);
   showMessage('✅ Key updated');
+  loadAllKeys();
 }
 
+function updateField(key, field, value){
+  const data = JSON.parse(localStorage.getItem(key));
+  data[field] = value;
+  localStorage.setItem(key, JSON.stringify(data));
+  showMessage('✅ Field updated');
+}
+
+function toggleUserSkin(key, skinId, imgEl){
+  const data = JSON.parse(localStorage.getItem(key));
+  if(!data.owned) data.owned=[];
+  if(data.owned.includes(skinId)){
+    data.owned = data.owned.filter(s=>s!==skinId);
+    imgEl.classList.remove('selected');
+    imgEl.classList.add('locked');
+  } else {
+    data.owned.push(skinId);
+    imgEl.classList.remove('locked');
+    imgEl.classList.add('selected');
+  }
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// Delete key
 function deleteKey(storageKey){
   if(confirm('Are you sure you want to delete this key?')){
     localStorage.removeItem(storageKey);
-    loadAllKeys();
     showMessage('✅ Key deleted');
+    loadAllKeys();
   }
-}
-
-// =======================
-// User Skin Editor
-// =======================
-function openUserSkinEditor(){
-  document.getElementById('userSkinEditor').style.display='block';
-  loadAllKeys();
-}
-function loadUserSkins(){
-  const key = document.getElementById('userSelect').value;
-  const container = document.getElementById('userSkinsContainer');
-  container.innerHTML='';
-  if(!key) return;
-  const userData = JSON.parse(localStorage.getItem(key));
-  const allSkins = JSON.parse(localStorage.getItem('skinsDataPublished')||'[]');
-  allSkins.forEach(skin=>{
-    const img = document.createElement('img');
-    img.src = skin.image||'';
-    img.alt = skin.name||'';
-    img.title = skin.name;
-    img.className = userData.owned.includes(skin.id)?'selected':'locked';
-    img.onclick = ()=>{
-      if(userData.owned.includes(skin.id)){
-        userData.owned = userData.owned.filter(s=>s!==skin.id);
-        img.className='locked';
-      } else {
-        userData.owned.push(skin.id);
-        img.className='selected';
-      }
-      localStorage.setItem(key, JSON.stringify(userData));
-    };
-    container.appendChild(img);
-  });
 }
 
 // =======================
@@ -394,7 +392,7 @@ function publishDeals(){
   alert('✅ Deals published!');
 }
 
-// =======================
+// Initialize
 loadAllKeys();
 </script>
 </body>
