@@ -77,10 +77,13 @@ th { background:#333; }
 
 <script>
 // =======================
-// Key Management (Inline Edit)
+// Utility & Message
 // =======================
 function showMessage(msg){ document.getElementById('message').textContent = msg; }
 
+// =======================
+// Key Management
+// =======================
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
   table.innerHTML = '<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
@@ -130,6 +133,7 @@ function loadAllKeys(){
   }
 }
 
+// Add Key
 function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
@@ -140,6 +144,7 @@ function addNewKey(){
   loadAllKeys();
 }
 
+// Update Key
 function updateKey(oldKey, newKey){
   if(!newKey) return showMessage('Key cannot be empty');
   const data = JSON.parse(localStorage.getItem(oldKey));
@@ -150,6 +155,7 @@ function updateKey(oldKey, newKey){
   loadAllKeys();
 }
 
+// Update Field
 function updateField(key, field, value){
   const data = JSON.parse(localStorage.getItem(key));
   data[field] = value;
@@ -157,6 +163,7 @@ function updateField(key, field, value){
   showMessage('✅ Field updated');
 }
 
+// Toggle Skin
 function toggleUserSkin(key, skinId, imgEl){
   const data = JSON.parse(localStorage.getItem(key));
   if(!data.owned) data.owned=[];
