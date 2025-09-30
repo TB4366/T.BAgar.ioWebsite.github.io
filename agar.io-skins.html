@@ -1,354 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<title>Skin Shop</title>
-<style>
-  body { font-family: Arial, Helvetica, sans-serif; background:#0b0b0b; color:#eee; padding:20px; text-align:center; }
-  h1 { color:#0af; margin-bottom:6px; }
-  .top-bar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:16px; }
-  input, button, select { padding:8px 12px; border-radius:999px; border:0; font-size:14px; }
-  button { cursor:pointer; background:#0af; color:#000; }
-  .skins { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:10px; }
-  .skinContainer { width:160px; display:flex; flex-direction:column; align-items:center; }
-  .skin { width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; background:#222; display:flex; align-items:center; justify-content:center; transition:transform .12s, filter .12s; }
-  .skin img { width:100%; height:100%; object-fit:cover; user-select:none; pointer-events:none; display:block; }
-  .skin:hover { transform:translateY(-4px); }
-  .grayed img { filter:grayscale(100%); opacity:.45; }
-  .lock { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.6); padding:6px; border-radius:50%; font-size:16px; }
-  .skinName { margin-top:8px; font-size:14px; }
-  .skinPrice { color:#ddd; font-size:13px; margin-top:4px; }
-  #message { color:yellow; margin-bottom:8px; }
-  #purchasedTitle { margin-top:28px; font-size:18px; text-decoration:underline; }
-  #purchasedSkins { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:10px; }
-  #purchasedSkins img { width:96px; height:96px; border-radius:50%; border:2px solid #0af; object-fit:cover; }
-
-  /* currency and small layout */
-  #currency { display:flex; gap:18px; align-items:center; justify-content:flex-end; font-size:16px; }
-  .currencyItem { display:flex; gap:6px; align-items:center; background:rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; }
-
-  /* event bar */
-  #eventBarContainer { position:fixed; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:999; max-width:90%; overflow:auto; padding:6px; }
-  .eventCard { width:220px; height:2.2cm; border:2px solid #0af; border-radius:6px; overflow:hidden; position:relative; cursor:pointer; background:#111; }
-  .eventCard img { width:100%; height:100%; object-fit:cover; display:block; }
-  .eventCountdown { position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.6); color:#fff; font-size:12px; text-align:center; padding:4px 2px; }
-
-  /* deal modal */
-  #dealModal { display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); background:#151515; color:#fff; border:2px solid #0af; padding:18px; border-radius:10px; z-index:2000; width:320px; max-width:90%; }
-  #dealModal img { width:100%; height:160px; object-fit:cover; border-radius:8px; }
-  #dealCountdown { font-weight:600; margin-top:8px; }
-  #dealNav { display:flex; justify-content:space-between; margin-top:10px; gap:8px; }
-  #dealModal button { margin-top:10px; }
-
-  /* small responsiveness */
-  @media (max-width:520px){ .skinContainer{ width:45%; } .eventCard{ width:160px; } }
-</style>
+  <meta charset="UTF-8">
+  <title>Skin Shop - User</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#fff; text-align:center; padding:20px; }
+    h1 { color:#0af; }
+    .skin, .deal { display:inline-block; margin:10px; padding:10px; border:1px solid #555; border-radius:8px; background:#222; width:150px; }
+    .skin img, .deal img { width:100px; height:100px; object-fit:cover; border-radius:6px; }
+    .owned { border:2px solid lime; }
+    .locked { opacity:0.5; }
+    button { margin-top:5px; padding:5px 10px; border:none; border-radius:4px; background:#0af; color:#fff; cursor:pointer; }
+    #eventBar { margin-top:20px; display:flex; justify-content:center; gap:10px; overflow-x:auto; }
+    .eventCard { width:160px; border:1px solid #0af; border-radius:6px; padding:5px; background:#222; cursor:pointer; position:relative; }
+    .eventCard img { width:100%; height:80px; object-fit:cover; border-radius:4px; }
+    .eventCountdown { position:absolute; bottom:4px; left:4px; right:4px; background:rgba(0,0,0,0.6); font-size:12px; border-radius:3px; color:#fff; }
+  </style>
 </head>
 <body>
 
-<h1>Skin Shop</h1>
-
-<div class="top-bar">
-  <div id="infoText">Contact admin to top up coins / money</div>
-  <div id="currency">
-    <div class="currencyItem">💰 <span id="money">0.00</span></div>
-    <div class="currencyItem">🪙 <span id="coins">0</span></div>
+  <h1>Skin Shop</h1>
+  <div>
+    <input id="keyInput" placeholder="Enter your key">
+    <button onclick="login()">Login</button>
   </div>
-</div>
 
-<div id="message">Enter your key to load your account (or browse available coins skins below)</div>
-
-<div style="margin:8px 0 12px;">
-  <input id="keyInput" placeholder="Enter your key here">
-  <button onclick="loadKey()">Load Key</button>
-  <button onclick="clearKey()">Clear</button>
-</div>
-
-<h3>Available Skins</h3>
-<div class="skins" id="skinsGrid"></div>
-
-<div id="purchasedSection">
-  <div id="purchasedTitle">With these skins and deals you have purchased:</div>
-  <div id="purchasedSkins"></div>
-</div>
-
-<!-- Event bar -->
-<div id="eventBarContainer"></div>
-
-<!-- Deal modal -->
-<div id="dealModal" role="dialog" aria-modal="true">
-  <h3 id="dealModalTitle"></h3>
-  <img id="dealModalImage" src="" alt="Deal image">
-  <p id="dealModalDesc" style="margin:8px 0 0;"></p>
-  <div id="dealCountdown"></div>
-  <div id="dealNav">
-    <button onclick="prevDeal()">⬅ Previous</button>
-    <button onclick="nextDeal()">Next ➡</button>
+  <div id="userInfo" style="margin-top:20px; display:none;">
+    <h2>Welcome, <span id="userName"></span></h2>
+    <p>Coins: <span id="userCoins">0</span> | Money: $<span id="userMoney">0.00</span></p>
   </div>
-  <button id="buyDealBtn">Buy Deal</button>
-  <button onclick="closeDealModal()" style="margin-left:8px;">Close</button>
-</div>
+
+  <h2>Available Skins</h2>
+  <div id="skins"></div>
+
+  <h2>Deals</h2>
+  <div id="deals"></div>
+
+  <h2>Events</h2>
+  <div id="eventBar"></div>
 
 <script>
 let currentKey = null;
-let coins = 0, money = 0;
-let owned = [];
-let purchasedDeals = [];
-let events = [];
-let currentEventDeals = [];
-let currentDealIndex = 0;
-let dealCountdownInterval = null;
+const API_BASE = "http://localhost:3000/api"; // Backend endpoint
 
-function showMessage(msg){ document.getElementById('message').textContent = msg; }
+async function login(){
+  const key = document.getElementById("keyInput").value.trim();
+  if(!key) return alert("Enter a key!");
 
-function saveData(){
-  if(!currentKey) return;
-  localStorage.setItem('skinshop_'+currentKey, JSON.stringify({coins, money, owned}));
-}
+  try {
+    const res = await fetch(`${API_BASE}/keys/${key}`);
+    if(!res.ok) throw new Error("Invalid key");
+    const data = await res.json();
 
-function savePurchasedDeals(){
-  if(!currentKey) return;
-  localStorage.setItem('purchasedDeals_'+currentKey, JSON.stringify(purchasedDeals));
-}
+    currentKey = key;
+    document.getElementById("userInfo").style.display="block";
+    document.getElementById("userName").textContent = data.name;
+    document.getElementById("userCoins").textContent = data.coins;
+    document.getElementById("userMoney").textContent = data.money.toFixed(2);
 
-function loadPurchasedDeals(){
-  if(!currentKey){ purchasedDeals = []; return; }
-  purchasedDeals = JSON.parse(localStorage.getItem('purchasedDeals_'+currentKey) || '[]');
-}
-
-function getPublishedSkinsAll(){
-  return JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
-}
-
-function getPublishedDeals(){
-  return JSON.parse(localStorage.getItem('dealDataPublished') || '[]');
-}
-
-function getPublishedEvents(){
-  return JSON.parse(localStorage.getItem('eventDataPublished') || '[]');
-}
-
-/* --- Render Available Skins --- */
-function renderSkins(){
-  const allSkins = getPublishedSkinsAll() || [];
-  const coinsSkins = allSkins.filter(s => s.useFor === 'coins');
-
-  const grid = document.getElementById('skinsGrid');
-  const purchasedContainer = document.getElementById('purchasedSkins');
-  grid.innerHTML = '';
-  purchasedContainer.innerHTML = '';
-
-  coinsSkins.forEach(skin=>{
-    const isOwned = owned.includes(skin.id);
-    if(isOwned){
-      addPurchasedItem(skin.image, skin.name);
-      return;
-    }
-    const container = document.createElement('div'); container.className = 'skinContainer';
-    const card = document.createElement('div'); card.className = 'skin grayed';
-    const img = document.createElement('img'); img.src = skin.image || ''; img.alt = skin.name || 'skin';
-    card.appendChild(img);
-
-    const lock = document.createElement('div'); lock.className = 'lock'; lock.textContent = '🔒';
-    card.appendChild(lock);
-
-    card.addEventListener('click', ()=>{
-      if(!currentKey){ showMessage('Enter your key first to buy skins'); return; }
-      buySkin(skin.id, skin.price);
-    });
-
-    container.appendChild(card);
-    const nameDiv = document.createElement('div'); nameDiv.className='skinName'; nameDiv.textContent = skin.name || '';
-    const priceDiv = document.createElement('div'); priceDiv.className='skinPrice'; priceDiv.textContent = 'Price: '+(skin.price||0)+' 💠';
-    container.appendChild(nameDiv); container.appendChild(priceDiv);
-
-    grid.appendChild(container);
-  });
-
-  // deal skins owned
-  const dealSkinsOwned = allSkins.filter(s => s.useFor === 'deals' && owned.includes(s.id));
-  dealSkinsOwned.forEach(skin => addPurchasedItem(skin.image, skin.name));
-
-  purchasedDeals.forEach(did=>{
-    const deal = getPublishedDeals().find(d => d.id === did);
-    if(deal){
-      deal.skins.forEach(sid => {
-        const skin = allSkins.find(s=>s.id===sid);
-        if(skin) addPurchasedItem(skin.image, skin.name);
-      });
-    }
-  });
-
-  document.getElementById('coins').textContent = coins;
-  document.getElementById('money').textContent = money.toFixed(2);
-}
-
-function addPurchasedItem(imgSrc, name){
-  const container = document.getElementById('purchasedSkins');
-  const img = document.createElement('img');
-  img.src = imgSrc || '';
-  img.alt = name || '';
-  container.appendChild(img);
-}
-
-/* --- Key Handling --- */
-function loadKey(){
-  const key = document.getElementById('keyInput').value.trim();
-  if(!key){ showMessage('Please enter your key'); return; }
-  const data = JSON.parse(localStorage.getItem('skinshop_'+key) || '{}');
-  if(!data || data.coins === undefined){
-    showMessage('❌ Invalid key!');
-    currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
-    renderSkins(); return;
+    loadSkins(data);
+    loadDeals(data);
+    loadEvents(data);
+  } catch(err){
+    alert("❌ Invalid key");
   }
-  currentKey = key;
-  coins = data.coins || 0;
-  money = data.money || 0;
-  owned = data.owned || [];
-  loadPurchasedDeals();
-  showMessage('✅ Key loaded: ' + (data.name || key));
-  renderSkins();
-  renderEventBar();
 }
 
-function clearKey(){
-  currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
-  document.getElementById('keyInput').value = '';
-  showMessage('Key cleared (you can still browse available skins)');
-  renderSkins();
-}
+async function loadSkins(userData){
+  const res = await fetch(`${API_BASE}/skins`);
+  const skins = await res.json();
+  const container = document.getElementById("skins");
+  container.innerHTML="";
 
-/* --- Buy coins skin --- */
-function buySkin(skinId, price){
-  if(!currentKey){ showMessage('Enter your key first'); return; }
-  if(owned.includes(skinId)){ showMessage('You already own this skin'); return; }
-  if(coins < price){ showMessage('Not enough coins'); return; }
-  coins -= price;
-  owned.push(skinId);
-  saveData();
-  showMessage('✅ Skin purchased!');
-  renderSkins();
-}
-
-/* --- Events & Deals --- */
-function loadEvents(){
-  events = getPublishedEvents() || [];
-  renderEventBar();
-  startEventCountdowns();
-}
-
-function renderEventBar(){
-  const container = document.getElementById('eventBarContainer');
-  container.innerHTML = '';
-  events.forEach((ev, idx) => {
-    const activeDeals = getPublishedDeals().filter(d=>d.eventId===ev.id && d.status==='active' && (!purchasedDeals.includes(d.id)));
-    if(activeDeals.length===0) return;
-    const card = document.createElement('div'); card.className = 'eventCard';
-    const img = document.createElement('img'); img.src = ev.barImage||ev.image||''; img.alt = ev.name||'';
-    card.appendChild(img);
-    const countdown = document.createElement('div'); countdown.className = 'eventCountdown'; countdown.textContent='';
-    card.appendChild(countdown);
-    card.dataset.eventIndex = idx;
-    card.addEventListener('click', ()=> openEventDeals(ev));
-    container.appendChild(card);
+  skins.forEach(skin=>{
+    const owned = userData.owned.includes(skin.id);
+    const div = document.createElement("div");
+    div.className = "skin " + (owned ? "owned":"locked");
+    div.innerHTML = `
+      <img src="${skin.image}" alt="">
+      <p>${skin.name}</p>
+      <p>${skin.price} coins</p>
+      ${owned ? "<p>Owned</p>" : `<button onclick="buySkin('${skin.id}',${skin.price})">Buy</button>`}
+    `;
+    container.appendChild(div);
   });
 }
 
-function startEventCountdowns(){
-  setInterval(()=>{
-    const now = Date.now();
-    const container = document.getElementById('eventBarContainer');
-    Array.from(container.children).forEach(card=>{
-      const idx = parseInt(card.dataset.eventIndex);
-      const ev = events[idx];
-      if(!ev) return;
-      let remaining=0;
-      if(ev.status==='coming') remaining=ev.startTime-now;
-      else if(ev.status==='active') remaining=ev.endTime-now;
-      if(remaining<=0){
-        if(ev.status==='coming') ev.status='active';
-        else if(ev.status==='active') ev.status='inactive';
-        localStorage.setItem('eventDataPublished', JSON.stringify(events));
-        renderEventBar();
-      } else {
-        const d=Math.floor(remaining/86400000);
-        const h=Math.floor((remaining%86400000)/3600000);
-        const m=Math.floor((remaining%3600000)/60000);
-        const s=Math.floor((remaining%60000)/1000);
-        const countdown = card.querySelector('.eventCountdown');
-        if(countdown) countdown.textContent=`${d}d ${h}h ${m}m ${s}s`;
-      }
-    });
-  },1000);
+async function buySkin(skinId, price){
+  if(!currentKey) return;
+  const res = await fetch(`${API_BASE}/buy-skin`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ key: currentKey, skinId, price })
+  });
+  const data = await res.json();
+  if(data.error) return alert("❌ " + data.error);
+  alert("✅ Skin purchased!");
+  login();
 }
 
-function openEventDeals(ev){
-  if(ev.status==='coming'){ alert('⏳ This event is coming soon'); return; }
-  currentEventDeals = getPublishedDeals().filter(d => d.eventId===ev.id && d.status==='active' && !purchasedDeals.includes(d.id));
-  if(currentEventDeals.length===0){ alert('No active deals for this event'); return; }
-  currentDealIndex = 0;
-  showDeal(currentEventDeals[currentDealIndex]);
+async function loadDeals(userData){
+  const res = await fetch(`${API_BASE}/deals`);
+  const deals = await res.json();
+  const container = document.getElementById("deals");
+  container.innerHTML="";
+
+  deals.forEach(deal=>{
+    const alreadyBought = userData.deals && userData.deals.includes(deal.id);
+    if(alreadyBought) return;
+
+    const div = document.createElement("div");
+    div.className = "deal";
+    div.innerHTML = `
+      <img src="${deal.image}" alt="">
+      <p>${deal.name}</p>
+      <p>${deal.price} coins</p>
+      <button onclick="buyDeal('${deal.id}',${deal.price})">Buy Deal</button>
+    `;
+    container.appendChild(div);
+  });
 }
 
-/* Deal modal */
-function showDeal(deal){
-  document.getElementById('dealModalTitle').textContent = deal.name;
-  document.getElementById('dealModalDesc').textContent = deal.desc||'';
-  document.getElementById('dealModalImage').src = deal.image||'';
-  document.getElementById('dealModal').style.display = 'block';
-  updateDealCountdown(deal);
-  if(dealCountdownInterval) clearInterval(dealCountdownInterval);
-  dealCountdownInterval = setInterval(()=>updateDealCountdown(deal),1000);
-  const buyBtn = document.getElementById('buyDealBtn');
-  buyBtn.disabled = purchasedDeals.includes(deal.id);
-  buyBtn.onclick = ()=> buyDeal(deal);
+async function buyDeal(dealId, price){
+  if(!currentKey) return;
+  const res = await fetch(`${API_BASE}/buy-deal`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ key: currentKey, dealId, price })
+  });
+  const data = await res.json();
+  if(data.error) return alert("❌ " + data.error);
+  alert("✅ Deal purchased!");
+  login();
 }
 
-function updateDealCountdown(deal){
-  const now = Date.now();
-  let remaining = deal.endTime - now;
-  if(remaining<0) remaining=0;
-  const d = Math.floor(remaining/86400000);
-  const h = Math.floor((remaining%86400000)/3600000);
-  const m = Math.floor((remaining%3600000)/60000);
-  const s = Math.floor((remaining%60000)/1000);
-  document.getElementById('dealCountdown').textContent=`Ends in: ${d}d ${h}h ${m}m ${s}s - Price: ${deal.price} 💰`;
+async function loadEvents(userData){
+  const res = await fetch(`${API_BASE}/events`);
+  const events = await res.json();
+  const container = document.getElementById("eventBar");
+  container.innerHTML="";
+
+  events.forEach(ev=>{
+    const div = document.createElement("div");
+    div.className = "eventCard";
+    div.innerHTML = `
+      <img src="${ev.image}" alt="">
+      <div class="eventCountdown"></div>
+      <p>${ev.name}</p>
+    `;
+    container.appendChild(div);
+
+    setInterval(()=>{
+      const now = Date.now();
+      let remaining = ev.status==="coming" ? ev.startTime-now : ev.endTime-now;
+      if(remaining<0) remaining=0;
+      const d = Math.floor(remaining/86400000);
+      const h = Math.floor((remaining%86400000)/3600000);
+      const m = Math.floor((remaining%3600000)/60000);
+      const s = Math.floor((remaining%60000)/1000);
+      div.querySelector(".eventCountdown").textContent = `${d}d ${h}h ${m}m ${s}s`;
+    },1000);
+  });
 }
-
-function closeDealModal(){
-  document.getElementById('dealModal').style.display='none';
-  if(dealCountdownInterval){ clearInterval(dealCountdownInterval); dealCountdownInterval=null; }
-}
-
-function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealDeals.length+currentDealIndex-1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
-function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
-
-/* Buy deal: only selected skins assigned, deal stored as purchased */
-function buyDeal(deal){
-  if(!currentKey){ showMessage('Enter your key first'); return; }
-  if(money<deal.price){ showMessage('Not enough money'); return; }
-  money-=deal.price;
-  if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
-
-  const allSkins = getPublishedSkinsAll();
-  if(Array.isArray(deal.skins)){
-    deal.skins.forEach(sid=>{
-      if(!owned.includes(sid)) owned.push(sid);
-    });
-  }
-
-  saveData();
-  savePurchasedDeals();
-  showMessage('✅ Deal purchased — skins added to your inventory');
-  renderSkins();
-  closeDealModal();
-}
-
-/* Init */
-(function init(){
-  renderSkins();
-  loadEvents();
-})();
 </script>
 
 </body>
