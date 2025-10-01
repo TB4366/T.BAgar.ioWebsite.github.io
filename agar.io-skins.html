@@ -106,10 +106,49 @@ function savePublishedKeys(keys){
   localStorage.setItem('skinshop_publishedKeys', JSON.stringify(keys));
 }
 
-function loadKey(){
+async function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key){ showMessage('Please enter your key'); return; }
 
+  // FIRST: try to load from server (so key works on ALL devices)
+  // Server endpoint expected: POST /api/key/load { key: "theKey" }
+  // Response expected: { success: true, keyData: { coins, money, owned, purchasedDeals, name } }
+  // If server returns success:true we use that data. If server not available or returns error, fallback to localStorage.
+  try {
+    const resp = await fetch('/api/key/load', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ key })
+    });
+    if(resp.ok){
+      const json = await resp.json();
+      if(json && json.success && json.keyData){
+        const kd = json.keyData;
+        currentKey = key;
+        coins = kd.coins || 0;
+        money = kd.money || 0;
+        owned = Array.isArray(kd.owned) ? kd.owned.slice() : [];
+        purchasedDeals = Array.isArray(kd.purchasedDeals) ? kd.purchasedDeals.slice() : [];
+        showMessage('✅ Key loaded from server: ' + (kd.name || key));
+        renderSkins();
+        renderEventBar();
+        return;
+      } else {
+        // server replied but says key not found -> fallback to local
+        if(json && json.error){
+          showMessage('Server: ' + json.error + ' — falling back to local keys');
+        }
+      }
+    } else {
+      // non-200 -> fallback
+      console.warn('Server loadKey responded with status', resp.status);
+    }
+  } catch (err){
+    // network/server error -> fallback to localStorage silently
+    console.warn('Could not reach server to load key, using localStorage fallback.', err);
+  }
+
+  // FALLBACK: load from localStorage (existing behavior)
   const allKeys = getPublishedKeys();
   if(!allKeys[key]){
     showMessage('❌ Invalid key!');
@@ -128,22 +167,55 @@ function loadKey(){
   renderEventBar();
 }
 
-function clearKey(){
+async function clearKey(){
   currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
   document.getElementById('keyInput').value = '';
   showMessage('Key cleared (you can still browse available skins)');
   renderSkins();
 }
 
-function saveUserData(){
+// When saving user data we will attempt to sync to the server so the key updates across devices.
+// Server endpoint expected: POST /api/key/save { key: "theKey", keyData: { coins, money, owned, purchasedDeals } }
+// Response expected: { success: true } or { success:false, error: "..." }
+async function saveUserData(){
   if(!currentKey) return;
+
+  // Update local first
   const allKeys = getPublishedKeys();
-  if(!allKeys[currentKey]) return;
-  allKeys[currentKey].coins = coins;
-  allKeys[currentKey].money = money;
-  allKeys[currentKey].owned = owned;
-  allKeys[currentKey].purchasedDeals = purchasedDeals;
+  if(!allKeys[currentKey]) {
+    // if key doesn't exist locally create a placeholder so local browsing still works
+    allKeys[currentKey] = { name: currentKey, coins, money, owned, purchasedDeals };
+  } else {
+    allKeys[currentKey].coins = coins;
+    allKeys[currentKey].money = money;
+    allKeys[currentKey].owned = owned;
+    allKeys[currentKey].purchasedDeals = purchasedDeals;
+  }
   savePublishedKeys(allKeys);
+
+  // Try to push to server
+  try {
+    const resp = await fetch('/api/key/save', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        key: currentKey,
+        keyData: { coins, money, owned, purchasedDeals }
+      })
+    });
+    if(resp.ok){
+      const json = await resp.json();
+      if(json && json.success){
+        console.log('Saved user data to server.');
+      } else {
+        console.warn('Server saveKey responded with error:', json && json.error);
+      }
+    } else {
+      console.warn('Server saveKey responded status', resp.status);
+    }
+  } catch (err){
+    console.warn('Could not reach server to save key data; localStorage updated only.', err);
+  }
 }
 
 // ================= SKINS =================
@@ -203,9 +275,39 @@ function addPurchasedItem(imgSrc, name){
   container.appendChild(img);
 }
 
-function buySkin(skinId, price){
+// BUY SKIN: modified to call server action endpoint for cross-device validation (optional).
+// Server endpoint expected (alternative): POST /api/action { key, action:'buySkin', skinId, price }
+// Response: { success:true, coins, owned } or { success:false, error: "..."}
+async function buySkin(skinId, price){
   if(!currentKey){ showMessage('Enter your key first'); return; }
   if(owned.includes(skinId)){ showMessage('You already own this skin'); return; }
+
+  // Try server-side purchase first (preferred if server available)
+  try {
+    const resp = await fetch('/api/action', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ key: currentKey, action: 'buySkin', skinId, price })
+    });
+    if(resp.ok){
+      const json = await resp.json();
+      if(json && json.success){
+        coins = json.coins !== undefined ? json.coins : coins - price;
+        owned = Array.isArray(json.owned) ? json.owned.slice() : (owned.concat([skinId]));
+        await saveUserData(); // ensure both local + server (server already saved but sync)
+        showMessage('✅ Skin purchased (server).');
+        renderSkins();
+        return;
+      } else if(json && json.error){
+        showMessage('❌ ' + json.error);
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('Server action buySkin failed, falling back to local purchase if possible.', err);
+  }
+
+  // FALLBACK: local-only purchase (existing behavior)
   if(coins < price){ showMessage('Not enough coins'); return; }
   coins -= price;
   owned.push(skinId);
@@ -281,10 +383,41 @@ function closeDealModal(){
 function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentEventDeals.length+currentDealIndex-1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 
-function buyDeal(deal){
+// BUY DEAL: attempt server-side purchase first, fallback to local logic.
+// Server endpoint: POST /api/action { key, action:'buyDeal', dealId }  -> returns { success:true, money, owned, purchasedDeals }
+async function buyDeal(deal){
   if(!currentKey){ showMessage('Enter your key first'); return; }
+
+  // Try server-side purchase
+  try {
+    const resp = await fetch('/api/action', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ key: currentKey, action: 'buyDeal', dealId: deal.id })
+    });
+    if(resp.ok){
+      const json = await resp.json();
+      if(json && json.success){
+        money = json.money !== undefined ? json.money : (money - deal.price);
+        purchasedDeals = Array.isArray(json.purchasedDeals) ? json.purchasedDeals.slice() : (purchasedDeals.concat([deal.id]));
+        if(Array.isArray(json.owned)) owned = json.owned.slice();
+        await saveUserData();
+        showMessage('✅ Deal purchased (server) — skins added to your inventory');
+        renderSkins();
+        closeDealModal();
+        return;
+      } else if(json && json.error){
+        showMessage('❌ ' + json.error);
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('Server action buyDeal failed, falling back to local purchase if possible.', err);
+  }
+
+  // FALLBACK: local purchase
   if(money<deal.price){ showMessage('Not enough money'); return; }
-  money-=deal.price;
+  money -= deal.price;
   if(!purchasedDeals.includes(deal.id)) purchasedDeals.push(deal.id);
 
   const allSkins = getPublishedSkinsAll();
