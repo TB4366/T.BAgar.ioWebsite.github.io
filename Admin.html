@@ -79,6 +79,19 @@ th { background:#333; }
 // ======= Utility =======
 function showMessage(msg){ document.getElementById('message').textContent = msg; }
 
+// ======= Server Sync Function =======
+async function syncKeyToServer(key, data){
+  try {
+    await fetch('/api/key/save', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ key, keyData: data })
+    });
+  } catch(err){
+    console.warn('Server sync failed', err);
+  }
+}
+
 // ======= Key Management =======
 function loadAllKeys(){
   const table = document.getElementById('keysTable');
@@ -126,9 +139,11 @@ function addNewKey(){
   const name = document.getElementById('newName').value.trim();
   if(!name) return showMessage('Enter a name');
   const key = Math.random().toString(36).substring(2,10);
-  localStorage.setItem('skinshop_'+key, JSON.stringify({name:name, coins:0, money:0, owned:[]}));
+  const keyData = {name:name, coins:0, money:0, owned:[]};
+  localStorage.setItem('skinshop_'+key, JSON.stringify(keyData));
   document.getElementById('newName').value='';
   showMessage('✅ New key created: '+key);
+  syncKeyToServer('skinshop_'+key, keyData);
   loadAllKeys();
 }
 
@@ -139,6 +154,7 @@ function updateKey(oldKey, newKey){
   localStorage.setItem(newStorageKey, JSON.stringify(data));
   if(newStorageKey!==oldKey) localStorage.removeItem(oldKey);
   showMessage('✅ Key updated');
+  syncKeyToServer(newStorageKey, data);
   loadAllKeys();
 }
 
@@ -147,6 +163,7 @@ function updateField(key, field, value){
   data[field] = value;
   localStorage.setItem(key, JSON.stringify(data));
   showMessage('✅ Field updated');
+  syncKeyToServer(key, data);
 }
 
 function toggleUserSkin(key, skinId, imgEl){
@@ -160,12 +177,19 @@ function toggleUserSkin(key, skinId, imgEl){
     imgEl.classList.remove('locked'); imgEl.classList.add('selected');
   }
   localStorage.setItem(key, JSON.stringify(data));
+  syncKeyToServer(key, data);
 }
 
 function deleteKey(storageKey){
   if(confirm('Are you sure you want to delete this key?')){
     localStorage.removeItem(storageKey);
     showMessage('✅ Key deleted');
+    // Optional: send delete request to server
+    fetch('/api/key/delete', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ key: storageKey })
+    }).catch(err=>console.warn('Server delete failed', err));
     loadAllKeys();
   }
 }
@@ -235,7 +259,15 @@ function saveSkins(){
   alert('✅ Skins saved!');
 }
 
-function publishSkins(){ localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); alert('✅ Skins published!'); }
+function publishSkins(){ 
+  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); 
+  fetch('/api/skins/publish', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: localStorage.getItem('skinsDataPublished')
+  }).catch(err=>console.warn('Server publish failed', err));
+  alert('✅ Skins published!'); 
+}
 
 // ======= Event Editor =======
 function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
@@ -301,6 +333,11 @@ function publishEvents(){
   });
   localStorage.setItem('eventData', JSON.stringify(events));
   localStorage.setItem('eventDataPublished', JSON.stringify(events));
+  fetch('/api/events/publish', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(events)
+  }).catch(err=>console.warn('Server publish failed', err));
   alert('✅ Events published!');
 }
 
@@ -377,6 +414,11 @@ function publishDeals(){
   });
   localStorage.setItem('dealData', JSON.stringify(deals));
   localStorage.setItem('dealDataPublished', JSON.stringify(deals));
+  fetch('/api/deals/publish', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(deals)
+  }).catch(err=>console.warn('Server publish failed', err));
   alert('✅ Deals published!');
 }
 
