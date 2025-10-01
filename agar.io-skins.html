@@ -95,21 +95,18 @@ let currentEventDeals = [];
 let currentDealIndex = 0;
 let dealCountdownInterval = null;
 
-// ======= SERVER SIMULATION =======
+// ======= KEY HANDLING =======
 function getPublishedKeys(){
   return JSON.parse(localStorage.getItem('skinshop_publishedKeys') || '{}');
 }
 function savePublishedKeys(keys){
   localStorage.setItem('skinshop_publishedKeys', JSON.stringify(keys));
 }
-
-// ======= KEY HANDLING =======
 function loadKey(){
   const key = document.getElementById('keyInput').value.trim();
   if(!key){ showMessage('Please enter your key'); return; }
   const allKeys = getPublishedKeys();
   if(!allKeys[key]){
-    // create key automatically if not exist
     allKeys[key] = {coins:0, money:0, owned:[], purchasedDeals:[], name:key};
     savePublishedKeys(allKeys);
   }
@@ -122,14 +119,12 @@ function loadKey(){
   renderSkins();
   renderEventBar();
 }
-
 function clearKey(){
   currentKey = null; coins = 0; money = 0; owned = []; purchasedDeals = [];
   document.getElementById('keyInput').value = '';
   showMessage('Key cleared (you can still browse available skins)');
   renderSkins();
 }
-
 function saveUserData(){
   if(!currentKey) return;
   const allKeys = getPublishedKeys();
@@ -141,14 +136,14 @@ function saveUserData(){
 function getPublishedSkinsAll(){
   return JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
 }
-
 function renderSkins(){
   const allSkins = getPublishedSkinsAll() || [];
   const grid = document.getElementById('skinsGrid');
   const purchasedContainer = document.getElementById('purchasedSkins');
   grid.innerHTML = '';
   purchasedContainer.innerHTML = '';
-  allSkins.forEach(skin=>{
+  const coinsSkins = allSkins.filter(s => s.useFor==='coins');
+  coinsSkins.forEach(skin=>{
     const isOwned = owned.includes(skin.id);
     if(isOwned){ addPurchasedItem(skin.image, skin.name); return; }
     const container = document.createElement('div'); container.className = 'skinContainer';
@@ -170,7 +165,6 @@ function renderSkins(){
   document.getElementById('coins').textContent = coins;
   document.getElementById('money').textContent = money.toFixed(2);
 }
-
 function addPurchasedItem(imgSrc, name){
   const container = document.getElementById('purchasedSkins');
   const img = document.createElement('img');
@@ -178,7 +172,6 @@ function addPurchasedItem(imgSrc, name){
   img.alt = name || '';
   container.appendChild(img);
 }
-
 function buySkin(skinId, price){
   if(!currentKey){ showMessage('Enter your key first'); return; }
   if(owned.includes(skinId)){ showMessage('You already own this skin'); return; }
@@ -194,14 +187,13 @@ function buySkin(skinId, price){
 function getPublishedEvents(){
   return JSON.parse(localStorage.getItem('eventDataPublished') || '[]');
 }
-
 function renderEventBar(){
   events = getPublishedEvents() || [];
   const container = document.getElementById('eventBarContainer');
   container.innerHTML = '';
   const now = Date.now();
   events.forEach(ev=>{
-    if(ev.startTime>now || ev.endTime<now) return;
+    if(ev.status!=='active') return;
     const card = document.createElement('div'); card.className = 'eventCard';
     const img = document.createElement('img'); img.src = ev.image||''; img.alt = ev.name||'';
     card.appendChild(img);
@@ -210,14 +202,14 @@ function renderEventBar(){
     container.appendChild(card);
     function updateCountdown(){
       const remaining = ev.endTime - Date.now();
-      if(remaining<0){ countdown.textContent='Ended'; clearInterval(timer); return; }
+      if(remaining<0){ countdown.textContent='Ended'; return; }
       const h = Math.floor(remaining/3600000);
       const m = Math.floor((remaining%3600000)/60000);
       const s = Math.floor((remaining%60000)/1000);
       countdown.textContent = `Ends in ${h}h ${m}m ${s}s`;
     }
     updateCountdown();
-    const timer = setInterval(updateCountdown,1000);
+    setInterval(updateCountdown,1000);
   });
 }
 
