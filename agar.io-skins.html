@@ -58,6 +58,8 @@
   <input id="keyInput" placeholder="Enter your key here">
   <button onclick="loadKey()">Load Key</button>
   <button onclick="clearKey()">Clear</button>
+  <button onclick="createKey()">Generate New Key</button>
+  <button onclick="adminViewKeys()">Admin: Show All Keys</button>
 </div>
 
 <h3>Available Skins</h3>
@@ -146,6 +148,43 @@ function saveUserData(){
   savePublishedKeys(allKeys);
 }
 
+// ================= KEY CREATION =================
+function generateRandomKey(length=20){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let key = '';
+  for(let i=0;i<length;i++) key += chars.charAt(Math.floor(Math.random()*chars.length));
+  return key;
+}
+
+function createKey(){
+  const allKeys = getPublishedKeys();
+  const newKey = generateRandomKey();
+  const name = prompt('Enter a name for your key/account:','My Account');
+  allKeys[newKey] = {
+    name: name || newKey,
+    coins: 0,
+    money: 0,
+    owned: [],
+    purchasedDeals: []
+  };
+  savePublishedKeys(allKeys);
+  alert('✅ Key created! Your key is:\n' + newKey + '\n\nSave this key safely. Admin can view it later.');
+  document.getElementById('keyInput').value = newKey;
+  loadKey();
+}
+
+// ================= ADMIN VIEW =================
+function adminViewKeys(){
+  const pwd = prompt('Enter admin password:');
+  if(pwd !== 'admin123') return alert('❌ Wrong password');
+  const allKeys = getPublishedKeys();
+  let msg = 'All keys:\n\n';
+  for(const k in allKeys){
+    msg += `Key: ${k}\nName: ${allKeys[k].name}\nCoins: ${allKeys[k].coins}\nMoney: ${allKeys[k].money.toFixed(2)}\nOwned: ${allKeys[k].owned.length} skins\n\n`;
+  }
+  alert(msg);
+}
+
 // ================= SKINS =================
 function getPublishedSkinsAll(){
   return JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
@@ -187,7 +226,6 @@ function renderSkins(){
     grid.appendChild(container);
   });
 
-  // Purchased skins
   const dealSkinsOwned = allSkins.filter(s => s.useFor === 'deals' && owned.includes(s.id));
   dealSkinsOwned.forEach(skin => addPurchasedItem(skin.image, skin.name));
 
@@ -233,9 +271,24 @@ function renderEventBar(){
     const card = document.createElement('div'); card.className = 'eventCard';
     const img = document.createElement('img'); img.src = ev.barImage||ev.image||''; img.alt = ev.name||'';
     card.appendChild(img);
-    const countdown = document.createElement('div'); countdown.className = 'eventCountdown'; countdown.textContent='';
+    const countdown = document.createElement('div'); countdown.className = 'eventCountdown';
     card.appendChild(countdown);
     card.dataset.eventIndex = idx;
+
+    // Aftel timer per event
+    function updateCountdown(){
+      const now = Date.now();
+      let remaining = ev.endTime - now;
+      if(remaining<0) remaining=0;
+      const d = Math.floor(remaining/86400000);
+      const h = Math.floor((remaining%86400000)/3600000);
+      const m = Math.floor((remaining%3600000)/60000);
+      const s = Math.floor((remaining%60000)/1000);
+      countdown.textContent = `Ends in: ${d}d ${h}h ${m}m ${s}s`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown,1000);
+
     card.addEventListener('click', ()=> openEventDeals(ev));
     container.appendChild(card);
   });
@@ -279,7 +332,7 @@ function closeDealModal(){
 }
 
 function prevDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentEventDeals.length+currentDealIndex-1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
-function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
+function nextDeal(){ if(!currentEventDeals.length) return; currentDealIndex=(currentDealDeals.length+currentDealIndex+1)%currentEventDeals.length; showDeal(currentEventDeals[currentDealIndex]); }
 
 function buyDeal(deal){
   if(!currentKey){ showMessage('Enter your key first'); return; }
