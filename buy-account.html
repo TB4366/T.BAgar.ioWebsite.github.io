@@ -1,176 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="nl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Buy Your Account!</title>
-<style>
-  body {
-    background: #0b1220;
-    color: white;
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    margin: 0;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 40px;
-    color: #48cae4;
-  }
-  .video-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-    max-width: 900px;
-    margin: 0 auto 50px auto;
-  }
-  .account-card {
-    background: #1e293b;
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 0 15px #48cae4;
-    transition: box-shadow 0.3s ease;
-  }
-  .account-card:hover {
-    box-shadow: 0 0 25px #1de9b6;
-  }
-  .video-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 kolommen */
-    gap: 8px;
-  }
-  .account-video {
-    width: 100%;
-    height: 120px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-  .account-info {
-    margin-top: 10px;
-    line-height: 1.5;
-    font-weight: 600;
-  }
-  .account-info div {
-    margin-bottom: 6px;
-    text-transform: capitalize;
-  }
-  .contact-info {
-    max-width: 900px;
-    margin: 0 auto;
-    font-size: 1.2rem;
-    background: #0f172a;
-    padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px #48cae4;
-    text-align: center;
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>buy account</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#f59e0b;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#071129 0%, #0b1220 100%);color:#e6eef8;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:900px;background:var(--card);border-radius:16px;box-shadow:0 8px 30px rgba(2,6,23,0.6);overflow:hidden}
+    .left{padding:0}
+    .video-wrap{position:relative;padding-top:56.25%;background:var(--glass)}
+    .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .meta{padding:28px;display:flex;flex-direction:column;gap:18px}
+    .price-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .price{font-size:48px;font-weight:800;letter-spacing:-1px}
+    .currency{font-size:20px;font-weight:700;margin-left:6px}
+    .paypal-btn{display:inline-flex;align-items:center;gap:12px;padding:14px 20px;border-radius:12px;background:white;color:#111;border:0;cursor:pointer;font-weight:700;font-size:18px;box-shadow:0 6px 18px rgba(2,6,23,0.35)}
+    .paypal-logo{width:36px;height:36px;display:inline-block}
+    .hint{font-size:13px;color:#9fb0d9}
+    .center{display:flex;gap:12px;align-items:center}
+    @media (max-width:720px){.price{font-size:38px}.meta{padding:18px}}
+  </style>
 </head>
 <body>
+  <div class="card">
+    <div class="left">
+      <!--
+        GEWENNEN:
+        - Vervang VIDEO_ID door de YouTube video-id die je wilt tonen.
+        - Vervang PAYPAL_ME_USERNAME door je PayPal.me gebruikersnaam, of PAYPAL_BUSINESS_EMAIL door je PayPal-business-e-mailadres.
+        Voorbeeld PayPal.me link: https://www.paypal.me/USERNAME/5
+        Als je liever een email-based PayPal-knop wilt gebruiken, vul PAYPAL_BUSINESS_EMAIL in en activeer de formuliersectie hieronder.
+      -->
+      <div class="video-wrap">
+        <!-- Plaats hier de YouTube video. Vervang VIDEO_ID -->
+        <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="meta">
+        <div class="price-row">
+          <div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <div class="price">€5</div>
+              <div class="currency">Paypal</div>
+            </div>
+            <div class="hint">Betaal direct via PayPal — klik op de knop rechts</div>
+          </div>
 
-<h1>Buy Your Account!</h1>
+          <!-- PayPal button: standaard opent deze de PayPal.me link in een nieuw tabblad -->
+          <div>
+            <button id="paypalBtn" class="paypal-btn" aria-label="Betaal 5 euro via PayPal">
+              <!-- eenvoudige PayPal svg -->
+              <svg class="paypal-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M4.5 3h10.2c2.2 0 3.9 1.8 3.3 4.1L16.9 17.9c-.6 2.3-2.7 3.9-5.1 3.9H7.2c-.7 0-1.2-.6-1-1.3L8 6.8C8.2 5.9 8.9 5.3 9.8 5.3H10" fill="#003087"/>
+                <path d="M7.2 7.9l-.6 3.8c-.1.6.3 1.2.9 1.2h2.7c2.2 0 3.9-1.8 3.3-4.1L12.8 4.4c-.6-2.3-2.7-3.9-5.1-3.9H5c-.7 0-1.2.6-1 1.3L7.2 7.9z" fill="#179bd7" opacity="0.9"/>
+              </svg>
+              Betaal €5
+            </button>
+          </div>
+        </div>
 
-<div class="video-grid">
+        <!-- Optionele PayPal email-form fallback (in commentaar) -->
+        <!--
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+          <input type="hidden" name="cmd" value="_xclick">
+          <input type="hidden" name="business" value="PAYPAL_BUSINESS_EMAIL">
+          <input type="hidden" name="item_name" value="Buy account">
+          <input type="hidden" name="amount" value="5.00">
+          <input type="hidden" name="currency_code" value="EUR">
+          <button type="submit" class="paypal-btn">Betaal €5 via PayPal (email)</button>
+        </form>
+        -->
 
-  <div class="account-card">
-    <div class="video-container">
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 09-18-34_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 16-12-45_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-15-2025 19-48-49_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-15-2025 19-37-45_1.mov" allowfullscreen></iframe>
-    </div>
-    <div class="account-info">
-      <div><strong>Description:</strong> This is a nice account with a high level and with many coins and DNA and with many emoji + skins</div>
-      <div><strong>Level:</strong> 87</div>
-      <div><strong>Emoji:</strong> 25</div>
-      <div><strong>All Skins:</strong> 288</div>
-      <div><strong>Custom Skins:</strong> 34</div>
-      <div><strong>Mystery Skins:</strong> 62</div>
-      <div><strong>Special Skins:</strong> 1</div>
-      <div><strong>Paid Skins:</strong> 20</div>
-      <div><strong>Coins:</strong> 12187784</div>
-      <div><strong>DNA:</strong> 32318</div>
-      <div><strong>Price:</strong> $49.99</div>
-      <div><strong>Discount:</strong> 0%</div>
-      <div><strong>Owner:</strong> Dasgar</div>
-      <div><strong>Contact:</strong> T.B </div>
-      <div><strong>Product number:</strong> 1078330642</div>
-    </div>
-  </div>
-
-  <div class="account-card">
-    <div class="video-container">
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 16-12-45_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 09-18-34_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-15-2025 19-48-49_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-15-2025 19-37-45_1.mov" allowfullscreen></iframe>
-    </div>
-    <div class="account-info">
-      <div><strong>Description:</strong> Beginner Account With Rare Skins</div>
-      <div><strong>Level:</strong> 10</div>
-      <div><strong>Emoji:</strong> 🌟✨</div>
-      <div><strong>Skins:</strong> 7</div>
-      <div><strong>Custom Skins:</strong> 3</div>
-      <div><strong>Paid Skins:</strong> 4</div>
-      <div><strong>Coins:</strong> 800</div>
-      <div><strong>DNA:</strong> 1200</div>
-      <div><strong>Price:</strong> $0</div>
-      <div><strong>Discount:</strong> 0%</div>
-      <div><strong>Owner:</strong> GamerGirl99</div>
-    </div>
-  </div>
-
-  <div class="account-card">
-    <div class="video-container">
-      <iframe class="account-video" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
-      <iframe class="account-video" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 16-12-45_1.mov" allowfullscreen></iframe>
-      <iframe class="account-video" src="ScreenRecording_08-14-2025 09-18-34_1.mov" allowfullscreen></iframe>
-    </div>
-    <div class="account-info">
-      <div><strong>Description:</strong> High-Level Account With Exclusive Items</div>
-      <div><strong>Level:</strong> 80</div>
-      <div><strong>Emoji:</strong> 💥⚡</div>
-      <div><strong>Skins:</strong> 20</div>
-      <div><strong>Custom Skins:</strong> 10</div>
-      <div><strong>Paid Skins:</strong> 10</div>
-      <div><strong>Coins:</strong> 9000</div>
-      <div><strong>DNA:</strong> 12000</div>
-      <div><strong>Price:</strong> $0</div>
-      <div><strong>Discount:</strong> 15%</div>
-      <div><strong>Owner:</strong> EliteGamer007</div>
+        <div class="hint">Opmerking: vervang de placeholders in de HTML door jouw eigen PayPal-gegevens.</div>
+      </div>
     </div>
   </div>
 
-</div>
+  <script>
+    // --- CONFIGUREER HIER ---
+    // 1) Als je een PayPal.me-naam hebt, zet die hieronder (zonder https://www.paypal.me/)
+    const PAYPAL_ME_USERNAME = 'REPLACE_WITH_PAYPALME';
+    // 2) Optioneel: PayPal business email fallback (gebruik als je geen PayPal.me gebruikt)
+    const PAYPAL_BUSINESS_EMAIL = 'REPLACE_WITH_BUSINESS_EMAIL';
+    // Het bedrag dat je wilt ontvangen
+    const AMOUNT = '5'; // euro
 
-<div class="contact-info">
-  <strong>Interested? Contact Us At: Instagram: @t.bagar.io or the support: @tbagariosupprtteam </strong>
-</div>
+    const paypalBtn = document.getElementById('paypalBtn');
+    paypalBtn.addEventListener('click', function (){
+      // Probeer PayPal.me link eerst
+      if (PAYPAL_ME_USERNAME && PAYPAL_ME_USERNAME !== 'REPLACE_WITH_PAYPALME'){
+        const url = `https://www.paypal.me/${encodeURIComponent(PAYPAL_ME_USERNAME)}/${encodeURIComponent(AMOUNT)}`;
+        window.open(url, '_blank');
+        return;
+      }
 
-<!-- Script om lege accounts of $0 price te verbergen -->
-<script>
-  const accounts = document.querySelectorAll('.account-card');
+      // Anders, fallback op e-mail-based PayPal link
+      if (PAYPAL_BUSINESS_EMAIL && PAYPAL_BUSINESS_EMAIL !== 'REPLACE_WITH_BUSINESS_EMAIL'){
+        // Eenvoudige pay URL via webscr (werkt in veel gevallen)
+        const params = new URLSearchParams({
+          cmd: '_xclick',
+          business: PAYPAL_BUSINESS_EMAIL,
+          item_name: 'Buy account',
+          amount: AMOUNT,
+          currency_code: 'EUR'
+        });
+        const url = 'https://www.paypal.com/cgi-bin/webscr?' + params.toString();
+        window.open(url, '_blank');
+        return;
+      }
 
-  accounts.forEach(account => {
-    const infoDivs = account.querySelectorAll('.account-info div');
-
-    const descriptionDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Description:'));
-    const priceDiv = Array.from(infoDivs).find(div => div.textContent.startsWith('Price:'));
-
-    const description = descriptionDiv?.textContent.split(':')[1]?.trim() || '';
-    let priceText = priceDiv?.textContent.split(':')[1]?.trim() || '';
-
-    let price = 0;
-    if (priceText.startsWith('$')) {
-      price = parseFloat(priceText.slice(1)) || 0;
-    }
-
-    if (!description || price <= 0) {
-      account.style.display = 'none';
-    }
-  });
-</script>
-
+      // Geen gegevens ingevuld: toon instructie
+      alert('Vul in de HTML je PayPal.me gebruikersnaam of je PayPal-business-e-mailadres in (zie de comments bovenin het bestand).');
+    });
+  </script>
 </body>
 </html>
