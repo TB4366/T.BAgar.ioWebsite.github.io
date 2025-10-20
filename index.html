@@ -3,24 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>T.B Agar.io Website</title>
+<title>T.B Agar.io Website - Halloween</title>
 <style>
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #0b1220;
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  body.dark {
-    background: #f0f0f0;
-    color: #222;
-  }
-
-  /* Halloween theme */
-  body.halloween {
-    background: #1a0b0b url('https://i.imgur.com/5D1GxgT.png') repeat top left; /* voorbeeld spinnenweb achtergrond */
+    background: #1a0b0b url('https://i.imgur.com/f0h0Qsp.png') repeat; /* Halloween background met spinnenweb, pompoen, vleermuizen */
+    background-size: cover;
     color: #ff7518;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   header {
@@ -28,15 +19,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background: #0f172a;
-    position: relative;
-    transition: background-color 0.3s ease;
-  }
-  body.dark header {
-    background: #e0e0e0;
-  }
-  body.halloween header {
     background: #330000;
+    position: relative;
   }
 
   .logo-container {
@@ -55,80 +39,39 @@
     font-size: 1.2rem;
     font-weight: bold;
   }
-  .toggle-btn-header {
+  .toggle-btn-header, .menu-btn {
     background: none;
     border: none;
     cursor: pointer;
     font-size: 22px;
-    color: #0077b6;
+    color: #ff7518;
     padding: 6px 10px;
     border-radius: 8px;
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
-  .toggle-btn-header:hover {
-    background-color: #48cae4;
-    color: white;
-  }
-  body.dark .toggle-btn-header {
-    color: #4dd0e1;
-  }
-  body.dark .toggle-btn-header:hover {
-    background-color: #0077b6;
-    color: white;
-  }
-  .menu-btn {
-    cursor: pointer;
-    font-size: 24px;
-    background: none;
-    border: none;
-    color: white;
-  }
-  body.dark .menu-btn {
-    color: #222;
-  }
+
   .menu {
     display: none;
     position: absolute;
     top: 60px;
     right: 20px;
-    background: #1e293b;
+    background: #440000;
     border-radius: 8px;
     overflow: hidden;
     min-width: 160px;
     z-index: 10;
   }
-  body.dark .menu {
-    background: #ccc;
-  }
-  body.halloween .menu {
-    background: #440000;
-  }
   .menu a {
     display: block;
     padding: 12px;
     text-decoration: none;
-    color: white;
-    border-bottom: 1px solid #334155;
-  }
-  body.dark .menu a {
-    color: #222;
-    border-bottom: 1px solid #aaa;
-  }
-  body.halloween .menu a {
     color: #ff7518;
     border-bottom: 1px solid #ff7518;
   }
   .menu a:hover {
-    background: #334155;
-  }
-  body.dark .menu a:hover {
-    background: #ddd;
-  }
-  body.halloween .menu a:hover {
     background: #550000;
   }
 
-  .main-video {
+  .main-video, .video-grid, .youtube-link {
     display: flex;
     justify-content: center;
     margin-top: 20px;
@@ -137,37 +80,19 @@
     gap: 12px;
   }
   .video-grid {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
     flex-wrap: wrap;
+    gap: 20px;
     margin: 20px;
   }
   iframe {
     border: none;
     border-radius: 12px;
   }
-  .youtube-link {
-    text-align: center;
-    margin-top: 20px;
-  }
-  .youtube-link a {
-    display: inline-block;
-    padding: 12px 20px;
-    background: #1e293b;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-  }
-  .youtube-link a:hover {
-    background: #334155;
-  }
 
   .btn {
     padding: 12px 24px;
-    background-color: #1e293b;
-    color: white;
+    background-color: #550000;
+    color: #ff7518;
     text-decoration: none;
     border-radius: 8px;
     font-weight: bold;
@@ -176,38 +101,19 @@
     transition: background-color 0.3s ease;
   }
   .btn:hover {
-    background-color: #334155;
-  }
-  body.halloween .btn {
-    background-color: #550000;
-    color: #ff7518;
-  }
-  body.halloween .btn:hover {
     background-color: #aa2200;
   }
 
   .divider {
     max-width: 900px;
     margin: 40px auto 10px auto;
-    border-top: 2px solid #48cae4;
+    border-top: 2px solid #ff7518;
   }
   .highlight-title {
     text-align: center;
     font-size: 1.8rem;
     font-weight: bold;
     margin: 20px 0 30px;
-    color: #48cae4;
-  }
-  body.dark .divider {
-    border-top: 2px solid #0077b6;
-  }
-  body.dark .highlight-title {
-    color: #0077b6;
-  }
-  body.halloween .divider {
-    border-top: 2px solid #ff7518;
-  }
-  body.halloween .highlight-title {
     color: #ff7518;
   }
 
@@ -225,17 +131,9 @@
     overflow: hidden;
     position: relative;
     background: #000;
-    box-shadow: 0 0 15px #48cae4;
-    filter: brightness(0.8) saturate(1.2);
-    cursor: pointer;
-    transition: filter 0.3s ease, box-shadow 0.3s ease;
-  }
-  body.dark .circle {
-    filter: brightness(1) saturate(1);
-    box-shadow: 0 0 15px #0077b6;
-  }
-  body.halloween .circle {
     box-shadow: 0 0 15px #ff7518;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
   }
   .circle img {
     width: 100%;
@@ -250,16 +148,9 @@
     opacity: 1;
   }
 
-  .keys-link {
+  .keys-link, .youtube-link {
     text-align: center;
     margin-bottom: 40px;
-  }
-  body.dark .keys-link .btn {
-    background-color: #ccc;
-    color: #222;
-  }
-  body.dark .keys-link .btn:hover {
-    background-color: #aaa;
   }
 
 </style>
@@ -305,7 +196,7 @@
     <div class="circle" id="circle3"></div>
   </div>
 
-  <!-- Halloween Button under skins -->
+  <!-- Halloween Button -->
   <div style="text-align:center; margin-bottom:40px;">
     <a href="#" class="btn">🎃 Are you scared to press this button?</a>
   </div>
@@ -322,6 +213,14 @@
     <div style="font-weight:bold; font-size:1.2rem; margin-bottom:20px;">
       Icy Crystal Contest – Join the Discord server to participate in this contest!
     </div>
+
+    <!-- Discord Join Button -->
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" 
+       style="display:inline-flex; align-items:center; gap:10px; background-color:#5865F2; color:white; 
+              padding:12px 20px; border-radius:12px; text-decoration:none; font-weight:bold;">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
+      Join the Discord Server
+    </a>
   </div>
 </main>
 
@@ -389,13 +288,6 @@
   cycleImages('circle1', skinsCircle1, intervals[0]);
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
-
-  // Halloween mode toggle for fun
-  // Example: enable halloween theme if today is October
-  const today = new Date();
-  if(today.getMonth() === 9){ // October (0-indexed)
-    body.classList.add('halloween');
-  }
 </script>
 
 </body>
