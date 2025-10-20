@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>T.B Agar.io — Editor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1220;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #1e293b;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #14213d;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #48cae4;
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0096c7;
+      color: #fff;
+    }
+    .preview {
+      margin-top: 30px;
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    iframe {
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎥 Editor Pagina</h1>
+  <a href="index.html" style="color:white; text-decoration:none;">⬅️ Terug naar website</a>
+</header>
+
+<div class="container">
+  <h2>Voeg nieuwe video toe</h2>
+  <label for="videoUrl">YouTube video URL</label>
+  <input type="text" id="videoUrl" placeholder="Bijv. https://www.youtube.com/watch?v=xxxxxx">
+
+  <label for="videoTitle">Titel van video</label>
+  <input type="text" id="videoTitle" placeholder="Titel...">
+
+  <button onclick="addVideo()">➕ Video toevoegen</button>
+
+  <div class="preview" id="preview">
+    <h3>📺 Voorbeeld</h3>
+    <div id="videoList"></div>
+  </div>
+</div>
+
+<script>
+  // Laad bestaande video's uit localStorage
+  const videoList = JSON.parse(localStorage.getItem('videos') || '[]');
+  const videoContainer = document.getElementById('videoList');
+
+  function renderVideos() {
+    videoContainer.innerHTML = '';
+    videoList.forEach(v => {
+      const iframe = document.createElement('iframe');
+      iframe.width = 360;
+      iframe.height = 215;
+      iframe.src = `https://www.youtube.com/embed/${v.id}`;
+      const title = document.createElement('p');
+      title.textContent = v.title;
+      videoContainer.appendChild(title);
+      videoContainer.appendChild(iframe);
+    });
+  }
+
+  function extractVideoId(url) {
+    const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\\.be\\/([^?]+)/);
+    return match ? match[1] : null;
+  }
+
+  function addVideo() {
+    const url = document.getElementById('videoUrl').value.trim();
+    const title = document.getElementById('videoTitle').value.trim();
+    const id = extractVideoId(url);
+    if (!id) return alert('Ongeldige YouTube-link');
+    videoList.push({ id, title });
+    localStorage.setItem('videos', JSON.stringify(videoList));
+    renderVideos();
+    document.getElementById('videoUrl').value = '';
+    document.getElementById('videoTitle').value = '';
+  }
+
+  renderVideos();
+</script>
+
+</body>
+</html>
