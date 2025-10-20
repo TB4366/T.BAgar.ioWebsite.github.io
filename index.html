@@ -82,6 +82,23 @@
   main {
     position: relative;
     z-index: 1;
+    padding: 50px 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .content-wrapper {
+    position: relative;
+    z-index: 2;
+    background: rgba(0,0,0,0.55);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
   }
 
   iframe {
@@ -95,12 +112,10 @@
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
-    margin-top: 30px;
   }
 
   .youtube-link {
     text-align: center;
-    margin-top: 20px;
   }
   .youtube-link a {
     display: inline-block;
@@ -120,7 +135,7 @@
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
-    margin: 40px 0 20px;
+    margin: 20px 0;
     color: #ffbb55;
     text-shadow: 0 0 15px #ff6600;
   }
@@ -130,7 +145,6 @@
     justify-content: center;
     gap: 40px;
     flex-wrap: wrap;
-    margin-bottom: 40px;
   }
 
   .circle {
@@ -158,21 +172,14 @@
 
   /* Halloween floating objects */
   .floating {
-    position: fixed;
+    position: absolute;
     font-size: 2.5rem;
-    opacity: 0.8;
-    animation: float 8s ease-in-out infinite;
-    z-index: 0;
-  }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-30px) rotate(10deg); }
+    opacity: 0.85;
+    z-index: 1;
   }
 
   .halloween-pop {
     text-align: center;
-    margin: 50px 0;
   }
 
   .halloween-button {
@@ -199,7 +206,7 @@
     justify-content: center;
     gap: 20px;
     flex-wrap: wrap;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
   }
 
   .socials a {
@@ -230,14 +237,14 @@
 </head>
 <body>
 
-<!-- Floating Halloween objects -->
-<div class="floating" style="top:10%; left:5%; animation-delay: 0s;">🎃</div>
-<div class="floating" style="top:30%; left:80%; animation-delay: 2s;">🦇</div>
-<div class="floating" style="top:60%; left:15%; animation-delay: 4s;">👻</div>
-<div class="floating" style="top:70%; left:70%; animation-delay: 1s;">🎃</div>
-<div class="floating" style="top:20%; left:50%; animation-delay: 3s;">🦇</div>
-<div class="floating" style="top:50%; left:35%; animation-delay: 2s;">🕷️</div>
-<div class="floating" style="top:80%; left:20%; animation-delay: 3s;">🕷️</div>
+<!-- Floating Halloween objects (initial positions will be set via JS) -->
+<div class="floating" id="obj1">🎃</div>
+<div class="floating" id="obj2">🦇</div>
+<div class="floating" id="obj3">👻</div>
+<div class="floating" id="obj4">🎃</div>
+<div class="floating" id="obj5">🦇</div>
+<div class="floating" id="obj6">🕷️</div>
+<div class="floating" id="obj7">🕷️</div>
 
 <header>
   <div class="logo-container">
@@ -255,88 +262,66 @@
 </header>
 
 <main>
-  <div class="main-video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
-  </div>
-
-  <div class="youtube-link">
-    <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My Haunted Channel 👻</a>
-  </div>
-
-  <div class="video-grid">
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
-  </div>
-
-  <div class="highlight-title">The Best Halloween Skins</div>
-  <div class="skins-circles">
-    <div class="circle" id="circle1">
-      <img src="skin1.png" class="active">
-      <img src="skin2.png">
-      <img src="skin3.png">
+  <div class="content-wrapper">
+    <div class="main-video">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
     </div>
-    <div class="circle" id="circle2">
-      <img src="skin4.png" class="active">
-      <img src="skin5.png">
-      <img src="skin6.png">
+
+    <div class="youtube-link">
+      <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My Haunted Channel 👻</a>
     </div>
-    <div class="circle" id="circle3">
-      <img src="skin7.png" class="active">
-      <img src="skin8.png">
-      <img src="skin9.png">
+
+    <div class="video-grid">
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
     </div>
-  </div>
 
-  <div class="halloween-pop">
-    <a href="#" class="halloween-button" onclick="scarySurprise()">🎃 Click here for a scary surprise!</a>
-  </div>
+    <div class="highlight-title">The Best Halloween Skins</div>
+    <div class="skins-circles">
+      <div class="circle" id="circle1">
+        <img src="skin1.png" class="active">
+        <img src="skin2.png">
+        <img src="skin3.png">
+      </div>
+      <div class="circle" id="circle2">
+        <img src="skin4.png" class="active">
+        <img src="skin5.png">
+        <img src="skin6.png">
+      </div>
+      <div class="circle" id="circle3">
+        <img src="skin7.png" class="active">
+        <img src="skin8.png">
+        <img src="skin9.png">
+      </div>
+    </div>
 
-  <div class="socials">
-    <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
-      Join my Discord Server
-    </a>
+    <div class="halloween-pop">
+      <a href="#" class="halloween-button" onclick="scarySurprise()">🎃 Click here for a scary surprise!</a>
+    </div>
 
-    <a href="https://www.instagram.com/t.bagar.io/" class="instagram" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
-      Follow me on Instagram
-    </a>
-
-    <a href="https://www.youtube.com/@T.B6" class="youtube" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
-      Subscribe on YouTube
-    </a>
+    <div class="socials">
+      <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
+        Join my Discord Server
+      </a>
+      <a href="https://www.instagram.com/t.bagar.io/" class="instagram" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
+        Follow me on Instagram
+      </a>
+      <a href="https://www.youtube.com/@T.B6" class="youtube" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
+        Subscribe on YouTube
+      </a>
+    </div>
   </div>
 </main>
 
 <script>
+  // Menu toggle
   function toggleMenu() {
     const menu = document.getElementById('menu');
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
-  function scarySurprise() {
-    document.body.style.animation = 'flash 0.4s ease 3';
-    const scream = new Audio('https://www.myinstants.com/media/sounds/wilhelm_scream.mp3');
-    scream.play();
-    alert("😱 BOO! Happy Halloween! 🎃");
-  }
-
-  // Skins slideshow
-  function cycleImages(circleId, interval) {
-    const circle = document.getElementById(circleId);
-    const imgs = circle.querySelectorAll('img');
-    let index = 0;
-    setInterval(() => {
-      imgs[index].classList.remove('active');
-      index = (index + 1) % imgs.length;
-      imgs[index].classList.add('active');
-    }, interval);
-  }
-
-  cycleImages('circle1', 4000);
-  cycleImages('circle2', 5000);
-  cycleImages('circle3', 6000);
-</script>
-</body>
-</html>
+  // Scary surprise
+  function scarySurprise
