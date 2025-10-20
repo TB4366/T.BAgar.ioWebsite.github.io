@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>T.B Agar.io — Editor</title>
   <style>
     body {
@@ -36,7 +36,7 @@
       margin-top: 15px;
       font-weight: bold;
     }
-    input, textarea {
+    input {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -52,6 +52,7 @@
       color: #000;
       font-weight: bold;
       cursor: pointer;
+      transition: 0.2s;
     }
     button:hover {
       background: #0096c7;
@@ -67,64 +68,133 @@
       border: none;
       border-radius: 10px;
       margin-top: 10px;
+      width: 100%;
+      max-width: 360px;
+      height: 215px;
+    }
+    .video-item {
+      border-bottom: 1px solid #334155;
+      padding: 10px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .delete-btn {
+      margin-top: 10px;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+    a.back {
+      color: #fff;
+      text-decoration: none;
+      background: #48cae4;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    a.back:hover {
+      background: #0096c7;
+      color: #fff;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>🎥 Editor Pagina</h1>
-  <a href="index.html" style="color:white; text-decoration:none;">⬅️ Terug naar website</a>
+  <h1>🎥 Website Editor</h1>
+  <a href="index.html" class="back">⬅️ Terug naar website</a>
 </header>
 
 <div class="container">
   <h2>Voeg nieuwe video toe</h2>
+
   <label for="videoUrl">YouTube video URL</label>
-  <input type="text" id="videoUrl" placeholder="Bijv. https://www.youtube.com/watch?v=xxxxxx">
+  <input type="text" id="videoUrl" placeholder="Bijv. https://www.youtube.com/watch?v=xxxxxx" />
 
   <label for="videoTitle">Titel van video</label>
-  <input type="text" id="videoTitle" placeholder="Titel...">
+  <input type="text" id="videoTitle" placeholder="Titel..." />
 
   <button onclick="addVideo()">➕ Video toevoegen</button>
 
-  <div class="preview" id="preview">
-    <h3>📺 Voorbeeld</h3>
+  <div class="preview">
+    <h3>📺 Toegevoegde video’s</h3>
     <div id="videoList"></div>
   </div>
 </div>
 
 <script>
-  // Laad bestaande video's uit localStorage
-  const videoList = JSON.parse(localStorage.getItem('videos') || '[]');
-  const videoContainer = document.getElementById('videoList');
+  const videoListEl = document.getElementById('videoList');
 
-  function renderVideos() {
-    videoContainer.innerHTML = '';
-    videoList.forEach(v => {
-      const iframe = document.createElement('iframe');
-      iframe.width = 360;
-      iframe.height = 215;
-      iframe.src = `https://www.youtube.com/embed/${v.id}`;
-      const title = document.createElement('p');
-      title.textContent = v.title;
-      videoContainer.appendChild(title);
-      videoContainer.appendChild(iframe);
-    });
-  }
+  // Laad video's uit localStorage bij opstart
+  let videos = JSON.parse(localStorage.getItem('videos') || '[]');
 
   function extractVideoId(url) {
-    const match = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\\.be\\/([^?]+)/);
+    const regex1 = /[?&]v=([^&]+)/;
+    const regex2 = /youtu\\.be\\/([^?]+)/;
+    const match = url.match(regex1) || url.match(regex2);
     return match ? match[1] : null;
+  }
+
+  function saveVideos() {
+    localStorage.setItem('videos', JSON.stringify(videos));
+  }
+
+  function renderVideos() {
+    videoListEl.innerHTML = '';
+    if (videos.length === 0) {
+      videoListEl.innerHTML = '<p>Geen video’s toegevoegd.</p>';
+      return;
+    }
+
+    videos.forEach((v, index) => {
+      const div = document.createElement('div');
+      div.className = 'video-item';
+
+      const title = document.createElement('h4');
+      title.textContent = v.title || '(Geen titel)';
+      div.appendChild(title);
+
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${v.id}`;
+      div.appendChild(iframe);
+
+      const del = document.createElement('button');
+      del.className = 'delete-btn';
+      del.textContent = '❌ Verwijderen';
+      del.onclick = () => {
+        videos.splice(index, 1);
+        saveVideos();
+        renderVideos();
+      };
+      div.appendChild(del);
+
+      videoListEl.appendChild(div);
+    });
   }
 
   function addVideo() {
     const url = document.getElementById('videoUrl').value.trim();
     const title = document.getElementById('videoTitle').value.trim();
     const id = extractVideoId(url);
-    if (!id) return alert('Ongeldige YouTube-link');
-    videoList.push({ id, title });
-    localStorage.setItem('videos', JSON.stringify(videoList));
+
+    if (!id) {
+      alert('⚠️ Ongeldige YouTube-link!');
+      return;
+    }
+
+    videos.push({ id, title });
+    saveVideos();
     renderVideos();
+
+    // Velden leegmaken
     document.getElementById('videoUrl').value = '';
     document.getElementById('videoTitle').value = '';
   }
