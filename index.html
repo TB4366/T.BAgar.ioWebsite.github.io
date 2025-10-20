@@ -8,10 +8,41 @@
   body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #1a0b0b url('https://i.imgur.com/f0h0Qsp.png') repeat; /* Halloween background met spinnenweb, pompoen, vleermuizen */
-    background-size: cover;
-    color: #ff7518;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: #1a0b0b; /* Donkere Halloween kleur */
+    color: #ff7518; /* Pompoen-oranje tekst */
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Halloween-items op achtergrond */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+      url('https://i.imgur.com/9Cz8W9G.png') 50px 100px no-repeat,  /* pompoen */
+      url('https://i.imgur.com/KzT7TgH.png') 300px 200px no-repeat, /* vleermuis */
+      url('https://i.imgur.com/7hCrc9V.png') 600px 50px no-repeat;  /* spin */
+    background-size: 60px, 50px, 40px;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+      url('https://i.imgur.com/9Cz8W9G.png') 150px 300px no-repeat,
+      url('https://i.imgur.com/KzT7TgH.png') 500px 400px no-repeat,
+      url('https://i.imgur.com/7hCrc9V.png') 800px 150px no-repeat;
+    background-size: 70px, 50px, 40px;
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
   }
 
   header {
@@ -21,6 +52,7 @@
     padding: 10px 20px;
     background: #330000;
     position: relative;
+    z-index: 1;
   }
 
   .logo-container {
@@ -58,7 +90,7 @@
     border-radius: 8px;
     overflow: hidden;
     min-width: 160px;
-    z-index: 10;
+    z-index: 2;
   }
   .menu a {
     display: block;
@@ -78,6 +110,8 @@
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    position: relative;
+    z-index: 1;
   }
   .video-grid {
     flex-wrap: wrap;
