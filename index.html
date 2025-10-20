@@ -7,10 +7,9 @@
 <style>
   body {
     margin: 0;
-    font-family: 'Creepster', cursive, Arial, sans-serif;
-    background: linear-gradient(180deg, #1a001a, #2d0033, #0d0d0d);
-    color: #ff7518;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at center, #ff6600, #ff3300, #220000);
+    color: #fff3e0;
     overflow-x: hidden;
   }
 
@@ -19,9 +18,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background: #1a001a;
+    background: rgba(30, 0, 0, 0.9);
     border-bottom: 3px solid #ff7518;
     box-shadow: 0 0 15px #ff6600;
+    position: relative;
+    z-index: 2;
   }
 
   .logo-container {
@@ -41,7 +42,7 @@
   .site-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #ff7518;
+    color: #ffbb55;
     text-shadow: 0 0 5px #ff6600;
   }
 
@@ -50,12 +51,7 @@
     font-size: 24px;
     background: none;
     border: none;
-    color: #ff7518;
-    transition: transform 0.3s ease;
-  }
-  .menu-btn:hover {
-    transform: scale(1.2);
-    color: #ffa94d;
+    color: #ffbb55;
   }
 
   .menu {
@@ -63,7 +59,7 @@
     position: absolute;
     top: 60px;
     right: 20px;
-    background: #2b001f;
+    background: rgba(50, 0, 0, 0.95);
     border: 2px solid #ff7518;
     border-radius: 10px;
     overflow: hidden;
@@ -75,7 +71,7 @@
     display: block;
     padding: 12px;
     text-decoration: none;
-    color: #ffcc99;
+    color: #ffddaa;
     border-bottom: 1px solid #ff7518;
   }
   .menu a:hover {
@@ -83,21 +79,29 @@
     color: #1a001a;
   }
 
-  .main-video {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+  main {
+    position: relative;
+    z-index: 1;
   }
 
   iframe {
     border: none;
     border-radius: 12px;
-    box-shadow: 0 0 25px #ff6600;
+    box-shadow: 0 0 20px #ff6600;
   }
 
+  .main-video, .video-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+
+  .youtube-link {
+    text-align: center;
+    margin-top: 20px;
+  }
   .youtube-link a {
     display: inline-block;
     padding: 12px 20px;
@@ -116,9 +120,16 @@
     text-align: center;
     font-size: 2rem;
     font-weight: bold;
-    margin: 20px 0 30px;
-    color: #ffa94d;
+    margin: 40px 0 20px;
+    color: #ffbb55;
     text-shadow: 0 0 15px #ff6600;
+  }
+
+  .skins-circles {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
   }
 
   .circle {
@@ -127,35 +138,33 @@
     border-radius: 50%;
     overflow: hidden;
     background: black;
-    box-shadow: 0 0 30px #ff6600;
-    filter: brightness(0.8);
-    animation: pulse 3s infinite ease-in-out;
+    box-shadow: 0 0 25px #ff6600;
+  }
+  .circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  @keyframes pulse {
-    0%, 100% { filter: brightness(0.8); }
-    50% { filter: brightness(1.2); }
-  }
-
-  /* Halloween Mist effect */
-  .mist {
+  /* Halloween floating objects */
+  .floating {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 200%;
-    height: 200%;
-    background: url('https://i.imgur.com/npWfY1T.png') repeat;
-    opacity: 0.1;
-    animation: mistMove 60s linear infinite;
-    pointer-events: none;
+    font-size: 2.5rem;
+    opacity: 0.8;
+    animation: float 8s ease-in-out infinite;
     z-index: 0;
   }
-  @keyframes mistMove {
-    from { transform: translate(0, 0); }
-    to { transform: translate(-50%, -50%); }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
   }
 
-  /* 🎃 Halloween pop button */
+  .halloween-pop {
+    text-align: center;
+    margin: 50px 0;
+  }
+
   .halloween-button {
     display: inline-block;
     background: #ff7518;
@@ -166,20 +175,43 @@
     border-radius: 12px;
     text-decoration: none;
     box-shadow: 0 0 20px #ff6600;
-    margin: 50px auto;
     transition: transform 0.3s ease, background 0.3s ease;
   }
+
   .halloween-button:hover {
     background: #ffa94d;
     transform: scale(1.1);
   }
 
-  .halloween-pop {
-    text-align: center;
-    margin-top: 40px;
+  /* Social buttons */
+  .socials {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
   }
 
-  /* Jump scare effect */
+  .socials a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #ff6600;
+  }
+
+  .discord { background-color: #5865F2; }
+  .instagram { background-color: #E1306C; }
+  .youtube { background-color: #FF0000; }
+
+  .socials a:hover {
+    opacity: 0.85;
+  }
+
   @keyframes flash {
     0%, 100% { background-color: transparent; }
     50% { background-color: white; }
@@ -188,7 +220,12 @@
 </head>
 <body>
 
-<div class="mist"></div>
+<!-- Floating Halloween objects -->
+<div class="floating" style="top:10%; left:5%; animation-delay: 0s;">🎃</div>
+<div class="floating" style="top:30%; left:80%; animation-delay: 2s;">🦇</div>
+<div class="floating" style="top:60%; left:15%; animation-delay: 4s;">👻</div>
+<div class="floating" style="top:70%; left:70%; animation-delay: 1s;">🎃</div>
+<div class="floating" style="top:20%; left:50%; animation-delay: 3s;">🦇</div>
 
 <header>
   <div class="logo-container">
@@ -214,15 +251,47 @@
     <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My Haunted Channel 👻</a>
   </div>
 
-  <div class="highlight-title">The Best Haunted Skins</div>
-  <div style="display:flex; justify-content:center; gap:40px;">
-    <div class="circle"><img src="IMG_2978.jpeg" width="100%" height="100%"></div>
-    <div class="circle"><img src="IMG_3156.jpeg" width="100%" height="100%"></div>
-    <div class="circle"><img src="IMG_3520.png" width="100%" height="100%"></div>
+  <div class="video-grid">
+    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
+    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
+  </div>
+
+  <div class="highlight-title">The Best Halloween Skins</div>
+  <div class="skins-circles">
+    <div class="circle"><img src="IMG_2978.jpeg"></div>
+    <div class="circle"><img src="IMG_3156.jpeg"></div>
+    <div class="circle"><img src="IMG_3520.png"></div>
+  </div>
+
+  <div class="highlight-title">New Videos</div>
+  <div class="main-video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
+  </div>
+
+  <div class="highlight-title">The Best Duo</div>
+  <div class="main-video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
   </div>
 
   <div class="halloween-pop">
     <a href="#" class="halloween-button" onclick="scarySurprise()">🎃 Click here for a scary surprise!</a>
+  </div>
+
+  <div class="socials">
+    <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">
+      Join my Discord Server
+    </a>
+
+    <a href="https://www.instagram.com/t.bagar.io/" class="instagram" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">
+      Follow me on Instagram
+    </a>
+
+    <a href="https://www.youtube.com/@T.B6" class="youtube" target="_blank">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">
+      Subscribe on YouTube
+    </a>
   </div>
 </main>
 
@@ -239,6 +308,5 @@
     alert("😱 BOO! Happy Halloween! 🎃");
   }
 </script>
-
 </body>
 </html>
