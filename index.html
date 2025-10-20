@@ -187,12 +187,12 @@
     margin-bottom: 40px;
   }
 
-  /* Social buttons naast elkaar */
+  /* Social buttons horizontaal: Discord links, Instagram midden, YouTube rechts */
   .social-buttons {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
+    flex-wrap: nowrap;
+    gap: 50px;
     margin: 50px 0;
     z-index: 1;
     position: relative;
@@ -210,6 +210,13 @@
   .social-discord { background-color: #5865F2; }
   .social-instagram { background-color: #E1306C; }
   .social-youtube { background-color: #FF0000; }
+
+  /* Rat popup animatie */
+  @keyframes popup {
+    0% { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+    50% { transform: translateX(-50%) translateY(-10px); opacity: 1; }
+    100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -253,9 +260,25 @@
     <div class="circle" id="circle3"></div>
   </div>
 
-  <!-- Halloween Button -->
-  <div style="text-align:center; margin-bottom:40px;">
-    <a href="#" class="btn">🎃 Are you scared to press this button?</a>
+  <!-- Halloween Button met Rat Popup -->
+  <div style="text-align:center; margin-bottom:40px; position:relative;">
+    <button id="halloweenBtn" class="btn">🎃 Are you scared to press this button?</button>
+    <div id="ratPopup" style="
+        position:absolute;
+        top:60px;
+        left:50%;
+        transform:translateX(-50%);
+        background:#330000;
+        color:#ff7518;
+        padding:12px 20px;
+        border-radius:12px;
+        font-weight:bold;
+        display:none;
+        box-shadow: 0 0 10px #ff7518;
+        z-index:10;
+        ">
+      🐀 Boo! You are silly! 💨
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -292,16 +315,16 @@
     </div>
   </div>
 
-  <!-- Social Buttons naast elkaar -->
+  <!-- Social Buttons horizontaal -->
   <div class="social-buttons">
     <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="social-discord">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20"> Join My Discord
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20"> Discord
     </a>
     <a href="https://www.instagram.com/t.bagar.io/" target="_blank" class="social-instagram">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="20"> Follow on Instagram
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="20"> Instagram
     </a>
     <a href="https://www.youtube.com/@T.B6" target="_blank" class="social-youtube">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20"> Subscribe on YouTube
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20"> YouTube
     </a>
   </div>
 </main>
@@ -358,6 +381,28 @@
   cycleImages('circle1', skinsCircle1, intervals[0]);
   cycleImages('circle2', skinsCircle2, intervals[1]);
   cycleImages('circle3', skinsCircle3, intervals[2]);
+
+  // Halloween Button Rat Popup
+  const halloweenBtn = document.getElementById('halloweenBtn');
+  const ratPopup = document.getElementById('ratPopup');
+
+  const funnyMessages = [
+    "Boo! You are silly! 💨",
+    "Hehe, scared yet? 😂",
+    "Watch out! You smell like candy! 🍬",
+    "The rat says: you're a pumpkin! 🎃",
+    "Ooooh, very spooky! 👻"
+  ];
+
+  halloweenBtn.addEventListener('click', () => {
+    const message = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+    ratPopup.textContent = "🐀 " + message;
+    ratPopup.style.display = 'block';
+    ratPopup.style.animation = 'popup 0.5s ease';
+    setTimeout(() => {
+      ratPopup.style.display = 'none';
+    }, 3000);
+  });
 </script>
 
 </body>
