@@ -3,462 +3,399 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>T.B Agar.io Halloween Edition 🎃</title>
+<title>T.B Agar.io Website</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #ff8c00, #8b0000);
-  color:#fff3e0;
-  overflow-x:hidden;
-}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1220;
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  body.dark {
+    background: #f0f0f0;
+    color: #222;
+  }
 
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 20px;
-  background: rgba(30,0,0,0.9);
-  border-bottom: 3px solid #ff7518;
-  box-shadow:0 0 15px #ff6600;
-  z-index:2;
-  position: relative;
-}
+  /* Halloween theme */
+  body.halloween {
+    background: #1a0b0b url('https://i.imgur.com/5D1GxgT.png') repeat top left; /* voorbeeld spinnenweb achtergrond */
+    color: #ff7518;
+  }
 
-.logo-container {
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #0f172a;
+    position: relative;
+    transition: background-color 0.3s ease;
+  }
+  body.dark header {
+    background: #e0e0e0;
+  }
+  body.halloween header {
+    background: #330000;
+  }
 
-.logo {
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  object-fit:cover;
-  filter: drop-shadow(0 0 8px #ff6600);
-}
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  .site-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .toggle-btn-header {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: #0077b6;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .toggle-btn-header:hover {
+    background-color: #48cae4;
+    color: white;
+  }
+  body.dark .toggle-btn-header {
+    color: #4dd0e1;
+  }
+  body.dark .toggle-btn-header:hover {
+    background-color: #0077b6;
+    color: white;
+  }
+  .menu-btn {
+    cursor: pointer;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+  }
+  body.dark .menu-btn {
+    color: #222;
+  }
+  .menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 160px;
+    z-index: 10;
+  }
+  body.dark .menu {
+    background: #ccc;
+  }
+  body.halloween .menu {
+    background: #440000;
+  }
+  .menu a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid #334155;
+  }
+  body.dark .menu a {
+    color: #222;
+    border-bottom: 1px solid #aaa;
+  }
+  body.halloween .menu a {
+    color: #ff7518;
+    border-bottom: 1px solid #ff7518;
+  }
+  .menu a:hover {
+    background: #334155;
+  }
+  body.dark .menu a:hover {
+    background: #ddd;
+  }
+  body.halloween .menu a:hover {
+    background: #550000;
+  }
 
-.site-title {
-  font-size:1.5rem;
-  font-weight:bold;
-  color:#ffbb55;
-  text-shadow:0 0 5px #ff6600;
-}
+  .main-video {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .video-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 20px;
+  }
+  iframe {
+    border: none;
+    border-radius: 12px;
+  }
+  .youtube-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .youtube-link a {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #1e293b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+  .youtube-link a:hover {
+    background: #334155;
+  }
 
-.menu-btn {
-  cursor:pointer;
-  font-size:24px;
-  background:none;
-  border:none;
-  color:#ffbb55;
-}
+  .btn {
+    padding: 12px 24px;
+    background-color: #1e293b;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  .btn:hover {
+    background-color: #334155;
+  }
+  body.halloween .btn {
+    background-color: #550000;
+    color: #ff7518;
+  }
+  body.halloween .btn:hover {
+    background-color: #aa2200;
+  }
 
-.menu {
-  display:none;
-  position:absolute;
-  top:60px;
-  right:20px;
-  background:rgba(50,0,0,0.95);
-  border:2px solid #ff7518;
-  border-radius:10px;
-  overflow:hidden;
-  z-index:10;
-  box-shadow:0 0 15px #ff6600;
-}
+  .divider {
+    max-width: 900px;
+    margin: 40px auto 10px auto;
+    border-top: 2px solid #48cae4;
+  }
+  .highlight-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 20px 0 30px;
+    color: #48cae4;
+  }
+  body.dark .divider {
+    border-top: 2px solid #0077b6;
+  }
+  body.dark .highlight-title {
+    color: #0077b6;
+  }
+  body.halloween .divider {
+    border-top: 2px solid #ff7518;
+  }
+  body.halloween .highlight-title {
+    color: #ff7518;
+  }
 
-.menu a {
-  display:block;
-  padding:12px;
-  text-decoration:none;
-  color:#ffddaa;
-  border-bottom:1px solid #ff7518;
-}
+  .skins-circles {
+    max-width: 900px;
+    margin: 0 auto 50px auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+  }
+  .circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    box-shadow: 0 0 15px #48cae4;
+    filter: brightness(0.8) saturate(1.2);
+    cursor: pointer;
+    transition: filter 0.3s ease, box-shadow 0.3s ease;
+  }
+  body.dark .circle {
+    filter: brightness(1) saturate(1);
+    box-shadow: 0 0 15px #0077b6;
+  }
+  body.halloween .circle {
+    box-shadow: 0 0 15px #ff7518;
+  }
+  .circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  .circle img.active {
+    opacity: 1;
+  }
 
-.menu a:hover {
-  background:#ff6600;
-  color:#1a001a;
-}
+  .keys-link {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  body.dark .keys-link .btn {
+    background-color: #ccc;
+    color: #222;
+  }
+  body.dark .keys-link .btn:hover {
+    background-color: #aaa;
+  }
 
-main {
-  position:relative;
-  z-index:1;
-  padding:50px 20px;
-  display:flex;
-  justify-content:center;
-}
-
-.content-wrapper {
-  position:relative;
-  z-index:2;
-  background:rgba(0,0,0,0.55);
-  padding:30px;
-  border-radius:15px;
-  max-width:1200px;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:40px;
-}
-
-iframe {
-  border:none;
-  border-radius:12px;
-  box-shadow:0 0 20px #ff6600;
-}
-
-.main-video,.video-grid {
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.youtube-link {
-  text-align:center;
-}
-
-.youtube-link a {
-  display:inline-block;
-  padding:12px 20px;
-  background:#ff6600;
-  color:black;
-  text-decoration:none;
-  border-radius:8px;
-  font-weight:bold;
-  box-shadow:0 0 10px #ff6600;
-}
-
-.youtube-link a:hover {
-  background:#ff8533;
-}
-
-.highlight-title {
-  text-align:center;
-  font-size:2rem;
-  font-weight:bold;
-  margin:20px 0;
-  color:#ffbb55;
-  text-shadow:0 0 15px #ff6600;
-}
-
-.skins-circles {
-  display:flex;
-  justify-content:center;
-  gap:40px;
-  flex-wrap:wrap;
-}
-
-.circle {
-  width:180px;
-  height:180px;
-  border-radius:50%;
-  overflow:hidden;
-  background:black;
-  box-shadow:0 0 25px #ff6600;
-  position:relative;
-}
-
-.circle img {
-  position:absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-  object-fit:cover;
-  opacity:0;
-  transition: opacity 1s ease-in-out;
-}
-
-.circle img.active {opacity:1;}
-
-.halloween-pop {text-align:center;}
-
-.halloween-button {
-  display:inline-block;
-  background:#ff7518;
-  color:black;
-  font-size:1.2rem;
-  font-weight:bold;
-  padding:14px 28px;
-  border-radius:12px;
-  text-decoration:none;
-  box-shadow:0 0 20px #ff6600;
-  transition:transform 0.3s ease, background 0.3s ease;
-}
-
-.halloween-button:hover {
-  background:#ffa94d;
-  transform:scale(1.1);
-}
-
-.socials {
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.socials a {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:white;
-  text-decoration:none;
-  font-weight:bold;
-  padding:12px 20px;
-  border-radius:12px;
-  box-shadow:0 0 10px #ff6600;
-}
-
-.discord { background-color: #5865F2; }
-.instagram { background-color: #E1306C; }
-.youtube { background-color: #FF0000; }
-
-.socials a:hover {opacity:0.85;}
-
-.floating {
-  position:absolute;
-  font-size:2.5rem;
-  opacity:0.85;
-  z-index:1;
-}
-
-#wheelOverlay {
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.85);
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-  flex-direction:column;
-}
 </style>
 </head>
 <body>
 
-<!-- 50 Floating Halloween objects -->
-<script>
-const floatingObjects = [];
-const emojis = ["🎃","👻","🦇","🕷️"];
-const totalObjects = 50;
-
-for(let i=0;i<totalObjects;i++){
-  const div = document.createElement('div');
-  div.className='floating';
-  div.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-  div.style.top=Math.random()*80+'%';
-  div.style.left=Math.random()*10+'%'; // left side
-  div.speed=(Math.random()*1+0.5)/2;
-  div.directionX=1;
-  div.directionY=1;
-  document.body.appendChild(div);
-  floatingObjects.push(div);
-  const div2 = div.cloneNode(true);
-  div2.style.left = (90+Math.random()*10)+'%'; // right side
-  document.body.appendChild(div2);
-  floatingObjects.push(div2);
-}
-
-// Animate floating objects
-function animateFloating(){
-  floatingObjects.forEach(o=>{
-    let top=parseFloat(o.style.top);
-    let left=parseFloat(o.style.left);
-    top+=o.directionY*o.speed;
-    left+=o.directionX*o.speed;
-    if(top<0||top>80)o.directionY*=-1;
-    if(left<0||left>10 && left<50)o.directionX*=-1;
-    if(left>90||left<50 && left>50)o.directionX*=-1;
-    o.style.top=top+'%';
-    o.style.left=left+'%';
-  });
-  requestAnimationFrame(animateFloating);
-}
-requestAnimationFrame(animateFloating);
-</script>
-
 <header>
   <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo">
-    <span class="site-title">T.B Agar.io 🎃</span>
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <span class="site-title">T.B Agar.io</span>
+    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
   <div class="menu" id="menu">
-    <a href="index.html">🏠 Home</a>
-    <a href="agar.io-skins.html">🎱 Skins</a>
+    <a href="index.html">🏠 Home Page</a>
+    <a href="agar.io-skins.html">🎱Agar.io Skins</a>
     <a href="custom-skins.html">🎨 Custom Skins</a>
     <a href="mod-menu.html">🛠️ Mod Menu</a>
     <a href="key-access.html">🔑 Keys</a>
+    <a href="buy-account.html">💰 Buy Account</a>
   </div>
 </header>
 
 <main>
-<div class="content-wrapper">
-  <!-- Skins -->
-  <div class="highlight-title">The Best Halloween Skins</div>
-  <div class="skins-circles">
-    <div class="circle" id="circle1">
-      <img src="skin1.png" class="active">
-      <img src="skin2.png">
-      <img src="skin3.png">
-    </div>
-    <div class="circle" id="circle2">
-      <img src="skin4.png" class="active">
-      <img src="skin5.png">
-      <img src="skin6.png">
-    </div>
-    <div class="circle" id="circle3">
-      <img src="skin7.png" class="active">
-      <img src="skin8.png">
-      <img src="skin9.png">
-    </div>
+  <div class="main-video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
   </div>
 
-  <!-- Videos under skins -->
+  <div class="youtube-link">
+    <a href="https://www.youtube.com/@T.B6/featured" target="_blank">Visit My YouTube Channel</a>
+  </div>
+
   <div class="video-grid">
     <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
     <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
   </div>
 
-  <!-- Halloween Prize Button -->
-  <div class="halloween-pop">
-    <a href="#" class="halloween-button" onclick="openWheel()">🎃 Click here for a Halloween Prize!</a>
+  <div class="divider"></div>
+  <div class="highlight-title">The Best Custom Skins</div>
+  <div class="skins-circles">
+    <div class="circle" id="circle1"></div>
+    <div class="circle" id="circle2"></div>
+    <div class="circle" id="circle3"></div>
   </div>
 
-  <!-- Photo section -->
-  <div style="text-align:center;">
-    <img src="halloween_photo.png" alt="Halloween Poster" style="width:400px; border-radius:15px; box-shadow:0 0 15px #ff6600;">
+  <!-- Halloween Button under skins -->
+  <div style="text-align:center; margin-bottom:40px;">
+    <a href="#" class="btn">🎃 Are you scared to press this button?</a>
   </div>
 
-  <!-- Ice Crystal Contest -->
-  <div style="text-align:center; color:#ffddaa;">
-    <h2>Ice Crystal Contest</h2>
-    <p>Join the Discord server to participate!</p>
+  <div class="divider"></div>
+  <div class="highlight-title">T.B Keys</div>
+  <div class="keys-link">
+    <a href="key-access.html" class="btn">🔑 Go to the keys</a>
   </div>
 
-  <!-- Discord server button -->
-  <div style="text-align:center; margin-bottom:20px;">
-    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="discord" style="padding:12px 24px; display:inline-block;">Join Discord</a>
+  <!-- Halloween Contest Section -->
+  <div style="text-align:center; margin-top:50px;">
+    <img src="https://i.imgur.com/XI5e1Jj.png" alt="Halloween Contest" style="width:300px; border-radius:12px; margin-bottom:20px;">
+    <div style="font-weight:bold; font-size:1.2rem; margin-bottom:20px;">
+      Icy Crystal Contest – Join the Discord server to participate in this contest!
+    </div>
   </div>
-
-  <!-- Video Best Duo -->
-  <div class="video-grid">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
-  </div>
-
-  <!-- Social media buttons -->
-  <div class="socials">
-    <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20"> Discord
-    </a>
-    <a href="https://www.instagram.com/t.bagar.io/" class="instagram" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20"> Instagram
-    </a>
-    <a href="https://www.youtube.com/@T.B6" class="youtube" target="_blank">
-      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20"> YouTube
-    </a>
-  </div>
-</div>
 </main>
 
-<!-- Wheel overlay -->
-<div id="wheelOverlay">
-  <canvas id="wheelCanvas" width="400" height="400" style="border-radius:50%; background:#fff;"></canvas>
-  <button onclick="spinWheel()" style="margin-top:20px; padding:10px 20px; font-size:1rem;">Spin!</button>
-  <div id="prizeText" style="margin-top:20px; font-size:1.2rem; color:#fff;"></div>
-</div>
-
 <script>
-function toggleMenu(){
-  const menu=document.getElementById('menu');
-  menu.style.display=menu.style.display==='block'?'none':'block';
-}
-
-// Skins animation
-function cycleSkins(circleId,interval){
-  const circle=document.getElementById(circleId);
-  let index=0;
-  const imgs=circle.querySelectorAll('img');
-  setInterval(()=>{
-    imgs.forEach(i=>i.classList.remove('active'));
-    index=(index+1)%imgs.length;
-    imgs[index].classList.add('active');
-  },interval);
-}
-cycleSkins('circle1',4000);
-cycleSkins('circle2',5000);
-cycleSkins('circle3',6000);
-
-// Halloween Wheel
-const wheelCanvas=document.getElementById('wheelCanvas');
-const ctx=wheelCanvas.getContext('2d');
-const wheelOverlay=document.getElementById('wheelOverlay');
-const prizeText=document.getElementById('prizeText');
-const prizes=["🍬 Trick Candy","🎨 Extra Skin","🎁 Small Prize","👻 Fun Emoji"];
-const numSegments=prizes.length;
-let currentAngle=0;
-let spinning=false;
-
-function openWheel(){
-  wheelOverlay.style.display='flex';
-  drawWheel();
-}
-
-function drawWheel(){
-  const center=200;
-  const radius=180;
-  ctx.clearRect(0,0,400,400);
-  for(let i=0;i<numSegments;i++){
-    ctx.beginPath();
-    ctx.moveTo(center,center);
-    const startAngle=(i/numSegments)*2*Math.PI;
-    const endAngle=((i+1)/numSegments)*2*Math.PI;
-    ctx.fillStyle=i%2===0?'#ff7518':'#ffcc66';
-    ctx.arc(center,center,radius,startAngle,endAngle);
-    ctx.fill();
-    ctx.save();
-    ctx.translate(center,center);
-    ctx.rotate((startAngle+endAngle)/2);
-    ctx.textAlign='right';
-    ctx.fillStyle='#000';
-    ctx.font='16px Arial';
-    ctx.fillText(prizes[i],radius-10,5);
-    ctx.restore();
+  function toggleMenu() {
+    const menu = document.getElementById('menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
-}
 
-function spinWheel(){
-  if(spinning) return;
-  spinning=true;
-  prizeText.textContent='';
-  let spins=Math.random()*5+5;
-  let targetAngle=spins*2*Math.PI+Math.random()*2*Math.PI;
-  let start=null;
-
-  function animate(time){
-    if(!start) start=time;
-    const elapsed=time-start;
-    const duration=4000;
-    const progress=Math.min(elapsed/duration,1);
-    const angle=currentAngle + (targetAngle-currentAngle)*easeOutQuad(progress);
-    currentAngle=angle;
-    drawWheel();
-    wheelCanvas.style.transform=`rotate(${angle}rad)`;
-    if(progress<1){
-      requestAnimationFrame(animate);
-    }else{
-      spinning=false;
-      const segment=Math.floor((currentAngle%(2*Math.PI))/(2*Math.PI/numSegments));
-      prizeText.textContent=`You won: ${prizes[segment]}! 🎉`;
+  const toggleBtn = document.getElementById('themeToggleBtn');
+  const body = document.body;
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    body.classList.add('dark');
+    toggleBtn.textContent = '☀️';
+  } else {
+    toggleBtn.textContent = '🌙';
+  }
+  toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    if (body.classList.contains('dark')) {
+      toggleBtn.textContent = '☀️';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      toggleBtn.textContent = '🌙';
+      localStorage.setItem('theme', 'light');
     }
-  }
-  requestAnimationFrame(animate);
-}
+  });
 
-function easeOutQuad(t){ return t*(2-t); }
+  // Skins images
+  const skinsCircle1 = [
+    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
+    'IMG_2978.jpeg',
+    'IMG_3164.png'
+  ];
+  const skinsCircle2 = [
+    'IMG_3156.jpeg',
+    'IMG_2718.png',
+    'IMG_2819.png'
+  ];
+  const skinsCircle3 = [
+    'IMG_3520.png',
+    'IMG_3533.png',
+    'IMG_3512.webp'
+  ];
+  const intervals = [4000, 4500, 5000];
+
+  function cycleImages(circleId, images, interval) {
+    const circle = document.getElementById(circleId);
+    let currentIndex = 0;
+    images.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      if (i === 0) img.classList.add('active');
+      circle.appendChild(img);
+    });
+    setInterval(() => {
+      const imgs = circle.querySelectorAll('img');
+      imgs[currentIndex].classList.remove('active');
+      currentIndex = (currentIndex + 1) % imgs.length;
+      imgs[currentIndex].classList.add('active');
+    }, interval);
+  }
+
+  cycleImages('circle1', skinsCircle1, intervals[0]);
+  cycleImages('circle2', skinsCircle2, intervals[1]);
+  cycleImages('circle3', skinsCircle3, intervals[2]);
+
+  // Halloween mode toggle for fun
+  // Example: enable halloween theme if today is October
+  const today = new Date();
+  if(today.getMonth() === 9){ // October (0-indexed)
+    body.classList.add('halloween');
+  }
 </script>
 
 </body>
