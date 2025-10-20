@@ -71,7 +71,7 @@
     background: #550000;
   }
 
-  .main-video, .video-grid, .youtube-link {
+  .main-video, .video-grid, .youtube-link, .social-buttons {
     display: flex;
     justify-content: center;
     margin-top: 20px;
@@ -153,6 +153,21 @@
     margin-bottom: 40px;
   }
 
+  /* Social buttons */
+  .social-buttons a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 5px;
+  }
+  .social-discord { background-color: #5865F2; }
+  .social-instagram { background-color: #E1306C; }
+  .social-youtube { background-color: #FF0000; }
 </style>
 </head>
 <body>
@@ -222,6 +237,19 @@
       Join the Discord Server
     </a>
   </div>
+
+  <!-- Social Buttons -->
+  <div class="social-buttons" style="justify-content:center; margin:50px 0;">
+    <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="social-discord">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" width="20"> Join My Discord
+    </a>
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" class="social-instagram">
+      <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="20"> Follow on Instagram
+    </a>
+    <a href="https://www.youtube.com/@T.B6" target="_blank" class="social-youtube">
+      <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" width="20"> Subscribe on YouTube
+    </a>
+  </div>
 </main>
 
 <script>
@@ -251,21 +279,9 @@
   });
 
   // Skins images
-  const skinsCircle1 = [
-    'FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png',
-    'IMG_2978.jpeg',
-    'IMG_3164.png'
-  ];
-  const skinsCircle2 = [
-    'IMG_3156.jpeg',
-    'IMG_2718.png',
-    'IMG_2819.png'
-  ];
-  const skinsCircle3 = [
-    'IMG_3520.png',
-    'IMG_3533.png',
-    'IMG_3512.webp'
-  ];
+  const skinsCircle1 = ['FB2EDDE2-8F8A-42C2-B720-7879BD6654DB.png','IMG_2978.jpeg','IMG_3164.png'];
+  const skinsCircle2 = ['IMG_3156.jpeg','IMG_2718.png','IMG_2819.png'];
+  const skinsCircle3 = ['IMG_3520.png','IMG_3533.png','IMG_3512.webp'];
   const intervals = [4000, 4500, 5000];
 
   function cycleImages(circleId, images, interval) {
@@ -274,13 +290,13 @@
     images.forEach((src, i) => {
       const img = document.createElement('img');
       img.src = src;
-      if (i === 0) img.classList.add('active');
+      if(i===0) img.classList.add('active');
       circle.appendChild(img);
     });
     setInterval(() => {
       const imgs = circle.querySelectorAll('img');
       imgs[currentIndex].classList.remove('active');
-      currentIndex = (currentIndex + 1) % imgs.length;
+      currentIndex = (currentIndex+1)%imgs.length;
       imgs[currentIndex].classList.add('active');
     }, interval);
   }
