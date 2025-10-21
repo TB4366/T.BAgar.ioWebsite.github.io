@@ -11,10 +11,7 @@
     --overlay: rgba(0,0,0,0.62);
   }
 
-  html,body{height:100%; margin:0; font-family:Arial, sans-serif; background:
-    radial-gradient(circle at 10% 10%, #ff9a2e 0%, transparent 20%),
-    linear-gradient(180deg,#2b0000 0%, #120000 40%, #0a0000 100%); color:#fff;}
-  /* subtle full-screen gradient for a pro look */
+  html,body{height:100%; margin:0; font-family:Arial, sans-serif; color:#fff;}
   body{
     background-image:
       radial-gradient(circle at 20% 10%, rgba(255,140,0,0.15) 0%, transparent 20%),
@@ -24,23 +21,81 @@
 
   /* Header */
   header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 22px;
-    background: rgba(18,6,6,0.75);
-    border-bottom: 3px solid var(--glow);
-    box-shadow: 0 6px 30px rgba(0,0,0,0.6);
-    z-index: 40;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px rgba(255, 100, 0, 0.3);
   }
-  .logo-container{display:flex;align-items:center;gap:12px}
-  .logo{width:52px;height:52px;border-radius:50%;object-fit:cover;filter:drop-shadow(0 0 8px var(--glow))}
-  .site-title{font-size:1.4rem;font-weight:700;color:var(--accent);text-shadow:0 0 8px var(--glow)}
-  .menu-btn{background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer}
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .site-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffae42;
+    text-shadow: 0 0 8px #ff4500;
+  }
+  .toggle-btn-header {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: #ffae42;
+  }
+  .menu-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    color: #ffae42;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .menu-btn:hover {
+    transform: scale(1.2);
+  }
+  .menu {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(30, 20, 20, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 100, 0, 0.4);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    min-width: 180px;
+  }
+  .menu a {
+    display: block;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
+  }
+  .menu a:hover {
+    background-color: rgba(255, 100, 0, 0.2);
+    padding-left: 18px;
+  }
 
-  /* Main wrapper - dark overlay so content stays readable */
-  main{display:flex;justify-content:center;padding:40px 16px 80px;position:relative;z-index:10}
+  /* Main wrapper - dark overlay */
+  main{display:flex;justify-content:center;padding:120px 16px 80px;position:relative;z-index:10}
   .content-wrapper{
     width:100%;
     max-width:1180px;
@@ -49,50 +104,43 @@
     padding:28px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     position:relative;
-    z-index:20; /* above floating objects */
+    z-index:20;
   }
 
-  /* Titles & layout */
   .highlight-title{ text-align:center; font-size:1.9rem; margin:6px 0 18px; color:var(--accent); text-shadow:0 0 12px var(--glow); }
   .skins-circles{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-bottom:10px}
   .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative}
   .circle img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 900ms ease-in-out}
   .circle img.active{opacity:1}
 
-  /* videos */
   .video-grid{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:20px 0}
   iframe{border:none;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
 
-  /* Halloween prize button */
   .halloween-pop{text-align:center;margin:22px 0}
   .halloween-button{display:inline-block;background:var(--glow);color:#0a0000;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;box-shadow:0 8px 30px rgba(255,102,0,0.15);cursor:pointer}
   .halloween-button:hover{transform:translateY(-3px)}
 
-  /* Photo & contest */
   .poster{display:block;margin:14px auto;border-radius:12px;max-width:420px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
   .contest{ text-align:center;color:#ffd89a;margin-top:8px }
   .contest h2{margin:8px 0 6px;font-size:1.4rem}
   .discord-cta{display:inline-block;background:#5865F2;color:white;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:700;box-shadow:0 8px 20px rgba(88,101,242,0.18)}
 
-  /* Socials */
   .socials{display:flex;justify-content:center;gap:14px;margin-top:18px;flex-wrap:wrap}
   .socials a{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;text-decoration:none;color:white;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,0.45)}
   .discord{background:#5865F2}
   .instagram{background:#E1306C}
   .youtube{background:#FF0000}
 
-  /* small floating emojis (behind content) */
   .floating{
     position:absolute;
-    pointer-events:none; /* don't interfere with clicks */
+    pointer-events:none;
     user-select:none;
-    z-index:5; /* below content-wrapper but above page bg */
+    z-index:5;
     opacity:0.95;
     transform:translate(-50%,-50%);
     will-change:transform;
   }
 
-  /* wheel overlay */
   #wheelOverlay{
     display:none;
     position:fixed;
@@ -107,7 +155,6 @@
   #spinBtn{margin-top:14px;padding:10px 18px;font-size:1rem;border-radius:10px;cursor:pointer;background:var(--glow);border:none;color:#120000;font-weight:800}
   #prizeText{margin-top:12px;color:#ffdca5;font-weight:700}
 
-  /* responsive tweaks */
   @media (max-width:900px){
     .circle{width:130px;height:130px}
     iframe[width="560"]{width:100%;height:220px}
@@ -118,10 +165,19 @@
 
 <header>
   <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo">
-    <div class="site-title">T.B Agar.io 🎃</div>
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <span class="site-title">T.B Agar.io</span>
+    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="index.html">🏠 Home Pagina</a>
+    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+    <a href="key-access.html">🔑 Keys</a>
+    <a href="buy-account.html">💰 Buy Account</a>
+  </div>
 </header>
 
 <main>
@@ -147,39 +203,38 @@
       </div>
     </div>
 
-    <!-- Videos directly under skins -->
-    <div class="video-grid" aria-label="Two videos under skins">
-      <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" title="Video 1" allowfullscreen></iframe>
-      <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" title="Video 2" allowfullscreen></iframe>
+    <!-- Videos under skins -->
+    <div class="video-grid">
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
     </div>
 
-    <!-- Halloween prize button (wheel) -->
+    <!-- Halloween prize button -->
     <div class="halloween-pop">
       <button class="halloween-button" onclick="openWheel()">🎃 Click here for a Halloween Prize!</button>
     </div>
 
-    <!-- Photo -->
+    <!-- Poster -->
     <div style="text-align:center;">
       <img src="halloween_photo.png" alt="Halloween Poster" class="poster">
     </div>
 
-    <!-- Ice Crystal Contest (English) -->
+    <!-- Ice Crystal Contest -->
     <div class="contest">
       <h2>Ice Crystal Contest</h2>
       <p>Join the Discord server to participate and win exclusive prizes!</p>
     </div>
 
-    <!-- Discord CTA -->
     <div style="text-align:center; margin-top:8px;">
       <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="discord-cta">Join Discord</a>
     </div>
 
-    <!-- Best Duo video under Discord CTA -->
+    <!-- Best Duo video -->
     <div class="video-grid" style="margin-top:18px;">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" title="Best Duo" allowfullscreen></iframe>
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/iXrJJT8u5P8" allowfullscreen></iframe>
     </div>
 
-    <!-- Social media buttons at bottom -->
+    <!-- Socials -->
     <div class="socials" style="margin-top:18px;">
       <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
         <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">Discord
@@ -203,19 +258,14 @@
   <button onclick="closeWheel()" style="margin-top:12px;padding:8px 12px;border-radius:8px;border:none;background:#222;color:#ffdca5;cursor:pointer">Close</button>
 </div>
 
-<!-- Floating objects container: created by JS -->
 <script>
-/* ---------------------------
-   Layout helpers & simple menu
-   --------------------------- */
+/* Toggle menu */
 function toggleMenu(){
-  // simple placeholder (no menu content changed)
-  alert("Menu toggled (placeholder)");
+  const menu = document.getElementById('menu');
+  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
 }
 
-/* ---------------------------
-   Skins slideshow
-   --------------------------- */
+/* Skins slideshow */
 function cycleSkins(circleId,interval){
   const circle=document.getElementById(circleId);
   const imgs=Array.from(circle.querySelectorAll('img'));
@@ -230,9 +280,7 @@ cycleSkins('circle1',4000);
 cycleSkins('circle2',5000);
 cycleSkins('circle3',6000);
 
-/* ---------------------------
-   Prize wheel (overlay)
-   --------------------------- */
+/* Prize wheel */
 const wheelCanvas = document.getElementById('wheelCanvas');
 const ctx = wheelCanvas.getContext('2d');
 const wheelOverlay = document.getElementById('wheelOverlay');
@@ -248,158 +296,97 @@ function openWheel(){
   prizeText.textContent = '';
 }
 function closeWheel(){ wheelOverlay.style.display='none'; prizeText.textContent=''; }
-
 function drawWheel(){
-  const center = wheelCanvas.width / 2;
-  const radius = Math.min(center - 10, wheelCanvas.height / 2 - 10);
-  ctx.clearRect(0,0,wheelCanvas.width,wheelCanvas.height);
+  const anglePer = (2*Math.PI)/segments;
   for(let i=0;i<segments;i++){
-    const start = (i/segments) * 2*Math.PI;
-    const end = ((i+1)/segments) * 2*Math.PI;
     ctx.beginPath();
-    ctx.moveTo(center,center);
-    ctx.arc(center,center,radius,start,end);
-    ctx.closePath();
-    ctx.fillStyle = i%2===0 ? '#ff7618' : '#ffd78a';
+    ctx.moveTo(210,210);
+    ctx.fillStyle= i%2===0?'#ff6600':'#ffbb55';
+    ctx.arc(210,210,210,i*anglePer,(i+1)*anglePer);
     ctx.fill();
-    // text
     ctx.save();
-    ctx.translate(center,center);
-    ctx.rotate((start+end)/2);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#070707';
-    ctx.font = 'bold 16px Arial';
-    ctx.fillText(prizes[i], radius - 14, 6);
+    ctx.translate(210,210);
+    ctx.rotate(i*anglePer+anglePer/2);
+    ctx.fillStyle="#000";
+    ctx.font="14px Arial";
+    ctx.textAlign="right";
+    ctx.fillText(prizes[i],200,0);
     ctx.restore();
   }
-  // center circle
-  ctx.beginPath();
-  ctx.arc(center,center,48,0,2*Math.PI);
-  ctx.fillStyle = '#fff';
-  ctx.fill();
-  ctx.fillStyle = '#120000';
-  ctx.font = 'bold 18px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('SPIN', center, center+6);
 }
-
 function spinWheel(){
-  if(spinning) return;
-  spinning = true;
-  prizeText.textContent = '';
-  const spins = Math.random()*3 + 4; // 4..7 rotations
-  const target = spins*2*Math.PI + Math.random()*2*Math.PI;
-  const startTime = performance.now();
-  const duration = 3500;
-
-  function step(now){
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic-like
-    const angle = currentAngle + (target - currentAngle) * eased;
-    wheelCanvas.style.transform = `rotate(${angle}rad)`;
-    if(t < 1){
-      requestAnimationFrame(step);
-    } else {
-      currentAngle = angle % (2*Math.PI);
-      spinning = false;
-      // determine prize index (pointing at top:  -currentAngle )
-      const anglePer = (2*Math.PI) / segments;
-      const normalized = (2*Math.PI - (currentAngle % (2*Math.PI))) % (2*Math.PI);
-      const index = Math.floor(normalized / anglePer) % segments;
-      prizeText.textContent = `You won: ${prizes[index]}! 🎉`;
+  if(spinning)return;
+  spinning=true;
+  let spins=Math.random()*3000+5000;
+  let duration=5000;
+  let start=performance.now();
+  function animate(now){
+    let elapsed=now-start;
+    let angle=(spins*elapsed/duration)/180*Math.PI;
+    currentAngle+=angle;
+    ctx.clearRect(0,0,420,420);
+    ctx.save();
+    ctx.translate(210,210);
+    ctx.rotate(currentAngle);
+    ctx.translate(-210,-210);
+    drawWheel();
+    ctx.restore();
+    if(elapsed<duration) requestAnimationFrame(animate);
+    else{
+      spinning=false;
+      const idx=Math.floor((segments - ((currentAngle%(2*Math.PI))/(2*Math.PI))*segments)%segments);
+      prizeText.textContent="You won: "+prizes[idx];
     }
   }
-  requestAnimationFrame(step);
+  requestAnimationFrame(animate);
 }
 
-/* ---------------------------
-   Floating objects (50 small)
-   --------------------------- */
-const floatingEmojis = ["🎃","👻","🦇","🕷️"];
-const floatingElements = [];
-const TOTAL = 50; // you requested ~50
-// create elements with small sizes and left/right placement
-for(let i=0;i<TOTAL;i++){
-  const el = document.createElement('div');
-  el.className = 'floating';
-  el.textContent = floatingEmojis[Math.floor(Math.random()*floatingEmojis.length)];
-  // font-size small and varied
-  const size = (Math.random()*0.9 + 0.9); // rem
-  el.style.fontSize = size + 'rem';
-  // choose side
-  el.side = (Math.random() < 0.5) ? 'left' : 'right';
-  // set vertical position within content area (0%..100% of viewport)
-  el.y = Math.random() * 80 + 8; // keep some margin top/bottom
-  // horizontal ranges in percentages:
-  if(el.side === 'left'){
-    el.x = Math.random() * 6 + 1; // 1% .. 7%
-  } else {
-    el.x = 100 - (Math.random() * 6 + 1); // 93% .. 99%
+/* Theme toggle */
+const toggleBtn=document.getElementById('themeToggleBtn');
+const body=document.body;
+const savedTheme=localStorage.getItem('theme');
+if(savedTheme==='dark'){body.classList.add('dark'); toggleBtn.textContent='☀️';} else{toggleBtn.textContent='🌙';}
+toggleBtn.addEventListener('click',()=>{
+  body.classList.toggle('dark');
+  if(body.classList.contains('dark')){
+    toggleBtn.textContent='☀️';
+    localStorage.setItem('theme','dark');
+  }else{
+    toggleBtn.textContent='🌙';
+    localStorage.setItem('theme','light');
   }
-  // speed px percent-per-frame style (use percent units)
-  el.speedX = (Math.random()*0.08 + 0.02) * (Math.random() < 0.5 ? 1 : -1); // % per frame-ish
-  el.speedY = (Math.random()*0.06 + 0.01) * (Math.random() < 0.5 ? 1 : -1); // % per frame-ish
-  // add slight rotation
-  el.rot = (Math.random()*1 - 0.5) * 6; // degrees
-  // place
-  el.style.left = el.x + '%';
-  el.style.top = el.y + '%';
-  // append behind content wrapper but above background
-  document.body.appendChild(el);
-  floatingElements.push(el);
-}
-
-// make sure floating elements are below content-wrapper visually
-// we already gave content-wrapper z-index:20; floating elements use z-index:5
-
-// animation loop (smooth)
-let last = performance.now();
-function animateFloating(now){
-  const dt = Math.min((now - last)/16.666, 4); // ~frames, cap
-  last = now;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-
-  floatingElements.forEach(el=>{
-    // update positions in percentages
-    el.x += el.speedX * dt * (el.side === 'left' ? 1 : 1);
-    el.y += el.speedY * dt;
-
-    // vertical bounds: keep within 6% .. 92% of viewport height to avoid overlap with header/footer
-    if(el.y < 6){ el.y = 6; el.speedY *= -1 * (0.9 + Math.random()*0.2); }
-    if(el.y > 92){ el.y = 92; el.speedY *= -1 * (0.9 + Math.random()*0.2); }
-
-    // horizontal bounds depend on side so they stay left or right
-    if(el.side === 'left'){
-      if(el.x < 0.2){ el.x = 0.2; el.speedX *= -1; }
-      if(el.x > 9.5){ el.x = 9.5; el.speedX *= -1; }
-    } else {
-      if(el.x > 99.8){ el.x = 99.8; el.speedX *= -1; }
-      if(el.x < 90.5){ el.x = 90.5; el.speedX *= -1; }
-    }
-
-    // small damp / random jitter occasionally for more natural motion
-    if(Math.random() < 0.002) el.speedY += (Math.random()*0.06 - 0.03);
-    if(Math.random() < 0.002) el.speedX += (Math.random()*0.04 - 0.02);
-
-    // apply styles with transform for smoothness
-    el.style.transform = `translate(-50%,-50%) translate(${el.x}vw, ${el.y}vh) rotate(${el.rot += 0.02}deg)`;
-    // note: using vw/vh via transform avoids layout thrashing; relatively portable
-  });
-
-  requestAnimationFrame(animateFloating);
-}
-requestAnimationFrame(animateFloating);
-
-/* ensure floats reposition properly on resize (recalculate percentages if needed) */
-window.addEventListener('resize', ()=>{
-  // nothing heavy; elements already use percentages and transform vw/vh; keep simple
 });
 
-/* Accessibility: close wheel overlay with ESC */
-window.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape') closeWheel();
-});
+/* Floating Halloween objects */
+const objects=["🎃","👻","🦇","🕷️"];
+const floats=[];
+for(let i=0;i<50;i++){
+  const span=document.createElement('span');
+  span.textContent=objects[Math.floor(Math.random()*objects.length)];
+  span.className='floating';
+  span.style.fontSize=(12+Math.random()*24)+'px';
+  span.style.left=Math.random()*window.innerWidth+'px';
+  span.style.top=Math.random()*window.innerHeight+'px';
+  span.speed=(0.3+Math.random()*1.2)*(Math.random()>0.5?1:-1);
+  document.body.appendChild(span);
+  floats.push(span);
+}
+
+function animateFloats(){
+  for(const f of floats){
+    let x=parseFloat(f.style.left);
+    let y=parseFloat(f.style.top);
+    x+=f.speed;
+    y+=f.speed/2;
+    if(x>window.innerWidth) x=0; if(x<0) x=window.innerWidth;
+    if(y>window.innerHeight) y=0; if(y<0) y=window.innerHeight;
+    f.style.left=x+'px';
+    f.style.top=y+'px';
+  }
+  requestAnimationFrame(animateFloats);
+}
+animateFloats();
 </script>
+
 </body>
 </html>
