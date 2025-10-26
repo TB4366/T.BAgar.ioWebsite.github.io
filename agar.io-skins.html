@@ -1,173 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Skin Shop - User Panel</title>
+<meta charset="utf-8" />
+<title>Skin Shop (User)</title>
 <style>
-body { font-family: Arial; background:#0b0b0b; color:#fff; text-align:center; margin:0; padding:20px; }
-h1 { color:#0af; }
-input, button { padding:8px; margin:5px; border:none; border-radius:5px; }
-button { cursor:pointer; background:#0af; color:#fff; }
-.skin-card { display:inline-block; background:#111; border:1px solid #333; border-radius:8px; margin:10px; padding:10px; width:180px; }
-.skin-card img { width:150px; height:150px; border-radius:8px; }
-.skin-card h3 { margin:5px 0; }
-#skinsContainer, #dealsContainer, #eventsContainer { display:flex; flex-wrap:wrap; justify-content:center; }
-#userInfo { margin:20px 0; }
+  body { font-family:Arial,Helvetica,sans-serif; background:#0b0b0b; color:#eee; padding:20px; text-align:center; }
+  h1 { color:#0af; margin-bottom:6px; }
+  input,button { padding:8px 12px; border-radius:999px; border:0; font-size:14px; }
+  button { cursor:pointer; background:#0af; color:#000; }
+  .skins { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:10px; }
+  .skinContainer { width:160px; display:flex; flex-direction:column; align-items:center; }
+  .skin { width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; background:#222;
+          display:flex; align-items:center; justify-content:center; transition:transform .12s, filter .12s; }
+  .skin img { width:100%; height:100%; object-fit:cover; }
+  .skin:hover { transform:translateY(-4px); }
+  .grayed img { filter:grayscale(100%); opacity:.45; }
+  .lock { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.6); padding:6px; border-radius:50%; font-size:16px; }
+  .skinName { margin-top:8px; font-size:14px; }
+  .skinPrice { color:#ddd; font-size:13px; margin-top:4px; }
+  #message { color:yellow; margin-bottom:8px; }
+
+  #eventBarContainer { position:fixed; bottom:12px; left:50%; transform:translateX(-50%);
+                       display:flex; gap:8px; z-index:999; max-width:90%; overflow:auto; padding:6px; }
+  .eventCard { width:220px; height:2.2cm; border:2px solid #0af; border-radius:6px; overflow:hidden;
+               position:relative; cursor:pointer; background:#111; }
+  .eventCard img { width:100%; height:100%; object-fit:cover; }
+  .eventCountdown { position:absolute; bottom:0; left:0; width:100%;
+                    background:rgba(0,0,0,0.6); color:#fff; font-size:12px; text-align:center; padding:4px 2px; }
+
+  #dealModal { display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+               background:#151515; color:#fff; border:2px solid #0af; padding:18px; border-radius:10px;
+               z-index:2000; width:320px; max-width:90%; }
+  #dealModal img { width:100%; height:160px; object-fit:cover; border-radius:8px; }
+  #dealNav { display:flex; justify-content:space-between; margin-top:10px; gap:8px; }
+  #dealModal button { margin-top:10px; }
+
+  #purchasedTitle { margin-top:28px; font-size:18px; text-decoration:underline; }
+  #purchasedSkins { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:10px; }
+  #purchasedSkins img { width:96px; height:96px; border-radius:50%; border:2px solid #0af; object-fit:cover; }
 </style>
 </head>
 <body>
 
-<h1>🎮 Skin Shop</h1>
-
-<div id="loginSection">
-  <input id="userKeyInput" placeholder="Enter your key">
-  <button onclick="login()">Login</button>
-  <div id="loginMessage" style="color:yellow; margin-top:10px;"></div>
+<h1>Skin Shop</h1>
+<div id="message">Enter your key to load your account</div>
+<div>
+  <input id="keyInput" placeholder="Enter your key here">
+  <button onclick="loadKey()">Load Key</button>
+  <button onclick="clearKey()">Clear</button>
 </div>
 
-<div id="userPanel" style="display:none;">
-  <div id="userInfo"></div>
+<h3>Available Skins</h3>
+<div id="skinsGrid" class="skins"></div>
 
-  <h2>🧥 Available Skins</h2>
-  <div id="skinsContainer"></div>
+<div id="purchasedSection">
+  <div id="purchasedTitle">Purchased Items</div>
+  <div id="purchasedSkins"></div>
+</div>
 
-  <h2>🔥 Deals</h2>
-  <div id="dealsContainer"></div>
+<div id="eventBarContainer"></div>
 
-  <h2>🎉 Events</h2>
-  <div id="eventsContainer"></div>
+<div id="dealModal">
+  <h3 id="dealModalTitle"></h3>
+  <img id="dealModalImage" src="">
+  <p id="dealModalDesc"></p>
+  <div id="dealCountdown"></div>
+  <div id="dealNav">
+    <button onclick="prevDeal()">⬅</button>
+    <button onclick="nextDeal()">➡</button>
+  </div>
+  <button id="buyDealBtn">Buy Deal</button>
+  <button onclick="closeDealModal()">Close</button>
 </div>
 
 <script>
-const GITHUB_BASE = "https://raw.githubusercontent.com/USERNAME/REPO/main/data/"; 
-// 👆 Zet hier jouw echte GitHub gebruikersnaam en repo naam
+const BASE_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/";
+let keysData={}, skinsData=[], eventsData=[], dealsData=[];
+let currentKey=null, coins=0, money=0, owned=[], purchasedDeals=[];
+let currentEventDeals=[], currentDealIndex=0, dealTimer=null;
 
-let allKeys = [];
-let allSkins = [];
-let allDeals = [];
-let allEvents = [];
-let currentUser = null;
+async function fetchJSON(url){ const r=await fetch(url); if(!r.ok) throw new Error(url); return r.json(); }
 
-async function fetchJSON(file){
-  try {
-    const res = await fetch(GITHUB_BASE + file);
-    if(!res.ok) throw new Error("404");
-    return await res.json();
-  } catch(err){
-    console.error("Fout bij ophalen van", file, err);
-    return [];
-  }
+async function loadRemoteData(){
+  try{
+    [keysData, skinsData, eventsData, dealsData] = await Promise.all([
+      fetchJSON(BASE_URL+"keys.json"),
+      fetchJSON(BASE_URL+"skins.json"),
+      fetchJSON(BASE_URL+"events.json"),
+      fetchJSON(BASE_URL+"deals.json")
+    ]);
+    console.log("✅ Data loaded");
+  }catch(e){ console.error(e); showMessage("❌ Failed to load data from GitHub"); }
 }
 
-async function loadAllData(){
-  [allKeys, allSkins, allDeals, allEvents] = await Promise.all([
-    fetchJSON("keys.json"),
-    fetchJSON("skins.json"),
-    fetchJSON("deals.json"),
-    fetchJSON("events.json")
-  ]);
-  console.log("✅ Data geladen van GitHub");
+function showMessage(msg){ document.getElementById('message').textContent = msg; }
+
+function loadKey(){
+  const key=document.getElementById('keyInput').value.trim();
+  if(!key){ return showMessage("Enter a key"); }
+  const data=keysData[key];
+  if(!data){ return showMessage("❌ Invalid key"); }
+  currentKey=key;
+  coins=data.coins||0; money=data.money||0; owned=data.owned||[]; purchasedDeals=data.purchasedDeals||[];
+  showMessage("✅ Loaded "+(data.name||key));
+  renderSkins(); renderEventBar();
 }
 
-function login(){
-  const key = document.getElementById("userKeyInput").value.trim();
-  if(!key) return alert("Vul je key in!");
-  const match = allKeys.find(k => k.key === key || k.id === key);
-  if(!match){ 
-    document.getElementById("loginMessage").textContent = "❌ Ongeldige key!";
-    return;
-  }
-  currentUser = match;
-  document.getElementById("loginSection").style.display = "none";
-  document.getElementById("userPanel").style.display = "block";
-  renderUserInfo();
-  renderSkins();
-  renderDeals();
-  renderEvents();
-}
-
-function renderUserInfo(){
-  const info = document.getElementById("userInfo");
-  info.innerHTML = `
-    <h2>Welkom, ${currentUser.name}!</h2>
-    <p>💰 Coins: <b>${currentUser.coins}</b> | 💵 Money: <b>${currentUser.money}</b></p>
-  `;
-}
+function clearKey(){ currentKey=null; coins=money=0; owned=[]; purchasedDeals=[]; showMessage("Key cleared"); renderSkins(); }
 
 function renderSkins(){
-  const container = document.getElementById("skinsContainer");
-  container.innerHTML = "";
-  allSkins.forEach(skin => {
-    const owned = currentUser.owned?.includes(skin.id);
-    const div = document.createElement("div");
-    div.className = "skin-card";
-    div.innerHTML = `
-      <img src="${skin.image}" alt="${skin.name}">
-      <h3>${skin.name}</h3>
-      <p>Prijs: ${skin.price} ${skin.useFor === 'coins' ? '🪙' : '💵'}</p>
-      <button ${owned ? "disabled" : ""} onclick="buySkin('${skin.id}')">
-        ${owned ? "✅ Owned" : "Koop"}
-      </button>
-    `;
-    container.appendChild(div);
+  const grid=document.getElementById("skinsGrid"); const purchased=document.getElementById("purchasedSkins");
+  grid.innerHTML=purchased.innerHTML="";
+  skinsData.filter(s=>s.useFor==="coins").forEach(skin=>{
+    const isOwned=owned.includes(skin.id);
+    if(isOwned){ addPurchased(skin); return; }
+    const wrap=document.createElement("div"); wrap.className="skinContainer";
+    const card=document.createElement("div"); card.className="skin grayed";
+    card.innerHTML=`<img src="${skin.image||''}" alt=""><div class="lock">🔒</div>`;
+    card.onclick=()=>{ if(!currentKey) return showMessage("Enter key first"); buySkin(skin.id,skin.price); };
+    wrap.append(card, Object.assign(document.createElement("div"),{className:"skinName",textContent:skin.name}),
+                      Object.assign(document.createElement("div"),{className:"skinPrice",textContent:"Price "+skin.price+"🪙"}));
+    grid.appendChild(wrap);
   });
 }
+function addPurchased(s){ const img=document.createElement("img"); img.src=s.image; img.alt=s.name;
+  document.getElementById("purchasedSkins").appendChild(img); }
+function buySkin(id,price){ if(coins<price) return showMessage("Not enough coins");
+  coins-=price; owned.push(id); showMessage("✅ Skin purchased"); renderSkins(); }
 
-function renderDeals(){
-  const container = document.getElementById("dealsContainer");
-  container.innerHTML = "";
-  const activeDeals = allDeals.filter(d => d.status === "active");
-  activeDeals.forEach(deal => {
-    const div = document.createElement("div");
-    div.className = "skin-card";
-    div.innerHTML = `
-      <img src="${deal.image}" alt="${deal.name}">
-      <h3>${deal.name}</h3>
-      <p>${deal.desc}</p>
-      <p>Prijs: ${deal.price}</p>
-      <p>Status: ${deal.status}</p>
-    `;
-    container.appendChild(div);
+function renderEventBar(){
+  const bar=document.getElementById("eventBarContainer"); bar.innerHTML="";
+  eventsData.filter(e=>e.status==="active").forEach(e=>{
+    const card=document.createElement("div"); card.className="eventCard";
+    card.innerHTML=`<img src="${e.image||''}" alt=""><div class="eventCountdown"></div>`;
+    card.onclick=()=>openEvent(e.id); bar.appendChild(card);
   });
 }
-
-function renderEvents(){
-  const container = document.getElementById("eventsContainer");
-  container.innerHTML = "";
-  const activeEvents = allEvents.filter(e => e.status === "active");
-  activeEvents.forEach(event => {
-    const div = document.createElement("div");
-    div.className = "skin-card";
-    div.innerHTML = `
-      <img src="${event.image}" alt="${event.name}">
-      <h3>${event.name}</h3>
-      <p>${event.desc}</p>
-      <p>Status: ${event.status}</p>
-    `;
-    container.appendChild(div);
-  });
+function openEvent(id){
+  currentEventDeals=dealsData.filter(d=>d.eventId===id && d.status==="active" && !purchasedDeals.includes(d.id));
+  if(!currentEventDeals.length) return alert("No active deals");
+  currentDealIndex=0; showDeal(currentEventDeals[currentDealIndex]);
 }
-
-function buySkin(skinId){
-  const skin = allSkins.find(s => s.id === skinId);
-  if(!skin) return alert("Skin niet gevonden");
-  const currency = skin.useFor === "coins" ? "coins" : "money";
-  if(currentUser[currency] < skin.price){
-    alert("Niet genoeg " + currency);
-    return;
-  }
-  currentUser[currency] -= skin.price;
-  if(!currentUser.owned) currentUser.owned = [];
-  currentUser.owned.push(skin.id);
-  alert(`✅ Je hebt ${skin.name} gekocht!`);
-  renderUserInfo();
-  renderSkins();
+function showDeal(d){
+  const m=document.getElementById("dealModal");
+  m.style.display="block";
+  m.querySelector("#dealModalTitle").textContent=d.name;
+  m.querySelector("#dealModalDesc").textContent=d.desc;
+  m.querySelector("#dealModalImage").src=d.image;
+  const btn=document.getElementById("buyDealBtn");
+  btn.disabled=purchasedDeals.includes(d.id);
+  btn.onclick=()=>buyDeal(d);
+  updateCountdown(d);
+  clearInterval(dealTimer);
+  dealTimer=setInterval(()=>updateCountdown(d),1000);
 }
+function updateCountdown(d){
+  const now=Date.now(), rem=Math.max(0,d.endTime-now);
+  const h=Math.floor(rem/3600000), m=Math.floor(rem%3600000/60000), s=Math.floor(rem%60000/1000);
+  document.getElementById("dealCountdown").textContent=`Ends in: ${h}h ${m}m ${s}s Price: ${d.price}💰`;
+}
+function prevDeal(){ if(!currentEventDeals.length) return;
+  currentDealIndex=(currentDealIndex+currentEventDeals.length-1)%currentEventDeals.length;
+  showDeal(currentEventDeals[currentDealIndex]); }
+function nextDeal(){ if(!currentEventDeals.length) return;
+  currentDealIndex=(currentDealIndex+1)%currentEventDeals.length;
+  showDeal(currentEventDeals[currentDealIndex]); }
+function closeDealModal(){ document.getElementById("dealModal").style.display="none"; clearInterval(dealTimer); }
+function buyDeal(d){ if(money<d.price) return showMessage("Not enough money");
+  money-=d.price; purchasedDeals.push(d.id);
+  (d.skins||[]).forEach(s=>!owned.includes(s)&&owned.push(s));
+  showMessage("✅ Deal purchased"); renderSkins(); closeDealModal(); }
 
-window.onload = async () => {
-  await loadAllData();
-};
+(async()=>{ await loadRemoteData(); renderSkins(); renderEventBar(); })();
 </script>
-
 </body>
 </html>
