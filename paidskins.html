@@ -12,13 +12,14 @@
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
+
 <!-- Navbar -->
 <header class="bg-gray-900 text-white">
   <div class="max-w-6xl mx-auto flex items-center justify-between p-4">
     <!-- Logo + site naam -->
     <div class="flex items-center gap-3">
       <img src="https://via.placeholder.com/40" alt="Logo" class="w-10 h-10 rounded-full">
-      <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
+      <span class="font-bold text-lg" data-i18n="siteName">T.B Agar.io Paid Skins</span>
     </div>
     <!-- Taal + winkelwagen -->
     <div class="flex items-center gap-4">
@@ -31,14 +32,13 @@
       </select>
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i>
-        <span>Winkelwagen</span>
+        <span data-i18n="cart">Winkelwagen</span>
         <span id="cartCount" class="cart-badge">0</span>
       </button>
     </div>
   </div>
 </header>
 
-<!-- Main content -->
 <main class="max-w-6xl mx-auto p-6">
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6"></div>
 </main>
@@ -46,19 +46,16 @@
 <!-- Winkelwagen Modal -->
 <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
   <div class="bg-white rounded shadow-lg max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
-    <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
+    <h2 class="text-2xl font-bold text-center mb-4" data-i18n="yourCart">Winkelwagen</h2>
     <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
-
     <div id="cartItems" class="space-y-4"></div>
-
     <hr class="border-gray-300 my-4">
     <div class="flex justify-between font-bold text-lg mb-4">
-      <span>Totaal:</span>
+      <span data-i18n="total">Totaal:</span>
       <span id="totalAmount">0</span>
     </div>
-
     <div class="flex justify-around gap-4">
-      <button class="flex-1 bg-gray-200 p-4 rounded text-center">Apple Gift Card</button>
+      <button class="flex-1 bg-gray-200 p-4 rounded text-center" data-i18n="appleGift">Apple Gift Card</button>
       <a id="paypalBtn" target="_blank" class="flex-1 bg-yellow-400 p-4 rounded text-center text-white font-semibold">PayPal</a>
     </div>
   </div>
@@ -67,12 +64,12 @@
 <template id="card-template">
   <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
     <img src="" alt="thumb" class="card-img" />
-    <h3 class="font-semibold mt-4 card-title text-lg"></h3>
-    <p class="text-sm text-gray-600 mt-1 card-desc"></p>
-    <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
+    <h3 class="font-semibold mt-4 card-title text-lg" data-i18n="skinName">Skin Name</h3>
+    <p class="text-sm text-gray-600 mt-1 card-desc" data-i18n="desc">Description</p>
+    <p class="text-md font-medium text-gray-800 mt-2 card-price">USD 0.00</p>
     <div class="mt-4 flex gap-3">
-      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
-      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
+      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2" data-i18n="share">Share</button>
+      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2" data-i18n="select">Select</button>
     </div>
   </div>
 </template>
@@ -82,8 +79,16 @@ feather.replace();
 
 const bundles = [
   {id:"special_skin_1", name:"Special Skin", price:9.99, image:"IMG_6174.webp", note:"No extra fees or taxes."},
-  {id:"demo_skin_2", name:"Demo Skin", price:12.99, image:"https://via.placeholder.com/120", note:"Voorbeeld bundle."}
+  {id:"demo_skin_2", name:"Demo Skin", price:12.99, image:"https://via.placeholder.com/120", note:"Example bundle."}
 ];
+
+const translations = {
+  nl: {siteName:"T.B Agar.io Paid Skins", cart:"Winkelwagen", yourCart:"Winkelwagen", total:"Totaal:", appleGift:"Apple Gift Card", share:"Share", select:"Select", desc:"Beschrijving"},
+  en: {siteName:"T.B Agar.io Paid Skins", cart:"Cart", yourCart:"Your Cart", total:"Total:", appleGift:"Apple Gift Card", share:"Share", select:"Select", desc:"Description"},
+  es: {siteName:"T.B Agar.io Paid Skins", cart:"Carrito", yourCart:"Tu Carrito", total:"Total:", appleGift:"Tarjeta de Regalo Apple", share:"Compartir", select:"Seleccionar", desc:"Descripción"},
+  fr: {siteName:"T.B Agar.io Paid Skins", cart:"Panier", yourCart:"Votre Panier", total:"Total:", appleGift:"Carte Cadeau Apple", share:"Partager", select:"Sélectionner", desc:"Description"},
+  de: {siteName:"T.B Agar.io Paid Skins", cart:"Warenkorb", yourCart:"Ihr Warenkorb", total:"Gesamt:", appleGift:"Apple Geschenk Karte", share:"Teilen", select:"Auswählen", desc:"Beschreibung"}
+};
 
 const grid = document.getElementById('grid');
 const template = document.getElementById('card-template');
@@ -156,6 +161,15 @@ document.getElementById('cartBtn').addEventListener('click',()=>{
 
 // Sluit modal
 document.getElementById('closeModal').addEventListener('click',()=>{cartModal.classList.add('hidden');});
+
+// Taalkeuze
+document.getElementById('langSelect').addEventListener('change',(e)=>{
+  const lang = e.target.value;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(translations[lang][key]) el.textContent = translations[lang][key];
+  });
+});
 
 render(bundles);
 </script>
