@@ -1,115 +1,137 @@
 <!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Skins Shop — paid skins</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .card-img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 9999px; /* ronde cirkel */
-      margin: 0 auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skins Shop Checkout Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<style>
+  .card-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 9999px;
+    margin: 0 auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  .cart-badge {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    border-radius: 9999px;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+  }
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <header class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold text-center">All Paid Skins Unlocked for buying</h1>
-    <p class="text-sm text-center text-gray-500">Mogelijk gemaakt door Google Translate</p>
-  </header>
+<header class="max-w-6xl mx-auto p-6 relative">
+  <h1 class="text-2xl font-semibold text-center">All Paid Skins Unlocked for buying</h1>
+  <p class="text-sm text-center text-gray-500">Mogelijk gemaakt door Google Translate</p>
+  <!-- Winkelwagen rechtsboven -->
+  <div class="absolute top-6 right-6">
+    <button id="cartBtn" class="relative bg-teal-500 text-white px-4 py-3 rounded shadow-lg flex items-center gap-2">
+      <i data-feather="shopping-cart"></i>
+      <span>Winkelwagen</span>
+      <span id="cartCount" class="cart-badge">0</span>
+    </button>
+  </div>
+</header>
 
-  <main class="max-w-6xl mx-auto p-6">
-    <div class="flex gap-4 items-center mb-6">
-      <input id="search" type="search" placeholder="Search with Skin names..." class="flex-1 rounded border px-4 py-2 shadow-sm" />
-      <select id="lang" class="rounded border px-3 py-2">
-        <option>Selecteer een taal</option>
-        <option>Nederlands</option>
-        <option>English</option>
-      </select>
-      <button id="optionsBtn" class="bg-blue-500 text-white rounded px-4 py-2">Options</button>
+<main class="max-w-6xl mx-auto p-6">
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6"></div>
+</main>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded shadow-lg max-w-md w-full p-6 relative">
+    <h2 class="text-3xl font-bold text-center mb-4">Totaal: <span id="totalAmount">0</span> USD</h2>
+    <hr class="border-gray-300 mb-4">
+    <div class="flex justify-around gap-4">
+      <button class="flex-1 bg-gray-200 p-4 rounded text-center">Apple Gift Card</button>
+      <a id="paypalBtn" target="_blank" class="flex-1 bg-yellow-400 p-4 rounded text-center text-white font-semibold">PayPal</a>
     </div>
+    <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">&times;</button>
+  </div>
+</div>
 
-    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  </main>
-
-  <template id="card-template">
-    <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
-      <img src="" alt="thumb" class="card-img" />
-      <h3 class="font-semibold mt-4 card-title text-lg"></h3>
-      <p class="text-sm text-gray-600 mt-1 card-desc"></p>
-      <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
-      <div class="mt-4 flex gap-3">
-        <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
-        <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
-      </div>
+<template id="card-template">
+  <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
+    <img src="" alt="thumb" class="card-img" />
+    <h3 class="font-semibold mt-4 card-title text-lg"></h3>
+    <p class="text-sm text-gray-600 mt-1 card-desc"></p>
+    <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
+    <div class="mt-4 flex gap-3">
+      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
+      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
     </div>
-  </template>
+  </div>
+</template>
 
-  <script>
-    const bundles = [
-      {
-        "id": "special_skin_1",
-        "name": "jack odoom",
-        "price": 9.99,
-        "image": "IMG_6174.webp", // jouw afbeelding
-        "note": "Items in Bundle:   1800 coin      1 skin_jack_odoom"
-      },
-      {
-        "id": "demo_skin_2",
-        "name": "jack odoom",
-        "price": 12.99,
-        "image": "IMG_6174.webp", 
-        "note": "Items in Bundle:   3600 coin      1 skin_jack_odoom"
-      }
-    ];
+<script>
+feather.replace();
 
-    const grid = document.getElementById('grid');
-    const template = document.getElementById('card-template');
-    const searchInput = document.getElementById('search');
-    const fallbackImg = "https://via.placeholder.com/120?text=No+Image"; // fallback afbeelding
+const bundles = [
+  {id:"special_skin_1", name:"Special Skin", price:9.99, image:"IMG_6174.webp", note:"No extra fees or taxes."},
+  {id:"demo_skin_2", name:"Demo Skin", price:12.99, image:"https://via.placeholder.com/120", note:"Voorbeeld bundle."}
+];
 
-    function render(list) {
-      grid.innerHTML = '';
-      list.forEach(item => {
-        const el = template.content.cloneNode(true);
-        el.querySelector('.card-title').textContent = item.name || item.id || 'Onbekend';
-        el.querySelector('.card-price').textContent = `USD ${item.price.toFixed(2)}`;
-        const img = el.querySelector('.card-img');
-        img.src = item.image || fallbackImg;
-        img.alt = item.name || 'thumb';
-        img.onerror = () => { img.src = fallbackImg }; // fallback als laden mislukt
-        el.querySelector('.card-desc').textContent = item.note || '';
+const grid = document.getElementById('grid');
+const template = document.getElementById('card-template');
+const cartCount = document.getElementById('cartCount');
+const fallbackImg = "https://via.placeholder.com/120?text=No+Image";
+let cart = [];
 
-        const shareBtn = el.querySelector('.shareBtn');
-        shareBtn.addEventListener('click', () => {
-          if (navigator.share) {
-            navigator.share({ title: item.name, text: `Check deze bundle: ${item.name}` });
-          } else {
-            navigator.clipboard.writeText(window.location.href + '#bundle=' + encodeURIComponent(item.id || item.name));
-            alert('Link gekopieerd naar klembord');
-          }
-        });
-
-        const selectBtn = el.querySelector('.selectBtn');
-        selectBtn.addEventListener('click', () => {
-          alert(`Geselecteerd: ${item.name}`);
-        });
-
-        grid.appendChild(el);
-      });
-    }
-
-    searchInput.addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase();
-      const filtered = bundles.filter(b => (b.name || '').toLowerCase().includes(q));
-      render(filtered);
+function render(list){
+  grid.innerHTML='';
+  list.forEach(item=>{
+    const el=template.content.cloneNode(true);
+    el.querySelector('.card-title').textContent=item.name||item.id||'Onbekend';
+    el.querySelector('.card-price').textContent=`USD ${item.price.toFixed(2)}`;
+    const img=el.querySelector('.card-img');
+    img.src=item.image||fallbackImg;
+    img.alt=item.name||'thumb';
+    img.onerror=()=>{img.src=fallbackImg};
+    el.querySelector('.card-desc').textContent=item.note||'';
+    el.querySelector('.shareBtn').addEventListener('click',()=>{
+      if(navigator.share){navigator.share({title:item.name,text:`Check deze bundle: ${item.name}`})} 
+      else{navigator.clipboard.writeText(window.location.href+'#bundle='+encodeURIComponent(item.id||item.name)); alert('Link gekopieerd naar klembord');}
     });
+    el.querySelector('.selectBtn').addEventListener('click',()=>{
+      cart.push(item);
+      cartCount.textContent=cart.length;
+      alert(`${item.name} toegevoegd aan de winkelwagen`);
+    });
+    grid.appendChild(el);
+  });
+}
 
-    render(bundles);
-  </script>
+render(bundles);
+
+// Checkout
+const cartBtn=document.getElementById('cartBtn');
+const checkoutModal=document.getElementById('checkoutModal');
+const totalAmount=document.getElementById('totalAmount');
+const paypalBtn=document.getElementById('paypalBtn');
+const closeModal=document.getElementById('closeModal');
+
+cartBtn.addEventListener('click',()=>{
+  if(cart.length===0){alert('Je winkelwagen is leeg'); return;}
+  let total=cart.reduce((acc,item)=>acc+item.price,0);
+  totalAmount.textContent=total.toFixed(2);
+  paypalBtn.href=`https://www.paypal.me/TBYTagario/${total.toFixed(2)}`;
+  checkoutModal.classList.remove('hidden');
+});
+
+closeModal.addEventListener('click',()=>{checkoutModal.classList.add('hidden')});
+</script>
 </body>
 </html>
