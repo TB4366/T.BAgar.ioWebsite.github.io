@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Skins Shop met Winkelwagen</title>
+<title>T.B Agar.io Paid Skins</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
@@ -12,22 +12,38 @@
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
-<header class="max-w-6xl mx-auto p-6 relative">
-  <h1 class="text-2xl font-semibold text-center">All Paid Skins Unlocked</h1>
-  <div class="absolute top-6 right-6">
-    <button id="cartBtn" class="relative bg-teal-500 text-white px-4 py-3 rounded shadow-lg flex items-center gap-2">
-      <i data-feather="shopping-cart"></i>
-      <span>Winkelwagen</span>
-      <span id="cartCount" class="cart-badge">0</span>
-    </button>
+<!-- Navbar -->
+<header class="bg-gray-900 text-white">
+  <div class="max-w-6xl mx-auto flex items-center justify-between p-4">
+    <!-- Logo + site naam -->
+    <div class="flex items-center gap-3">
+      <img src="https://via.placeholder.com/40" alt="Logo" class="w-10 h-10 rounded-full">
+      <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
+    </div>
+    <!-- Taal + winkelwagen -->
+    <div class="flex items-center gap-4">
+      <select id="langSelect" class="rounded text-gray-800 px-2 py-1">
+        <option value="nl">Nederlands</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
+        <i data-feather="shopping-cart"></i>
+        <span>Winkelwagen</span>
+        <span id="cartCount" class="cart-badge">0</span>
+      </button>
+    </div>
   </div>
 </header>
 
+<!-- Main content -->
 <main class="max-w-6xl mx-auto p-6">
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6"></div>
 </main>
 
-<!-- Winkelwagen / Checkout Modal -->
+<!-- Winkelwagen Modal -->
 <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
   <div class="bg-white rounded shadow-lg max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
     <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
@@ -79,6 +95,7 @@ const paypalBtn = document.getElementById('paypalBtn');
 const fallbackImg = "https://via.placeholder.com/120?text=No+Image";
 let cart = [];
 
+// Render skins
 function render(list){
   grid.innerHTML='';
   list.forEach(item=>{
@@ -103,6 +120,7 @@ function render(list){
   });
 }
 
+// Update winkelwagen modal
 function updateCartModal(){
   cartItemsContainer.innerHTML='';
   cart.forEach((item,index)=>{
@@ -129,15 +147,15 @@ function updateCartModal(){
   paypalBtn.href=`https://www.paypal.me/TBYTagario/${total.toFixed(2)}`;
 }
 
+// Open winkelwagen modal
 document.getElementById('cartBtn').addEventListener('click',()=>{
   if(cart.length===0){alert('Je winkelwagen is leeg'); return;}
   updateCartModal();
   cartModal.classList.remove('hidden');
 });
 
-document.getElementById('closeModal').addEventListener('click',()=>{
-  cartModal.classList.add('hidden');
-});
+// Sluit modal
+document.getElementById('closeModal').addEventListener('click',()=>{cartModal.classList.add('hidden');});
 
 render(bundles);
 </script>
