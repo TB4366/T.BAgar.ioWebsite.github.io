@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skins Shop — paid skins</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 9999px; /* ronde cirkel */
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <header class="max-w-6xl mx-auto p-6">
+    <h1 class="text-2xl font-semibold text-center">All Paid Skins Unlocked for buying</h1>
+    <p class="text-sm text-center text-gray-500">Mogelijk gemaakt door Google Translate</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-6">
+    <div class="flex gap-4 items-center mb-6">
+      <input id="search" type="search" placeholder="Search with Skin names..." class="flex-1 rounded border px-4 py-2 shadow-sm" />
+      <select id="lang" class="rounded border px-3 py-2">
+        <option>Selecteer een taal</option>
+        <option>Nederlands</option>
+        <option>English</option>
+      </select>
+      <button id="optionsBtn" class="bg-blue-500 text-white rounded px-4 py-2">Options</button>
+    </div>
+
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </main>
+
+  <template id="card-template">
+    <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
+      <img src="" alt="thumb" class="card-img" />
+      <h3 class="font-semibold mt-4 card-title text-lg"></h3>
+      <p class="text-sm text-gray-600 mt-1 card-desc"></p>
+      <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
+      <div class="mt-4 flex gap-3">
+        <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
+        <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const bundles = [
+      {
+        "id": "special_skin_1",
+        "name": "Special Skin",
+        "price": 9.99,
+        "image": "IMG_6174.webp", // jouw afbeelding
+        "note": "No extra fees or taxes."
+      },
+      {
+        "id": "demo_skin_2",
+        "name": "Demo Skin",
+        "price": 12.99,
+        "image": "https://via.placeholder.com/120", 
+        "note": "Voorbeeld bundle."
+      }
+    ];
+
+    const grid = document.getElementById('grid');
+    const template = document.getElementById('card-template');
+    const searchInput = document.getElementById('search');
+    const fallbackImg = "https://via.placeholder.com/120?text=No+Image"; // fallback afbeelding
+
+    function render(list) {
+      grid.innerHTML = '';
+      list.forEach(item => {
+        const el = template.content.cloneNode(true);
+        el.querySelector('.card-title').textContent = item.name || item.id || 'Onbekend';
+        el.querySelector('.card-price').textContent = `USD ${item.price.toFixed(2)}`;
+        const img = el.querySelector('.card-img');
+        img.src = item.image || fallbackImg;
+        img.alt = item.name || 'thumb';
+        img.onerror = () => { img.src = fallbackImg }; // fallback als laden mislukt
+        el.querySelector('.card-desc').textContent = item.note || '';
+
+        const shareBtn = el.querySelector('.shareBtn');
+        shareBtn.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({ title: item.name, text: `Check deze bundle: ${item.name}` });
+          } else {
+            navigator.clipboard.writeText(window.location.href + '#bundle=' + encodeURIComponent(item.id || item.name));
+            alert('Link gekopieerd naar klembord');
+          }
+        });
+
+        const selectBtn = el.querySelector('.selectBtn');
+        selectBtn.addEventListener('click', () => {
+          alert(`Geselecteerd: ${item.name}`);
+        });
+
+        grid.appendChild(el);
+      });
+    }
+
+    searchInput.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = bundles.filter(b => (b.name || '').toLowerCase().includes(q));
+      render(filtered);
+    });
+
+    render(bundles);
+  </script>
+</body>
+</html>
