@@ -3,78 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io Paid Skins</title>
+<title>T.B Agar.io Paid Skins — 30 Skins</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-  .card-img {
-    width: 120px; height: 120px;
-    object-fit: cover; border-radius: 9999px;
-    margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-  .cart-badge {
-    background-color: red; color: white; font-weight: bold;
-    border-radius: 9999px; width: 20px; height: 20px;
-    font-size: 12px; display: flex; justify-content: center; align-items: center;
-    position: absolute; top: -5px; right: -5px;
-  }
+  .card-img{width:120px;height:120px;object-fit:cover;border-radius:9999px;box-shadow:0 6px 12px rgba(0,0,0,0.08);}
+  .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px;box-shadow:0 4px 8px rgba(0,0,0,0.08);}
+  .cart-badge{background-color:#ef4444;color:white;font-weight:700;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;position:absolute;top:-6px;right:-6px;}
+  .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
 </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-<!-- Navbar -->
 <header class="bg-gray-900 text-white">
   <div class="max-w-6xl mx-auto flex items-center justify-between p-4 gap-4">
     <div class="flex items-center gap-3">
-      <img src="https://via.placeholder.com/40" alt="Logo" class="w-10 h-10 rounded-full">
-      <span class="font-bold text-lg" data-i18n="siteName">T.B Agar.io Paid Skins</span>
+      <img src="https://via.placeholder.com/40/111827/ffffff?text=TB" alt="Logo" class="w-10 h-10 rounded-full">
+      <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
     </div>
-    <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 rounded px-2 py-1 text-gray-800">
+    <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 max-w-xl rounded px-3 py-2 text-gray-800">
     <div class="flex items-center gap-4">
-      <select id="langSelect" class="rounded text-gray-800 px-2 py-1">
+      <select id="langSelect" class="rounded text-gray-800 px-2 py-2">
         <option value="nl">Nederlands</option>
         <option value="en">English</option>
       </select>
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
-        <i data-feather="shopping-cart"></i>
-        <span data-i18n="cart">Winkelwagen</span>
+        <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
         <span id="cartCount" class="cart-badge">0</span>
       </button>
     </div>
   </div>
 </header>
 
+<div class="max-w-6xl mx-auto px-6 mt-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <label for="sortSelect" class="text-sm font-medium">Prijzen</label>
+    <select id="sortSelect" class="rounded border px-3 py-2">
+      <option value="default">Algemeen</option>
+      <option value="low">Van laag naar hoog</option>
+      <option value="high">Van hoog naar laag</option>
+      <option value="popular">Populair</option>
+      <option value="shuffle">Shuffle</option>
+    </select>
+  </div>
+</div>
+
 <main class="max-w-6xl mx-auto p-6">
-  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-6"></div>
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- Winkelwagen Modal -->
-<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-  <div class="bg-white rounded shadow-lg max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
-    <h2 class="text-2xl font-bold text-center mb-4" data-i18n="yourCart">Winkelwagen</h2>
-    <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
-    <div id="cartItems" class="space-y-4"></div>
-    <hr class="border-gray-300 my-4">
+<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded shadow-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-auto">
+    <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
+    <button id="closeModal" class="absolute top-3 right-4 text-gray-600 text-2xl">&times;</button>
+    <div id="cartItems" class="space-y-4 mb-4"></div>
+    <hr class="my-4">
     <div class="flex justify-between font-bold text-lg mb-4">
-      <span data-i18n="total">Totaal:</span>
-      <span id="totalAmount">0</span>
+      <span>Totaal:</span><span id="totalAmount">USD 0.00</span>
     </div>
-    <div class="flex justify-around gap-4">
-      <button class="flex-1 bg-gray-200 p-4 rounded text-center" data-i18n="appleGift">Apple Gift Card</button>
-      <a id="paypalBtn" target="_blank" class="flex-1 bg-yellow-400 p-4 rounded text-center text-white font-semibold">PayPal</a>
+    <div class="flex gap-4">
+      <button class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
+      <a id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold text-center" target="_blank">PayPal</a>
     </div>
   </div>
 </div>
 
 <template id="card-template">
   <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
-    <img src="" alt="thumb" class="card-img" />
+    <div class="imgs-row"></div>
     <h3 class="font-semibold mt-4 card-title text-lg"></h3>
     <p class="text-sm text-gray-600 mt-1 card-desc"></p>
     <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
     <div class="mt-4 flex gap-3">
-      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2"></button>
-      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2"></button>
+      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
+      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
     </div>
   </div>
 </template>
@@ -82,45 +84,38 @@
 <script>
 feather.replace();
 
-// ----------- 30 SKINS HIER ONDER -----------
-const bundles = [
-  { id:"skin_1", name:{nl:"Jack Odoom",en:"Jack Odoom"}, price:3.99, image:"IMG_6174.webp", note:{nl:"1800 coins + Jack Odoom skin",en:"1800 coins + Jack Odoom skin"} },
-  { id:"skin_2", name:{nl:"Flame Gremlin",en:"Flame Gremlin"}, price:4.49, image:"IMG_6175.webp", note:{nl:"4200 coins + Flame Gremlin",en:"4200 coins + Flame Gremlin"} },
-  { id:"skin_3", name:{nl:"Golden Demon",en:"Golden Demon"}, price:5.99, image:"IMG_6176.webp", note:{nl:"5000 coins + Golden Demon",en:"5000 coins + Golden Demon"} },
-  { id:"skin_4", name:{nl:"Blue Fire",en:"Blue Fire"}, price:3.49, image:"IMG_6177.webp", note:{nl:"2000 coins + Blue Fire skin",en:"2000 coins + Blue Fire skin"} },
-  { id:"skin_5", name:{nl:"Toxic Skull",en:"Toxic Skull"}, price:2.99, image:"IMG_6178.webp", note:{nl:"1500 coins + Toxic Skull",en:"1500 coins + Toxic Skull"} },
-  { id:"skin_6", name:{nl:"Crimson Wolf",en:"Crimson Wolf"}, price:4.99, image:"IMG_6179.webp", note:{nl:"3500 coins + Crimson Wolf",en:"3500 coins + Crimson Wolf"} },
-  { id:"skin_7", name:{nl:"Ocean Spirit",en:"Ocean Spirit"}, price:6.49, image:"IMG_6180.webp", note:{nl:"6000 coins + Ocean Spirit",en:"6000 coins + Ocean Spirit"} },
-  { id:"skin_8", name:{nl:"Ghostly Mask",en:"Ghostly Mask"}, price:3.29, image:"IMG_6181.webp", note:{nl:"1800 coins + Ghostly Mask",en:"1800 coins + Ghostly Mask"} },
-  { id:"skin_9", name:{nl:"Cyber Beast",en:"Cyber Beast"}, price:5.49, image:"IMG_6182.webp", note:{nl:"4200 coins + Cyber Beast",en:"4200 coins + Cyber Beast"} },
-  { id:"skin_10", name:{nl:"Emerald Phantom",en:"Emerald Phantom"}, price:4.29, image:"IMG_6183.webp", note:{nl:"3000 coins + Emerald Phantom",en:"3000 coins + Emerald Phantom"} },
-  { id:"skin_11", name:{nl:"Inferno Eye",en:"Inferno Eye"}, price:3.99, image:"IMG_6184.webp", note:{nl:"2000 coins + Inferno Eye",en:"2000 coins + Inferno Eye"} },
-  { id:"skin_12", name:{nl:"Shadow Lord",en:"Shadow Lord"}, price:6.99, image:"IMG_6185.webp", note:{nl:"7000 coins + Shadow Lord",en:"7000 coins + Shadow Lord"} },
-  { id:"skin_13", name:{nl:"Electric Fury",en:"Electric Fury"}, price:5.99, image:"IMG_6186.webp", note:{nl:"5500 coins + Electric Fury",en:"5500 coins + Electric Fury"} },
-  { id:"skin_14", name:{nl:"Frost King",en:"Frost King"}, price:4.99, image:"IMG_6187.webp", note:{nl:"3800 coins + Frost King",en:"3800 coins + Frost King"} },
-  { id:"skin_15", name:{nl:"Nightmare",en:"Nightmare"}, price:7.49, image:"IMG_6188.webp", note:{nl:"8000 coins + Nightmare",en:"8000 coins + Nightmare"} },
-  { id:"skin_16", name:{nl:"Dark Samurai",en:"Dark Samurai"}, price:5.79, image:"IMG_6189.webp", note:{nl:"5200 coins + Dark Samurai",en:"5200 coins + Dark Samurai"} },
-  { id:"skin_17", name:{nl:"Venom Fang",en:"Venom Fang"}, price:3.69, image:"IMG_6190.webp", note:{nl:"2400 coins + Venom Fang",en:"2400 coins + Venom Fang"} },
-  { id:"skin_18", name:{nl:"Royal Dragon",en:"Royal Dragon"}, price:6.29, image:"IMG_6191.webp", note:{nl:"6500 coins + Royal Dragon",en:"6500 coins + Royal Dragon"} },
-  { id:"skin_19", name:{nl:"Galaxy Orb",en:"Galaxy Orb"}, price:4.59, image:"IMG_6192.webp", note:{nl:"3100 coins + Galaxy Orb",en:"3100 coins + Galaxy Orb"} },
-  { id:"skin_20", name:{nl:"Storm Rider",en:"Storm Rider"}, price:5.29, image:"IMG_6193.webp", note:{nl:"4700 coins + Storm Rider",en:"4700 coins + Storm Rider"} },
-  { id:"skin_21", name:{nl:"Solar Flame",en:"Solar Flame"}, price:3.89, image:"IMG_6194.webp", note:{nl:"1900 coins + Solar Flame",en:"1900 coins + Solar Flame"} },
-  { id:"skin_22", name:{nl:"Titan Horn",en:"Titan Horn"}, price:6.79, image:"IMG_6195.webp", note:{nl:"7500 coins + Titan Horn",en:"7500 coins + Titan Horn"} },
-  { id:"skin_23", name:{nl:"Mystic Eye",en:"Mystic Eye"}, price:2.79, image:"IMG_6196.webp", note:{nl:"1300 coins + Mystic Eye",en:"1300 coins + Mystic Eye"} },
-  { id:"skin_24", name:{nl:"Fire Demon",en:"Fire Demon"}, price:5.89, image:"IMG_6197.webp", note:{nl:"5600 coins + Fire Demon",en:"5600 coins + Fire Demon"} },
-  { id:"skin_25", name:{nl:"Ice Reaper",en:"Ice Reaper"}, price:4.79, image:"IMG_6198.webp", note:{nl:"4000 coins + Ice Reaper",en:"4000 coins + Ice Reaper"} },
-  { id:"skin_26", name:{nl:"Steel Ghost",en:"Steel Ghost"}, price:3.59, image:"IMG_6199.webp", note:{nl:"2100 coins + Steel Ghost",en:"2100 coins + Steel Ghost"} },
-  { id:"skin_27", name:{nl:"Vortex Skull",en:"Vortex Skull"}, price:5.19, image:"IMG_6200.webp", note:{nl:"4900 coins + Vortex Skull",en:"4900 coins + Vortex Skull"} },
-  { id:"skin_28", name:{nl:"Oblivion Mask",en:"Oblivion Mask"}, price:6.49, image:"IMG_6201.webp", note:{nl:"6200 coins + Oblivion Mask",en:"6200 coins + Oblivion Mask"} },
-  { id:"skin_29", name:{nl:"Thunder Oni",en:"Thunder Oni"}, price:5.59, image:"IMG_6202.webp", note:{nl:"5000 coins + Thunder Oni",en:"5000 coins + Thunder Oni"} },
-  { id:"skin_30", name:{nl:"Crimson Flame",en:"Crimson Flame"}, price:4.39, image:"IMG_6203.webp", note:{nl:"3500 coins + Crimson Flame",en:"3500 coins + Crimson Flame"} }
+const bundles=[
+  {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"1800 coins",en:"1800 coins"},sold:300},
+  {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:"IMG_6176.webp",note:{nl:"3600 coins",en:"3600 coins"},sold:260},
+  {id:"skin_3",name:{nl:"Lava King",en:"Lava King"},price:4.49,image1:"https://via.placeholder.com/160/f87171/ffffff?text=Lava+King",image2:null,note:{nl:"2000 coins",en:"2000 coins"},sold:200},
+  {id:"skin_4",name:{nl:"Blue Dragon",en:"Blue Dragon"},price:6.99,image1:"https://via.placeholder.com/160/3b82f6/ffffff?text=Blue+Dragon",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"4200 coins",en:"4200 coins"},sold:180},
+  {id:"skin_5",name:{nl:"Ghost Rider",en:"Ghost Rider"},price:7.99,image1:"https://via.placeholder.com/160/111827/ffffff?text=Ghost",image2:null,note:{nl:"4800 coins",en:"4800 coins"},sold:170},
+  {id:"skin_6",name:{nl:"Inferno Orb",en:"Inferno Orb"},price:4.99,image1:"https://via.placeholder.com/160/f97316/ffffff?text=Inferno",image2:null,note:{nl:"3000 coins",en:"3000 coins"},sold:150},
+  {id:"skin_7",name:{nl:"Toxic Slime",en:"Toxic Slime"},price:2.49,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1200 coins",en:"1200 coins"},sold:140},
+  {id:"skin_8",name:{nl:"Shadow Skull",en:"Shadow Skull"},price:8.99,image1:"https://via.placeholder.com/160/111827/ffffff?text=Shadow",image2:"https://via.placeholder.com/160/0f172a/ffffff?text=Alt",note:{nl:"5600 coins",en:"5600 coins"},sold:120},
+  {id:"skin_9",name:{nl:"Cyber Core",en:"Cyber Core"},price:5.49,image1:"https://via.placeholder.com/160/0ea5e9/ffffff?text=Cyber",image2:null,note:{nl:"3100 coins",en:"3100 coins"},sold:115},
+  {id:"skin_10",name:{nl:"Frozen Titan",en:"Frozen Titan"},price:6.79,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Frozen",image2:null,note:{nl:"3500 coins",en:"3500 coins"},sold:110},
+  {id:"skin_11",name:{nl:"Galaxy Orb",en:"Galaxy Orb"},price:9.99,image1:"https://via.placeholder.com/160/7c3aed/ffffff?text=Galaxy",image2:"https://via.placeholder.com/160/a855f7/ffffff?text=Alt",note:{nl:"6200 coins",en:"6200 coins"},sold:105},
+  {id:"skin_12",name:{nl:"Crimson Blade",en:"Crimson Blade"},price:4.59,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Crimson",image2:null,note:{nl:"2000 coins",en:"2000 coins"},sold:98},
+  {id:"skin_13",name:{nl:"Storm Rider",en:"Storm Rider"},price:3.49,image1:"https://via.placeholder.com/160/0ea5e9/ffffff?text=Storm",image2:null,note:{nl:"1600 coins",en:"1600 coins"},sold:95},
+  {id:"skin_14",name:{nl:"Ocean Wave",en:"Ocean Wave"},price:2.99,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Ocean",image2:null,note:{nl:"1400 coins",en:"1400 coins"},sold:90},
+  {id:"skin_15",name:{nl:"Thunder Orb",en:"Thunder Orb"},price:6.29,image1:"https://via.placeholder.com/160/facc15/000000?text=Thunder",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:88},
+  {id:"skin_16",name:{nl:"Emerald Eye",en:"Emerald Eye"},price:4.39,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Emerald",image2:"https://via.placeholder.com/160/16a34a/ffffff?text=Alt",note:{nl:"2200 coins",en:"2200 coins"},sold:80},
+  {id:"skin_17",name:{nl:"Purple Flame",en:"Purple Flame"},price:5.79,image1:"https://via.placeholder.com/160/9333ea/ffffff?text=Purple",image2:null,note:{nl:"3400 coins",en:"3400 coins"},sold:76},
+  {id:"skin_18",name:{nl:"Golden Mask",en:"Golden Mask"},price:8.19,image1:"https://via.placeholder.com/160/fbbf24/000000?text=Golden",image2:null,note:{nl:"5100 coins",en:"5100 coins"},sold:70},
+  {id:"skin_19",name:{nl:"Obsidian Orb",en:"Obsidian Orb"},price:3.99,image1:"https://via.placeholder.com/160/000000/ffffff?text=Obsidian",image2:null,note:{nl:"1900 coins",en:"1900 coins"},sold:64},
+  {id:"skin_20",name:{nl:"Star Burst",en:"Star Burst"},price:7.59,image1:"https://via.placeholder.com/160/fde047/000000?text=Star",image2:null,note:{nl:"4900 coins",en:"4900 coins"},sold:60},
+  {id:"skin_21",name:{nl:"Toxic Eye",en:"Toxic Eye"},price:3.19,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1300 coins",en:"1300 coins"},sold:56},
+  {id:"skin_22",name:{nl:"Vortex Core",en:"Vortex Core"},price:5.39,image1:"https://via.placeholder.com/160/2563eb/ffffff?text=Vortex",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"3000 coins",en:"3000 coins"},sold:50},
+  {id:"skin_23",name:{nl:"Ruby Fang",en:"Ruby Fang"},price:6.19,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Ruby",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:46},
+  {id:"skin_24",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
+  {id:"skin_25",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
+  {id:"skin_26",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
+  {id:"skin_27",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36},
+  {id:"skin_28",name:{nl:"Fire Ball",en:"Fire Ball"},price:7.99,image1:"https://via.placeholder.com/160/f97316/ffffff?text=Fire",image2:null,note:{nl:"4500 coins",en:"4500 coins"},sold:34},
+  {id:"skin_29",name:{nl:"Aqua Lord",en:"Aqua Lord"},price:5.49,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Aqua",image2:null,note:{nl:"3100 coins",en:"3100 coins"},sold:32},
+  {id:"skin_30",name:{nl:"Plasma Nova",en:"Plasma Nova"},price:9.49,image1:"https://via.placeholder.com/160/7c3aed/ffffff?text=Plasma",image2:"https://via.placeholder.com/160/a855f7/ffffff?text=Alt",note:{nl:"6200 coins",en:"6200 coins"},sold:30}
 ];
-// -------------------------------------------
-
-const translations = {
-  nl:{siteName:"T.B Agar.io Paid Skins",cart:"Winkelwagen",yourCart:"Winkelwagen",total:"Totaal:",appleGift:"Apple Gift Card",share:"Deel",select:"Selecteer"},
-  en:{siteName:"T.B Agar.io Paid Skins",cart:"Cart",yourCart:"Your Cart",total:"Total:",appleGift:"Apple Gift Card",share:"Share",select:"Select"}
-};
 
 const grid=document.getElementById('grid');
 const template=document.getElementById('card-template');
@@ -130,89 +125,62 @@ const totalAmount=document.getElementById('totalAmount');
 const cartModal=document.getElementById('cartModal');
 const paypalBtn=document.getElementById('paypalBtn');
 const navbarSearch=document.getElementById('navbarSearch');
-const langSelect=document.getElementById('langSelect');
+const sortSelect=document.getElementById('sortSelect');
 const fallbackImg="https://via.placeholder.com/120?text=No+Image";
 let cart=[];
+let originalOrder=bundles.slice();
 
+function formatPrice(p){return`USD ${p.toFixed(2)}`;}
+function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function render(list){
   grid.innerHTML='';
-  const lang = langSelect.value;
   list.forEach(item=>{
-    if(!item.name[lang] || !item.image) return;
-    const el = template.content.cloneNode(true);
-    el.querySelector('.card-title').textContent = item.name[lang];
-    el.querySelector('.card-price').textContent = `USD ${item.price}`;
-    const img = el.querySelector('.card-img');
-    img.src = item.image || fallbackImg;
-    img.alt = item.name[lang];
-    img.onerror = ()=>{ img.src = fallbackImg };
-    el.querySelector('.card-desc').textContent = item.note[lang] || '';
-    const shareBtn = el.querySelector('.shareBtn');
-    shareBtn.textContent = translations[lang].share;
-    shareBtn.addEventListener('click',()=>{
-      if(navigator.share){navigator.share({title:item.name[lang],text:`Check deze bundle: ${item.name[lang]}`})} 
-      else{navigator.clipboard.writeText(window.location.href+'#bundle='+encodeURIComponent(item.id)); alert('Link gekopieerd');}
-    });
-    const selectBtn = el.querySelector('.selectBtn');
-    selectBtn.textContent = translations[lang].select;
-    selectBtn.addEventListener('click',()=>{
-      cart.push(item);
-      cartCount.textContent=cart.length;
-      alert(`${item.name[lang]} toegevoegd aan winkelwagen`);
-    });
+    if(!item.image1&&!item.image2)return;
+    const el=template.content.cloneNode(true);
+    const imgsRow=el.querySelector('.imgs-row');
+    if(item.image1){const img=document.createElement('img');img.src=item.image1;img.className=item.image2?'small-img':'card-img';img.onerror=()=>img.src=fallbackImg;imgsRow.appendChild(img);}
+    if(item.image2){const img2=document.createElement('img');img2.src=item.image2;img2.className='small-img';img2.onerror=()=>img2.src=fallbackImg;imgsRow.appendChild(img2);}
+    el.querySelector('.card-title').textContent=item.name.nl;
+    el.querySelector('.card-desc').textContent=item.note.nl;
+    el.querySelector('.card-price').textContent=formatPrice(item.price);
+    el.querySelector('.shareBtn').addEventListener('click',()=>{navigator.clipboard.writeText(location.href+'#'+item.id);alert('Link gekopieerd');});
+    el.querySelector('.selectBtn').addEventListener('click',()=>{cart.push(item);cartCount.textContent=cart.length;alert(`${item.name.nl} toegevoegd aan winkelwagen`);});
     grid.appendChild(el);
   });
 }
-
 function updateCartModal(){
   cartItemsContainer.innerHTML='';
-  const lang = langSelect.value;
-  cart.forEach((item,index)=>{
+  cart.forEach((item,i)=>{
     const div=document.createElement('div');
     div.className='flex items-center justify-between gap-4 p-2 border rounded';
-    div.innerHTML=`
-      <img src="${item.image}" alt="${item.name[lang]}" class="w-16 h-16 object-cover rounded-full">
-      <div class="flex-1">
-        <h4 class="font-semibold">${item.name[lang]}</h4>
-        <p class="text-gray-600">USD ${item.price}</p>
-      </div>
-      <button class="text-red-500 font-bold text-xl removeBtn">&times;</button>
-    `;
-    div.querySelector('.removeBtn').addEventListener('click',()=>{
-      cart.splice(index,1);
-      cartCount.textContent=cart.length;
-      updateCartModal();
-    });
+    div.innerHTML=`<img src="${item.image1||fallbackImg}" class="w-16 h-16 rounded-full"><div class="flex-1"><h4>${item.name.nl}</h4><p>${formatPrice(item.price)}</p></div><button class="removeBtn text-red-500 font-bold text-xl">&times;</button>`;
+    div.querySelector('.removeBtn').addEventListener('click',()=>{cart.splice(i,1);cartCount.textContent=cart.length;updateCartModal();});
     cartItemsContainer.appendChild(div);
   });
-  let total = cart.reduce((acc,item)=>acc+parseFloat(item.price),0);
-  totalAmount.textContent=`USD ${total.toFixed(2)}`;
-  paypalBtn.href=`https://www.paypal.me/TBYTagario/${total.toFixed(2)}`;
+  const total=cart.reduce((s,it)=>s+it.price,0);
+  totalAmount.textContent=formatPrice(total);
+  paypalBtn.href=`https://paypal.me/TBYTagario/${total}`;
 }
 
-document.getElementById('cartBtn').addEventListener('click',()=>{
-  if(cart.length===0){alert('Je winkelwagen is leeg'); return;}
-  updateCartModal();
-  cartModal.classList.remove('hidden');
+document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.remove('hidden');};
+document.getElementById('closeModal').onclick=()=>cartModal.classList.add('hidden');
+
+navbarSearch.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
+  render(filtered);
 });
 
-document.getElementById('closeModal').addEventListener('click',()=>{cartModal.classList.add('hidden');});
-
-langSelect.addEventListener('change',()=>{
-  const lang = langSelect.value;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key = el.getAttribute('data-i18n');
-    if(translations[lang][key]) el.textContent = translations[lang][key];
-  });
-  render(bundles);
-});
-
-navbarSearch.addEventListener('input',()=>{
-  const q = navbarSearch.value.toLowerCase();
-  render(bundles.filter(b=>{
-    const lang = langSelect.value;
-    return b.name[lang] && b.name[lang].toLowerCase().includes(q);
-  }));
+sortSelect.addEventListener('change',()=>{
+  let sorted=[];
+  switch(sortSelect.value){
+    case'low':sorted=bundles.slice().sort((a,b)=>a.price-b.price);break;
+    case'high':sorted=bundles.slice().sort((a,b)=>b.price-a.price);break;
+    case'popular':sorted=bundles.slice().sort((a,b)=>b.sold-a.sold);break;
+    case'shuffle':sorted=shuffleArray(bundles);break;
+    default:sorted=originalOrder;
+  }
+  render(sorted);
 });
 
 render(bundles);
