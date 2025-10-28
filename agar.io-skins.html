@@ -1,177 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="nl">
 <head>
-<meta charset="utf-8" />
-<title>Skin Shop (User)</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>paidskinsmangerpaneel — beheer</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-  body { font-family:Arial,Helvetica,sans-serif; background:#0b0b0b; color:#eee; padding:20px; text-align:center; }
-  h1 { color:#0af; margin-bottom:6px; }
-  input,button { padding:8px 12px; border-radius:999px; border:0; font-size:14px; }
-  button { cursor:pointer; background:#0af; color:#000; }
-  .skins { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:10px; }
-  .skinContainer { width:160px; display:flex; flex-direction:column; align-items:center; }
-  .skin { width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; background:#222;
-          display:flex; align-items:center; justify-content:center; transition:transform .12s, filter .12s; }
-  .skin img { width:100%; height:100%; object-fit:cover; }
-  .skin:hover { transform:translateY(-4px); }
-  .grayed img { filter:grayscale(100%); opacity:.45; }
-  .lock { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.6); padding:6px; border-radius:50%; font-size:16px; }
-  .skinName { margin-top:8px; font-size:14px; }
-  .skinPrice { color:#ddd; font-size:13px; margin-top:4px; }
-  #message { color:yellow; margin-bottom:8px; }
-
-  #eventBarContainer { position:fixed; bottom:12px; left:50%; transform:translateX(-50%);
-                       display:flex; gap:8px; z-index:999; max-width:90%; overflow:auto; padding:6px; }
-  .eventCard { width:220px; height:2.2cm; border:2px solid #0af; border-radius:6px; overflow:hidden;
-               position:relative; cursor:pointer; background:#111; }
-  .eventCard img { width:100%; height:100%; object-fit:cover; }
-  .eventCountdown { position:absolute; bottom:0; left:0; width:100%;
-                    background:rgba(0,0,0,0.6); color:#fff; font-size:12px; text-align:center; padding:4px 2px; }
-
-  #dealModal { display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
-               background:#151515; color:#fff; border:2px solid #0af; padding:18px; border-radius:10px;
-               z-index:2000; width:320px; max-width:90%; }
-  #dealModal img { width:100%; height:160px; object-fit:cover; border-radius:8px; }
-  #dealNav { display:flex; justify-content:space-between; margin-top:10px; gap:8px; }
-  #dealModal button { margin-top:10px; }
-
-  #purchasedTitle { margin-top:28px; font-size:18px; text-decoration:underline; }
-  #purchasedSkins { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:10px; }
-  #purchasedSkins img { width:96px; height:96px; border-radius:50%; border:2px solid #0af; object-fit:cover; }
+  body{background:#f3f4f6;}
+  .table-cell{padding:12px;border-bottom:1px solid #e5e7eb;}
+  .nowrap{white-space:nowrap;}
+  .code-box{font-family:monospace;padding:6px 10px;border-radius:6px;background:#fff;border:1px dashed #d1d5db;}
 </style>
 </head>
-<body>
+<body class="p-6">
+  <div class="max-w-6xl mx-auto bg-white rounded shadow p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h1 class="text-2xl font-bold">PaidSkins Manager Paneel</h1>
+      <div class="flex gap-2">
+        <button id="refreshBtn" class="px-3 py-2 bg-gray-200 rounded">Ververs</button>
+        <button id="exportBtn" class="px-3 py-2 bg-teal-500 text-white rounded">Export CSV</button>
+        <button id="clearBtn" class="px-3 py-2 bg-red-500 text-white rounded">Verwijder alles</button>
+      </div>
+    </div>
 
-<h1>Skin Shop</h1>
-<div id="message">Enter your key to load your account</div>
-<div>
-  <input id="keyInput" placeholder="Enter your key here">
-  <button onclick="loadKey()">Load Key</button>
-  <button onclick="clearKey()">Clear</button>
-</div>
+    <div id="noData" class="text-gray-600">Geen bestellingen gevonden.</div>
 
-<h3>Available Skins</h3>
-<div id="skinsGrid" class="skins"></div>
-
-<div id="purchasedSection">
-  <div id="purchasedTitle">Purchased Items</div>
-  <div id="purchasedSkins"></div>
-</div>
-
-<div id="eventBarContainer"></div>
-
-<div id="dealModal">
-  <h3 id="dealModalTitle"></h3>
-  <img id="dealModalImage" src="">
-  <p id="dealModalDesc"></p>
-  <div id="dealCountdown"></div>
-  <div id="dealNav">
-    <button onclick="prevDeal()">⬅</button>
-    <button onclick="nextDeal()">➡</button>
+    <div id="ordersTable" class="mt-4 overflow-auto"></div>
   </div>
-  <button id="buyDealBtn">Buy Deal</button>
-  <button onclick="closeDealModal()">Close</button>
-</div>
 
 <script>
-const BASE_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/data/";
-let keysData={}, skinsData=[], eventsData=[], dealsData=[];
-let currentKey=null, coins=0, money=0, owned=[], purchasedDeals=[];
-let currentEventDeals=[], currentDealIndex=0, dealTimer=null;
+/* Manager paneel leest localStorage sleutel 'paidskins_orders' */
+const key='paidskins_orders';
+const ordersTable=document.getElementById('ordersTable');
+const noData=document.getElementById('noData');
+document.getElementById('refreshBtn').addEventListener('click',renderOrders);
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  if(!confirm('Weet je zeker dat je alle opgeslagen bestellingen wilt verwijderen?')) return;
+  localStorage.removeItem(key);
+  renderOrders();
+});
+document.getElementById('exportBtn').addEventListener('click',exportCSV);
 
-async function fetchJSON(url){ const r=await fetch(url); if(!r.ok) throw new Error(url); return r.json(); }
-
-async function loadRemoteData(){
-  try{
-    [keysData, skinsData, eventsData, dealsData] = await Promise.all([
-      fetchJSON(BASE_URL+"keys.json"),
-      fetchJSON(BASE_URL+"skins.json"),
-      fetchJSON(BASE_URL+"events.json"),
-      fetchJSON(BASE_URL+"deals.json")
-    ]);
-    console.log("✅ Data loaded");
-  }catch(e){ console.error(e); showMessage("❌ Failed to load data from GitHub"); }
+function readOrders(){
+  return JSON.parse(localStorage.getItem(key) || '[]');
 }
 
-function showMessage(msg){ document.getElementById('message').textContent = msg; }
+function renderOrders(){
+  const arr=readOrders();
+  if(arr.length===0){
+    ordersTable.innerHTML=''; noData.style.display='block'; return;
+  }
+  noData.style.display='none';
+  let html = `<table class="w-full"><thead class="text-left bg-gray-50"><tr>
+    <th class="table-cell">Datum</th><th class="table-cell">Code</th><th class="table-cell">UID</th><th class="table-cell">E-mail</th><th class="table-cell">Items</th><th class="table-cell">Totaal (USD)</th><th class="table-cell">Acties</th>
+  </tr></thead><tbody>`;
+  arr.slice().reverse().forEach((o,idx)=>{
+    const date = new Date(o.date).toLocaleString('nl-NL');
+    const items = (o.items || []).map(it=>`${it.title} (${it.price.toFixed(2)})`).join(', ');
+    html += `<tr>
+      <td class="table-cell nowrap">${date}</td>
+      <td class="table-cell"><div class="code-box">${o.code}</div></td>
+      <td class="table-cell">${o.uid}</td>
+      <td class="table-cell">${o.email}</td>
+      <td class="table-cell">${items}</td>
+      <td class="table-cell">USD ${o.total.toFixed(2)}</td>
+      <td class="table-cell">
+        <button class="mailtoBtn px-2 py-1 bg-gray-200 rounded" data-email="${o.email}" data-code="${o.code}">E-mail klant</button>
+        <button class="deleteBtn px-2 py-1 bg-red-100 rounded" data-index="${idx}">Verwijder</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  ordersTable.innerHTML = html;
 
-function loadKey(){
-  const key=document.getElementById('keyInput').value.trim();
-  if(!key){ return showMessage("Enter a key"); }
-  const data=keysData[key];
-  if(!data){ return showMessage("❌ Invalid key"); }
-  currentKey=key;
-  coins=data.coins||0; money=data.money||0; owned=data.owned||[]; purchasedDeals=data.purchasedDeals||[];
-  showMessage("✅ Loaded "+(data.name||key));
-  renderSkins(); renderEventBar();
-}
+  // voeg eventlisteners toe op de knoppen
+  document.querySelectorAll('.mailtoBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const email=btn.dataset.email;
+      const code=btn.dataset.code;
+      const subject = encodeURIComponent('Over je aankoop bij T.B Agar.io');
+      const body = encodeURIComponent(`Hoi,\n\nBedankt voor je aankoop. Jouw code: ${code}\n\nAls er iets mis is met je bestelling mail ons aub terug.\n\nGroeten,\nT.B`);
+      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    });
+  });
 
-function clearKey(){ currentKey=null; coins=money=0; owned=[]; purchasedDeals=[]; showMessage("Key cleared"); renderSkins(); }
-
-function renderSkins(){
-  const grid=document.getElementById("skinsGrid"); const purchased=document.getElementById("purchasedSkins");
-  grid.innerHTML=purchased.innerHTML="";
-  skinsData.filter(s=>s.useFor==="coins").forEach(skin=>{
-    const isOwned=owned.includes(skin.id);
-    if(isOwned){ addPurchased(skin); return; }
-    const wrap=document.createElement("div"); wrap.className="skinContainer";
-    const card=document.createElement("div"); card.className="skin grayed";
-    card.innerHTML=`<img src="${skin.image||''}" alt=""><div class="lock">🔒</div>`;
-    card.onclick=()=>{ if(!currentKey) return showMessage("Enter key first"); buySkin(skin.id,skin.price); };
-    wrap.append(card, Object.assign(document.createElement("div"),{className:"skinName",textContent:skin.name}),
-                      Object.assign(document.createElement("div"),{className:"skinPrice",textContent:"Price "+skin.price+"🪙"}));
-    grid.appendChild(wrap);
+  document.querySelectorAll('.deleteBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(!confirm('Verwijder deze bestelling permanent?')) return;
+      // delete by index (reverse order in rendering)
+      const arr = readOrders();
+      const revIndex = arr.length - 1 - parseInt(btn.dataset.index,10);
+      arr.splice(revIndex,1);
+      localStorage.setItem(key, JSON.stringify(arr));
+      renderOrders();
+    });
   });
 }
-function addPurchased(s){ const img=document.createElement("img"); img.src=s.image; img.alt=s.name;
-  document.getElementById("purchasedSkins").appendChild(img); }
-function buySkin(id,price){ if(coins<price) return showMessage("Not enough coins");
-  coins-=price; owned.push(id); showMessage("✅ Skin purchased"); renderSkins(); }
 
-function renderEventBar(){
-  const bar=document.getElementById("eventBarContainer"); bar.innerHTML="";
-  eventsData.filter(e=>e.status==="active").forEach(e=>{
-    const card=document.createElement("div"); card.className="eventCard";
-    card.innerHTML=`<img src="${e.image||''}" alt=""><div class="eventCountdown"></div>`;
-    card.onclick=()=>openEvent(e.id); bar.appendChild(card);
+function exportCSV(){
+  const arr = readOrders();
+  if(arr.length===0){ alert('Geen data om te exporteren'); return; }
+  const rows = [['datum','code','uid','email','items','total']];
+  arr.forEach(o=>{
+    const items = (o.items || []).map(it=>`${it.title} (${it.price})`).join(' | ');
+    rows.push([o.date, o.code, o.uid, o.email, items, o.total]);
   });
+  const csv = rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'paidskins_orders_export.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
-function openEvent(id){
-  currentEventDeals=dealsData.filter(d=>d.eventId===id && d.status==="active" && !purchasedDeals.includes(d.id));
-  if(!currentEventDeals.length) return alert("No active deals");
-  currentDealIndex=0; showDeal(currentEventDeals[currentDealIndex]);
-}
-function showDeal(d){
-  const m=document.getElementById("dealModal");
-  m.style.display="block";
-  m.querySelector("#dealModalTitle").textContent=d.name;
-  m.querySelector("#dealModalDesc").textContent=d.desc;
-  m.querySelector("#dealModalImage").src=d.image;
-  const btn=document.getElementById("buyDealBtn");
-  btn.disabled=purchasedDeals.includes(d.id);
-  btn.onclick=()=>buyDeal(d);
-  updateCountdown(d);
-  clearInterval(dealTimer);
-  dealTimer=setInterval(()=>updateCountdown(d),1000);
-}
-function updateCountdown(d){
-  const now=Date.now(), rem=Math.max(0,d.endTime-now);
-  const h=Math.floor(rem/3600000), m=Math.floor(rem%3600000/60000), s=Math.floor(rem%60000/1000);
-  document.getElementById("dealCountdown").textContent=`Ends in: ${h}h ${m}m ${s}s Price: ${d.price}💰`;
-}
-function prevDeal(){ if(!currentEventDeals.length) return;
-  currentDealIndex=(currentDealIndex+currentEventDeals.length-1)%currentEventDeals.length;
-  showDeal(currentEventDeals[currentDealIndex]); }
-function nextDeal(){ if(!currentEventDeals.length) return;
-  currentDealIndex=(currentDealIndex+1)%currentEventDeals.length;
-  showDeal(currentEventDeals[currentDealIndex]); }
-function closeDealModal(){ document.getElementById("dealModal").style.display="none"; clearInterval(dealTimer); }
-function buyDeal(d){ if(money<d.price) return showMessage("Not enough money");
-  money-=d.price; purchasedDeals.push(d.id);
-  (d.skins||[]).forEach(s=>!owned.includes(s)&&owned.push(s));
-  showMessage("✅ Deal purchased"); renderSkins(); closeDealModal(); }
 
-(async()=>{ await loadRemoteData(); renderSkins(); renderEventBar(); })();
+/* Init */
+renderOrders();
 </script>
 </body>
 </html>
