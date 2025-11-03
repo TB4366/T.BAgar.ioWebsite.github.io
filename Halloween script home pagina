@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>T.B Agar.io — Halloween 🎃</title>
+<style>
+  :root{
+    --glow:#ff6600;
+    --accent:#ffbb55;
+    --overlay: rgba(0,0,0,0.62);
+  }
+
+  html,body{height:100%; margin:0; font-family:Arial, sans-serif; color:#fff;}
+  body{
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,140,0,0.15) 0%, transparent 20%),
+      linear-gradient(180deg,#4b0a00 0%, #1b0000 45%, #060000 100%);
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px rgba(255, 100, 0, 0.3);
+  }
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .site-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffae42;
+    text-shadow: 0 0 8px #ff4500;
+  }
+  .toggle-btn-header {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: #ffae42;
+  }
+  .menu-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    color: #ffae42;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .menu-btn:hover {
+    transform: scale(1.2);
+  }
+  .menu {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: rgba(30, 20, 20, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 100, 0, 0.4);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    min-width: 180px;
+  }
+  .menu a {
+    display: block;
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
+  }
+  .menu a:hover {
+    background-color: rgba(255, 100, 0, 0.2);
+    padding-left: 18px;
+  }
+
+  /* Main wrapper - dark overlay */
+  main{display:flex;justify-content:center;padding:120px 16px 80px;position:relative;z-index:10}
+  .content-wrapper{
+    width:100%;
+    max-width:1180px;
+    background: var(--overlay);
+    border-radius:14px;
+    padding:28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    position:relative;
+    z-index:20;
+  }
+
+  .highlight-title{ text-align:center; font-size:1.9rem; margin:6px 0 18px; color:var(--accent); text-shadow:0 0 12px var(--glow); }
+  .skins-circles{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-bottom:10px}
+  .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative}
+  .circle img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 900ms ease-in-out}
+  .circle img.active{opacity:1}
+
+  .video-grid{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:20px 0}
+  iframe{border:none;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+
+  .halloween-pop{text-align:center;margin:22px 0}
+  .halloween-button{display:inline-block;background:var(--glow);color:#0a0000;font-weight:700;padding:12px 24px;border-radius:12px;text-decoration:none;box-shadow:0 8px 30px rgba(255,102,0,0.15);cursor:pointer}
+  .halloween-button:hover{transform:translateY(-3px)}
+
+  .poster{display:block;margin:14px auto;border-radius:12px;max-width:420px;width:100%;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  .contest{ text-align:center;color:#ffd89a;margin-top:8px }
+  .contest h2{margin:8px 0 6px;font-size:1.4rem}
+  .discord-cta{display:inline-block;background:#5865F2;color:white;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:700;box-shadow:0 8px 20px rgba(88,101,242,0.18)}
+
+  .socials{display:flex;justify-content:center;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .socials a{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;text-decoration:none;color:white;font-weight:700;box-shadow:0 8px 18px rgba(0,0,0,0.45)}
+  .discord{background:#5865F2}
+  .instagram{background:#E1306C}
+  .youtube{background:#FF0000}
+
+  .floating{
+    position:absolute;
+    pointer-events:none;
+    user-select:none;
+    z-index:5;
+    opacity:0.95;
+    transform:translate(-50%,-50%);
+    will-change:transform;
+  }
+
+  #wheelOverlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+  }
+  #wheelCanvas{border-radius:50%; background:#fff; box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+  #spinBtn{margin-top:14px;padding:10px 18px;font-size:1rem;border-radius:10px;cursor:pointer;background:var(--glow);border:none;color:#120000;font-weight:800}
+  #prizeText{margin-top:12px;color:#ffdca5;font-weight:700}
+
+  @media (max-width:900px){
+    .circle{width:130px;height:130px}
+    iframe[width="560"]{width:100%;height:220px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-container">
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <span class="site-title">T.B Agar.io</span>
+    <button class="toggle-btn-header" id="themeToggleBtn"/button>
+  </div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="index.html">🏠 Home Pagina</a>
+    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+    <a href="key-access.html">🔑 Keys</a>
+    <a href="buy-account.html">💰 Buy Account</a>
+    <a href="paidskins.html">💰 Buy Account</a>
+  </div>
+</header>
+
+<main>
+  <div class="content-wrapper">
+
+    <!-- Skins -->
+    <div class="highlight-title">The Best Halloween Skins</div>
+    <div class="skins-circles">
+      <div class="circle" id="circle1">
+        <img src="A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" class="active" alt="">
+        <img src="610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg" alt="">
+        <img src="3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg" alt="">
+      </div>
+      <div class="circle" id="circle2">
+        <img src="IMG_5981.png" class="active" alt="">
+        <img src="IMG_5993.png" alt="">
+        <img src="IMG_5983.png" alt="">
+      </div>
+      <div class="circle" id="circle3">
+        <img src="IMG_6066.png" class="active" alt="">
+        <img src="A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" alt="">
+        <img src="610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg" alt="">
+      </div>
+    </div>
+
+    <!-- Videos under skins -->
+    <div class="video-grid">
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/vDoeUtuUdo4" allowfullscreen></iframe>
+      <iframe width="360" height="215" src="https://www.youtube.com/embed/REqb_bq0Qvk" allowfullscreen></iframe>
+    </div>
+
+    <!-- Halloween prize button -->
+    <div class="halloween-pop">
+      <button class="halloween-button" onclick="openWheel()">🎃 Click here for a Halloween Prize!</button>
+    </div>
+
+    <!-- Poster -->
+    <div style="text-align:center;">
+      <img src="C039176F-60A7-4C13-BE8A-8780741EB3CC.jpeg" alt="Ice Crysal Contest" class="poster"
+    </div>
+
+    <!-- Ice Crystal Contest -->
+    <div class="Contest">
+      <h2>Ice Crystal Contest</h2>
+      <p>Join the Discord server to participate and win exclusive prizes!</p>
+    </div>
+
+    <div style="text-align:center; margin-top:8px;">
+      <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="discord-cta">Join Discord</a>
+    </div>
+
+    <!-- Best Duo video -->
+    <div class="video-grid" style="margin-top:18px;">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/d8DluzJAd2w" allowfullscreen></iframe>
+    </div>
+
+    <!-- Socials -->
+    <div class="socials" style="margin-top:18px;">
+      <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">Discord
+      </a>
+      <a href="https://www.instagram.com/t.bagar.io/" class="instagram" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="20">Instagram
+      </a>
+      <a href="https://www.youtube.com/@T.B6" class="youtube" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" width="20">YouTube
+      </a>
+    </div>
+
+  </div>
+</main>
+
+<!-- Wheel overlay -->
+<div id="wheelOverlay" style="display:none;position:fixed;">
+  <canvas id="wheelCanvas" width="420" height="420"></canvas>
+  <button id="spinBtn" onclick="spinWheel()">SPIN!</button>
+  <div id="prizeText"></div>
+  <button onclick="closeWheel()" style="margin-top:12px;padding:8px 12px;border-radius:8px;border:none;background:#222;color:#ffdca5;cursor:pointer">Close</button>
+</div>
+
+<script>
+/* Toggle menu */
+function toggleMenu(){
+  const menu = document.getElementById('menu');
+  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
+
+/* Skins slideshow */
+function cycleSkins(circleId,interval){
+  const circle=document.getElementById(circleId);
+  const imgs=Array.from(circle.querySelectorAll('img'));
+  let idx=0;
+  setInterval(()=>{
+    imgs[idx].classList.remove('active');
+    idx=(idx+1)%imgs.length;
+    imgs[idx].classList.add('active');
+  }, interval);
+}
+cycleSkins('circle1',4000);
+cycleSkins('circle2',5000);
+cycleSkins('circle3',6000);
+
+/* Prize wheel */
+const wheelCanvas = document.getElementById('wheelCanvas');
+const ctx = wheelCanvas.getContext('2d');
+const wheelOverlay = document.getElementById('wheelOverlay');
+const prizeText = document.getElementById('prizeText');
+const prizes = ["🍬 Trick Candy","🎨 Extra Skin","🎁 Small Prize","👻 Fun Emoji","⭐ Bonus XP","🔒 Key Item"];
+const segments = prizes.length;
+let currentAngle = 0;
+let spinning = false;
+
+function openWheel(){
+  wheelOverlay.style.display = 'flex';
+  drawWheel();
+  prizeText.textContent = '';
+}
+function closeWheel(){ wheelOverlay.style.display='none'; prizeText.textContent=''; }
+function drawWheel(){
+  const anglePer = (2*Math.PI)/segments;
+  for(let i=0;i<segments;i++){
+    ctx.beginPath();
+    ctx.moveTo(210,210);
+    ctx.fillStyle= i%2===0?'#ff6600':'#ffbb55';
+    ctx.arc(210,210,210,i*anglePer,(i+1)*anglePer);
+    ctx.fill();
+    ctx.save();
+    ctx.translate(210,210);
+    ctx.rotate(i*anglePer+anglePer/2);
+    ctx.fillStyle="#000";
+    ctx.font="14px Arial";
+    ctx.textAlign="right";
+    ctx.fillText(prizes[i],200,0);
+    ctx.restore();
+  }
+}
+function spinWheel(){
+  if(spinning)return;
+  spinning=true;
+  let spins=Math.random()*3000+5000;
+  let duration=5000;
+  let start=performance.now();
+  function animate(now){
+    let elapsed=now-start;
+    let angle=(spins*elapsed/duration)/180*Math.PI;
+    currentAngle+=angle;
+    ctx.clearRect(0,0,420,420);
+    ctx.save();
+    ctx.translate(210,210);
+    ctx.rotate(currentAngle);
+    ctx.translate(-210,-210);
+    drawWheel();
+    ctx.restore();
+    if(elapsed<duration) requestAnimationFrame(animate);
+    else{
+      spinning=false;
+      const idx=Math.floor((segments - ((currentAngle%(2*Math.PI))/(2*Math.PI))*segments)%segments);
+      prizeText.textContent="You won: "+prizes[idx];
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+/* Floating Halloween objects */
+const objects=["🎃","👻","🦇","🕷️"];
+const floats=[];
+for(let i=0;i<50;i++){
+  const span=document.createElement('span');
+  span.textContent=objects[Math.floor(Math.random()*objects.length)];
+  span.className='floating';
+  span.style.fontSize=(12+Math.random()*24)+'px';
+  span.style.left=Math.random()*window.innerWidth+'px';
+  span.style.top=Math.random()*window.innerHeight+'px';
+  span.speed=(0.3+Math.random()*1.2)*(Math.random()>0.5?1:-1);
+  document.body.appendChild(span);
+  floats.push(span);
+}
+
+function animateFloats(){
+  for(const f of floats){
+    let x=parseFloat(f.style.left);
+    let y=parseFloat(f.style.top);
+    x+=f.speed;
+    y+=f.speed/2;
+    if(x>window.innerWidth) x=0; if(x<0) x=window.innerWidth;
+    if(y>window.innerHeight) y=0; if(y<0) y=window.innerHeight;
+    f.style.left=x+'px';
+    f.style.top=y+'px';
+  }
+  requestAnimationFrame(animateFloats);
+}
+animateFloats();
+</script>
+
+</body>
+</html>
