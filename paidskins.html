@@ -15,13 +15,17 @@
 </style>
 
 <!-- Google Translate Widget -->
+<div id="google_translate_element" style="position: fixed; top: 10px; right: 10px; z-index: 9999;"></div>
 <script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'nl'}, 'google_translate_element');
-}
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'nl',
+      includedLanguages: 'en,fr,de,es,it,pt,tr,pl,ru,ar,ja,zh-CN,zh-TW,ko,hi,nl',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+  }
 </script>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -33,7 +37,6 @@ function googleTranslateElementInit() {
     </div>
     <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 max-w-xl rounded px-3 py-2 text-gray-800">
     <div class="flex items-center gap-4">
-      <div id="google_translate_element"></div>
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
         <span id="cartCount" class="cart-badge">0</span>
@@ -59,7 +62,7 @@ function googleTranslateElementInit() {
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- Cart modal -->
+<!-- Winkelwagen modal -->
 <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white rounded shadow-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-auto">
     <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
@@ -69,8 +72,6 @@ function googleTranslateElementInit() {
     <div class="flex justify-between font-bold text-lg mb-4">
       <span>Totaal:</span><span id="totalAmount">USD 0.00</span>
     </div>
-
-    <!-- UID en E-mail -->
     <div class="space-y-3 mb-4">
       <label class="block"><span class="font-medium">UID (bite mod)</span>
         <input id="inputUID" class="w-full border rounded px-3 py-2 mt-1" placeholder="Voer de UID van de bite mod in">
@@ -78,9 +79,7 @@ function googleTranslateElementInit() {
       <label class="block"><span class="font-medium">E-mail</span>
         <input id="inputEmail" type="email" class="w-full border rounded px-3 py-2 mt-1" placeholder="voorbeeld@email.nl">
       </label>
-      <p class="text-sm text-gray-600">We gebruiken deze gegevens alleen om de skin toe te wijzen en je te contacteren bij problemen.</p>
     </div>
-
     <div class="flex gap-4">
       <button id="applePayBtn" class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
       <button id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold">PayPal</button>
@@ -104,40 +103,37 @@ function googleTranslateElementInit() {
 <script>
 feather.replace();
 
-const bundles=[
+const bundles = [
   {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"Items in Bundle: 1800 coin 1 skin jack odoom"},sold:300},
   {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:null,note:{nl:"Items in Bundle: 4200 coin 1 skin Flame Gremlin"},sold:260},
   {id:"skin_3",name:{nl:"biteback",en:"biteback"},price:7.99,image1:"IMG_6260.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin biteback"},sold:140},
-  {id:"skin_3",name:{nl:"spore_dog",en:"spore_dog"},price:6.89,image1:"IMG_6258.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin spore dog"},sold:200},
-  {id:"skin_3",name:{nl:"hoppy hat",en:"hoppy hat"},price:5.49,image1:"IMG_6257.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp_boost 2x 24h 1 skin hoppy hat"},sold:140},
-  {id:"skin_4",name:{nl:"Jack Odoom + swamp watcher",en:"swamp watcher"},price:6.99,image1:"IMG_6174.webp",image2:"IMG_6176.webp",note:{nl:"Items in Bundle: 1250 dna 1 skin jack odoom 1 skin swamp watcher"},sold:180},
-  {id:"skin_5",name:{nl:"plague rat + hazmat horror",en:"hazmat horror"},price:7.25,image1:"IMG_6255.webp",image2:"IMG_6256.webp",note:{nl:"Items in Bundle: Items in Bundle: 9000 coin 380 dna 1 skin plague rat 1 skin hazmat horror"},sold:120},
-  {id:"skin_6",name:{nl:"hippo smash",en:"hippo smash"},price:6.99,image1:"IMG_5158.webp",image2:null,note:{nl:"Items in Bundle: 750 dna 3 mass boost 3x 24h 1 skin hippo smash"},sold:170},
-  {id:"skin_7",name:{nl:"woolverine",en:"woolverine"},price:2.89,image1:"IMG_6253.webp",image2:null,note:{nl:"Items in Bundle: 2250 coin 1 skin woolverine"},sold:150},
-  {id:"skin_8",name:{nl:"bloomstache",en:"bloomstache"},price:4.99,image1:"IMG_6252.webp",image2:null,note:{nl:"Items in Bundle: 4000 coin 500 arena event token 1 skin bloomstache"},sold:140},
-  {id:"skin_9",name:{nl:"shroom shaman + skully spores",en:"shroom shaman"},price:9.99,image1:"IMG_5963.webp",image2:"IMG_4938.webp",note:{nl:"Items in Bundle: 10000 coin 800 dna 1700 arena event token 1 skin shroom shaman 1 skin skully spores"},sold:120},
-  {id:"skin_10",name:{nl:"lootpunk",en:"lootpunk"},price:5.69,image1:"IMG_0671.webp",image2:null,note:{nl:"Items in Bundle: 5000 coin 1 skin lootpunk"},sold:115},
-  {id:"skin_10",name:{nl:"tentaclonaut + rocket raider",en:"rocket raider"},price:6.99,image1:"IMG_0669.webp",image2:"IMG_0670.webp",note:{nl:"Items in Bundle: 9300 coin 1 skin tentaclonaut 1 skin rocket raider 300 dna"},sold:110},
-  {id:"skin_11",name:{nl:"grinpot",en:"grinpot"},price:8.29,image1:"IMG_6267.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin grinpot"},sold:105},
-  {id:"skin_12",name:{nl:"jaws potion",en:"jaws potion"},price:5.95,image1:"IMG_5160.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp boost 2x 24h1 skin jaws potion"},sold:98},
-  {id:"skin_13",name:{nl:"nutcurse",en:"nutcurse"},price:6.49,image1:"IMG_5161.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin nutcurse"},sold:95},
-  {id:"skin_14",name:{nl:"Ocean Wave",en:"Ocean Wave"},price:2.99,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Ocean",image2:null,note:{nl:"1400 coins",en:"1400 coins"},sold:90},
-  {id:"skin_15",name:{nl:"Thunder Orb",en:"Thunder Orb"},price:6.29,image1:"https://via.placeholder.com/160/facc15/000000?text=Thunder",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:88},
-  {id:"skin_16",name:{nl:"Emerald Eye",en:"Emerald Eye"},price:0.00,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Emerald",image2:"https://via.placeholder.com/160/16a34a/ffffff?text=Alt",note:{nl:"2200 coins",en:"2200 coins"},sold:80},
-  {id:"skin_17",name:{nl:"Purple Flame",en:"Purple Flame"},price:5.79,image1:"https://via.placeholder.com/160/9333ea/ffffff?text=Purple",image2:null,note:{nl:"3400 coins",en:"3400 coins"},sold:76},
-  {id:"skin_18",name:{nl:"Golden Mask",en:"Golden Mask"},price:8.19,image1:"https://via.placeholder.com/160/fbbf24/000000?text=Golden",image2:null,note:{nl:"5100 coins",en:"5100 coins"},sold:70},
-  {id:"skin_19",name:{nl:"Obsidian Orb",en:"Obsidian Orb"},price:3.99,image1:"https://via.placeholder.com/160/000000/ffffff?text=Obsidian",image2:null,note:{nl:"1900 coins",en:"1900 coins"},sold:64},
-  {id:"skin_20",name:{nl:"Star Burst",en:"Star Burst"},price:7.59,image1:"https://via.placeholder.com/160/fde047/000000?text=Star",image2:null,note:{nl:"4900 coins",en:"4900 coins"},sold:60},
-  {id:"skin_21",name:{nl:"Toxic Eye",en:"Toxic Eye"},price:3.19,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1300 coins",en:"1300 coins"},sold:56},
-  {id:"skin_22",name:{nl:"Vortex Core",en:"Vortex Core"},price:5.39,image1:"https://via.placeholder.com/160/2563eb/ffffff?text=Vortex",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"3000 coins",en:"3000 coins"},sold:50},
-  {id:"skin_23",name:{nl:"Ruby Fang",en:"Ruby Fang"},price:6.19,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Ruby",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:46},
-  {id:"skin_24",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
-  {id:"skin_25",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
-  {id:"skin_26",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
-  {id:"skin_27",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36},
-  {id:"skin_28",name:{nl:"Fire Ball",en:"Fire Ball"},price:7.99,image1:"https://via.placeholder.com/160/f97316/ffffff?text=Fire",image2:null,note:{nl:"4500 coins",en:"4500 coins"},sold:34},
-  {id:"skin_29",name:{nl:"Aqua Lord",en:"Aqua Lord"},price:5.49,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Aqua",image2:null,note:{nl:"3100 coins",en:"3100 coins"},sold:32},
-  {id:"skin_30",name:{nl:"Plasma Nova",en:"Plasma Nova"},price:9.49,image1:"https://via.placeholder.com/160/7c3aed/ffffff?text=Plasma",image2:"https://via.placeholder.com/160/a855f7/ffffff?text=Alt",note:{nl:"6200 coins",en:"6200 coins"},sold:30}
+  {id:"skin_4",name:{nl:"spore_dog",en:"spore_dog"},price:6.89,image1:"IMG_6258.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin spore dog"},sold:200},
+  {id:"skin_5",name:{nl:"hoppy hat",en:"hoppy hat"},price:5.49,image1:"IMG_6257.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp_boost 2x 24h 1 skin hoppy hat"},sold:140},
+  {id:"skin_6",name:{nl:"Jack Odoom + swamp watcher",en:"swamp watcher"},price:6.99,image1:"IMG_6174.webp",image2:"IMG_6176.webp",note:{nl:"Items in Bundle: 1250 dna 1 skin jack odoom 1 skin swamp watcher"},sold:180},
+  {id:"skin_7",name:{nl:"plague rat + hazmat horror",en:"hazmat horror"},price:7.25,image1:"IMG_6255.webp",image2:"IMG_6256.webp",note:{nl:"Items in Bundle: Items in Bundle: 9000 coin 380 dna 1 skin plague rat 1 skin hazmat horror"},sold:120},
+  {id:"skin_8",name:{nl:"hippo smash",en:"hippo smash"},price:6.99,image1:"IMG_5158.webp",image2:null,note:{nl:"Items in Bundle: 750 dna 3 mass boost 3x 24h 1 skin hippo smash"},sold:170},
+  {id:"skin_9",name:{nl:"woolverine",en:"woolverine"},price:2.89,image1:"IMG_6253.webp",image2:null,note:{nl:"Items in Bundle: 2250 coin 1 skin woolverine"},sold:150},
+  {id:"skin_10",name:{nl:"bloomstache",en:"bloomstache"},price:4.99,image1:"IMG_6252.webp",image2:null,note:{nl:"Items in Bundle: 4000 coin 500 arena event token 1 skin bloomstache"},sold:140},
+  {id:"skin_11",name:{nl:"shroom shaman + skully spores",en:"shroom shaman"},price:9.99,image1:"IMG_5963.webp",image2:"IMG_4938.webp",note:{nl:"Items in Bundle: 10000 coin 800 dna 1700 arena event token 1 skin shroom shaman 1 skin skully spores"},sold:120},
+  {id:"skin_12",name:{nl:"lootpunk",en:"lootpunk"},price:5.69,image1:"IMG_0671.webp",image2:null,note:{nl:"Items in Bundle: 5000 coin 1 skin lootpunk"},sold:115},
+  {id:"skin_13",name:{nl:"tentaclonaut + rocket raider",en:"rocket raider"},price:6.99,image1:"IMG_0669.webp",image2:"IMG_0670.webp",note:{nl:"Items in Bundle: 9300 coin 1 skin tentaclonaut 1 skin rocket raider 300 dna"},sold:110},
+  {id:"skin_14",name:{nl:"grinpot",en:"grinpot"},price:8.29,image1:"IMG_6267.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin grinpot"},sold:105},
+  {id:"skin_15",name:{nl:"jaws potion",en:"jaws potion"},price:5.95,image1:"IMG_5160.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp boost 2x 24h1 skin jaws potion"},sold:98},
+  {id:"skin_16",name:{nl:"nutcurse",en:"nutcurse"},price:6.49,image1:"IMG_5161.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin nutcurse"},sold:95},
+  {id:"skin_17",name:{nl:"Ocean Wave",en:"Ocean Wave"},price:2.99,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Ocean",image2:null,note:{nl:"1400 coins",en:"1400 coins"},sold:90},
+  {id:"skin_18",name:{nl:"Thunder Orb",en:"Thunder Orb"},price:6.29,image1:"https://via.placeholder.com/160/facc15/000000?text=Thunder",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:88},
+  {id:"skin_19",name:{nl:"Emerald Eye",en:"Emerald Eye"},price:0.00,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Emerald",image2:"https://via.placeholder.com/160/16a34a/ffffff?text=Alt",note:{nl:"2200 coins",en:"2200 coins"},sold:80},
+  {id:"skin_20",name:{nl:"Purple Flame",en:"Purple Flame"},price:5.79,image1:"https://via.placeholder.com/160/9333ea/ffffff?text=Purple",image2:null,note:{nl:"3400 coins",en:"3400 coins"},sold:76},
+  {id:"skin_21",name:{nl:"Golden Mask",en:"Golden Mask"},price:8.19,image1:"https://via.placeholder.com/160/fbbf24/000000?text=Golden",image2:null,note:{nl:"5100 coins",en:"5100 coins"},sold:70},
+  {id:"skin_22",name:{nl:"Obsidian Orb",en:"Obsidian Orb"},price:3.99,image1:"https://via.placeholder.com/160/000000/ffffff?text=Obsidian",image2:null,note:{nl:"1900 coins",en:"1900 coins"},sold:64},
+  {id:"skin_23",name:{nl:"Star Burst",en:"Star Burst"},price:7.59,image1:"https://via.placeholder.com/160/fde047/000000?text=Star",image2:null,note:{nl:"4900 coins",en:"4900 coins"},sold:60},
+  {id:"skin_24",name:{nl:"Toxic Eye",en:"Toxic Eye"},price:3.19,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1300 coins",en:"1300 coins"},sold:56},
+  {id:"skin_25",name:{nl:"Vortex Core",en:"Vortex Core"},price:5.39,image1:"https://via.placeholder.com/160/2563eb/ffffff?text=Vortex",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"3000 coins",en:"3000 coins"},sold:50},
+  {id:"skin_26",name:{nl:"Ruby Fang",en:"Ruby Fang"},price:6.19,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Ruby",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:46},
+  {id:"skin_27",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
+  {id:"skin_28",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
+  {id:"skin_29",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
+  {id:"skin_30",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36}
 ];
 
 const grid=document.getElementById('grid');
@@ -187,33 +183,30 @@ function updateCartModal(){
   totalAmount.textContent=formatPrice(total);
 }
 
-/* PayPal-knop: stuur gebruiker direct naar jouw PayPal.me link */
+/* Demo PayPal flow: redirect naar jouw PayPal.me link */
 paypalBtn.addEventListener('click',()=>{
   const uid=inputUID.value.trim();
   const email=inputEmail.value.trim();
   if(!uid){alert('Voer eerst een UID in.'); inputUID.focus(); return;}
   if(!email || !email.includes('@')){alert('Voer een geldig e-mail adres in.'); inputEmail.focus(); return;}
   if(cart.length===0){alert('Je winkelwagen is leeg.'); return;}
-  const total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
-  const paypalURL=`https://paypal.me/TBYTagario/${total}`;
-  window.open(paypalURL,'_blank');
+  let total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
+  window.open(`https://paypal.me/TBYTagario/${total}`, '_blank');
 });
 
-/* Apple Gift Card */
 applePayBtn.addEventListener('click',()=>{
-  alert('Apple Gift Card betaling is in deze versie nog niet geactiveerd.');
+  alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd. Gebruik PayPal-demo of implementeer server-side Apple/Google payments.');
 });
 
-/* Open en sluit winkelwagen */
 document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.remove('hidden');};
 document.getElementById('closeModal').onclick=()=>cartModal.classList.add('hidden');
 
-/* Zoek en sorteer */
 navbarSearch.addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
   const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
   render(filtered);
 });
+
 sortSelect.addEventListener('change',()=>{
   let sorted=[];
   switch(sortSelect.value){
