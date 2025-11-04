@@ -12,19 +12,55 @@
   .cart-badge{background-color:#ef4444;color:white;font-weight:700;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;position:absolute;top:-6px;right:-6px;}
   .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
   .centered-confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap-12px;padding:24px;}
-  
-  /* Google Translate dropdown styling */
+
+  /* Google Translate dropdown styling (ziet eruit als onderdeel van de zoekbalk) */
+  #google_translate_element {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    background: white;
+  }
   #google_translate_element select {
     background-color: white !important;
     color: black !important;
     border: none !important;
-    padding: 2px 6px !important;
+    padding: 6px 8px !important;
     height: 36px !important;
     font-size: 14px !important;
     cursor: pointer;
   }
   #google_translate_element select:focus {
     outline: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Centraal gecentreerde winkelwagen modal */
+  #cartModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  #cartModal.active {
+    display: flex;
+  }
+  #cartModal .cart-box {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    width: 92%;
+    max-width: 540px;
+    max-height: 82vh;
+    overflow-y: auto;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+  }
+
+  /* kleine fixes voor card layout op kleinere schermen */
+  @media (max-width: 640px) {
+    .card-img{width:96px;height:96px;}
   }
 </style>
 </head>
@@ -37,18 +73,16 @@
       <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
     </div>
 
-    <!-- Zoekbalk + vertaler -->
-    <div class="flex flex-1 max-w-xl">
-      <input id="navbarSearch" type="text" placeholder="Search skins..." 
+    <!-- Zoekbalk + vertaler (vertaler geïntegreerd in dezelfde balk) -->
+    <div class="flex flex-1 max-w-xl items-center">
+      <input id="navbarSearch" type="text" placeholder="Zoek skins..." 
              class="flex-1 rounded-l-md border border-gray-300 px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
-      
-      <!-- Google Translate widget container -->
-      <div id="google_translate_element" 
-           class="rounded-r-md border border-gray-300 border-l-0 flex items-center px-2 bg-white">
-      </div>
+
+      <!-- Google Translate widget container (styled om op zoekbalk aan te sluiten) -->
+      <div id="google_translate_element" class="rounded-r-md border border-gray-300 border-l-0 bg-white px-2"></div>
     </div>
 
-    <!-- Winkelwagen knop -->
+    <!-- Winkelwagen knop (rechterkant, blijft zoals eerder) -->
     <div class="flex items-center gap-4">
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
@@ -75,27 +109,28 @@
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- Winkelwagen modal -->
-<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-  <div class="bg-white rounded shadow-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-auto">
-    <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
-    <button id="closeModal" class="absolute top-3 right-4 text-gray-600 text-2xl">&times;</button>
-    <div id="cartItems" class="space-y-4 mb-4"></div>
-    <hr class="my-4">
-    <div class="flex justify-between font-bold text-lg mb-4">
-      <span>Totaal:</span><span id="totalAmount">USD 0.00</span>
+<!-- Gecentreerde Winkelwagen modal -->
+<div id="cartModal">
+  <div class="cart-box">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-bold">🛒 Jouw winkelwagen</h2>
+      <button id="closeModal" class="text-2xl text-gray-600">&times;</button>
     </div>
-    <div class="space-y-3 mb-4">
-      <label class="block"><span class="font-medium">UID (bite mod)</span>
-        <input id="inputUID" class="w-full border rounded px-3 py-2 mt-1" placeholder="Voer de UID van de bite mod in">
-      </label>
-      <label class="block"><span class="font-medium">E-mail</span>
-        <input id="inputEmail" type="email" class="w-full border rounded px-3 py-2 mt-1" placeholder="voorbeeld@email.nl">
-      </label>
+
+    <div id="cartItems" class="space-y-3 mb-4"></div>
+
+    <div class="flex justify-between font-semibold text-lg mb-4">
+      <span>Totaal:</span>
+      <span id="totalAmount">USD 0.00</span>
     </div>
-    <div class="flex gap-4">
-      <button id="applePayBtn" class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
-      <button id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold">PayPal</button>
+
+    <div class="space-y-3">
+      <input id="inputUID" type="text" placeholder="Voer je Bite UID in" class="w-full border rounded px-3 py-2">
+      <input id="inputEmail" type="email" placeholder="Voer je e-mail in" class="w-full border rounded px-3 py-2">
+      <div class="flex gap-3">
+        <button id="applePayBtn" class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
+        <button id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold">PayPal</button>
+      </div>
     </div>
   </div>
 </div>
@@ -147,7 +182,7 @@ const bundles = [
   {id:"skin_27",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
   {id:"skin_28",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
   {id:"skin_29",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
-  {id:"skin_30",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36}
+  {id:"skin_30",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36},
 ];
 
 /* ======= Variabelen ======= */
@@ -200,7 +235,7 @@ function updateCartModal(){
   totalAmount.textContent=formatPrice(total);
 }
 
-/* ======= PayPal demo ======= */
+/* ======= PayPal demo redirect ======= */
 paypalBtn.addEventListener('click',()=>{
   const uid=inputUID.value.trim();
   const email=inputEmail.value.trim();
@@ -211,17 +246,18 @@ paypalBtn.addEventListener('click',()=>{
   window.open(`https://paypal.me/TBYTagario/${total}`, '_blank');
 });
 
-applePayBtn.addEventListener('click',()=>{alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd. Gebruik PayPal-demo of implementeer server-side Apple/Google payments.');});
+applePayBtn.addEventListener('click',()=>{alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd.');});
 
-document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.remove('hidden');};
-document.getElementById('closeModal').onclick=()=>cartModal.classList.add('hidden');
+/* Winkelwagen open / close */
+document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.add('active');};
+document.getElementById('closeModal').onclick=()=>cartModal.classList.remove('active');
 
+/* Zoek en sorteer */
 navbarSearch.addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
   const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
   render(filtered);
 });
-
 sortSelect.addEventListener('change',()=>{
   let sorted=[];
   switch(sortSelect.value){
@@ -236,14 +272,18 @@ sortSelect.addEventListener('change',()=>{
 
 render(bundles);
 cartCount.textContent=cart.length;
-
-/* ======= Google Translate ======= */
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'nl', includedLanguages: 'en,nl,de,fr,es,it,pt,ru,zh-CN,ja,ko'}, 'google_translate_element');
-}
 </script>
 
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<!-- Google Translate -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'nl',
+    includedLanguages: 'en,fr,de,es,it,pt,ru,zh-CN,ja,ko'
+  }, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>
