@@ -58,9 +58,124 @@
     box-shadow: 0 6px 30px rgba(0,0,0,0.25);
   }
 
-  /* kleine fixes voor card layout op kleinere schermen */
-  @media (max-width: 640px) {
-    .card-img{width:96px;height:96px;}
+  /* Deals modal (van bottom-bar) */
+  #dealsModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 11000;
+    align-items: center;
+    justify-content: center;
+  }
+  #dealsModal.active { display:flex; }
+  #dealsModal .deals-box {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    width: 94%;
+    max-width: 760px;
+    max-height: 86vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+
+  /* Deal-card layout */
+  .deal-hero {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .deal-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    overflow:hidden;
+  }
+  .deal-circles {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    gap: 18px;
+    z-index: 3;
+  }
+  .deal-hero::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.35) 100%);
+    pointer-events: none;
+  }
+  .price-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:12px;
+  }
+  .orig-price { text-decoration: line-through; color:#6b7280; }
+  .sale-price {
+    background: #ef4444;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  /* Bottom bar */
+  #dealBar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg,#111827,#0f172a);
+    color: white;
+    padding: 10px 16px;
+    z-index: 12000;
+    box-shadow: 0 -6px 20px rgba(2,6,23,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+  #dealBar .inner {
+    max-width: 1100px;
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  #dealBar .timer {
+    font-weight:700;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  #dealBar .cta {
+    background: #06b6d4;
+    padding: 8px 12px;
+    border-radius: 7px;
+    color: #02111a;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  @media (max-width:640px) {
+    .deal-hero{height:200px;}
+    .deal-circle{width:66px;height:66px;}
+    #dealBar .inner{padding:0 8px;}
+    #dealBar .timer{font-size:14px;}
   }
 </style>
 </head>
@@ -73,16 +188,14 @@
       <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
     </div>
 
-    <!-- Zoekbalk + vertaler (vertaler geïntegreerd in dezelfde balk) -->
+    <!-- Zoekbalk + vertaler -->
     <div class="flex flex-1 max-w-xl items-center">
       <input id="navbarSearch" type="text" placeholder="Zoek skins..." 
              class="flex-1 rounded-l-md border border-gray-300 px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
-
-      <!-- Google Translate widget container (styled om op zoekbalk aan te sluiten) -->
       <div id="google_translate_element" class="rounded-r-md border border-gray-300 border-l-0 bg-white px-2"></div>
     </div>
 
-    <!-- Winkelwagen knop (rechterkant, blijft zoals eerder) -->
+    <!-- Winkelwagen knop -->
     <div class="flex items-center gap-4">
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
@@ -135,6 +248,55 @@
   </div>
 </div>
 
+<!-- Deals modal (open via bottom bar) -->
+<div id="dealsModal" aria-hidden="true">
+  <div class="deals-box">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold">Hot Deals</h3>
+      <button id="closeDeals" class="text-2xl text-gray-600">&times;</button>
+    </div>
+
+    <!-- DEAL 1 -->
+    <div id="deal1" class="mb-6">
+      <div id="dealHero" class="deal-hero" style="background-image: url('PLACEHOLDER_BG.jpg');">
+        <!-- two circles on image -->
+        <div class="deal-circles">
+          <div class="deal-circle" id="dealCircle1">
+            <!-- You can replace inner img src later -->
+            <img id="dealCircle1Img" src="https://via.placeholder.com/88" alt="circle1" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="deal-circle" id="dealCircle2">
+            <img id="dealCircle2Img" src="https://via.placeholder.com/88" alt="circle2" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <div class="price-row">
+          <div class="orig-price" id="dealOrigPrice">USD 9.99</div>
+          <div class="sale-price" id="dealSalePrice">USD 4.99</div>
+        </div>
+        <p class="text-sm text-gray-600 mt-2" id="dealDesc">Deal 1: beperkte tijd - klik op de sale prijs om toe te voegen aan je winkelwagen.</p>
+      </div>
+    </div>
+
+    <!-- je kunt hier meerdere deals toevoegen op gelijke wijze -->
+  </div>
+</div>
+
+<!-- Bottom sticky deal bar -->
+<div id="dealBar" title="Klik voor deals">
+  <div class="inner">
+    <div>
+      <div style="font-size:13px;opacity:0.9">Speciale Aanbieding</div>
+      <div class="timer" id="dealTimer">Deal eindigt over 00:00:00</div>
+    </div>
+    <div>
+      <div class="cta">Bekijk deals</div>
+    </div>
+  </div>
+</div>
+
 <template id="card-template">
   <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
     <div class="imgs-row"></div>
@@ -150,6 +312,20 @@
 
 <script>
 feather.replace();
+
+/* ================== EDITABLE DEAL SETTINGS ==================
+ You can change these to suit the deal.
+ - DEAL_SKIN_ID: which skin id from bundles to add when clicking the sale price
+ - DEAL_BG_IMAGE: path/URL to background image (you upload later)
+ - DEAL_ORIGINAL_PRICE / DEAL_SALE_PRICE: displayed prices (strings)
+ - DEAL_DURATION_MS: milliseconds from now for the countdown (default 24h)
+============================================================ */
+const DEAL_SKIN_ID = "skin_1";                // default: uses skin_1 (change as needed)
+const DEAL_BG_IMAGE = "PLACEHOLDER_BG.jpg";   // replace with your uploaded image path
+const DEAL_ORIGINAL_PRICE = "USD 9.99";       // change text as desired
+const DEAL_SALE_PRICE = "USD 4.99";           // change text as desired
+const DEAL_DURATION_MS = 24*60*60*1000;       // 24 hours countdown (change if needed)
+/* ========================================================== */
 
 /* ======= Bundles (30 skins) ======= */
 const bundles = [
@@ -198,11 +374,21 @@ const inputUID=document.getElementById('inputUID');
 const inputEmail=document.getElementById('inputEmail');
 const navbarSearch=document.getElementById('navbarSearch');
 const sortSelect=document.getElementById('sortSelect');
+const dealBar=document.getElementById('dealBar');
+const dealsModal=document.getElementById('dealsModal');
+const closeDeals=document.getElementById('closeDeals');
+const dealHero=document.getElementById('dealHero');
+const dealOrigPriceEl=document.getElementById('dealOrigPrice');
+const dealSalePriceEl=document.getElementById('dealSalePrice');
+const dealTimerEl=document.getElementById('dealTimer');
+const dealCircle1Img=document.getElementById('dealCircle1Img');
+const dealCircle2Img=document.getElementById('dealCircle2Img');
+
 const fallbackImg="https://via.placeholder.com/120?text=No+Image";
 let cart=[];
 let originalOrder=bundles.slice();
 
-/* ======= Functies ======= */
+/* ======= Basic render / cart functions ======= */
 function formatPrice(p){return`USD ${p.toFixed(2)}`;}
 function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function render(list){
@@ -217,11 +403,13 @@ function render(list){
     el.querySelector('.card-desc').textContent=item.note.nl;
     el.querySelector('.card-price').textContent=formatPrice(item.price);
     el.querySelector('.shareBtn').addEventListener('click',()=>{navigator.clipboard.writeText(location.href+'#'+item.id);alert('Link gekopieerd');});
-    el.querySelector('.selectBtn').addEventListener('click',()=>{cart.push(item);cartCount.textContent=cart.length;alert(`${item.name.nl} toegevoegd aan winkelwagen`);});
+    el.querySelector('.selectBtn').addEventListener('click',()=>{
+      addToCart(item.id, item.price);
+      alert(`${item.name.nl} toegevoegd aan winkelwagen`);
+    });
     grid.appendChild(el);
   });
 }
-
 function updateCartModal(){
   cartItemsContainer.innerHTML='';
   cart.forEach((item,i)=>{
@@ -235,20 +423,86 @@ function updateCartModal(){
   totalAmount.textContent=formatPrice(total);
 }
 
-/* ======= PayPal demo redirect ======= */
+/* Add to cart by skin id; optional override price */
+function addToCart(skinId, overridePrice = null){
+  const skin = bundles.find(b => b.id === skinId);
+  if(!skin) { alert('Skin niet gevonden'); return; }
+  const item = Object.assign({}, skin); // shallow copy
+  if(overridePrice !== null){
+    item.price = Number(overridePrice);
+  }
+  cart.push(item);
+  cartCount.textContent = cart.length;
+  updateCartModal();
+}
+
+/* ======= Deal bar & modal logic ======= */
+
+/* initialize deal content from editable constants */
+function initDealUI(){
+  // background image:
+  dealHero.style.backgroundImage = `url('${DEAL_BG_IMAGE}')`;
+
+  // text prices
+  dealOrigPriceEl.textContent = DEAL_ORIGINAL_PRICE;
+  dealSalePriceEl.textContent = DEAL_SALE_PRICE;
+
+  // for circles we use placeholder images; user can replace the src attributes:
+  // dealCircle1Img.src = 'path/to/your-circle1.jpg';
+  // dealCircle2Img.src = 'path/to/your-circle2.jpg';
+}
+
+/* countdown */
+const dealDeadline = Date.now() + Number(DEAL_DURATION_MS);
+function updateTimer(){
+  const now = Date.now();
+  let diff = Math.max(0, dealDeadline - now);
+  const hrs = Math.floor(diff / (1000*60*60));
+  diff -= hrs*(1000*60*60);
+  const mins = Math.floor(diff / (1000*60));
+  diff -= mins*(1000*60);
+  const secs = Math.floor(diff / 1000);
+  dealTimerEl.textContent = `Deal eindigt over ${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  if (dealDeadline - now <= 0) {
+    // expired
+    dealTimerEl.textContent = `Deal verlopen`;
+    clearInterval(timerInterval);
+  }
+}
+const timerInterval = setInterval(updateTimer, 1000);
+updateTimer();
+
+/* open deals modal when bottom bar clicked */
+dealBar.addEventListener('click', ()=> {
+  initDealUI();
+  dealsModal.classList.add('active');
+});
+closeDeals.addEventListener('click', ()=> dealsModal.classList.remove('active'));
+
+/* clicking on sale price adds the deal skin to cart with sale price */
+dealSalePriceEl.addEventListener('click', ()=>{
+  // sale price as number (strip non-digits)
+  const numeric = DEAL_SALE_PRICE.replace(/[^0-9.,]/g,'').replace(',', '.');
+  const priceNum = parseFloat(numeric) || null;
+  addToCart(DEAL_SKIN_ID, priceNum);
+  dealsModal.classList.remove('active');
+  alert('Deal toegevoegd aan winkelwagen');
+});
+
+/* ======= PayPal / Apple Buttons (unchanged behavior) ======= */
 paypalBtn.addEventListener('click',()=>{
   const uid=inputUID.value.trim();
   const email=inputEmail.value.trim();
   if(!uid){alert('Voer eerst een UID in.'); inputUID.focus(); return;}
   if(!email || !email.includes('@')){alert('Voer een geldig e-mail adres in.'); inputEmail.focus(); return;}
   if(cart.length===0){alert('Je winkelwagen is leeg.'); return;}
-  let total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
-  window.open(`https://paypal.me/TBYTagario/${total}`, '_blank');
+  const total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
+  const paypalURL=`https://paypal.me/TBYTagario/${total}`;
+  window.open(paypalURL,'_blank');
 });
-
 applePayBtn.addEventListener('click',()=>{alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd.');});
 
-/* Winkelwagen open / close */
+/* open / close cart modal */
 document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.add('active');};
 document.getElementById('closeModal').onclick=()=>cartModal.classList.remove('active');
 
@@ -270,8 +524,11 @@ sortSelect.addEventListener('change',()=>{
   render(sorted);
 });
 
+/* initial render */
 render(bundles);
 cartCount.textContent=cart.length;
+initDealUI();
+
 </script>
 
 <!-- Google Translate -->
