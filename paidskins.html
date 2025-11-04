@@ -13,6 +13,15 @@
   .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
   .centered-confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;}
 </style>
+
+<!-- Google Translate Widget -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'nl'}, 'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -24,10 +33,7 @@
     </div>
     <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 max-w-xl rounded px-3 py-2 text-gray-800">
     <div class="flex items-center gap-4">
-      <select id="langSelect" class="rounded text-gray-800 px-2 py-2">
-        <option value="nl">Nederlands</option>
-        <option value="en">English</option>
-      </select>
+      <div id="google_translate_element"></div>
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
         <span id="cartCount" class="cart-badge">0</span>
@@ -64,7 +70,7 @@
       <span>Totaal:</span><span id="totalAmount">USD 0.00</span>
     </div>
 
-    <!-- Nieuwe invoervelden voor UID en E-mail (verplicht voordat er betaald kan worden) -->
+    <!-- UID en E-mail -->
     <div class="space-y-3 mb-4">
       <label class="block"><span class="font-medium">UID (bite mod)</span>
         <input id="inputUID" class="w-full border rounded px-3 py-2 mt-1" placeholder="Voer de UID van de bite mod in">
@@ -72,21 +78,12 @@
       <label class="block"><span class="font-medium">E-mail</span>
         <input id="inputEmail" type="email" class="w-full border rounded px-3 py-2 mt-1" placeholder="voorbeeld@email.nl">
       </label>
-      <p class="text-sm text-gray-600">We gebruiken deze gegevens alleen om de skin toe te wijzen en je te contacteren bij problemen. (Demo: lokaal opgeslagen)</p>
+      <p class="text-sm text-gray-600">We gebruiken deze gegevens alleen om de skin toe te wijzen en je te contacteren bij problemen.</p>
     </div>
 
     <div class="flex gap-4">
       <button id="applePayBtn" class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
       <button id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold">PayPal</button>
-    </div>
-  </div>
-</div>
-
-<!-- Confirmation overlay (toont na demo-betaling) -->
-<div id="confirmOverlay" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-60">
-  <div class="bg-white rounded shadow-lg max-w-lg w-full p-6">
-    <div id="confirmInner" class="centered-confirm">
-      <!-- Content wordt dynamisch gezet -->
     </div>
   </div>
 </div>
@@ -107,7 +104,6 @@
 <script>
 feather.replace();
 
-/* ======= jouw bestaande bundles (ongewijzigd) ======= */
 const bundles=[
   {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"Items in Bundle: 1800 coin 1 skin jack odoom"},sold:300},
   {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:null,note:{nl:"Items in Bundle: 4200 coin 1 skin Flame Gremlin"},sold:260},
@@ -152,8 +148,6 @@ const totalAmount=document.getElementById('totalAmount');
 const cartModal=document.getElementById('cartModal');
 const paypalBtn=document.getElementById('paypalBtn');
 const applePayBtn=document.getElementById('applePayBtn');
-const confirmOverlay=document.getElementById('confirmOverlay');
-const confirmInner=document.getElementById('confirmInner');
 const inputUID=document.getElementById('inputUID');
 const inputEmail=document.getElementById('inputEmail');
 const navbarSearch=document.getElementById('navbarSearch');
@@ -193,81 +187,33 @@ function updateCartModal(){
   totalAmount.textContent=formatPrice(total);
 }
 
-/* ====== Demo PayPal / betaling flow (geen echte betalingen) ====== */
-
-/* Hulpfunctie: genereer unieke code */
-function generateCode(){return 'TB-'+Date.now().toString(36).toUpperCase().slice(-8);}
-
-/* Sla order op in localStorage (paidskins_orders) */
-function saveOrder(order){
-  const key='paidskins_orders';
-  const arr = JSON.parse(localStorage.getItem(key) || '[]');
-  arr.push(order);
-  localStorage.setItem(key, JSON.stringify(arr));
-}
-
-/* Simuleer redirect naar PayPal (DEMO): valideer velden, sla order, toon bevestiging-overlay */
-function startDemoPayment(){
+/* PayPal-knop: stuur gebruiker direct naar jouw PayPal.me link */
+paypalBtn.addEventListener('click',()=>{
   const uid=inputUID.value.trim();
   const email=inputEmail.value.trim();
   if(!uid){alert('Voer eerst een UID in.'); inputUID.focus(); return;}
   if(!email || !email.includes('@')){alert('Voer een geldig e-mail adres in.'); inputEmail.focus(); return;}
   if(cart.length===0){alert('Je winkelwagen is leeg.'); return;}
-  const total=cart.reduce((s,it)=>s+it.price,0);
-  const items=cart.map(it=>({id:it.id,title:it.name.nl,price:it.price}));
-  const code=generateCode();
-  const order={
-    code:code,
-    uid:uid,
-    email:email,
-    items:items,
-    total:total,
-    date:new Date().toISOString()
-  };
-
-  // Sla op (lokale demo)
-  saveOrder(order);
-
-  // Toon overlay (simuleert redirect terug na betaling)
-  confirmInner.innerHTML='';
-  const h=document.createElement('h2'); h.textContent='Je hebt betaald!'; h.className='text-2xl font-bold';
-  const p=document.createElement('p'); p.textContent='Bedankt voor je betaling. Hieronder staat je code:';
-  const codeBox=document.createElement('div'); codeBox.className='p-4 rounded border font-mono text-lg'; codeBox.textContent=code;
-  const instruct=document.createElement('p'); instruct.innerHTML=`Kopieer deze code en geef hem aan T.B. Neem contact op met T.B op Instagram: <strong>@t.bagar.io</strong> of Discord: ping T.B en stuur de code + een foto naar zijn DM.`;
-  const doneBtn=document.createElement('button'); doneBtn.className='px-4 py-2 bg-teal-500 text-white rounded'; doneBtn.textContent='Sluiten';
-  confirmInner.appendChild(h); confirmInner.appendChild(p); confirmInner.appendChild(codeBox); confirmInner.appendChild(instruct); confirmInner.appendChild(doneBtn);
-  confirmOverlay.classList.remove('hidden');
-
-  // Leeg winkelwagen na betaling (demo)
-  cart=[]; cartCount.textContent='0'; updateCartModal();
-
-  doneBtn.addEventListener('click',()=>{confirmOverlay.classList.add('hidden'); cartModal.classList.add('hidden');});
-}
-
-/* PayPal button (demo) */
-paypalBtn.addEventListener('click',()=>{
-  // In een echte implementatie: stuur eerst cart + uid+email naar jouw backend,
-  // backend maakt PayPal order via server-side SDK, retourneert approve-link -> redirect user.
-  // Hier simuleer ik die stap en toon direct de bevestiging.
-  startDemoPayment();
+  const total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
+  const paypalURL=`https://paypal.me/TBYTagario/${total}`;
+  window.open(paypalURL,'_blank');
 });
 
-/* Apple gift card button - voor demo: opent instructies */
+/* Apple Gift Card */
 applePayBtn.addEventListener('click',()=>{
-  alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd. Gebruik PayPal-demo of implementeer server-side Apple/Google payments.');
+  alert('Apple Gift Card betaling is in deze versie nog niet geactiveerd.');
 });
 
-/* Open en sluiten winkelwagen */
+/* Open en sluit winkelwagen */
 document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.remove('hidden');};
 document.getElementById('closeModal').onclick=()=>cartModal.classList.add('hidden');
 
-/* Zoek en sort (ongewijzigd) */
+/* Zoek en sorteer */
 navbarSearch.addEventListener('input',e=>{
   const q=e.target.value.toLowerCase();
   const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
   render(filtered);
 });
-
 sortSelect.addEventListener('change',()=>{
   let sorted=[];
   switch(sortSelect.value){
@@ -280,14 +226,8 @@ sortSelect.addEventListener('change',()=>{
   render(sorted);
 });
 
-/* Render de producten */
 render(bundles);
-
-/* Zorg dat cartCount consistent is bij page load (kan uit localStorage gehaald worden indien gewenst) */
 cartCount.textContent=cart.length;
-
-/* EXTRA: Faciliteit om demo-orders te exporteren (optioneel) */
-/* Niet zichtbaar in UI van index.html — beheer via paidskinsmangerpaneel.html */
 </script>
 </body>
 </html>
