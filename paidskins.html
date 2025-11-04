@@ -11,21 +11,18 @@
   .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px;box-shadow:0 4px 8px rgba(0,0,0,0.08);}
   .cart-badge{background-color:#ef4444;color:white;font-weight:700;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;position:absolute;top:-6px;right:-6px;}
   .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
-  .centered-confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;}
-</style>
-
-<!-- Google Translate Widget -->
-<div id="google_translate_element" style="position: fixed; top: 10px; right: 10px; z-index: 9999;"></div>
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'nl',
-      includedLanguages: 'en,fr,de,es,it,pt,tr,pl,ru,ar,ja,zh-CN,zh-TW,ko,hi,nl',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
+  .centered-confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap-12px;padding:24px;}
+  /* Google Translate widget styling */
+  #google_translate_element select {
+    background-color: white !important;
+    color: black !important;
+    padding: 2px 4px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    height: 34px !important;
+    line-height: normal !important;
   }
-</script>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -35,7 +32,16 @@
       <img src="https://via.placeholder.com/40/111827/ffffff?text=TB" alt="Logo" class="w-10 h-10 rounded-full">
       <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
     </div>
-    <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 max-w-xl rounded px-3 py-2 text-gray-800">
+
+    <!-- Zoekbalk + vertaler -->
+    <div class="flex flex-1 max-w-xl gap-2">
+      <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 rounded-l px-3 py-2 text-gray-800 border border-gray-300">
+      
+      <!-- Google Translate widget container -->
+      <div id="google_translate_element" class="rounded-r border border-gray-300 bg-white flex items-center px-2"></div>
+    </div>
+
+    <!-- Winkelwagen knop -->
     <div class="flex items-center gap-4">
       <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
         <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
@@ -103,6 +109,7 @@
 <script>
 feather.replace();
 
+/* ======= Bundles (30 skins) ======= */
 const bundles = [
   {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"Items in Bundle: 1800 coin 1 skin jack odoom"},sold:300},
   {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:null,note:{nl:"Items in Bundle: 4200 coin 1 skin Flame Gremlin"},sold:260},
@@ -110,7 +117,7 @@ const bundles = [
   {id:"skin_4",name:{nl:"spore_dog",en:"spore_dog"},price:6.89,image1:"IMG_6258.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin spore dog"},sold:200},
   {id:"skin_5",name:{nl:"hoppy hat",en:"hoppy hat"},price:5.49,image1:"IMG_6257.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp_boost 2x 24h 1 skin hoppy hat"},sold:140},
   {id:"skin_6",name:{nl:"Jack Odoom + swamp watcher",en:"swamp watcher"},price:6.99,image1:"IMG_6174.webp",image2:"IMG_6176.webp",note:{nl:"Items in Bundle: 1250 dna 1 skin jack odoom 1 skin swamp watcher"},sold:180},
-  {id:"skin_7",name:{nl:"plague rat + hazmat horror",en:"hazmat horror"},price:7.25,image1:"IMG_6255.webp",image2:"IMG_6256.webp",note:{nl:"Items in Bundle: Items in Bundle: 9000 coin 380 dna 1 skin plague rat 1 skin hazmat horror"},sold:120},
+  {id:"skin_7",name:{nl:"plague rat + hazmat horror",en:"hazmat horror"},price:7.25,image1:"IMG_6255.webp",image2:"IMG_6256.webp",note:{nl:"Items in Bundle: 9000 coin 380 dna 1 skin plague rat 1 skin hazmat horror"},sold:120},
   {id:"skin_8",name:{nl:"hippo smash",en:"hippo smash"},price:6.99,image1:"IMG_5158.webp",image2:null,note:{nl:"Items in Bundle: 750 dna 3 mass boost 3x 24h 1 skin hippo smash"},sold:170},
   {id:"skin_9",name:{nl:"woolverine",en:"woolverine"},price:2.89,image1:"IMG_6253.webp",image2:null,note:{nl:"Items in Bundle: 2250 coin 1 skin woolverine"},sold:150},
   {id:"skin_10",name:{nl:"bloomstache",en:"bloomstache"},price:4.99,image1:"IMG_6252.webp",image2:null,note:{nl:"Items in Bundle: 4000 coin 500 arena event token 1 skin bloomstache"},sold:140},
@@ -133,7 +140,7 @@ const bundles = [
   {id:"skin_27",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
   {id:"skin_28",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
   {id:"skin_29",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
-  {id:"skin_30",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36}
+  {id:"skin_30",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36},
 ];
 
 const grid=document.getElementById('grid');
@@ -170,6 +177,7 @@ function render(list){
     grid.appendChild(el);
   });
 }
+
 function updateCartModal(){
   cartItemsContainer.innerHTML='';
   cart.forEach((item,i)=>{
@@ -183,7 +191,7 @@ function updateCartModal(){
   totalAmount.textContent=formatPrice(total);
 }
 
-/* Demo PayPal flow: redirect naar jouw PayPal.me link */
+/* PayPal demo */
 paypalBtn.addEventListener('click',()=>{
   const uid=inputUID.value.trim();
   const email=inputEmail.value.trim();
@@ -222,5 +230,18 @@ sortSelect.addEventListener('change',()=>{
 render(bundles);
 cartCount.textContent=cart.length;
 </script>
+
+<!-- Google Translate -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'nl',
+    includedLanguages: 'en,fr,de,es,it,pt,tr,pl,ru,ar,ja,zh-CN,zh-TW,ko,hi,nl',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
