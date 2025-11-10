@@ -5,23 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io</title>
 <style>
-html, body { margin:0; padding:0; height:100%; font-family:Arial, sans-serif; color:#fff; overflow-x:hidden; }
+html, body { margin:0; padding:0; height:100%; font-family:Arial, sans-serif; color:#fff; overflow-x:hidden; transition:color 0.5s;}
 body { background-size:cover; background-position:center; transition:background 0.5s, background-color 0.5s; }
 
-header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(0,0,0,0.7); position:fixed; width:100%; top:0; z-index:1000; backdrop-filter:blur(8px); box-shadow:0 0 15px rgba(255,100,0,0.3);}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 20px;
+  background:rgba(0,0,0,0.7);
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:1000;
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 15px rgba(255,100,0,0.3);
+}
 .logo-container { display:flex; align-items:center; gap:12px; }
 .logo { width:50px; height:50px; border-radius:50%; object-fit:cover; }
-.site-title { font-size:1.3rem; font-weight:bold; color:#ffae42; text-shadow:0 0 8px #ff4500; }
+.site-title { font-size:1.3rem; font-weight:bold; color:#ffae42; text-shadow:0 0 8px #ff4500; transition: color 0.5s; }
 
-.menu-btn { font-size:26px; background:none; border:none; color:#ffae42; cursor:pointer; transition:transform 0.3s; }
+.menu-btn { font-size:26px; background:none; border:none; cursor:pointer; transition:transform 0.3s; position:relative; left:-10px; /* hamburger iets naar links */ }
 .menu-btn:hover{ transform:scale(1.2);}
+
 .menu { position:absolute; top:70px; right:20px; background:rgba(30,20,20,0.95); border-radius:12px; box-shadow:0 0 20px rgba(255,100,0,0.4); overflow:hidden; display:none; flex-direction:column; min-width:180px; }
 .menu a { display:block; padding:12px; color:white; text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.1); transition:0.3s;}
 .menu a:hover { background: rgba(255,100,0,0.2); padding-left:18px;}
 
 main{display:flex;justify-content:center;padding:120px 16px 80px;position:relative; z-index:10;}
 .content-wrapper{ width:100%; max-width:1180px; background:rgba(0,0,0,0.62); border-radius:14px; padding:28px; box-shadow:0 10px 40px rgba(0,0,0,0.6); position:relative; z-index:20;}
-.highlight-title{ text-align:center; font-size:1.9rem; margin:6px 0 18px; color:#ffbb55; text-shadow:0 0 12px #ff6600; }
+.highlight-title{ text-align:center; font-size:1.9rem; margin:6px 0 18px; color:#ffbb55; text-shadow:0 0 12px #ff6600; transition: color 0.5s; }
 
 .skins-circles{display:flex; justify-content:center; gap:36px; flex-wrap:wrap; margin-bottom:10px;}
 .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative;}
@@ -43,9 +56,9 @@ iframe{border:none; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6);}
 <header>
   <div class="logo-container">
     <img src="IMG_2718.png" alt="Logo" class="logo" />
-    <span class="site-title">T.B Agar.io</span>
+    <span class="site-title" id="siteTitle">T.B Agar.io</span>
   </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <button class="menu-btn" id="hamburgerBtn" onclick="toggleMenu()">☰</button>
   <div class="menu" id="menu">
     <a href="index.html">🏠 Home Pagina</a>
     <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
@@ -60,7 +73,7 @@ iframe{border:none; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6);}
   <div class="content-wrapper">
 
     <!-- Skins -->
-    <div class="highlight-title">Top 9 Skins</div>
+    <div class="highlight-title" id="highlightTitle">Top 9 Skins</div>
     <div class="skins-circles">
       <div class="circle" id="circle1">
         <img src="A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" class="active">
@@ -79,6 +92,7 @@ iframe{border:none; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6);}
       </div>
     </div>
 
+    <!-- YouTube -->
     <div class="video-grid">
       <iframe width="360" height="215" src="https://www.youtube.com/embed/vDoeUtuUdo4" allowfullscreen></iframe>
       <iframe width="360" height="215" src="https://www.youtube.com/embed/REqb_bq0Qvk" allowfullscreen></iframe>
@@ -117,8 +131,10 @@ cycleSkins('circle1',4000);
 cycleSkins('circle2',5000);
 cycleSkins('circle3',6000);
 
-/* Homepagina achtergrond & figuren laden vanuit admin */
+/* Load admin settings */
 const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+
+/* Achtergrond */
 if(settings.background){
   document.body.style.backgroundImage=`url('${settings.background}')`;
   document.body.style.backgroundColor='';
@@ -127,6 +143,14 @@ if(settings.background){
   document.body.style.backgroundImage='';
 }
 
+/* Tekstkleur instellen */
+if(settings.textColor){
+  document.getElementById('siteTitle').style.color=settings.textColor;
+  document.getElementById('highlightTitle').style.color=settings.textColor;
+  document.getElementById('hamburgerBtn').style.color=settings.textColor;
+}
+
+/* Figuren */
 if(settings.figures==='on' && settings.theme){
   const icons={
     zomer:["☀️","🌴","🌊","🕶️"],
