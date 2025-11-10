@@ -17,6 +17,7 @@
       radial-gradient(circle at 20% 10%, rgba(255,140,0,0.15) 0%, transparent 20%),
       linear-gradient(180deg,#4b0a00 0%, #1b0000 45%, #060000 100%);
     overflow-x: hidden;
+    transition: background-image 0.8s ease-in-out;
   }
 
   /* Header */
@@ -184,7 +185,6 @@
 <main>
   <div class="content-wrapper">
 
-    <!-- Skins -->
     <div class="highlight-title">The Best Halloween Skins</div>
     <div class="skins-circles">
       <div class="circle" id="circle1">
@@ -204,24 +204,20 @@
       </div>
     </div>
 
-    <!-- Videos under skins -->
     <div class="video-grid">
       <iframe width="360" height="215" src="https://www.youtube.com/embed/vDoeUtuUdo4" allowfullscreen></iframe>
       <iframe width="360" height="215" src="https://www.youtube.com/embed/REqb_bq0Qvk" allowfullscreen></iframe>
     </div>
 
-    <!-- Halloween prize button -->
     <div class="halloween-pop">
       <button class="halloween-button" onclick="openWheel()">🎃 Click here for a Halloween Prize!</button>
     </div>
 
-    <!-- Poster -->
     <div style="text-align:center;">
-      <img src="C039176F-60A7-4C13-BE8A-8780741EB3CC.jpeg" alt="Ice Crysal Contest" class="poster"
+      <img src="C039176F-60A7-4C13-BE8A-8780741EB3CC.jpeg" alt="Ice Crysal Contest" class="poster">
     </div>
 
-    <!-- Ice Crystal Contest -->
-    <div class="Contest">
+    <div class="contest">
       <h2>Ice Crystal Contest</h2>
       <p>Join the Discord server to participate and win exclusive prizes!</p>
     </div>
@@ -230,12 +226,10 @@
       <a href="https://discord.gg/jTwx5U8hDV" target="_blank" class="discord-cta">Join Discord</a>
     </div>
 
-    <!-- Best Duo video -->
     <div class="video-grid" style="margin-top:18px;">
       <iframe width="560" height="315" src="https://www.youtube.com/embed/d8DluzJAd2w" allowfullscreen></iframe>
     </div>
 
-    <!-- Socials -->
     <div class="socials" style="margin-top:18px;">
       <a href="https://discord.gg/jTwx5U8hDV" class="discord" target="_blank">
         <img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" alt="Discord" width="20">Discord
@@ -251,7 +245,6 @@
   </div>
 </main>
 
-<!-- Wheel overlay -->
 <div id="wheelOverlay" style="display:none;position:fixed;">
   <canvas id="wheelCanvas" width="420" height="420"></canvas>
   <button id="spinBtn" onclick="spinWheel()">SPIN!</button>
@@ -371,6 +364,23 @@ function animateFloats(){
   requestAnimationFrame(animateFloats);
 }
 animateFloats();
+
+/* === Dynamische achtergrond op basis van adminkeuze === */
+(function() {
+  const savedBackground = localStorage.getItem("selectedBackground");
+
+  if (savedBackground) {
+    document.body.style.background = "none";
+    document.body.style.backgroundImage = `url(${savedBackground})`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.transition = "background-image 0.8s ease-in-out";
+  } else {
+    document.body.style.backgroundImage =
+      "radial-gradient(circle at 20% 10%, rgba(255,140,0,0.15) 0%, transparent 20%), linear-gradient(180deg,#4b0a00 0%, #1b0000 45%, #060000 100%)";
+  }
+})();
 </script>
 
 </body>
