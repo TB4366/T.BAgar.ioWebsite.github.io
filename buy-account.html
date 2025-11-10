@@ -8,51 +8,27 @@
 body{margin:0; font-family:Arial, sans-serif; background:#111; color:#fff; padding:20px;}
 h1{color:#ffbb55;}
 label{display:block; margin-top:12px; font-weight:700;}
-select, input[type=color]{margin-top:4px; padding:6px; border-radius:6px; border:none;}
-button{margin-top:20px; padding:10px 18px; border:none; border-radius:8px; background:#ff6600; color:#120000; font-weight:700; cursor:pointer;}
-.button-row{margin-top:12px;}
-.background-preview{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;}
-.bg-option{width:120px; height:70px; border:2px solid #fff; border-radius:6px; cursor:pointer; background-size:cover; background-position:center;}
-.bg-selected{border:3px solid #ffbb55;}
+input, select, textarea{margin-top:4px; padding:6px; border-radius:6px; border:none; width:100%;}
+button{margin-top:12px; padding:10px 18px; border:none; border-radius:8px; background:#ff6600; color:#120000; font-weight:700; cursor:pointer;}
+.section{border:1px solid #444; padding:12px; margin-top:16px; border-radius:10px;}
+.preview-skins, .preview-videos{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;}
+.skin-item, .video-item{border:2px solid #fff; border-radius:6px; padding:6px; position:relative;}
+.skin-item img{width:120px; height:120px; object-fit:cover; display:block;}
+.remove-btn{position:absolute; top:2px; right:2px; background:red; color:#fff; border:none; cursor:pointer; border-radius:4px; padding:2px 6px; font-size:12px;}
+.editor{border:1px solid #555; padding:12px; border-radius:8px; margin-top:8px; background:#222; min-height:200px;}
+.editor *{color:#fff;}
 </style>
 </head>
 <body>
 
-<h1>Admin Panel - Homepagina Instellingen</h1>
+<h1>Admin Panel - T.B Agar.io</h1>
 
-<!-- Achtergrond instellen -->
-<label>Achtergrond Thema</label>
-<select id="themeSelect">
-  <option value="">Geen thema (kleur kiezen)</option>
-  <option value="zomer">Zomer</option>
-  <option value="lente">Lente</option>
-  <option value="herfst">Herfst</option>
-  <option value="winter">Winter</option>
-  <option value="halloween">Halloween</option>
-  <option value="kerst">Kerst</option>
-  <option value="pasen">Pasen</option>
-  <option value="blackfriday">Black Friday</option>
-</select>
-
-<div class="background-preview" id="bgPreview"></div>
-
-<label>Achtergrondkleur (als geen thema)</label>
-<input type="color" id="bgColor">
-
-<!-- Tekstkleur -->
-<label>Tekstkleur</label>
-<input type="color" id="textColor">
-
-<!-- Figuren -->
-<label>Figuren</label>
-<select id="figuresSelect">
-  <option value="off">Uit</option>
-  <option value="on">Aan</option>
-</select>
-
-<div id="figureOptions" style="margin-top:8px; display:none;">
-  <label>Selecteer thema voor figuren</label>
-  <select id="figureTheme">
+<!-- Achtergrond & Figuren -->
+<div class="section">
+  <h2>Achtergrond & Figuren</h2>
+  <label>Thema achtergrond</label>
+  <select id="themeSelect">
+    <option value="">Geen thema (kleur kiezen)</option>
     <option value="zomer">Zomer</option>
     <option value="lente">Lente</option>
     <option value="herfst">Herfst</option>
@@ -62,12 +38,63 @@ button{margin-top:20px; padding:10px 18px; border:none; border-radius:8px; backg
     <option value="pasen">Pasen</option>
     <option value="blackfriday">Black Friday</option>
   </select>
+  <div class="background-preview" id="bgPreview"></div>
+  <label>Achtergrondkleur</label>
+  <input type="color" id="bgColor">
+
+  <label>Tekstkleur</label>
+  <input type="color" id="textColor">
+
+  <label>Figuren aan/uit</label>
+  <select id="figuresSelect">
+    <option value="off">Uit</option>
+    <option value="on">Aan</option>
+  </select>
+
+  <div id="figureOptions" style="margin-top:8px; display:none;">
+    <label>Selecteer thema voor figuren</label>
+    <select id="figureTheme">
+      <option value="zomer">Zomer</option>
+      <option value="lente">Lente</option>
+      <option value="herfst">Herfst</option>
+      <option value="winter">Winter</option>
+      <option value="halloween">Halloween</option>
+      <option value="kerst">Kerst</option>
+      <option value="pasen">Pasen</option>
+      <option value="blackfriday">Black Friday</option>
+    </select>
+  </div>
 </div>
 
-<button onclick="publishSettings()">Publiceren</button>
+<!-- Skins beheer -->
+<div class="section">
+  <h2>Skins beheren</h2>
+  <label>Nieuwe skin link</label>
+  <input type="text" id="newSkinLink" placeholder="Voer URL van de skin in">
+  <button onclick="addSkin()">Voeg skin toe</button>
+  <div class="preview-skins" id="skinsPreview"></div>
+</div>
+
+<!-- YouTube beheer -->
+<div class="section">
+  <h2>YouTube Video’s</h2>
+  <label>Nieuwe video link</label>
+  <input type="text" id="newVideoLink" placeholder="YouTube embed link">
+  <button onclick="addVideo()">Voeg video toe</button>
+  <div class="preview-videos" id="videosPreview"></div>
+</div>
+
+<!-- Live editor -->
+<div class="section">
+  <h2>Live website bewerken</h2>
+  <div class="editor" id="liveEditor" contenteditable="true">
+    <!-- Hier wordt de live content geladen -->
+  </div>
+  <button onclick="saveEditor()">Opslaan en homepagina bijwerken</button>
+</div>
 
 <script>
-// Voorbeeldachtergronden per thema
+// Achtergrond & Figuren
 const bgImages={
   zomer:["zomer1.jpg","zomer2.jpg"],
   lente:["lente1.jpg","lente2.jpg"],
@@ -87,7 +114,6 @@ const figuresSelect=document.getElementById('figuresSelect');
 const figureOptions=document.getElementById('figureOptions');
 const figureTheme=document.getElementById('figureTheme');
 
-// Update preview als thema geselecteerd
 themeSelect.addEventListener('change',()=>{
   const val=themeSelect.value;
   bgPreview.innerHTML='';
@@ -99,31 +125,79 @@ themeSelect.addEventListener('change',()=>{
       div.addEventListener('click',()=>{
         document.querySelectorAll('.bg-option').forEach(el=>el.classList.remove('bg-selected'));
         div.classList.add('bg-selected');
-        div.dataset.selected='true';
       });
       bgPreview.appendChild(div);
     });
   }
 });
 
-// Figuren aan/uit
-figuresSelect.addEventListener('change',()=>{
-  figureOptions.style.display = figuresSelect.value==='on'?'block':'none';
-});
+figuresSelect.addEventListener('change',()=>{figureOptions.style.display = figuresSelect.value==='on'?'block':'none';});
 
-// Publiceren
-function publishSettings(){
-  const selectedBgDiv = document.querySelector('.bg-option.bg-selected');
-  const selectedBg = selectedBgDiv?selectedBgDiv.style.backgroundImage.slice(5,-2):'';
+// Skins
+let skins = JSON.parse(localStorage.getItem('skins')) || [];
+const skinsPreview=document.getElementById('skinsPreview');
+function renderSkins(){
+  skinsPreview.innerHTML='';
+  skins.forEach((link,i)=>{
+    const div=document.createElement('div');
+    div.className='skin-item';
+    const img=document.createElement('img');
+    img.src=link;
+    div.appendChild(img);
+    const btn=document.createElement('button');
+    btn.textContent='X';
+    btn.className='remove-btn';
+    btn.onclick=()=>{skins.splice(i,1); renderSkins();}
+    div.appendChild(btn);
+    skinsPreview.appendChild(div);
+  });
+}
+function addSkin(){
+  const link=document.getElementById('newSkinLink').value;
+  if(link){skins.push(link); renderSkins(); document.getElementById('newSkinLink').value='';}
+}
+renderSkins();
+
+// YouTube
+let videos = JSON.parse(localStorage.getItem('videos')) || [];
+const videosPreview=document.getElementById('videosPreview');
+function renderVideos(){
+  videosPreview.innerHTML='';
+  videos.forEach((link,i)=>{
+    const div=document.createElement('div');
+    div.className='video-item';
+    div.textContent=link;
+    const btn=document.createElement('button');
+    btn.textContent='X';
+    btn.className='remove-btn';
+    btn.onclick=()=>{videos.splice(i,1); renderVideos();}
+    div.appendChild(btn);
+    videosPreview.appendChild(div);
+  });
+}
+function addVideo(){
+  const link=document.getElementById('newVideoLink').value;
+  if(link){videos.push(link); renderVideos(); document.getElementById('newVideoLink').value='';}
+}
+renderVideos();
+
+// Live editor
+const liveEditor=document.getElementById('liveEditor');
+liveEditor.innerHTML = localStorage.getItem('homeContent') || '<p>Bewerk hier de homepagina content...</p>';
+function saveEditor(){
   const settings={
-    theme:themeSelect.value || figureTheme.value,
-    background:selectedBg || '',
-    color:(!themeSelect.value)?bgColor.value:'',
+    theme:themeSelect.value,
+    background:document.querySelector('.bg-option.bg-selected')?.style.backgroundImage || '',
+    bgColor:bgColor.value,
     textColor:textColor.value,
-    figures:figuresSelect.value
+    figures:figuresSelect.value,
+    figureTheme:figureTheme.value
   };
-  localStorage.setItem('siteSettings', JSON.stringify(settings));
-  alert('Instellingen gepubliceerd! Ga naar de homepagina om ze te zien.');
+  localStorage.setItem('siteSettings',JSON.stringify(settings));
+  localStorage.setItem('skins',JSON.stringify(skins));
+  localStorage.setItem('videos',JSON.stringify(videos));
+  localStorage.setItem('homeContent',liveEditor.innerHTML);
+  alert('Homepagina instellingen en content opgeslagen!');
 }
 </script>
 
