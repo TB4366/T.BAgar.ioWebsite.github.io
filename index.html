@@ -1,25 +1,32 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>T.B Agar.io</title>
 <style>
-  :root{
-    --glow:#ff6600;
-    --accent:#ffbb55;
-    --overlay: rgba(0,0,0,0.62);
+  :root {
+    --glow: #ff6600;
+    --accent: #ffbb55;
+    --overlay: rgba(0, 0, 0, 0.62);
   }
 
-  html,body{height:100%; margin:0; font-family:Arial, sans-serif; color:#fff;}
-  body{
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(255,140,0,0.15) 0%, transparent 20%),
-      linear-gradient(180deg,#4b0a00 0%, #1b0000 45%, #060000 100%);
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #fff;
+    transition: background 1s ease-in-out;
+  }
+
+  body {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     overflow-x: hidden;
-    transition: background-image 0.8s ease-in-out;
   }
 
+  /* Header */
   header {
     display: flex;
     align-items: center;
@@ -29,18 +36,43 @@
     position: fixed;
     width: 100%;
     top: 0;
-    left: 0;
     z-index: 1000;
     backdrop-filter: blur(8px);
     box-shadow: 0 0 15px rgba(255, 100, 0, 0.3);
   }
 
-  .logo-container { display: flex; align-items: center; gap: 12px; }
-  .logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-  .site-title { font-size: 1.3rem; font-weight: bold; color: #ffae42; text-shadow: 0 0 8px #ff4500; }
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-  .menu-btn { font-size: 26px; background: none; border: none; color: #ffae42; cursor: pointer; transition: transform 0.3s ease; }
-  .menu-btn:hover { transform: scale(1.2); }
+  .logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .site-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffae42;
+    text-shadow: 0 0 8px #ff4500;
+  }
+
+  .menu-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    color: #ffae42;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .menu-btn:hover {
+    transform: scale(1.2);
+  }
 
   .menu {
     position: absolute;
@@ -54,6 +86,7 @@
     flex-direction: column;
     min-width: 180px;
   }
+
   .menu a {
     display: block;
     padding: 12px;
@@ -62,47 +95,39 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: background-color 0.3s ease, padding-left 0.3s ease;
   }
+
   .menu a:hover {
     background-color: rgba(255, 100, 0, 0.2);
     padding-left: 18px;
   }
 
-  main{display:flex;justify-content:center;padding:120px 16px 80px;position:relative;z-index:10}
-  .content-wrapper{
-    width:100%;
-    max-width:1180px;
+  main { display: flex; justify-content: center; padding: 120px 16px 80px; position: relative; z-index: 10; }
+  .content-wrapper {
+    width: 100%;
+    max-width: 1180px;
     background: var(--overlay);
-    border-radius:14px;
-    padding:28px;
+    border-radius: 14px;
+    padding: 28px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    position:relative;
-    z-index:20;
+    z-index: 20;
   }
 
-  .highlight-title{ text-align:center; font-size:1.9rem; margin:6px 0 18px; color:var(--accent); text-shadow:0 0 12px var(--glow); }
-  .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative;margin:10px auto}
-  .circle img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 900ms ease-in-out}
-  .circle img.active{opacity:1}
+  .highlight-title { text-align:center; font-size:1.9rem; margin:6px 0 18px; color:var(--accent); text-shadow:0 0 12px var(--glow); }
+  .skins-circles { display:flex; justify-content:center; gap:36px; flex-wrap:wrap; margin-bottom:10px; }
+  .circle { width:160px; height:160px; border-radius:50%; overflow:hidden; background:#000; box-shadow:0 0 22px rgba(255,102,0,0.25); position:relative; }
+  .circle img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 900ms ease-in-out; }
+  .circle img.active { opacity:1; }
+
+  .video-grid { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; margin:20px 0; }
+  iframe { border:none; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6); }
 
   .floating {
-    position: absolute;
-    pointer-events: none;
-    user-select: none;
-    z-index: 5;
-    opacity: 0.95;
-    transform: translate(-50%, -50%);
-    will-change: transform;
-  }
-
-  #wheelOverlay {
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.8);
-    z-index:9999;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
+    position:absolute;
+    pointer-events:none;
+    user-select:none;
+    z-index:5;
+    opacity:0.9;
+    transform:translate(-50%,-50%);
   }
 </style>
 </head>
@@ -126,82 +151,54 @@
 
 <main>
   <div class="content-wrapper">
-    <div class="highlight-title">Welkom bij T.B Agar.io!</div>
-    <p style="text-align:center;">🎉 De achtergrond en figuren veranderen automatisch volgens het huidige seizoen of feestdag gekozen in het adminpaneel!</p>
+    <!-- jouw content blijft hier -->
+    <div class="highlight-title">The Best Halloween Skins</div>
+    <div class="skins-circles">
+      <div class="circle" id="circle1">
+        <img src="A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" class="active">
+        <img src="610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg">
+      </div>
+    </div>
   </div>
 </main>
 
 <script>
 function toggleMenu(){
-  const menu = document.getElementById('menu');
-  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  const menu=document.getElementById('menu');
+  menu.style.display=menu.style.display==='flex'?'none':'flex';
 }
 
-/* === DYNAMISCHE ACHTERGROND === */
-(function() {
-  const savedBackground = localStorage.getItem("selectedBackground");
-  if (savedBackground) {
-    document.body.style.background = "none";
-    document.body.style.backgroundImage = `url(${savedBackground})`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPosition = "center";
-    document.body.style.backgroundRepeat = "no-repeat";
-  }
-})();
+/* Achtergrond laden uit admin-keuze */
+const savedSettings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+if(savedSettings.background){
+  document.body.style.backgroundImage = `url('${savedSettings.background}')`;
+}
+if(savedSettings.figures === 'on' && savedSettings.theme){
+  spawnFigures(savedSettings.theme);
+}
 
-/* === FIGUREN DYNAMISCH TONEN === */
-(function() {
-  const figuresEnabled = localStorage.getItem("figuresEnabled") === "true";
-  const selectedTheme = localStorage.getItem("selectedFiguresTheme");
-
-  if (!figuresEnabled || !selectedTheme) return;
-
-  const themaFiguren = {
-    zomer: ["🌞","🌊","🏖️","🍉","🕶️"],
-    herfst: ["🍂","🍁","🎃","🦉","🌰"],
-    winter: ["❄️","⛄","🎿","🎁","🌨️"],
-    lente: ["🌸","🌼","🐝","🌷","☘️"],
-    halloween: ["🎃","👻","🦇","🕷️","💀"],
-    kerst: ["🎄","🎁","⭐","⛄","🧤"],
-    pasen: ["🐣","🐰","🥚","🌷","🌸"],
-    blackfriday: ["🛍️","💳","💰","📦","🔥"],
-    nieuwjaar: ["🎆","🎇","🥂","🎉","✨"]
+/* Figuren genereren per thema */
+function spawnFigures(theme){
+  const themes = {
+    zomer: ["☀️","🌴","🌊","🕶️"],
+    herfst: ["🍁","🍂","🌰","🦔"],
+    winter: ["❄️","⛄","🎿","🌨️"],
+    lente: ["🌸","🌼","🐝","🌷"],
+    halloween: ["🎃","👻","🦇","🕷️"],
+    kerst: ["🎅","🎄","❄️","🎁"],
+    pasen: ["🐰","🥚","🌸","🐣"]
   };
-
-  const icons = themaFiguren[selectedTheme] || [];
-  const floats = [];
-
-  for (let i = 0; i < 40; i++) {
-    const span = document.createElement("span");
-    span.textContent = icons[Math.floor(Math.random() * icons.length)];
-    span.className = "floating";
-    span.style.fontSize = (12 + Math.random() * 24) + "px";
-    span.style.left = Math.random() * window.innerWidth + "px";
-    span.style.top = Math.random() * window.innerHeight + "px";
-    span.speedX = (Math.random() - 0.5) * 1.5;
-    span.speedY = (Math.random() - 0.5) * 1.5;
+  const icons = themes[theme.toLowerCase()] || ["⭐"];
+  for(let i=0;i<30;i++){
+    const span=document.createElement('span');
+    span.textContent=icons[Math.floor(Math.random()*icons.length)];
+    span.className='floating';
+    span.style.fontSize=(16+Math.random()*24)+'px';
+    span.style.left=Math.random()*window.innerWidth+'px';
+    span.style.top=Math.random()*window.innerHeight+'px';
     document.body.appendChild(span);
-    floats.push(span);
   }
-
-  function animate() {
-    for (const f of floats) {
-      let x = parseFloat(f.style.left);
-      let y = parseFloat(f.style.top);
-      x += f.speedX;
-      y += f.speedY;
-      if (x > window.innerWidth) x = 0;
-      if (x < 0) x = window.innerWidth;
-      if (y > window.innerHeight) y = 0;
-      if (y < 0) y = window.innerHeight;
-      f.style.left = x + "px";
-      f.style.top = y + "px";
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
+}
 </script>
-
 </body>
 </html>
