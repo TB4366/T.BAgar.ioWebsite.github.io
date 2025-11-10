@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,9 +9,14 @@
     font-family: Arial, sans-serif;
     background: #111;
     color: #fff;
-    padding: 30px;
     text-align: center;
+    padding: 30px;
+    transition: background-image 0.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
   }
+  h1 { color: #ff6600; text-shadow: 0 0 10px #ff6600; }
+
   select, button {
     padding: 10px;
     font-size: 1rem;
@@ -19,10 +24,12 @@
     border-radius: 8px;
     border: none;
   }
+
   select {
     background: #222;
     color: #fff;
   }
+
   .preview-container {
     display: flex;
     justify-content: center;
@@ -30,39 +37,56 @@
     margin-top: 20px;
     flex-wrap: wrap;
   }
+
   .preview {
-    width: 300px;
+    width: 320px;
     height: 180px;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
     border: 3px solid transparent;
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    position: relative;
   }
+
   .preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
+  .preview:hover {
+    transform: scale(1.03);
+  }
+
   .preview.selected {
     border-color: #ff6600;
     box-shadow: 0 0 15px #ff6600;
   }
+
   button.publish {
     background: #ff6600;
     color: #000;
     font-weight: bold;
-    margin-top: 20px;
+    margin-top: 25px;
     cursor: pointer;
+    padding: 12px 24px;
   }
+
   button.publish:hover {
     background: #ffaa33;
+  }
+
+  .notice {
+    margin-top: 20px;
+    color: #aaa;
+    font-size: 0.9rem;
   }
 </style>
 </head>
 <body>
-  <h1>🌍 Admin Paneel</h1>
-  <p>Kies een thema en achtergrond voor de homepagina:</p>
+  <h1>🎨 Admin Paneel</h1>
+  <p>Kies een thema en stel de achtergrond van de homepagina in:</p>
 
   <label for="themeSelect">Seizoen of Feestdag:</label>
   <select id="themeSelect" onchange="loadPreviews()">
@@ -80,51 +104,63 @@
 
   <div class="preview-container" id="previewContainer"></div>
 
-  <button class="publish" onclick="publishBackground()">Publiceren</button>
+  <button class="publish" onclick="publishBackground()">✅ Publiceren</button>
+
+  <p class="notice">Na publicatie zie je de nieuwe achtergrond direct op de homepagina.</p>
 
 <script>
+/* Thema's en voorbeeldafbeeldingen — vervang door jouw echte bestandsnamen of map */
 const backgrounds = {
-  zomer: ["zomer1.jpg", "zomer2.jpg"],
-  herfst: ["herfst1.jpg", "herfst2.jpg"],
-  winter: ["winter1.jpg", "winter2.jpg"],
-  lente: ["lente1.jpg", "lente2.jpg"],
-  halloween: ["halloween1.jpg", "halloween2.jpg"],
-  kerst: ["kerst1.jpg", "kerst2.jpg"],
-  pasen: ["pasen1.jpg", "pasen2.jpg"],
-  blackfriday: ["black1.jpg", "black2.jpg"],
-  oudennieuw: ["oud1.jpg", "nieuw2.jpg"]
+  zomer: ["images/zomer1.jpg", "images/zomer2.jpg"],
+  herfst: ["images/herfst1.jpg", "images/herfst2.jpg"],
+  winter: ["images/winter1.jpg", "images/winter2.jpg"],
+  lente: ["images/lente1.jpg", "images/lente2.jpg"],
+  halloween: ["images/halloween1.jpg", "images/halloween2.jpg"],
+  kerst: ["images/kerst1.jpg", "images/kerst2.jpg"],
+  pasen: ["images/pasen1.jpg", "images/pasen2.jpg"],
+  blackfriday: ["images/black1.jpg", "images/black2.jpg"],
+  oudennieuw: ["images/oud1.jpg", "images/nieuw2.jpg"]
 };
 
 let selectedBackground = null;
 
+/* Achtergrond previews laden */
 function loadPreviews() {
+  const theme = document.getElementById("themeSelect").value;
   const container = document.getElementById("previewContainer");
   container.innerHTML = "";
-  const theme = document.getElementById("themeSelect").value;
+  selectedBackground = null;
+
   if (!theme) return;
 
-  backgrounds[theme].forEach(src => {
+  const images = backgrounds[theme];
+  images.forEach(src => {
     const div = document.createElement("div");
     div.className = "preview";
-    div.innerHTML = `<img src="${src}" alt="">`;
+    div.innerHTML = `<img src="${src}" alt="${theme} achtergrond">`;
     div.onclick = () => selectPreview(div, src);
     container.appendChild(div);
   });
 }
 
+/* Selectie en live preview */
 function selectPreview(div, src) {
   document.querySelectorAll(".preview").forEach(p => p.classList.remove("selected"));
   div.classList.add("selected");
   selectedBackground = src;
+
+  // Toon direct een live achtergrond-preview
+  document.body.style.backgroundImage = `url(${src})`;
 }
 
+/* Opslaan/publiceren */
 function publishBackground() {
   if (!selectedBackground) {
-    alert("Kies eerst een achtergrond!");
+    alert("⚠️ Kies eerst een achtergrond voordat je publiceert.");
     return;
   }
   localStorage.setItem("selectedBackground", selectedBackground);
-  alert("Achtergrond succesvol gepubliceerd!");
+  alert("✅ Achtergrond succesvol gepubliceerd!\nBekijk het op de homepagina.");
 }
 </script>
 </body>
