@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>T.B Agar.io</title>
+<title>T.B Agar.io </title>
 <style>
 :root{
   --glow:#ff6600;
@@ -154,6 +154,7 @@ iframe { border:none; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.6)
 
 <main>
   <div class="content-wrapper">
+
     <div class="highlight-title">The Best Skins</div>
     <div class="skins-circles">
       <div class="circle" id="circle1">
@@ -202,7 +203,7 @@ function toggleMenu(){
   menu.style.display = menu.style.display==='flex'?'none':'flex';
 }
 
-/* Skins slideshow voor 3 rijen x 3 */
+// Skins slideshow
 function cycleSkins(circleId, interval){
   const circle = document.getElementById(circleId);
   const imgs = Array.from(circle.querySelectorAll('img'));
@@ -217,13 +218,15 @@ cycleSkins('circle1',4000);
 cycleSkins('circle2',5000);
 cycleSkins('circle3',6000);
 
-/* Dynamische achtergrond + figuren */
+// Dynamische achtergrond + figuren
+let floatingFigures = [];
 const savedSettings = JSON.parse(localStorage.getItem('siteSettings')) || {};
 if(savedSettings.background){
   document.body.style.backgroundImage = `url('${savedSettings.background}')`;
 }
 if(savedSettings.figures === 'on' && savedSettings.theme){
   spawnFigures(savedSettings.theme);
+  animateFigures();
 }
 
 function spawnFigures(theme){
@@ -234,18 +237,36 @@ function spawnFigures(theme){
     lente: ["🌸","🌼","🐝","🌷"],
     halloween: ["🎃","👻","🦇","🕷️"],
     kerst: ["🎅","🎄","❄️","🎁"],
-    pasen: ["🐰","🥚","🌸","🐣"]
+    pasen: ["🐰","🥚","🌸","🐣"],
+    blackfriday: ["🛒","💰","📦"]
   };
   const icons = themes[theme.toLowerCase()] || ["⭐"];
   for(let i=0;i<30;i++){
     const span = document.createElement('span');
     span.textContent = icons[Math.floor(Math.random()*icons.length)];
-    span.className='floating';
-    span.style.fontSize=(16+Math.random()*24)+'px';
-    span.style.left=Math.random()*window.innerWidth+'px';
-    span.style.top=Math.random()*window.innerHeight+'px';
+    span.className = 'floating';
+    span.style.fontSize = (16 + Math.random()*24) + 'px';
+    span.style.left = Math.random()*window.innerWidth + 'px';
+    span.style.top = Math.random()*window.innerHeight + 'px';
+    span.speedX = (Math.random()*1.2+0.3) * (Math.random()>0.5?1:-1);
+    span.speedY = (Math.random()*1.2+0.3) * (Math.random()>0.5?1:-1);
     document.body.appendChild(span);
+    floatingFigures.push(span);
   }
+}
+
+function animateFigures(){
+  floatingFigures.forEach(f => {
+    let x = parseFloat(f.style.left);
+    let y = parseFloat(f.style.top);
+    x += f.speedX;
+    y += f.speedY;
+    if(x > window.innerWidth) x = 0; if(x < 0) x = window.innerWidth;
+    if(y > window.innerHeight) y = 0; if(y < 0) y = window.innerHeight;
+    f.style.left = x+'px';
+    f.style.top = y+'px';
+  });
+  requestAnimationFrame(animateFigures);
 }
 </script>
 </body>
