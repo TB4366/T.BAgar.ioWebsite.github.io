@@ -1,165 +1,132 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Achtergrond & Figuren</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #fff;
-    padding: 20px;
-  }
-  h1 {
-    color: #ffae42;
-    text-shadow: 0 0 8px #ff6600;
-  }
-  select, button {
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
-    border: none;
-  }
-  button {
-    background: #ff6600;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #ff8c1a;
-  }
-  .preview {
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
-  }
-  .preview img {
-    width: 180px;
-    height: 100px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 3px solid transparent;
-    transition: transform 0.3s, border-color 0.3s;
-  }
-  .preview img:hover {
-    transform: scale(1.05);
-  }
-  .preview img.selected {
-    border-color: #ff6600;
-  }
-  .figuren-sectie {
-    margin-top: 30px;
-    background: rgba(255,255,255,0.05);
-    padding: 15px;
-    border-radius: 10px;
-  }
+body{
+  font-family: Arial, sans-serif;
+  background:#1b0000;
+  color:#fff;
+  padding:20px;
+}
+h1{color:#ffae42;}
+label{display:block; margin:10px 0 4px;}
+select, button{padding:8px 12px; border-radius:6px; border:none; margin-bottom:12px;}
+#preview{margin-top:20px; width:100%; max-width:600px; height:300px; background-size:cover; background-position:center; border:2px solid #ffae42; border-radius:12px; position:relative;}
+.floating-preview{
+  position:absolute; font-size:24px; pointer-events:none; user-select:none; transform:translate(-50%,-50%);
+}
 </style>
 </head>
 <body>
 
-<h1>🌄 Admin Paneel – Achtergrond & Figuren</h1>
+<h1>Admin Panel - Homepagina Instellingen</h1>
 
-<label for="themeSelect">Kies een seizoen of feestdag:</label><br>
-<select id="themeSelect">
-  <option value="">-- Kies thema --</option>
-  <option value="zomer">☀️ Zomer</option>
-  <option value="herfst">🍂 Herfst</option>
-  <option value="winter">❄️ Winter</option>
-  <option value="lente">🌸 Lente</option>
-  <option value="halloween">🎃 Halloween</option>
-  <option value="kerst">🎄 Kerst</option>
-  <option value="pasen">🐣 Pasen</option>
-  <option value="blackfriday">🛍️ Black Friday</option>
-  <option value="nieuwjaar">🎆 Oud & Nieuw</option>
+<label for="backgroundSelect">Selecteer Achtergrond:</label>
+<select id="backgroundSelect">
+  <option value="">-- Kies een achtergrond --</option>
+  <option value="zomer.jpg">Zomer</option>
+  <option value="lente.jpg">Lente</option>
+  <option value="herfst.jpg">Herfst</option>
+  <option value="winter.jpg">Winter</option>
+  <option value="halloween.jpg">Halloween</option>
+  <option value="kerst.jpg">Kerst</option>
+  <option value="pasen.jpg">Pasen</option>
+  <option value="blackfriday.jpg">Black Friday</option>
+  <option value="oudnieuw.jpg">Oud & Nieuw</option>
 </select>
 
-<div id="backgroundPreview" class="preview"></div>
+<label>Figuren:</label>
+<input type="radio" name="figuresToggle" value="on" id="figuresOn"> <label for="figuresOn" style="display:inline">Aan</label>
+<input type="radio" name="figuresToggle" value="off" id="figuresOff"> <label for="figuresOff" style="display:inline">Uit</label>
 
-<div class="figuren-sectie">
-  <h3>🎈 Figuren</h3>
-  <label><input type="checkbox" id="figurenToggle"> Figuren inschakelen</label>
-  <div id="figurenThema" style="display:none; margin-top:10px;">
-    <label for="figurenSelect">Kies figuren-thema:</label><br>
-    <select id="figurenSelect">
-      <option value="zomer">☀️ Zomer</option>
-      <option value="herfst">🍂 Herfst</option>
-      <option value="winter">❄️ Winter</option>
-      <option value="lente">🌸 Lente</option>
-      <option value="halloween">🎃 Halloween</option>
-      <option value="kerst">🎄 Kerst</option>
-      <option value="pasen">🐣 Pasen</option>
-      <option value="blackfriday">🛍️ Black Friday</option>
-      <option value="nieuwjaar">🎆 Oud & Nieuw</option>
-    </select>
-  </div>
-</div>
+<label for="themeSelect">Kies thema voor figuren:</label>
+<select id="themeSelect">
+  <option value="">-- Kies thema --</option>
+  <option value="zomer">Zomer</option>
+  <option value="lente">Lente</option>
+  <option value="herfst">Herfst</option>
+  <option value="winter">Winter</option>
+  <option value="halloween">Halloween</option>
+  <option value="kerst">Kerst</option>
+  <option value="pasen">Pasen</option>
+  <option value="blackfriday">Black Friday</option>
+</select>
 
-<br><button onclick="publiceer()">✅ Publiceren</button>
+<button id="publishBtn">Publiceer</button>
+
+<div id="preview"></div>
 
 <script>
-const themeSelect = document.getElementById("themeSelect");
-const previewDiv = document.getElementById("backgroundPreview");
-const figurenToggle = document.getElementById("figurenToggle");
-const figurenThemaDiv = document.getElementById("figurenThema");
-const figurenSelect = document.getElementById("figurenSelect");
+const backgroundSelect = document.getElementById('backgroundSelect');
+const figuresOn = document.getElementById('figuresOn');
+const figuresOff = document.getElementById('figuresOff');
+const themeSelect = document.getElementById('themeSelect');
+const publishBtn = document.getElementById('publishBtn');
+const preview = document.getElementById('preview');
 
-// Achtergrondvoorbeelden per thema
-const achtergrondOpties = {
-  zomer: ["images/zomer1.jpg","images/zomer2.jpg"],
-  herfst: ["images/herfst1.jpg","images/herfst2.jpg"],
-  winter: ["images/winter1.jpg","images/winter2.jpg"],
-  lente: ["images/lente1.jpg","images/lente2.jpg"],
-  halloween: ["images/halloween1.jpg","images/halloween2.jpg"],
-  kerst: ["images/kerst1.jpg","images/kerst2.jpg"],
-  pasen: ["images/pasen1.jpg","images/pasen2.jpg"],
-  blackfriday: ["images/blackfriday1.jpg","images/blackfriday2.jpg"],
-  nieuwjaar: ["images/nieuwjaar1.jpg","images/nieuwjaar2.jpg"]
-};
+let floatingPreview = [];
 
-let geselecteerdeAchtergrond = null;
+// Functie om preview figuren te tonen
+function showPreviewFigures(theme){
+  // eerst verwijderen
+  floatingPreview.forEach(f => f.remove());
+  floatingPreview = [];
+  if(!theme) return;
 
-// Achtergrond previews tonen
-themeSelect.addEventListener("change", () => {
-  const thema = themeSelect.value;
-  previewDiv.innerHTML = "";
-  geselecteerdeAchtergrond = null;
-  if (thema && achtergrondOpties[thema]) {
-    achtergrondOpties[thema].forEach(url => {
-      const img = document.createElement("img");
-      img.src = url;
-      img.onclick = () => {
-        document.querySelectorAll(".preview img").forEach(i => i.classList.remove("selected"));
-        img.classList.add("selected");
-        geselecteerdeAchtergrond = url;
-      };
-      previewDiv.appendChild(img);
-    });
+  const icons = {
+    zomer: ["☀️","🌴","🌊","🕶️"],
+    lente: ["🌸","🌼","🐝","🌷"],
+    herfst: ["🍁","🍂","🌰","🦔"],
+    winter: ["❄️","⛄","🎿","🌨️"],
+    halloween: ["🎃","👻","🦇","🕷️"],
+    kerst: ["🎅","🎄","❄️","🎁"],
+    pasen: ["🐰","🥚","🌸","🐣"],
+    blackfriday: ["🛒","💰","📦"]
+  };
+  const selectedIcons = icons[theme] || ["⭐"];
+  for(let i=0;i<15;i++){
+    const span = document.createElement('span');
+    span.textContent = selectedIcons[Math.floor(Math.random()*selectedIcons.length)];
+    span.className='floating-preview';
+    span.style.left = Math.random()*preview.offsetWidth+'px';
+    span.style.top = Math.random()*preview.offsetHeight+'px';
+    preview.appendChild(span);
+    floatingPreview.push(span);
   }
-});
-
-// Figuren toggle
-figurenToggle.addEventListener("change", () => {
-  figurenThemaDiv.style.display = figurenToggle.checked ? "block" : "none";
-});
-
-// Publiceren
-function publiceer() {
-  if (!geselecteerdeAchtergrond) {
-    alert("⚠️ Kies eerst een achtergrond voordat je publiceert!");
-    return;
-  }
-  const figurenAan = figurenToggle.checked;
-  const figurenThema = figurenAan ? figurenSelect.value : null;
-
-  localStorage.setItem("selectedBackground", geselecteerdeAchtergrond);
-  localStorage.setItem("figuresEnabled", figurenAan);
-  localStorage.setItem("selectedFiguresTheme", figurenThema);
-
-  alert("✅ Achtergrond en figuren gepubliceerd!");
-  window.open("index.html", "_blank");
 }
+
+// Update preview
+backgroundSelect.addEventListener('change',()=>{
+  const bg = backgroundSelect.value;
+  if(bg) preview.style.backgroundImage = `url('${bg}')`;
+  else preview.style.backgroundImage='';
+});
+
+themeSelect.addEventListener('change',()=>{
+  if(figuresOn.checked) showPreviewFigures(themeSelect.value);
+});
+
+figuresOn.addEventListener('change',()=>{
+  if(figuresOn.checked) showPreviewFigures(themeSelect.value);
+});
+figuresOff.addEventListener('change',()=>{
+  floatingPreview.forEach(f => f.remove());
+  floatingPreview = [];
+});
+
+// Publiceer knop
+publishBtn.addEventListener('click',()=>{
+  const bg = backgroundSelect.value;
+  const figures = figuresOn.checked?'on':'off';
+  const theme = themeSelect.value;
+
+  const settings = { background: bg, figures, theme };
+  localStorage.setItem('siteSettings', JSON.stringify(settings));
+  alert('Instellingen gepubliceerd! De homepage zal de wijzigingen tonen.');
+});
 </script>
 
 </body>
