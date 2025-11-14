@@ -3,269 +3,186 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io</title>
+<title>Admin – Home Editor (Pro, Fixed)</title>
 <style>
-  :root{
-    --glow:#ff6600;
-    --accent:#ffbb55;
-    --overlay: rgba(0,0,0,0.62);
-  }
-
-  html,body{height:100%; margin:0; font-family:Arial, sans-serif; color:#fff;}
-  body{
-    background:#111;
-    overflow-x: hidden;
-  }
-
-  /* Header */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.7);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 15px rgba(255, 100, 0, 0.3);
-  }
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .site-title {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color:#ffae42;
-    text-shadow:0 0 8px #ff4500;
-  }
-  .menu-btn {
-    font-size:26px;
-    background:none;
-    border:none;
-    color:#ffae42;
-    cursor:pointer;
-    transition: transform 0.3s ease;
-  }
-  .menu-btn:hover{transform:scale(1.2);}
-  .menu {
-    position:absolute;
-    top:70px;
-    right:20px;
-    background: rgba(30,20,20,0.95);
-    border-radius:12px;
-    box-shadow:0 0 20px rgba(255,100,0,0.4);
-    overflow:hidden;
-    display:none;
-    flex-direction: column;
-    min-width:180px;
-  }
-  .menu a{
-    display:block;
-    padding:12px;
-    color:white;
-    text-decoration:none;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    transition: background-color 0.3s, padding-left 0.3s;
-  }
-  .menu a:hover{background-color:rgba(255,100,0,0.2); padding-left:18px;}
-
-  main{display:flex; justify-content:center; padding:120px 16px 80px; position:relative; z-index:10;}
-  .content-wrapper{
-    width:100%;
-    max-width:1180px;
-    background: var(--overlay);
-    border-radius:14px;
-    padding:28px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.6);
-    position:relative;
-    z-index:20;
-  }
-
-  .highlight-title{
-    text-align:center;
-    font-size:1.9rem;
-    margin:6px 0 18px;
-    color:var(--accent);
-    text-shadow:0 0 12px var(--glow);
-  }
-  .skins-circles{display:flex; justify-content:center; gap:36px; flex-wrap:wrap; margin-bottom:10px;}
-  .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative;}
-  .circle img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 900ms ease-in-out;}
-  .circle img.active{opacity:1;}
-
-  .video-grid{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:20px 0;}
-  iframe{border:none;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6);}
-
-  .floating{
-    position:absolute;
-    pointer-events:none;
-    user-select:none;
-    z-index:5;
-    opacity:0.95;
-    transform:translate(-50%,-50%);
-    will-change:transform;
-  }
-
-  @media (max-width:900px){
-    .circle{width:130px;height:130px}
-    iframe[width="560"]{width:100%;height:220px}
-  }
+  :root{--accent:#ffae42;--bg:#111;}
+  html,body{height:100%;margin:0;font-family:Arial, sans-serif;background:var(--bg);color:#fff}
+  .wrap{max-width:1100px;margin:18px auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{color:var(--accent);margin:0}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .btn{background:#ff6600;border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .btn.secondary{background:#333}
+  .panel{background:#151515;border:1px solid #2a2a2a;padding:12px;border-radius:10px;margin-top:12px}
+  .editor-area{min-height:260px;border-radius:8px;border:1px dashed #333;padding:8px;background:#0f0f0f;overflow:auto}
+  .block{background:#0b0b0b;border:1px solid #222;border-radius:8px;padding:10px;margin:8px 0;cursor:grab}
+  .block.dragging{opacity:0.6}
+  .block .handle{float:right;cursor:grab}
+  label{display:block;margin:6px 0}
+  input[type=text],select{width:100%;padding:8px;border-radius:6px;border:1px solid #333;background:#0b0b0b;color:#fff}
+  #preview{background:linear-gradient(180deg,#00000055,#00000022);padding:18px;border-radius:10px;margin-top:12px;min-height:180px}
+  .small{font-size:13px;color:#bbb}
+  .row{display:flex;gap:8px}
+  .col{flex:1}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .danger{background:#991b1b}
+  .floating{position:absolute;pointer-events:none;user-select:none;z-index:5;opacity:0.95;transform:translate(-50%,-50%);will-change:transform}
+  #previewWrap{position:relative;min-height:260px}
+  @media (max-width:900px){.row{flex-direction:column}}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <header>
+    <h1>Admin – Home Editor (Pro)</h1>
+    <div class="top-actions">
+      <button class="btn" id="btnLogout">🔒 Logout</button>
+    </div>
+  </header>
 
-<header>
-  <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
-    <span class="site-title" id="siteTitle">T.B Agar.io</span>
+  <div class="panel">
+    <div class="small">Beveiliging</div>
+    <div class="row">
+      <div class="col">
+        <label>Admin wachtwoord instellen (standaard: admin123)</label>
+        <input type="text" id="pwInput" placeholder="Nieuw wachtwoord">
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnSetPW">Opslaan wachtwoord</button>
+      </div>
+    </div>
   </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Pagina</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-  </div>
-</header>
 
-<main>
-  <div class="content-wrapper" id="contentWrapper">
-
-    <div class="highlight-title" id="highlightTitle">Welkom bij T.B Agar.io</div>
-
-    <!-- Skins -->
-    <div class="skins-circles" id="skinsContainer">
-      <!-- Skins worden hier geladen -->
+  <div class="panel">
+    <div class="small">Invoeg items</div>
+    <div class="controls">
+      <button class="btn" onclick="addBlock('h2')">+ Titel</button>
+      <button class="btn" onclick="addBlock('p')">+ Tekst</button>
+      <button class="btn" id="addImageBtn">+ Afbeelding</button>
+      <button class="btn" onclick="showVideoDialog()">+ Video</button>
+      <button class="btn" onclick="addLink()">+ Link</button>
+      <button class="btn" onclick="addHR()">+ Lijn</button>
+      <button class="btn secondary" onclick="clearEditor()">🧹 Alles wissen</button>
+      <button class="btn" id="btnSave">💾 Opslaan</button>
     </div>
 
-    <!-- YouTube Video's -->
-    <div class="video-grid" id="videosContainer">
-      <!-- Video's worden hier geladen -->
+    <div style="margin-top:10px" class="small">Drag & drop: sleep een blok om de volgorde te veranderen.</div>
+
+    <div id="editor" class="editor-area" contenteditable="false" aria-label="Editor content"></div>
+  </div>
+
+  <div class="panel">
+    <div class="small">Achtergrond & Figuren</div>
+    <div class="row">
+      <div class="col">
+        <label>achtergrondkleur</label>
+        <input type="color" id="bgColorPicker">
+      </div>
+      <div class="col">
+        <label>achtergrond afbeelding (url)</label>
+        <input type="text" id="bgImageInput" placeholder="https://...">
+      </div>
     </div>
 
+    <div style="margin-top:8px" class="row">
+      <div class="col">
+        <label>zwevende figuren thema</label>
+        <select id="figureThemeSelect">
+          <option value="none">Geen</option>
+          <option value="zomer">Zomer</option>
+          <option value="lente">Lente</option>
+          <option value="herfst">Herfst</option>
+          <option value="winter">Winter</option>
+          <option value="halloween">Halloween</option>
+          <option value="kerst">Kerst</option>
+          <option value="pasen">Pasen</option>
+          <option value="blackfriday">Black Friday</option>
+          <option value="oudnieuw">Oud & Nieuw</option>
+        </select>
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnApplyTheme">Toepassen</button>
+      </div>
+    </div>
   </div>
-</main>
 
+  <div class="panel">
+    <div class="small">Automatisch opslaan & preview</div>
+    <div class="row">
+      <div class="col">
+        <label>Auto-save interval (ms)</label>
+        <input type="text" id="autoSaveInterval" value="3000">
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnToggleAuto">Toggle Auto-save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="small">Preview</div>
+    <div id="previewWrap">
+      <div id="preview"></div>
+    </div>
+  </div>
+
+  <div style="height:60px"></div>
+</div>
+
+<input type="file" id="imagePicker" accept="image/*" style="display:none">
 <script>
-// Hamburger menu
-function toggleMenu(){
-  const menu=document.getElementById('menu');
-  menu.style.display = menu.style.display==='flex'?'none':'flex';
+// ---------- AUTH ----------
+const DEFAULT_PW = 'admin123';
+function requireAuth(){
+  const stored = localStorage.getItem('adminPW') || DEFAULT_PW;
+  const attempt = prompt('Voer admin wachtwoord in:');
+  if(attempt !== stored){ alert('Verkeerd wachtwoord'); throw new Error('Unauthorized'); }
 }
+try { requireAuth(); } catch(e){ document.body.innerHTML = '<div style="color:#fff;padding:40px;text-align:center">Toegang geweigerd.</div>'; }
 
-// Laad instellingen
-const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
-const skins = JSON.parse(localStorage.getItem('skins')) || [];
-const videos = JSON.parse(localStorage.getItem('videos')) || [];
-const homeContent = localStorage.getItem('homeContent') || '';
+// ---------- EDITOR CORE ----------
+let autoSaveTimer=null, autoSaveOn=true;
+const editor = document.getElementById('editor');
+function getSavedContent(){ return localStorage.getItem('homeContent')||''; }
+function setSavedContent(v){ localStorage.setItem('homeContent',v); }
 
-// Achtergrond
-if(settings.bgColor) document.body.style.background = settings.bgColor;
-if(settings.background) document.body.style.backgroundImage = settings.background;
-if(settings.textColor){
-  document.getElementById('siteTitle').style.color = settings.textColor;
-  document.getElementById('highlightTitle').style.color = settings.textColor;
-}
-
-// Figuren
-let floats = [];
-function createFigures(){
-  floats.forEach(f=>f.remove());
-  floats=[];
-  if(settings.figures==='on'){
-    let themeObjects=[];
-    switch(settings.figureTheme){
-      case 'zomer': themeObjects=['🌞','🏖️','🌴','⛱️']; break;
-      case 'lente': themeObjects=['🌸','🐦','🌿','🌷']; break;
-      case 'herfst': themeObjects=['🍁','🌰','🎃','🍂']; break;
-      case 'winter': themeObjects=['❄️','⛄','🌨️','🎿']; break;
-      case 'halloween': themeObjects=['🎃','👻','🦇','🕷️']; break;
-      case 'kerst': themeObjects=['🎄','🎅','❄️','🎁']; break;
-      case 'pasen': themeObjects=['🐣','🥚','🐰','🌷']; break;
-      case 'blackfriday': themeObjects=['🛍️','💰','🛒','🔥']; break;
-      default: themeObjects=['⭐']; break;
-    }
-    for(let i=0;i<50;i++){
-      const span=document.createElement('span');
-      span.textContent = themeObjects[Math.floor(Math.random()*themeObjects.length)];
-      span.className='floating';
-      span.style.fontSize=(12+Math.random()*24)+'px';
-      span.style.left=Math.random()*window.innerWidth+'px';
-      span.style.top=Math.random()*window.innerHeight+'px';
-      span.speed=(0.3+Math.random()*1.2)*(Math.random()>0.5?1:-1);
-      document.body.appendChild(span);
-      floats.push(span);
-    }
-    animateFloats();
-  }
-}
-function animateFloats(){
-  floats.forEach(f=>{
-    let x=parseFloat(f.style.left);
-    let y=parseFloat(f.style.top);
-    x+=f.speed; y+=f.speed/2;
-    if(x>window.innerWidth)x=0; if(x<0)x=window.innerWidth;
-    if(y>window.innerHeight)y=0; if(y<0)y=window.innerHeight;
-    f.style.left=x+'px';
-    f.style.top=y+'px';
+function parseToBlocks(html){
+  if(!html) return;
+  const temp=document.createElement('div'); temp.innerHTML=html;
+  Array.from(temp.childNodes).forEach(n=>{
+    const block=document.createElement('div');
+    block.className='block'; block.draggable=true;
+    block.innerHTML = (n.outerHTML!==undefined ? n.outerHTML : n.textContent);
+    addBlockControls(block);
+    editor.appendChild(block);
   });
-  requestAnimationFrame(animateFloats);
 }
-createFigures();
 
-// Skins laden
-const skinsContainer = document.getElementById('skinsContainer');
-function renderSkins(){
-  skinsContainer.innerHTML='';
-  for(let i=0;i<skins.length;i+=3){
-    const circle = document.createElement('div');
-    circle.className='circle';
-    const imgs = skins.slice(i,i+3);
-    imgs.forEach((src,j)=>{
-      const img=document.createElement('img');
-      img.src=src;
-      if(j===0) img.classList.add('active');
-      circle.appendChild(img);
-      let idx=j;
-      setInterval(()=>{
-        circle.querySelectorAll('img').forEach(im=>im.classList.remove('active'));
-        img.classList.add('active');
-        idx=(idx+1)%imgs.length;
-      },4000+j*1000);
-    });
-    skinsContainer.appendChild(circle);
-  }
+function rebuildFromBlocks(){
+  const html = Array.from(editor.children)
+    .map(b=>b.innerHTML)
+    .join('\n'); // FIXED LINE
+  document.getElementById('preview').innerHTML = html;
+  setSavedContent(html);
 }
-renderSkins();
 
-// YouTube laden
-const videosContainer=document.getElementById('videosContainer');
-videos.forEach(link=>{
-  const iframe=document.createElement('iframe');
-  iframe.width=360;
-  iframe.height=215;
-  iframe.src=link;
-  iframe.allowFullscreen=true;
-  videosContainer.appendChild(iframe);
-});
+function loadEditor(){
+  editor.innerHTML='';
+  const saved=getSavedContent();
+  if(saved) parseToBlocks(saved);
+  else addBlock('h2','Welkom bij T.B Agar.io');
+  applySettingsToPreview();
+}
 
-// Home content
-const contentWrapper=document.getElementById('contentWrapper');
-if(homeContent) contentWrapper.innerHTML = homeContent;
-</script>
-
-</body>
-</html>
+// ---------- BLOCKS ----------
+function addBlock(tag,text){
+  const block=document.createElement('div');
+  block.className='block'; block.draggable=true;
+  if(tag==='h2') block.innerHTML=`<h2 contenteditable="true">${text||'Nieuwe Titel'}</h2>`;
+  else if(tag==='p') block.innerHTML=`<p contenteditable="true">${text||'Nieuwe tekst...'} </p>`;
+  else if(tag==='hr') block.innerHTML='<hr>';
+  else if(tag==='img') block.innerHTML=`<img src="${text||''}" style="max-width:100%;border-radius:8px">`;
+  else block.innerHTML=text||'';
+  addBlockControls(block);
+  editor.appendChild(block);
+  rebuildFrom
