@@ -19,8 +19,9 @@
 <button class="btn" onclick="insert('<h2>Nieuwe Titel</h2>')">+ Titel</button>
 <button class="btn" onclick="insert('<p>Nieuwe tekst...</p>')">+ Tekst</button>
 <button class="btn" onclick="insert('<hr>')">+ Lijn</button>
-<button class="btn" onclick="insert('<iframe width=360 height=215 src=\"https://youtube.com/embed/VIDEO_ID\"></iframe>')">+ Video</button>
-<button class="btn" onclick="saveContent()">💾 Opslaan</button>
+<button class="btn" onclick="addVideo()">+ Video (YouTube)</button>>+ Video</button>
+<button class="btn" onclick="addLink()">+ Link</button>
+<button class="btn" onclick="saveContent"()">💾 Opslaan</button>
 <button class="btn" onclick="loadContent()">🔄 Herladen</button>
 
 <h3>Editor</h3>
@@ -51,12 +52,72 @@ function saveContent(){
   alert("Opgeslagen!");
 }
 
+// Video toevoegen
+function addVideo(){
+  let url = prompt('Plak hier een YouTube link:');
+  if(!url) return;
+  url = url.replace('watch?v=', 'embed/');
+  insert(`<iframe width=360 height=215 src="${url}" allowfullscreen></iframe>`);
+}
+
+// Link toevoegen
+function addLink(){
+  let text = prompt('Link tekst:');
+  if(!text) return;
+  let url = prompt('Plak de URL:');
+  if(!url) return;
+  insert(`<a href='${url}' target='_blank' style='color:#ffae42;'>${text}</a>`);
+}
+
 // Live update
 setInterval(()=>{
   document.getElementById('preview').innerHTML = document.getElementById('editor').innerHTML;
 },300);
 
 loadContent();
+</script>
+
+
+<h3>Achtergrond instellingen</h3>
+<label>Kies achtergrondkleur: <input type="color" id="bgColorPicker"></label><br><br>
+<label>Achtergrond afbeelding URL: <input type="text" id="bgImageInput" style="width:60%"></label>
+
+<h3>Zwevende Figuren</h3>
+<select id="figureThemeSelect" class="btn" style="background:#333;color:#fff;">
+  <option value="none">Geen</option>
+  <option value="zomer">Zomer</option>
+  <option value="lente">Lente</option>
+  <option value="herfst">Herfst</option>
+  <option value="winter">Winter</option>
+  <option value="halloween">Halloween</option>
+  <option value="kerst">Kerst</option>
+  <option value="pasen">Pasen</option>
+  <option value="blackfriday">Black Friday</option>
+  <option value="oudnieuw">Oud & Nieuw</option>
+</select>
+<button class="btn" onclick="saveSettings()">🎨 Instellingen opslaan</button>
+
+<script>
+// Instellingen laden
+function loadSettings(){
+  const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+  if(settings.bgColor) document.getElementById('bgColorPicker').value = settings.bgColor;
+  if(settings.background) document.getElementById('bgImageInput').value = settings.background;
+  if(settings.figureTheme) document.getElementById('figureThemeSelect').value = settings.figureTheme;
+}
+
+function saveSettings(){
+  const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+  settings.bgColor = document.getElementById('bgColorPicker').value;
+  settings.background = document.getElementById('bgImageInput').value;
+  settings.figureTheme = document.getElementById('figureThemeSelect').value;
+  settings.figures = settings.figureTheme === "none" ? "off" : "on";
+
+  localStorage.setItem('siteSettings', JSON.stringify(settings));
+  alert("Instellingen opgeslagen!");
+}
+
+loadSettings();
 </script>
 
 </body>
