@@ -3,122 +3,382 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin – Home Editor</title>
+<title>Admin – Home Editor (Pro)</title>
 <style>
-  body{background:#111;color:#fff;font-family:Arial;padding:20px;}
-  h1{text-align:center;color:#ffae42;}
-  .editor-area{width:100%;height:300px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;padding:12px;overflow:auto;}
-  .btn{padding:10px 14px;margin:4px;background:#ff6600;border:none;border-radius:6px;color:#fff;cursor:pointer;}
-  .btn:hover{background:#ff8533;}
-  #preview{background:#0003;padding:20px;border-radius:8px;margin-top:20px;}
+  :root{--accent:#ffae42;--bg:#111;}
+  html,body{height:100%;margin:0;font-family:Arial, sans-serif;background:var(--bg);color:#fff}
+  .wrap{max-width:1100px;margin:18px auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  h1{color:var(--accent);margin:0}
+
+  .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .btn{background:#ff6600;border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .btn.secondary{background:#333}
+  .panel{background:#151515;border:1px solid #2a2a2a;padding:12px;border-radius:10px;margin-top:12px}
+  .editor-area{min-height:260px;border-radius:8px;border:1px dashed #333;padding:8px;background:#0f0f0f;overflow:auto}
+  .block{background:#0b0b0b;border:1px solid #222;border-radius:8px;padding:10px;margin:8px 0;cursor:grab}
+  .block.dragging{opacity:0.6}
+  .block .handle{float:right;cursor:grab}
+  label{display:block;margin:6px 0}
+  input[type=text],select{width:100%;padding:8px;border-radius:6px;border:1px solid #333;background:#0b0b0b;color:#fff}
+  #preview{background:linear-gradient(180deg,#00000055,#00000022);padding:18px;border-radius:10px;margin-top:12px;min-height:180px}
+  .small{font-size:13px;color:#bbb}
+  .row{display:flex;gap:8px}
+  .col{flex:1}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .danger{background:#991b1b}
+
+  /* floating figure preview area specific */
+  .floating{position:absolute;pointer-events:none;user-select:none;z-index:5;opacity:0.95;transform:translate(-50%,-50%);will-change:transform}
+  #previewWrap{position:relative;min-height:260px}
+
+  @media (max-width:900px){.row{flex-direction:column}}
 </style>
 </head>
 <body>
-<h1>Home Pagina Editor</h1>
+<div class="wrap">
+  <header>
+    <h1>Admin – Home Editor (Pro)</h1>
+    <div class="top-actions">
+      <button class="btn" id="btnLogout">🔒 Logout</button>
+    </div>
+  </header>
 
-<button class="btn" onclick="insert('<h2>Nieuwe Titel</h2>')">+ Titel</button>
-<button class="btn" onclick="insert('<p>Nieuwe tekst...</p>')">+ Tekst</button>
-<button class="btn" onclick="insert('<hr>')">+ Lijn</button>
-<button class="btn" onclick="addVideo()">+ Video (YouTube)</button>>+ Video</button>
-<button class="btn" onclick="addLink()">+ Link</button>
-<button class="btn" onclick="saveContent()""()">💾 Opslaan</button>
-<button class="btn" onclick="loadContent()">🔄 Herladen</button>
+  <div class="panel">
+    <div class="small">Beveiliging</div>
+    <div class="row">
+      <div class="col">
+        <label>Admin wachtwoord instellen (standaard: admin123)</label>
+        <input type="text" id="pwInput" placeholder="Nieuw wachtwoord">
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnSetPW">Opslaan wachtwoord</button>
+      </div>
+    </div>
+  </div>
 
-<h3>Editor</h3>
-<div id="editor" class="editor-area" contenteditable="true"></div>
+  <div class="panel">
+    <div class="small">Invoeg items</div>
+    <div class="controls">
+      <button class="btn" onclick="addBlock('h2')">+ Titel</button>
+      <button class="btn" onclick="addBlock('p')">+ Tekst</button>
+      <button class="btn" id="addImageBtn">+ Afbeelding</button>
+      <button class="btn" onclick="showVideoDialog()">+ Video</button>
+      <button class="btn" onclick="addLink()">+ Link</button>
+      <button class="btn" onclick="addHR()">+ Lijn</button>
+      <button class="btn secondary" onclick="clearEditor()">🧹 Alles wissen</button>
+      <button class="btn" id="btnSave">💾 Opslaan</button>
+    </div>
 
-<h3>Preview</h3>
-<div id="preview"></div>
+    <div style="margin-top:10px" class="small">Drag &amp; drop: sleep een blok om de volgorde te veranderen.</div>
+
+    <div id="editor" class="editor-area" contenteditable="false" aria-label="Editor content"></div>
+  </div>
+
+  <div class="panel">
+    <div class="small">Achtergrond &amp; Figuren</div>
+    <div class="row">
+      <div class="col">
+        <label>achtergrondkleur</label>
+        <input type="color" id="bgColorPicker">
+      </div>
+      <div class="col">
+        <label>achtergrond afbeelding (url)</label>
+        <input type="text" id="bgImageInput" placeholder="https://...">
+      </div>
+    </div>
+    <div style="margin-top:8px" class="row">
+      <div class="col">
+        <label>zwevende figuren thema</label>
+        <select id="figureThemeSelect">
+          <option value="none">Geen</option>
+          <option value="zomer">Zomer</option>
+          <option value="lente">Lente</option>
+          <option value="herfst">Herfst</option>
+          <option value="winter">Winter</option>
+          <option value="halloween">Halloween</option>
+          <option value="kerst">Kerst</option>
+          <option value="pasen">Pasen</option>
+          <option value="blackfriday">Black Friday</option>
+          <option value="oudnieuw">Oud &amp; Nieuw</option>
+        </select>
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnApplyTheme">Toepassen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="small">Automatisch opslaan & preview</div>
+    <div class="row">
+      <div class="col">
+        <label>Auto-save interval (ms)</label>
+        <input type="text" id="autoSaveInterval" value="3000">
+      </div>
+      <div style="width:160px;align-self:end">
+        <button class="btn" id="btnToggleAuto">Toggle Auto-save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="small">Preview</div>
+    <div id="previewWrap">
+      <div id="preview"></div>
+    </div>
+  </div>
+
+  <div style="height:60px"></div>
+</div>
+
+<input type="file" id="imagePicker" accept="image/*" style="display:none">
 
 <script>
-// Laden bestaande content
-function loadContent(){
-  const saved = localStorage.getItem('homeContent') || '';
-  document.getElementById('editor').innerHTML = saved;
-  document.getElementById('preview').innerHTML = saved;
+// ----------------- Security (simple) -----------------
+const DEFAULT_PW = 'admin123';
+function requireAuth(){
+  const stored = localStorage.getItem('adminPW') || DEFAULT_PW;
+  const attempt = prompt('Voer admin wachtwoord in:');
+  if(attempt !== stored){
+    alert('Verkeerd wachtwoord');
+    throw new Error('Unauthorized');
+  }
+}
+try{ requireAuth(); }catch(e){ document.body.innerHTML = '<div style="color:#fff;padding:40px;text-align:center">Toegang geweigerd.</div>'; }
+
+// ----------------- Editor state -----------------
+let autoSaveTimer = null;
+let autoSaveOn = true;
+function getSavedContent(){ return localStorage.getItem('homeContent') || ''; }
+function setSavedContent(html){ localStorage.setItem('homeContent', html); }
+
+// Initialize editor with blocks (parse existing content into draggable blocks)
+const editor = document.getElementById('editor');
+function parseToBlocks(html){
+  if(!html) return;
+  // simple split by top-level tags: wrap in temp and iterate children
+  const temp = document.createElement('div'); temp.innerHTML = html;
+  const nodes = Array.from(temp.childNodes);
+  nodes.forEach(n=>{
+    const block = document.createElement('div');
+    block.className='block';
+    block.draggable = true;
+    block.innerHTML = n.outerHTML || n.textContent;
+    addBlockControls(block);
+    editor.appendChild(block);
+  });
 }
 
-// Invoegen blok
-function insert(html){
-  const editor=document.getElementById('editor');
-  editor.innerHTML += html;
-  document.getElementById('preview').innerHTML = editor.innerHTML;
+function rebuildFromBlocks(){
+  const html = Array.from(editor.children).map(b=>b.innerHTML).join('
+');
+  document.getElementById('preview').innerHTML = html;
+  setSavedContent(html);
 }
 
-// Opslaan
-function saveContent(){
-  const html = document.getElementById('editor').innerHTML;
-  localStorage.setItem('homeContent', html);
-  alert("Opgeslagen!");
+function loadEditor(){
+  editor.innerHTML = '';
+  const saved = getSavedContent();
+  if(saved) parseToBlocks(saved);
+  else addBlock('h2','Welkom bij T.B Agar.io');
+  applySettingsToPreview();
 }
 
-// Video toevoegen
-function addVideo(){
-  let url = prompt('Plak hier een YouTube link:');
-  if(!url) return;
-  url = url.replace('watch?v=', 'embed/');
-  insert(`<iframe width=360 height=215 style='border:none;border-radius:12px;' src="${url}" allowfullscreen></iframe>` width=360 height=215 src="${url}" allowfullscreen></iframe>`);
+// ----------------- Block helpers -----------------
+function addBlock(tag, text){
+  const block = document.createElement('div');
+  block.className='block'; block.draggable = true;
+  if(tag === 'h2') block.innerHTML = `<h2 contenteditable=true>${text||'Nieuwe Titel'}</h2>`;
+  else if(tag==='p') block.innerHTML = `<p contenteditable=true>${text||'Nieuwe tekst...'}</p>`;
+  else if(tag==='hr') block.innerHTML = `<hr>`;
+  else if(tag==='img') block.innerHTML = `<img src='${text||''}' style='max-width:100%;border-radius:8px'>`;
+  else block.innerHTML = text || '';
+  addBlockControls(block);
+  editor.appendChild(block);
+  rebuildFromBlocks();
 }
 
-// Link toevoegen
+function addBlockControls(block){
+  const handle = document.createElement('span');
+  handle.className='handle small'; handle.textContent='⋮⋮';
+  handle.style.marginLeft='8px';
+  handle.title='Sleep om te verplaatsen';
+  handle.onmousedown = (e)=>{ e.preventDefault(); };
+  const toolbar = document.createElement('div');
+  toolbar.style.float='right';
+  toolbar.appendChild(handle);
+
+  const btnEdit = document.createElement('button'); btnEdit.className='btn secondary small'; btnEdit.textContent='Bewerk';
+  btnEdit.onclick = ()=>{ const editable = block.querySelector('[contenteditable]'); if(editable) editable.focus(); };
+  const btnDelete = document.createElement('button'); btnDelete.className='btn danger small'; btnDelete.textContent='Verwijder';
+  btnDelete.onclick = ()=>{ if(confirm('Verwijderen?')){ block.remove(); rebuildFromBlocks(); } };
+  toolbar.appendChild(btnEdit); toolbar.appendChild(btnDelete);
+  block.prepend(toolbar);
+  // drag events
+  block.addEventListener('dragstart', (e)=>{ block.classList.add('dragging'); e.dataTransfer.setData('text/plain',''); });
+  block.addEventListener('dragend', (e)=>{ block.classList.remove('dragging'); rebuildFromBlocks(); });
+}
+
+// allow dropping between blocks
+editor.addEventListener('dragover', (e)=>{
+  e.preventDefault();
+  const after = getDragAfterElement(editor, e.clientY);
+  const dragging = document.querySelector('.dragging');
+  if(!dragging) return;
+  if(after == null) editor.appendChild(dragging);
+  else editor.insertBefore(dragging, after);
+});
+function getDragAfterElement(container, y){
+  const draggableElements = [...container.querySelectorAll('.block:not(.dragging)')];
+  return draggableElements.reduce((closest, child)=>{
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if(offset < 0 && offset > closest.offset) return {offset: offset, element: child};
+    return closest;
+  }, {offset: Number.NEGATIVE_INFINITY}).element;
+}
+
+// ----------------- Image upload -----------------
+const imagePicker = document.getElementById('imagePicker');
+document.getElementById('addImageBtn').addEventListener('click', ()=> imagePicker.click());
+imagePicker.addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{ addBlock('img', reader.result); };
+  reader.readAsDataURL(file);
+});
+
+// ----------------- Video dialog with size -----------------
+function showVideoDialog(){
+  const url = prompt('Plak een YouTube link (of embed link)'); if(!url) return;
+  const size = prompt('Kies maat: klein, normaal, groot','normaal') || 'normaal';
+  let w=560,h=315; if(size==='klein'){w=360;h=215;} else if(size==='groot'){w=800;h=450;} // normaal default
+  const embed = url.includes('embed/') ? url : url.replace('watch?v=','embed/').replace('youtu.be/','youtube.com/embed/');
+  addBlock('div', `<iframe width="${w}" height="${h}" src="${embed}" allowfullscreen style='border:none;border-radius:12px'></iframe>`);
+}
+
+// ----------------- Links -----------------
 function addLink(){
-  let text = prompt('Link tekst:');
-  if(!text) return;
-  let url = prompt('Plak de URL:');
-  if(!url) return;
-  insert(`<a href='${url}' target='_blank' style='color:#ffae42;'>${text}</a>`);
+  const text = prompt('Link tekst:'); if(!text) return;
+  const url = prompt('Plak de URL'); if(!url) return;
+  addBlock('div', `<a href='${url}' target='_blank' style='color:${getComputedStyle(document.documentElement).getPropertyValue('--accent')||'#ffae42'}'>${text}</a>`);
 }
 
-// Live update
-setInterval(()=>{
-  document.getElementById('preview').innerHTML = document.getElementById('editor').innerHTML;
-},300);
+// ----------------- HR -----------------
+function addHR(){ addBlock('hr'); }
 
-loadContent();
-</script>
+// ----------------- Clear -----------------
+function clearEditor(){ if(confirm('Alles wissen?')){ editor.innerHTML=''; rebuildFromBlocks(); } }
 
+// ----------------- Save/Auto-save -----------------
+const btnSave = document.getElementById('btnSave');
+btnSave.addEventListener('click', ()=>{ rebuildFromBlocks(); alert('Opgeslagen'); });
 
-<h3>Achtergrond instellingen</h3>
-<label>Kies achtergrondkleur: <input type="color" id="bgColorPicker"></label><br><br>
-<label>Achtergrond afbeelding URL: <input type="text" id="bgImageInput" style="width:60%"></label>
+function startAutoSave(){
+  stopAutoSave();
+  const interval = parseInt(document.getElementById('autoSaveInterval').value) || 3000;
+  autoSaveTimer = setInterval(()=>{ rebuildFromBlocks(); }, interval);
+  autoSaveOn = true; document.getElementById('btnToggleAuto').textContent = 'Auto-save: Aan';
+}
+function stopAutoSave(){ if(autoSaveTimer) clearInterval(autoSaveTimer); autoSaveOn=false; document.getElementById('btnToggleAuto').textContent='Auto-save: Uit'; }
 
-<h3>Zwevende Figuren</h3>
-<select id="figureThemeSelect" class="btn" style="background:#333;color:#fff;">
-  <option value="none">Geen</option>
-  <option value="zomer">Zomer</option>
-  <option value="lente">Lente</option>
-  <option value="herfst">Herfst</option>
-  <option value="winter">Winter</option>
-  <option value="halloween">Halloween</option>
-  <option value="kerst">Kerst</option>
-  <option value="pasen">Pasen</option>
-  <option value="blackfriday">Black Friday</option>
-  <option value="oudnieuw">Oud & Nieuw</option>
-</select>
-<button class="btn" onclick="saveSettings()">🎨 Instellingen opslaan</button>
+document.getElementById('btnToggleAuto').addEventListener('click', ()=>{ if(autoSaveOn) stopAutoSave(); else startAutoSave(); });
 
-<script>
-// Instellingen laden
-function loadSettings(){
-  const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
+// ----------------- Settings (background & figures) -----------------
+function applySettingsToPreview(){
+  const settings = JSON.parse(localStorage.getItem('siteSettings')||'{}');
+  const wrap = document.getElementById('preview');
+  if(settings.bgColor) wrap.style.background = settings.bgColor;
+  else wrap.style.background = '';
+  if(settings.background) wrap.style.backgroundImage = `url(${settings.background})`;
+  else wrap.style.backgroundImage = '';
+  createFiguresPreview(settings);
+}
+
+document.getElementById('btnApplyTheme').addEventListener('click', ()=>{
+  const settings = JSON.parse(localStorage.getItem('siteSettings')||'{}');
+  settings.bgColor = document.getElementById('bgColorPicker').value;
+  settings.background = document.getElementById('bgImageInput').value;
+  settings.figureTheme = document.getElementById('figureThemeSelect').value;
+  settings.figures = settings.figureTheme === 'none' ? 'off' : 'on';
+  localStorage.setItem('siteSettings', JSON.stringify(settings));
+  applySettingsToPreview();
+  alert('Instellingen opgeslagen');
+});
+
+// populate controls from localStorage
+function loadSettingsToControls(){
+  const settings = JSON.parse(localStorage.getItem('siteSettings')||'{}');
   if(settings.bgColor) document.getElementById('bgColorPicker').value = settings.bgColor;
   if(settings.background) document.getElementById('bgImageInput').value = settings.background;
   if(settings.figureTheme) document.getElementById('figureThemeSelect').value = settings.figureTheme;
 }
 
-function saveSettings(){
-  const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
-  settings.bgColor = document.getElementById('bgColorPicker').value;
-  settings.background = document.getElementById('bgImageInput').value;
-  settings.figureTheme = document.getElementById('figureThemeSelect').value;
-  settings.figures = settings.figureTheme === "none" ? "off" : "on";
-
-  localStorage.setItem('siteSettings', JSON.stringify(settings));
-  alert("Instellingen opgeslagen!");
+// Figures preview logic (similar to index)
+let previewFloats = [];
+function clearPreviewFloats(){ previewFloats.forEach(f=>f.remove()); previewFloats=[]; }
+function createFiguresPreview(settings){
+  clearPreviewFloats();
+  if(!settings || settings.figures==='off') return;
+  let themeObjects=[];
+  switch(settings.figureTheme){
+    case 'zomer': themeObjects=['🌞','🏖️','🌴','⛱️']; break;
+    case 'lente': themeObjects=['🌸','🐦','🌿','🌷']; break;
+    case 'herfst': themeObjects=['🍁','🌰','🎃','🍂']; break;
+    case 'winter': themeObjects=['❄️','⛄','🌨️','🎿']; break;
+    case 'halloween': themeObjects=['🎃','👻','🦇','🕷️']; break;
+    case 'kerst': themeObjects=['🎄','🎅','❄️','🎁']; break;
+    case 'pasen': themeObjects=['🐣','🥚','🐰','🌷']; break;
+    case 'blackfriday': themeObjects=['🛍️','💰','🛒','🔥']; break;
+    case 'oudnieuw': themeObjects=['🎆','🥂','🎉','🕛']; break;
+    default: themeObjects=['⭐']; break;
+  }
+  const wrap = document.getElementById('previewWrap');
+  for(let i=0;i<30;i++){
+    const span = document.createElement('span'); span.className='floating'; span.textContent = themeObjects[Math.floor(Math.random()*themeObjects.length)];
+    span.style.fontSize = (12+Math.random()*26)+'px';
+    span.style.left = (10 + Math.random()*80) + '%';
+    span.style.top = (5 + Math.random()*85) + '%';
+    span.speed = (0.2 + Math.random()*1.0) * (Math.random()>0.5?1:-1);
+    wrap.appendChild(span); previewFloats.push(span);
+  }
+  animatePreviewFloats();
+}
+function animatePreviewFloats(){
+  previewFloats.forEach(f=>{
+    const rect = f.getBoundingClientRect();
+    const parent = document.getElementById('previewWrap').getBoundingClientRect();
+    let x = (parseFloat(f.style.left) / 100) * parent.width;
+    let y = (parseFloat(f.style.top) / 100) * parent.height;
+    x += f.speed; y += f.speed/2;
+    if(x>parent.width) x=0; if(x<0) x=parent.width;
+    if(y>parent.height) y=0; if(y<0) y=parent.height;
+    f.style.left = (x/parent.width*100)+'%';
+    f.style.top = (y/parent.height*100)+'%';
+  });
+  requestAnimationFrame(animatePreviewFloats);
 }
 
-loadSettings();
-</script>
+// ----------------- Password management -----------------
+document.getElementById('btnSetPW').addEventListener('click', ()=>{
+  const v = document.getElementById('pwInput').value.trim();
+  if(!v) return alert('Vul een wachtwoord in');
+  localStorage.setItem('adminPW', v);
+  alert('Wachtwoord opgeslagen');
+});
 
+// logout
+document.getElementById('btnLogout').addEventListener('click', ()=>{ alert('Reload om opnieuw in te loggen'); location.reload(); });
+
+// ----------------- Init -----------------
+loadEditor(); loadSettingsToControls(); applySettingsToPreview(); startAutoSave();
+
+// ensure preview updates when blocks changed (listen to input events on contenteditable children)
+editor.addEventListener('input', debounce(()=>{ rebuildFromBlocks(); }, 400));
+
+function debounce(fn, wait){ let t; return function(...args){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,args), wait); } }
+
+</script>
 </body>
 </html>
