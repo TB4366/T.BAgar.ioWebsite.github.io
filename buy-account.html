@@ -3,149 +3,175 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agar.io Skin Shop — Paid Skins</title>
+  <title>Agar.io Skin Shop — Betaalde Skins</title>
   <style>
-    body{font-family:Inter,Arial;background:#fff;padding:24px;color:#222}
-    h1{font-size:28px;margin-bottom:18px}
-    .panel{max-width:980px;margin:0 auto}
-    .uid-row{display:flex;gap:12px;margin-bottom:16px}
-    .uid-row input{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
-    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:20px}
-    .skin{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center}
-    .skin img{width:130px;height:130px;object-fit:contain}
-    .buy-btn{margin-top:8px;background:#f08b2d;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
-    .tiny{font-size:13px;color:#666}
-    .error{color:#b00020}
+    body { font-family: Inter, Arial, sans-serif; background: #fff; padding: 24px; color: #222; }
+    h1 { font-size: 28px; margin-bottom: 18px; }
+    .panel { max-width: 980px; margin: 0 auto; }
+    .uid-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .uid-row input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; }
+    .skin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 20px; }
+    .skin { border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; }
+    .skin img { width: 130px; height: 130px; object-fit: contain; }
+    .buy-btn { margin-top: 8px; background: #f08b2d; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+    .tiny { font-size: 13px; color: #666; }
+    .error { color: #b00020; }
   </style>
 </head>
 <body>
-<div class="panel">
-  <h1>Paid Skins — Agar.io Shop</h1>
+  <div class="panel">
+    <h1>Betaalde Skins — Agar.io Shop</h1>
 
-  <div class="uid-row">
-    <input id="encodedUid" type="text" placeholder="GFRTIMZY..." />
+    <div class="uid-row">
+      <input id="encodedUid" type="text" placeholder="Voer je Encoded UID in…" />
+    </div>
+
+    <div>
+      <input id="configUrl" type="text" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:4px"
+        value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
+      <button id="loadBtn" class="buy-btn" style="margin-top:10px">Laad betaalde skins</button>
+    </div>
+
+    <h2 style="margin-top:22px">Betaalde skins</h2>
+    <div id="skinsContainer" class="skin-grid"></div>
+    <div id="status" class="tiny" style="margin-top:12px"></div>
   </div>
 
-  <div>
-    <input id="configUrl" type="text" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:4px" 
-      value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
-    <button id="loadBtn" class="buy-btn" style="margin-top:10px">Laad betaalde skins</button>
-  </div>
+  <script>
+    async function loadConfig(url) {
+      const status = document.getElementById('status');
+      status.textContent = 'Loading…';
 
-  <h2 style="margin-top:22px">Betaalde skins</h2>
-  <div id="skinsContainer" class="skin-grid"></div>
-  <div id="status" class="tiny" style="margin-top:12px"></div>
-</div>
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+        const data = await res.json();
 
-<script>
-// Load config and extract paid bundles
-async function loadConfig(url){
-  const status = document.getElementById('status');
-  status.textContent = 'Loading...';
-  try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error(res.status);
-    const data = await res.json();
+        const paidSkins = [];
 
-    const paid = [];
+        function scan(node) {
+          if (!node) return;
+          if (Array.isArray(node)) {
+            node.forEach(scan);
+          } else if (typeof node === 'object') {
+            const hasPrice = node.currencyAmount || node.currencyCost || node.price || node.usdPrice;
+            const id = node.id || node.bundleId || node.sku;
+            const img = node.imageUrl || node.img || node.url;
 
-    // Scan whole config for bundles with price AND skin image
-    function scan(node){
-      if(!node) return;
-      if(Array.isArray(node)) return node.forEach(scan);
-      if(typeof node === 'object'){
-        const hasPrice = (node.currencyAmount || node.currencyCost || node.price || node.usdPrice);
-        const id = node.id || node.bundleId || node.sku;
-        const img = node.imageUrl || node.img || node.url;
+            if (hasPrice && id) {
+              // Zoek naar afbeelding via id in de config
+              const found = findImage(id, data);
+              paidSkins.push({
+                id: id,
+                price: hasPrice,
+                img: found || img || ''
+              });
+            }
 
-        if(hasPrice && id){
-          // Try find image anywhere in config by ID match
-          const imgFound = findImage(id, data);
+            Object.values(node).forEach(scan);
+          }
+        }
 
-          paid.push({
-            id: id,
-            price: hasPrice,
-            img: imgFound || img || ''
+        function findImage(id, root) {
+          const results = [];
+          function walk(n) {
+            if (!n) return;
+            if (typeof n === 'string') {
+              if (n.includes(id) && /(png|jpg|jpeg|gif|svg)/i.test(n)) {
+                results.push(n);
+              }
+            } else if (Array.isArray(n)) {
+              n.forEach(walk);
+            } else if (typeof n === 'object') {
+              Object.values(n).forEach(walk);
+            }
+          }
+          walk(root);
+          return results[0] || '';
+        }
+
+        scan(data);
+
+        // Enkel skins met geldige afbeelding tonen
+        const filtered = paidSkins.filter(s => s.img);
+        status.textContent = 'Gevonden ' + filtered.length + ' betaalde skins.';
+        return filtered;
+
+      } catch (err) {
+        status.innerHTML = '<span class="error">Fout bij laden: ' + err.message + '</span>';
+        return [];
+      }
+    }
+
+    function renderSkins(skins) {
+      const container = document.getElementById('skinsContainer');
+      container.innerHTML = '';
+
+      skins.forEach(skin => {
+        const card = document.createElement('div');
+        card.className = 'skin';
+
+        const img = document.createElement('img');
+        img.src = skin.img;
+        img.alt = skin.id;
+
+        const title = document.createElement('div');
+        title.textContent = skin.id;
+
+        const price = document.createElement('div');
+        price.className = 'tiny';
+        price.textContent = '$' + skin.price;
+
+        const btn = document.createElement('button');
+        btn.className = 'buy-btn';
+        btn.textContent = 'Buy';
+
+        btn.addEventListener('click', () => {
+          const uid = document.getElementById('encodedUid').value.trim();
+          if (!uid) {
+            alert('Voer eerst je Encoded UID in.');
+            return;
+          }
+
+          const base = 'https://secure.xsolla.com/paystation3/desktop/list/';  
+          const params = new URLSearchParams({
+            access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
+            preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
+            sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--',
+            uid: uid,
+            user_id: uid,
+            user_external_id: uid,
+            item_id: skin.id
           });
-        }
-        Object.values(node).forEach(scan);
-      }
+
+          const checkoutUrl = base + '?' + params.toString();
+          window.location.href = checkoutUrl;
+        });
+
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(price);
+        card.appendChild(btn);
+        container.appendChild(card);
+      });
     }
 
-    // Search any string containing id + looks like image
-    function findImage(id, root){
-      const results = [];
-      function walk(n){
-        if(!n) return;
-        if(typeof n === 'string'){
-          if(n.includes(id) && /(png|jpg|jpeg|gif|svg)/i.test(n)) results.push(n);
-        }
-        if(Array.isArray(n)) n.forEach(walk);
-        else if(typeof n === 'object') Object.values(n).forEach(walk);
-      }
-      walk(root);
-      return results[0] || '';
-    }
-
-    scan(data);
-
-    // Keep only those with image + price
-    const filtered = paid.filter(s => s.img);
-    status.textContent = 'Gevonden ' + filtered.length + ' betaalde skins.';
-    return filtered;
-
-  }catch(err){
-    status.innerHTML = '<span class="error">Fout bij laden: '+err+'</span>';
-    return [];
-  }
-}
-
-function renderSkins(list){
-  const box = document.getElementById('skinsContainer');
-  box.innerHTML = '';
-
-  list.forEach(skin =>{
-    const card = document.createElement('div');
-    card.className = 'skin';
-
-    const img = document.createElement('img');
-    img.src = skin.img || '';
-
-    const title = document.createElement('div');
-    title.textContent = skin.id;
-
-    const price = document.createElement('div');
-    price.className = 'tiny';
-    price.textContent = '$' + skin.price;
-
-    const btn = document.createElement('button');
-    btn.className = 'buy-btn';
-    btn.textContent = 'Buy';
-
-    btn.addEventListener('click',()=>{
-      const uid = document.getElementById('encodedUid').value.trim();
-      if(!uid) return alert('Voer eerst je Encoded UID in.');
-
-      // Redirect to XSOLLA with UID
-      const checkout = `https://secure.xsolla.com/paystation3/?uid=${encodeURIComponent(uid)}&skin=${encodeURIComponent(skin.id)}&price=${encodeURIComponent(skin.price)}`;
-      window.location.href = checkout;
+    document.getElementById('loadBtn').addEventListener('click', async () => {
+      const url = document.getElementById('configUrl').value.trim();
+      const skins = await loadConfig(url);
+      renderSkins(skins);
     });
 
-    card.appendChild(img);
-    card.appendChild(title);
-    card.appendChild(price);
-    card.appendChild(btn);
-    box.appendChild(card);
-  });
-}
-
-// Load button
-
-document.getElementById('loadBtn').addEventListener('click', async()=>{
-  const url = document.getElementById('configUrl').value.trim();
-  const skins = await loadConfig(url);
-  renderSkins(skins);
-});
-</script>
+    // Probeer automatisch te laden bij openen
+    (async () => {
+      const defaultUrl = document.getElementById('configUrl').value;
+      try {
+        const skins = await loadConfig(defaultUrl);
+        renderSkins(skins);
+      } catch (e) {
+        console.warn('Auto-load mislukt', e);
+      }
+    })();
+  </script>
 </body>
 </html>
