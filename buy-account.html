@@ -101,28 +101,29 @@ async function loadConfig(url){
 }
 
 function renderSkins(skinData){
-      const xsollaItems = {
-        "ice_crystal": {price: 5, itemId: "ice_crystal_5usd"},
+      const paidSkins = {
+        "1_skin_ice_crystal": { price: 5, itemId: "ice_crystal_5usd" }
       };
       const container = document.getElementById('skinsContainer');
-      container.innerHTML='';
+      container.innerHTML = '';
       (Array.isArray(skinData)?skinData:[]).forEach(u=>{
-        const nameKey = u.split('/').pop().split('?')[0].replace(/\.png|\.jpg|\.jpeg/gi,'').toLowerCase().replace(/[^a-z0-9]+/g,'_');
-        const xs = xsollaItems[nameKey];
-        const card=document.createElement('div');card.className='skin';
-        const img=document.createElement('img');img.src=u;
-        const name=document.createElement('div');name.className='tiny';name.textContent=nameKey;
-        const btn=document.createElement('button');btn.className='buy-btn';btn.textContent= xs?`Buy ($${xs.price})`:'Buy';
-        btn.addEventListener('click',()=>{
-          const uid=document.getElementById('encodedUid').value.trim();
+        const id = (u.id || u.name || u).toString();
+        if(!paidSkins[id]) return;
+        const card = document.createElement('div'); card.className='skin';
+        const img = document.createElement('img'); img.src = u.img || u; img.alt = id;
+        const name = document.createElement('div'); name.className='tiny'; name.textContent = id;
+        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent = `Buy ($${paidSkins[id].price})`;
+        btn.addEventListener('click', ()=>{
+          const uid = document.getElementById('encodedUid').value.trim();
           if(!uid) return alert('Voer eerst je Encoded UID in.');
-          if(!xs) return alert('Geen Xsolla item-id beschikbaar voor deze skin.');
-          const payUrl=`https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en&user[id]="+uid+"&item_id=${xs.itemId}`;
-          window.open(payUrl,'_blank');
+          const item = paidSkins[id];
+          const payUrl = `https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en&user[id]=${uid}&item_id=${item.itemId}`;
+          window.open(payUrl, '_blank');
         });
-        card.appendChild(img);card.appendChild(name);card.appendChild(btn);
+        card.appendChild(img); card.appendChild(name); card.appendChild(btn);
         container.appendChild(card);
       });
+    });
     }
 &skin=${encodeURIComponent(skin.id)}&price=${encodeURIComponent(skin.price)}`;
       window.location.href = checkout;
