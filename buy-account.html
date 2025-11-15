@@ -1,363 +1,184 @@
 <!doctype html>
 <html lang="nl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin Panel – Website Editor (Fixed Advanced)</title>
-<style>
-  :root{--accent:#ffae42}
-  body{margin:0;font-family:Arial;background:#111;color:#fff}
-  .wrap{max-width:1200px;margin:18px auto;padding:20px}
-  h1{color:var(--accent);margin:0 0 8px}
-  .panel{background:#181818;border:1px solid #333;padding:14px;border-radius:10px;margin-top:14px}
-  .controls{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{background:#ff6600;color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-  .btn.danger{background:#b11111}
-  input,select,textarea{padding:8px;border-radius:6px;border:1px solid #333;background:#0b0b0b;color:#fff}
-  #editor{min-height:260px;border:1px dashed #444;border-radius:8px;padding:10px;margin-top:10px;background:#0e0e0e}
-  .block{background:#0c0c0c;border:1px solid #222;padding:10px;margin:8px 0;border-radius:8px;position:relative}
-  .toolbar{position:absolute;top:6px;right:6px;display:flex;gap:6px}
-  .toolbar button{padding:4px 6px;font-size:12px}
-  #previewWrap{position:relative;min-height:260px;border-radius:8px;overflow:hidden}
-  #preview{padding:18px}
-  .skin-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .skin-thumb{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #222}
-  label{display:block;margin:6px 0}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Special Deals — Agar.io skins</title>
+  <style>
+    :root{--orange:#f08b2d;--muted:#f7f2ea;--text:#222}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#fff;padding:24px;color:var(--text)}
+    h1{font-size:28px;margin:0 0 18px}
+    .panel{max-width:980px;margin:0 auto}
+    .uid-row{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+    .uid-row input[type=text]{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
+    label{font-size:14px}
+    .offer-title{font-size:22px;margin:18px 0}
+    .offer{background:var(--orange);border-radius:8px;padding:18px;color:white;display:flex;gap:18px;align-items:center}
+    .coins{flex:0 0 420px;background:linear-gradient(180deg,#ffcc4d,#f4b400);border-radius:8px;padding:18px;display:flex;align-items:center}
+    .coins .stack{width:220px;height:120px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120"></svg>') no-repeat center/cover}
+    .price{font-weight:700;font-size:22px;margin-left:auto}
+    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:20px}
+    .skin{background:#fff;border:1px solid #e6e6e6;padding:6px;border-radius:8px;display:flex;flex-direction:column;align-items:center}
+    .skin img{width:120px;height:120px;object-fit:contain}
+    .buy-btn{margin-top:8px;background:var(--orange);border:none;color:white;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .footer-note{background:#fff3d9;border-left:4px solid #e6c08b;padding:12px;margin-top:12px;border-radius:4px}
+    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
+    .tiny{font-size:13px;color:#666}
+    .error{color:#b00020}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Admin – Advanced Editor</h1>
-
   <div class="panel">
-    <h3>Inhoud toevoegen</h3>
-    <div class="controls">
-      <button class="btn" onclick="addBlock('h2')">+ Titel</button>
-      <button class="btn" onclick="addBlock('p')">+ Tekst</button>
-      <button class="btn" id="imgBtn">+ Afbeelding</button>
-      <button class="btn" onclick="addVideo()">+ Video</button>
-      <button class="btn" onclick="addLink()">+ Link</button>
-      <button class="btn" onclick="addHR()">+ Lijn</button>
-      <button class="btn" onclick="clearAll()">🧹 Alles wissen</button>
-      <button class="btn" onclick="saveContent()">💾 Opslaan</button>
+    <h1>Special Deals</h1>
+
+    <div class="uid-row">
+      <input id="encodedUid" type="text" placeholder="GFRTIMZY..." value="" />
+      <label><input id="friendEncoded" type="checkbox" /> Friend Encoded uid</label>
     </div>
 
-    <div id="editor"></div>
-  </div>
+    <div class="offer-title">purchase <strong>125000</strong> coins <span style="font-weight:400;font-size:16px">(click on the orange icon to buy)</span> <span class="price">99.99 $</span></div>
 
-  <div class="panel">
-    <h3>Skins (multi upload & animate)</h3>
-    <label>Upload skins (meerdere selecteerbaar)</label>
-    <input type="file" id="skinsPicker" accept="image/*" multiple>
-    <div class="skin-row" id="skinsRow"></div>
-    <label>Animatie type</label>
-    <select id="skinsAnim">
-      <option value="rotate">Rotate</option>
-      <option value="pulse">Pulse</option>
-      <option value="float">Float</option>
-    </select>
-    <label>Animatie snelheid (ms)</label>
-    <input type="number" id="skinsSpeed" value="3000">
-    <button class="btn" onclick="saveSkins()">Opslaan skins</button>
-  </div>
+    <div class="offer">
+      <div class="coins">
+        <div style="flex:1;">
+          <h3 style="margin:0 0 8px">125000 C</h3>
+          <p style="margin:0 0 12px">Bonus skins included</p>
+        </div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Coins_icon.png" alt="coins" style="width:110px;height:110px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.2);padding:6px"/>
+      </div>
 
-  <div class="panel">
-    <h3>Zwevende figuren & animatie</h3>
-    <label>Thema</label>
-    <select id="figureTheme">
-      <option value="none">Geen</option>
-      <option value="zomer">Zomer</option>
-      <option value="lente">Lente</option>
-      <option value="herfst">Herfst</option>
-      <option value="winter">Winter</option>
-      <option value="halloween">Halloween</option>
-      <option value="kerst">Kerst</option>
-      <option value="pasen">Pasen</option>
-      <option value="blackfriday">Black Friday</option>
-      <option value="oudnieuw">Oud & Nieuw</option>
-    </select>
-    <label>Aantal figuren</label>
-    <input type="number" id="figureCount" value="25">
-    <label>Snelheid</label>
-    <input type="range" id="figureSpeed" min="0.2" max="3" step="0.1" value="1">
-    <button class="btn" id="btnApplyFigures">Toepassen</button>
-  </div>
+      <div style="flex:1;padding:8px 6px">
+        <div style="font-size:14px;margin-bottom:6px">125000_coins = 99.99 $</div>
+        <div style="font-size:14px">Valuta:
+          <select id="currencySelect">
+            <option>USD</option>
+            <option>EUR</option>
+          </select>
+        </div>
 
-  <div class="panel">
-    <h3>Header / Hamburger</h3>
-    <label>Hamburger positie</label>
-    <select id="hamburgerPos">
-      <option value="right">Rechts</option>
-      <option value="left">Links</option>
-    </select>
-    <label>Toon header in preview?</label>
-    <select id="showHeader">
-      <option value="yes">Ja</option>
-      <option value="no">Nee</option>
-    </select>
-    <button class="btn" onclick="saveSettings()">Opslaan instellingen</button>
-  </div>
+        <div style="margin-top:12px">
+          <input id="configUrl" type="text" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
+        </div>
 
-  <div class="panel">
-    <h3>Preview</h3>
-    <div id="previewWrap">
-      <div id="preview"></div>
+        <div class="controls">
+          <button id="loadBtn" class="buy-btn">Laad skins</button>
+          <div class="tiny">For some payment methods Library</div>
+        </div>
+
+        <div class="footer-note">
+          To make purchases, you must be logged in to your account…<br>
+          Encoded UID: <span id="uidPreview" style="font-family:monospace;color:#0b6">(enter above)</span>
+        </div>
+      </div>
     </div>
+
+    <h2 style="margin-top:22px">Alle skins in deze config</h2>
+    <div id="skinsContainer" class="skin-grid"></div>
+
+    <div id="status" class="tiny" style="margin-top:12px"></div>
   </div>
-</div>
 
-<input type="file" id="imgPicker" accept="image/*" style="display:none">
+  <script>
+    // Best-effort loader: tries to fetch the provided JSON and locate arrays of image URLs or skin definitions.
+    async function loadConfig(url){
+      const statusEl = document.getElementById('status');
+      statusEl.textContent = 'Loading...';
 
-<script>
-// -------------------- Utilities --------------------
-function q(id){return document.getElementById(id);}
-function uuid(){return Math.random().toString(36).slice(2,9);} // small id
+      try{
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Fetch failed: ' + res.status);
+        const data = await res.json();
 
-// -------------------- State --------------------
-let skins = JSON.parse(localStorage.getItem('skins')||'[]');
-let previewFloats = [];
+        // Search the object for arrays that look like skins
+        const images = [];
+        function walk(node){
+          if(!node) return;
+          if(Array.isArray(node)){
+            // if array of strings that look like image urls
+            if(node.length>0 && node.every(it => typeof it === 'string')){
+              node.forEach(it=>{
+                if(/https?:.*\.(png|jpg|jpeg|gif|svg)(\?.*)?$/i.test(it) || /^(data:image\/)/.test(it)) images.push(it);
+              });
+            } else {
+              node.forEach(walk);
+            }
+          } else if(typeof node === 'object'){
+            Object.values(node).forEach(walk);
+          }
+        }
+        walk(data);
 
-// -------------------- Editor core --------------------
-const editor = q('editor');
-function loadEditor(){
-  editor.innerHTML='';
-  const saved = localStorage.getItem('homeContent') || '';
-  if(saved.trim()){
-    const tmp = document.createElement('div'); tmp.innerHTML = saved;
-    Array.from(tmp.childNodes).forEach(n=> createBlock(n.outerHTML || n.textContent));
-  } else {
-    addBlock('h2','Welkom bij de site');
-  }
-  loadUIFromSettings();
-  renderSkinsRow();
-  updatePreview();
-}
+        // Some configs have objects with 'skins' keyed entries where images are relative paths or ids.
+        // Also collect entries that contain 'skin' or 'image' in the key with a string value.
+        function walkForStrings(obj){
+          if(!obj) return;
+          if(typeof obj === 'string'){
+            if(/https?:.*\.(png|jpg|jpeg|gif|svg)(\?.*)?$/i.test(obj) || /^(data:image\/)/.test(obj)) images.push(obj);
+            return;
+          }
+          if(Array.isArray(obj)) obj.forEach(walkForStrings);
+          else if(typeof obj === 'object'){
+            for(const [k,v] of Object.entries(obj)){
+              if(/skin|image|url/i.test(k) && typeof v === 'string'){
+                if(/https?:.*\.(png|jpg|jpeg|gif|svg)/i.test(v)) images.push(v);
+              }
+              walkForStrings(v);
+            }
+          }
+        }
+        walkForStrings(data);
 
-function createBlock(html){
-  const b=document.createElement('div'); b.className='block'; b.draggable=true; b.innerHTML=html;
-  const bar=document.createElement('div'); bar.className='toolbar';
-  const btnDel=document.createElement('button'); btnDel.className='btn danger'; btnDel.textContent='Verwijder';
-  btnDel.onclick = ()=>{ if(confirm('Verwijderen?')){ b.remove(); saveContent(); }};
-  const btnEdit=document.createElement('button'); btnEdit.className='btn secondary'; btnEdit.textContent='Bewerk';
-  btnEdit.onclick = ()=>{ const ce = b.querySelector('[contenteditable]'); if(ce) ce.focus(); };
-  bar.appendChild(btnEdit); bar.appendChild(btnDel); b.prepend(bar);
+        // Deduplicate and show
+        const uniq = Array.from(new Set(images));
+        if(uniq.length===0){
+          statusEl.innerHTML = '<span class="error">Geen directe skin-afbeeldingen gevonden in de config. Mogelijk gebruikt de config relatieve paden of ids. Je kunt de JSON handmatig openen en de skinlijst plakken in het veld.</span>';
+          return [];
+        }
+        statusEl.textContent = 'Gevonden ' + uniq.length + ' skins.';
+        return uniq;
+      }catch(err){
+        statusEl.innerHTML = '<span class="error">Kan config niet laden — controleer CORS of de URL. Error: ' + err.message + '</span>';
+        return [];
+      }
+    }
 
-  // drag handlers
-  b.addEventListener('dragstart', ()=> b.classList.add('dragging'));
-  b.addEventListener('dragend', ()=>{ b.classList.remove('dragging'); saveContent(); });
-  editor.appendChild(b);
-}
+    function renderSkins(urls){
+      const container = document.getElementById('skinsContainer');
+      container.innerHTML = '';
+      urls.forEach(u=>{
+        const card = document.createElement('div'); card.className='skin';
+        const img = document.createElement('img'); img.src = u; img.alt = 'skin';
+        const name = document.createElement('div'); name.className='tiny'; name.textContent = u.split('/').pop().split('?')[0];
+        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent='Buy';
+        btn.addEventListener('click', ()=>{
+          const uid = document.getElementById('encodedUid').value.trim();
+          if(!uid) return alert('Voer eerst je Encoded UID in.');
+          // Simple demo action
+          alert('Koopt ' + name.textContent + ' voor account: ' + uid + '\n(dit is een demo)');
+        });
+        card.appendChild(img); card.appendChild(name); card.appendChild(btn);
+        container.appendChild(card);
+      });
+    }
 
-function addBlock(type, text){
-  if(type==='h2') createBlock(`<h2 contenteditable="true">${text||'Nieuwe Titel'}</h2>`);
-  if(type==='p') createBlock(`<p contenteditable="true">${text||'Nieuwe tekst...'}</p>`);
-  if(type==='hr') createBlock(`<hr>`);
-  saveContent();
-}
-
-// drag/drop between blocks
-editor.addEventListener('dragover', e=>{
-  e.preventDefault();
-  const dragging = editor.querySelector('.dragging'); if(!dragging) return;
-  const after = getAfterElement(e.clientY);
-  if(after==null) editor.appendChild(dragging); else editor.insertBefore(dragging, after);
-});
-function getAfterElement(y){
-  const els=[...editor.querySelectorAll('.block:not(.dragging)')];
-  return els.reduce((closest, child)=>{
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height/2;
-    if(offset < 0 && offset > closest.offset) return {offset, element: child};
-    return closest;
-  }, {offset: Number.NEGATIVE_INFINITY}).element;
-}
-
-function saveContent(){
-  const html = [...editor.children].map(b=>{ const c=b.cloneNode(true); const t=c.querySelector('.toolbar'); if(t) t.remove(); return c.innerHTML; }).join('
-');
-  localStorage.setItem('homeContent', html);
-  updatePreview();
-}
-
-// -------------------- Images --------------------
-q('imgBtn').onclick = ()=> q('imgPicker').click();
-q('imgPicker').onchange = e=>{
-  const f = e.target.files[0]; if(!f) return;
-  const r=new FileReader(); r.onload = ()=>{ createBlock(`<img src="${r.result}" style="max-width:100%;border-radius:10px">`); saveContent(); }; r.readAsDataURL(f);
-};
-
-// -------------------- Video --------------------
-function addVideo(){
-  const url = prompt('Plak YouTube link (of embed)'); if(!url) return;
-  const embed = url.includes('embed/') ? url : url.replace('watch?v=','embed/').replace('youtu.be/','youtube.com/embed/');
-  createBlock(`<iframe width="560" height="315" src="${embed}" allowfullscreen style="border:none;border-radius:10px"></iframe>`);
-  saveContent();
-}
-
-// -------------------- Links --------------------
-function addLink(){
-  const t = prompt('Link tekst'); const u = prompt('URL'); if(!t||!u) return; createBlock(`<a href="${u}" target="_blank" style="color:var(--accent)">${t}</a>`); saveContent(); }
-
-// -------------------- HR --------------------
-function addHR(){ createBlock('<hr>'); saveContent(); }
-
-// -------------------- Skins multi-upload --------------------
-q('skinsPicker')?.addEventListener('change', e=>{
-  const files = [...e.target.files];
-  files.forEach(f=>{
-    const r=new FileReader(); r.onload=()=>{ skins.push({id:uuid(),src:r.result}); renderSkinsRow(); }; r.readAsDataURL(f);
-  });
-});
-
-function renderSkinsRow(){
-  const row=q('skinsRow'); row.innerHTML='';
-  skins.forEach(s=>{
-    const img=document.createElement('img'); img.src=s.src; img.className='skin-thumb';
-    img.title='Klik om te verwijderen';
-    img.onclick = ()=>{ if(confirm('Verwijderen?')){ skins = skins.filter(x=>x.id!==s.id); renderSkinsRow(); saveSkins(); }};
-    row.appendChild(img);
-  });
-}
-
-function saveSkins(){
-  const anim = q('skinsAnim').value; const speed = parseInt(q('skinsSpeed').value)||3000;
-  localStorage.setItem('skins', JSON.stringify({list:skins,anim,speed}));
-  alert('Skins opgeslagen');
-  updatePreview();
-}
-
-// -------------------- Floating figures --------------------
-q('btnApplyFigures').addEventListener('click', ()=>{
-  saveSettings();
-  updatePreview();
-});
-
-function clearPreviewFloats(){ previewFloats.forEach(f=>f.remove()); previewFloats=[]; }
-
-function createPreviewFloats(settings){
-  clearPreviewFloats();
-  if(!settings || settings.theme==='none') return;
-  const theme = settings.theme || 'zomer';
-  let themeObjects=[];
-  switch(theme){
-    case 'zomer': themeObjects=['🌞','🏖️','🌴','⛱️']; break;
-    case 'lente': themeObjects=['🌸','🐦','🌿','🌷']; break;
-    case 'herfst': themeObjects=['🍁','🌰','🎃','🍂']; break;
-    case 'winter': themeObjects=['❄️','⛄','🌨️','🎿']; break;
-    case 'halloween': themeObjects=['🎃','👻','🦇','🕷️']; break;
-    case 'kerst': themeObjects=['🎄','🎅','❄️','🎁']; break;
-    case 'pasen': themeObjects=['🐣','🥚','🐰','🌷']; break;
-    case 'blackfriday': themeObjects=['🛍️','💰','🛒','🔥']; break;
-    case 'oudnieuw': themeObjects=['🎆','🥂','🎉','🕛']; break;
-    default: themeObjects=['⭐'];
-  }
-
-  const wrap = q('previewWrap');
-  const count = parseInt(settings.count||25);
-  const speedMultiplier = parseFloat(settings.speed||1);
-  for(let i=0;i<count;i++){
-    const s=document.createElement('span'); s.className='floating'; s.textContent = themeObjects[Math.floor(Math.random()*themeObjects.length)];
-    s.style.fontSize = (12 + Math.random()*28)+'px';
-    s.style.left = (Math.random()*100)+'%'; s.style.top = (Math.random()*100)+'%';
-    s._vx = (0.2 + Math.random()*1.2) * (Math.random()>0.5?1:-1) * speedMultiplier;
-    s._vy = (0.1 + Math.random()*0.8) * (Math.random()>0.5?1:-1) * speedMultiplier;
-    wrap.appendChild(s); previewFloats.push(s);
-  }
-  animatePreviewFloats();
-}
-
-function animatePreviewFloats(){
-  previewFloats.forEach(f=>{
-    const parent = q('previewWrap').getBoundingClientRect();
-    let x = (parseFloat(f.style.left)/100)*parent.width + f._vx;
-    let y = (parseFloat(f.style.top)/100)*parent.height + f._vy;
-    if(x>parent.width) x=0; if(x<0) x=parent.width; if(y>parent.height) y=0; if(y<0) y=parent.height;
-    f.style.left = (x/parent.width*100)+'%'; f.style.top = (y/parent.height*100)+'%';
-  });
-  requestAnimationFrame(animatePreviewFloats);
-}
-
-// -------------------- Header/Hamburger preview --------------------
-function renderHeader(settings){
-  const show = settings.showHeader!=='no';
-  const wrap = q('preview');
-  let header = q('_tempHeader'); if(header) header.remove();
-  if(!show) return;
-  header = document.createElement('div'); header.id='_tempHeader'; header.style.position='absolute'; header.style.top='8px'; header.style.left='0'; header.style.right='0'; header.style.padding='10px 20px'; header.style.display='flex'; header.style.alignItems='center'; header.style.justifyContent='space-between'; header.style.pointerEvents='none';
-  const logo = document.createElement('div'); logo.textContent='T.B Agar.io'; logo.style.fontWeight='700'; logo.style.color='var(--accent)'; logo.style.pointerEvents='auto';
-  const burger = document.createElement('div'); burger.textContent='☰'; burger.style.fontSize='24px'; burger.style.pointerEvents='auto';
-  if(settings.hamburgerPos==='left'){
-    header.appendChild(burger); header.appendChild(logo);
-  } else {
-    header.appendChild(logo); header.appendChild(burger);
-  }
-  q('previewWrap').appendChild(header);
-}
-
-// -------------------- Settings save/load --------------------
-function loadUIFromSettings(){
-  const st = JSON.parse(localStorage.getItem('siteSettings')||'{}');
-  if(st.theme) q('figureTheme').value=st.theme; if(st.count) q('figureCount').value=st.count; if(st.speed) q('figureSpeed').value=st.speed; if(st.hamburgerPos) q('hamburgerPos').value=st.hamburgerPos; if(st.showHeader) q('showHeader').value=st.showHeader;
-}
-
-function saveSettings(){
-  const st = {
-    theme: q('figureTheme').value,
-    count: parseInt(q('figureCount').value)||25,
-    speed: parseFloat(q('figureSpeed').value)||1,
-    hamburgerPos: q('hamburgerPos').value,
-    showHeader: q('showHeader').value
-  };
-  localStorage.setItem('siteSettings', JSON.stringify(st));
-  updatePreview();
-  alert('Instellingen opgeslagen');
-}
-
-// -------------------- Preview update --------------------
-function updatePreview(){
-  // clear preview
-  q('preview').innerHTML = '';
-  // insert content
-  const content = localStorage.getItem('homeContent') || '';
-  q('preview').innerHTML = content;
-  // apply skins
-  const skinsData = JSON.parse(localStorage.getItem('skins')||'null');
-  if(skinsData && skinsData.list && skinsData.list.length){
-    const container = document.createElement('div'); container.style.display='flex'; container.style.gap='12px'; container.style.flexWrap='wrap'; container.style.marginTop='12px';
-    skinsData.list.forEach(s=>{
-      const img = document.createElement('img'); img.src=s.src; img.style.width='120px'; img.style.height='120px'; img.style.borderRadius='50%'; img.style.objectFit='cover';
-      // animation
-      if(skinsData.anim==='rotate') img.style.animation = `spin ${skinsData.speed||3000}ms linear infinite`;
-      if(skinsData.anim==='pulse') img.style.animation = `pulse ${skinsData.speed||3000}ms infinite`;
-      if(skinsData.anim==='float') img.style.animation = `floaty ${skinsData.speed||3000}ms ease-in-out infinite`;
-      container.appendChild(img);
+    document.getElementById('loadBtn').addEventListener('click', async ()=>{
+      const url = document.getElementById('configUrl').value.trim();
+      if(!url) return alert('Voer de config-URL in');
+      const skins = await loadConfig(url);
+      renderSkins(skins);
     });
-    q('preview').appendChild(container);
-  }
 
-  // apply header
-  const st = JSON.parse(localStorage.getItem('siteSettings')||'{}');
-  renderHeader(st);
-  // apply floating figures
-  clearPreviewFloats();
-  createPreviewFloats(st);
-}
+    // show uid preview
+    document.getElementById('encodedUid').addEventListener('input', e=>{
+      const v = e.target.value.trim();
+      document.getElementById('uidPreview').textContent = v || '(enter above)';
+    });
 
-// -------------------- Load skins from storage --------------------
-function loadSkinsFromStorage(){
-  const s = localStorage.getItem('skins');
-  if(!s) return; try{ const parsed = JSON.parse(s); skins = parsed.list||[]; q('skinsAnim').value = parsed.anim||'rotate'; q('skinsSpeed').value = parsed.speed||3000; }catch(e){}
-}
-
-function saveSkins(){ localStorage.setItem('skins', JSON.stringify({list:skins,anim:q('skinsAnim').value,speed:parseInt(q('skinsSpeed').value)||3000})); renderSkinsRow(); updatePreview(); }
-
-// -------------------- initial load --------------------
-function init(){ loadSkinsFromStorage(); renderSkinsRow(); loadEditor(); }
-
-// small css animations for skins
-const style = document.createElement('style'); style.innerHTML=`@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}} @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}} @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}`; document.head.appendChild(style);
-
-init();
-</script>
+    // Auto-attempt load the default URL once (best-effort)
+    (async ()=>{
+      const defaultUrl = document.getElementById('configUrl').value;
+      try{ const skins = await loadConfig(defaultUrl); renderSkins(skins);}catch(e){}
+    })();
+  </script>
 </body>
 </html>
