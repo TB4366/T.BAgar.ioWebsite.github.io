@@ -15,7 +15,6 @@
     .offer-title{font-size:22px;margin:18px 0}
     .offer{background:var(--orange);border-radius:8px;padding:18px;color:white;display:flex;gap:18px;align-items:center}
     .coins{flex:0 0 420px;background:linear-gradient(180deg,#ffcc4d,#f4b400);border-radius:8px;padding:18px;display:flex;align-items:center}
-    .coins .stack{width:220px;height:120px;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120"></svg>') no-repeat center/cover}
     .price{font-weight:700;font-size:22px;margin-left:auto}
     .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:20px}
     .skin{background:#fff;border:1px solid #e6e6e6;padding:6px;border-radius:8px;display:flex;flex-direction:column;align-items:center}
@@ -79,7 +78,7 @@
   </div>
 
   <script>
-    // Best-effort loader: tries to fetch the provided JSON and locate arrays of image URLs or skin definitions.
+    // Best-effort loader: tries to fetch the provided JSON and locate bundles (bundleId/id + currencyAmount) and images.
     async function loadConfig(url){
       const statusEl = document.getElementById('status');
       statusEl.textContent = 'Loading...';
@@ -89,12 +88,11 @@
         if(!res.ok) throw new Error('Fetch failed: ' + res.status);
         const data = await res.json();
 
-        // Search the object for arrays that look like skins
+        // collect all direct image-like strings first (for matching later)
         const images = [];
         function walk(node){
           if(!node) return;
           if(Array.isArray(node)){
-            // if array of strings that look like image urls
             if(node.length>0 && node.every(it => typeof it === 'string')){
               node.forEach(it=>{
                 if(/https?:.*\.(png|jpg|jpeg|gif|svg)(\?.*)?$/i.test(it) || /^(data:image\/)/.test(it)) images.push(it);
@@ -108,76 +106,83 @@
         }
         walk(data);
 
-        // Some configs have objects with 'skins' keyed entries where images are relative paths or ids.
-        // Also collect entries that contain 'skin' or 'image' in the key with a string value.
-        function walkForStrings(obj){
-          if(!obj) return;
-          if(typeof obj === 'string'){
-            if(/https?:.*\.(png|jpg|jpeg|gif|svg)(\?.*)?$/i.test(obj) || /^(data:image\/)/.test(obj)) images.push(obj);
-            return;
-          }
-          if(Array.isArray(obj)) obj.forEach(walkForStrings);
-          else if(typeof obj === 'object'){
-            for(const [k,v] of Object.entries(obj)){
-              if(/skin|image|url/i.test(k) && typeof v === 'string'){
-                if(/https?:.*\.(png|jpg|jpeg|gif|svg)/i.test(v)) images.push(v);
-              }
-              walkForStrings(v);
-            }
-          }
-        }
-        walkForStrings(data);
-
-        // Find skin objects with prices
-        const skins = [];
-        function walkForSkinObjects(node){
+        // Also collect any string values in the whole config (useful for matching id substrings)
+        const allStrings = [];
+        function collectStrings(node){
           if(!node) return;
-          if(Array.isArray(node)) node.forEach(walkForSkinObjects);
+          if(typeof node === 'string'){ allStrings.push(node); return; }
+          if(Array.isArray(node)) node.forEach(collectStrings);
+          else if(typeof node === 'object') Object.values(node).forEach(collectStrings);
+        }
+        collectStrings(data);
+
+        // Find bundle-like entries: objects that contain currencyAmount/currencyCost and id/bundleId
+        const bundles = [];
+        function walkForBundles(node){
+          if(!node) return;
+          if(Array.isArray(node)) node.forEach(walkForBundles);
           else if(typeof node === 'object'){
-            if(node.id && (node.imageUrl || node.url || node.img) && node.price){
-              skins.push({
-                img: node.imageUrl || node.url || node.img,
-                name: node.name || node.id,
-                price: node.price
-              });
+            if(('currencyAmount' in node || 'currencyCost' in node || 'currency' in node || 'amount' in node) &&
+               ('id' in node || 'bundleId' in node || 'sku' in node || 'productId' in node)){
+              bundles.push(node);
             }
-            Object.values(node).forEach(walkForSkinObjects);
+            Object.values(node).forEach(walkForBundles);
           }
         }
-        walkForSkinObjects(data);
+        walkForBundles(data);
 
-        // fallback to images only
-        const uniq = Array.from(new Set(images));
+        // Build skin entries from bundles, try to attach an image by searching strings that contain the id
+        const skins = bundles.map(b => {
+          const id = b.id || b.bundleId || b.sku || b.productId || 'unknown';
+          const price = b.currencyAmount || b.currencyCost || b.amount || b.price || 0;
+          const product = b.currencyProductId || b.currency || b.currencyCode || 'coin';
+          // find image by checking collected images and allStrings for strings containing the id
+          let foundImg = images.find(s => s.indexOf(id) !== -1);
+          if(!foundImg){
+            // more fuzzy: check allStrings for a path/url that contains the id (or its last token)
+            const token = id.split('_').slice(-1)[0];
+            foundImg = allStrings.find(s => /https?:/.test(s) && s.indexOf(token)!==-1) || allStrings.find(s => s.indexOf(id)!==-1 && /png|jpg|jpeg|svg|gif/i.test(s));
+          }
+          return { id, price, product, img: foundImg || '' , raw: b};
+        });
+
+        // If no bundles found, fallback to deduplicated images-only
+        const uniq = Array.from(new Set(images.concat(allStrings.filter(s=>/https?:.*\.(png|jpg|jpeg|gif|svg)/i.test(s)))));
         statusEl.textContent = 'Gevonden ' + (skins.length || uniq.length) + ' skins.';
         return skins.length ? skins : uniq;
-        const uniq = Array.from(new Set(images));
-        if(uniq.length===0){
-          statusEl.innerHTML = '<span class="error">Geen directe skin-afbeeldingen gevonden in de config. Mogelijk gebruikt de config relatieve paden of ids. Je kunt de JSON handmatig openen en de skinlijst plakken in het veld.</span>';
-          return [];
-        }
-        statusEl.textContent = 'Gevonden ' + uniq.length + ' skins.';
-        return uniq;
       }catch(err){
         statusEl.innerHTML = '<span class="error">Kan config niet laden — controleer CORS of de URL. Error: ' + err.message + '</span>';
         return [];
       }
     }
 
-    function renderSkins(skinData)(urls){
+    function renderSkins(skinData){
       const container = document.getElementById('skinsContainer');
       container.innerHTML = '';
-      (Array.isArray(skinData)?skinData:[]).forEach(u=>{
+      (Array.isArray(skinData)?skinData:[]).forEach(item=>{
         const card = document.createElement('div'); card.className='skin';
-        const img = document.createElement('img'); img.src = u; img.alt = 'skin';
-        const name = document.createElement('div'); name.className='tiny'; name.textContent = u.split('/').pop().split('?')[0];
+        const img = document.createElement('img');
+        let titleText = '';
+        let priceText = '';
+        if(typeof item === 'string'){
+          img.src = item;
+          titleText = item.split('/').pop().split('?')[0];
+          priceText = '';
+        } else {
+          img.src = item.img || 'data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\"><rect width=\"120\" height=\"120\" fill=\"#f0f0f0\"/></svg>';
+          titleText = item.id;
+          priceText = (item.price !== undefined) ? (item.price + ' ' + (item.product||'')) : '';
+        }
+        img.alt = titleText;
+        const name = document.createElement('div'); name.className='tiny'; name.textContent = titleText;
+        const price = document.createElement('div'); price.className='tiny'; price.textContent = priceText;
         const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent='Buy';
         btn.addEventListener('click', ()=>{
           const uid = document.getElementById('encodedUid').value.trim();
           if(!uid) return alert('Voer eerst je Encoded UID in.');
-          // Simple demo action
-          alert('Koopt ' + name.textContent + ' voor account: ' + uid + '\n(dit is een demo)');
+          alert('Koopt ' + titleText + ' voor account: ' + uid + '\\nPrijs: ' + priceText + '\\n(dit is een demo)');
         });
-        card.appendChild(img); card.appendChild(name); card.appendChild(btn);
+        card.appendChild(img); card.appendChild(name); if(priceText) card.appendChild(price); card.appendChild(btn);
         container.appendChild(card);
       });
     }
