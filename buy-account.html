@@ -128,7 +128,28 @@
         }
         walkForStrings(data);
 
-        // Deduplicate and show
+        // Find skin objects with prices
+        const skins = [];
+        function walkForSkinObjects(node){
+          if(!node) return;
+          if(Array.isArray(node)) node.forEach(walkForSkinObjects);
+          else if(typeof node === 'object'){
+            if(node.id && (node.imageUrl || node.url || node.img) && node.price){
+              skins.push({
+                img: node.imageUrl || node.url || node.img,
+                name: node.name || node.id,
+                price: node.price
+              });
+            }
+            Object.values(node).forEach(walkForSkinObjects);
+          }
+        }
+        walkForSkinObjects(data);
+
+        // fallback to images only
+        const uniq = Array.from(new Set(images));
+        statusEl.textContent = 'Gevonden ' + (skins.length || uniq.length) + ' skins.';
+        return skins.length ? skins : uniq;
         const uniq = Array.from(new Set(images));
         if(uniq.length===0){
           statusEl.innerHTML = '<span class="error">Geen directe skin-afbeeldingen gevonden in de config. Mogelijk gebruikt de config relatieve paden of ids. Je kunt de JSON handmatig openen en de skinlijst plakken in het veld.</span>';
@@ -142,10 +163,10 @@
       }
     }
 
-    function renderSkins(urls){
+    function renderSkins(skinData)(urls){
       const container = document.getElementById('skinsContainer');
       container.innerHTML = '';
-      urls.forEach(u=>{
+      (Array.isArray(skinData)?skinData:[]).forEach(u=>{
         const card = document.createElement('div'); card.className='skin';
         const img = document.createElement('img'); img.src = u; img.alt = 'skin';
         const name = document.createElement('div'); name.className='tiny'; name.textContent = u.split('/').pop().split('?')[0];
