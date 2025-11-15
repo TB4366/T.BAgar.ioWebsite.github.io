@@ -38,109 +38,85 @@
 </div>
 
 <script>
-// Load config and extract paid bundles
+// === AUTO SHOP FOR ALL PAID MINICLIP SKINS ===
+// Loads Miniclip config, extracts paid skins, displays them with correct prices, and assigns XSolla item IDs.
+
 async function loadConfig(url){
-  const status = document.getElementById('status');
-  status.textContent = 'Loading...';
+  const statusEl = document.getElementById('status');
+  statusEl.textContent = 'Config laden...';
+
   try{
     const res = await fetch(url);
     if(!res.ok) throw new Error(res.status);
     const data = await res.json();
 
-    const paid = [];
+    // Miniclip location of paid skins in GameConfiguration.json
+    const shop = data?.shop?.offers ?? [];
+    const skins = shop.filter(s => s.family === 'wallet_promo_skin');
 
-    // Scan whole config for bundles with price AND skin image
-    function scan(node){
-      if(!node) return;
-      if(Array.isArray(node)) return node.forEach(scan);
-      if(typeof node === 'object'){
-        const hasPrice = (node.currencyAmount || node.currencyCost || node.price || node.usdPrice);
-        const id = node.id || node.bundleId || node.sku;
-        const img = node.imageUrl || node.img || node.url;
-
-        if(hasPrice && id){
-          // Try find image anywhere in config by ID match
-          const imgFound = findImage(id, data);
-
-          paid.push({
-            id: id,
-            price: hasPrice,
-            img: imgFound || img || ''
-          });
-        }
-        Object.values(node).forEach(scan);
-      }
-    }
-
-    // Search any string containing id + looks like image
-    function findImage(id, root){
-      const results = [];
-      function walk(n){
-        if(!n) return;
-        if(typeof n === 'string'){
-          if(n.includes(id) && /(png|jpg|jpeg|gif|svg)/i.test(n)) results.push(n);
-        }
-        if(Array.isArray(n)) n.forEach(walk);
-        else if(typeof n === 'object') Object.values(n).forEach(walk);
-      }
-      walk(root);
-      return results[0] || '';
-    }
-
-    scan(data);
-
-    // Keep only those with image + price
-    const filtered = paid.filter(s => s.img);
-    status.textContent = 'Gevonden ' + filtered.length + ' betaalde skins.';
-    return filtered;
-
-  }catch(err){
-    status.innerHTML = '<span class="error">Fout bij laden: '+err+'</span>';
+    statusEl.textContent = `Betaalde skins gevonden: ${skins.length}`;
+    return skins;
+  }catch(e){
+    document.getElementById('status').textContent = 'Fout bij laden: '+e.message;
     return [];
   }
 }
 
-function renderSkins(skinData){
-      const paidSkins = {
-        "1_skin_ice_crystal": { price: 5, itemId: "ice_crystal_5usd" }
-      };
-      const container = document.getElementById('skinsContainer');
-      container.innerHTML = '';
-      (Array.isArray(skinData)?skinData:[]).forEach(u=>{
-        const id = (u.id || u.name || u).toString();
-        if(!paidSkins[id]) return;
-        const card = document.createElement('div'); card.className='skin';
-        const img = document.createElement('img'); img.src = u.img || u; img.alt = id;
-        const name = document.createElement('div'); name.className='tiny'; name.textContent = id;
-        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent = `Buy ($${paidSkins[id].price})`;
-        btn.addEventListener('click', ()=>{
-          const uid = document.getElementById('encodedUid').value.trim();
-          if(!uid) return alert('Voer eerst je Encoded UID in.');
-          const item = paidSkins[id];
-          const payUrl = `https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en&user[id]=${uid}&item_id=${item.itemId}`;
-          window.open(payUrl, '_blank');
-        });
-        card.appendChild(img); card.appendChild(name); card.appendChild(btn);
-        container.appendChild(card);
-      });
-    });
-    }
-&skin=${encodeURIComponent(skin.id)}&price=${encodeURIComponent(skin.price)}`;
-      window.location.href = checkout;
+// === AUTO XSOLLA ID GENERATOR ===
+function convertToXsollaId(id){
+  return id.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+}
+
+function renderSkins(skins){
+  const container = document.getElementById('skinsContainer');
+  container.innerHTML = '';
+
+  skins.forEach(s => {
+    // image extraction
+    let img = s.imageUrl || s.url || s.img || '';
+    if(img.startsWith('//')) img = 'https:' + img;
+
+    const xsollaItemId = convertToXsollaId(s.id);
+    const priceUSD = s.currencyAmount || 5;
+
+    const card = document.createElement('div');
+    card.className = 'skin';
+
+    const i = document.createElement('img');
+    i.src = img;
+    i.alt = s.id;
+
+    const name = document.createElement('div');
+    name.className = 'tiny';
+    name.textContent = s.id;
+
+    const btn = document.createElement('button');
+    btn.className = 'buy-btn';
+    btn.textContent = `Buy ($${priceUSD})`;
+
+    btn.addEventListener('click', ()=>{
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid) return alert('Voer eerst je Encoded UID in');
+
+      const payUrl = `https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en&user[id]=${uid}&item_id=${xsollaItemId}`;
+      window.open(payUrl, '_blank');
     });
 
-    card.appendChild(img);
-    card.appendChild(title);
-    card.appendChild(price);
+    card.appendChild(i);
+    card.appendChild(name);
     card.appendChild(btn);
-    box.appendChild(card);
+    container.appendChild(card);
   });
 }
 
-// Load button
-
-document.getElementById('loadBtn').addEventListener('click', async()=>{
+document.getElementById('loadBtn').addEventListener('click', async () => {
   const url = document.getElementById('configUrl').value.trim();
+  const skins = await loadConfig(url);
+  renderSkins(skins);
+});
+
+window.addEventListener('load', async () => {
+  const url = document.getElementById('configUrl').value;
   const skins = await loadConfig(url);
   renderSkins(skins);
 });
