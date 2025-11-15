@@ -3,208 +3,149 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Special Deals — Agar.io skins</title>
+  <title>Agar.io Skin Shop — Paid Skins</title>
   <style>
-    :root{--orange:#f08b2d;--muted:#f7f2ea;--text:#222}
-    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#fff;padding:24px;color:var(--text)}
-    h1{font-size:28px;margin:0 0 18px}
+    body{font-family:Inter,Arial;background:#fff;padding:24px;color:#222}
+    h1{font-size:28px;margin-bottom:18px}
     .panel{max-width:980px;margin:0 auto}
-    .uid-row{display:flex;gap:12px;align-items:center;margin-bottom:16px}
-    .uid-row input[type=text]{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
-    label{font-size:14px}
-    .offer-title{font-size:22px;margin:18px 0}
-    .offer{background:var(--orange);border-radius:8px;padding:18px;color:white;display:flex;gap:18px;align-items:center}
-    .coins{flex:0 0 420px;background:linear-gradient(180deg,#ffcc4d,#f4b400);border-radius:8px;padding:18px;display:flex;align-items:center}
-    .price{font-weight:700;font-size:22px;margin-left:auto}
-    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:20px}
-    .skin{background:#fff;border:1px solid #e6e6e6;padding:6px;border-radius:8px;display:flex;flex-direction:column;align-items:center}
-    .skin img{width:120px;height:120px;object-fit:contain}
-    .buy-btn{margin-top:8px;background:var(--orange);border:none;color:white;padding:8px 12px;border-radius:6px;cursor:pointer}
-    .footer-note{background:#fff3d9;border-left:4px solid #e6c08b;padding:12px;margin-top:12px;border-radius:4px}
-    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
+    .uid-row{display:flex;gap:12px;margin-bottom:16px}
+    .uid-row input{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
+    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:20px}
+    .skin{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center}
+    .skin img{width:130px;height:130px;object-fit:contain}
+    .buy-btn{margin-top:8px;background:#f08b2d;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
     .tiny{font-size:13px;color:#666}
     .error{color:#b00020}
   </style>
 </head>
 <body>
-  <div class="panel">
-    <h1>Special Deals</h1>
+<div class="panel">
+  <h1>Paid Skins — Agar.io Shop</h1>
 
-    <div class="uid-row">
-      <input id="encodedUid" type="text" placeholder="GFRTIMZY..." value="" />
-      <label><input id="friendEncoded" type="checkbox" /> Friend Encoded uid</label>
-    </div>
-
-    <div class="offer-title">purchase <strong>125000</strong> coins <span style="font-weight:400;font-size:16px">(click on the orange icon to buy)</span> <span class="price">99.99 $</span></div>
-
-    <div class="offer">
-      <div class="coins">
-        <div style="flex:1;">
-          <h3 style="margin:0 0 8px">125000 C</h3>
-          <p style="margin:0 0 12px">Bonus skins included</p>
-        </div>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Coins_icon.png" alt="coins" style="width:110px;height:110px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.2);padding:6px"/>
-      </div>
-
-      <div style="flex:1;padding:8px 6px">
-        <div style="font-size:14px;margin-bottom:6px">125000_coins = 99.99 $</div>
-        <div style="font-size:14px">Valuta:
-          <select id="currencySelect">
-            <option>USD</option>
-            <option>EUR</option>
-          </select>
-        </div>
-
-        <div style="margin-top:12px">
-          <input id="configUrl" type="text" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
-        </div>
-
-        <div class="controls">
-          <button id="loadBtn" class="buy-btn">Laad skins</button>
-          <div class="tiny">For some payment methods Library</div>
-        </div>
-
-        <div class="footer-note">
-          To make purchases, you must be logged in to your account…<br>
-          Encoded UID: <span id="uidPreview" style="font-family:monospace;color:#0b6">(enter above)</span>
-        </div>
-      </div>
-    </div>
-
-    <h2 style="margin-top:22px">Alle skins in deze config</h2>
-    <div id="skinsContainer" class="skin-grid"></div>
-
-    <div id="status" class="tiny" style="margin-top:12px"></div>
+  <div class="uid-row">
+    <input id="encodedUid" type="text" placeholder="GFRTIMZY..." />
   </div>
 
-  <script>
-    // Best-effort loader: tries to fetch the provided JSON and locate bundles (bundleId/id + currencyAmount) and images.
-    async function loadConfig(url){
-      const statusEl = document.getElementById('status');
-      statusEl.textContent = 'Loading...';
+  <div>
+    <input id="configUrl" type="text" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:4px" 
+      value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
+    <button id="loadBtn" class="buy-btn" style="margin-top:10px">Laad betaalde skins</button>
+  </div>
 
-      try{
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('Fetch failed: ' + res.status);
-        const data = await res.json();
+  <h2 style="margin-top:22px">Betaalde skins</h2>
+  <div id="skinsContainer" class="skin-grid"></div>
+  <div id="status" class="tiny" style="margin-top:12px"></div>
+</div>
 
-        // collect all direct image-like strings first (for matching later)
-        const images = [];
-        function walk(node){
-          if(!node) return;
-          if(Array.isArray(node)){
-            if(node.length>0 && node.every(it => typeof it === 'string')){
-              node.forEach(it=>{
-                if(/https?:.*\.(png|jpg|jpeg|gif|svg)(\?.*)?$/i.test(it) || /^(data:image\/)/.test(it)) images.push(it);
-              });
-            } else {
-              node.forEach(walk);
-            }
-          } else if(typeof node === 'object'){
-            Object.values(node).forEach(walk);
-          }
+<script>
+// Load config and extract paid bundles
+async function loadConfig(url){
+  const status = document.getElementById('status');
+  status.textContent = 'Loading...';
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error(res.status);
+    const data = await res.json();
+
+    const paid = [];
+
+    // Scan whole config for bundles with price AND skin image
+    function scan(node){
+      if(!node) return;
+      if(Array.isArray(node)) return node.forEach(scan);
+      if(typeof node === 'object'){
+        const hasPrice = (node.currencyAmount || node.currencyCost || node.price || node.usdPrice);
+        const id = node.id || node.bundleId || node.sku;
+        const img = node.imageUrl || node.img || node.url;
+
+        if(hasPrice && id){
+          // Try find image anywhere in config by ID match
+          const imgFound = findImage(id, data);
+
+          paid.push({
+            id: id,
+            price: hasPrice,
+            img: imgFound || img || ''
+          });
         }
-        walk(data);
-
-        // Also collect any string values in the whole config (useful for matching id substrings)
-        const allStrings = [];
-        function collectStrings(node){
-          if(!node) return;
-          if(typeof node === 'string'){ allStrings.push(node); return; }
-          if(Array.isArray(node)) node.forEach(collectStrings);
-          else if(typeof node === 'object') Object.values(node).forEach(collectStrings);
-        }
-        collectStrings(data);
-
-        // Find bundle-like entries: objects that contain currencyAmount/currencyCost and id/bundleId
-        const bundles = [];
-        function walkForBundles(node){
-          if(!node) return;
-          if(Array.isArray(node)) node.forEach(walkForBundles);
-          else if(typeof node === 'object'){
-            if(('currencyAmount' in node || 'currencyCost' in node || 'currency' in node || 'amount' in node) &&
-               ('id' in node || 'bundleId' in node || 'sku' in node || 'productId' in node)){
-              bundles.push(node);
-            }
-            Object.values(node).forEach(walkForBundles);
-          }
-        }
-        walkForBundles(data);
-
-        // Build skin entries from bundles, try to attach an image by searching strings that contain the id
-        const skins = bundles.map(b => {
-          const id = b.id || b.bundleId || b.sku || b.productId || 'unknown';
-          const price = b.currencyAmount || b.currencyCost || b.amount || b.price || 0;
-          const product = b.currencyProductId || b.currency || b.currencyCode || 'coin';
-          // find image by checking collected images and allStrings for strings containing the id
-          let foundImg = images.find(s => s.indexOf(id) !== -1);
-          if(!foundImg){
-            // more fuzzy: check allStrings for a path/url that contains the id (or its last token)
-            const token = id.split('_').slice(-1)[0];
-            foundImg = allStrings.find(s => /https?:/.test(s) && s.indexOf(token)!==-1) || allStrings.find(s => s.indexOf(id)!==-1 && /png|jpg|jpeg|svg|gif/i.test(s));
-          }
-          return { id, price, product, img: foundImg || '' , raw: b};
-        });
-
-        // If no bundles found, fallback to deduplicated images-only
-        const uniq = Array.from(new Set(images.concat(allStrings.filter(s=>/https?:.*\.(png|jpg|jpeg|gif|svg)/i.test(s)))));
-        statusEl.textContent = 'Gevonden ' + (skins.length || uniq.length) + ' skins.';
-        return skins.length ? skins : uniq;
-      }catch(err){
-        statusEl.innerHTML = '<span class="error">Kan config niet laden — controleer CORS of de URL. Error: ' + err.message + '</span>';
-        return [];
+        Object.values(node).forEach(scan);
       }
     }
 
-    function renderSkins(skinData){
-      const container = document.getElementById('skinsContainer');
-      container.innerHTML = '';
-      (Array.isArray(skinData)?skinData:[]).forEach(item=>{
-        const card = document.createElement('div'); card.className='skin';
-        const img = document.createElement('img');
-        let titleText = '';
-        let priceText = '';
-        if(typeof item === 'string'){
-          img.src = item;
-          titleText = item.split('/').pop().split('?')[0];
-          priceText = '';
-        } else {
-          img.src = item.img || 'data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\"><rect width=\"120\" height=\"120\" fill=\"#f0f0f0\"/></svg>';
-          titleText = item.id;
-          priceText = (item.price !== undefined) ? (item.price + ' ' + (item.product||'')) : '';
+    // Search any string containing id + looks like image
+    function findImage(id, root){
+      const results = [];
+      function walk(n){
+        if(!n) return;
+        if(typeof n === 'string'){
+          if(n.includes(id) && /(png|jpg|jpeg|gif|svg)/i.test(n)) results.push(n);
         }
-        img.alt = titleText;
-        const name = document.createElement('div'); name.className='tiny'; name.textContent = titleText;
-        const price = document.createElement('div'); price.className='tiny'; price.textContent = priceText;
-        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent='Buy';
-        btn.addEventListener('click', ()=>{
-          const uid = document.getElementById('encodedUid').value.trim();
-          if(!uid) return alert('Voer eerst je Encoded UID in.');
-          alert('Koopt ' + titleText + ' voor account: ' + uid + '\\nPrijs: ' + priceText + '\\n(dit is een demo)');
-        });
-        card.appendChild(img); card.appendChild(name); if(priceText) card.appendChild(price); card.appendChild(btn);
-        container.appendChild(card);
-      });
+        if(Array.isArray(n)) n.forEach(walk);
+        else if(typeof n === 'object') Object.values(n).forEach(walk);
+      }
+      walk(root);
+      return results[0] || '';
     }
 
-    document.getElementById('loadBtn').addEventListener('click', async ()=>{
-      const url = document.getElementById('configUrl').value.trim();
-      if(!url) return alert('Voer de config-URL in');
-      const skins = await loadConfig(url);
-      renderSkins(skins);
+    scan(data);
+
+    // Keep only those with image + price
+    const filtered = paid.filter(s => s.img);
+    status.textContent = 'Gevonden ' + filtered.length + ' betaalde skins.';
+    return filtered;
+
+  }catch(err){
+    status.innerHTML = '<span class="error">Fout bij laden: '+err+'</span>';
+    return [];
+  }
+}
+
+function renderSkins(list){
+  const box = document.getElementById('skinsContainer');
+  box.innerHTML = '';
+
+  list.forEach(skin =>{
+    const card = document.createElement('div');
+    card.className = 'skin';
+
+    const img = document.createElement('img');
+    img.src = skin.img || '';
+
+    const title = document.createElement('div');
+    title.textContent = skin.id;
+
+    const price = document.createElement('div');
+    price.className = 'tiny';
+    price.textContent = '$' + skin.price;
+
+    const btn = document.createElement('button');
+    btn.className = 'buy-btn';
+    btn.textContent = 'Buy';
+
+    btn.addEventListener('click',()=>{
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid) return alert('Voer eerst je Encoded UID in.');
+
+      // Redirect to XSOLLA with UID
+      const checkout = `https://secure.xsolla.com/paystation3/?uid=${encodeURIComponent(uid)}&skin=${encodeURIComponent(skin.id)}&price=${encodeURIComponent(skin.price)}`;
+      window.location.href = checkout;
     });
 
-    // show uid preview
-    document.getElementById('encodedUid').addEventListener('input', e=>{
-      const v = e.target.value.trim();
-      document.getElementById('uidPreview').textContent = v || '(enter above)';
-    });
+    card.appendChild(img);
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(btn);
+    box.appendChild(card);
+  });
+}
 
-    // Auto-attempt load the default URL once (best-effort)
-    (async ()=>{
-      const defaultUrl = document.getElementById('configUrl').value;
-      try{ const skins = await loadConfig(defaultUrl); renderSkins(skins);}catch(e){}
-    })();
-  </script>
+// Load button
+
+document.getElementById('loadBtn').addEventListener('click', async()=>{
+  const url = document.getElementById('configUrl').value.trim();
+  const skins = await loadConfig(url);
+  renderSkins(skins);
+});
+</script>
 </body>
 </html>
