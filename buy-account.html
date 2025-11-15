@@ -3,123 +3,187 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agar.io Skin Shop — Paid Skins</title>
+  <title>Agar.io — Alle skins</title>
   <style>
-    body{font-family:Inter,Arial;background:#fff;padding:24px;color:#222}
-    h1{font-size:28px;margin-bottom:18px}
-    .panel{max-width:980px;margin:0 auto}
-    .uid-row{display:flex;gap:12px;margin-bottom:16px}
-    .uid-row input{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
-    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:20px}
-    .skin{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center}
-    .skin img{width:130px;height:130px;object-fit:contain}
-    .buy-btn{margin-top:8px;background:#f08b2d;color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+    :root{--accent:#f08b2d;--muted:#f6f6f6;--text:#222}
+    body{font-family:Inter,system-ui,Arial,sans-serif;background:#fff;color:var(--text);padding:24px}
+    .panel{max-width:1100px;margin:0 auto}
+    h1{font-size:28px;margin:0 0 12px}
+    .controls{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+    input[type=text]{padding:10px;border:1px solid #ddd;border-radius:6px;flex:1}
+    button{background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer}
+    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:18px}
+    .skin{border:1px solid #e6e6e6;border-radius:8px;padding:10px;text-align:center;background:#fff}
+    .skin img{width:130px;height:130px;object-fit:contain;border-radius:6px;background:var(--muted)}
+    .skin .id{font-weight:600;margin-top:8px;font-size:13px}
+    .skin .name{font-size:13px;color:#666;margin-top:4px}
+    .price{margin-top:6px;font-weight:700}
     .tiny{font-size:13px;color:#666}
-    .error{color:#b00020}
+    .note{margin-top:12px;background:#fff3d9;border-left:4px solid #e6c08b;padding:10px;border-radius:6px}
   </style>
 </head>
 <body>
-<div class="panel">
-  <h1>Paid Skins — Agar.io Shop</h1>
+  <div class="panel">
+    <h1>Alle Agar.io skins</h1>
 
-  <div class="uid-row">
-    <input id="encodedUid" type="text" placeholder="GFRTIMZY..." />
+    <div class="controls">
+      <input id="encodedUid" type="text" placeholder="Voer je Encoded UID in (verplicht voor kopen)" />
+      <input id="configUrl" type="text" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" style="width:520px" />
+      <button id="loadBtn">Laad skins</button>
+    </div>
+
+    <div class="tiny">Images path wordt opgebouwd als:<br><code>https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/&lt;skin_id&gt;.png</code></div>
+
+    <div id="status" class="tiny" style="margin-top:10px"></div>
+
+    <div id="skinsContainer" class="skin-grid"></div>
+
+    <div class="note">Tip: vul je UID in voordat je op Buy klikt. Kooptaken sturen UID, uid, user_external_id mee naar XSolla.</div>
   </div>
 
-  <div>
-    <input id="configUrl" type="text" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:4px" 
-      value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" />
-    <button id="loadBtn" class="buy-btn" style="margin-top:10px">Laad betaalde skins</button>
-  </div>
+  <script>
+    // Helper: deep scan for skin objects
+    function findSkins(root){
+      const found = [];
+      function walk(node){
+        if(!node) return;
+        if(Array.isArray(node)) return node.forEach(walk);
+        if(typeof node === 'object'){
+          const type = node.type || '';
+          const family = node.productFamily || '';
+          const id = node.id || node.bundleId || node.sku;
+          // heuristics: it is a skin object if type === 'skin' OR productFamily contains 'skin' OR id startsWith 'skin_'
+          if((type && type.toLowerCase()==='skin') || /skin/i.test(family) || (typeof id === 'string' && /^skin_/i.test(id))){
+            // collect relevant fields
+            const entry = {
+              id: id || (node.localizedName || '').toString(),
+              localizedName: node.localizedName || node.name || '',
+              productFamily: family,
+              price: node.currencyAmount || node.currencyCost || node.price || node.amount || null,
+              img: node.imageUrl || node.img || node.url || ''
+            };
+            found.push(entry);
+          }
+          Object.values(node).forEach(walk);
+        }
+      }
+      walk(root);
+      // deduplicate by id
+      const map = new Map();
+      found.forEach(f => { if(f.id) map.set(f.id, Object.assign({}, map.get(f.id)||{}, f)) });
+      return Array.from(map.values());
+    }
 
-  <h2 style="margin-top:22px">Betaalde skins</h2>
-  <div id="skinsContainer" class="skin-grid"></div>
-  <div id="status" class="tiny" style="margin-top:12px"></div>
-</div>
+    function toXsollaItemId(skinId){
+      // convert Miniclip skin id to safe xsolla id
+      return skinId.toString().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g,'');
+    }
 
-<script>
-// === AUTO SHOP FOR ALL PAID MINICLIP SKINS ===
-// Loads Miniclip config, extracts paid skins, displays them with correct prices, and assigns XSolla item IDs.
+    function imageForSkin(skinId, explicit){
+      // Priority 1: explicit URL from config
+      if(explicit && explicit.startsWith('http')) return explicit;
 
-async function loadConfig(url){
-  const statusEl = document.getElementById('status');
-  statusEl.textContent = 'Config laden...';
+      // Build possible CDN paths
+      const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
+      const alt1 = 'https://configs-web.agario.miniclippt.com/live/v15/10850/skins/';
+      const alt2 = 'https://assets-agario.miniclippt.com/skins/';
 
-  try{
-    const res = await fetch(url);
-    if(!res.ok) throw new Error(res.status);
-    const data = await res.json();
+      return {
+        primary: base + encodeURIComponent(skinId) + '.png',
+        alternatives: [
+          alt1 + encodeURIComponent(skinId) + '.png',
+          alt2 + encodeURIComponent(skinId) + '.png'
+        ]
+      };
+    }(skinId, explicit){
+      // Build image URL according to path A
+      const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
+      if(explicit && explicit.startsWith('http')) return explicit;
+      return base + encodeURIComponent(skinId) + '.png';
+    }
 
-    // Miniclip location of paid skins in GameConfiguration.json
-    const shop = data?.shop?.offers ?? [];
-    const skins = shop.filter(s => s.family === 'wallet_promo_skin');
+    async function loadConfig(url){
+      const status = document.getElementById('status');
+      status.textContent = 'Laden...';
+      try{
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Fetch error ' + res.status);
+        const data = await res.json();
+        const skins = findSkins(data);
+        status.textContent = `Gevonden ${skins.length} skins (bron: config)`;
+        return skins;
+      }catch(err){
+        status.innerHTML = '<span style="color:#b00020">Fout bij laden: '+err.message+'</span>';
+        return [];
+      }
+    }
 
-    statusEl.textContent = `Betaalde skins gevonden: ${skins.length}`;
-    return skins;
-  }catch(e){
-    document.getElementById('status').textContent = 'Fout bij laden: '+e.message;
-    return [];
-  }
-}
+    function renderAll(skins){
+      const container = document.getElementById('skinsContainer');
+      container.innerHTML = '';
+      skins.forEach(s => {
+        const id = s.id || 'unknown';
+        const xsollaId = toXsollaItemId(id);
+        const imgUrl = imageForSkin(id, s.img);
 
-// === AUTO XSOLLA ID GENERATOR ===
-function convertToXsollaId(id){
-  return id.toLowerCase().replace(/[^a-z0-9]+/g, '_');
-}
+        const card = document.createElement('div'); card.className='skin';
+        const img = document.createElement('img');
+        const imgSet = imageForSkin(id, s.img);
+        img.src = imgSet.primary;
+        img.alt = id;
+        img.onerror = function(){
+          const next = imgSet.alternatives.shift();
+          if(next){ img.src = next; return; }
+          img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>';
+        } img.alt = id;
+        img.onerror = function(){ this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>' };
 
-function renderSkins(skins){
-  const container = document.getElementById('skinsContainer');
-  container.innerHTML = '';
+        const title = document.createElement('div'); title.className='id'; title.textContent = id;
+        const name = document.createElement('div'); name.className='name'; name.textContent = s.localizedName || '';
+        const price = document.createElement('div'); price.className='price'; price.textContent = s.price ? ('$' + s.price) : '';
 
-  skins.forEach(s => {
-    // image extraction
-    let img = s.imageUrl || s.url || s.img || '';
-    if(img.startsWith('//')) img = 'https:' + img;
+        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent = 'Buy';
+        btn.style.marginTop = '8px';
+        btn.onclick = function(){
+          const uid = document.getElementById('encodedUid').value.trim();
+          if(!uid){ alert('Voer eerst je Encoded UID in.'); return; }
+          // Build XSolla link with all UID params
+          const base = 'https://secure.xsolla.com/paystation3/desktop/list/';
+          const params = new URLSearchParams({
+            access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
+            preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
+            sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--',
+            uid: uid,
+            user_id: uid,
+            user_external_id: uid,
+            item_id: xsollaId
+          });
+          const url = base + '?' + params.toString();
+          // open in new tab so the shop stays available
+          window.open(url, '_blank');
+        };
 
-    const xsollaItemId = convertToXsollaId(s.id);
-    const priceUSD = s.currencyAmount || 5;
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(name);
+        if(s.price) card.appendChild(price);
+        card.appendChild(btn);
+        container.appendChild(card);
+      });
+    }
 
-    const card = document.createElement('div');
-    card.className = 'skin';
-
-    const i = document.createElement('img');
-    i.src = img;
-    i.alt = s.id;
-
-    const name = document.createElement('div');
-    name.className = 'tiny';
-    name.textContent = s.id;
-
-    const btn = document.createElement('button');
-    btn.className = 'buy-btn';
-    btn.textContent = `Buy ($${priceUSD})`;
-
-    btn.addEventListener('click', ()=>{
-      const uid = document.getElementById('encodedUid').value.trim();
-      if(!uid) return alert('Voer eerst je Encoded UID in');
-
-      const payUrl = `https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en&user[id]=${uid}&item_id=${xsollaItemId}`;
-      window.open(payUrl, '_blank');
+    document.getElementById('loadBtn').addEventListener('click', async ()=>{
+      const url = document.getElementById('configUrl').value.trim();
+      const skins = await loadConfig(url);
+      renderAll(skins);
     });
 
-    card.appendChild(i);
-    card.appendChild(name);
-    card.appendChild(btn);
-    container.appendChild(card);
-  });
-}
-
-document.getElementById('loadBtn').addEventListener('click', async () => {
-  const url = document.getElementById('configUrl').value.trim();
-  const skins = await loadConfig(url);
-  renderSkins(skins);
-});
-
-window.addEventListener('load', async () => {
-  const url = document.getElementById('configUrl').value;
-  const skins = await loadConfig(url);
-  renderSkins(skins);
-});
-</script>
+    // Auto-load on page open
+    (async ()=>{
+      const url = document.getElementById('configUrl').value;
+      const skins = await loadConfig(url);
+      renderAll(skins);
+    })();
+  </script>
 </body>
 </html>
