@@ -3,43 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Special Deals — Agar.io</title>
+  <title>Special Deals — Agar.io Skin</title>
   <style>
-    body{font-family:Inter, Arial, Helvetica, sans-serif;background:#fff;margin:0;padding:24px;color:#222}
-    .panel{max-width:980px;margin:0 auto}
-    .header{font-size:28px;margin-bottom:12px}
-    .uid-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-    .uid-row input[type=text]{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
-    .uid-row label{display:flex;gap:8px;align-items:center}
+    /* (zelfde CSS als in je vorige kaart) */
+    body { font-family: Inter, Arial; background: #fff; padding: 24px; color: #222; }
+    .panel { max-width: 980px; margin: 0 auto; }
+    .header { font-size: 28px; margin-bottom: 12px; }
+    .uid-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
+    .uid-row input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; }
 
-    /* card like screenshot */
-    .offer-card{border-radius:6px;padding:14px}
-    .offer-title{font-size:26px;margin:8px 0 12px;display:flex;justify-content:space-between;align-items:center}
-    .offer-title .title-left{font-weight:700}
-    .offer-title .price{font-size:22px;font-weight:700}
+    .offer-card { border-radius: 6px; padding: 14px; }
+    .offer-title { font-size: 26px; display: flex; justify-content: space-between; align-items: center; }
+    .offer-title .price { font-size: 22px; font-weight: 700; }
 
-    .offer-visual{background:#f28d2b;border-radius:8px;padding:16px;display:flex;align-items:center;gap:14px}
-    .coins-area{flex:0 0 58%;display:flex;align-items:center;gap:14px}
-    .coins-stack{width:220px;height:120px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120"></svg>');background-repeat:no-repeat;background-size:contain}
-    .coin-bubble{background:#fff;padding:8px 12px;border-radius:22px;font-weight:700}
-    .plus{font-size:64px;font-weight:700;color:#ffd77a}
-    .skins-circle{flex:0 0 120px;display:flex;gap:8px}
-    .skin-circle{width:84px;height:84px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.4);background:#fff;display:flex;align-items:center;justify-content:center}
-    .skin-circle img{width:80px;height:80px;object-fit:cover}
+    .offer-visual { background: #f28d2b; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 14px; position: relative; }
+    .coins-area { flex: 0 0 58%; display: flex; align-items: center; gap: 14px; }
+    .coins-stack { width: 220px; height: 120px; background-size: contain; background-repeat: no-repeat; background-image: url('…'); }
+    .coin-bubble { background: #fff; padding: 8px 12px; border-radius: 22px; font-weight: 700; }
 
-    .offer-info{background:#fff;border-radius:6px;border:1px solid #e6e6e6;padding:10px;margin-top:10px}
-    .controls{display:flex;gap:8px;align-items:center;margin-top:14px}
-    select,input[type=text].small{padding:8px;border:1px solid #ddd;border-radius:4px}
-    .config-url{width:100%;padding:10px;border:1px solid #ddd;border-radius:4px}
+    .plus { font-size: 64px; font-weight: 700; color: #ffd77a; }
 
-    .note{margin-top:12px;background:#fff3d9;border-left:4px solid #e6c08b;padding:12px;border-radius:4px}
-    .copy-link{color:#c62828;font-weight:700;cursor:pointer;margin-left:6px}
+    .skins-circle { flex: 0 0 120px; display: flex; gap: 8px; }
+    .skin-circle { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(255,255,255,0.4); background: #fff; display: flex; align-items: center; justify-content: center; }
+    .skin-circle img { width: 80px; height: 80px; object-fit: cover; }
 
-    .buy-overlay{position:relative}
-    .buy-btn-overlay{position:absolute;left:18px;bottom:18px;background:#ff7f24;border-radius:30px;padding:8px 14px;color:#fff;border:none;cursor:pointer;font-weight:700}
+    .buy-btn-overlay { position: absolute; left: 18px; bottom: 18px; background: #ff7f24; border-radius: 30px; padding: 8px 14px; color: #fff; border: none; cursor: pointer; font-weight:700; }
 
-    /* responsive */
-    @media (max-width:760px){ .coins-area{flex-direction:column;align-items:flex-start} .skins-circle{justify-content:flex-start} }
+    .offer-info { background: #fff; border: 1px solid #e6e6e6; border-radius: 6px; padding: 10px; margin-top: 10px; }
+
+    .controls { margin-top: 12px; display: flex; gap: 8px; }
+    .controls select, .controls input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+
+    .note { margin-top: 12px; background: #fff3d9; border-left: 4px solid #e6c08b; padding: 12px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -48,138 +43,84 @@
 
     <div class="uid-row">
       <input id="encodedUid" type="text" placeholder="Encoded UID" />
-      <label><input id="friendEncoded" type="checkbox" /> Friend Encoded uid</label>
     </div>
 
     <div class="offer-card">
       <div class="offer-title">
-        <div class="title-left" id="offerName">Promotionpack15 <span style="font-weight:400;font-size:14px">(click on the orange icon to buy)</span></div>
-        <div class="price" id="offerPrice">19.99 $</div>
+        <div class="title-left">Special Skin Pack</div>
+        <div class="price" id="offerPrice">$5</div>
       </div>
 
-      <div class="buy-overlay">
-        <div class="offer-visual" id="offerVisual">
-          <div class="coins-area">
-            <div style="flex:1">
-              <div class="coins-stack" id="coinsImg" style="background-image:url('/');background-size:contain;background-position:center"></div>
-            </div>
-            <div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
-              <div class="coin-bubble" id="coinBubble">50000 C</div>
-            </div>
-            <div class="plus">+</div>
-            <div class="skins-circle" id="skinsCircle">
-              <div class="skin-circle"><img id="skin1" src="" alt="skin" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect width=\'100%\' height=\'100%\' fill=\'%23eee\'/></svg>'"/></div>
-              <div class="skin-circle"><img id="skin2" src="" alt="skin" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect width=\'100%\' height=\'100%\' fill=\'%23eee\'/></svg>'"/></div>
-            </div>
+      <div class="offer-visual">
+        <div class="coins-area">
+          <div style="flex:1">
+            <div class="coins-stack" id="coinsImg"></div>
           </div>
-
+          <div>
+            <div class="coin-bubble" id="coinBubble">—</div>
+          </div>
+          <div class="plus">+</div>
+          <div class="skins-circle">
+            <div class="skin-circle"><img id="skin1" src="" /></div>
+          </div>
         </div>
         <button class="buy-btn-overlay" id="buyOverlayBtn">Buy</button>
       </div>
 
-      <div class="offer-info" id="offerInfoText">50000_coins_1_skin_king_lion_1_skin_magic_hat = 19.99 $</div>
+      <div class="offer-info" id="offerInfoText">special_skin = 5 $</div>
 
       <div class="controls">
         <select id="currencySelect"><option>USD</option><option>EUR</option></select>
-        <div style="flex:1"><input id="librarySelect" class="small" type="text" placeholder="For some payment methods" /></div>
       </div>
 
-      <div style="margin-top:12px"><input id="configField" class="config-url" type="text" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" /></div>
-
       <div class="note">
-        To make purchases, you must be logged in to your account…<br>
+        Om te kopen, moet je je echte speler-UID invullen.<br>
         Encoded UID: <span id="uidPreview" style="font-family:monospace;color:#0b6">(enter UID)</span>
-        <span class="copy-link" id="copyLink">COPY.</span>
       </div>
     </div>
   </div>
 
   <script>
-    // Base XSolla link values (from you)
     const XSOLLA_BASE = 'https://secure.xsolla.com/paystation3/desktop/list/';
     const XSOLLA_PARAMS = {
-      access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
+      access_token: 'ryolptUISLKE3SmWGBP9MQ05xHBvub5j_lc_en',
       preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
       sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--'
     };
 
-    // Helper: fetch config and pick a default offer (promotionpack like)
-    async function loadDefaultOffer(configUrl){
-      try{
-        const r = await fetch(configUrl);
-        if(!r.ok) throw new Error(r.status);
-        const json = await r.json();
+    // Jouw skin gegevens
+    const mySkin = {
+      id: 'skin_voidmaster',   // pas dit aan naar de juiste skin-id
+      price: 5,
+      xsollaItemId: 'skin_voidmaster_5usd',
+      imageUrl: 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/skin_voidmaster.png',
+      name: 'Voidmaster'
+    };
 
-        // Heuristic: look for offers / bundles
-        const offers = json.shop?.offers || json.wallet?.offers || json.offers || [];
-        // pick first that has price or coin bundle
-        let offer = null;
-        for(const o of offers){
-          if(o.currencyAmount || o.bundleId || o.name || o.displayName) { offer = o; break; }
-        }
-        if(!offer){
-          // fallback create a mock offer
-          offer = { bundleId: 'promotionpack15', currencyAmount: 19.99, coins:50000, items:['skin_king_lion','skin_magic_hat'] };
-        }
+    // UI invul
+    document.getElementById('skin1').src = mySkin.imageUrl;
+    document.getElementById('offerPrice').textContent = mySkin.price + ' $';
+    document.getElementById('offerInfoText').textContent = `${mySkin.id} = ${mySkin.price} $`;
 
-        // Fill UI
-        document.getElementById('offerName').textContent = (offer.bundleId || offer.name || 'Promotionpack15') + ' '; 
-        document.getElementById('offerPrice').textContent = (offer.currencyAmount || offer.price || 19.99) + ' $';
-        document.getElementById('coinBubble').textContent = ((offer.coins || offer.currencyAmountCoins || 50000) + ' C');
-
-        const items = offer.items || offer.skus || offer.contents || [];
-        const img1 = items[0] || 'skin_king_lion';
-        const img2 = items[1] || 'skin_magic_hat';
-
-        // Build image URLs using assumed path
-        const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
-        document.getElementById('skin1').src = base + encodeURIComponent(img1) + '.png';
-        document.getElementById('skin2').src = base + encodeURIComponent(img2) + '.png';
-
-        // info text
-        const infoText = `${offer.coins || 50000}_coins_` + items.join('_') + ' = ' + (offer.currencyAmount || offer.price || 19.99) + ' $';
-        document.getElementById('offerInfoText').textContent = infoText;
-      }catch(err){
-        console.warn('Config load failed', err);
-      }
-    }
-
-    // Build XSolla checkout URL with multiple uid params
-    function buildXsollaUrl(uid, itemId){
-      const p = new URLSearchParams(XSOLLA_PARAMS);
-      p.set('uid', uid);
-      p.set('user_id', uid);
-      p.set('user_external_id', uid);
-      if(itemId) p.set('item_id', itemId);
-      return XSOLLA_BASE + '?' + p.toString();
-    }
-
-    // events
-    document.getElementById('buyOverlayBtn').addEventListener('click', ()=>{
+    document.getElementById('buyOverlayBtn').addEventListener('click', () => {
       const uid = document.getElementById('encodedUid').value.trim();
-      if(!uid) return alert('Voer eerst je Encoded UID in.');
-      // item id use offer bundleId
-      const itemId = document.getElementById('offerName').textContent.trim().split(' ')[0];
-      const url = buildXsollaUrl(uid, itemId);
+      if (!uid) {
+        alert('Voer eerst je Encoded UID in.');
+        return;
+      }
+      const params = new URLSearchParams(XSOLLA_PARAMS);
+      params.set('uid', uid);
+      params.set('user_id', uid);
+      params.set('user_external_id', uid);
+      params.set('item_id', mySkin.xsollaItemId);
+
+      const url = XSOLLA_BASE + '?' + params.toString();
       window.open(url, '_blank');
     });
 
-    document.getElementById('copyLink').addEventListener('click', ()=>{
-      const txt = document.getElementById('configField').value;
-      navigator.clipboard.writeText(txt).then(()=>{ alert('Link gekopieerd'); });
-    });
-
-    document.getElementById('encodedUid').addEventListener('input', (e)=>{
+    document.getElementById('encodedUid').addEventListener('input', (e) => {
       document.getElementById('uidPreview').textContent = e.target.value || '(enter UID)';
     });
-
-    document.getElementById('loadBtn').addEventListener('click', ()=>{
-      const url = document.getElementById('configField').value.trim() || document.getElementById('configUrl').value.trim();
-      loadDefaultOffer(url);
-    });
-
-    // auto load
-    loadDefaultOffer(document.getElementById('configUrl').value);
   </script>
 </body>
 </html>
