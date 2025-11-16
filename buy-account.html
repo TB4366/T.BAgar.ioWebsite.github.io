@@ -3,124 +3,270 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Special Deals — Agar.io Skin</title>
+  <title>Agar.io — Complete Shop Replica</title>
   <style>
-    /* (zelfde CSS als in je vorige kaart) */
-    body { font-family: Inter, Arial; background: #fff; padding: 24px; color: #222; }
-    .panel { max-width: 980px; margin: 0 auto; }
-    .header { font-size: 28px; margin-bottom: 12px; }
-    .uid-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
-    .uid-row input { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; }
+    :root{--orange:#f08b2d;--bg:#ffffff;--muted:#f6f6f6;--text:#222}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial; background:var(--bg); color:var(--text); margin:0;padding:20px}
+    .container{max-width:1200px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    h1{font-size:22px;margin:0}
+    .top-controls{display:flex;gap:8px;align-items:center}
+    input[type=text]{padding:10px;border:1px solid #ddd;border-radius:6px}
+    button{background:var(--orange);color:#fff;border:none;padding:10px 12px;border-radius:8px;cursor:pointer}
 
-    .offer-card { border-radius: 6px; padding: 14px; }
-    .offer-title { font-size: 26px; display: flex; justify-content: space-between; align-items: center; }
-    .offer-title .price { font-size: 22px; font-weight: 700; }
+    /* Sections */
+    .section{margin-top:18px}
+    .section h2{font-size:18px;margin:0 0 10px}
+    .carousel{display:flex;gap:12px;overflow:auto;padding-bottom:6px}
+    .offer{min-width:360px;border-radius:10px;background:#fff;border:1px solid #e7e7e7;box-shadow:0 2px 6px rgba(0,0,0,0.03);padding:12px;flex:0 0 auto}
 
-    .offer-visual { background: #f28d2b; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 14px; position: relative; }
-    .coins-area { flex: 0 0 58%; display: flex; align-items: center; gap: 14px; }
-    .coins-stack { width: 220px; height: 120px; background-size: contain; background-repeat: no-repeat; background-image: url('…'); }
-    .coin-bubble { background: #fff; padding: 8px 12px; border-radius: 22px; font-weight: 700; }
+    .offer .visual{border-radius:8px;padding:14px;background:linear-gradient(180deg,#f7b57a,#f28d2b);color:#fff;display:flex;align-items:center;gap:12px}
+    .coins{flex:1}
+    .coins .coins-amount{font-weight:800;font-size:20px}
+    .skins-mini{display:flex;gap:8px}
+    .skin-thumb{width:64px;height:64px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,0.25);background:#fff;display:flex;align-items:center;justify-content:center}
+    .skin-thumb img{width:60px;height:60px;object-fit:cover}
 
-    .plus { font-size: 64px; font-weight: 700; color: #ffd77a; }
+    .offer .meta{margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+    .offer .meta .title{font-weight:700}
+    .offer .meta .price{font-weight:800}
 
-    .skins-circle { flex: 0 0 120px; display: flex; gap: 8px; }
-    .skin-circle { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; border: 4px solid rgba(255,255,255,0.4); background: #fff; display: flex; align-items: center; justify-content: center; }
-    .skin-circle img { width: 80px; height: 80px; object-fit: cover; }
+    .offer .info{font-size:13px;color:#444;margin-top:8px}
 
-    .buy-btn-overlay { position: absolute; left: 18px; bottom: 18px; background: #ff7f24; border-radius: 30px; padding: 8px 14px; color: #fff; border: none; cursor: pointer; font-weight:700; }
+    /* Preview modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:9999}
+    .modal .card{background:#fff;padding:18px;border-radius:10px;width:420px;max-width:95%}
+    .modal img{width:240px;height:240px;object-fit:contain;background:#f6f6f6;border-radius:8px;display:block;margin:0 auto}
+    .modal .row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 
-    .offer-info { background: #fff; border: 1px solid #e6e6e6; border-radius: 6px; padding: 10px; margin-top: 10px; }
+    /* small */
+    .tiny{font-size:13px;color:#666}
 
-    .controls { margin-top: 12px; display: flex; gap: 8px; }
-    .controls select, .controls input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-
-    .note { margin-top: 12px; background: #fff3d9; border-left: 4px solid #e6c08b; padding: 12px; border-radius: 4px; }
+    @media (max-width:760px){ .offer{min-width:300px} .skin-thumb{width:56px;height:56px} }
   </style>
 </head>
 <body>
-  <div class="panel">
-    <div class="header">Special Deals</div>
-
-    <div class="uid-row">
-      <input id="encodedUid" type="text" placeholder="Encoded UID" />
-    </div>
-
-    <div class="offer-card">
-      <div class="offer-title">
-        <div class="title-left">Special Skin Pack</div>
-        <div class="price" id="offerPrice">$5</div>
+  <div class="container">
+    <header>
+      <h1>Agar.io — Shop (Replica)</h1>
+      <div class="top-controls">
+        <input id="encodedUid" type="text" placeholder="Voer je Encoded UID in (verplicht voor kopen)" />
+        <button id="reloadBtn">Laad config</button>
       </div>
+    </header>
 
-      <div class="offer-visual">
-        <div class="coins-area">
-          <div style="flex:1">
-            <div class="coins-stack" id="coinsImg"></div>
-          </div>
-          <div>
-            <div class="coin-bubble" id="coinBubble">—</div>
-          </div>
-          <div class="plus">+</div>
-          <div class="skins-circle">
-            <div class="skin-circle"><img id="skin1" src="" /></div>
-          </div>
-        </div>
-        <button class="buy-btn-overlay" id="buyOverlayBtn">Buy</button>
-      </div>
+    <div id="status" class="tiny">Loaded: waiting...</div>
 
-      <div class="offer-info" id="offerInfoText">special_skin = 5 $</div>
+    <!-- Sections will be injected here -->
+    <div id="sections"></div>
+  </div>
 
-      <div class="controls">
-        <select id="currencySelect"><option>USD</option><option>EUR</option></select>
-      </div>
-
-      <div class="note">
-        Om te kopen, moet je je echte speler-UID invullen.<br>
-        Encoded UID: <span id="uidPreview" style="font-family:monospace;color:#0b6">(enter UID)</span>
+  <!-- Preview modal (click thumbnail to open) -->
+  <div id="previewModal" class="modal">
+    <div class="card">
+      <button id="closePreview" style="float:right;background:#eee;border:none;padding:6px 8px;border-radius:6px;cursor:pointer">Close</button>
+      <img id="previewImg" src="" alt="preview" />
+      <div id="previewTitle" style="text-align:center;font-weight:800;margin-top:8px"></div>
+      <div id="previewName" style="text-align:center;color:#666;margin-top:4px"></div>
+      <div class="row">
+        <div id="previewPrice" style="font-weight:900;font-size:18px"></div>
+        <button id="previewBuy" style="background:var(--orange);color:#fff;border:none;padding:10px 12px;border-radius:8px;cursor:pointer">Buy</button>
       </div>
     </div>
   </div>
 
   <script>
-    const XSOLLA_BASE = 'https://secure.xsolla.com/paystation3/desktop/list/';
-    const XSOLLA_PARAMS = {
-      access_token: 'ryolptUISLKE3SmWGBP9MQ05xHBvub5j_lc_en',
+    const CONFIG_URL_FIELD = 'https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json';
+    const IMAGE_BASE = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
+
+    // XSolla base settings (you provided earlier)
+    const XS_BASE = 'https://secure.xsolla.com/paystation3/desktop/list/';
+    const XS_PARAMS = {
+      access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
       preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
       sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--'
     };
 
-    // Jouw skin gegevens
-    const mySkin = {
-      id: 'skin_voidmaster',   // pas dit aan naar de juiste skin-id
-      price: 5,
-      xsollaItemId: 'skin_voidmaster_5usd',
-      imageUrl: 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/skin_voidmaster.png',
-      name: 'Voidmaster'
-    };
+    // Utils
+    function toXsollaId(s){ return (s||'').toString().toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,''); }
+    function skinImg(id){ return IMAGE_BASE + encodeURIComponent(id) + '.png'; }
 
-    // UI invul
-    document.getElementById('skin1').src = mySkin.imageUrl;
-    document.getElementById('offerPrice').textContent = mySkin.price + ' $';
-    document.getElementById('offerInfoText').textContent = `${mySkin.id} = ${mySkin.price} $`;
+    // Fetch config and build shop
+    async function buildShop(url){
+      const status = document.getElementById('status');
+      status.textContent = 'Laden config...';
+      try{
+        const r = await fetch(url);
+        if(!r.ok) throw new Error('Fetch error: '+r.status);
+        const json = await r.json();
 
-    document.getElementById('buyOverlayBtn').addEventListener('click', () => {
-      const uid = document.getElementById('encodedUid').value.trim();
-      if (!uid) {
-        alert('Voer eerst je Encoded UID in.');
-        return;
+        // Heuristics: gather offers and coin packs
+        const offers = json.shop?.offers || json.wallet?.offers || json.offers || [];
+        const sections = [];
+
+        // Separate into categories: Promo/Season/Bundles/CoinPacks
+        const promo = offers.filter(o => (o.productFamily || '').toLowerCase().includes('promo') || (o.family||'').toLowerCase().includes('promo') );
+        const season = offers.filter(o => (o.productFamily || '').toLowerCase().includes('season') );
+        const coins = offers.filter(o => (o.bundleType || '').toLowerCase().includes('coins') || /coin/i.test(o.bundleId || o.id || o.name || ''));
+        const others = offers.filter(o => !promo.includes(o) && !season.includes(o) && !coins.includes(o));
+
+        // Build section list with fallbacks
+        if(coins.length) sections.push({title:'Coin packs', items:coins});
+        if(promo.length) sections.push({title:'Promotion packs', items:promo});
+        if(season.length) sections.push({title:'Season packs', items:season});
+        if(others.length) sections.push({title:'Other offers', items:others});
+
+        // Render sections
+        const container = document.getElementById('sections');
+        container.innerHTML = '';
+
+        sections.forEach(sec => {
+          const secEl = document.createElement('div'); secEl.className='section';
+          const h = document.createElement('h2'); h.textContent = sec.title; secEl.appendChild(h);
+          const car = document.createElement('div'); car.className='carousel';
+
+          sec.items.forEach(item => {
+            const el = renderOfferCard(item);
+            car.appendChild(el);
+          });
+
+          secEl.appendChild(car);
+          container.appendChild(secEl);
+        });
+
+        status.textContent = 'Shop geladen — secties: ' + sections.length;
+      }catch(err){
+        status.textContent = 'Fout bij laden: ' + err.message;
+        console.error(err);
       }
-      const params = new URLSearchParams(XSOLLA_PARAMS);
+    }
+
+    // Render one offer card (visual similar to screenshot)
+    function renderOfferCard(offer){
+      const wrapper = document.createElement('div'); wrapper.className='offer';
+
+      // Determine displayed fields
+      const bundleId = offer.bundleId || offer.id || offer.sku || offer.name || 'offer';
+      const price = offer.currencyAmount || offer.price || offer.currencyCost || offer.cost || null;
+      const coins = offer.coins || offer.coinAmount || offer.currencyAmountCoins || offer.coinsAmount || offer.amount || null;
+      const items = offer.items || offer.contents || offer.skus || offer.skins || offer.itemsInOffer || [];
+
+      // Visual
+      const visual = document.createElement('div'); visual.className='visual';
+      const coinsDiv = document.createElement('div'); coinsDiv.className='coins';
+      const coinsAmt = document.createElement('div'); coinsAmt.className='coins-amount'; coinsAmt.textContent = coins ? (coins + ' C') : '';
+      coinsDiv.appendChild(coinsAmt);
+
+      const skinsMini = document.createElement('div'); skinsMini.className='skins-mini';
+
+      // pick up to 3 thumbnail ids
+      const thumbIds = (items.length?items:[]).slice(0,3).map(i => (i.id||i.bundleId||i.sku||i).toString());
+      if(thumbIds.length===0){
+        // try search inside offer for skin-like references
+        const txt = JSON.stringify(offer);
+        const m = txt.match(/skin_[a-z0-9_]+/gi) || [];
+        for(const mm of m.slice(0,3)) thumbIds.push(mm);
+      }
+
+      if(thumbIds.length===0){
+        // fallback placeholder
+        thumbIds.push('skin_king_lion');
+      }
+
+      thumbIds.forEach(id => {
+        const thumb = document.createElement('div'); thumb.className='skin-thumb';
+        const img = document.createElement('img'); img.src = skinImg(id);
+        img.onerror = function(){ this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect width="100%" height="100%" fill="%23eee"/></svg>' };
+        thumb.appendChild(img);
+        skinsMini.appendChild(thumb);
+
+        // click opens preview
+        thumb.addEventListener('click', e=>{ e.stopPropagation(); openPreview(id, offer, img.src); });
+      });
+
+      visual.appendChild(coinsDiv);
+      visual.appendChild(skinsMini);
+
+      // Buy overlay button mimicking screenshot
+      const buyBtn = document.createElement('button'); buyBtn.className='buy-btn-overlay'; buyBtn.textContent = price?('$'+price):'Buy';
+      buyBtn.addEventListener('click', e=>{ e.stopPropagation(); triggerBuy(offer); });
+      buyBtn.style.position='absolute'; buyBtn.style.right='14px'; buyBtn.style.bottom='14px';
+
+      wrapper.appendChild(visual);
+      wrapper.appendChild(buyBtn);
+
+      // meta row
+      const meta = document.createElement('div'); meta.className='meta';
+      const title = document.createElement('div'); title.className='title'; title.textContent = bundleId;
+      const pr = document.createElement('div'); pr.className='price'; pr.textContent = price?('$'+price):'';
+      meta.appendChild(title); meta.appendChild(pr);
+      wrapper.appendChild(meta);
+
+      // info
+      const info = document.createElement('div'); info.className='info';
+      info.textContent = offer.description || offer.localizedName || JSON.stringify(thumbIds.join(', ')).slice(0,120);
+      wrapper.appendChild(info);
+
+      return wrapper;
+    }
+
+    // Open preview modal for a skin
+    function openPreview(skinId, offer, imgSrc){
+      const modal = document.getElementById('previewModal');
+      document.getElementById('previewImg').src = imgSrc || skinImg(skinId);
+      document.getElementById('previewTitle').textContent = skinId;
+      document.getElementById('previewName').textContent = offer.localizedName || offer.name || '';
+      const price = offer.currencyAmount || offer.price || offer.currencyCost || offer.cost || null;
+      document.getElementById('previewPrice').textContent = price?('$'+price):'';
+      // store current offer in previewBuy dataset
+      const pb = document.getElementById('previewBuy'); pb.dataset.offerBundle = offer.bundleId || offer.id || offer.sku || '';
+      pb.dataset.offerPrice = price || '';
+      modal.style.display = 'flex';
+    }
+
+    document.getElementById('closePreview').addEventListener('click', ()=>{ document.getElementById('previewModal').style.display='none'; });
+
+    // Trigger buy: open XSolla with uid and item_id
+    function triggerBuy(offer){
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid){ alert('Voer eerst je Encoded UID in.'); return; }
+      const itemId = (offer.bundleId || offer.id || offer.sku || offer.name || '').toString();
+      const params = new URLSearchParams(XS_PARAMS);
       params.set('uid', uid);
       params.set('user_id', uid);
       params.set('user_external_id', uid);
-      params.set('item_id', mySkin.xsollaItemId);
-
-      const url = XSOLLA_BASE + '?' + params.toString();
+      params.set('item_id', toXsollaId(itemId));
+      const url = XS_BASE + '?' + params.toString();
       window.open(url, '_blank');
+    }
+
+    // preview buy button
+    document.getElementById('previewBuy').addEventListener('click', ()=>{
+      const bundle = document.getElementById('previewBuy').dataset.offerBundle;
+      // find offer by bundle id
+      // naive: we rely on last fetched json in closure; store if needed
+      // For simplicity, just construct params using bundle
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid){ alert('Voer eerst je Encoded UID in.'); return; }
+      const params = new URLSearchParams(XS_PARAMS);
+      params.set('uid', uid); params.set('user_id', uid); params.set('user_external_id', uid);
+      if(bundle) params.set('item_id', toXsollaId(bundle));
+      window.open(XS_BASE + '?' + params.toString(), '_blank');
     });
 
-    document.getElementById('encodedUid').addEventListener('input', (e) => {
-      document.getElementById('uidPreview').textContent = e.target.value || '(enter UID)';
-    });
+    // triggerBuy wrapper
+    function triggerBuyByBundle(bundleId){
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid){ alert('Voer eerst je Encoded UID in.'); return; }
+      const params = new URLSearchParams(XS_PARAMS);
+      params.set('uid', uid); params.set('user_id', uid); params.set('user_external_id', uid);
+      params.set('item_id', toXsollaId(bundleId));
+      window.open(XS_BASE + '?' + params.toString(), '_blank');
+    }
+
+    // initial load
+    document.getElementById('reloadBtn').addEventListener('click', ()=> buildShop(document.getElementById('reloadBtn').dataset.url || CONFIG_URL_FIELD));
+    buildShop(CONFIG_URL_FIELD);
   </script>
 </body>
 </html>
