@@ -3,181 +3,183 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Agar.io — Alle skins</title>
+  <title>Special Deals — Agar.io</title>
   <style>
-    :root{--accent:#f08b2d;--muted:#f6f6f6;--text:#222}
-    body{font-family:Inter,system-ui,Arial,sans-serif;background:#fff;color:var(--text);padding:24px}
-    .panel{max-width:1100px;margin:0 auto}
-    h1{font-size:28px;margin:0 0 12px}
-    .controls{display:flex;gap:8px;align-items:center;margin-bottom:12px}
-    input[type=text]{padding:10px;border:1px solid #ddd;border-radius:6px;flex:1}
-    button{background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer}
-    .skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:18px}
-    .skin{border:1px solid #e6e6e6;border-radius:8px;padding:10px;text-align:center;background:#fff}
-    .skin img{width:130px;height:130px;object-fit:contain;border-radius:6px;background:var(--muted)}
-    .skin .id{font-weight:600;margin-top:8px;font-size:13px}
-    .skin .name{font-size:13px;color:#666;margin-top:4px}
-    .price{margin-top:6px;font-weight:700}
-    .tiny{font-size:13px;color:#666}
-    .note{margin-top:12px;background:#fff3d9;border-left:4px solid #e6c08b;padding:10px;border-radius:6px}
+    body{font-family:Inter, Arial, Helvetica, sans-serif;background:#fff;margin:0;padding:24px;color:#222}
+    .panel{max-width:980px;margin:0 auto}
+    .header{font-size:28px;margin-bottom:12px}
+    .uid-row{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .uid-row input[type=text]{flex:1;padding:12px;border:1px solid #ddd;border-radius:4px;font-family:monospace}
+    .uid-row label{display:flex;gap:8px;align-items:center}
+
+    /* card like screenshot */
+    .offer-card{border-radius:6px;padding:14px}
+    .offer-title{font-size:26px;margin:8px 0 12px;display:flex;justify-content:space-between;align-items:center}
+    .offer-title .title-left{font-weight:700}
+    .offer-title .price{font-size:22px;font-weight:700}
+
+    .offer-visual{background:#f28d2b;border-radius:8px;padding:16px;display:flex;align-items:center;gap:14px}
+    .coins-area{flex:0 0 58%;display:flex;align-items:center;gap:14px}
+    .coins-stack{width:220px;height:120px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="120"></svg>');background-repeat:no-repeat;background-size:contain}
+    .coin-bubble{background:#fff;padding:8px 12px;border-radius:22px;font-weight:700}
+    .plus{font-size:64px;font-weight:700;color:#ffd77a}
+    .skins-circle{flex:0 0 120px;display:flex;gap:8px}
+    .skin-circle{width:84px;height:84px;border-radius:50%;overflow:hidden;border:4px solid rgba(255,255,255,0.4);background:#fff;display:flex;align-items:center;justify-content:center}
+    .skin-circle img{width:80px;height:80px;object-fit:cover}
+
+    .offer-info{background:#fff;border-radius:6px;border:1px solid #e6e6e6;padding:10px;margin-top:10px}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:14px}
+    select,input[type=text].small{padding:8px;border:1px solid #ddd;border-radius:4px}
+    .config-url{width:100%;padding:10px;border:1px solid #ddd;border-radius:4px}
+
+    .note{margin-top:12px;background:#fff3d9;border-left:4px solid #e6c08b;padding:12px;border-radius:4px}
+    .copy-link{color:#c62828;font-weight:700;cursor:pointer;margin-left:6px}
+
+    .buy-overlay{position:relative}
+    .buy-btn-overlay{position:absolute;left:18px;bottom:18px;background:#ff7f24;border-radius:30px;padding:8px 14px;color:#fff;border:none;cursor:pointer;font-weight:700}
+
+    /* responsive */
+    @media (max-width:760px){ .coins-area{flex-direction:column;align-items:flex-start} .skins-circle{justify-content:flex-start} }
   </style>
 </head>
 <body>
   <div class="panel">
-    <h1>Alle Agar.io skins</h1>
+    <div class="header">Special Deals</div>
 
-    <div class="controls">
-      <input id="encodedUid" type="text" placeholder="Voer je Encoded UID in (verplicht voor kopen)" />
-      <input id="configUrl" type="text" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" style="width:520px" />
-      <button id="loadBtn">Laad skins</button>
+    <div class="uid-row">
+      <input id="encodedUid" type="text" placeholder="Encoded UID" />
+      <label><input id="friendEncoded" type="checkbox" /> Friend Encoded uid</label>
     </div>
 
-    <div class="tiny">Images path wordt opgebouwd als:<br><code>https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/&lt;skin_id&gt;.png</code></div>
+    <div class="offer-card">
+      <div class="offer-title">
+        <div class="title-left" id="offerName">Promotionpack15 <span style="font-weight:400;font-size:14px">(click on the orange icon to buy)</span></div>
+        <div class="price" id="offerPrice">19.99 $</div>
+      </div>
 
-    <div id="status" class="tiny" style="margin-top:10px"></div>
+      <div class="buy-overlay">
+        <div class="offer-visual" id="offerVisual">
+          <div class="coins-area">
+            <div style="flex:1">
+              <div class="coins-stack" id="coinsImg" style="background-image:url('/');background-size:contain;background-position:center"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+              <div class="coin-bubble" id="coinBubble">50000 C</div>
+            </div>
+            <div class="plus">+</div>
+            <div class="skins-circle" id="skinsCircle">
+              <div class="skin-circle"><img id="skin1" src="" alt="skin" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect width=\'100%\' height=\'100%\' fill=\'%23eee\'/></svg>'"/></div>
+              <div class="skin-circle"><img id="skin2" src="" alt="skin" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'><rect width=\'100%\' height=\'100%\' fill=\'%23eee\'/></svg>'"/></div>
+            </div>
+          </div>
 
-    <div id="skinsContainer" class="skin-grid"></div>
+        </div>
+        <button class="buy-btn-overlay" id="buyOverlayBtn">Buy</button>
+      </div>
 
-    <div class="note">Tip: vul je UID in voordat je op Buy klikt. Kooptaken sturen UID, uid, user_external_id mee naar XSolla.</div>
+      <div class="offer-info" id="offerInfoText">50000_coins_1_skin_king_lion_1_skin_magic_hat = 19.99 $</div>
+
+      <div class="controls">
+        <select id="currencySelect"><option>USD</option><option>EUR</option></select>
+        <div style="flex:1"><input id="librarySelect" class="small" type="text" placeholder="For some payment methods" /></div>
+      </div>
+
+      <div style="margin-top:12px"><input id="configField" class="config-url" type="text" value="https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json" /></div>
+
+      <div class="note">
+        To make purchases, you must be logged in to your account…<br>
+        Encoded UID: <span id="uidPreview" style="font-family:monospace;color:#0b6">(enter UID)</span>
+        <span class="copy-link" id="copyLink">COPY.</span>
+      </div>
+    </div>
   </div>
 
   <script>
-    // Helper: deep scan for skin objects
-    function findSkins(root){
-      const found = [];
-      function walk(node){
-        if(!node) return;
-        if(Array.isArray(node)) return node.forEach(walk);
-        if(typeof node === 'object'){
-          const type = node.type || '';
-          const family = node.productFamily || '';
-          const id = node.id || node.bundleId || node.sku;
-          // heuristics: it is a skin object if type === 'skin' OR productFamily contains 'skin' OR id startsWith 'skin_'
-          if((type && type.toLowerCase()==='skin') || /skin/i.test(family) || (typeof id === 'string' && /^skin_/i.test(id))){
-            // collect relevant fields
-            const entry = {
-              id: id || (node.localizedName || '').toString(),
-              localizedName: node.localizedName || node.name || '',
-              productFamily: family,
-              price: node.currencyAmount || node.currencyCost || node.currency_price || node.originalPrice || node.cost || null,
-              img: node.imageUrl || node.img || node.url || ''
-            };
-            found.push(entry);
-          }
-          Object.values(node).forEach(walk);
-        }
-      }
-      walk(root);
-      // deduplicate by id
-      const map = new Map();
-      found.forEach(f => { if(f.id) map.set(f.id, Object.assign({}, map.get(f.id)||{}, f)) });
-      return Array.from(map.values());
-    }
+    // Base XSolla link values (from you)
+    const XSOLLA_BASE = 'https://secure.xsolla.com/paystation3/desktop/list/';
+    const XSOLLA_PARAMS = {
+      access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
+      preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
+      sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--'
+    };
 
-    function toXsollaItemId(skinId){
-      // convert Miniclip skin id to safe xsolla id
-      return skinId.toString().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g,'');
-    }
-
-    function imageForSkin(skinId, explicit){
-      if(explicit && explicit.startsWith('http')) return {primary: explicit, alts: []};
-      const primary = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/' + encodeURIComponent(skinId) + '.png';
-      const alts = [
-        'https://configs-web.agario.miniclippt.com/live/v15/10850/skins/' + encodeURIComponent(skinId) + '.png',
-        'https://assets-agario.miniclippt.com/skins/' + encodeURIComponent(skinId) + '.png',
-        'https://agar.io/skins/' + encodeURIComponent(skinId) + '.png'
-      ];
-      return { primary, alts };
-    }(skinId) + '.png';
-    }
-
-    async function loadConfig(url){
-      const status = document.getElementById('status');
-      status.textContent = 'Laden...';
+    // Helper: fetch config and pick a default offer (promotionpack like)
+    async function loadDefaultOffer(configUrl){
       try{
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('Fetch error ' + res.status);
-        const data = await res.json();
-        const skins = findSkins(data);
-        status.textContent = `Gevonden ${skins.length} skins (bron: config)`;
-        return skins;
+        const r = await fetch(configUrl);
+        if(!r.ok) throw new Error(r.status);
+        const json = await r.json();
+
+        // Heuristic: look for offers / bundles
+        const offers = json.shop?.offers || json.wallet?.offers || json.offers || [];
+        // pick first that has price or coin bundle
+        let offer = null;
+        for(const o of offers){
+          if(o.currencyAmount || o.bundleId || o.name || o.displayName) { offer = o; break; }
+        }
+        if(!offer){
+          // fallback create a mock offer
+          offer = { bundleId: 'promotionpack15', currencyAmount: 19.99, coins:50000, items:['skin_king_lion','skin_magic_hat'] };
+        }
+
+        // Fill UI
+        document.getElementById('offerName').textContent = (offer.bundleId || offer.name || 'Promotionpack15') + ' '; 
+        document.getElementById('offerPrice').textContent = (offer.currencyAmount || offer.price || 19.99) + ' $';
+        document.getElementById('coinBubble').textContent = ((offer.coins || offer.currencyAmountCoins || 50000) + ' C');
+
+        const items = offer.items || offer.skus || offer.contents || [];
+        const img1 = items[0] || 'skin_king_lion';
+        const img2 = items[1] || 'skin_magic_hat';
+
+        // Build image URLs using assumed path
+        const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
+        document.getElementById('skin1').src = base + encodeURIComponent(img1) + '.png';
+        document.getElementById('skin2').src = base + encodeURIComponent(img2) + '.png';
+
+        // info text
+        const infoText = `${offer.coins || 50000}_coins_` + items.join('_') + ' = ' + (offer.currencyAmount || offer.price || 19.99) + ' $';
+        document.getElementById('offerInfoText').textContent = infoText;
       }catch(err){
-        status.innerHTML = '<span style="color:#b00020">Fout bij laden: '+err.message+'</span>';
-        return [];
+        console.warn('Config load failed', err);
       }
     }
 
-    function renderAll(skins){
-      const container = document.getElementById('skinsContainer');
-      container.innerHTML = '';
-      skins.forEach(s => {
-        const id = s.id || 'unknown';
-        const xsollaId = toXsollaItemId(id);
-        const imgSet = imageForSkin(id, s.img);(id, s.img);
-
-        const card = document.createElement('div'); card.className='skin';
-        const img = document.createElement('img'); img.src = imgSet.primary; img.alt = id;
-        img.onerror = function(){ const next = imgSet.alts.shift(); if(next){ img.src = next; return;} img.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>'}; img.alt = id;
-        img.onerror = function(){ this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>' };
-
-        const title = document.createElement('div'); title.className='id'; title.textContent = id;
-        const name = document.createElement('div'); name.className='name'; name.textContent = s.localizedName || '';
-        const price = document.createElement('div'); price.className='price'; price.textContent = s.price ? ('$' + s.price) : '';
-
-        const btn = document.createElement('button'); btn.className='buy-btn'; btn.textContent = 'Buy';
-        btn.style.marginTop = '8px';
-        btn.onclick = function(){
-          const uid = document.getElementById('encodedUid').value.trim();
-          if(!uid){ alert('Voer eerst je Encoded UID in.'); return; }
-          // Build XSolla link with all UID params
-          const base = 'https://secure.xsolla.com/paystation3/desktop/list/';
-          const params = new URLSearchParams({
-            access_token: 'ryol6nje1VCMIVwX232Zi4YsTToU8wim_lc_en',
-            preferences: 'eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-',
-            sessional: 'eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV1dfQ--',
-            uid: uid,
-            user_id: uid,
-            user_external_id: uid,
-            item_id: xsollaId
-          });
-          const url = base + '?' + params.toString();
-          // open in new tab so the shop stays available
-          window.open(url, '_blank');
-        };
-
-        card.appendChild(img);
-        card.appendChild(title);
-        card.appendChild(name);
-        if(s.price) card.appendChild(price);
-        card.appendChild(btn);
-        card.addEventListener('click', function(e){ if(e.target.classList.contains('buy-btn')) return; document.getElementById('previewImg').src = imgUrl; document.getElementById('previewId').textContent = id; document.getElementById('previewName').textContent = s.localizedName || ''; document.getElementById('previewPrice').textContent = s.price ? ('$' + s.price) : 'Geen prijs'; document.getElementById('previewModal').style.display='flex'; }); container.appendChild(card);
-      });
+    // Build XSolla checkout URL with multiple uid params
+    function buildXsollaUrl(uid, itemId){
+      const p = new URLSearchParams(XSOLLA_PARAMS);
+      p.set('uid', uid);
+      p.set('user_id', uid);
+      p.set('user_external_id', uid);
+      if(itemId) p.set('item_id', itemId);
+      return XSOLLA_BASE + '?' + p.toString();
     }
 
-    document.getElementById('loadBtn').addEventListener('click', async ()=>{
-      const url = document.getElementById('configUrl').value.trim();
-      const skins = await loadConfig(url);
-      renderAll(skins);
+    // events
+    document.getElementById('buyOverlayBtn').addEventListener('click', ()=>{
+      const uid = document.getElementById('encodedUid').value.trim();
+      if(!uid) return alert('Voer eerst je Encoded UID in.');
+      // item id use offer bundleId
+      const itemId = document.getElementById('offerName').textContent.trim().split(' ')[0];
+      const url = buildXsollaUrl(uid, itemId);
+      window.open(url, '_blank');
     });
 
-    // Auto-load on page open
-    (async ()=>{
-      const url = document.getElementById('configUrl').value;
-      const skins = await loadConfig(url);
-      renderAll(skins);
-    })();
-  document.getElementById('closePreview').onclick = () => { document.getElementById('previewModal').style.display='none'; };
+    document.getElementById('copyLink').addEventListener('click', ()=>{
+      const txt = document.getElementById('configField').value;
+      navigator.clipboard.writeText(txt).then(()=>{ alert('Link gekopieerd'); });
+    });
 
-</script>
-  <div id="previewModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:9999;">
-    <div style="background:#fff;padding:20px;border-radius:10px;max-width:420px;width:90%;text-align:center;position:relative;">
-      <button id="closePreview" style="position:absolute;top:10px;right:10px;border:none;background:#eee;padding:6px 10px;border-radius:6px;cursor:pointer">X</button>
-      <img id="previewImg" src="" style="width:200px;height:200px;object-fit:contain;background:#f3f3f3;border-radius:8px" />
-      <div id="previewId" style="margin-top:10px;font-weight:700;font-size:16px"></div>
-      <div id="previewName" style="margin-top:4px;color:#555"></div>
-      <div id="previewPrice" style="margin-top:8px;font-size:18px;font-weight:800;color:#000"></div>
-    </div>
-  </div>
+    document.getElementById('encodedUid').addEventListener('input', (e)=>{
+      document.getElementById('uidPreview').textContent = e.target.value || '(enter UID)';
+    });
 
+    document.getElementById('loadBtn').addEventListener('click', ()=>{
+      const url = document.getElementById('configField').value.trim() || document.getElementById('configUrl').value.trim();
+      loadDefaultOffer(url);
+    });
+
+    // auto load
+    loadDefaultOffer(document.getElementById('configUrl').value);
+  </script>
 </body>
 </html>
