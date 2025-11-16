@@ -150,7 +150,7 @@
         card.appendChild(name);
         if(s.price) card.appendChild(price);
         card.appendChild(btn);
-        container.appendChild(card);
+        card.addEventListener('click', function(e){ if(e.target.classList.contains('buy-btn')) return; document.getElementById('previewImg').src = imgUrl; document.getElementById('previewId').textContent = id; document.getElementById('previewName').textContent = s.localizedName || ''; document.getElementById('previewPrice').textContent = s.price ? ('$' + s.price) : 'Geen prijs'; document.getElementById('previewModal').style.display='flex'; }); container.appendChild(card);
       });
     }
 
@@ -166,6 +166,18 @@
       const skins = await loadConfig(url);
       renderAll(skins);
     })();
-  </script>
+  document.getElementById('closePreview').onclick = () => { document.getElementById('previewModal').style.display='none'; };
+
+</script>
+  <div id="previewModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:9999;">
+    <div style="background:#fff;padding:20px;border-radius:10px;max-width:420px;width:90%;text-align:center;position:relative;">
+      <button id="closePreview" style="position:absolute;top:10px;right:10px;border:none;background:#eee;padding:6px 10px;border-radius:6px;cursor:pointer">X</button>
+      <img id="previewImg" src="" style="width:200px;height:200px;object-fit:contain;background:#f3f3f3;border-radius:8px" />
+      <div id="previewId" style="margin-top:10px;font-weight:700;font-size:16px"></div>
+      <div id="previewName" style="margin-top:4px;color:#555"></div>
+      <div id="previewPrice" style="margin-top:8px;font-size:18px;font-weight:800;color:#000"></div>
+    </div>
+  </div>
+
 </body>
 </html>
