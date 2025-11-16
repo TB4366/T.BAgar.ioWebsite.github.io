@@ -59,7 +59,7 @@
               id: id || (node.localizedName || '').toString(),
               localizedName: node.localizedName || node.name || '',
               productFamily: family,
-              price: node.currencyAmount || node.currencyCost || node.price || node.amount || null,
+              price: node.currencyAmount || node.currencyCost || node.currency_price || node.originalPrice || node.cost || null,
               img: node.imageUrl || node.img || node.url || ''
             };
             found.push(entry);
@@ -80,26 +80,15 @@
     }
 
     function imageForSkin(skinId, explicit){
-      // Priority 1: explicit URL from config
-      if(explicit && explicit.startsWith('http')) return explicit;
-
-      // Build possible CDN paths
-      const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
-      const alt1 = 'https://configs-web.agario.miniclippt.com/live/v15/10850/skins/';
-      const alt2 = 'https://assets-agario.miniclippt.com/skins/';
-
-      return {
-        primary: base + encodeURIComponent(skinId) + '.png',
-        alternatives: [
-          alt1 + encodeURIComponent(skinId) + '.png',
-          alt2 + encodeURIComponent(skinId) + '.png'
-        ]
-      };
-    }(skinId, explicit){
-      // Build image URL according to path A
-      const base = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/';
-      if(explicit && explicit.startsWith('http')) return explicit;
-      return base + encodeURIComponent(skinId) + '.png';
+      if(explicit && explicit.startsWith('http')) return {primary: explicit, alts: []};
+      const primary = 'https://configs-web.agario.miniclippt.com/live/v15/10850/assets/skins/' + encodeURIComponent(skinId) + '.png';
+      const alts = [
+        'https://configs-web.agario.miniclippt.com/live/v15/10850/skins/' + encodeURIComponent(skinId) + '.png',
+        'https://assets-agario.miniclippt.com/skins/' + encodeURIComponent(skinId) + '.png',
+        'https://agar.io/skins/' + encodeURIComponent(skinId) + '.png'
+      ];
+      return { primary, alts };
+    }(skinId) + '.png';
     }
 
     async function loadConfig(url){
@@ -124,18 +113,11 @@
       skins.forEach(s => {
         const id = s.id || 'unknown';
         const xsollaId = toXsollaItemId(id);
-        const imgUrl = imageForSkin(id, s.img);
+        const imgSet = imageForSkin(id, s.img);(id, s.img);
 
         const card = document.createElement('div'); card.className='skin';
-        const img = document.createElement('img');
-        const imgSet = imageForSkin(id, s.img);
-        img.src = imgSet.primary;
-        img.alt = id;
-        img.onerror = function(){
-          const next = imgSet.alternatives.shift();
-          if(next){ img.src = next; return; }
-          img.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>';
-        } img.alt = id;
+        const img = document.createElement('img'); img.src = imgSet.primary; img.alt = id;
+        img.onerror = function(){ const next = imgSet.alts.shift(); if(next){ img.src = next; return;} img.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>'}; img.alt = id;
         img.onerror = function(){ this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="130" height="130"><rect width="130" height="130" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="%23666">No image</text></svg>' };
 
         const title = document.createElement('div'); title.className='id'; title.textContent = id;
