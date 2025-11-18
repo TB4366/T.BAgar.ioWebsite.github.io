@@ -2,127 +2,146 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
-  <title>Agar.io Shop</title>
+  <title>Agar.io Skin Shop</title>
   <style>
-    body {
-      font-family: Arial;
-      background: #f1f1f1;
-      padding: 20px;
-    }
-    .product {
-      background: white;
+    body { font-family: Arial; padding: 20px; }
+    .skinCard {
+      display: inline-block;
+      width: 160px;
+      border: 1px solid #444;
+      background: #f2f2f2;
+      padding: 10px;
+      margin: 6px;
       border-radius: 8px;
-      padding: 15px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
+      text-align: center;
     }
-    .product h3 { margin: 0 0 5px 0; }
-    #products { margin-top: 20px; }
+    .skinCard img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+    }
   </style>
 </head>
 <body>
 
-  <h1>Agar.io Shop</h1>
+  <h1>Agar.io Skin Shop</h1>
 
-  <label>Voer je Agar.io UID in:</label><br>
-  <input id="uidInput" type="text" placeholder="123456789" style="padding:5px;width:200px;">
-  <button onclick="saveUid()">Opslaan</button>
+  <label>Voer je Agar.io UID in:</label>
+  <input type="text" id="uid" placeholder="Bijv. 123456789" />
+  <button onclick="saveUID()">Sla UID op</button>
 
-  <h2>Producten</h2>
-  <div id="products">Laden…</div>
+  <hr>
+
+  <h2>Alle Skins</h2>
+  <div id="skins">Skins laden...</div>
 
 <script>
+
 const CONFIG_URL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
+const BASE_URL = CONFIG_URL.substring(0, CONFIG_URL.lastIndexOf("/") + 1);
 
-let agarUid = null;
-let configData = null;
+let USER_UID = null;
 
-// -------------------------------
-// 1. UID Opslaan
-// -------------------------------
-function saveUid() {
-  const uid = document.getElementById("uidInput").value.trim();
-
-  if (!uid) return alert("Voer een geldige UID in!");
-
-  agarUid = uid;
-  localStorage.setItem("agarUid", uid);
-
-  alert("UID opgeslagen!");
+function saveUID() {
+  const v = document.getElementById("uid").value.trim();
+  if (!v) return alert("UID is leeg.");
+  USER_UID = v;
+  localStorage.setItem("agar_uid", v);
+  alert("UID opgeslagen: " + v);
 }
 
-// -------------------------------
-// 2. Laden Agar.io Config
-// -------------------------------
-async function loadConfig() {
-  try {
-    const resp = await fetch(CONFIG_URL);
-    configData = await resp.json();
-    renderProducts();
-  } catch (e) {
-    document.getElementById("products").innerHTML = "Fout bij laden config!";
+window.onload = async () => {
+
+  // laad UID
+  const saved = localStorage.getItem("agar_uid");
+  if (saved) {
+    USER_UID = saved;
+    document.getElementById("uid").value = saved;
   }
+
+  // laad skins
+  try {
+    const r = await fetch(CONFIG_URL);
+    const data = await r.json();
+
+    // Zoek skins array in de JSON
+    const skins = findSkinsArray(data);
+
+    if (!skins) {
+      document.getElementById("skins").innerText = "Geen skin-sectie gevonden.";
+      return;
+    }
+
+    displaySkins(skins);
+  } 
+  catch (e) {
+    document.getElementById("skins").innerText = "Fout bij laden JSON.";
+    console.error(e);
+  }
+};
+
+// Automatische detectie van jouw skin-lijst
+function findSkinsArray(json) {
+  // 1. Zoek arrays met skinType == "premium"
+  function scan(obj) {
+    if (Array.isArray(obj)) {
+      if (obj.length > 3 && obj[0].productId && obj[0].image) return obj;
+    }
+    if (typeof obj === "object") {
+      for (let k in obj) {
+        let f = scan(obj[k]);
+        if (f) return f;
+      }
+    }
+    return null;
+  }
+  return scan(json);
 }
 
-// -------------------------------
-// 3. Producten tonen
-// -------------------------------
-function renderProducts() {
-  const container = document.getElementById("products");
+// Skins weergeven
+function displaySkins(skins) {
+  const container = document.getElementById("skins");
   container.innerHTML = "";
 
-  const store = configData?.monetization?.store;
-
-  if (!store) {
-    container.innerHTML = "Geen store data gevonden.";
-    return;
-  }
-
-  store.forEach(item => {
+  skins.forEach(skin => {
     const div = document.createElement("div");
-    div.className = "product";
+    div.className = "skinCard";
 
-    div.innerHTML = `
-      <h3>${item.title}</h3>
-      <p>${item.description || ""}</p>
-      <p><b>Prijs:</b> ${item.price.amount} ${item.price.currency}</p>
-      <button onclick='buy(${JSON.stringify(item)})'>Koop</button>
-    `;
+    // IMG
+    const img = document.createElement("img");
+    img.src = BASE_URL + skin.image;
+    div.appendChild(img);
+
+    // Titel
+    const title = document.createElement("p");
+    title.innerHTML = "<b>" + skin.productId + "</b>";
+    div.appendChild(title);
+
+    // Gameplay ID
+    const gid = document.createElement("p");
+    gid.innerText = "Gameplay ID: " + skin.gameplayId;
+    div.appendChild(gid);
+
+    // Koopknop
+    const btn = document.createElement("button");
+    btn.innerText = "Koop Skin";
+    btn.onclick = () => buySkin(skin);
+    div.appendChild(btn);
 
     container.appendChild(div);
   });
 }
 
-// -------------------------------
-// 4. Koop functie → Xsolla Widget
-// -------------------------------
-function buy(item) {
-  if (!agarUid) return alert("Voer eerst een UID in!");
+function buySkin(skin) {
+  if (!USER_UID) return alert("Voer eerst je UID in!");
 
-  // In echt scenario moet hier een server-token komen
-  const fakeXsollaToken = "DEMO_TOKEN_HIER";
+  alert("Skin kopen: " + skin.productId + "\nUID: " + USER_UID);
 
-  alert(
-    "Xsolla betaling starten voor item:\n" + 
-    item.title +
-    "\n\nLET OP: Je moet een backend token hebben voor echte betalingen."
-  );
-
-  // Hier zou je normaliter Xsolla Widget openen:
-  // XPayStationWidget.init({ access_token: fakeXsollaToken, ... })
+  // Hier plaats je later jouw Xsolla betaling
 }
 
-// -------------------------------
-// 5. UID uit localStorage zetten
-// -------------------------------
-window.onload = () => {
-  const stored = localStorage.getItem("agarUid");
-  if (stored) {
-    agarUid = stored;
-    document.getElementById("uidInput").value = stored;
-  }
-  loadConfig();
-};
 </script>
 
 </body>
