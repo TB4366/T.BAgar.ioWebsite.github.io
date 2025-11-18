@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Agar.io Shop + Xsolla</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .product { border: 1px solid #333; padding: 10px; margin: 10px 0; }
+    .product h3 { margin: 0 0 5px; }
+    .product button { margin-top: 5px; }
+  </style>
 </head>
 <body>
   <h1>Agar.io Shop</h1>
@@ -16,33 +22,16 @@
   <hr />
 
   <div id="productsContainer">
-    <!-- Producten komen hier -->
     <p>Producten laden…</p>
   </div>
 
   <script>
-    // De config URL die je gaf
     const configUrl = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
 
-    // Globale variabelen
     let agarUid = null;
     let config = null;
 
-    // Stap 1: laad config
-    async function loadConfig() {
-      try {
-        const resp = await fetch(configUrl);
-        if (!resp.ok) throw new Error("Kan config niet laden");
-        config = await resp.json();
-        console.log("Config geladen:", config);
-        renderProducts();
-      } catch (err) {
-        console.error("Error bij laden config:", err);
-        document.getElementById("productsContainer").innerText = "Fout bij laden producten.";
-      }
-    }
-
-    // Stap 2: sla UID op
+    // Sla UID op in localStorage en variabele
     document.getElementById("saveUidBtn").addEventListener("click", () => {
       const input = document.getElementById("agarUid").value.trim();
       if (!input) {
@@ -50,103 +39,11 @@
         return;
       }
       agarUid = input;
-      alert("UID opgeslagen: " + agarUid);
-      // Optioneel: sla in localStorage
       localStorage.setItem("agarUid", agarUid);
+      alert("UID opgeslagen: " + agarUid);
     });
 
-    // Stap 3: render producten op basis van config
-    function renderProducts() {
-      if (!config) return;
-
-      const container = document.getElementById("productsContainer");
-      container.innerHTML = ""; // leeg eerst
-
-      // Stel: in config heb je iets als config.items of config.store
-      // Hier moet je aanpassen op basis van hoe jouw GameConfiguration.json is opgebouwd
-      const items = config.items || config.storeItems || config.shopItems;
-      if (!items || !Array.isArray(items)) {
-        container.innerText = "Geen producten gevonden in config.";
-        return;
-      }
-
-      items.forEach(item => {
-        // We nemen aan dat elk item een id, naam en prijs heeft in config
-        const div = document.createElement("div");
-        div.style.border = "1px solid #333";
-        div.style.padding = "10px";
-        div.style.margin = "5px";
-
-        const name = document.createElement("h3");
-        name.innerText = item.name || ("Product " + item.id);
-
-        const desc = document.createElement("p");
-        desc.innerText = item.description || "";
-
-        const price = document.createElement("p");
-        price.innerText = "Prijs: " + (item.price ? item.price : "n.v.t.");
-
-        const buyBtn = document.createElement("button");
-        buyBtn.innerText = "Koop";
-        buyBtn.addEventListener("click", () => {
-          if (!agarUid) {
-            alert("Voer eerst je Agar.io UID in!");
-            return;
-          }
-          openXsollaPayment(item);
-        });
-
-        div.appendChild(name);
-        div.appendChild(desc);
-        div.appendChild(price);
-        div.appendChild(buyBtn);
-
-        container.appendChild(div);
-      });
-    }
-
-    // Stap 4: Xsolla integratie - open Pay Station
-    function openXsollaPayment(item) {
-      // Hier moet je van je backend een token opvragen dat je Xsolla gebruikt
-      // Bijvoorbeeld: via fetch("/create_xsolla_token", { method: "POST", body: JSON.stringify({ agarUid, itemId: item.id }) })
-      // Voor demo doen we alsof we de token al hebben:
-      const accessToken = "JE_ACCESS_TOKEN_VAN_BACKEND";
-
-      // Laad het Xsolla-widget script asynchroon
-      const s = document.createElement("script");
-      s.type = "text/javascript";
-      s.async = true;
-      s.src = "https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js";
-      s.addEventListener("load", () => {
-        XPayStationWidget.init({
-          access_token: accessToken,
-          sandbox: true, // zet false als je live bent
-          settings: {
-            user: {
-              id: {
-                value: agarUid,
-                hidden: true
-              }
-            },
-            purchase: {
-              virtual_currency: {
-                // of purchase.checkout, afhankelijk hoe je Xsolla hebt ingesteld
-                // Hieronder een voorbeeld met checkout
-                checkout: {
-                  external_id: item.id.toString()
-                }
-              }
-            }
-          }
-        });
-
-        // Open widget
-        XPayStationWidget.open();
-      });
-      document.getElementsByTagName("head")[0].appendChild(s);
-    }
-
-    // Bij het laden van de pagina: check of we al een UID in localStorage hebben
+    // Check localStorage bij laden pagina
     window.addEventListener("load", () => {
       const stored = localStorage.getItem("agarUid");
       if (stored) {
@@ -155,6 +52,146 @@
       }
       loadConfig();
     });
+
+    // Laad de config
+    async function loadConfig() {
+      try {
+        const resp = await fetch(configUrl);
+        if (!resp.ok) throw new Error("Kon config niet laden: " + resp.status);
+        config = await resp.json();
+        console.log("Config geladen:", config);
+        renderProducts();
+      } catch (err) {
+        console.error("Error bij laden config:", err);
+        const container = document.getElementById("productsContainer");
+        container.innerText = "Fout bij laden producten.";
+      }
+    }
+
+    // Render producten op basis van config
+    function renderProducts() {
+      const container = document.getElementById("productsContainer");
+      container.innerHTML = "";
+
+      // Zoek mogelijke aanbiedingen / pakketten in config
+      // Dit is generiek: kijk of er een waarde is op config.offers / config.storeOffers / config.shopOffers
+      const possibleOffers = config.offers || config.storeOffers || config.shopOffers || config.offersList;
+
+      if (!possibleOffers || !Array.isArray(possibleOffers)) {
+        container.innerText = "Geen aankooppakketten gevonden in config.";
+        return;
+      }
+
+      // Optioneel: virtuele valuta struct uitlezen
+      const currencies = config.virtualCurrencies || config.currencies;
+
+      possibleOffers.forEach(offer => {
+        const div = document.createElement("div");
+        div.className = "product";
+
+        // Titel / naam
+        const title = document.createElement("h3");
+        // Sommige offers hebben name, andere id
+        title.innerText = offer.name || ("Offer " + offer.id);
+        div.appendChild(title);
+
+        // Beschrijving (indien beschikbaar)
+        if (offer.description) {
+          const desc = document.createElement("p");
+          desc.innerText = offer.description;
+          div.appendChild(desc);
+        }
+
+        // Prijs (in euro of in echte valuta of virtuele valuta)
+        const priceP = document.createElement("p");
+        if (offer.price) {
+          // Als config price object is
+          if (typeof offer.price === "object") {
+            // bijv { currency: "USD", amount: 4.99 }
+            priceP.innerText = `Prijs: ${offer.price.amount} ${offer.price.currency}`;
+          } else {
+            priceP.innerText = `Prijs: ${offer.price}`;
+          }
+        } else if (offer.virtual_currency_amount && offer.virtual_currency_id) {
+          // Als het een virtuele valuta pakket is
+          const curr = currencies && currencies[offer.virtual_currency_id];
+          const currName = curr ? curr.name : offer.virtual_currency_id;
+          priceP.innerText = `Geeft ${offer.virtual_currency_amount} ${currName}`;
+        } else {
+          priceP.innerText = "Prijs onbekend";
+        }
+        div.appendChild(priceP);
+
+        // Koop-knop
+        const buyBtn = document.createElement("button");
+        buyBtn.innerText = "Koop";
+        buyBtn.onclick = () => {
+          if (!agarUid) {
+            alert("Voer eerst je Agar.io UID in!");
+            return;
+          }
+          openXsollaPayment(offer);
+        };
+        div.appendChild(buyBtn);
+
+        container.appendChild(div);
+      });
+    }
+
+    // Open Xsolla widget met de offer en user-id
+    function openXsollaPayment(offer) {
+      // Vraag je backend om Xsolla access token
+      // Bijv:
+      // fetch("/create_xsolla_token", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ agarUid, offerId: offer.id })
+      // })
+      // .then(r => r.json())
+      // .then(data => {
+      //    const token = data.access_token;
+      //    startXsolla(token, offer);
+      // });
+
+      // Voor demo / placeholder:
+      const accessToken = "JE_BACKEND_TOKEN";
+
+      // Zorg dat widget niet meerdere keren ingeladen wordt
+      if (!window.XPayStationWidget) {
+        const s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://cdn.xsolla.net/payments-bucket-prod/embed/1.5.0/widget.min.js";
+        s.addEventListener("load", () => {
+          startXsolla(accessToken, offer);
+        });
+        document.head.appendChild(s);
+      } else {
+        startXsolla(accessToken, offer);
+      }
+    }
+
+    function startXsolla(token, offer) {
+      XPayStationWidget.init({
+        access_token: token,
+        sandbox: true, // false als live
+        settings: {
+          user: {
+            id: {
+              value: agarUid,
+              hidden: true
+            }
+          },
+          purchase: {
+            checkout: {
+              external_id: offer.id.toString(),
+              // je kan meer properties meegeven als je backend dat ondersteunt
+            }
+          }
+        }
+      });
+      XPayStationWidget.open();
+    }
   </script>
 </body>
 </html>
