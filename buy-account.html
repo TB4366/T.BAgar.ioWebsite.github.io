@@ -1,131 +1,53 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>Agar.io Skin Shop</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-    h1 { text-align: center; }
-    .product { border: 1px solid #333; background: #fff; padding: 10px; margin: 10px; display: inline-block; width: 200px; text-align: center; vertical-align: top; }
-    .product img { max-width: 100%; }
-    #productsContainer { text-align: center; }
-  </style>
+<meta charset="UTF-8">
+<title>Koop Skin</title>
 </head>
 <body>
-  <h1>Agar.io Skin Shop</h1>
+<h1>Kies je skin</h1>
+<div id="skins"></div>
 
-  <div>
-    <label for="agarUid">Voer je Agar.io UID in:</label>
-    <input type="text" id="agarUid" placeholder="Bijv. 12345678">
-    <button id="saveUidBtn">Sla UID op</button>
-  </div>
+<script>
+// Voorbeeld mapping: productId -> Xsolla PID
+const skinToXsollaPID = {
+    "skin_olympus_hades": 3175,
+    "skin_olympus_ares": 3176,
+    "skin_olympus_zeus": 3177,
+    "skin_nvr_zap": 3178,
+    "skin_nvr_silent_fox": 3179,
+    // Voeg hier al je skins en hun PIDs toe
+};
 
-  <hr>
+// Voorbeeld skins uit config
+const skins = [
+    {name: "Olympus Hades", productId: "skin_olympus_hades"},
+    {name: "Olympus Ares", productId: "skin_olympus_ares"},
+    {name: "Olympus Zeus", productId: "skin_olympus_zeus"},
+    {name: "NVR Zap", productId: "skin_nvr_zap"},
+    {name: "NVR Silent Fox", productId: "skin_nvr_silent_fox"},
+];
 
-  <div id="productsContainer">
-    <p>Producten laden…</p>
-  </div>
+const skinsContainer = document.getElementById("skins");
 
-  <script>
-    const configUrl = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
-    let agarUid = null;
-    let config = null;
-
-    // UID opslaan
-    document.getElementById("saveUidBtn").addEventListener("click", () => {
-      const input = document.getElementById("agarUid").value.trim();
-      if (!input) { alert("Voer een geldige UID in!"); return; }
-      agarUid = input;
-      localStorage.setItem("agarUid", agarUid);
-      alert("UID opgeslagen: " + agarUid);
-    });
-
-    // Config laden
-    async function loadConfig() {
-      try {
-        const resp = await fetch(configUrl);
-        if (!resp.ok) throw new Error("Kan config niet laden");
-        const data = await resp.json();
-        config = data.gameConfig || data;
-        renderProducts();
-      } catch(err) {
-        console.error(err);
-        document.getElementById("productsContainer").innerText = "Fout bij laden producten.";
-      }
-    }
-
-    function renderProducts() {
-      if (!config) return;
-      const container = document.getElementById("productsContainer");
-      container.innerHTML = "";
-
-      // Pak skins uit config: Default Settings - Custom Skins
-      const skins = [];
-      for (let key in config) {
-        if (Array.isArray(config[key])) {
-          config[key].forEach(item => {
-            if (item.image && item.productId) {
-              skins.push(item);
-            }
-          });
+// Voeg knoppen toe voor alle skins
+skins.forEach(skin => {
+    const btn = document.createElement("button");
+    btn.innerText = skin.name;
+    btn.onclick = () => {
+        const pid = skinToXsollaPID[skin.productId];
+        if(!pid) {
+            alert("Geen Xsolla PID gevonden voor deze skin!");
+            return;
         }
-      }
 
-      if (skins.length === 0) {
-        container.innerText = "Geen skins gevonden.";
-        return;
-      }
+        // Bouw dynamische Xsolla URL
+        const url = `https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolptUISLKE3SmWGBP9MQ05xHBvub5j_lc_en&additional=${btoa(JSON.stringify({pid: pid}))}&preferences=${btoa(JSON.stringify({itemProportions: []}))}&sessional=${btoa(JSON.stringify({history:[["savedmethod"],["list",true],["payment",true,{pid: pid}]]}))}`;
 
-      skins.forEach(skin => {
-        const div = document.createElement("div");
-        div.className = "product";
-
-        const img = document.createElement("img");
-        img.src = skin.image.startsWith("http") ? skin.image : `https://cdn.agario.miniclippt.com/skins/${skin.image}`;
-        div.appendChild(img);
-
-        const name = document.createElement("h4");
-        name.innerText = skin.productId;
-        div.appendChild(name);
-
-        const buyBtn = document.createElement("button");
-        buyBtn.innerText = "Koop";
-        buyBtn.addEventListener("click", () => {
-          if (!agarUid) { alert("Voer eerst je Agar.io UID in!"); return; }
-          openXsollaPayment(skin.productId);
-        });
-        div.appendChild(buyBtn);
-
-        container.appendChild(div);
-      });
-    }
-
-    function openXsollaPayment(productId) {
-      // Voorbeeld: gebruik backend om access_token en PID te genereren
-      // Hier demo met fake token en PID
-      const accessToken = "ryolptUISLKE3SmWGBP9MQ05xHBvub5j_lc_en";
-      const pid = getXsollaPID(productId);
-
-      const url = `https://secure.xsolla.com/paystation3/desktop/payment/?access_token=${accessToken}&additional=${btoa(JSON.stringify({pid: pid}))}`;
-      window.open(url, "_blank");
-    }
-
-    function getXsollaPID(productId) {
-      // Voorbeeld mapping: productId -> PID (moet in backend komen)
-      const mapping = {
-        "skin_olympus_hades": 3175,
-        "skin_olympus_ares": 3176,
-        "skin_olympus_zeus": 3177
-        // Voeg hier alle andere skins en hun juiste PID toe
-      };
-      return mapping[productId] || 0;
-    }
-
-    window.addEventListener("load", () => {
-      const stored = localStorage.getItem("agarUid");
-      if (stored) { agarUid = stored; document.getElementById("agarUid").value = agarUid; }
-      loadConfig();
-    });
-  </script>
+        window.open(url, "_blank");
+    };
+    skinsContainer.appendChild(btn);
+});
+</script>
 </body>
 </html>
