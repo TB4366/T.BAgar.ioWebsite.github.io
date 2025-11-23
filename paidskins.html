@@ -1,115 +1,546 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>T.B Agar.io - Home</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.B Agar.io Paid Skins — 30 Skins</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<style>
+  .card-img{width:120px;height:120px;object-fit:cover;border-radius:9999px;box-shadow:0 6px 12px rgba(0,0,0,0.08);}
+  .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px;box-shadow:0 4px 8px rgba(0,0,0,0.08);}
+  .cart-badge{background-color:#ef4444;color:white;font-weight:700;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;position:absolute;top:-6px;right:-6px;}
+  .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
+  .centered-confirm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap-12px;padding:24px;}
 
-    /* Navigatiebalk */
-    .navbar {
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      background: #222;
-      color: white;
-    }
+  /* Google Translate dropdown styling (ziet eruit als onderdeel van de zoekbalk) */
+  #google_translate_element {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    background: white;
+  }
+  #google_translate_element select {
+    background-color: white !important;
+    color: black !important;
+    border: none !important;
+    padding: 6px 8px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    cursor: pointer;
+  }
+  #google_translate_element select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 
-    .navbar img {
-      height: 40px;
-      margin-right: 10px;
-    }
+  /* Centraal gecentreerde winkelwagen modal */
+  #cartModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+  }
+  #cartModal.active {
+    display: flex;
+  }
+  #cartModal .cart-box {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    width: 92%;
+    max-width: 540px;
+    max-height: 82vh;
+    overflow-y: auto;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.25);
+  }
 
-    .site-name {
-      font-size: 20px;
-      font-weight: bold;
-      margin-right: 20px;
-    }
+  /* Deals modal (van bottom-bar) */
+  #dealsModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 11000;
+    align-items: center;
+    justify-content: center;
+  }
+  #dealsModal.active { display:flex; }
+  #dealsModal .deals-box {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    width: 94%;
+    max-width: 760px;
+    max-height: 86vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
 
-    .searchbar {
-      flex: 1;
-    }
+  /* Deal-card layout */
+  .deal-hero {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .deal-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.95);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    overflow:hidden;
+  }
+  .deal-circles {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display:flex;
+    gap: 18px;
+    z-index: 3;
+  }
+  .deal-hero::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.0) 40%, rgba(0,0,0,0.35) 100%);
+    pointer-events: none;
+  }
+  .price-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:12px;
+  }
+  .orig-price { text-decoration: line-through; color:#6b7280; }
+  .sale-price {
+    background: #ef4444;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+  }
 
-    .searchbar input {
-      width: 100%;
-      padding: 8px;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-    }
+  /* Bottom bar */
+  #dealBar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg,#111827,#0f172a);
+    color: white;
+    padding: 10px 16px;
+    z-index: 12000;
+    box-shadow: 0 -6px 20px rgba(2,6,23,0.6);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+  #dealBar .inner {
+    max-width: 1100px;
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  #dealBar .timer {
+    font-weight:700;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  #dealBar .cta {
+    background: #06b6d4;
+    padding: 8px 12px;
+    border-radius: 7px;
+    color: #02111a;
+    font-weight:700;
+    cursor:pointer;
+  }
 
-    .hamburger {
-      margin-left: 20px;
-      cursor: pointer;
-    }
-
-    .hamburger div {
-      width: 25px;
-      height: 3px;
-      background: white;
-      margin: 5px 0;
-      border-radius: 2px;
-    }
-  </style>
+  @media (max-width:640px) {
+    .deal-hero{height:200px;}
+    .deal-circle{width:66px;height:66px;}
+    #dealBar .inner{padding:0 8px;}
+    #dealBar .timer{font-size:14px;}
+  }
+</style>
 </head>
-<body>
-  <div class="navbar">
-    <img src="logo.png" alt="Logo" />
-    <div class="site-name">T.B Agar.io</div>
+<body class="bg-gray-100 text-gray-800">
 
-    <div class="searchbar">
-      <input type="text" placeholder="Zoeken..." />
+<header class="bg-gray-900 text-white">
+  <div class="max-w-6xl mx-auto flex items-center justify-between p-4 gap-4">
+    <div class="flex items-center gap-3">
+      <img src="https://via.placeholder.com/40/111827/ffffff?text=TB" alt="Logo" class="w-10 h-10 rounded-full">
+      <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
     </div>
 
-    <a href="volgende_pagina.html" class="hamburger">
-      <div></div>
-      <div></div>
-      <div></div>
-    </a>
-  </div>
-
-  <h1 style="padding: 20px; text-align:center;">Welcome to the website!</h1>
-  <hr style="margin: 0 20px;">
-
-  <div class="circle-container" style="display:flex; justify-content:center; gap:40px; padding:40px 0;">
-    <div class="circle" style="width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; animation: fade 3s infinite alternate;">
-      <img src="skin1a.png" style="width:100%; height:100%; object-fit:cover;">
-      <img src="skin1b.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate;">
-      <img src="skin1c.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate-reverse;">
+    <!-- Zoekbalk + vertaler -->
+    <div class="flex flex-1 max-w-xl items-center">
+      <input id="navbarSearch" type="text" placeholder="Zoek skins..." 
+             class="flex-1 rounded-l-md border border-gray-300 px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+      <div id="google_translate_element" class="rounded-r-md border border-gray-300 border-l-0 bg-white px-2"></div>
     </div>
 
-    <div class="circle" style="width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; animation: fade 3s infinite alternate;">
-      <img src="skin2a.png" style="width:100%; height:100%; object-fit:cover;">
-      <img src="skin2b.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate;">
-      <img src="skin2c.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate-reverse;">
-    </div>
-
-    <div class="circle" style="width:150px; height:150px; border-radius:50%; overflow:hidden; position:relative; animation: fade 3s infinite alternate;">
-      <img src="skin3a.png" style="width:100%; height:100%; object-fit:cover;">
-      <img src="skin3b.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate;">
-      <img src="skin3c.png" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; animation: fade 3s infinite alternate-reverse;">
+    <!-- Winkelwagen knop -->
+    <div class="flex items-center gap-4">
+      <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
+        <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
+        <span id="cartCount" class="cart-badge">0</span>
+      </button>
     </div>
   </div>
+</header>
 
-  <style>
-    @keyframes fade {
-      0% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-  </style>
-
-  <hr style="margin: 0 20px;">
-
-  <div style="padding:20px; text-align:center;">
-    <video controls width="600">
-      <source src="video.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+<div class="max-w-6xl mx-auto px-6 mt-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <label for="sortSelect" class="text-sm font-medium">Prijzen</label>
+    <select id="sortSelect" class="rounded border px-3 py-2">
+      <option value="default">Algemeen</option>
+      <option value="low">Van laag naar hoog</option>
+      <option value="high">Van hoog naar laag</option>
+      <option value="popular">Populair</option>
+      <option value="shuffle">Shuffle</option>
+    </select>
   </div>
+</div>
+
+<main class="max-w-6xl mx-auto p-6">
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+</main>
+
+<!-- Gecentreerde Winkelwagen modal -->
+<div id="cartModal">
+  <div class="cart-box">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-xl font-bold">🛒 Jouw winkelwagen</h2>
+      <button id="closeModal" class="text-2xl text-gray-600">&times;</button>
+    </div>
+
+    <div id="cartItems" class="space-y-3 mb-4"></div>
+
+    <div class="flex justify-between font-semibold text-lg mb-4">
+      <span>Totaal:</span>
+      <span id="totalAmount">USD 0.00</span>
+    </div>
+
+    <div class="space-y-3">
+      <input id="inputUID" type="text" placeholder="Voer je Bite UID in" class="w-full border rounded px-3 py-2">
+      <input id="inputEmail" type="email" placeholder="Voer je e-mail in" class="w-full border rounded px-3 py-2">
+      <div class="flex gap-3">
+        <button id="applePayBtn" class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
+        <button id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold">PayPal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deals modal (open via bottom bar) -->
+<div id="dealsModal" aria-hidden="true">
+  <div class="deals-box">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold">Hot Deals</h3>
+      <button id="closeDeals" class="text-2xl text-gray-600">&times;</button>
+    </div>
+
+    <!-- DEAL 1 -->
+    <div id="deal1" class="mb-6">
+      <div id="dealHero" class="deal-hero" style="background-image: url('PLACEHOLDER_BG.jpg');">
+        <!-- two circles on image -->
+        <div class="deal-circles">
+          <div class="deal-circle" id="dealCircle1">
+            <!-- You can replace inner img src later -->
+            <img id="dealCircle1Img" src="https://i.imgur.com/zAOoOR6.png" alt="circle1" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="deal-circle" id="dealCircle2">
+            <img id="dealCircle2Img" src="https://i.imgur.com/yDG1S2F.png" alt="circle2" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <div class="price-row">
+          <div class="orig-price" id="dealOrigPrice">USD 9.99</div>
+          <div class="sale-price" id="dealSalePrice">USD 4.99</div>
+        </div>
+        <p class="text-sm text-gray-600 mt-2" id="dealDesc">Deal 1: beperkte tijd - klik op de sale prijs om toe te voegen aan je winkelwagen.</p>
+      </div>
+    </div>
+
+    <!-- je kunt hier meerdere deals toevoegen op gelijke wijze -->
+  </div>
+</div>
+
+<!-- Bottom sticky deal bar -->
+<div id="dealBar" title="Klik voor deals">
+  <div class="inner">
+    <div>
+      <div style="font-size:13px;opacity:0.9">Speciale Aanbieding</div>
+      <div class="timer" id="dealTimer">Deal eindigt over 00:00:00</div>
+    </div>
+    <div>
+      <div class="cta">Bekijk deals</div>
+    </div>
+  </div>
+</div>
+
+<template id="card-template">
+  <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
+    <div class="imgs-row"></div>
+    <h3 class="font-semibold mt-4 card-title text-lg"></h3>
+    <p class="text-sm text-gray-600 mt-1 card-desc"></p>
+    <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
+    <div class="mt-4 flex gap-3">
+      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
+      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
+    </div>
+  </div>
+</template>
+
+<script>
+feather.replace();
+
+/* ================== EDITABLE DEAL SETTINGS ==================
+ You can change these to suit the deal.
+ - DEAL_SKIN_ID: which skin id from bundles to add when clicking the sale price
+ - DEAL_BG_IMAGE: path/URL to background image (you upload later)
+ - DEAL_ORIGINAL_PRICE / DEAL_SALE_PRICE: displayed prices (strings)
+ - DEAL_DURATION_MS: milliseconds from now for the countdown (default 24h)
+============================================================ */
+const DEAL_SKIN_ID = "skin_1";                // default: uses skin_1 (change as needed)
+const DEAL_BG_IMAGE = "PLACEHOLDER_BG.jpg";   // replace with your uploaded image path
+const DEAL_ORIGINAL_PRICE = "USD 9.99";       // change text as desired
+const DEAL_SALE_PRICE = "USD 4.99";           // change text as desired
+const DEAL_DURATION_MS = 24*60*60*1000;       // 24 hours countdown (change if needed)
+/* ========================================================== */
+
+/* ======= Bundles (30 skins) ======= */
+const bundles = [
+  {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"Items in Bundle: 1800 coin 1 skin jack odoom"},sold:300},
+  {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:null,note:{nl:"Items in Bundle: 4200 coin 1 skin Flame Gremlin"},sold:260},
+  {id:"skin_3",name:{nl:"biteback",en:"biteback"},price:7.99,image1:"IMG_6260.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin biteback"},sold:140},
+  {id:"skin_4",name:{nl:"spore_dog",en:"spore_dog"},price:6.89,image1:"IMG_6258.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h1 skin spore dog"},sold:200},
+  {id:"skin_5",name:{nl:"hoppy hat",en:"hoppy hat"},price:5.49,image1:"IMG_6257.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp_boost 2x 24h 1 skin hoppy hat"},sold:140},
+  {id:"skin_6",name:{nl:"Jack Odoom + swamp watcher",en:"swamp watcher"},price:6.99,image1:"IMG_6174.webp",image2:"IMG_6176.webp",note:{nl:"Items in Bundle: 1250 dna 1 skin jack odoom 1 skin swamp watcher"},sold:180},
+  {id:"skin_7",name:{nl:"plague rat + hazmat horror",en:"hazmat horror"},price:7.25,image1:"IMG_6255.webp",image2:"IMG_6256.webp",note:{nl:"Items in Bundle: 9000 coin 380 dna 1 skin plague rat 1 skin hazmat horror"},sold:120},
+  {id:"skin_8",name:{nl:"hippo smash",en:"hippo smash"},price:6.99,image1:"IMG_5158.webp",image2:null,note:{nl:"Items in Bundle: 750 dna 3 mass boost 3x 24h 1 skin hippo smash"},sold:170},
+  {id:"skin_9",name:{nl:"woolverine",en:"woolverine"},price:2.89,image1:"IMG_6253.webp",image2:null,note:{nl:"Items in Bundle: 2250 coin 1 skin woolverine"},sold:150},
+  {id:"skin_10",name:{nl:"bloomstache",en:"bloomstache"},price:4.99,image1:"IMG_6252.webp",image2:null,note:{nl:"Items in Bundle: 4000 coin 500 arena event token 1 skin bloomstache"},sold:140},
+  {id:"skin_11",name:{nl:"shroom shaman + skully spores",en:"shroom shaman"},price:9.99,image1:"IMG_5963.webp",image2:"IMG_4938.webp",note:{nl:"Items in Bundle: 10000 coin 800 dna 1700 arena event token 1 skin shroom shaman 1 skin skully spores"},sold:120},
+  {id:"skin_12",name:{nl:"lootpunk",en:"lootpunk"},price:5.69,image1:"IMG_0671.webp",image2:null,note:{nl:"Items in Bundle: 5000 coin 1 skin lootpunk"},sold:115},
+  {id:"skin_13",name:{nl:"tentaclonaut + rocket raider",en:"rocket raider"},price:6.99,image1:"IMG_0669.webp",image2:"IMG_0670.webp",note:{nl:"Items in Bundle: 9300 coin 1 skin tentaclonaut 1 skin rocket raider 300 dna"},sold:110},
+  {id:"skin_14",name:{nl:"grinpot",en:"grinpot"},price:8.29,image1:"IMG_6267.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin grinpot"},sold:105},
+  {id:"skin_15",name:{nl:"jaws potion",en:"jaws potion"},price:5.95,image1:"IMG_5160.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp boost 2x 24h 1 skin jaws potion"},sold:98},
+  {id:"skin_16",name:{nl:"nutcurse",en:"nutcurse"},price:6.49,image1:"IMG_5161.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 mass boost 2x 24h 1 skin nutcurse"},sold:95},
+  {id:"skin_17",name:{nl:"dr mixwell",en:"dr mixwell"},price:6.49,image1:"IMG_5159.webp",image2:null,note:{nl:"Items in Bundle: 3300 coin 200 dna 1 xp boost 2x 24h 1 skin dr mixwell"},sold:90},
+  {id:"skin_18",name:{nl:"giggle flask",en:"giggle flask"},price:4.99,image1:"IMG_6357.webp",image2:null,note:{nl:"Items in Bundle: 1600 coin 120 dna 1 xp boost 2x 24h 1 skin giggle flask"},sold:88},
+  {id:"skin_19",name:{nl:"virox",en:"virox"},price:8.69,image1:"IMG_6358.webp",image2:null,note:{nl:"Items in Bundle: 7000 coin 500 dna 1 potion legendary 1 skin virox"},sold:80},
+  {id:"skin_20",name:{nl:"dr mixwell + giggle flask",en:"giggle flask"},price:11.89,image1:"IMG_5159.webp",image2:"IMG_6357.webp",note:{nl:"Items in Bundle: 6800 coin 380 dna 1 xp boost 5x 24h 1 skin dr mixwell 1 skin giggle flask"},sold:76},
+  {id:"skin_21",name:{nl:"Golden Mask",en:"Golden Mask"},price:8.19,image1:"https://via.placeholder.com/160/fbbf24/000000?text=Golden",image2:null,note:{nl:"5100 coins",en:"5100 coins"},sold:70},
+  {id:"skin_22",name:{nl:"Obsidian Orb",en:"Obsidian Orb"},price:3.99,image1:"https://via.placeholder.com/160/000000/ffffff?text=Obsidian",image2:null,note:{nl:"1900 coins",en:"1900 coins"},sold:64},
+  {id:"skin_23",name:{nl:"Star Burst",en:"Star Burst"},price:7.59,image1:"https://via.placeholder.com/160/fde047/000000?text=Star",image2:null,note:{nl:"4900 coins",en:"4900 coins"},sold:60},
+  {id:"skin_24",name:{dr mixwellnl:"Toxic Eye",en:"Toxic Eye"},price:3.19,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1300 coins",en:"1300 coins"},sold:56},
+  {id:"skin_25",name:{nl:"Vortex Core",en:"Vortex Core"},price:5.39,image1:"https://via.placeholder.com/160/2563eb/ffffff?text=Vortex",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"3000 coins",en:"3000 coins"},sold:50},
+  {id:"skin_26",name:{nl:"Ruby Fang",en:"Ruby Fang"},price:6.19,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Ruby",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:46},
+  {id:"skin_27",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
+  {id:"skin_28",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
+  {id:"skin_29",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
+  {id:"skin_30",name:{nl:"turtail + victory orc",en:"turtail"},price:6.99,image1:"IMG_6360.webp",image2:"IMG_6359.webp",note:{nl:"Items in Bundle: 1 skin victory orc1 skin turtail 3100 coin 150 dna 1 xp boost 2x 24h"},sold:36},
+];
+
+/* ======= Variabelen ======= */
+const grid=document.getElementById('grid');
+const template=document.getElementById('card-template');
+const cartCount=document.getElementById('cartCount');
+const cartItemsContainer=document.getElementById('cartItems');
+const totalAmount=document.getElementById('totalAmount');
+const cartModal=document.getElementById('cartModal');
+const paypalBtn=document.getElementById('paypalBtn');
+const applePayBtn=document.getElementById('applePayBtn');
+const inputUID=document.getElementById('inputUID');
+const inputEmail=document.getElementById('inputEmail');
+const navbarSearch=document.getElementById('navbarSearch');
+const sortSelect=document.getElementById('sortSelect');
+const dealBar=document.getElementById('dealBar');
+const dealsModal=document.getElementById('dealsModal');
+const closeDeals=document.getElementById('closeDeals');
+const dealHero=document.getElementById('dealHero');
+const dealOrigPriceEl=document.getElementById('dealOrigPrice');
+const dealSalePriceEl=document.getElementById('dealSalePrice');
+const dealTimerEl=document.getElementById('dealTimer');
+const dealCircle1Img=document.getElementById('dealCircle1Img');
+const dealCircle2Img=document.getElementById('dealCircle2Img');
+
+const fallbackImg="https://via.placeholder.com/120?text=No+Image";
+let cart=[];
+let originalOrder=bundles.slice();
+
+/* ======= Basic render / cart functions ======= */
+function formatPrice(p){return`USD ${p.toFixed(2)}`;}
+function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function render(list){
+  grid.innerHTML='';
+  list.forEach(item=>{
+    if(!item.image1&&!item.image2)return;
+    const el=template.content.cloneNode(true);
+    const imgsRow=el.querySelector('.imgs-row');
+    if(item.image1){const img=document.createElement('img');img.src=item.image1;img.className=item.image2?'small-img':'card-img';img.onerror=()=>img.src=fallbackImg;imgsRow.appendChild(img);}
+    if(item.image2){const img2=document.createElement('img');img2.src=item.image2;img2.className='small-img';img2.onerror=()=>img2.src=fallbackImg;imgsRow.appendChild(img2);}
+    el.querySelector('.card-title').textContent=item.name.nl;
+    el.querySelector('.card-desc').textContent=item.note.nl;
+    el.querySelector('.card-price').textContent=formatPrice(item.price);
+    el.querySelector('.shareBtn').addEventListener('click',()=>{navigator.clipboard.writeText(location.href+'#'+item.id);alert('Link gekopieerd');});
+    el.querySelector('.selectBtn').addEventListener('click',()=>{
+      addToCart(item.id, item.price);
+      alert(`${item.name.nl} toegevoegd aan winkelwagen`);
+    });
+    grid.appendChild(el);
+  });
+}
+function updateCartModal(){
+  cartItemsContainer.innerHTML='';
+  cart.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='flex items-center justify-between gap-4 p-2 border rounded';
+    div.innerHTML=`<img src="${item.image1||fallbackImg}" class="w-16 h-16 rounded-full"><div class="flex-1"><h4>${item.name.nl}</h4><p>${formatPrice(item.price)}</p></div><button class="removeBtn text-red-500 font-bold text-xl">&times;</button>`;
+    div.querySelector('.removeBtn').addEventListener('click',()=>{cart.splice(i,1);cartCount.textContent=cart.length;updateCartModal();});
+    cartItemsContainer.appendChild(div);
+  });
+  const total=cart.reduce((s,it)=>s+it.price,0);
+  totalAmount.textContent=formatPrice(total);
+}
+
+/* Add to cart by skin id; optional override price */
+function addToCart(skinId, overridePrice = null){
+  const skin = bundles.find(b => b.id === skinId);
+  if(!skin) { alert('Skin niet gevonden'); return; }
+  const item = Object.assign({}, skin); // shallow copy
+  if(overridePrice !== null){
+    item.price = Number(overridePrice);
+  }
+  cart.push(item);
+  cartCount.textContent = cart.length;
+  updateCartModal();
+}
+
+/* ======= Deal bar & modal logic ======= */
+
+/* initialize deal content from editable constants */
+function initDealUI(){
+  // background image:
+  dealHero.style.backgroundImage = `url('${DEAL_BG_IMAGE}')`;
+
+  // text prices
+  dealOrigPriceEl.textContent = DEAL_ORIGINAL_PRICE;
+  dealSalePriceEl.textContent = DEAL_SALE_PRICE;
+
+  // for circles we use placeholder images; user can replace the src attributes:
+  // dealCircle1Img.src = 'path/to/your-circle1.jpg';
+  // dealCircle2Img.src = 'path/to/your-circle2.jpg';
+}
+
+/* countdown */
+const dealDeadline = Date.now() + Number(DEAL_DURATION_MS);
+function updateTimer(){
+  const now = Date.now();
+  let diff = Math.max(0, dealDeadline - now);
+  const hrs = Math.floor(diff / (1000*60*60));
+  diff -= hrs*(1000*60*60);
+  const mins = Math.floor(diff / (1000*60));
+  diff -= mins*(1000*60);
+  const secs = Math.floor(diff / 1000);
+  dealTimerEl.textContent = `Deal eindigt over ${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  if (dealDeadline - now <= 0) {
+    // expired
+    dealTimerEl.textContent = `Deal verlopen`;
+    clearInterval(timerInterval);
+  }
+}
+const timerInterval = setInterval(updateTimer, 1000);
+updateTimer();
+
+/* open deals modal when bottom bar clicked */
+dealBar.addEventListener('click', ()=> {
+  initDealUI();
+  dealsModal.classList.add('active');
+});
+closeDeals.addEventListener('click', ()=> dealsModal.classList.remove('active'));
+
+/* clicking on sale price adds the deal skin to cart with sale price */
+dealSalePriceEl.addEventListener('click', ()=>{
+  // sale price as number (strip non-digits)
+  const numeric = DEAL_SALE_PRICE.replace(/[^0-9.,]/g,'').replace(',', '.');
+  const priceNum = parseFloat(numeric) || null;
+  addToCart(DEAL_SKIN_ID, priceNum);
+  dealsModal.classList.remove('active');
+  alert('Deal toegevoegd aan winkelwagen');
+});
+
+/* ======= PayPal / Apple Buttons (unchanged behavior) ======= */
+paypalBtn.addEventListener('click',()=>{
+  const uid=inputUID.value.trim();
+  const email=inputEmail.value.trim();
+  if(!uid){alert('Voer eerst een UID in.'); inputUID.focus(); return;}
+  if(!email || !email.includes('@')){alert('Voer een geldig e-mail adres in.'); inputEmail.focus(); return;}
+  if(cart.length===0){alert('Je winkelwagen is leeg.'); return;}
+  const total=cart.reduce((s,it)=>s+it.price,0).toFixed(2);
+  const paypalURL=`https://paypal.me/TBYTagario/${total}`;
+  window.open(paypalURL,'_blank');
+});
+applePayBtn.addEventListener('click',()=>{alert('Apple Gift Cardbetaling is in deze demo niet geactiveerd.');});
+
+/* open / close cart modal */
+document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.add('active');};
+document.getElementById('closeModal').onclick=()=>cartModal.classList.remove('active');
+
+/* Zoek en sorteer */
+navbarSearch.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
+  render(filtered);
+});
+sortSelect.addEventListener('change',()=>{
+  let sorted=[];
+  switch(sortSelect.value){
+    case'low':sorted=bundles.slice().sort((a,b)=>a.price-b.price);break;
+    case'high':sorted=bundles.slice().sort((a,b)=>b.price-a.price);break;
+    case'popular':sorted=bundles.slice().sort((a,b)=>b.sold-a.sold);break;
+    case'shuffle':sorted=shuffleArray(bundles);break;
+    default:sorted=originalOrder;
+  }
+  render(sorted);
+});
+
+/* initial render */
+render(bundles);
+cartCount.textContent=cart.length;
+initDealUI();
+
+</script>
+
+<!-- Google Translate -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'nl',
+    includedLanguages: 'en,fr,de,es,it,pt,ru,zh-CN,ja,ko'
+  }, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
