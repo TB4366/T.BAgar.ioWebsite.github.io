@@ -1,271 +1,237 @@
 <!doctype html>
 <html lang="nl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io</title>
-<style>
-  :root{
-    --glow:#ff6600;
-    --accent:#ffbb55;
-    --overlay: rgba(0,0,0,0.62);
-  }
-
-  html,body{height:100%; margin:0; font-family:Arial, sans-serif; color:#fff;}
-  body{
-    background:#111;
-    overflow-x: hidden;
-  }
-
-  /* Header */
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: rgba(0,0,0,0.7);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 15px rgba(255, 100, 0, 0.3);
-  }
-  .logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .logo {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  .site-title {
-    font-size: 1.3rem;
-    font-weight: bold;
-    color:#ffae42;
-    text-shadow:0 0 8px #ff4500;
-  }
-  .menu-btn {
-    font-size:26px;
-    background:none;
-    border:none;
-    color:#ffae42;
-    cursor:pointer;
-    transition: transform 0.3s ease;
-  }
-  .menu-btn:hover{transform:scale(1.2);}
-  .menu {
-    position:absolute;
-    top:70px;
-    right:20px;
-    background: rgba(30,20,20,0.95);
-    border-radius:12px;
-    box-shadow:0 0 20px rgba(255,100,0,0.4);
-    overflow:hidden;
-    display:none;
-    flex-direction: column;
-    min-width:180px;
-  }
-  .menu a{
-    display:block;
-    padding:12px;
-    color:white;
-    text-decoration:none;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    transition: background-color 0.3s, padding-left 0.3s;
-  }
-  .menu a:hover{background-color:rgba(255,100,0,0.2); padding-left:18px;}
-
-  main{display:flex; justify-content:center; padding:120px 16px 80px; position:relative; z-index:10;}
-  .content-wrapper{
-    width:100%;
-    max-width:1180px;
-    background: var(--overlay);
-    border-radius:14px;
-    padding:28px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.6);
-    position:relative;
-    z-index:20;
-  }
-
-  .highlight-title{
-    text-align:center;
-    font-size:1.9rem;
-    margin:6px 0 18px;
-    color:var(--accent);
-    text-shadow:0 0 12px var(--glow);
-  }
-  .skins-circles{display:flex; justify-content:center; gap:36px; flex-wrap:wrap; margin-bottom:10px;}
-  .circle{width:160px;height:160px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 22px rgba(255,102,0,0.25);position:relative;}
-  .circle img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 900ms ease-in-out;}
-  .circle img.active{opacity:1;}
-
-  .video-grid{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin:20px 0;}
-  iframe{border:none;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.6);}
-
-  .floating{
-    position:absolute;
-    pointer-events:none;
-    user-select:none;
-    z-index:5;
-    opacity:0.95;
-    transform:translate(-50%,-50%);
-    will-change:transform;
-  }
-
-  @media (max-width:900px){
-    .circle{width:130px;height:130px}
-    iframe[width="560"]{width:100%;height:220px}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Editor / User - Voorbeeld</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#7c3aed;--muted:#9aa4b2;--glass:rgba(255,255,255,0.03)}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial}
+    body{background:linear-gradient(180deg,#081126 0%, #071126 100%);color:#e6eef8;padding:24px;box-sizing:border-box}
+    .app{max-width:1100px;margin:0 auto;background:var(--card);border-radius:12px;padding:16px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    h1{font-size:18px;margin:0}
+    .tabs{display:flex;gap:8px}
+    .tab{background:var(--glass);padding:8px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+    .tab.active{background:linear-gradient(90deg,rgba(124,58,237,0.18),rgba(59,130,246,0.06));border-color:rgba(124,58,237,0.22)}
+    main{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:12px;border-radius:10px;min-height:420px;overflow:auto}
+    .toolbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+    button.btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 8px;border-radius:8px;color:var(--muted);cursor:pointer}
+    button.btn:hover{border-color:rgba(255,255,255,0.12);color:#fff}
+    .editor{min-height:320px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.01);outline:none}
+    .preview{min-height:320px;padding:16px;border-radius:8px;background:#020617;color:#e6eef8}
+    .controls{display:flex;gap:8px;margin-top:10px}
+    input[type=file]{display:none}
+    .small{padding:6px 10px;font-size:13px}
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:12px;font-size:13px;color:var(--muted)}
+    @media (max-width:900px){main{grid-template-columns:1fr;}}
+  </style>
 </head>
 <body>
+  <div class="app" role="application">
+    <header>
+      <h1>Voorbeeld: User HTML &amp; Editor HTML</h1>
+      <div class="tabs" role="tablist">
+        <div class="tab active" id="tab-user" role="tab" aria-selected="true">Gebruiker (User)</div>
+        <div class="tab" id="tab-editor" role="tab">Editor</div>
+      </div>
+    </header>
 
-<header>
-  <div class="logo-container">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
-    <span class="site-title" id="siteTitle">T.B Agar.io</span>
+    <main>
+      <!-- Left: User preview (same tab as editor when you switch) -->
+      <section class="panel" id="panel-user" aria-labelledby="tab-user">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="muted">Weergave zoals de gebruiker het ziet</div>
+          <div>
+            <button class="btn small" id="download-user">Download user.html</button>
+            <button class="btn small" id="open-user" >Open in nieuw venster</button>
+          </div>
+        </div>
+        <article id="preview" class="preview" aria-live="polite">
+          <h2>Voorbeeld titel</h2>
+          <p>Dit is een voorbeeld paragraaf. Schakel naar <strong>Editor</strong> om de inhoud aan te passen.</p>
+        </article>
+      </section>
+
+      <!-- Right: Editor with toolbar -->
+      <section class="panel" id="panel-editor" aria-labelledby="tab-editor" hidden>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div class="muted">Editor: gebruik de knoppen om inhoud te bewerken</div>
+          <div>
+            <button class="btn small" id="download-editor">Download editor.html</button>
+            <label for="import-file" class="btn small" style="cursor:pointer">Importeer .html</label>
+            <input id="import-file" type="file" accept="text/html" />
+          </div>
+        </div>
+
+        <div class="toolbar" role="toolbar" aria-label="Editor knoppen">
+          <button class="btn" data-cmd="bold"><strong>B</strong></button>
+          <button class="btn" data-cmd="italic"><em>I</em></button>
+          <button class="btn" data-cmd="underline"><u>U</u></button>
+          <button class="btn" data-cmd="insertUnorderedList">• Lijst</button>
+          <button class="btn" data-cmd="insertOrderedList">1. Lijst</button>
+          <button class="btn" data-cmd="formatBlock" data-value="H1">H1</button>
+          <button class="btn" data-cmd="formatBlock" data-value="H2">H2</button>
+          <button class="btn" data-cmd="createLink">Link</button>
+          <button class="btn" data-cmd="insertImage">Afbeelding</button>
+          <button class="btn" id="clear-format">Clear</button>
+        </div>
+
+        <div id="editor" class="editor" contenteditable="true" aria-multiline="true">
+          <h2>Voorbeeld titel</h2>
+          <p>Dit is een voorbeeld paragraaf. Gebruik de toolbar om deze tekst aan te passen. De inhoud hier wordt live weergegeven in de <em>Gebruiker</em>-tab.</p>
+        </div>
+
+        <div class="controls">
+          <button class="btn small" id="apply">Bijwerken preview</button>
+          <button class="btn small" id="reset">Reset naar voorbeeld</button>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      Tip: Wissel tussen tabbladen. De editor geeft extra knoppen; de gebruiker ziet alleen de gerenderde HTML.
+    </footer>
   </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Pagina</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-  </div>
-</header>
 
-<main>
-  <div class="content-wrapper" id="contentWrapper">
+  <script>
+    // Tabs
+    const tabUser = document.getElementById('tab-user');
+    const tabEditor = document.getElementById('tab-editor');
+    const panelUser = document.getElementById('panel-user');
+    const panelEditor = document.getElementById('panel-editor');
 
-    <div class="highlight-title" id="highlightTitle">Welkom bij T.B Agar.io</div>
-
-    <!-- Skins -->
-    <div class="skins-circles" id="skinsContainer">
-      <!-- Skins worden hier geladen -->
-    </div>
-
-    <!-- YouTube Video's -->
-    <div class="video-grid" id="videosContainer">
-      <!-- Video's worden hier geladen -->
-    </div>
-
-  </div>
-</main>
-
-<script>
-// Hamburger menu
-function toggleMenu(){
-  const menu=document.getElementById('menu');
-  menu.style.display = menu.style.display==='flex'?'none':'flex';
-}
-
-// Laad instellingen
-const settings = JSON.parse(localStorage.getItem('siteSettings')) || {};
-const skins = JSON.parse(localStorage.getItem('skins')) || [];
-const videos = JSON.parse(localStorage.getItem('videos')) || [];
-const homeContent = localStorage.getItem('homeContent') || '';
-
-// Achtergrond
-if(settings.bgColor) document.body.style.background = settings.bgColor;
-if(settings.background) document.body.style.backgroundImage = settings.background;
-if(settings.textColor){
-  document.getElementById('siteTitle').style.color = settings.textColor;
-  document.getElementById('highlightTitle').style.color = settings.textColor;
-}
-
-// Figuren
-let floats = [];
-function createFigures(){
-  floats.forEach(f=>f.remove());
-  floats=[];
-  if(settings.figures==='on'){
-    let themeObjects=[];
-    switch(settings.figureTheme){
-      case 'zomer': themeObjects=['🌞','🏖️','🌴','⛱️']; break;
-      case 'lente': themeObjects=['🌸','🐦','🌿','🌷']; break;
-      case 'herfst': themeObjects=['🍁','🌰','🎃','🍂']; break;
-      case 'winter': themeObjects=['❄️','⛄','🌨️','🎿']; break;
-      case 'halloween': themeObjects=['🎃','👻','🦇','🕷️']; break;
-      case 'kerst': themeObjects=['🎄','🎅','❄️','🎁']; break;
-      case 'pasen': themeObjects=['🐣','🥚','🐰','🌷']; break;
-      case 'blackfriday': themeObjects=['🛍️','💰','🛒','🔥']; break;
-      default: themeObjects=['⭐']; break;
+    function activateTab(tab){
+      if(tab === 'user'){
+        tabUser.classList.add('active'); tabUser.setAttribute('aria-selected','true');
+        tabEditor.classList.remove('active'); tabEditor.setAttribute('aria-selected','false');
+        panelUser.hidden = false; panelEditor.hidden = true;
+      } else {
+        tabEditor.classList.add('active'); tabEditor.setAttribute('aria-selected','true');
+        tabUser.classList.remove('active'); tabUser.setAttribute('aria-selected','false');
+        panelEditor.hidden = false; panelUser.hidden = true;
+      }
     }
-    for(let i=0;i<50;i++){
-      const span=document.createElement('span');
-      span.textContent = themeObjects[Math.floor(Math.random()*themeObjects.length)];
-      span.className='floating';
-      span.style.fontSize=(12+Math.random()*24)+'px';
-      span.style.left=Math.random()*window.innerWidth+'px';
-      span.style.top=Math.random()*window.innerHeight+'px';
-      span.speed=(0.3+Math.random()*1.2)*(Math.random()>0.5?1:-1);
-      document.body.appendChild(span);
-      floats.push(span);
-    }
-    animateFloats();
-  }
-}
-function animateFloats(){
-  floats.forEach(f=>{
-    let x=parseFloat(f.style.left);
-    let y=parseFloat(f.style.top);
-    x+=f.speed; y+=f.speed/2;
-    if(x>window.innerWidth)x=0; if(x<0)x=window.innerWidth;
-    if(y>window.innerHeight)y=0; if(y<0)y=window.innerHeight;
-    f.style.left=x+'px';
-    f.style.top=y+'px';
-  });
-  requestAnimationFrame(animateFloats);
-}
-createFigures();
+    tabUser.addEventListener('click',()=>activateTab('user'));
+    tabEditor.addEventListener('click',()=>activateTab('editor'));
 
-// Skins laden
-const skinsContainer = document.getElementById('skinsContainer');
-function renderSkins(){
-  skinsContainer.innerHTML='';
-  for(let i=0;i<skins.length;i+=3){
-    const circle = document.createElement('div');
-    circle.className='circle';
-    const imgs = skins.slice(i,i+3);
-    imgs.forEach((src,j)=>{
-      const img=document.createElement('img');
-      img.src=src;
-      if(j===0) img.classList.add('active');
-      circle.appendChild(img);
-      let idx=j;
-      setInterval(()=>{
-        circle.querySelectorAll('img').forEach(im=>im.classList.remove('active'));
-        img.classList.add('active');
-        idx=(idx+1)%imgs.length;
-      },4000+j*1000);
+    // Editor commands
+    const toolbar = document.querySelector('.toolbar');
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+
+    toolbar.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const cmd = btn.dataset.cmd;
+      if(!cmd) return;
+
+      if(cmd === 'createLink'){
+        const url = prompt('Voer de URL in (bijv. https://example.com):','https://');
+        if(url) document.execCommand('createLink', false, url);
+        return;
+      }
+
+      if(cmd === 'insertImage'){
+        const url = prompt('Afbeeldings-URL invoeren:','https://');
+        if(url) document.execCommand('insertImage', false, url);
+        return;
+      }
+
+      if(cmd === 'formatBlock'){
+        const val = btn.dataset.value || 'P';
+        document.execCommand('formatBlock', false, '<'+val+'>');
+        return;
+      }
+
+      document.execCommand(cmd, false, null);
     });
-    skinsContainer.appendChild(circle);
-  }
-}
-renderSkins();
 
-// YouTube laden
-const videosContainer=document.getElementById('videosContainer');
-videos.forEach(link=>{
-  const iframe=document.createElement('iframe');
-  iframe.width=360;
-  iframe.height=215;
-  iframe.src=link;
-  iframe.allowFullscreen=true;
-  videosContainer.appendChild(iframe);
-});
+    document.getElementById('clear-format').addEventListener('click', ()=>{
+      document.execCommand('removeFormat', false, null);
+      // remove heading tags by wrapping in P
+      const selection = window.getSelection();
+      if(selection.rangeCount){
+        const range = selection.getRangeAt(0);
+        const container = range.commonAncestorContainer;
+      }
+    });
 
-// Home content
-const contentWrapper=document.getElementById('contentWrapper');
-if(homeContent) contentWrapper.innerHTML = homeContent;
-</script>
+    // Update preview
+    function updatePreview(){
+      // Simple sanitization: remove script tags
+      const html = editor.innerHTML.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'');
+      preview.innerHTML = html;
+    }
+    document.getElementById('apply').addEventListener('click', updatePreview);
 
+    // Live update (optional)
+    editor.addEventListener('input', ()=>{
+      // live preview on edit
+      updatePreview();
+    });
+
+    document.getElementById('reset').addEventListener('click', ()=>{
+      editor.innerHTML = '<h2>Voorbeeld titel</h2><p>Dit is een voorbeeld paragraaf. Gebruik de toolbar om deze tekst aan te passen. De inhoud hier wordt live weergegeven in de <em>Gebruiker</em>-tab.</p>';
+      updatePreview();
+    });
+
+    // Download functions
+    function downloadFile(filename, contents){
+      const blob = new Blob([contents], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('download-user').addEventListener('click', ()=>{
+      const html = '<!doctype html>\n<html lang="nl">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>user.html</title></head>\n<body>\n' + preview.innerHTML + '\n</body>\n</html>';
+      downloadFile('user.html', html);
+    });
+
+    document.getElementById('open-user').addEventListener('click', ()=>{
+      const html = '<!doctype html>\n<html lang="nl">\n<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>user.html</title></head>\n<body>\n' + preview.innerHTML + '\n</body>\n</html>';
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(()=>URL.revokeObjectURL(url),10000);
+    });
+
+    document.getElementById('download-editor').addEventListener('click', ()=>{
+      // Create a simple editor page with the same toolbar disabled (for demo we'll embed minimal script)
+      const page = `<!doctype html>
+<html lang="nl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>editor.html</title></head>
+<body>
+<!-- Gemaakt met de ingebouwde editor -->
+<div>${editor.innerHTML.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi,'')}</div>
+</body>
+</html>`;
+      downloadFile('editor.html', page);
+    });
+
+    // Import HTML into editor
+    document.getElementById('import-file').addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        // naive: insert body innerHTML if possible
+        let text = reader.result;
+        const bodyMatch = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if(bodyMatch) text = bodyMatch[1];
+        editor.innerHTML = text;
+        updatePreview();
+      };
+      reader.readAsText(f);
+    });
+
+    // Initialize preview
+    updatePreview();
+  </script>
 </body>
 </html>
