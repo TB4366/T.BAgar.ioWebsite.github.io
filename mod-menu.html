@@ -1,174 +1,303 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io Website</title>
-<style>
-  body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;transition:background-color 0.3s ease,color 0.3s ease;}
-  body.dark{background:#f0f0f0;color:#222;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;position:relative;transition:background-color 0.3s ease;}
-  body.dark header{background:#e0e0e0;}
-  .left-header{display:flex;align-items:center;gap:12px;}
-  .logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
-  .site-title{font-size:1.3rem;font-weight:bold;}
-  .search-bar input{padding:8px 12px;border-radius:6px;border:none;outline:none;font-size:14px;width:180px;}
-  .toggle-btn-header{background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;padding:6px 10px;border-radius:8px;transition:background-color 0.3s ease,color 0.3s ease;}
-  .menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
-  .menu{display:none;position:absolute;top:65px;right:20px;background:#1e293b;border-radius:8px;overflow:hidden;min-width:170px;}
-  .menu a{display:block;padding:12px;color:white;text-decoration:none;border-bottom:1px solid #334155;}
-  .main-video{display:flex;justify-content:center;margin-top:20px;}
-  .video-grid{display:flex;justify-content:center;gap:20px;margin:20px;flex-wrap:wrap;}
-  iframe{border:none;border-radius:12px;}
-  .divider{max-width:900px;margin:40px auto 10px auto;border-top:2px solid #48cae4;}
-  .highlight-title{text-align:center;font-size:1.8rem;font-weight:bold;margin:20px 0 30px 0;color:#48cae4;}
-  .skins-circles{max-width:900px;margin:0 auto 50px auto;display:flex;justify-content:center;gap:30px;flex-wrap:wrap;}
-  .circle-block{display:flex;flex-direction:column;align-items:center;position:relative;}
-  .circle{width:170px;height:170px;border-radius:50%;overflow:hidden;position:relative;background:#000;box-shadow:0 0 15px #48cae4;cursor:pointer;}
-  .circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.2s ease;}
-  .circle img.active{opacity:1;}
-  .price-badge{margin-top:10px;background:#ef4444;color:white;padding:6px 12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:transform 0.2s;}
-  .price-badge:hover{transform:scale(1.05);}
-  .best-deal-badge{position:absolute;top:-10px;left:-10px;background:gold;color:black;padding:4px 8px;font-weight:bold;border-radius:6px;font-size:0.8rem;}
-  .btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;}
-  .cta-wrap{text-align:center;margin-bottom:30px;}
-  /* Custom Circles */
-  .custom-circles{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:40px;}
-  .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;box-shadow:0 0 15px #48cae4;background:#000;}
-  .custom-circle img{width:100%;height:100%;object-fit:cover;}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mod Menu — T.B Agar.io Website</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      background: #0b1220;
+      color: #fff;
+      padding: 0;
+    }
+
+    /* Menu stijl */
+    .menu {
+      background: #0f172a;
+      display: flex;
+      flex-wrap: wrap;
+      overflow-x: auto;
+    }
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: white;
+      border-bottom: 1px solid #334155;
+    }
+    .menu a:hover {
+      background: #334155;
+    }
+
+    header {
+      padding: 20px 0;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 0 8px #0f172a;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .card a button {
+      display: block;
+      width: 100%;
+      padding: 8px;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.3s ease;
+    }
+    .card a button:hover {
+      background: #2563eb;
+    }
+    .info {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-bottom: 4px;
+    }
+    hr {
+      border: none;
+      height: 2px;
+      background: #3b82f6;
+      margin: 40px 0;
+    }
+    .help-section {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    .help-section p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    .help-button {
+      background: #3b82f6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .help-button:hover {
+      background: #2563eb;
+    }
+  </style>
 </head>
 <body>
 
+<!-- Menu -->
+<div class="menu" id="menu">
+  <a href="index.html"><span>🏠</span> <span>Home Page</span></a>
+  <a href="custom-skins.html"><span>🎨</span> <span>Custom Skins</span></a>
+  <a href="mod-menu.html"><span>🛠️</span> <span>Mod Menu</span></a>
+  <a href="key-access.html"><span>🔑</span> <span>Keys</span></a>
+  <a href="buy-account.html"><span>💰</span> <span>Buy Account</span></a>
+  <a href="sell-account.html"><span>📤</span> <span>Sell Account</span></a>
+</div>
+
 <header>
-  <div class="left-header">
-    <img src="IMG_2718.png" class="logo" />
-    <span class="site-title">T.B Agar.io</span>
-    <div class="search-bar">
-      <input type="text" placeholder="Search..." />
-    </div>
-    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-  </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Page</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-    <a href="paidskins.html">💎 Paid Skins</a>
-  </div>
+  <h1>Mod Menu</h1>
 </header>
 
-<main>
+<!-- Grid met mods -->
+<div class="grid">
 
-  <!-- Paid Skins -->
-  <div class="divider"></div>
-  <div class="highlight-title">Paid Skins Deals</div>
-  <div class="skins-circles" id="paidSkinsContainer"></div>
-  <div class="cta-wrap"><a href="paidskins.html" class="btn">View All Skins</a></div>
-
-  <div class="divider"></div>
-
-  <!-- Main Video -->
-  <div class="main-video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/OEkurL8aaZk" allowfullscreen></iframe>
-  </div>
-  <div class="video-grid">
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/diAuO3IC8Hg" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/m0DEe4RhgSw" allowfullscreen></iframe>
+  <!-- T.B Agar.io Mod (blijft bovenaan) -->
+  <div class="card">
+    <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="T.B Mod">
+    <a href="https://drive.usercontent.google.com/download?id=11ENGpwYZpI-gxUmWazBxSn_BkT7dTvWi&export=download">
+      <button aria-label="Download T.B Mod version 2.30.5">Download</button>
+    </a>
+    <div class="info">Version: 2.30.5</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">T.B Mod (Kabrah) Unlock skin</div>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- Custom Skins -->
-  <div class="highlight-title">The Best Custom Skins</div>
-  <div class="custom-circles">
-    <div class="custom-circle"><img src="IMG_2978.jpeg"></div>
-    <div class="custom-circle"><img src="IMG_3156.jpeg"></div>
-    <div class="custom-circle"><img src="IMG_3520.png"></div>
+  <!-- Placeholder Mods -->
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+5" alt="Mod 5">
+    <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/2.30.5.qxanarky+kahraba+shark.ipa"><button aria-label="Download Shark + kabrah mod">Download</button></a>
+    <div class="info">Version: 2.30.5</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">Shark + kabrah mod</div>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- T.B Keys Section -->
-  <div class="highlight-title">🔑 Keys</div>
-  <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
-  <p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
-  <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">
-    No key yet? Buy one at T.B Agar.io. Contact via Instagram @t.bagar.io
-  </p>
-  <div class="divider"></div>
-
-  <!-- Mods Section -->
-  <div class="highlight-title">The Best Mods!</div>
-  <div class="skins-circles" style="justify-content:center;gap:40px;">
-    <div class="circle-block">
-      <div class="circle"><img src="MOD1_IMAGE.webp" alt="Mod 1"></div>
-      <div class="skin-name">Mod 1</div>
-    </div>
-    <div class="circle-block">
-      <div class="circle"><img src="MOD2_IMAGE.webp" alt="Mod 2"></div>
-      <div class="skin-name">Mod 2</div>
-    </div>
-  </div>
-  <div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
-  <div class="divider"></div>
-
-  <!-- Social Links -->
-  <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;">
-    <a href="https://www.youtube.com/@T.B6" target="_blank" style="background:red;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">YouTube</a>
-    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:linear-gradient(45deg,#f97316,#facc15);color:#111;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Instagram</a>
-    <a href="https://discord.gg/drvb5Um2C" target="_blank" style="background:purple;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Discord</a>
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+6" alt="Mod 6">
+    <a href="#"><button aria-label="Download Mod 6">Download</button></a>
+    <div class="info">Version: 1.1</div>
+    <div class="info">Date: 03-09-2025</div>
+    <div class="info">Description of Mod 6</div>
   </div>
 
-</main>
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+7" alt="Mod 7">
+    <a href="#"><button aria-label="Download Mod 7">Download</button></a>
+    <div class="info">Version: 2.0</div>
+    <div class="info">Date: 04-09-2025</div>
+    <div class="info">Description of Mod 7</div>
+  </div>
 
+  <div class="card">
+    <img src="IMG_4322.png" alt="Shark Mod">
+    <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/2.30.5.shark.ipa"><button aria-label="Shark mod">Download</button></a>
+    <div class="info">Version: 2.30.5</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">Shark Mod</div>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+9" alt="Mod 9">
+    <a href="#"><button aria-label="Download Mod 9">Download</button></a>
+    <div class="info">Version: 1.0</div>
+    <div class="info">Date: 06-09-2025</div>
+    <div class="info">Description of Mod 9</div>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+10" alt="Mod 10">
+    <a href="#"><button aria-label="Download Mod 10">Download</button></a>
+    <div class="info">Version: 2.0</div>
+    <div class="info">Date: 07-09-2025</div>
+    <div class="info">Description of Mod 10</div>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+11" alt="Mod 11">
+    <a href="#"><button aria-label="Download Mod 11">Download</button></a>
+    <div class="info">Version: 1.3</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">Description of Mod 11</div>
+  </div>
+
+  <div class="card">
+    <img src="https://via.placeholder.com/300x120?text=Mod+12" alt="Mod 12">
+    <a href="#"><button aria-label="Download Mod 12">Download</button></a>
+    <div class="info">Version: 2.1</div>
+    <div class="info">Date: 09-09-2025</div>
+    <div class="info">Description of Mod 12</div>
+  </div>
+
+  <!-- DNS Profile -->
+  <div class="card">
+    <img src="IMG_2466.png" alt="DNS Profile">
+    <a href="https://tinyurl.com/5py6ts5a">
+      <button aria-label="Install DNS Profile">Install</button>
+    </a>
+    <div class="info">MOD: DNS PROFILE</div>
+    <div class="info">Date: 10-09-2025</div>
+    <div class="info">Install DNS Profile</div>
+  </div>
+
+  <!-- Esign Cert -->
+  <div class="card">
+    <img src="IMG_2466.png" alt="Esign Cert">
+    <a href="https://github.com/esigncert/khoindvn/raw/refs/heads/main/document/DNS/Certs-Khoindvn.zip">
+      <button aria-label="Download Esign Certificate">Download</button>
+    </a>
+    <div class="info">Esign Cert</div>
+    <div class="info">Date: 10-09-2025</div>
+    <div class="info">Download Certificate</div>
+  </div>
+
+  <!-- EeveeSpotify -->
+  <div class="card">
+    <img src="IMG_4318.png" alt="EeveeSpotify Mod">
+    <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+      <button aria-label="Download EeveeSpotify mod">Download</button>
+    </a>
+    <div class="info">Version: 9.0.66</div>
+    <div class="info">Date: 11-09-2025</div>
+    <div class="info">EeveeSpotify — Premium functies gratis, extra features zoals custom lyrics</div>
+  </div>
+
+</div>
+
+<hr>
+
+<div class="help-section">
+  <p><strong>How do I get the mod?</strong></p>
+  <a href="mods-help.html" class="help-button">Help Mods</a>
+</div>
+
+<!-- Script -->
 <script>
-// Menu toggle
-function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
+  function checkCards() {
+    document.querySelectorAll(".card").forEach(card => {
+      const img = card.querySelector("img");
+      const link = card.querySelector("a");
+      const altText = img?.getAttribute("alt")?.trim() || "";
+      const href = link?.getAttribute("href")?.trim() || "";
 
-// Dark mode toggle
-const toggleBtn=document.getElementById('themeToggleBtn');
-const body=document.body;
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
-toggleBtn.addEventListener('click',()=>{
-  body.classList.toggle('dark');
-  toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';
-  localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');
-});
+      // Check of kaart een placeholder "Mod X" is
+      const isPlaceholder = /^Mod\s+\d+$/i.test(altText);
 
-// Paid skins JS
-const paidSkins=[
-  {id:"skin_1",img:"IMG_6174.webp",price:"$4.99",best:true},
-  {id:"skin_2",img:"IMG_6175.webp",price:"$6.99",best:false},
-  {id:"skin_3",img:"IMG_6260.webp",price:"$3.49",best:false}
-];
-const paidContainer=document.getElementById('paidSkinsContainer');
-paidSkins.forEach(skin=>{
-  const block=document.createElement('div');block.className='circle-block';
-  const circle=document.createElement('div');circle.className='circle';
-  const img=document.createElement('img');img.src=skin.img;img.classList.add('active');
-  circle.appendChild(img);
-  if(skin.best){const badge=document.createElement('div');badge.className='best-deal-badge';badge.textContent='Best Deal';circle.appendChild(badge);}
-  const priceBadge=document.createElement('div');priceBadge.className='price-badge';priceBadge.textContent=skin.price;
-  priceBadge.addEventListener('click',()=>{localStorage.setItem('addSkinId',skin.id);window.location.href='paidskins.html';});
-  block.appendChild(circle);block.appendChild(priceBadge);paidContainer.appendChild(block);
-});
+      // Staat er data-visible="true"? Dan altijd tonen
+      if (card.dataset.visible === "true") {
+        card.style.display = "block";
+        return;
+      }
 
-// Custom skins cycle
-const skinsCircle1=['IMG_2978.jpeg','IMG_3164.png','FB2EDDE2.png'];
-const skinsCircle2=['IMG_3156.jpeg','IMG_2718.png','IMG_2819.png'];
-const skinsCircle3=['IMG_3520.png','IMG_3533.png','IMG_3512.webp'];
-function cycle(circleId,images,time){
-  const circle=document.getElementById(circleId);
-  let i=0;
-  images.forEach((src,index)=>{const img=document.createElement('img');img.src=src;if(index===0)img.classList.add('active');circle.appendChild(img);});
-  setInterval(()=>{const imgs=circle.querySelectorAll('img');imgs[i].classList.remove('active');i=(i+1)%imgs.length;imgs[i].classList.add('active');},time);
-}
-// No need for circle ids for custom skins; already static
+      // Als placeholder → verbergen
+      if (isPlaceholder) {
+        card.style.display = "none";
+        return;
+      }
+
+      // Als geen link of href="#" → verbergen
+      if (!href || href === "#") {
+        card.style.display = "none";
+        return;
+      }
+
+      // In alle andere gevallen → zichtbaar
+      card.style.display = "block";
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    checkCards();
+
+    const grid = document.querySelector(".grid");
+    if (grid) {
+      const observer = new MutationObserver(() => checkCards());
+      observer.observe(grid, { attributes: true, subtree: true, childList: true });
+    }
+  });
 </script>
 
 </body>
