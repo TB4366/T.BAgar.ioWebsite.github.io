@@ -48,10 +48,6 @@
     font-weight: bold;
   }
 
-  /* Zoekbalk */
-  .search-bar {
-    margin-left: 20px;
-  }
   .search-bar input {
     padding: 8px 12px;
     border-radius: 6px;
@@ -134,8 +130,15 @@
     margin: 0 auto 50px auto;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     flex-wrap: wrap;
+  }
+
+  .circle-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
   }
 
   .circle {
@@ -146,6 +149,7 @@
     position: relative;
     background: #000;
     box-shadow: 0 0 15px #48cae4;
+    cursor: pointer;
   }
 
   .circle img {
@@ -155,6 +159,42 @@
     transition: opacity 1.2s ease;
   }
   .circle img.active { opacity: 1; }
+
+  .price-badge {
+    margin-top: 10px;
+    background: #ef4444;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .price-badge:hover {
+    transform: scale(1.05);
+  }
+
+  .best-deal-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: gold;
+    color: black;
+    padding: 4px 8px;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    display: inline-block;
+    background: #06b6d4;
+    color: #02111a;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
 
 </style>
 </head>
@@ -185,33 +225,13 @@
   </div>
 </header>
 
-<!-- JOUW VIDEO + SKINS + EXTRA SECTIES BLIJVEN HIER GEWOON GELIJK -->
-
 <main>
 
-  <!-- PAID SKINS SECTION -->
   <div class="divider"></div>
   <div class="highlight-title">Paid Skins Deals</div>
 
-  <div class="skins-circles">
-    <div class="circle-block">
-      <div class="circle"><img src="IMG_6174.webp" class="active"></div>
-      <div class="price">€4.99</div>
-    </div>
-    <div class="circle-block">
-      <div class="circle"><img src="IMG_6175.webp" class="active"></div>
-      <div class="price">€6.99</div>
-    </div>
-    <div class="circle-block">
-      <div class="circle"><img src="IMG_6260.webp" class="active"></div>
-      <div class="price">€3.49</div>
-    </div>
-  </div>
-    <div class="circle"><img src="IMG_6175.webp" class="active"></div>
-    <div class="circle"><img src="IMG_6260.webp" class="active"></div>
-  </div>
-    <div class="circle"><img src="paid2.png" class="active"></div>
-    <div class="circle"><img src="paid3.png" class="active"></div>
+  <div class="skins-circles" id="paidSkinsContainer">
+    <!-- Dynamische skins worden hier geladen -->
   </div>
 
   <div style="text-align:center; margin-bottom:40px;">
@@ -256,11 +276,54 @@ if (savedTheme === 'dark') {
   body.classList.add('dark');
   toggleBtn.textContent = '☀️';
 }
-
 toggleBtn.addEventListener('click', () => {
   body.classList.toggle('dark');
   toggleBtn.textContent = body.classList.contains('dark') ? '☀️' : '🌙';
   localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+});
+
+// PAID SKINS DATA
+const paidSkins = [
+  {id:"skin_1",img:"IMG_6174.webp",price:"$4.99",best:true},
+  {id:"skin_2",img:"IMG_6175.webp",price:"$6.99",best:false},
+  {id:"skin_3",img:"IMG_6260.webp",price:"$3.49",best:false},
+  {id:"skin_4",img:"IMG_6258.webp",price:"$5.49",best:false},
+  {id:"skin_5",img:"IMG_6257.webp",price:"$5.95",best:false}
+];
+
+const paidContainer = document.getElementById('paidSkinsContainer');
+
+paidSkins.forEach(skin => {
+  const block = document.createElement('div');
+  block.className = 'circle-block';
+
+  const circle = document.createElement('div');
+  circle.className = 'circle';
+  const img = document.createElement('img');
+  img.src = skin.img;
+  img.classList.add('active');
+  circle.appendChild(img);
+
+  // Best Deal badge
+  if(skin.best){
+    const badge = document.createElement('div');
+    badge.className = 'best-deal-badge';
+    badge.textContent = 'Best Deal';
+    circle.appendChild(badge);
+  }
+
+  // Klik functionaliteit: ga naar paidskins.html met skin toegevoegd
+  const priceBadge = document.createElement('div');
+  priceBadge.className = 'price-badge';
+  priceBadge.textContent = skin.price;
+  priceBadge.addEventListener('click', () => {
+    localStorage.setItem('addSkinId', skin.id); // wordt opgehaald in paidskins.html
+    window.location.href = 'paidskins.html';
+  });
+
+  block.appendChild(circle);
+  block.appendChild(priceBadge);
+  paidContainer.appendChild(block);
 });
 
 // SKIN CAROUSEL
