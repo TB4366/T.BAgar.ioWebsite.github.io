@@ -1,211 +1,473 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mod Menu — T.B Agar.io Website</title>
 <style>
-body { font-family: Arial, sans-serif; background:#0d0d0d; color:#fff; margin:0; padding:20px; }
-.menu { display:flex; flex-wrap:wrap; gap:10px; background:#0f172a; padding:10px; }
-.menu a { text-decoration:none; color:#fff; padding:8px 12px; border-bottom:1px solid #334155; display:flex; align-items:center; gap:5px; }
-.menu a:hover { background:#334155; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; margin-bottom:40px; }
-.card { position:relative; background:#1a1a1a; padding:15px; border-radius:12px; text-align:center; overflow:hidden; border:2px solid #2a2a2a; }
-.card img { width:100%; height:160px; object-fit:cover; border-radius:10px; background:#000; }
-.status-label { position:absolute; top:10px; left:10px; padding:5px 10px; border-radius:6px; font-size:14px; display:none; font-weight:bold; }
-.overlay { position:absolute; inset:0; background:rgba(0,0,0,0.5); border-radius:12px; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:1rem; text-align:center; display:none; color:#fff; }
-button { width:100%; margin-top:10px; padding:10px; border:none; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; transition:0.2s; }
-button.locked { background:#555; color:#ccc; cursor:not-allowed; }
-.info { margin-top:5px; font-size:14px; opacity:0.7; }
-hr { border:none; height:2px; background:#3b82f6; margin:40px 0; }
-.help-section { text-align:center; padding-bottom:20px; }
-.help-button { background:#3b82f6; color:white; padding:10px 20px; border:none; border-radius:8px; font-size:1rem; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-block; transition:0.3s; }
-.help-button:hover { background:#2563eb; }
+  :root{
+    --bg:#0b1220;
+    --panel:#1e293b;
+    --muted:#94a3b8;
+    --accent:#3b82f6;
+    --card-border:#172032;
+  }
+
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  .menu{background:#0f172a;display:flex;flex-wrap:wrap;padding:8px 12px;gap:8px;border-bottom:1px solid #18202a}
+  .menu a{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;text-decoration:none;border-radius:8px}
+  .menu a:hover{background:#10304a}
+
+  header{padding:18px 12px;text-align:center}
+  header h1{margin:0;font-size:1.6rem}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px}
+  @media (max-width:1024px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--panel);
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(2,6,23,0.6);
+    position:relative;
+    border:1px solid var(--card-border);
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    gap:8px;
+  }
+
+  .card img{width:100%;height:140px;object-fit:cover;border-radius:8px;background:linear-gradient(180deg,#0b1220,#111827)}
+  .status-label{position:absolute;top:12px;left:12px;padding:6px 8px;border-radius:8px;font-weight:700;display:none;font-size:0.8rem}
+  .label-soon{background:#2563eb;color:white}
+  .label-update{background:#ef4444;color:white}
+  .label-unavailable{background:#7c3aed;color:white}
+
+  button.download{
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  /* locked button (grijs) */
+  button.locked{
+    background:#475569 !important;
+    color:#e2e8f0;
+    cursor:not-allowed;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .info{font-size:0.9rem;color:var(--muted)}
+  .overlay{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:12px;
+    border-radius:12px;
+    color:#fff;
+    font-weight:700;
+    font-size:1rem;
+    background:rgba(0,0,0,0.55);
+    display:none;
+  }
+
+  hr.section-line{border:none;height:3px;background:var(--accent);margin:28px 0;border-radius:4px}
+
+  .section-title{text-align:center;font-size:1.2rem;margin-bottom:12px}
+
+  .help-section{text-align:center;padding:28px 12px}
+  .help-button{display:inline-block;background:var(--accent);color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+  .help-button:hover{background:#2563eb}
+
+  /* small icon inside button */
+  .btn-icon{font-size:1.05rem}
 </style>
 </head>
 <body>
 
+<!-- Top menu -->
 <div class="menu">
-<a href="index.html"><span>🏠</span> Home</a>
-<a href="custom-skins.html"><span>🎨</span> Skins</a>
-<a href="mod-menu.html"><span>🛠️</span> Mods</a>
-<a href="key-access.html"><span>🔑</span> Keys</a>
-<a href="buy-account.html"><span>💰</span> Buy</a>
-<a href="sell-account.html"><span>📤</span> Sell</a>
+  <a href="index.html">🏠 Home Page</a>
+  <a href="custom-skins.html">🎨 Custom Skins</a>
+  <a href="mod-menu.html">🛠️ Mod Menu</a>
+  <a href="key-access.html">🔑 Keys</a>
+  <a href="buy-account.html">💰 Buy Account</a>
+  <a href="sell-account.html">📤 Sell Account</a>
 </div>
 
-<header><h1>Mod Menu</h1></header>
+<header>
+  <h1>Mod Menu</h1>
+</header>
 
-<!-- 16 Hoofdmods -->
+<!-- 16 Hoofdmods (allemaal data-status="inactive" zoals gevraagd) -->
 <div class="grid">
-<!-- Mod 1 -->
-<div class="card" data-status="active">
-  <div class="status-label">UPDATE</div>
-  <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="Mod 1">
-  <a><button>Download</button></a>
-  <div class="info">Version: 2.30.5</div>
-  <div class="info">Date: 08-09-2025</div>
-  <div class="info">T.B Mod (Kabrah) Unlock skin</div>
-  <div class="overlay"></div>
-</div>
 
-<!-- Mod 2 t/m 16 (zelfde indeling als Mod 1) -->
-<div class="card" data-status="update">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 2">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="soon">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 3">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 4">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 5">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 6">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 7">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 8">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 9">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 10">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 11">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 12">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 13">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 14">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 15">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<div class="card" data-status="inactive">
-  <div class="status-label">UPDATE</div>
-  <img src="#" alt="Mod 16">
-  <a><button>Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
+  <!-- MOD 1 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="Mod 1">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info">Version: 2.30.5</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">T.B Mod (Kabrah) Unlock skin</div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
 
-</div>
+  <!-- MOD 2 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 2">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
 
-<hr>
+  <!-- MOD 3 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 3">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 4 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 4">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 5 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 5">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 6 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 6">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 7 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 7">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 8 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 8">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 9 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 9">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 10 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 10">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 11 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 11">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 12 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 12">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 13 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 13">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 14 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 14">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 15 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 15">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- MOD 16 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Mod 16">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+</div> <!-- einde hoofdmods grid -->
+
+<hr class="section-line">
+<div class="section-title">DNS PROFILE</div>
+
+<!-- 8 Extra Mods -->
 <div class="grid">
-<!-- 8 Extra Mods (zelfde indeling) -->
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 1"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 2"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 3"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 4"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 5"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 6"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 7"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-<div class="card" data-status="inactive"><div class="status-label">UPDATE</div><img src="#" alt="Extra Mod 8"><a><button>Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-</div>
 
-<hr>
+  <!-- Extra Mod 1 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 1">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 2 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 2">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 3 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 3">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 4 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 4">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 5 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 5">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 6 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 6">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 7 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 7">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+  <!-- Extra Mod 8 -->
+  <div class="card" data-status="inactive">
+    <div class="status-label label-update">UPDATE</div>
+    <img src="#" alt="Extra Mod 8">
+    <button class="download locked" aria-disabled="true"><span class="btn-icon">🔒</span> Download</button>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="info"></div>
+    <div class="overlay">This mod is no longer active</div>
+  </div>
+
+</div> <!-- einde extra mods grid -->
+
+<hr class="section-line">
+
+<!-- Help sectie - button onderaan -->
 <div class="help-section">
   <p><strong>How do I get the mod?</strong></p>
-  <a href="mods-help.html" class="help-button">Help Mods</a>
+  <a class="help-button" href="mods-help.html">Help Mods</a>
 </div>
+
+<script>
+  // Script: past per-card de zichtbaarheid en knoppen aan op basis van data-status
+  document.querySelectorAll('.card').forEach(card => {
+    const status = card.getAttribute('data-status') || 'inactive';
+    const label = card.querySelector('.status-label');
+    const overlay = card.querySelector('.overlay');
+    const btn = card.querySelector('button.download');
+
+    // helper: set locked appearance
+    function lockButtonWithIcon(icon, text){
+      if(btn){
+        btn.classList.add('locked');
+        btn.innerHTML = icon + ' ' + (text || 'Download');
+        btn.setAttribute('aria-disabled','true');
+        btn.onclick = () => { alert((text === 'Download') ? 'Not available' : text); };
+      }
+    }
+
+    // helper: set normal button
+    function setButtonActive(){
+      if(btn){
+        btn.classList.remove('locked');
+        btn.innerHTML = 'Download';
+        btn.removeAttribute('aria-disabled');
+        btn.onclick = null;
+      }
+    }
+
+    // Reset first
+    if(label) label.style.display = 'none';
+    if(overlay) overlay.style.display = 'none';
+
+    // Apply by status
+    if(status === 'active'){
+      // visible, downloadable
+      setButtonActive();
+      // no overlay, no label
+    } else if(status === 'soon' || status === 'inactive'){
+      // For both 'soon' and 'inactive' as per your "C" choice: show overlay + locked button with lock icon
+      // overlay message: 'This mod is no longer active' for inactive, 'Coming Soon' for soon
+      if(status === 'soon'){
+        if(label){ label.textContent = 'COMING SOON'; label.className = 'status-label label-soon'; label.style.display = 'block'; }
+        if(overlay){ overlay.textContent = 'Coming Soon'; overlay.style.display = 'flex'; overlay.style.background = 'rgba(0,0,0,0.35)'; }
+        lockButtonWithIcon('🔒','Coming Soon');
+      } else {
+        // inactive
+        if(label){ label.textContent = ''; label.style.display = 'none'; }
+        if(overlay){ overlay.textContent = 'This mod is no longer active'; overlay.style.display = 'flex'; overlay.style.background = 'rgba(0,0,0,0.55)'; }
+        lockButtonWithIcon('🔒','This mod is no longer active');
+        card.style.opacity = '0.55';
+      }
+    } else if(status === 'update'){
+      if(label){ label.textContent = 'UPDATE'; label.className = 'status-label label-update'; label.style.display = 'block'; }
+      if(overlay){ overlay.textContent = 'Update required'; overlay.style.display = 'flex'; overlay.style.background = 'rgba(0,0,0,0.45)'; }
+      lockButtonWithIcon('⏳','Update required');
+    } else if(status === 'not_available' || status === 'unavailable'){
+      if(label){ label.textContent = 'NOT AVAILABLE'; label.className = 'status-label label-unavailable'; label.style.display = 'block'; }
+      if(overlay){ overlay.textContent = 'This mod is no longer available'; overlay.style.display = 'flex'; overlay.style.background = 'rgba(0,0,0,0.6)'; }
+      lockButtonWithIcon('❌','This mod is no longer available');
+      card.style.opacity = '0.35';
+    } else if(status === 'hidden'){
+      // hide from page
+      card.style.display = 'none';
+    } else {
+      // fallback treat as inactive
+      if(overlay){ overlay.textContent = 'This mod is no longer active'; overlay.style.display = 'flex'; }
+      lockButtonWithIcon('🔒','This mod is no longer active');
+      card.style.opacity = '0.55';
+    }
+  });
+</script>
 
 </body>
 </html>
