@@ -4,88 +4,158 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mod Menu — T.B Agar.io Website</title>
+
 <style>
   :root{
     --bg:#0b1220;
-    --panel:#1e293b;
+    --panel:#131b2c;
     --muted:#94a3b8;
     --accent:#3b82f6;
-    --card-border:#172032;
+    --border:#1e2a3d;
     --label-update:#ef4444;
     --label-soon:#2563eb;
     --label-not:#7c3aed;
   }
 
-  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  .menu{background:#0f172a;display:flex;flex-wrap:wrap;padding:8px 12px;gap:8px;border-bottom:1px solid #18202a}
-  .menu a{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;text-decoration:none;border-radius:8px}
-  .menu a:hover{background:#10304a}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:white;
+    font-family:system-ui,Segoe UI,Roboto;
+  }
 
-  header{padding:18px 12px;text-align:center}
-  header h1{margin:0;font-size:1.6rem}
+  /* MENU */
+  .menu{
+    background:#101a2f;
+    padding:10px 14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    border-bottom:1px solid var(--border);
+  }
+  .menu a{
+    background:#152039;
+    padding:8px 12px;
+    border-radius:8px;
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+  }
 
-  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px}
-  @media (max-width:1024px){ .grid{grid-template-columns:repeat(2,1fr);} }
-  @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+  header{
+    text-align:center;
+    padding:20px 10px;
+  }
 
+  /* GRID */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    padding:20px;
+  }
+
+  /* CARD */
   .card{
     background:var(--panel);
     border-radius:12px;
+    border:1px solid var(--border);
     padding:12px;
-    text-align:center;
-    box-shadow:0 4px 18px rgba(2,6,23,0.6);
-    position:relative;
-    border:1px solid var(--card-border);
-    min-height:300px;
     display:flex;
     flex-direction:column;
-    gap:8px;
+    gap:10px;
+    position:relative;
+    box-shadow:0 4px 18px rgba(0,0,0,0.4);
   }
 
-  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px;background:linear-gradient(180deg,#0b1220,#111827)}
+  /* Afbeelding: nooit meer misvormd */
+  .card img{
+    width:100%;
+    aspect-ratio: 16/9;
+    object-fit:cover;
+    border-radius:10px;
+    background:#111827;
+  }
 
   .status-label{
-    position:absolute; top:12px; left:12px; padding:6px 8px; border-radius:8px;
-    font-weight:700; display:none; font-size:0.85rem;
+    position:absolute;
+    top:12px;
+    left:12px;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:0.8rem;
+    font-weight:700;
+    display:none;
   }
-  .status-label.update{ background:var(--label-update); color:white; }
-  .status-label.soon{ background:var(--label-soon); color:white; }
-  .status-label.not{ background:var(--label-not); color:white; }
+  .update{ background:var(--label-update); }
+  .soon{ background:var(--label-soon); }
+  .not{ background:var(--label-not); }
 
-  .card .info{ font-size:0.92rem; color:var(--muted); margin-top:4px; }
-
-  .download {
-    border:none; padding:10px; border-radius:8px; background:var(--accent);
-    color:#fff; font-weight:700; cursor:pointer; width:100%;
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  .download{
+    padding:10px;
+    background:var(--accent);
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
   }
-  .download.locked {
-    background:#475569 !important; color:#e2e8f0; cursor:not-allowed;
+  .download.locked{
+    background:#475569;
+    cursor:not-allowed;
   }
 
-  .overlay {
-    position:absolute; inset:0; display:none; justify-content:center; align-items:center; text-align:center;
-    padding:12px; border-radius:12px; font-weight:700; font-size:1rem; color:#fff;
+  .info{
+    font-size:0.9rem;
+    color:var(--muted);
+  }
+
+  .overlay{
+    position:absolute;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
     background:rgba(0,0,0,0.55);
+    border-radius:12px;
+    font-weight:700;
   }
 
-  hr.section-line{border:none;height:3px;background:var(--accent);margin:28px 0;border-radius:4px}
-  .section-title{text-align:center;font-size:1.15rem;margin-bottom:12px}
+  hr.section-line{
+    border:none;
+    height:3px;
+    background:var(--accent);
+    margin:30px 0;
+    border-radius:4px;
+  }
 
-  .help-section{text-align:center;padding:28px 12px}
-  .help-button{display:inline-block;background:var(--accent);color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700}
-  .help-button:hover{background:#2563eb}
+  .section-title{
+    text-align:center;
+    font-size:1.3rem;
+    margin-bottom:10px;
+  }
 
-  .btn-icon{font-size:1.05rem}
+  .help-section{
+    text-align:center;
+    padding:30px;
+  }
+  .help-button{
+    background:var(--accent);
+    padding:12px 20px;
+    border-radius:10px;
+    color:white;
+    font-weight:700;
+    text-decoration:none;
+  }
 </style>
 </head>
 <body>
 
-<!-- Menu -->
+<!-- MENU -->
 <div class="menu">
-  <a href="index.html">🏠 Home Page</a>
+  <a href="index.html">🏠 Home</a>
   <a href="custom-skins.html">🎨 Custom Skins</a>
-  <a href="mod-menu.html">🛠️ Mod Menu</a>
+  <a href="mod-menu.html">🛠 Mod Menu</a>
   <a href="key-access.html">🔑 Keys</a>
   <a href="buy-account.html">💰 Buy Account</a>
   <a href="sell-account.html">📤 Sell Account</a>
@@ -93,86 +163,84 @@
 
 <header><h1>Mod Menu</h1></header>
 
-<!-- ========== 16 HOOFDMODS ========== -->
+<!-- 16 HOOFDMODS -->
 <div class="grid">
-
-  <!-- Mod 1 → active -->
+  <!-- Voorbeeld van Mod 1 -->
   <div class="card" data-status="active">
     <div class="status-label update">UPDATE</div>
-    <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="Mod 1">
+    <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg">
     <a href="#"><button class="download">Download</button></a>
     <div class="info">Version: 2.30.5</div>
     <div class="info">Date: 08-09-2025</div>
-    <div class="info">T.B Mod (Kabrah) Unlock skin</div>
+    <div class="info">T.B Mod (Kabrah) Unlock Skin</div>
     <div class="overlay"></div>
   </div>
 
-  <!-- Mod 2 → update -->
-  <div class="card" data-status="active"
-    <img src="IMG_6587.png" alt="Mod 2">
-    <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/AGARIO_2.30.8_BiteYt-SkinsMod-2.5.0.ipa"><button class="download">Download</button></a>
-    <div class="info"></div><div class="info"></div><div class="info"></div>
+  <!-- Mod 2 -->
+  <div class="card" data-status="active">
+    <img src="IMG_6587.png">
+    <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/AGARIO_2.30.8_BiteYt-SkinsMod-2.5.0.ipa">
+      <button class="download">Download</button>
+    </a>
     <div class="overlay"></div>
   </div>
 
-  <!-- Mod 3 → coming soon -->
-  <div class="card" data-status="soon" data-soon-msg="De mod komt zo">
+  <!-- Mod 3 t/m 16 VOORBEELD -->
+  <!-- Kopieer deze en vul je eigen images + data in -->
+  <div class="card" data-status="soon">
     <div class="status-label soon">COMING SOON</div>
-    <img src="#" alt="Mod 3">
-    <a href="#"><button class="download">Download</button></a>
-    <div class="info"></div><div class="info"></div><div class="info"></div>
+    <img src="#">
+    <button class="download">Download</button>
     <div class="overlay"></div>
   </div>
 
-  <!-- Mod 4 → available -->
-  <div class="card" data-status="available" data-notavail-msg="This mod is no longer available.">
-    <div class="status-label not">NOT AVAILABLE</div>
-    <img src="#" alt="Mod 4">
-    <a href="#"><button class="download">Download</button></a>
-    <div class="info"></div><div class="info"></div><div class="info"></div>
-    <div class="overlay"></div>
-  </div>
-
-  <!-- Mod 5 → inactive -->
-  <div class="card" data-status="available">
-    <div class="status-label update">UPDATE</div>
-    <img src="#" alt="Mod 5">
-    <a href="#"><button class="download">Download</button></a>
-    <div class="info"></div><div class="info"></div><div class="info"></div>
-    <div class="overlay"></div>
-  </div>
-
-  <!-- Mods 6 t/m 16 → voorbeeld allemaal inactive -->
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 6"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 7"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 8"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 9"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 10"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 11"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 12"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 13"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 14"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 15"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Mod 16"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-
+  <!-- 13 leeg voor jou -->
+  <!-- Je kunt zelf meer kaarten kopiëren -->
 </div>
+
 
 <hr class="section-line">
 <div class="section-title">DNS PROFILE</div>
 
-<!-- ========== 8 EXTRA MODS ========== -->
+<!-- 8 EXTRA MODS -->
 <div class="grid">
 
-  <div class="card" data-status="active"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 1"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="update" data-update-msg="Deze update komt over 2 uur"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 2"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="soon" data-soon-msg="Komt binnenkort"><div class="status-label soon">COMING SOON</div><img src="#" alt="Extra Mod 3"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="available" data-notavail-msg="This mod is no longer available."><div class="status-label not">NOT AVAILABLE</div><img src="#" alt="Extra Mod 4"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 5"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 6"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 7"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
-  <div class="card" data-status="inactive"><div class="status-label update">UPDATE</div><img src="#" alt="Extra Mod 8"><a href="#"><button class="download">Download</button></a><div class="info"></div><div class="info"></div><div class="info"></div><div class="overlay"></div></div>
+  <div class="card" data-status="update">
+    <div class="status-label update">UPDATE</div>
+    <img src="#">
+    <button class="download">Download</button>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="card" data-status="update" data-update-msg="2 uur remaining">
+    <div class="status-label update">UPDATE</div>
+    <img src="#">
+    <button class="download">Download</button>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="card" data-status="soon">
+    <div class="status-label soon">COMING SOON</div>
+    <img src="#">
+    <button class="download">Download</button>
+    <div class="overlay"></div>
+  </div>
+
+  <div class="card" data-status="not">
+    <div class="status-label not">NOT AVAILABLE</div>
+    <img src="#">
+    <button class="download">Download</button>
+    <div class="overlay"></div>
+  </div>
+
+  <!-- 4 lege extra mods -->
+  <div class="card" data-status="inactive"><img src="#"><button class="download">Download</button></div>
+  <div class="card" data-status="inactive"><img src="#"><button class="download">Download</button></div>
+  <div class="card" data-status="inactive"><img src="#"><button class="download">Download</button></div>
+  <div class="card" data-status="inactive"><img src="#"><button class="download">Download</button></div>
 
 </div>
+
 
 <hr class="section-line">
 
@@ -182,53 +250,49 @@
 </div>
 
 <script>
-document.querySelectorAll('.card').forEach(card => {
-  const status = (card.getAttribute('data-status') || 'inactive').trim();
-  const btn = card.querySelector('button.download');
-  const label = card.querySelector('.status-label');
-  const overlay = card.querySelector('.overlay');
+document.querySelectorAll(".card").forEach(card => {
+  const status = card.getAttribute("data-status");
+  const btn = card.querySelector(".download");
+  const label = card.querySelector(".status-label");
+  const overlay = card.querySelector(".overlay");
 
-  const setLocked = (icon, text, clickMsg) => {
-    if(!btn) return;
-    btn.classList.add('locked');
-    btn.innerHTML = `<span class="btn-icon">${icon}</span> ${text}`;
-    btn.onclick = (e) => { e.preventDefault(); alert(clickMsg); };
-    btn.setAttribute('aria-disabled','true');
-  };
+  if(label) label.style.display = "none";
+  if(overlay) overlay.style.display = "none";
 
-  const setActiveButton = () => {
-    if(!btn) return;
-    btn.classList.remove('locked');
-    btn.innerHTML = 'Download';
-    btn.onclick = null;
-    btn.removeAttribute('aria-disabled');
-  };
+  const lock = (title,msg) => {
+    btn.classList.add("locked");
+    btn.textContent = title;
+    btn.onclick = (e)=>{ e.preventDefault(); alert(msg); };
+  }
 
-  if(label) label.style.display = 'none';
-  if(overlay) overlay.style.display = 'none';
-  card.style.display = '';
-  card.style.opacity = '';
-
-  if(status === 'active'){
-    setActiveButton();
-  } else if(status === 'update') {
-    if(label){ label.className='status-label update'; label.textContent='UPDATE'; label.style.display='block'; }
-    const msg = card.getAttribute('data-update-msg') || 'This update is ready.';
-    setLocked('⏳','Update', msg);
-  } else if(status === 'soon' || status === 'coming-soon') {
-    if(label){ label.className='status-label soon'; label.textContent='COMING SOON'; label.style.display='block'; }
-    const msg = card.getAttribute('data-soon-msg') || 'De mod komt zo';
-    setLocked('🔒','Coming Soon', msg);
-  } else if(status === 'available') {
-    if(label){ label.className='status-label not'; label.textContent='NOT AVAILABLE'; label.style.display='block'; }
-    const msg = card.getAttribute('data-notavail-msg') || 'This mod is no longer available.';
-    if(overlay){ overlay.textContent=msg; overlay.style.display='flex'; overlay.style.background='rgba(0,0,0,0.55)'; }
-    setLocked('🔒','Not available', msg);
-    card.style.opacity='0.45';
-  } else if(status === 'inactive') {
-    card.style.display='none';
-  } else {
-    card.style.display='none';
+  if(status === "active"){
+    btn.textContent = "Download";
+  }
+  if(status === "update"){
+    label.textContent = "UPDATE";
+    label.classList.add("update");
+    label.style.display = "block";
+    lock("Update","De update komt eraan");
+  }
+  if(status === "soon"){
+    label.textContent = "COMING SOON";
+    label.classList.add("soon");
+    label.style.display = "block";
+    lock("Coming Soon","Deze mod komt binnenkort!");
+  }
+  if(status === "not"){
+    label.textContent = "NOT AVAILABLE";
+    label.classList.add("not");
+    label.style.display = "block";
+    lock("Unavailable","Deze mod is niet meer beschikbaar");
+    if(overlay){
+      overlay.textContent = "Not available";
+      overlay.style.display = "flex";
+    }
+    card.style.opacity="0.45";
+  }
+  if(status === "inactive"){
+    card.style.display="none";
   }
 });
 </script>
