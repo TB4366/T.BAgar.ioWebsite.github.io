@@ -1,137 +1,201 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Mod Menu — T.B Agar.io Website</title>
 <style>
-body { font-family: system-ui, sans-serif; margin:0; background:#0b1220; color:#fff; padding:0; }
-.menu { background:#0f172a; display:flex; flex-wrap:wrap; overflow-x:auto; }
-.menu a { display:flex; align-items:center; gap:8px; padding:12px 16px; text-decoration:none; color:white; border-bottom:1px solid #334155; }
-.menu a:hover { background:#334155; }
-header { padding:20px 0; text-align:center; margin-bottom:20px; }
-h1 { margin:0; }
-.grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; padding:20px; }
-.card { background:#1e293b; border-radius:12px; padding:12px; text-align:center; box-shadow:0 0 8px #0f172a; transition: transform 0.2s ease, box-shadow 0.2s ease; position:relative; }
-.card:hover { transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
-.card img { width:100%; border-radius:8px; margin-bottom:10px; object-fit:cover; }
-.card a button { display:block; width:100%; padding:8px; background:#3b82f6; color:white; font-weight:bold; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px; transition:background 0.3s ease; }
-.card a button.locked { background:#555; cursor:not-allowed; }
-.card .info { font-size:0.9rem; color:#cbd5e1; margin-bottom:4px; }
-.card .status-label { position:absolute; top:10px; left:10px; background:red; color:white; padding:2px 6px; border-radius:4px; font-weight:bold; display:none; }
-.card .overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); color:white; display:flex; justify-content:center; align-items:center; font-weight:bold; font-size:1rem; border-radius:12px; display:none; text-align:center; padding:10px; }
-hr { border:none; height:2px; background:#3b82f6; margin:40px 0; }
-.section-title { text-align:center; font-size:1.5rem; font-weight:bold; margin-bottom:20px; }
-.help-section { text-align:center; padding-bottom:20px; }
-.help-section p { font-size:1.2rem; margin-bottom:20px; }
-.help-button { background:#3b82f6; color:white; padding:10px 20px; border:none; border-radius:8px; font-size:1rem; font-weight:bold; cursor:pointer; transition:background 0.3s ease; text-decoration:none; display:inline-block; }
-.help-button:hover { background:#2563eb; }
-@media (max-width:1024px) { .grid { grid-template-columns:repeat(2,1fr); } }
-@media (max-width:640px) { .grid { grid-template-columns:1fr; } }
+  :root{
+    --bg:#0b1220;
+    --panel:#1e293b;
+    --muted:#94a3b8;
+    --accent:#3b82f6;
+    --card-border:#172032;
+    --label-update:#ef4444;
+    --label-soon:#2563eb;
+    --label-not:#7c3aed;
+  }
+
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  .menu{background:#0f172a;display:flex;flex-wrap:wrap;padding:8px 12px;gap:8px;border-bottom:1px solid #18202a}
+  .menu a{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;color:#fff;text-decoration:none;border-radius:8px}
+  .menu a:hover{background:#10304a}
+
+  header{padding:18px 12px;text-align:center}
+  header h1{margin:0;font-size:1.6rem}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px}
+  @media (max-width:1024px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--panel);
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+    box-shadow:0 4px 18px rgba(2,6,23,0.6);
+    position:relative;
+    border:1px solid var(--card-border);
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+
+  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px;background:linear-gradient(180deg,#0b1220,#111827)}
+
+  .status-label{
+    position:absolute; top:12px; left:12px; padding:6px 8px; border-radius:8px;
+    font-weight:700; display:none; font-size:0.85rem;
+  }
+  .status-label.update{ background:var(--label-update); color:white; }
+  .status-label.soon{ background:var(--label-soon); color:white; }
+  .status-label.not{ background:var(--label-not); color:white; }
+
+  .card .info{ font-size:0.92rem; color:var(--muted); margin-top:4px; }
+
+  .download {
+    border:none; padding:10px; border-radius:8px; background:var(--accent);
+    color:#fff; font-weight:700; cursor:pointer; width:100%;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .download.locked {
+    background:#475569 !important; color:#e2e8f0; cursor:not-allowed;
+  }
+
+  .overlay {
+    position:absolute; inset:0; display:none; justify-content:center; align-items:center; text-align:center;
+    padding:12px; border-radius:12px; font-weight:700; font-size:1rem; color:#fff;
+    background:rgba(0,0,0,0.55);
+  }
+
+  hr.section-line{border:none;height:3px;background:var(--accent);margin:28px 0;border-radius:4px}
+  .section-title{text-align:center;font-size:1.15rem;margin-bottom:12px}
+
+  .help-section{text-align:center;padding:28px 12px}
+  .help-button{display:inline-block;background:var(--accent);color:#fff;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700}
+  .help-button:hover{background:#2563eb}
+
+  .btn-icon{font-size:1.05rem}
 </style>
 </head>
 <body>
 
+<!-- Menu -->
 <div class="menu">
-<a href="index.html"><span>🏠</span> Home Page</a>
-<a href="custom-skins.html"><span>🎨</span> Custom Skins</a>
-<a href="mod-menu.html"><span>🛠️</span> Mod Menu</a>
-<a href="key-access.html"><span>🔑</span> Keys</a>
-<a href="buy-account.html"><span>💰</span> Buy Account</a>
-<a href="sell-account.html"><span>📤</span> Sell Account</a>
+  <a href="index.html">🏠 Home Page</a>
+  <a href="custom-skins.html">🎨 Custom Skins</a>
+  <a href="mod-menu.html">🛠️ Mod Menu</a>
+  <a href="key-access.html">🔑 Keys</a>
+  <a href="buy-account.html">💰 Buy Account</a>
+  <a href="sell-account.html">📤 Sell Account</a>
 </div>
 
 <header><h1>Mod Menu</h1></header>
 
-<!-- ========== 16 Hoofdmods ========== -->
+<!-- ========== 16 HOOFDMODS ========== -->
 <div class="grid">
 
-<!-- Mod 1 t/m Mod 16 -->
-<div class="card" data-status="inactive" data-update-msg="Deze update is klaar en is over 1 uur beschikbaar" data-soon-msg="De mod komt zo" data-notavail-msg="This mod is no longer available.">
-  <div class="status-label update">UPDATE</div>
-  <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="Mod 1">
-  <a href="#"><button class="download">Download</button></a>
-  <div class="info">Version: 2.30.5</div>
-  <div class="info">Date: 08-09-2025</div>
-  <div class="info">T.B Mod (Kabrah) Unlock skin</div>
-  <div class="overlay"></div>
+  <!-- MOD 1 -->
+  <div class="card"
+       data-status="update"
+       data-update-msg="Deze update is klaar en is over 1 uur beschikbaar"
+       data-soon-msg="De mod komt zo"
+       data-notavail-msg="This mod is no longer available.">
+    <div class="status-label update">UPDATE</div>
+    <img src="EDFC02D9-A95F-479D-BD21-3709C77B8FF5.jpeg" alt="Mod 1">
+    <a href="#"><button class="download">Download</button></a>
+    <div class="info">Version: 2.30.5</div>
+    <div class="info">Date: 08-09-2025</div>
+    <div class="info">T.B Mod (Kabrah) Unlock skin</div>
+    <div class="overlay"></div>
+  </div>
+
+  <!-- MOD 2 t/m MOD 16 voorbeeldcards -->
+  <div class="card" data-status="soon" data-update-msg="" data-soon-msg="" data-notavail-msg="This mod is no longer available.">
+    <div class="status-label update">UPDATE</div>
+    <img src="#" alt="Mod">
+    <a href="#"><button class="download">Download</button></a>
+    <div class="info"></div><div class="info"></div><div class="info"></div>
+    <div class="overlay"></div>
+  </div>
+  <!-- Herhaal dit voor alle 16 mods, pas data-status aan per mod -->
+
 </div>
 
-<!-- Kopieer exact hetzelfde voor Mod 2 t/m Mod 16, pas alt aan -->
-<div class="card" data-status="soon" data-update-msg="Deze update is klaar en is over 1 uur beschikbaar" data-soon-msg="De mod komt zo" data-notavail-msg="This mod is no longer available.">
-  <div class="status-label update">UPDATE</div>
-  <img src="#" alt="Mod 2">
-  <a href="#"><button class="download">Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<!-- Herhaal tot Mod 16 met alt="Mod 3" t/m "Mod 16" -->
+<hr class="section-line">
+<div class="section-title">DNS PROFILE</div>
 
-</div>
-
-<hr>
-<div class="section-title">ESIGN & DNS PROFILE</div>
-
-<!-- ========== 8 Extra Mods ========== -->
+<!-- ========== 8 EXTRA MODS ========== -->
 <div class="grid">
 
-<!-- Extra Mod 1 t/m 8 -->
-<div class="card" data-status="inactive" data-update-msg="Deze update is klaar en is over 1 uur beschikbaar" data-soon-msg="De mod komt zo" data-notavail-msg="This mod is no longer available.">
-  <div class="status-label update">UPDATE</div>
-  <img src="#" alt="Extra Mod 1">
-  <a href="#"><button class="download">Download</button></a>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="info"></div>
-  <div class="overlay"></div>
-</div>
-<!-- Herhaal tot Extra Mod 8 met alt="Extra Mod 2" t/m "Extra Mod 8" -->
+  <!-- Extra Mod 1 t/m Extra Mod 8 -->
+  <div class="card" data-status="inactive" data-update-msg="" data-soon-msg="" data-notavail-msg="This mod is no longer available.">
+    <div class="status-label update">UPDATE</div>
+    <img src="#" alt="Extra Mod">
+    <a href="#"><button class="download">Download</button></a>
+    <div class="info"></div><div class="info"></div><div class="info"></div>
+    <div class="overlay"></div>
+  </div>
+  <!-- Herhaal dit voor alle 8 extra mods -->
 
 </div>
 
-<hr>
+<hr class="section-line">
+
 <div class="help-section">
-<p><strong>How do I get the mod?</strong></p>
-<a href="mods-help.html" class="help-button">Help Mods</a>
+  <p><strong>How do I get the mod?</strong></p>
+  <a class="help-button" href="mods-help.html">Help Mods</a>
 </div>
 
 <script>
-// Script voor statusbeheer
-document.querySelectorAll(".card").forEach(card=>{
-  const status = card.dataset.status;
-  const overlay = card.querySelector(".overlay");
-  const button = card.querySelector(".download");
-  const label = card.querySelector(".status-label");
+document.querySelectorAll('.card').forEach(card => {
+  const status = (card.getAttribute('data-status') || 'inactive').trim();
+  const btn = card.querySelector('button.download');
+  const label = card.querySelector('.status-label');
+  const overlay = card.querySelector('.overlay');
 
-  if(status === "inactive"){ 
-    card.style.display="none"; // helemaal onzichtbaar
-  }
-  if(status === "notavailable"){ 
-    card.style.opacity="0.5";
-    overlay.style.display="flex";
-    overlay.textContent = card.dataset.notavailMsg;
-    button.classList.add("locked");
-  }
-  if(status === "soon"){ 
-    card.style.opacity="1";
-    overlay.style.display="flex";
-    overlay.innerHTML = 'Coming Soon 🔒';
-    button.classList.add("locked");
-  }
-  if(status === "update"){ 
-    card.style.opacity="1";
-    overlay.style.display="flex";
-    overlay.innerHTML = 'Update ⏰';
-    label.style.display="block";
-    button.classList.add("locked");
-  }
-  if(status === "active"){ 
-    card.style.opacity="1";
-    overlay.style.display="none";
-    label.style.display="none";
-    button.classList.remove("locked");
+  const setLocked = (icon, text, clickMsg) => {
+    if(!btn) return;
+    btn.classList.add('locked');
+    btn.innerHTML = `<span class="btn-icon">${icon}</span> ${text}`;
+    btn.onclick = (e) => { e.preventDefault(); alert(clickMsg); };
+    btn.setAttribute('aria-disabled','true');
+  };
+
+  const setActiveButton = () => {
+    if(!btn) return;
+    btn.classList.remove('locked');
+    btn.innerHTML = 'Download';
+    btn.onclick = null;
+    btn.removeAttribute('aria-disabled');
+  };
+
+  if(label) label.style.display = 'none';
+  if(overlay) overlay.style.display = 'none';
+  card.style.display = '';
+  card.style.opacity = '';
+
+  if(status === 'active'){
+    setActiveButton();
+  } else if(status === 'update') {
+    if(label){ label.className='status-label update'; label.textContent='UPDATE'; label.style.display='block'; }
+    const msg = card.getAttribute('data-update-msg') || 'This update is ready.';
+    setLocked('⏳','Update', msg);
+  } else if(status === 'soon' || status === 'coming-soon') {
+    if(label){ label.className='status-label soon'; label.textContent='COMING SOON'; label.style.display='block'; }
+    const msg = card.getAttribute('data-soon-msg') || 'De mod komt zo';
+    setLocked('🔒','Coming Soon', msg);
+  } else if(status === 'available') {
+    if(label){ label.className='status-label not'; label.textContent='NOT AVAILABLE'; label.style.display='block'; }
+    const msg = card.getAttribute('data-notavail-msg') || 'This mod is no longer available.';
+    if(overlay){ overlay.textContent=msg; overlay.style.display='flex'; overlay.style.background='rgba(0,0,0,0.55)'; }
+    setLocked('🔒','Not available', msg);
+    card.style.opacity='0.45';
+  } else if(status === 'inactive') {
+    card.style.display='none';
+  } else {
+    card.style.display='none';
   }
 });
 </script>
