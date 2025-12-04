@@ -62,6 +62,24 @@
     100% { transform: translateY(120vh) translateX(20px); opacity: 0.2; }
   }
 
+  /* 🌫️ Extra zachte voorgrond sneeuw/mist */
+  .foreground-snowflake {
+    position: fixed;
+    top: -20px;
+    left: 0;
+    font-size: 25px;
+    color: rgba(255,255,255,0.15);
+    pointer-events: none;
+    z-index: -1;
+    animation: foregroundSnow linear infinite;
+  }
+
+  @keyframes foregroundSnow {
+    0% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(50vh) translateX(15px); }
+    100% { transform: translateY(100vh) translateX(0); }
+  }
+
   /* 🎄 Kerst iconen basis */
   .christmas-icon {
     position: fixed;
@@ -185,11 +203,25 @@ function createSnow() {
   snow.style.opacity = Math.random() * 0.7 + 0.3;
 
   document.body.appendChild(snow);
-
   setTimeout(() => snow.remove(), 13000);
 }
 setInterval(createSnow, 300);
 
+// 🌫️ Extra zachte voorgrond sneeuw/mist
+function createForegroundSnow() {
+  const snow = document.createElement("div");
+  snow.classList.add("foreground-snowflake");
+  snow.textContent = "❄";
+
+  snow.style.left = Math.random() * window.innerWidth + "px";
+  snow.style.animationDuration = (Math.random() * 15 + 15) + "s";
+  snow.style.fontSize = (Math.random() * 15 + 20) + "px";
+  snow.style.opacity = Math.random() * 0.15 + 0.05;
+
+  document.body.appendChild(snow);
+  setTimeout(() => snow.remove(), 30000);
+}
+setInterval(createForegroundSnow, 800);
 
 // 🎄 KRISKRAS LANGZAME KERST ICONEN
 function createFloatingChristmasIcon(icon) {
