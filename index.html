@@ -38,51 +38,81 @@
   .custom-circle img.active{opacity:1;}
 
 
-  /* ------------------------------- */
-  /*      ❄ WINTER BACKGROUND ❄      */
-  /* ------------------------------- */
+  /* ❄ WINTER EFFECTEN TOEGEVOEGD */
   body {
     background: linear-gradient(#0b1e3d, #0b1220) !important;
-    position: relative;
     overflow-x: hidden;
+    position: relative;
   }
 
-  /* Sneeuwvlokken */
+  /* Sneeuwvlok stijl */
   .snowflake {
     position: fixed;
     top: -10px;
-    color: white;
-    font-size: 1.2rem;
-    animation: fall linear infinite;
+    left: 0;
+    font-size: 20px;
+    color: rgba(255,255,255,0.8);
     pointer-events: none;
-    z-index: 9999;
+    z-index: -1; /* Achter tekst */
+    animation: snowfall linear infinite;
   }
 
-  /* Animatie sneeuw */
-  @keyframes fall {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(110vh); opacity: 0.4; }
+  /* Langzame sneeuwval */
+  @keyframes snowfall {
+    0% { transform: translateY(0) translateX(0); opacity: .8; }
+    100% { transform: translateY(120vh) translateX(20px); opacity: .2; }
   }
 
-  /* Kerst iconen animatie */
+  /* Kerst iconen */
   .christmas-icon {
     position: fixed;
-    bottom: 20px;
-    animation: floatX 8s ease-in-out infinite;
-    z-index: 9998;
-    width: 60px;
-    font-size: 45px;
+    z-index: -1; /* Achter tekst */
+    font-size: 55px;
+    opacity: 0.5;
+    animation: floatSlow 12s ease-in-out infinite;
   }
 
-  /* Links-rechts beweging */
-  @keyframes floatX {
+  @keyframes floatSlow {
     0% { transform: translateX(0) rotate(0deg); }
-    50% { transform: translateX(40px) rotate(10deg); }
+    50% { transform: translateX(60px) rotate(8deg); }
     100% { transform: translateX(0) rotate(0deg); }
+  }
+
+  /* Mistlaag subtiel */
+  .winter-mist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, rgba(255,255,255,0.07), rgba(255,255,255,0));
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Kerstverlichting bovenaan */
+  .christmas-lights {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    z-index: -1;
+    font-size: 28px;
+    opacity: 0.8;
+    animation: glow 2s ease infinite;
+  }
+
+  @keyframes glow {
+    0% { opacity: .6; }
+    50% { opacity: 1; }
+    100% { opacity: .6; }
   }
 </style>
 </head>
 <body>
+
+<div class="winter-mist"></div>
+<div class="christmas-lights">💡✨💡✨💡✨💡✨💡✨💡✨</div>
 
 <header>
   <div class="left-header">
@@ -107,7 +137,6 @@
 
 <main>
 
-  <!-- Paid Skins -->
   <div class="divider"></div>
   <div class="highlight-title">Paid Skins Deals</div>
   <div class="skins-circles" id="paidSkinsContainer"></div>
@@ -115,7 +144,6 @@
 
   <div class="divider"></div>
 
-  <!-- Main Video -->
   <div class="main-video">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ayxxcfAxD5g" allowfullscreen></iframe>
   </div>
@@ -126,7 +154,6 @@
 
   <div class="divider"></div>
 
-  <!-- Custom Skins -->
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="custom-circles">
     <div class="custom-circle">
@@ -150,7 +177,6 @@
 
   <div class="divider"></div>
 
-  <!-- T.B Keys Section -->
   <div class="highlight-title">🔑 Keys</div>
   <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
   <p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
@@ -159,12 +185,9 @@
   </p>
   <div class="divider"></div>
 
-  <!-- Mods Section -->
-  
   <div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
   <div class="divider"></div>
 
-  <!-- Social Links -->
   <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;">
     <a href="https://www.youtube.com/@T.B6" target="_blank" style="background:red;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">YouTube</a>
     <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:linear-gradient(45deg,#f97316,#facc15);color:#111;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Instagram</a>
@@ -206,7 +229,7 @@ paidSkins.forEach(skin=>{
   block.appendChild(circle);block.appendChild(priceBadge);paidContainer.appendChild(block);
 });
 
-// Custom skins cycle (NIEUW, maar niets van je code verwijderd)
+// Custom skins fade cycle
 document.querySelectorAll('.custom-circle').forEach(circle=>{
   const imgs=circle.querySelectorAll('img');
   let i=0;
@@ -219,29 +242,34 @@ document.querySelectorAll('.custom-circle').forEach(circle=>{
 });
 </script>
 
-<!-- WINTER + SNEEUW + KERST ICONEN SCRIPT (ALLEEN TOEGEVOEGD) -->
+<!-- ❄ WINTER SCRIPT TOEGEVOEGD -->
 <script>
-// ❄ SNEEUW GENERATOR
+// ❄ Langzame mooie sneeuw
 function createSnow() {
   const snow = document.createElement("div");
   snow.classList.add("snowflake");
   snow.textContent = "❄";
 
   snow.style.left = Math.random() * window.innerWidth + "px";
-  snow.style.animationDuration = (Math.random() * 4 + 3) + "s";
-  snow.style.opacity = Math.random();
+  snow.style.animationDuration = (Math.random() * 6 + 6) + "s"; 
+  snow.style.fontSize = (Math.random() * 10 + 15) + "px"; 
+  snow.style.opacity = Math.random() * 0.7 + 0.3;
 
   document.body.appendChild(snow);
-  setTimeout(() => snow.remove(), 7000);
+  setTimeout(() => snow.remove(), 13000);
 }
-setInterval(createSnow, 150);
+setInterval(createSnow, 300);
 
-// 🎄 Kerst iconen
+
+// 🎄 Kersticonen langzaam achter de tekst
 ["🎄","🎁","⭐"].forEach((icon,i)=>{
   const el=document.createElement("div");
   el.classList.add("christmas-icon");
   el.textContent=icon;
-  el.style.left=(20 + i*70)+"px";
+
+  el.style.left=(25 + i*100)+"px";
+  el.style.bottom=(10 + i*12)+"vh";
+
   document.body.appendChild(el);
 });
 </script>
