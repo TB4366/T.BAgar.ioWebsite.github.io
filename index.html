@@ -32,20 +32,20 @@
   .best-deal-badge{position:absolute;top:-10px;left:-10px;background:gold;color:black;padding:4px 8px;font-weight:bold;border-radius:6px;font-size:0.8rem;}
   .btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;}
   .cta-wrap{text-align:center;margin-bottom:30px;}
+  /* Custom Circles */
   .custom-circles{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:40px;}
-  .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;box-shadow:0 0 15px #48cae4;background:#000;position:relative;}
-  .custom-circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.2s ease;}
+  .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;box-shadow:0 0 15px #48cae4;background:#000;}
+  .custom-circle img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease;}
   .custom-circle img.active{opacity:1;}
 
-
-  /* ❄ WINTER EFFECTEN TOEGEVOEGD */
+  /* WINTER BACKGROUND */
   body {
     background: linear-gradient(#0b1e3d, #0b1220) !important;
-    overflow-x: hidden;
     position: relative;
+    overflow-x: hidden;
   }
 
-  /* Sneeuwvlok stijl */
+  /* ❄ Mooie langzame sneeuw achter de tekst */
   .snowflake {
     position: fixed;
     top: -10px;
@@ -53,66 +53,26 @@
     font-size: 20px;
     color: rgba(255,255,255,0.8);
     pointer-events: none;
-    z-index: -1; /* Achter tekst */
+    z-index: -1;
     animation: snowfall linear infinite;
   }
 
-  /* Langzame sneeuwval */
   @keyframes snowfall {
-    0% { transform: translateY(0) translateX(0); opacity: .8; }
-    100% { transform: translateY(120vh) translateX(20px); opacity: .2; }
+    0% { transform: translateY(0) translateX(0); opacity: 0.8; }
+    100% { transform: translateY(120vh) translateX(20px); opacity: 0.2; }
   }
 
-  /* Kerst iconen */
+  /* 🎄 Kerst iconen basis */
   .christmas-icon {
     position: fixed;
-    z-index: -1; /* Achter tekst */
     font-size: 55px;
-    opacity: 0.5;
-    animation: floatSlow 12s ease-in-out infinite;
-  }
-
-  @keyframes floatSlow {
-    0% { transform: translateX(0) rotate(0deg); }
-    50% { transform: translateX(60px) rotate(8deg); }
-    100% { transform: translateX(0) rotate(0deg); }
-  }
-
-  /* Mistlaag subtiel */
-  .winter-mist {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle, rgba(255,255,255,0.07), rgba(255,255,255,0));
-    z-index: -1;
+    opacity: 0.45;
     pointer-events: none;
-  }
-
-  /* Kerstverlichting bovenaan */
-  .christmas-lights {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    text-align: center;
     z-index: -1;
-    font-size: 28px;
-    opacity: 0.8;
-    animation: glow 2s ease infinite;
-  }
-
-  @keyframes glow {
-    0% { opacity: .6; }
-    50% { opacity: 1; }
-    100% { opacity: .6; }
   }
 </style>
 </head>
 <body>
-
-<div class="winter-mist"></div>
-<div class="christmas-lights">💡✨💡✨💡✨💡✨💡✨💡✨</div>
 
 <header>
   <div class="left-header">
@@ -156,23 +116,9 @@
 
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="custom-circles">
-    <div class="custom-circle">
-      <img src="IMG_2978.jpeg">
-      <img src="IMG_3164.png">
-      <img src="FB2EDDE2.png">
-    </div>
-
-    <div class="custom-circle">
-      <img src="IMG_3156.jpeg">
-      <img src="IMG_2718.png">
-      <img src="IMG_2819.png">
-    </div>
-
-    <div class="custom-circle">
-      <img src="IMG_3520.png">
-      <img src="IMG_3533.png">
-      <img src="IMG_3512.webp">
-    </div>
+    <div class="custom-circle"><img src="IMG_2978.jpeg"></div>
+    <div class="custom-circle"><img src="IMG_3156.jpeg"></div>
+    <div class="custom-circle"><img src="IMG_3520.png"></div>
   </div>
 
   <div class="divider"></div>
@@ -180,9 +126,7 @@
   <div class="highlight-title">🔑 Keys</div>
   <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
   <p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
-  <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">
-    No key yet? Buy one at T.B Agar.io. Contact via Instagram @t.bagar.io
-  </p>
+  <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">No key yet? Buy one via Instagram @t.bagar.io</p>
   <div class="divider"></div>
 
   <div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
@@ -229,49 +173,57 @@ paidSkins.forEach(skin=>{
   block.appendChild(circle);block.appendChild(priceBadge);paidContainer.appendChild(block);
 });
 
-// Custom skins fade cycle
-document.querySelectorAll('.custom-circle').forEach(circle=>{
-  const imgs=circle.querySelectorAll('img');
-  let i=0;
-  imgs[0].classList.add('active');
-  setInterval(()=>{
-    imgs[i].classList.remove('active');
-    i=(i+1)%imgs.length;
-    imgs[i].classList.add('active');
-  },2000);
-});
-</script>
-
-<!-- ❄ WINTER SCRIPT TOEGEVOEGD -->
-<script>
-// ❄ Langzame mooie sneeuw
+// ❄ LANGZAME SNEEUW ACHTER TEKST
 function createSnow() {
   const snow = document.createElement("div");
   snow.classList.add("snowflake");
   snow.textContent = "❄";
 
   snow.style.left = Math.random() * window.innerWidth + "px";
-  snow.style.animationDuration = (Math.random() * 6 + 6) + "s"; 
-  snow.style.fontSize = (Math.random() * 10 + 15) + "px"; 
+  snow.style.animationDuration = (Math.random() * 6 + 6) + "s";
+  snow.style.fontSize = (Math.random() * 10 + 15) + "px";
   snow.style.opacity = Math.random() * 0.7 + 0.3;
 
   document.body.appendChild(snow);
+
   setTimeout(() => snow.remove(), 13000);
 }
 setInterval(createSnow, 300);
 
 
-// 🎄 Kersticonen langzaam achter de tekst
-["🎄","🎁","⭐"].forEach((icon,i)=>{
-  const el=document.createElement("div");
+// 🎄 KRISKRAS LANGZAME KERST ICONEN
+function createFloatingChristmasIcon(icon) {
+  const el = document.createElement("div");
   el.classList.add("christmas-icon");
-  el.textContent=icon;
+  el.textContent = icon;
 
-  el.style.left=(25 + i*100)+"px";
-  el.style.bottom=(10 + i*12)+"vh";
+  el.style.left = Math.random() * window.innerWidth + "px";
+  el.style.top = Math.random() * window.innerHeight + "px";
+
+  const duration = Math.random() * 12 + 10;
+  const moveX = Math.random() * 200 - 100;
+  const moveY = Math.random() * 200 - 100;
+
+  const animName = "move" + Math.random().toString(36).substring(7);
+
+  const styleSheet = document.styleSheets[0];
+  styleSheet.insertRule(`
+    @keyframes ${animName} {
+      0% { transform: translate(0,0) rotate(0deg); }
+      50% { transform: translate(${moveX}px, ${moveY}px) rotate(10deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
+  `, styleSheet.cssRules.length);
+
+  el.style.animation = `${animName} ${duration}s ease-in-out infinite`;
 
   document.body.appendChild(el);
+}
+
+["🎄", "🎁", "⭐", "🔔", "❄"].forEach(icon => {
+  createFloatingChristmasIcon(icon);
 });
+
 </script>
 
 </body>
