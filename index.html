@@ -43,7 +43,6 @@
   .modal label{display:block;margin-top:10px;font-size:0.9rem;color:#cbd5e1;}
   .modal input{width:100%;padding:10px;border-radius:8px;border:1px solid #2b394b;margin-top:6px;background:transparent;color:inherit;box-sizing:border-box;}
   body.dark .modal input{border:1px solid #ddd;background:transparent;color:inherit;}
-  .modal .row{display:flex;gap:10px;}
   .modal .actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
   .modal .actions .left{font-size:0.9rem;color:#9ca3af;}
   .modal .actions button{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;}
@@ -85,11 +84,13 @@
 </header>
 
 <main>
+  <!-- Original content remains -->
   <div class="divider"></div>
   <div class="highlight-title">Paid Skins Deals</div>
   <div class="skins-circles" id="paidSkinsContainer"></div>
   <div class="cta-wrap"><a href="paidskins.html" class="btn">View All Skins</a></div>
   <div class="divider"></div>
+
   <div class="main-video">
     <iframe width="560" height="315" src="https://www.youtube.com/embed/ayxxcfAxD5g" allowfullscreen></iframe>
   </div>
@@ -97,21 +98,27 @@
     <iframe width="360" height="215" src="https://www.youtube.com/embed/ocAvgK2V2to" allowfullscreen></iframe>
     <iframe width="360" height="215" src="https://www.youtube.com/embed/aubtrQKGG4A" allowfullscreen></iframe>
   </div>
+
   <div class="divider"></div>
+
   <div class="highlight-title">The Best Custom Skins</div>
   <div class="custom-circles">
     <div class="custom-circle"><img src="IMG_2978.jpeg"></div>
     <div class="custom-circle"><img src="IMG_3156.jpeg"></div>
     <div class="custom-circle"><img src="IMG_3520.png"></div>
   </div>
+
   <div class="divider"></div>
+
   <div class="highlight-title">🔑 Keys</div>
   <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
   <p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
   <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">No key yet? Buy one via Instagram @t.bagar.io</p>
   <div class="divider"></div>
+
   <div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
   <div class="divider"></div>
+
   <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;">
     <a href="https://www.youtube.com/@T.B6" target="_blank" style="background:red;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">YouTube</a>
     <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:linear-gradient(45deg,#f97316,#facc15);color:#111;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Instagram</a>
@@ -163,9 +170,59 @@
 </div>
 
 <script>
-// ORIGINAL JS FUNCTIONS + AUTH LOGIC (Login/Register/Settings)
-...
-// The full JS code for login, registration, settings, localStorage handling and original features
+// MENU TOGGLE
+function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
+
+// DARK MODE
+const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;const savedTheme=localStorage.getItem('theme');
+if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
+toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
+
+// AUTH LOGIC
+const authArea=document.getElementById('authArea');
+const loginBtn=document.getElementById('loginBtn');
+const settingsBtn=document.getElementById('settingsBtn');
+const loginModal=document.getElementById('loginModal');
+const registerModal=document.getElementById('registerModal');
+const settingsModal=document.getElementById('settingsModal');
+document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
+function openLogin(){loginModal.style.display='flex';}
+function closeLogin(){loginModal.style.display='none';}
+function openRegister(){registerModal.style.display='flex';}
+function closeRegister(){registerModal.style.display='none';}
+function openSettings(){settingsModal.style.display='flex';loadSettingsFields();}
+function closeSettings(){settingsModal.style.display='none';}
+function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
+function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
+function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
+function setCurrentUser(user){localStorage.setItem('currentUser',JSON.stringify(user));}
+document.getElementById('doLoginBtn').addEventListener('click',()=>{const email=document.getElementById('loginEmail').value.trim();const password=document.getElementById('loginPassword').value;const users=getUsers();const user=users.find(u=>u.email===email&&u.password===password);if(user){setCurrentUser(user);updateAuthUI();closeLogin();}else{alert('Invalid email or password.');}});
+document.getElementById('doRegisterBtn').addEventListener('click',()=>{const name=document.getElementById('regName').value.trim();const email=document.getElementById('regEmail').value.trim();const uid=document.getElementById('regUid').value.trim();const pass1=document.getElementById('regPassword').value;const pass2=document.getElementById('regPassword2').value;const errorDiv=document.getElementById('regError');if(!name||!email||!uid||!pass1||!pass2){errorDiv.style.display='block';errorDiv.textContent='All fields are required.';return;}if(pass1!==pass2){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';return;}const users=getUsers();if(users.find(u=>u.email===email)){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';return;}const newUser={name,email,uid,password:pass1};users.push(newUser);saveUsers(users);setCurrentUser(newUser);errorDiv.style.display='none';updateAuthUI();closeRegister();});
+function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
+function loadSettingsFields(){const user=getCurrentUser();if(!user)return;document.getElementById('settingsName').value=user.name;document.getElementById('settingsEmail').value=user.email;document.getElementById('settingsPassword').value=user.password;document.getElementById('settingsUid').value=user.uid;}
+document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{const user=getCurrentUser();if(!user)return;const users=getUsers();const name=document.getElementById('settingsName').value.trim();const email=document.getElementById('settingsEmail').value.trim();const password=document.getElementById('settingsPassword').value;user.name=name;user.email=email;user.password=password;const idx=users.findIndex(u=>u.uid===user.uid);if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);updateAuthUI();closeSettings();}});
+function updateAuthUI(){const user=getCurrentUser();if(user){loginBtn.textContent='Logout';loginBtn.onclick=logout;settingsBtn.style.display='inline-block';}else{loginBtn.textContent='Login';loginBtn.onclick=openLogin;settingsBtn.style.display='none';}}updateAuthUI();
+
+// PAID SKINS
+const paidSkins=[{id:"skin_1",img:"IMG_6174.webp",price:"$3.99",best:true},{id:"skin_2",img:"IMG_6175.webp",price:"$5.99",best:false},{id:"skin_3",img:"IMG_6260.webp",price:"$7.99",best:false}];
+const paidContainer=document.getElementById('paidSkinsContainer');
+paidSkins.forEach(skin=>{const block=document.createElement('div');block.className='circle-block';const circle=document.createElement('div');circle.className='circle';const img=document.createElement('img');img.src=skin.img;img.classList.add('active');circle.appendChild(img);if(skin.best){const badge=document.createElement('div');badge.className='best-deal-badge';badge.textContent='Best Deal';circle.appendChild(badge);}const priceBadge=document.createElement('div');priceBadge.className='price-badge';priceBadge.textContent=skin.price;priceBadge.addEventListener('click',()=>{localStorage.setItem('addSkinId',skin.id);window.location.href='paidskins.html';});block.appendChild(circle);block.appendChild(priceBadge);paidContainer.appendChild(block);});
+
+// SNOW & CHRISTMAS
+function createSnow(){const snow=document.createElement("div");snow.classList.add("snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*6+6)+"s";snow.style.fontSize=(Math.random()*10+15)+"px";snow.style.opacity=Math.random()*0.7+0.3;document.body.appendChild(snow);setTimeout(()=>snow.remove(),13000);}setInterval(createSnow,300);
+function createFloatingChristmasIcon(icon){const el=document.createElement("div");el.classList.add("christmas-icon");el.textContent=icon;el.style.left=Math.random()*window.innerWidth+"px";el.style.top=Math.random()*window.innerHeight+"px";const duration=Math.random()*12+10;const moveX=Math.random()*200-100;const moveY=Math.random()*200-100;const animName="move"+Math.random().toString(36).substring(7);const styleSheet=document.styleSheets[0];styleSheet.insertRule(`@keyframes ${animName}{0%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(${moveX}px,${moveY}px) rotate(10deg);}100%{transform:translate(0,0) rotate(0deg);}}`,styleSheet.cssRules.length);el.style.animation=`${animName} ${duration}s ease-in-out infinite`;document.body.appendChild(el);}
+["🎄","🎁","⭐","🔔","❄"].forEach(icon=>{createFloatingChristmasIcon(icon);});
+function createForegroundSnow(){const snow=document.createElement("div");snow.classList.add("foreground-snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*15+15)+"s";snow.style.fontSize=(Math.random()*15+20)+"px";snow.style.opacity=Math.random()*0.15+0.05;document.body.appendChild(snow);setTimeout(()=>snow.remove(),30000);}setInterval(createForegroundSnow,800);
+
+// CUSTOM SKINS FADE SLIDESHOW
+const skinsCircle1=["IMG_2978.jpeg","IMG_3164.png","FB2EDDE2.png"];
+const skinsCircle2=["IMG_3156.jpeg","IMG_2718.png","IMG_2819.png"];
+const skinsCircle3=["IMG_3520.png","IMG_3533.png","IMG_3512.webp"];
+function setupCustomFade(circleSelector,images,interval){const circle=document.querySelector(circleSelector);if(!circle)return;circle.innerHTML="";images.forEach((src,index)=>{const img=document.createElement("img");img.src=src;if(index===0)img.classList.add("active");circle.appendChild(img);});let i=0;setInterval(()=>{const imgs=circle.querySelectorAll("img");imgs[i].classList.remove("active");i=(i+1)%imgs.length;imgs[i].classList.add("active");},interval);}
+setupCustomFade(".custom-circles .custom-circle:nth-child(1)",skinsCircle1,3000);
+setupCustomFade(".custom-circles .custom-circle:nth-child(2)",skinsCircle2,3000);
+setupCustomFade(".custom-circles .custom-circle:nth-child(3)",skinsCircle3,3000);
 </script>
+
 </body>
 </html>
