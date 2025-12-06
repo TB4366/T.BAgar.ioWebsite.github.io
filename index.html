@@ -22,11 +22,11 @@ body.dark header{background:#e0e0e0;}
 iframe{border:none;border-radius:12px;}
 .divider{max-width:900px;margin:40px auto 10px auto;border-top:2px solid #48cae4;}
 .highlight-title{text-align:center;font-size:1.8rem;font-weight:bold;margin:20px 0 30px 0;color:#48cae4;}
-.skins-circles{max-width:900px;margin:0 auto 50px auto;display:flex;justify-content:center;gap:30px;flex-wrap:wrap;}
-.circle-block{display:flex;flex-direction:column;align-items:center;position:relative;}
-.circle{width:170px;height:170px;border-radius:50%;overflow:hidden;position:relative;background:#000;box-shadow:0 0 15px #48cae4;cursor:pointer;}
-.circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.2s ease;}
-.circle img.active{opacity:1;}
+.skins-circles, .custom-circles{display:flex;justify-content:center;gap:30px;margin:0 auto 50px auto;flex-wrap:nowrap;max-width:600px;}
+@media (max-width:600px){.custom-circles{flex-wrap:wrap;}}
+.circle-block, .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;position:relative;background:#000;box-shadow:0 0 15px #48cae4;}
+.circle img, .custom-circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.2s ease;}
+.circle img.active, .custom-circle img.active{opacity:1;}
 .price-badge{margin-top:10px;background:#ef4444;color:white;padding:6px 12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:transform 0.2s;}
 .price-badge:hover{transform:scale(1.05);}
 .best-deal-badge{position:absolute;top:-10px;left:-10px;background:gold;color:black;padding:4px 8px;font-weight:bold;border-radius:6px;font-size:0.8rem;}
@@ -36,158 +36,150 @@ iframe{border:none;border-radius:12px;}
 .auth-area button{background:none;border:none;color:white;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;}
 .auth-area .primary-btn{background:#06b6d4;color:#02111a;padding:8px 12px;border-radius:8px;}
 .auth-area .settings-btn{background:none;border:1px solid rgba(255,255,255,0.08);padding:6px 10px;border-radius:8px;}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
 .modal{background:#071028;padding:20px;border-radius:12px;max-width:420px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:white;position:relative;}
 body.dark .modal{background:#ffffff;color:#111;}
 .modal h2{margin:0 0 10px 0;font-size:1.2rem;}
 .modal label{display:block;margin-top:10px;font-size:0.9rem;color:#cbd5e1;}
 .modal input{width:100%;padding:10px;border-radius:8px;border:1px solid #2b394b;margin-top:6px;background:transparent;color:inherit;box-sizing:border-box;}
-body.dark .modal input{border:1px solid #ddd;background:transparent;color:inherit;}
 .modal .actions{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
-.modal .actions .left{font-size:0.9rem;color:#9ca3af;}
 .modal .actions button{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;}
 .modal .actions .cancel{background:transparent;color:#9ca3af;}
 .modal .actions .confirm{background:#06b6d4;color:#02111a;}
 .note{font-size:0.85rem;color:#9ca3af;margin-top:8px;}
 .danger{color:#f87171;font-weight:700;}
-.custom-circles .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;position:relative;background:#000;box-shadow:0 0 15px #48cae4;}
-.custom-circles .custom-circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:0;transition:opacity 1.2s ease;}
-.custom-circles .custom-circle img.active{opacity:1;}
 body {background: linear-gradient(#0b1e3d, #0b1220) !important;position: relative;overflow-x: hidden;}
 .snowflake{position: fixed;top: -10px;left: 0;font-size: 20px;color: rgba(255,255,255,0.8);pointer-events: none;z-index: -1;animation: snowfall linear infinite;}
-@keyframes snowfall{0% { transform: translateY(0) translateX(0); opacity: 0.8; } 100% { transform: translateY(120vh) translateX(20px); opacity: 0.2; }}
-.christmas-icon{position: fixed;font-size: 55px;opacity: 0.45;pointer-events: none;z-index: -1;}
-.foreground-snowflake{position: fixed;top: -20px;left: 0;font-size: 25px;color: rgba(255,255,255,0.15);pointer-events: none;z-index: -1;animation: foregroundSnow linear infinite;}
-@keyframes foregroundSnow{0% { transform: translateY(0) translateX(0); } 50% { transform: translateY(50vh) translateX(15px); } 100% { transform: translateY(100vh) translateX(0); }}
+@keyframes snowfall{0% { transform: translateY(0) translateX(0) opacity:0.8;}100%{transform:translateY(120vh) translateX(20px) opacity:0.2;}}
+.christmas-icon{position: fixed;font-size: 55px;opacity:0.45;pointer-events:none;z-index:-1;}
+.foreground-snowflake{position: fixed;top:-20px;left:0;font-size:25px;color: rgba(255,255,255,0.15);pointer-events:none;z-index:-1;animation: foregroundSnow linear infinite;}
+@keyframes foregroundSnow{0%{transform:translateY(0) translateX(0);}50%{transform:translateY(50vh) translateX(15px);}100%{transform:translateY(100vh) translateX(0);}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="left-header">
-    <img src="IMG_2718.png" class="logo" />
-    <span class="site-title">T.B Agar.io</span>
-    <div class="search-bar"><input type="text" placeholder="Search..." /></div>
-    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-  </div>
-  <div class="auth-area" id="authArea">
-    <button id="loginBtn" class="primary-btn">Login</button>
-    <button id="settingsBtn" class="settings-btn" style="display:none;">Settings</button>
-  </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Page</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-    <a href="paidskins.html">💎 Paid Skins</a>
-  </div>
+<div class="left-header">
+<img src="IMG_2718.png" class="logo" />
+<span class="site-title">T.B Agar.io</span>
+<div class="search-bar"><input type="text" placeholder="Search..." /></div>
+<button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
+</div>
+<div class="auth-area">
+<button id="loginBtn" class="primary-btn">Login</button>
+<button id="settingsBtn" class="settings-btn" style="display:none;">Settings</button>
+</div>
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="menu" id="menu">
+<a href="index.html">🏠 Home Page</a>
+<a href="agar.io-skins.html">🎱 Agar.io Skins</a>
+<a href="custom-skins.html">🎨 Custom Skins</a>
+<a href="mod-menu.html">🛠️ Mod Menu</a>
+<a href="key-access.html">🔑 Keys</a>
+<a href="buy-account.html">💰 Buy Account</a>
+<a href="paidskins.html">💎 Paid Skins</a>
+</div>
 </header>
 
 <main>
-  <!-- Original content remains -->
-  <div class="divider"></div>
-  <div class="highlight-title">Paid Skins Deals</div>
-  <div class="skins-circles" id="paidSkinsContainer"></div>
-  <div class="cta-wrap"><a href="paidskins.html" class="btn">View All Skins</a></div>
-  <div class="divider"></div>
+<div class="divider"></div>
+<div class="highlight-title">Paid Skins Deals</div>
+<div class="skins-circles" id="paidSkinsContainer"></div>
+<div class="cta-wrap"><a href="paidskins.html" class="btn">View All Skins</a></div>
 
-  <div class="main-video">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/ayxxcfAxD5g" allowfullscreen></iframe>
-  </div>
-  <div class="video-grid">
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/ocAvgK2V2to" allowfullscreen></iframe>
-    <iframe width="360" height="215" src="https://www.youtube.com/embed/aubtrQKGG4A" allowfullscreen></iframe>
-  </div>
+<div class="divider"></div>
+<div class="main-video">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ayxxcfAxD5g" allowfullscreen></iframe>
+</div>
+<div class="video-grid">
+<iframe width="360" height="215" src="https://www.youtube.com/embed/ocAvgK2V2to" allowfullscreen></iframe>
+<iframe width="360" height="215" src="https://www.youtube.com/embed/aubtrQKGG4A" allowfullscreen></iframe>
+</div>
 
-  <div class="divider"></div>
+<div class="divider"></div>
+<div class="highlight-title">The Best Custom Skins</div>
+<div class="custom-circles">
+<div class="custom-circle"></div>
+<div class="custom-circle"></div>
+<div class="custom-circle"></div>
+</div>
 
-  <div class="highlight-title">The Best Custom Skins</div>
-  <div class="custom-circles">
-    <div class="custom-circle"></div>
-    <div class="custom-circle"></div>
-    <div class="custom-circle"></div>
-  </div>
+<div class="divider"></div>
+<div class="highlight-title">🔑 Keys</div>
+<div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
+<p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
+<p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">No key yet? Buy one via Instagram @t.bagar.io</p>
+<div class="divider"></div>
 
-  <div class="divider"></div>
+<div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
+<div class="divider"></div>
 
-  <div class="highlight-title">🔑 Keys</div>
-  <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
-  <p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
-  <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">No key yet? Buy one via Instagram @t.bagar.io</p>
-  <div class="divider"></div>
-
-  <div class="cta-wrap"><a href="mod-menu.html" class="btn">View All Mods</a></div>
-  <div class="divider"></div>
-
-  <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;">
-    <a href="https://www.youtube.com/@T.B6" target="_blank" style="background:red;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">YouTube</a>
-    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:linear-gradient(45deg,#f97316,#facc15);color:#111;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Instagram</a>
-    <a href="https://discord.gg/drvb5Um2C" target="_blank" style="background:purple;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Discord</a>
-  </div>
+<div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin:20px 0;">
+<a href="https://www.youtube.com/@T.B6" target="_blank" style="background:red;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">YouTube</a>
+<a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:linear-gradient(45deg,#f97316,#facc15);color:#111;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Instagram</a>
+<a href="https://discord.gg/drvb5Um2C" target="_blank" style="background:purple;color:white;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;">Discord</a>
+</div>
 </main>
 
-<!-- LOGIN / REGISTER / SETTINGS MODALS -->
-<div id="loginModal" class="modal-backdrop" style="display:none;">
-  <div class="modal"><h2>Login</h2>
-    <label>Email</label><input id="loginEmail" type="email" placeholder="you@example.com" />
-    <label>Password</label><input id="loginPassword" type="password" placeholder="Password" />
-    <div class="note">Don't have an account? <a href="#" id="openRegisterFromLogin">Register here</a></div>
-    <div class="actions">
-      <div class="left"><button class="cancel" onclick="closeLogin()">Cancel</button></div>
-      <div><button class="confirm" id="doLoginBtn">Login</button></div>
-    </div>
-  </div>
+<!-- Modals -->
+<div id="loginModal" class="modal-backdrop">
+<div class="modal">
+<h2>Login</h2>
+<label>Email</label><input id="loginEmail" type="email">
+<label>Password</label><input id="loginPassword" type="password">
+<div class="note">Don't have an account? <a href="#" id="openRegisterFromLogin">Register here</a></div>
+<div class="actions">
+<button class="cancel" onclick="closeLogin()">Cancel</button>
+<button class="confirm" id="doLoginBtn">Login</button>
+</div>
+</div>
 </div>
 
-<div id="registerModal" class="modal-backdrop" style="display:none;">
-  <div class="modal"><h2>Register</h2>
-    <label>Name</label><input id="regName" type="text" placeholder="Your name" />
-    <label>Email</label><input id="regEmail" type="email" placeholder="you@example.com" />
-    <label>Agar.io UID</label><input id="regUid" type="text" placeholder="Your Agar.io UID" />
-    <label>Password</label><input id="regPassword" type="password" placeholder="Create a password" />
-    <label>Repeat Password</label><input id="regPassword2" type="password" placeholder="Repeat password" />
-    <div class="note danger" id="regError" style="display:none;"></div>
-    <div class="actions">
-      <div class="left"><button class="cancel" onclick="closeRegister()">Cancel</button></div>
-      <div><button class="confirm" id="doRegisterBtn">Register</button></div>
-    </div>
-  </div>
+<div id="registerModal" class="modal-backdrop">
+<div class="modal">
+<h2>Register</h2>
+<label>Name</label><input id="regName" type="text">
+<label>Email</label><input id="regEmail" type="email">
+<label>Agar.io UID</label><input id="regUid" type="text">
+<label>Password</label><input id="regPassword" type="password">
+<label>Repeat Password</label><input id="regPassword2" type="password">
+<div class="note danger" id="regError" style="display:none;"></div>
+<div class="actions">
+<button class="cancel" onclick="closeRegister()">Cancel</button>
+<button class="confirm" id="doRegisterBtn">Register</button>
+</div>
+</div>
 </div>
 
-<div id="settingsModal" class="modal-backdrop" style="display:none;">
-  <div class="modal"><h2>Settings</h2>
-    <hr>
-    <label>Change name</label><input id="settingsName" type="text" />
-    <label>Change email</label><input id="settingsEmail" type="email" />
-    <label>Change password</label><input id="settingsPassword" type="password" />
-    <label>Agar.io UID</label><input id="settingsUid" type="text" disabled />
-    <div class="note">To change your UID, please contact T.B.</div>
-    <div class="actions">
-      <div class="left"><button class="cancel" onclick="closeSettings()">Cancel</button></div>
-      <div><button class="confirm" id="doSaveSettingsBtn">Save</button></div>
-    </div>
-  </div>
+<div id="settingsModal" class="modal-backdrop">
+<div class="modal">
+<h2>Settings</h2>
+<hr>
+<label>Name</label><input id="settingsName" type="text">
+<label>Email</label><input id="settingsEmail" type="email">
+<label>Password</label><input id="settingsPassword" type="password">
+<label>Agar.io UID</label><input id="settingsUid" type="text" disabled>
+<div class="note">To change your UID, contact T.B.</div>
+<div class="actions">
+<button class="cancel" onclick="closeSettings()">Cancel</button>
+<button class="confirm" id="doSaveSettingsBtn">Save</button>
+</div>
+</div>
 </div>
 
 <script>
-// MENU TOGGLE
+// MENU
 function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
 
 // DARK MODE
-const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;const savedTheme=localStorage.getItem('theme');
+const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;
+const savedTheme=localStorage.getItem('theme');
 if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
 toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
 
-// AUTH LOGIC
-const authArea=document.getElementById('authArea');
-const loginBtn=document.getElementById('loginBtn');
-const settingsBtn=document.getElementById('settingsBtn');
-const loginModal=document.getElementById('loginModal');
-const registerModal=document.getElementById('registerModal');
-const settingsModal=document.getElementById('settingsModal');
+// AUTH
+const loginBtn=document.getElementById('loginBtn');const settingsBtn=document.getElementById('settingsBtn');
+const loginModal=document.getElementById('loginModal');const registerModal=document.getElementById('registerModal');const settingsModal=document.getElementById('settingsModal');
 document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
 function openLogin(){loginModal.style.display='flex';}
 function closeLogin(){loginModal.style.display='none';}
@@ -202,40 +194,21 @@ function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
 function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
 function setCurrentUser(user){localStorage.setItem('currentUser',JSON.stringify(user));}
 
-document.getElementById('doLoginBtn').addEventListener('click',()=>{
-  const email=document.getElementById('loginEmail').value.trim();
-  const password=document.getElementById('loginPassword').value;
-  const users=getUsers();
-  const user=users.find(u=>u.email===email&&u.password===password);
-  if(user){setCurrentUser(user);updateAuthUI();closeLogin();}
-  else{alert('Invalid email or password.');}
-});
-
-document.getElementById('doRegisterBtn').addEventListener('click',()=>{
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const uid=document.getElementById('regUid').value.trim();
-  const pass1=document.getElementById('regPassword').value;
-  const pass2=document.getElementById('regPassword2').value;
-  const errorDiv=document.getElementById('regError');
-  if(!name||!email||!uid||!pass1||!pass2){errorDiv.style.display='block';errorDiv.textContent='All fields are required.';return;}
-  if(pass1!==pass2){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';return;}
-  const users=getUsers();
-  if(users.find(u=>u.email===email)){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';return;}
-  const newUser={name,email,uid,password:pass1};users.push(newUser);saveUsers(users);setCurrentUser(newUser);errorDiv.style.display='none';updateAuthUI();closeRegister();
-});
-
 function updateAuthUI(){
   const user=getCurrentUser();
-  if(user){loginBtn.textContent='Logout';loginBtn.onclick=logout;settingsBtn.style.display='inline-block';}
-  else{loginBtn.textContent='Login';loginBtn.onclick=openLogin;settingsBtn.style.display='none';}
+  if(user){
+    loginBtn.textContent='Logout';loginBtn.onclick=logout;
+    settingsBtn.style.display='inline-block';
+  } else {
+    loginBtn.textContent='Login';loginBtn.onclick=openLogin;
+    settingsBtn.style.display='none';
+  }
 }
 
 function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
 
 function loadSettingsFields(){
-  const user=getCurrentUser();
-  if(!user)return;
+  const user=getCurrentUser();if(!user)return;
   document.getElementById('settingsName').value=user.name;
   document.getElementById('settingsEmail').value=user.email;
   document.getElementById('settingsPassword').value=user.password;
@@ -253,9 +226,32 @@ document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{
   if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);updateAuthUI();closeSettings();}
 });
 
-updateAuthUI();
+document.getElementById('doLoginBtn').addEventListener('click',()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const users=getUsers();
+  const user=users.find(u=>u.email===email && u.password===password);
+  if(user){setCurrentUser(user);updateAuthUI();closeLogin();}
+  else{alert('Invalid email or password');}
+});
 
-// PAID SKINS
+document.getElementById('doRegisterBtn').addEventListener('click',()=>{
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const uid=document.getElementById('regUid').value.trim();
+  const pass1=document.getElementById('regPassword').value;
+  const pass2=document.getElementById('regPassword2').value;
+  const errorDiv=document.getElementById('regError');
+  errorDiv.style.display='none';
+  if(!name||!email||!uid||!pass1||!pass2){errorDiv.style.display='block';errorDiv.textContent='All fields required.';return;}
+  if(pass1!==pass2){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';return;}
+  const users=getUsers();
+  if(users.find(u=>u.email===email)){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';return;}
+  const newUser={name,email,uid,password:pass1};
+  users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();
+});
+
+// Paid Skins
 const paidSkins=[{id:"skin_1",img:"IMG_6174.webp",price:"$3.99",best:true},{id:"skin_2",img:"IMG_6175.webp",price:"$5.99",best:false},{id:"skin_3",img:"IMG_6260.webp",price:"$7.99",best:false}];
 const paidContainer=document.getElementById('paidSkinsContainer');
 paidSkins.forEach(skin=>{
@@ -268,39 +264,24 @@ paidSkins.forEach(skin=>{
   block.appendChild(circle);block.appendChild(priceBadge);paidContainer.appendChild(block);
 });
 
-// ❄ Snow
-function createSnow(){const snow=document.createElement("div");snow.classList.add("snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*6+6)+"s";snow.style.fontSize=(Math.random()*10+15)+"px";snow.style.opacity=Math.random()*0.7+0.3;document.body.appendChild(snow);setTimeout(()=>snow.remove(),13000);}
-setInterval(createSnow,300);
-
-function createFloatingChristmasIcon(icon){const el=document.createElement("div");el.classList.add("christmas-icon");el.textContent=icon;el.style.left=Math.random()*window.innerWidth+"px";el.style.top=Math.random()*window.innerHeight+"px";const duration=Math.random()*12+10;const moveX=Math.random()*200-100;const moveY=Math.random()*200-100;const animName="move"+Math.random().toString(36).substring(7);const styleSheet=document.styleSheets[0];styleSheet.insertRule(`@keyframes ${animName}{0%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(${moveX}px,${moveY}px) rotate(10deg);}100%{transform:translate(0,0) rotate(0deg);}}`,styleSheet.cssRules.length);el.style.animation=`${animName} ${duration}s ease-in-out infinite`;document.body.appendChild(el);}
-["🎄","🎁","⭐","🔔","❄"].forEach(icon=>{createFloatingChristmasIcon(icon);});
-
-function createForegroundSnow(){const snow=document.createElement("div");snow.classList.add("foreground-snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*15+15)+"s";snow.style.fontSize=(Math.random()*15+20)+"px";snow.style.opacity=Math.random()*0.15+0.05;document.body.appendChild(snow);setTimeout(()=>snow.remove(),30000);}
-setInterval(createForegroundSnow,800);
-
-// Custom Skins fade
+// Custom Skins Fade
 const skinsCircle1=["IMG_2978.jpeg","IMG_3164.png","FB2EDDE2.png"];
 const skinsCircle2=["IMG_3156.jpeg","IMG_2718.png","IMG_2819.png"];
 const skinsCircle3=["IMG_3520.png","IMG_3533.png","IMG_3512.webp"];
+function setupCustomFade(){const circles=document.querySelectorAll('.custom-circle');[skinsCircle1,skinsCircle2,skinsCircle3].forEach((imgs,i)=>{const circle=circles[i];imgs.forEach((src,index)=>{const img=document.createElement('img');img.src=src;if(index===0)img.classList.add('active');circle.appendChild(img);});let j=0;setInterval(()=>{const imgsEl=circle.querySelectorAll('img');imgsEl[j].classList.remove('active');j=(j+1)%imgsEl.length;imgsEl[j].classList.add('active');},3000);});}
+setupCustomFade();
 
-function setupCustomFade(circleSelector, images, interval){
-  const circle=document.querySelector(circleSelector);
-  if(!circle)return;
-  circle.innerHTML="";
-  images.forEach((src,index)=>{
-    const img=document.createElement("img");img.src=src;if(index===0)img.classList.add("active");circle.appendChild(img);
-  });
-  let i=0;
-  setInterval(()=>{
-    const imgs=circle.querySelectorAll("img");imgs[i].classList.remove("active");i=(i+1)%imgs.length;imgs[i].classList.add("active");
-  },interval);
-}
+// Snow
+function createSnow(){const snow=document.createElement("div");snow.classList.add("snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*6+6)+"s";snow.style.fontSize=(Math.random()*10+15)+"px";snow.style.opacity=Math.random()*0.7+0.3;document.body.appendChild(snow);setTimeout(()=>snow.remove(),13000);}
+setInterval(createSnow,300);
+// Christmas icons
+function createFloatingChristmasIcon(icon){const el=document.createElement("div");el.classList.add("christmas-icon");el.textContent=icon;el.style.left=Math.random()*window.innerWidth+"px";el.style.top=Math.random()*window.innerHeight+"px";const duration=Math.random()*12+10;const moveX=Math.random()*200-100;const moveY=Math.random()*200-100;const animName="move"+Math.random().toString(36).substring(7);const styleSheet=document.styleSheets[0];styleSheet.insertRule(`@keyframes ${animName} {0%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(${moveX}px,${moveY}px) rotate(10deg);}100%{transform:translate(0,0) rotate(0deg);}}`,styleSheet.cssRules.length);el.style.animation=`${animName} ${duration}s ease-in-out infinite`;document.body.appendChild(el);}
+["🎄","🎁","⭐","🔔","❄"].forEach(icon=>{createFloatingChristmasIcon(icon);});
+// Foreground snow
+function createForegroundSnow(){const snow=document.createElement("div");snow.classList.add("foreground-snowflake");snow.textContent="❄";snow.style.left=Math.random()*window.innerWidth+"px";snow.style.animationDuration=(Math.random()*15+15)+"s";snow.style.fontSize=(Math.random()*15+20)+"px";snow.style.opacity=Math.random()*0.15+0.05;document.body.appendChild(snow);setTimeout(()=>snow.remove(),30000);}
+setInterval(createForegroundSnow,800);
 
-setupCustomFade(".custom-circles .custom-circle:nth-child(1)", skinsCircle1, 3000);
-setupCustomFade(".custom-circles .custom-circle:nth-child(2)", skinsCircle2, 3000);
-setupCustomFade(".custom-circles .custom-circle:nth-child(3)", skinsCircle3, 3000);
-
+updateAuthUI();
 </script>
-
 </body>
 </html>
