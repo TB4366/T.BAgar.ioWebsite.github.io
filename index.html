@@ -32,6 +32,7 @@
   .best-deal-badge{position:absolute;top:-10px;left:-10px;background:gold;color:black;padding:4px 8px;font-weight:bold;border-radius:6px;font-size:0.8rem;}
   .btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;}
   .cta-wrap{text-align:center;margin-bottom:30px;}
+
   /* Custom Circles */
   .custom-circles{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:40px;}
   .custom-circle{width:170px;height:170px;border-radius:50%;overflow:hidden;box-shadow:0 0 15px #48cae4;background:#000;}
@@ -62,6 +63,15 @@
     100% { transform: translateY(120vh) translateX(20px); opacity: 0.2; }
   }
 
+  /* 🎄 Kerst iconen basis */
+  .christmas-icon {
+    position: fixed;
+    font-size: 55px;
+    opacity: 0.45;
+    pointer-events: none;
+    z-index: -1;
+  }
+
   /* 🌫️ Extra zachte voorgrond sneeuw/mist */
   .foreground-snowflake {
     position: fixed;
@@ -78,15 +88,6 @@
     0% { transform: translateY(0) translateX(0); }
     50% { transform: translateY(50vh) translateX(15px); }
     100% { transform: translateY(100vh) translateX(0); }
-  }
-
-  /* 🎄 Kerst iconen basis */
-  .christmas-icon {
-    position: fixed;
-    font-size: 55px;
-    opacity: 0.45;
-    pointer-events: none;
-    z-index: -1;
   }
 </style>
 </head>
@@ -203,25 +204,11 @@ function createSnow() {
   snow.style.opacity = Math.random() * 0.7 + 0.3;
 
   document.body.appendChild(snow);
+
   setTimeout(() => snow.remove(), 13000);
 }
 setInterval(createSnow, 300);
 
-// 🌫️ Extra zachte voorgrond sneeuw/mist
-function createForegroundSnow() {
-  const snow = document.createElement("div");
-  snow.classList.add("foreground-snowflake");
-  snow.textContent = "❄";
-
-  snow.style.left = Math.random() * window.innerWidth + "px";
-  snow.style.animationDuration = (Math.random() * 15 + 15) + "s";
-  snow.style.fontSize = (Math.random() * 15 + 20) + "px";
-  snow.style.opacity = Math.random() * 0.15 + 0.05;
-
-  document.body.appendChild(snow);
-  setTimeout(() => snow.remove(), 30000);
-}
-setInterval(createForegroundSnow, 800);
 
 // 🎄 KRISKRAS LANGZAME KERST ICONEN
 function createFloatingChristmasIcon(icon) {
@@ -255,6 +242,58 @@ function createFloatingChristmasIcon(icon) {
 ["🎄", "🎁", "⭐", "🔔", "❄"].forEach(icon => {
   createFloatingChristmasIcon(icon);
 });
+
+
+// 🌫️ ZACHTE VOORGROND SNEEUW/MIST
+function createForegroundSnow() {
+  const snow = document.createElement("div");
+  snow.classList.add("foreground-snowflake");
+  snow.textContent = "❄";
+
+  snow.style.left = Math.random() * window.innerWidth + "px";
+  snow.style.animationDuration = (Math.random() * 15 + 15) + "s";
+  snow.style.fontSize = (Math.random() * 15 + 20) + "px";
+  snow.style.opacity = Math.random() * 0.15 + 0.05;
+
+  document.body.appendChild(snow);
+  setTimeout(() => snow.remove(), 30000);
+}
+setInterval(createForegroundSnow, 800);
+
+
+// --- Custom Skins Fade Slideshow (zoals eerst) ---
+
+const skinsCircle1 = ["IMG_2978.jpeg", "IMG_3164.png", "FB2EDDE2.png"];
+const skinsCircle2 = ["IMG_3156.jpeg", "IMG_2718.png", "IMG_2819.png"];
+const skinsCircle3 = ["IMG_3520.png", "IMG_3533.png", "IMG_3512.webp"];
+
+// Helper functie voor fade-slideshow
+function setupCustomFade(circleSelector, images, interval) {
+    const circle = document.querySelector(circleSelector);
+    if (!circle) return;
+
+    // Oude IMG vervangen door slideshow
+    circle.innerHTML = "";
+    images.forEach((src, index) => {
+        const img = document.createElement("img");
+        img.src = src;
+        if (index === 0) img.classList.add("active");
+        circle.appendChild(img);
+    });
+
+    let i = 0;
+    setInterval(() => {
+        const imgs = circle.querySelectorAll("img");
+        imgs[i].classList.remove("active");
+        i = (i + 1) % imgs.length;
+        imgs[i].classList.add("active");
+    }, interval);
+}
+
+// Slideshow voor 3 custom circles
+setupCustomFade(".custom-circles .custom-circle:nth-child(1)", skinsCircle1, 3000);
+setupCustomFade(".custom-circles .custom-circle:nth-child(2)", skinsCircle2, 3000);
+setupCustomFade(".custom-circles .custom-circle:nth-child(3)", skinsCircle3, 3000);
 
 </script>
 
