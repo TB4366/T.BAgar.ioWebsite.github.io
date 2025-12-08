@@ -14,11 +14,13 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+  /* Dark mode styles */
   body.dark {
     background: #f0f0f0;
     color: #222;
   }
 
+  /* Header + menu */
   header {
     display: flex;
     align-items: center;
@@ -52,6 +54,7 @@
     font-weight: bold;
   }
 
+  /* Toggle knop naast site-title */
   .toggle-btn-header {
     background: none;
     border: none;
@@ -77,6 +80,7 @@
     color: white;
   }
 
+  /* Hamburger menu button */
   .menu-btn {
     cursor: pointer;
     font-size: 24px;
@@ -89,6 +93,7 @@
     color: #222;
   }
 
+  /* Dropdown menu */
   .menu {
     display: none;
     position: absolute;
@@ -126,29 +131,80 @@
     background: #ddd;
   }
 
-  /* SKINS GRID zoals jouw screenshot */
+  /* Skins grid */
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 35px;
-    max-width: 900px;
-    margin: 30px auto;
+    grid-template-columns: repeat(3, 1fr); /* altijd 3 naast elkaar */
+    gap: 30px;
+    max-width: 900px; /* breedte voor 3 cirkels */
+    margin: 20px auto;
+    padding: 0 10px;
   }
 
   .skin {
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: auto;
-    border: 4px solid #e6e6e6;
-    background: #000;
+    background: #071029;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 0 8px #0f172a;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  body.dark .skin {
+    background: #e8e8e8;
+    box-shadow: 0 0 8px #bbb;
   }
 
   .skin img {
-    width: 100%;
-    height: 100%;
+    width: 220px;   /* grotere cirkels */
+    height: 220px;
     object-fit: cover;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 15px; /* ruimte boven de naam */
+    background: #1a202c;
+    transition: background-color 0.3s ease;
+  }
+
+  body.dark .skin img {
+    background: #ccc;
+  }
+
+  .skin-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 5px;
+    color: #cbd5e1;
+    transition: color 0.3s ease;
+  }
+
+  body.dark .skin-name {
+    color: #333;
+  }
+
+  /* --- CLICK EFFECT (toegevoegd) --- */
+  .skin {
+    cursor: pointer;
+    border: 4px solid #222;
+    border-radius: 50%;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .skin.selected {
+    transform: scale(1.15);
+    border-color: #ffb300;
+    box-shadow: 0 0 25px #ffb300;
+  }
+
+  .skin-name {
+    display: none; /* VERBERGEN omdat jouw screenshot geen namen toont */
+  }
+
+  .skin img {
+    margin: 0;
   }
 </style>
 </head>
@@ -179,6 +235,7 @@
     menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
   }
 
+  // Skins lijst
   const skins = [
     { name: "Baby Dragon", url: "IMG_4073.png" },
     { name: "Thor Hamer", url: "IMG_4027.jpeg" },
@@ -195,20 +252,42 @@
   const gallery = document.getElementById('gallery');
 
   skins.forEach(skin => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'skin';
+    const card = document.createElement('div');
+    card.className = 'skin';
 
     const img = document.createElement('img');
     img.src = skin.url;
     img.alt = skin.name;
 
-    wrapper.appendChild(img);
-    gallery.appendChild(wrapper);
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'skin-name';
+    nameDiv.textContent = skin.name;
+
+    card.appendChild(img);
+    card.appendChild(nameDiv);
+    gallery.appendChild(card);
   });
 
+  // --- CLICK EFFECT SCRIPT (toegevoegd) ---
+  let lastSelected = null;
+
+  document.addEventListener("click", e => {
+    const clicked = e.target.closest(".skin");
+    if (!clicked) return;
+
+    if (lastSelected && lastSelected !== clicked) {
+      lastSelected.classList.remove("selected");
+    }
+
+    clicked.classList.toggle("selected");
+    lastSelected = clicked.classList.contains("selected") ? clicked : null;
+  });
+
+  // Dark/light mode toggle code
   const toggleBtn = document.getElementById('themeToggleBtn');
   const body = document.body;
 
+  // Laad voorkeur uit localStorage (default licht)
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') {
     body.classList.add('dark');
