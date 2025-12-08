@@ -134,62 +134,22 @@
   /* Skins grid */
   .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* altijd 3 naast elkaar */
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
-    max-width: 900px; /* breedte voor 3 cirkels */
+    max-width: 900px;
     margin: 20px auto;
     padding: 0 10px;
   }
 
-  .skin {
-    background: #071029;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 0 8px #0f172a;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  body.dark .skin {
-    background: #e8e8e8;
-    box-shadow: 0 0 8px #bbb;
-  }
-
-  .skin img {
-    width: 220px;   /* grotere cirkels */
-    height: 220px;
-    object-fit: cover;
-    border-radius: 50%;
-    display: block;
-    margin: 0 auto 15px; /* ruimte boven de naam */
-    background: #1a202c;
-    transition: background-color 0.3s ease;
-  }
-
-  body.dark .skin img {
-    background: #ccc;
-  }
-
-  .skin-name {
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 5px;
-    color: #cbd5e1;
-    transition: color 0.3s ease;
-  }
-
-  body.dark .skin-name {
-    color: #333;
-  }
-
-  /* --- CLICK EFFECT (toegevoegd) --- */
+  /* --- PERFECTE CIRKELS FIX --- */
   .skin {
     cursor: pointer;
-    border: 4px solid #222;
+    width: 220px;
+    height: 220px;
+    margin: auto;
     border-radius: 50%;
-    padding: 0;
-    background: none;
-    box-shadow: none;
+    overflow: hidden;
+    border: 4px solid #222;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
 
@@ -199,12 +159,16 @@
     box-shadow: 0 0 25px #ffb300;
   }
 
-  .skin-name {
-    display: none; /* VERBERGEN omdat jouw screenshot geen namen toont */
+  .skin img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
   }
 
-  .skin img {
-    margin: 0;
+  .skin-name {
+    display: none;
   }
 </style>
 </head>
@@ -268,7 +232,7 @@
     gallery.appendChild(card);
   });
 
-  // --- CLICK EFFECT SCRIPT (toegevoegd) ---
+  // Klik effect
   let lastSelected = null;
 
   document.addEventListener("click", e => {
@@ -283,11 +247,10 @@
     lastSelected = clicked.classList.contains("selected") ? clicked : null;
   });
 
-  // Dark/light mode toggle code
+  // Dark/light mode toggle
   const toggleBtn = document.getElementById('themeToggleBtn');
   const body = document.body;
 
-  // Laad voorkeur uit localStorage (default licht)
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'dark') {
     body.classList.add('dark');
