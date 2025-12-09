@@ -1,247 +1,154 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Bite-like Simulator — Exact UI Replica (Lokaal Demo)</title>
+<meta charset="UTF-8">
+<title>Agar.io Special Deals</title>
 <style>
-  /* Styling geïnspireerd door de aangeleverde screenshots */
-  :root{--bg:#061022;--panel:#0d1724;--muted:#9fb0c8;--accent:#22c55e;--glass:rgba(255,255,255,0.04)}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6f0fb;background:linear-gradient(180deg,#02111b 0%, #06182a 100%)}
-  .app{max-width:1280px;margin:18px auto;padding:18px;display:grid;grid-template-columns:360px 1fr;gap:16px}
-  .panel{background:var(--panel);border-radius:12px;padding:14px;box-shadow:0 8px 30px rgba(3,6,12,0.6);border:1px solid rgba(255,255,255,0.02)}
-  h2{margin:0 0 8px 0;font-size:18px}
-  label{display:block;color:var(--muted);font-size:13px;margin-top:10px}
-  input[type=text], input[type=number], select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;box-sizing:border-box}
-  .row{display:flex;gap:8px;align-items:center}
-  .btn{padding:9px 12px;border-radius:10px;border:none;cursor:pointer}
-  .btn.primary{background:#1f6feb;color:#fff}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#d9eefc}
-  .small{font-size:13px;color:var(--muted)}
-  .server-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:var(--glass);margin-bottom:8px}
-  #canvasWrap{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-  #gameCanvas{display:block;width:100%;height:640px;background:linear-gradient(180deg,#081226 0%, #04111a 100%)}
-  .sidebar-img{width:100%;border-radius:8px;margin-top:12px}
-  .log{height:140px;overflow:auto;background:rgba(0,0,0,0.25);padding:8px;border-radius:8px;font-family:monospace}
-  .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px}
+    body {
+        background: #111;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 40px;
+        color: #000;
+    }
+
+    .window {
+        width: 420px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    input[type=text] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        border: 1px solid #bbb;
+        font-size: 14px;
+    }
+
+    label {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 14px;
+        border: 1px solid #aaa;
+        margin-bottom: 15px;
+    }
+
+    .card {
+        background: #FF8E00;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        color: #fff;
+        margin-bottom: 20px;
+        cursor: pointer;
+        position: relative;
+    }
+    .card:hover {
+        opacity: 0.9;
+    }
+
+    .buy-button {
+        display: block;
+        width: 100%;
+        padding: 13px;
+        font-size: 17px;
+        border: none;
+        border-radius: 10px;
+        background: #6e3eff;
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .buy-button:hover {
+        background: #532ed0;
+    }
+
+    .warning-box {
+        background: #fff9d6;
+        border: 1px solid #f2e79e;
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-top: 15px;
+    }
 </style>
 </head>
+
 <body>
-<div class="app">
-  <!-- LEFT: Admin / Servers -->
-  <div class="panel">
-    <h2>Admin — Key & Server beheer</h2>
-    <label>Admin key (PIN)</label>
-    <input id="adminPin" value="admin-demo" />
-    <label>Geldig (dagen)</label>
-    <input id="adminDays" type="number" min="1" value="7" />
 
-    <div style="margin-top:10px" class="row">
-      <button class="btn primary" id="btnGen">Genereer key</button>
-      <button class="btn ghost" id="btnShow">Toon keys</button>
+<div class="window">
+    <div class="title">Special Deals</div>
+
+    <!-- UID invoerveld -->
+    <input type="text" id="uid" placeholder="%3D">
+
+    <label>
+        <input type="checkbox" id="frienduid">
+        Friend Encoded UID
+    </label>
+
+    <!-- Select menu EXACT zoals screenshot -->
+    <select id="productSelect">
+        <option value="125000">125000_coins = 99.99 $</option>
+        <option value="30000">30000_coins_1_skin_blue_swirl = 9.99 $</option>
+        <option value="16000">16000_coins_1_skin_blue_swirl = 4.99 $</option>
+        <option value="3250">3250_coins_1_skin_king_lion = 1.99 $</option>
+        <option value="7000">7000_coins_1_skin_zodiac_2017_libra = 4.99 $</option>
+        <option value="1800">1800_dna_1_skin_special = 1.99 $</option>
+    </select>
+
+    <!-- OFFER KAART -->
+    <div class="card" onclick="openXsolla()">
+        <div style="font-size: 35px;">💰 + 🎁</div>
+        <div style="margin-top: 10px; font-size: 20px;">Klik om te kopen</div>
     </div>
 
-    <label style="margin-top:12px">Servers (sim)</label>
-    <div id="serverList"></div>
-    <div style="margin-top:10px" class="row">
-      <button class="btn" id="btnAdd">+ Server</button>
-      <button class="btn" id="btnReset">Reset</button>
+    <!-- Betaal knop -->
+    <button class="buy-button" onclick="openXsolla()">Koop nu</button>
+
+    <!-- Config link info -->
+    <div class="warning-box">
+        Om aankoop te doen moet je ingelogd zijn.<br>
+        Config geladen van:<br>
+        <b>https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json</b><br><br>
+        Encoded UID wordt gebruikt om de skin aan jouw account toe te voegen.
     </div>
-
-    <img class="sidebar-img" src="/mnt/data/IMG_6486.png" alt="skin-preview"/>
-
-    <p class="small" style="margin-top:10px">Keys en servers worden lokaal opgeslagen in je browser (localStorage). Dit is een UI-replica en maakt geen verbinding met Agar.io.</p>
-  </div>
-
-  <!-- RIGHT: Main UI + Canvas -->
-  <div class="panel">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2>Client — Verbinden & Bot Control</h2>
-      <div class="small">Status: <span id="status" class="badge">idle</span></div>
-    </div>
-
-    <div style="display:flex;gap:10px;margin-top:8px;align-items:end">
-      <div style="flex:1">
-        <label>Skin Key / Console ID</label>
-        <input id="userKey" placeholder="Plak key..." />
-      </div>
-      <div style="width:220px">
-        <label>Server</label>
-        <select id="serverSelect"></select>
-      </div>
-      <div style="width:140px">
-        <label>Mode</label>
-        <select id="modeSelect"><option>Follow</option><option>Feed-Leave</option><option>Smart</option></select>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <div style="flex:1" class="row">
-        <input id="botCount" type="number" min="0" max="300" value="12" style="width:110px" />
-        <input id="useTime" type="number" min="1" value="15" style="width:110px" />
-        <label class="small" style="margin-left:6px">(min)</label>
-      </div>
-      <div style="width:260px" class="row">
-        <button class="btn primary" id="btnConnect">Verbind (sim)</button>
-        <button class="btn" id="btnDisconnect">Verbreek</button>
-        <button class="btn ghost" id="btnParty">Maak party</button>
-      </div>
-    </div>
-
-    <div id="canvasWrap" style="margin-top:12px">
-      <canvas id="gameCanvas"></canvas>
-    </div>
-
-    <div style="display:flex;gap:12px;margin-top:12px">
-      <div style="flex:1">
-        <label>Console</label>
-        <div id="console" class="log"></div>
-      </div>
-      <div style="width:320px">
-        <label>Live Stats</label>
-        <div style="display:flex;gap:8px;margin-top:6px">
-          <div class="small">Connected</div><div id="statConnected" class="badge">false</div>
-          <div class="small">Bots</div><div id="statBots" class="badge">0</div>
-        </div>
-        <img class="sidebar-img" src="/mnt/data/IMG_6485.png" alt="bots" />
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script>
-/* Local storage keys */
-const STORAGE_KEYS = 'bite_exact_keys_v1';
-const STORAGE_SERVERS = 'bite_exact_servers_v1';
-function now(){return Math.floor(Date.now()/1000);} 
-function uid(n=8){return Math.random().toString(36).slice(2,2+n);} 
+function openXsolla() {
+    const uid = document.getElementById("uid").value.trim();
+    if (!uid) {
+        alert("Voer eerst je UID in!");
+        return;
+    }
 
-/* init servers */
-if(!localStorage.getItem(STORAGE_SERVERS)){
-  const base = [
-    {id:'EU-AMS',name:'EU — Amsterdam'},
-    {id:'EU-LON',name:'EU — London'},
-    {id:'US-NY',name:'US — New York'}
-  ];
-  localStorage.setItem(STORAGE_SERVERS, JSON.stringify(base));
+    // “Open nieuw venster + toestaan popup” EXACT zoals op iPad
+    window.open("https://secure.xsolla.com/paystation3/", "_blank");
 }
-
-function loadServers(){try{return JSON.parse(localStorage.getItem(STORAGE_SERVERS)||'[]')}catch(e){return []}}
-function saveServers(s){localStorage.setItem(STORAGE_SERVERS, JSON.stringify(s))}
-function loadKeys(){try{return JSON.parse(localStorage.getItem(STORAGE_KEYS)||'{}')}catch(e){return {}}}
-function saveKeys(k){localStorage.setItem(STORAGE_KEYS, JSON.stringify(k))}
-
-/* render server list */
-function renderServers(){
-  const list = document.getElementById('serverList'); list.innerHTML='';
-  const sel = document.getElementById('serverSelect'); sel.innerHTML='';
-  const servers = loadServers();
-  servers.forEach(s=>{
-    const el = document.createElement('div'); el.className='server-item';
-    el.innerHTML = '<div><strong>'+s.name+'</strong><div class="small">'+(Math.floor(Math.random()*200))+' players • ping '+(20+Math.floor(Math.random()*140))+'ms</div></div><div><button class="btn" data-id="'+s.id+'">Select</button></div>';
-    list.appendChild(el);
-    const opt = document.createElement('option'); opt.value = s.id; opt.textContent = s.name; sel.appendChild(opt);
-  });
-}
-renderServers();
-
-/* admin gen */
-document.getElementById('btnGen').addEventListener('click', ()=>{
-  const pin = document.getElementById('adminPin').value.trim();
-  if(pin !== 'admin-demo'){alert('Ongeldige admin PIN (demo: admin-demo)'); return;}
-  const days = parseInt(document.getElementById('adminDays').value)||1;
-  const key = 'b_'+uid(10);
-  const keys = loadKeys(); keys[key]={created:now(),expires: now()+days*24*3600,days}; saveKeys(keys);
-  alert('Key gegenereerd: '+key+' (vervalt over '+days+'d)'); log('Admin: key '+key+' gegenereerd');
-});
-
-document.getElementById('btnShow').addEventListener('click', ()=>{ const keys=loadKeys(); const lines=Object.keys(keys).map(k=>k+' — expires: '+new Date(keys[k].expires*1000).toLocaleString()); alert(lines.length?lines.join('
-'):'Geen keys'); });
-
-document.getElementById('btnAdd').addEventListener('click', ()=>{ const servers=loadServers(); const id='SV-'+Math.floor(Math.random()*9999); servers.push({id,name:'Server '+id}); saveServers(servers); renderServers(); log('Server toegevoegd: '+id); });
-
-document.getElementById('btnReset').addEventListener('click', ()=>{ if(confirm('Reset servers?')){localStorage.removeItem(STORAGE_SERVERS); location.reload();}});
-
-/* party */
-function genParty(){return Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase(); }
-document.getElementById('btnParty').addEventListener('click', ()=>{ const code = genParty(); alert('Party code: '+code); log('Party gegenereerd: '+code); });
-
-/* connect */
-let connected=false; let simInterval=null; let world={player:{x:0,y:0,r:26},bots:[],foods:[]};
-function log(msg){ const el=document.getElementById('console'); el.innerHTML='['+new Date().toLocaleTimeString()+'] '+msg+'<br/>'+el.innerHTML; }
-
-document.getElementById('btnConnect').addEventListener('click', ()=>{
-  const key=document.getElementById('userKey').value.trim(); const keys=loadKeys();
-  if(!key||!keys[key]){ alert('Key ongeldig'); log('Connect poging mislukt (ongeldige key)'); return; }
-  if(now() > keys[key].expires){ alert('Key verlopen'); log('Connect poging: key verlopen'); return; }
-  connected=true; document.getElementById('statConnected').textContent='true'; document.getElementById('status').textContent='connected'; log('Verbonden met '+document.getElementById('serverSelect').selectedOptions[0].text);
-});
-
-document.getElementById('btnDisconnect').addEventListener('click', ()=>{ connected=false; document.getElementById('statConnected').textContent='false'; document.getElementById('status').textContent='idle'; stopBots(); log('Verbinding verbroken'); });
-
-/* canvas world */
-const canvas=document.getElementById('gameCanvas'); const ctx=canvas.getContext('2d'); function resize(){ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; world.player.x = canvas.width/2; world.player.y = canvas.height/2; } window.addEventListener('resize', resize); resize();
-
-function spawnFood(n){ for(let i=0;i<n;i++){ world.foods.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:3}); }}
-function spawnBots(n,mode){ for(let i=0;i<n;i++){ world.bots.push({id:'b'+Math.floor(Math.random()*99999),x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:8+Math.random()*20,vx:(Math.random()-0.5)*1.5,vy:(Math.random()-0.5)*1.5,mode}); } document.getElementById('statBots').textContent = world.bots.length; }
-function clearWorld(){ world.bots=[]; world.foods=[]; document.getElementById('statBots').textContent='0'; }
-
-let mouse=null; canvas.addEventListener('mousemove', (e)=>{ const r=canvas.getBoundingClientRect(); mouse={x:e.clientX-r.left,y:e.clientY-r.top}; });
-canvas.addEventListener('click', (e)=>{ const r=canvas.getBoundingClientRect(); world.foods.push({x:e.clientX-r.left,y:e.clientY-r.top,r:4}); log('Food spawned'); });
-
-function step(){ // update player
-  if(mouse){ const dx=mouse.x-world.player.x, dy=mouse.y-world.player.y, d=Math.hypot(dx,dy)||1; world.player.x += (dx/d)*3; world.player.y += (dy/d)*3; }
-  // bots AI
-  world.bots.forEach(b=>{
-    if(b.mode==='Follow'){ const dx=world.player.x-b.x, dy=world.player.y-b.y, d=Math.hypot(dx,dy)||1; b.vx += (dx/d)*0.04; b.vy += (dy/d)*0.04; }
-    if(b.mode==='Feed-Leave'){ if(Math.random()<0.02){ b.vx += (Math.random()-0.5)*1; b.vy += (Math.random()-0.5)*1; } }
-    b.vx = Math.max(-2,Math.min(2,b.vx)); b.vy = Math.max(-2,Math.min(2,b.vy)); b.x += b.vx; b.y += b.vy;
-    if(b.x < -50) b.x = canvas.width+50; if(b.x > canvas.width+50) b.x = -50; if(b.y < -50) b.y = canvas.height+50; if(b.y>canvas.height+50) b.y=-50;
-  });
-  // collisions food
-  for(let i=world.foods.length-1;i>=0;i--){ const f=world.foods[i]; if(Math.hypot(f.x-world.player.x,f.y-world.player.y) < f.r + world.player.r){ world.player.r += 0.3; world.foods.splice(i,1); log('Player ate food'); continue; } for(let j=world.bots.length-1;j>=0;j--){ const b=world.bots[j]; if(Math.hypot(f.x-b.x,f.y-b.y) < f.r + b.r){ b.r += 0.15; world.foods.splice(i,1); break; } } }
-  render();
-}
-
-function render(){ ctx.clearRect(0,0,canvas.width,canvas.height); // bg
-  ctx.fillStyle='#04111a'; ctx.fillRect(0,0,canvas.width,canvas.height);
-  // food
-  for(const f of world.foods){ ctx.beginPath(); ctx.fillStyle='#ffd166'; ctx.arc(f.x,f.y,f.r,0,Math.PI*2); ctx.fill(); }
-  // bots
-  for(const b of world.bots){ ctx.beginPath(); ctx.fillStyle='hsl('+Math.floor((b.r*5)%360)+',60%,60%)'; ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); }
-  // player
-  ctx.beginPath(); ctx.fillStyle='#ffffff'; ctx.arc(world.player.x,world.player.y,world.player.r,0,Math.PI*2); ctx.fill();
-}
-
-function startBots(){ if(!connected){ alert('Verbind eerst (sim)'); return; }
-  const count = Math.min(300, parseInt(document.getElementById('botCount').value)||12);
-  const mode = document.getElementById('modeSelect').value;
-  spawnBots(count, mode);
-  spawnFood(120);
-  log('Bots gestart — '+count+' ('+mode+')');
-  if(simInterval) clearInterval(simInterval);
-  simInterval = setInterval(step, 40);
-}
-function stopBots(){ if(simInterval) clearInterval(simInterval); simInterval=null; clearWorld(); log('Bots stopped'); }
-
-document.getElementById('startBtn')?.addEventListener('click', startBots);
-document.getElementById('stopBtn')?.addEventListener('click', stopBots);
-
-// wire up connect/disconnect to start/stop buttons in top area
-const topStart = document.getElementById('btnConnect'); const topStop = document.getElementById('btnDisconnect');
-topStart.addEventListener('click', ()=>{ document.getElementById('startBtn').disabled=false; });
-topStop.addEventListener('click', ()=>{ stopBots(); });
-
-window.addEventListener('load', ()=>{
-  // create demo key
-  const keys = loadKeys(); if(Object.keys(keys).length===0){ keys['demo-bite-0001']={created:now(),expires:now()+7*24*3600}; saveKeys(keys); alert('Demo key aangemaakt: demo-bite-0001'); }
-  renderServers(); log('Exact UI simulator geladen.');
-  // create top start/stop buttons that mimic Bite layout
-  const topStartBtn = document.createElement('button'); topStartBtn.textContent='Start (sim)'; topStartBtn.className='btn primary'; topStartBtn.style.marginLeft='8px'; topStartBtn.onclick = startBots;
-  document.querySelector('.panel:nth-child(2) .panel')?.appendChild(topStartBtn);
-});
-
 </script>
+
 </body>
 </html>
