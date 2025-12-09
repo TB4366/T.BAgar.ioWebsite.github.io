@@ -1,149 +1,208 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Shop</title>
 <style>
-    body { font-family: Arial; background:#111; color:#fff; margin:0; padding:20px; }
-    h1 { text-align:center; }
-    .uid-box { margin:20px auto; text-align:center; }
-    input { padding:10px; width:320px; border-radius:5px; border:none; }
-    #offers { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:30px; }
-    .offer {
-        background:#1e1e1e;
-        border:1px solid #333;
-        border-radius:10px;
-        width:260px;
-        padding:15px;
-        text-align:center;
-        transition:0.2s;
+    body {
+        margin: 0;
+        background: #141414;
+        font-family: Arial, sans-serif;
+        color: #fff;
+        display: flex;
     }
-    .offer:hover { transform:scale(1.05); border-color:#0f0; }
-    .offer img { width:120px; height:120px; object-fit:contain; margin-bottom:10px; }
-    .buy-button {
-        margin-top:10px;
-        padding:10px;
-        width:100%;
-        background:#28a745;
-        border:none;
-        border-radius:5px;
-        font-size:16px;
-        cursor:pointer;
-        color:#fff;
+
+    /* Sidebar */
+    #sidebar {
+        width: 220px;
+        background: #0c0c0c;
+        padding: 20px;
+        border-right: 2px solid #1f1f1f;
+        height: 100vh;
     }
-    .buy-button:hover { background:#34d058; }
+
+    #sidebar h2 {
+        margin-top: 0;
+        font-size: 20px;
+        color: #00d4ff;
+        text-align: center;
+    }
+
+    /* UID Input */
+    #uidInput {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        margin-top: 10px;
+        background: #1b1b1b;
+        color: white;
+    }
+
+    /* Main shop grid */
+    #shop {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    #shop h1 {
+        text-align: center;
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    #items {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 20px;
+    }
+
+    .item {
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid #2b2b2b;
+        transition: 0.2s;
+    }
+
+    .item:hover {
+        transform: scale(1.04);
+        border-color: #00ffcc;
+    }
+
+    .item img {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 10px;
+        object-fit: contain;
+    }
+
+    .buy {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 15px;
+        border: none;
+        border-radius: 6px;
+        background: #00ff88;
+        color: #000;
+        cursor: pointer;
+    }
+
+    .buy:hover {
+        background: #14ff9f;
+    }
+
+    #log {
+        white-space: pre-wrap;
+        margin-top: 20px;
+        background: #0e0e0e;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #00ffcc;
+    }
+
 </style>
 </head>
 <body>
 
-<h1>Agar.io Store</h1>
+<!-- Sidebar -->
+<div id="sidebar">
+    <h2>Agar.io Shop</h2>
+    <label>UID:</label>
+    <input id="uidInput" placeholder="Enter your UID">
 
-<div class="uid-box">
-    <label>Your UID:<br>
-    <input type="text" id="uidInput" placeholder="Enter your Agar.io UID">
-    </label>
+    <div id="log"></div>
 </div>
 
-<div id="offers">Loading offers…</div>
+<!-- Main shop -->
+<div id="shop">
+    <h1>Store Offers</h1>
+    <div id="items">Loading...</div>
+</div>
+
 
 <script>
-// LIVE AGARIO CONFIG
+// REAL AGARIO CONFIG URL
 const CONFIG_URL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
 
-// Fallback Xsolla Paystation
-const XSOLLA_BASE = "https://secure.xsolla.com/paystation3/?purchase=";
+// CORS BYPASS PROXY (werkt altijd)
+const PROXY = "https://corsproxy.io/?";
+
+const XSOLLA = "https://secure.xsolla.com/paystation3/?purchase=";
+
+function log(text) {
+    document.getElementById("log").innerText += text + "\n";
+}
 
 async function loadConfig() {
     try {
-        const res = await fetch(CONFIG_URL);
-        const json = await res.json();
+        log("Downloading live Agar.io config...");
+        const res = await fetch(PROXY + CONFIG_URL);
+        const config = await res.json();
+        log("Config loaded!");
 
-        console.log("Loaded config:", json);
-        renderOffers(json);
-    } catch (err) {
-        document.getElementById("offers").innerHTML = "Failed to load configuration.";
+        renderShop(config);
+    } catch (e) {
+        log("Error loading config: " + e);
+        document.getElementById("items").innerHTML = "Could not load shop (CORS).";
     }
 }
 
-function renderOffers(config) {
-    const container = document.getElementById("offers");
-    container.innerHTML = "";
+function renderShop(cfg) {
 
-    const allOffers = [];
+    const offers = [];
+    const areas = [
+        cfg?.Shop?.SoftCurrencies,
+        cfg?.Shop?.HardCurrencies,
+        cfg?.Shop?.Boosts,
+        cfg?.Shop?.SkinsSale
+    ];
 
-    // HARD CURRENCY / COINS
-    if (config?.Shop?.SoftCurrencies) {
-        Object.values(config.Shop.SoftCurrencies).forEach(item => {
-            allOffers.push({
+    areas.forEach(section => {
+        if (!section) return;
+
+        Object.values(section).forEach(item => {
+            offers.push({
                 id: item.ProductId,
-                name: item.Title || "Coins Pack",
-                icon: item.ImageUrl,
-                price: item.Price?.PriceAmount || 0
+                name: item.Title || "Offer",
+                price: item.Price?.PriceAmount || "?",
+                img: item.ImageUrl || ""
             });
         });
-    }
+    });
 
-    // HARD CURRENCY / DNA
-    if (config?.Shop?.HardCurrencies) {
-        Object.values(config.Shop.HardCurrencies).forEach(item => {
-            allOffers.push({
-                id: item.ProductId,
-                name: item.Title || "DNA Pack",
-                icon: item.ImageUrl,
-                price: item.Price?.PriceAmount || 0
-            });
-        });
-    }
+    const shop = document.getElementById("items");
+    shop.innerHTML = "";
 
-    // SKINS
-    if (config?.Shop?.SkinsSale) {
-        config.Shop.SkinsSale.forEach(item => {
-            allOffers.push({
-                id: item.ProductId,
-                name: item.Title || "Skin",
-                icon: item.ImageUrl,
-                price: item.Price?.PriceAmount || 0
-            });
-        });
-    }
+    offers.forEach(o => {
+        const card = document.createElement("div");
+        card.className = "item";
 
-    // BOOSTS / OFFERS
-    if (config?.Shop?.Boosts) {
-        config.Shop.Boosts.forEach(item => {
-            allOffers.push({
-                id: item.ProductId,
-                name: item.Title || "Boost",
-                icon: item.ImageUrl,
-                price: item.Price?.PriceAmount || 0
-            });
-        });
-    }
-
-    // RENDER ALL
-    allOffers.forEach(o => {
-        const div = document.createElement("div");
-        div.className = "offer";
-
-        div.innerHTML = `
-            <img src="${o.icon}" alt="">
+        card.innerHTML = `
+            <img src="${o.img}">
             <h3>${o.name}</h3>
             <p><b>${o.price}$</b></p>
-            <button class="buy-button" onclick="buy('${o.id}')">Buy</button>
+            <button class="buy" onclick="buy('${o.id}')">Buy</button>
         `;
 
-        container.appendChild(div);
+        shop.appendChild(card);
     });
+
+    log(`Loaded ${offers.length} shop items.`);
 }
 
 function buy(productId) {
     const uid = document.getElementById("uidInput").value.trim();
-
     if (!uid) {
-        alert("Enter your UID first!");
+        alert("Enter your UID first.");
         return;
     }
 
-    const url = `${XSOLLA_BASE}${productId}&uid=${encodeURIComponent(uid)}`;
+    const url = `${XSOLLA}${productId}&uid=${encodeURIComponent(uid)}`;
+    log("Opening payment: " + url);
 
     window.open(url, "_blank");
 }
