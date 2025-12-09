@@ -1,124 +1,155 @@
-<!doctype html>
-<html lang="nl">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>paidskinsmangerpaneel — beheer</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<title>Agar.io Shop</title>
 <style>
-  body{background:#f3f4f6;}
-  .table-cell{padding:12px;border-bottom:1px solid #e5e7eb;}
-  .nowrap{white-space:nowrap;}
-  .code-box{font-family:monospace;padding:6px 10px;border-radius:6px;background:#fff;border:1px dashed #d1d5db;}
+    body { font-family: Arial; background:#111; color:#fff; margin:0; padding:20px; }
+    h1 { text-align:center; }
+    .uid-box { margin:20px auto; text-align:center; }
+    input { padding:10px; width:320px; border-radius:5px; border:none; }
+    #offers { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; margin-top:30px; }
+    .offer {
+        background:#1e1e1e;
+        border:1px solid #333;
+        border-radius:10px;
+        width:260px;
+        padding:15px;
+        text-align:center;
+        transition:0.2s;
+    }
+    .offer:hover { transform:scale(1.05); border-color:#0f0; }
+    .offer img { width:120px; height:120px; object-fit:contain; margin-bottom:10px; }
+    .buy-button {
+        margin-top:10px;
+        padding:10px;
+        width:100%;
+        background:#28a745;
+        border:none;
+        border-radius:5px;
+        font-size:16px;
+        cursor:pointer;
+        color:#fff;
+    }
+    .buy-button:hover { background:#34d058; }
 </style>
 </head>
-<body class="p-6">
-  <div class="max-w-6xl mx-auto bg-white rounded shadow p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">PaidSkins Manager Paneel</h1>
-      <div class="flex gap-2">
-        <button id="refreshBtn" class="px-3 py-2 bg-gray-200 rounded">Ververs</button>
-        <button id="exportBtn" class="px-3 py-2 bg-teal-500 text-white rounded">Export CSV</button>
-        <button id="clearBtn" class="px-3 py-2 bg-red-500 text-white rounded">Verwijder alles</button>
-      </div>
-    </div>
+<body>
 
-    <div id="noData" class="text-gray-600">Geen bestellingen gevonden.</div>
+<h1>Agar.io Store</h1>
 
-    <div id="ordersTable" class="mt-4 overflow-auto"></div>
-  </div>
+<div class="uid-box">
+    <label>Your UID:<br>
+    <input type="text" id="uidInput" placeholder="Enter your Agar.io UID">
+    </label>
+</div>
+
+<div id="offers">Loading offers…</div>
 
 <script>
-/* Manager paneel leest localStorage sleutel 'paidskins_orders' */
-const key='paidskins_orders';
-const ordersTable=document.getElementById('ordersTable');
-const noData=document.getElementById('noData');
-document.getElementById('refreshBtn').addEventListener('click',renderOrders);
-document.getElementById('clearBtn').addEventListener('click',()=>{
-  if(!confirm('Weet je zeker dat je alle opgeslagen bestellingen wilt verwijderen?')) return;
-  localStorage.removeItem(key);
-  renderOrders();
-});
-document.getElementById('exportBtn').addEventListener('click',exportCSV);
+// LIVE AGARIO CONFIG
+const CONFIG_URL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
 
-function readOrders(){
-  return JSON.parse(localStorage.getItem(key) || '[]');
+// Fallback Xsolla Paystation
+const XSOLLA_BASE = "https://secure.xsolla.com/paystation3/?purchase=";
+
+async function loadConfig() {
+    try {
+        const res = await fetch(CONFIG_URL);
+        const json = await res.json();
+
+        console.log("Loaded config:", json);
+        renderOffers(json);
+    } catch (err) {
+        document.getElementById("offers").innerHTML = "Failed to load configuration.";
+    }
 }
 
-function renderOrders(){
-  const arr=readOrders();
-  if(arr.length===0){
-    ordersTable.innerHTML=''; noData.style.display='block'; return;
-  }
-  noData.style.display='none';
-  let html = `<table class="w-full"><thead class="text-left bg-gray-50"><tr>
-    <th class="table-cell">Datum</th><th class="table-cell">Code</th><th class="table-cell">UID</th><th class="table-cell">E-mail</th><th class="table-cell">Items</th><th class="table-cell">Totaal (USD)</th><th class="table-cell">Acties</th>
-  </tr></thead><tbody>`;
-  arr.slice().reverse().forEach((o,idx)=>{
-    const date = new Date(o.date).toLocaleString('nl-NL');
-    const items = (o.items || []).map(it=>`${it.title} (${it.price.toFixed(2)})`).join(', ');
-    html += `<tr>
-      <td class="table-cell nowrap">${date}</td>
-      <td class="table-cell"><div class="code-box">${o.code}</div></td>
-      <td class="table-cell">${o.uid}</td>
-      <td class="table-cell">${o.email}</td>
-      <td class="table-cell">${items}</td>
-      <td class="table-cell">USD ${o.total.toFixed(2)}</td>
-      <td class="table-cell">
-        <button class="mailtoBtn px-2 py-1 bg-gray-200 rounded" data-email="${o.email}" data-code="${o.code}">E-mail klant</button>
-        <button class="deleteBtn px-2 py-1 bg-red-100 rounded" data-index="${idx}">Verwijder</button>
-      </td>
-    </tr>`;
-  });
-  html += '</tbody></table>';
-  ordersTable.innerHTML = html;
+function renderOffers(config) {
+    const container = document.getElementById("offers");
+    container.innerHTML = "";
 
-  // voeg eventlisteners toe op de knoppen
-  document.querySelectorAll('.mailtoBtn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const email=btn.dataset.email;
-      const code=btn.dataset.code;
-      const subject = encodeURIComponent('Over je aankoop bij T.B Agar.io');
-      const body = encodeURIComponent(`Hoi,\n\nBedankt voor je aankoop. Jouw code: ${code}\n\nAls er iets mis is met je bestelling mail ons aub terug.\n\nGroeten,\nT.B`);
-      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    const allOffers = [];
+
+    // HARD CURRENCY / COINS
+    if (config?.Shop?.SoftCurrencies) {
+        Object.values(config.Shop.SoftCurrencies).forEach(item => {
+            allOffers.push({
+                id: item.ProductId,
+                name: item.Title || "Coins Pack",
+                icon: item.ImageUrl,
+                price: item.Price?.PriceAmount || 0
+            });
+        });
+    }
+
+    // HARD CURRENCY / DNA
+    if (config?.Shop?.HardCurrencies) {
+        Object.values(config.Shop.HardCurrencies).forEach(item => {
+            allOffers.push({
+                id: item.ProductId,
+                name: item.Title || "DNA Pack",
+                icon: item.ImageUrl,
+                price: item.Price?.PriceAmount || 0
+            });
+        });
+    }
+
+    // SKINS
+    if (config?.Shop?.SkinsSale) {
+        config.Shop.SkinsSale.forEach(item => {
+            allOffers.push({
+                id: item.ProductId,
+                name: item.Title || "Skin",
+                icon: item.ImageUrl,
+                price: item.Price?.PriceAmount || 0
+            });
+        });
+    }
+
+    // BOOSTS / OFFERS
+    if (config?.Shop?.Boosts) {
+        config.Shop.Boosts.forEach(item => {
+            allOffers.push({
+                id: item.ProductId,
+                name: item.Title || "Boost",
+                icon: item.ImageUrl,
+                price: item.Price?.PriceAmount || 0
+            });
+        });
+    }
+
+    // RENDER ALL
+    allOffers.forEach(o => {
+        const div = document.createElement("div");
+        div.className = "offer";
+
+        div.innerHTML = `
+            <img src="${o.icon}" alt="">
+            <h3>${o.name}</h3>
+            <p><b>${o.price}$</b></p>
+            <button class="buy-button" onclick="buy('${o.id}')">Buy</button>
+        `;
+
+        container.appendChild(div);
     });
-  });
-
-  document.querySelectorAll('.deleteBtn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(!confirm('Verwijder deze bestelling permanent?')) return;
-      // delete by index (reverse order in rendering)
-      const arr = readOrders();
-      const revIndex = arr.length - 1 - parseInt(btn.dataset.index,10);
-      arr.splice(revIndex,1);
-      localStorage.setItem(key, JSON.stringify(arr));
-      renderOrders();
-    });
-  });
 }
 
-function exportCSV(){
-  const arr = readOrders();
-  if(arr.length===0){ alert('Geen data om te exporteren'); return; }
-  const rows = [['datum','code','uid','email','items','total']];
-  arr.forEach(o=>{
-    const items = (o.items || []).map(it=>`${it.title} (${it.price})`).join(' | ');
-    rows.push([o.date, o.code, o.uid, o.email, items, o.total]);
-  });
-  const csv = rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'paidskins_orders_export.csv';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+function buy(productId) {
+    const uid = document.getElementById("uidInput").value.trim();
+
+    if (!uid) {
+        alert("Enter your UID first!");
+        return;
+    }
+
+    const url = `${XSOLLA_BASE}${productId}&uid=${encodeURIComponent(uid)}`;
+
+    window.open(url, "_blank");
 }
 
-/* Init */
-renderOrders();
+loadConfig();
 </script>
+
 </body>
 </html>
