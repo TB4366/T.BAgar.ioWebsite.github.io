@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io Website</title>
 <style>
-/* ---------- basis (ongewijzigd uiterlijk) ---------- */
 body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;transition:background-color 0.3s ease,color 0.3s ease;}
 body.dark{background:#f0f0f0;color:#222;}
 header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;position:relative;transition:background-color 0.3s ease;}
@@ -13,48 +12,28 @@ body.dark header{background:#e0e0e0;}
 .left-header{display:flex;align-items:center;gap:12px;}
 .logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
 .site-title{font-size:1.3rem;font-weight:bold;}
-.search-bar input{padding:8px 12px;border-radius:6px;border:none;outline:none;font-size:14px;width:180px;}
 .toggle-btn-header{background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;padding:6px 10px;border-radius:8px;transition:background-color 0.3s ease,color 0.3s ease;}
 .menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
 .menu{display:none;position:absolute;top:65px;right:20px;background:#1e293b;border-radius:8px;overflow:hidden;min-width:170px;z-index:50;}
 .menu a{display:block;padding:12px;color:white;text-decoration:none;border-bottom:1px solid #334155;}
+.auth-area{display:flex;align-items:center;gap:10px;}
+.menu-action-btn{background:#06b6d4;color:#02111a;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700;font-size:14px;transition: background 0.2s ease;}
+.menu-action-btn:hover{ background:#38bdf8;}
 
-/* TOP-AUTH BUTTONS (toegevoegd) */
-.top-auth-buttons {
-    display:flex;
-    gap:8px;
-    margin-left:14px;
-}
-.top-auth-btn {
-    background:#06b6d4;
-    color:#02111a;
-    border:none;
-    padding:6px 12px;
-    border-radius:6px;
-    cursor:pointer;
-    font-weight:700;
-    font-size:14px;
-}
+/* Gallery */
+#gallery {display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:20px;}
+.skin {position:relative;border:2px solid #222;border-radius:10px;overflow:hidden;cursor:pointer;transition:transform 0.25s, box-shadow 0.25s, border-color 0.25s;}
+.skin img {width:100%;height:auto;display:block;}
+.skin.selected {border-color: gold; box-shadow:0 0 15px gold; transform: scale(1.1);}
 
-/* ---------- skins area (kept look + added lock visuals) ---------- */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 900px; margin: 20px auto; padding: 0 10px; }
+/* Locked */
+.skin.locked img {filter:grayscale(100%) brightness(0.5);pointer-events:none;}
+.lock-overlay {position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;justify-content:center;align-items:center;font-size:32px;}
+.lock-price {background:orange;padding:5px 10px;border-radius:6px;font-weight:bold;position:absolute;bottom:6px;right:6px;cursor:pointer;}
 
-.skin { cursor: pointer; width: 220px; height: 220px; margin: auto; border-radius: 50%; overflow: hidden; border: 4px solid #222; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; position: relative; background: transparent; }
-.skin img { width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 50%; display:block; }
-.skin.selected { transform: scale(1.15); border-color: #ffb300; box-shadow: 0 0 25px #ffb300; }
-
-/* locked visuals */
-.skin.locked img { filter: grayscale(100%) brightness(0.5); pointer-events: none; }
-.skin .lock-overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:5; display:flex; flex-direction:column; align-items:center; gap:8px; pointer-events:none; }
-.lock-icon { width:56px; height:56px; background:rgba(0,0,0,0.4); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:28px; color:white; border:2px solid rgba(255,255,255,0.08); }
-.lock-price { position:absolute; left:50%; transform:translateX(-50%); bottom:-18px; background:#ef4444; color:white; padding:6px 12px; border-radius:10px; font-weight:700; z-index:6; cursor:pointer; }
-
-/* hide skin-name as before */
-.skin-name { display:none; }
-
-/* modals + settings additions */
+/* Modals */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
-.modal{background:#071028;padding:20px;border-radius:12px;max-width:520px;width:92%;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:white;position:relative;}
+.modal{background:#071028;padding:20px;border-radius:12px;max-width:420px;width:90%;color:white;position:relative;}
 .modal h2{margin:0 0 10px 0;font-size:1.2rem;}
 .modal label{display:block;margin-top:10px;font-size:0.9rem;color:#cbd5e1;}
 .modal input{width:100%;padding:10px;border-radius:8px;border:1px solid #2b394b;margin-top:6px;background:transparent;color:inherit;box-sizing:border-box;}
@@ -62,175 +41,188 @@ body.dark header{background:#e0e0e0;}
 .modal .actions button{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700;}
 .modal .actions .cancel{background:transparent;color:#9ca3af;}
 .modal .actions .confirm{background:#06b6d4;color:#02111a;}
-.small{font-size:0.9rem;color:#cbd5e1;margin-top:8px;}
-.money-display{font-weight:700;margin-top:8px;color:#ffd166;}
-/* paypal button style small */
-.paypal-btn{display:inline-block;background:#003087;color:white;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;}
-/* responsive tweak */
-@media (max-width:720px){ .grid { grid-template-columns: repeat(2, 1fr); } .skin{width:170px;height:170px;} }
-@media (max-width:420px){ .grid { grid-template-columns: repeat(1, 1fr); } .skin{width:140px;height:140px;} }
-
-/* menu buttons for login/settings */
-.menu-action-btn{
-  background:#06b6d4;color:#02111a;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-weight:700;font-size:14px;
-}
-.menu-action-btn:hover{ background:#38bdf8; }
 </style>
 </head>
 <body>
 
 <header>
-    <div class="logo-container" style="display:flex;align-items:center;gap:10px;">
-        <img src="IMG_2718.png" alt="Logo" class="logo" />
-        <span class="site-title">T.B Agar.io</span>
-        <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-
-        <!-- ⭐ TOP LOGIN BUTTON (toegevoegd) -->
-        <div class="top-auth-buttons">
-            <button id="topLoginBtn" class="top-auth-btn">Login</button>
-            <button id="topSettingsBtn" class="top-auth-btn" style="display:none;">Settings</button>
-        </div>
-    </div>
-
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-    <div class="menu" id="menu">
-      <a href="index.html">🏠 Home Pagina</a>
-      <a href="custom-skins.html">🎨 Custom Skins</a>
-      <a href="mod-menu.html">🛠️ Mod Menu</a>
-
-      <div id="authButtons" style="display:flex;gap:8px;padding:12px;">
-        <button id="menuLoginBtn" class="menu-action-btn">Login</button>
-        <button id="menuSettingsBtn" class="menu-action-btn" style="display:none;">Settings</button>
-      </div>
-    </div>
+  <div class="left-header">
+    <img src="IMG_2718.png" class="logo">
+    <span class="site-title">T.B Agar.io</span>
+    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
+  </div>
+  <div class="auth-area">
+    <button id="loginBtn" class="menu-action-btn">Login</button>
+    <button id="settingsBtn" class="menu-action-btn" style="display:none;">Settings</button>
+  </div>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="index.html">🏠 Home Pagina</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+  </div>
 </header>
 
 <main>
-  <h1 style="text-align:center;margin-top:18px;">Custom Skins</h1>
-  <div class="grid" id="gallery"></div>
+  <div id="gallery"></div>
 </main>
 
-<!-- JE PURCHASE + LOGIN + REGISTER + SETTINGS MODALS BLIJVEN ONGEWIJZIGD -->
+<!-- Modals -->
+<div id="loginModal" class="modal-backdrop">
+  <div class="modal">
+    <h2>Login</h2>
+    <label>Email</label><input id="loginEmail" type="email">
+    <label>Password</label><input id="loginPassword" type="password">
+    <div class="actions">
+      <button class="cancel" onclick="closeLogin()">Cancel</button>
+      <button class="confirm" id="doLoginBtn">Login</button>
+    </div>
+  </div>
+</div>
+
+<div id="registerModal" class="modal-backdrop">
+  <div class="modal">
+    <h2>Register</h2>
+    <label>Name</label><input id="regName" type="text">
+    <label>Email</label><input id="regEmail" type="email">
+    <label>Agar.io UID</label><input id="regUid" type="text">
+    <label>Password</label><input id="regPassword" type="password">
+    <label>Repeat Password</label><input id="regPassword2" type="password">
+    <div class="actions">
+      <button class="cancel" onclick="closeRegister()">Cancel</button>
+      <button class="confirm" id="doRegisterBtn">Register</button>
+    </div>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal-backdrop">
+  <div class="modal">
+    <h2>Settings</h2>
+    <label>Name</label><input id="settingsName" type="text">
+    <label>Email</label><input id="settingsEmail" type="email">
+    <label>Password</label><input id="settingsPassword" type="password">
+    <label>Agar.io UID</label><input id="settingsUid" type="text" disabled>
+    <div class="actions">
+      <button class="cancel" onclick="closeSettings()">Cancel</button>
+      <button class="confirm" id="doSaveSettingsBtn">Save</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ---------- utilities (menu + darkmode) ---------- */
+// ---------- MENU ----------
 function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
+
+// ---------- DARK MODE ----------
 const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
+if(localStorage.getItem('theme')==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
 toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
 
-/* ---------- AUTH / ACCOUNT ---------- */
-function getUsers(){ return JSON.parse(localStorage.getItem('users')||'[]'); }
-function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
-function getCurrentUser(){ return JSON.parse(localStorage.getItem('currentUser')||'null'); }
-function setCurrentUser(u){ localStorage.setItem('currentUser', JSON.stringify(u)); updateAuthUI(); }
+// ---------- AUTH ----------
+const loginBtn=document.getElementById('loginBtn');
+const settingsBtn=document.getElementById('settingsBtn');
+const loginModal=document.getElementById('loginModal');
+const registerModal=document.getElementById('registerModal');
+const settingsModal=document.getElementById('settingsModal');
 
-/* UPDATE AUTH UI — ⭐ BELANGRIJK DEEL */
+function openLogin(){loginModal.style.display='flex';}
+function closeLogin(){loginModal.style.display='none';}
+function openRegister(){registerModal.style.display='flex';}
+function closeRegister(){registerModal.style.display='none';}
+function openSettings(){settingsModal.style.display='flex';loadSettingsFields();}
+function closeSettings(){settingsModal.style.display='none';}
+
+function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
+function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
+function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
+function setCurrentUser(u){localStorage.setItem('currentUser',JSON.stringify(u));updateAuthUI();}
+
 function updateAuthUI(){
-    const user = getCurrentUser();
-
-    const topLoginBtn = document.getElementById("topLoginBtn");
-    const topSettingsBtn = document.getElementById("topSettingsBtn");
-
-    const menuLoginBtn = document.getElementById("menuLoginBtn");
-    const menuSettingsBtn = document.getElementById("menuSettingsBtn");
-
-    if(user){
-        topLoginBtn.textContent = "Logout";
-        topLoginBtn.onclick = logout;
-        topSettingsBtn.style.display = "inline-block";
-        topSettingsBtn.onclick = openSettings;
-
-        menuLoginBtn.textContent = "Logout";
-        menuLoginBtn.onclick = logout;
-        menuSettingsBtn.style.display = "inline-block";
-        menuSettingsBtn.onclick = openSettings;
-    }
-    else{
-        topLoginBtn.textContent = "Login";
-        topLoginBtn.onclick = openLogin;
-        topSettingsBtn.style.display = "none";
-
-        menuLoginBtn.textContent = "Login";
-        menuLoginBtn.onclick = openLogin;
-        menuSettingsBtn.style.display = "none";
-    }
+  const user=getCurrentUser();
+  if(user){
+    loginBtn.textContent='Logout';loginBtn.onclick=logout;
+    settingsBtn.style.display='inline-block';
+  } else {
+    loginBtn.textContent='Login';loginBtn.onclick=openLogin;
+    settingsBtn.style.display='none';
+  }
 }
 
-/* LOGIN / REGISTER / SETTINGS functies blijven exact zoals jij had */
-function openLogin(){ loginModal.style.display='flex'; }
-function closeLogin(){ loginModal.style.display='none'; }
-function openSettings(){ settingsModal.style.display='flex'; loadSettingsFields(); }
-function closeSettings(){ settingsModal.style.display='none'; }
-function logout(){ localStorage.removeItem('currentUser'); updateAuthUI(); }
+function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
 
-/* ---------- skins rendering BLIJFT EXACT ZO ---------- */
-/* Paid skins */
-const paidSkins = [
-  { id:"paid_IMG_6174", img:"IMG_6174.webp", price:3.99, priceLabel:"$3.99" },
-  { id:"paid_IMG_6175", img:"IMG_6175.webp", price:5.99, priceLabel:"$5.99" },
-  { id:"paid_IMG_6260", img:"IMG_6260.webp", price:7.99, priceLabel:"$7.99" }
+function loadSettingsFields(){
+  const user=getCurrentUser();if(!user)return;
+  document.getElementById('settingsName').value=user.name;
+  document.getElementById('settingsEmail').value=user.email;
+  document.getElementById('settingsPassword').value=user.password;
+  document.getElementById('settingsUid').value=user.uid;
+}
+
+// Register/Login
+document.getElementById('doRegisterBtn').addEventListener('click',()=>{
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const uid=document.getElementById('regUid').value.trim();
+  const pass1=document.getElementById('regPassword').value;
+  const pass2=document.getElementById('regPassword2').value;
+  if(!name||!email||!uid||!pass1||!pass2||pass1!==pass2){alert('Fill all fields & passwords match');return;}
+  const users=getUsers();
+  if(users.find(u=>u.email===email)){alert('Email exists');return;}
+  const newUser={name,email,uid,password:pass1,ownedSkins:[]};
+  users.push(newUser);saveUsers(users);setCurrentUser(newUser);closeRegister();
+});
+
+document.getElementById('doLoginBtn').addEventListener('click',()=>{
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const users=getUsers();
+  const user=users.find(u=>u.email===email&&u.password===password);
+  if(user){setCurrentUser(user);closeLogin();} else{alert('Invalid email/password');}
+});
+
+// ---------- SKINS ----------
+const paidSkins=[
+  {id:"paid1",img:"IMG_6174.webp",price:"$3.99"},
+  {id:"paid2",img:"IMG_6175.webp",price:"$5.99"},
+  {id:"paid3",img:"IMG_6260.webp",price:"$7.99"}
 ];
-
-/* Normal skins */
-const skins = [
-    { name: "evil halloween spider", url: "A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" },
-    { name: "evil halloween spider", url: "A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" },
-    { name: "haloween man", url: "3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg" },
-    { name: "evil halloween cat", url: "610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg" },
-    { name: "Baby Dragon", url: "IMG_4073.png" },
-    { name: "Thor Hamer", url: "IMG_4027.jpeg" },
-    { name: "Sting wasp", url: "IMG_4028.jpeg" },
-    { name: "fire skeleton", url: "IMG_4024.jpeg" },
-    { name: "fire wolf", url: "IMG_4025.jpeg" },
-    { name: "captain jay", url: "IMG_4026.jpeg" },
-    { name: "Fire Art", url: "IMG_4022.jpeg" },
-    { name: "mouth fire art", url: "IMG_3180.jpeg" },
-    { name: "fire snake", url: "IMG_4032.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
+const skins=[
+  {name:"evil halloween spider",url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"},
+  {name:"haloween man",url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"},
+  {name:"Baby Dragon",url:"IMG_4073.png"}
 ];
+const allSkins=skins.concat(paidSkins.map(s=>({name:'paid',url:s.img,paidData:s})));
+const gallery=document.getElementById('gallery');
 
-/* Merge */
-const allSkins = skins.concat(paidSkins.map(s=>({ name:'paid', url:s.img, paidData:s })));
+function userOwnsSkin(user,id){return user && Array.isArray(user.ownedSkins) && user.ownedSkins.includes(id);}
 
-/* Render gallery EXACT zoals jij had */
 function renderGallery(){
-    const gallery=document.getElementById('gallery');
-    gallery.innerHTML='';
-    const user=getCurrentUser();
+  gallery.innerHTML='';
+  const user=getCurrentUser();
+  allSkins.forEach(skin=>{
+    const card=document.createElement('div');card.className='skin';
+    const img=document.createElement('img');img.src=skin.url;card.appendChild(img);
 
-    allSkins.forEach(skin=>{
-        const card=document.createElement('div');
-        card.className='skin';
-        const paidEntry=paidSkins.find(p=>p.img===skin.url);
+    if(skin.paidData){
+      card.classList.add('locked');
+      if(userOwnsSkin(user,skin.paidData.id)) card.classList.remove('locked');
+      else{
+        const overlay=document.createElement('div');overlay.className='lock-overlay';overlay.textContent='🔒';
+        card.appendChild(overlay);
+        const priceTag=document.createElement('div');priceTag.className='lock-price';priceTag.textContent=skin.paidData.price;
+        priceTag.addEventListener('click',()=>{alert('Purchase flow here');});
+        card.appendChild(priceTag);
+      }
+    }
 
-        if(paidEntry && (!user || !(user.ownedSkins||[]).includes(paidEntry.id))){
-            card.classList.add('locked');
-
-            const img=document.createElement('img');
-            img.src=skin.url;
-            card.appendChild(img);
-
-            const overlay=document.createElement('div');
-            overlay.className='lock-overlay';
-            overlay.innerHTML='<div class="lock-icon">🔒</div>';
-            card.appendChild(overlay);
-
-            const price=document.createElement('div');
-            price.className='lock-price';
-            price.textContent=paidEntry.priceLabel;
-            card.appendChild(price);
-        }
-        else{
-            const img=document.createElement('img');
-            img.src=skin.url;
-            card.appendChild(img);
-        }
-
-        gallery.appendChild(card);
+    card.addEventListener('click',()=>{
+      if(card.classList.contains('locked')) return;
+      document.querySelectorAll('.skin').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
     });
+
+    gallery.appendChild(card);
+  });
 }
 
 updateAuthUI();
