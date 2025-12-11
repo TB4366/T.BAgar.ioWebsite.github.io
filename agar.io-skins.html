@@ -84,6 +84,53 @@ body.dark header{background:#e0e0e0;}
 </div>
 </main>
 
+<!-- LOGIN / REGISTER / SETTINGS MODALS (FIXED + RESTORED) -->
+<div id="loginModal" class="modal-backdrop">
+<div class="modal">
+<h2>Login</h2>
+<label>Email</label><input id="loginEmail" type="email">
+<label>Password</label><input id="loginPassword" type="password">
+<div class="note">Don't have an account? <a href="#" id="openRegisterFromLogin">Register here</a></div>
+<div class="actions">
+<button class="cancel" onclick="closeLogin()">Cancel</button>
+<button class="confirm" id="doLoginBtn">Login</button>
+</div>
+</div>
+</div>
+
+<div id="registerModal" class="modal-backdrop">
+<div class="modal">
+<h2>Register</h2>
+<label>Name</label><input id="regName" type="text">
+<label>Email</label><input id="regEmail" type="email">
+<label>Agar.io UID</label><input id="regUid" type="text">
+<label>Password</label><input id="regPassword" type="password">
+<label>Repeat Password</label><input id="regPassword2" type="password">
+<div class="note danger" id="regError" style="display:none;"></div>
+<div class="actions">
+<button class="cancel" onclick="closeRegister()">Cancel</button>
+<button class="confirm" id="doRegisterBtn">Register</button>
+</div>
+</div>
+</div>
+
+<div id="settingsModal" class="modal-backdrop">
+<div class="modal">
+<h2>Settings</h2>
+<hr>
+<label>Name</label><input id="settingsName" type="text">
+<label>Email</label><input id="settingsEmail" type="email">
+<label>Password</label><input id="settingsPassword" type="password">
+<label>Agar.io UID</label><input id="settingsUid" type="text" disabled>
+<div class="note">To change your UID, contact T.B.</div>
+<div class="actions">
+<button class="cancel" onclick="closeSettings()">Cancel</button>
+<button class="confirm" id="doSaveSettingsBtn">Save</button>
+</div>
+</div>
+</div>
+
+
 <!-- Keeping all login/register/settings modals + JS exactly as original, only removing skins/videos logic -->
 <script>
 // MENU
@@ -112,7 +159,11 @@ function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
 function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
 function setCurrentUser(user){localStorage.setItem('currentUser',JSON.stringify(user));}
 
-function updateAuthUI(){
+function // FIX LOGIN BUTTON EVENT
+const loginBtn = document.getElementById('loginBtn');
+if (loginBtn) loginBtn.onclick = () => openLogin();
+
+updateAuthUI(){
   const user=getCurrentUser();
   if(user){loginBtn.textContent='Logout';loginBtn.onclick=logout;settingsBtn.style.display='inline-block';}
   else{loginBtn.textContent='Login';loginBtn.onclick=openLogin;settingsBtn.style.display='none';}
