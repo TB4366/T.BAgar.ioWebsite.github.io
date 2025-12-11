@@ -1,4 +1,4 @@
-<!-- Updated HTML with videos and skins removed, price wheel placeholder added -->
+<!-- Updated HTML with working login and prize wheel -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io Website</title>
 <style>
-/* Keeping all original CSS */
+/* Keeping all original CSS (trimmed comments) */
 body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;transition:background-color 0.3s ease,color 0.3s ease;}
 body.dark{background:#f0f0f0;color:#222;}
 header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;position:relative;transition:background-color 0.3s ease;}
@@ -24,9 +24,16 @@ body.dark header{background:#e0e0e0;}
 
 /* PRICE WHEEL */
 .price-wheel-container{display:flex;justify-content:center;margin:40px 0;}
-.wheel{width:300px;height:300px;border-radius:50%;border:6px solid #48cae4;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:bold;background:#0f172a;color:white;}
+.wheel{width:300px;height:300px;border-radius:50%;border:6px solid #48cae4;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:bold;background:#0f172a;color:white;position:relative;}
+.wheel:after{content:'';position:absolute;width:8px;height:40px;background:#fff;right:-14px;top:50%;transform:translateY(-50%);border-radius:4px;}
 
-/* Keep all other original styles (modals, snow, icons, etc.) */
+/* Keep other styles minimal for modals */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
+.modal{background:#071028;padding:20px;border-radius:12px;max-width:420px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:white;position:relative;}
+.modal h2{margin:0 0 10px 0;font-size:1.2rem;} 
+.btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;cursor:pointer;border:none}
+.note{font-size:0.85rem;color:#9ca3af;margin-top:8px;}
+
 </style>
 </head>
 <body>
@@ -56,21 +63,21 @@ body.dark header{background:#e0e0e0;}
 
 <main>
 <div class="divider"></div>
-<div class="highlight-title">💸 Prices Wheel</div>
+<div class="highlight-title">💸 Prize Wheel</div>
 
 <div class="price-wheel-container">
     <div class="wheel" id="wheel">Spin Wheel</div>
 </div>
 <div style="text-align:center;margin-top:15px;">
     <button id="spinBtn" class="btn">Start Wheel</button>
-    <p id="freeSpinText" style="margin-top:10px;">Play 1 time for free</p>
+    <p id="freeSpinText" style="margin-top:10px;color:#ccc">Play 1 time for free</p>
 </div>
-<div class="divider"></div></div>
+<div class="divider"></div>
 
 <!-- Keeping ONLY key section + mods + socials as requested -->
 <div class="highlight-title">🔑 Keys</div>
 <div class="cta-wrap"><a href="key-access.html" class="btn">Keys</a></div>
-<p style="text-align:center;margin-top:10px;">ENTER YOUR KEY CODE HERE!</p>
+<p style="text-align:center;margin-top:10px;color:#ccc">ENTER YOUR KEY CODE HERE!</p>
 <p style="text-align:center;font-size:0.9rem;margin-top:5px;color:#ccc;">No key yet? Buy one via Instagram @t.bagar.io</p>
 
 <div class="divider"></div>
@@ -84,7 +91,7 @@ body.dark header{background:#e0e0e0;}
 </div>
 </main>
 
-<!-- LOGIN / REGISTER / SETTINGS MODALS (FIXED + RESTORED) -->
+<!-- LOGIN / REGISTER / SETTINGS MODALS -->
 <div id="loginModal" class="modal-backdrop">
 <div class="modal">
 <h2>Login</h2>
@@ -130,8 +137,6 @@ body.dark header{background:#e0e0e0;}
 </div>
 </div>
 
-
-<!-- Keeping all login/register/settings modals + JS exactly as original, only removing skins/videos logic -->
 <script>
 // MENU
 function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
@@ -142,34 +147,106 @@ const savedTheme=localStorage.getItem('theme');
 if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
 toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
 
-// AUTH SYSTEM (unchanged)
-const loginBtn=document.getElementById('loginBtn');const settingsBtn=document.getElementById('settingsBtn');
-const loginModal=document.getElementById('loginModal');const registerModal=document.getElementById('registerModal');const settingsModal=document.getElementById('settingsModal');
-document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
-function openLogin(){loginModal.style.display='flex';}
-function closeLogin(){loginModal.style.display='none';}
-function openRegister(){registerModal.style.display='flex';}
-function closeRegister(){registerModal.style.display='none';}
-function openSettings(){settingsModal.style.display='flex';loadSettingsFields();}
-function closeSettings(){settingsModal.style.display='none';}
-settingsBtn.addEventListener('click', openSettings);
+// AUTH SYSTEM
+const loginBtn = document.getElementById('loginBtn');
+const settingsBtn = document.getElementById('settingsBtn');
+const loginModal = document.getElementById('loginModal');
+const registerModal = document.getElementById('registerModal');
+const settingsModal = document.getElementById('settingsModal');
 
+// helpers
 function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
 function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
 function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
 function setCurrentUser(user){localStorage.setItem('currentUser',JSON.stringify(user));}
 
-function // FIX LOGIN BUTTON EVENT
-const loginBtn = document.getElementById('loginBtn');
-if (loginBtn) loginBtn.onclick = () => openLogin();
+function openLogin(){ if(loginModal) loginModal.style.display='flex'; }
+function closeLogin(){ if(loginModal) loginModal.style.display='none'; }
+function openRegister(){ if(registerModal) registerModal.style.display='flex'; }
+function closeRegister(){ if(registerModal) registerModal.style.display='none'; }
+function openSettings(){ if(settingsModal){ settingsModal.style.display='flex'; loadSettingsFields(); } }
+function closeSettings(){ if(settingsModal) settingsModal.style.display='none'; }
 
-updateAuthUI(){
-  const user=getCurrentUser();
-  if(user){loginBtn.textContent='Logout';loginBtn.onclick=logout;settingsBtn.style.display='inline-block';}
-  else{loginBtn.textContent='Login';loginBtn.onclick=openLogin;settingsBtn.style.display='none';}
+if(document.getElementById('openRegisterFromLogin')){
+  document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
 }
 
-function logout(){localStorage.removeItem('currentUser');// PRICE WHEEL LOGIC
+// Ensure login button opens modal
+if(loginBtn) loginBtn.addEventListener('click', ()=>{
+  const user = getCurrentUser();
+  if(user){ // logged in -> logout
+    logout();
+  } else {
+    openLogin();
+  }
+});
+
+function updateAuthUI(){
+  const user=getCurrentUser();
+  if(loginBtn){
+    if(user){loginBtn.textContent='Logout';settingsBtn.style.display='inline-block';}
+    else{loginBtn.textContent='Login';settingsBtn.style.display='none';}
+  }
+}
+
+function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
+
+function loadSettingsFields(){
+  const user=getCurrentUser();if(!user)return;
+  const n=document.getElementById('settingsName');
+  const e=document.getElementById('settingsEmail');
+  const p=document.getElementById('settingsPassword');
+  const u=document.getElementById('settingsUid');
+  if(n) n.value=user.name||'';
+  if(e) e.value=user.email||'';
+  if(p) p.value=user.password||'';
+  if(u) u.value=user.uid||'';
+}
+
+// Modal button handlers
+if(document.getElementById('doSaveSettingsBtn')){
+  document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{
+    const user=getCurrentUser();if(!user)return;
+    const users=getUsers();
+    const name=document.getElementById('settingsName').value.trim();
+    const email=document.getElementById('settingsEmail').value.trim();
+    const password=document.getElementById('settingsPassword').value;
+    user.name=name;user.email=email;user.password=password;
+    const idx=users.findIndex(u=>u.uid===user.uid);
+    if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);updateAuthUI();closeSettings();}
+  });
+}
+
+if(document.getElementById('doLoginBtn')){
+  document.getElementById('doLoginBtn').addEventListener('click',()=>{
+    const email=document.getElementById('loginEmail').value.trim();
+    const password=document.getElementById('loginPassword').value;
+    const users=getUsers();
+    const user=users.find(u=>u.email===email && u.password===password);
+    if(user){setCurrentUser(user);updateAuthUI();closeLogin();}
+    else{alert('Invalid email or password');}
+  });
+}
+
+if(document.getElementById('doRegisterBtn')){
+  document.getElementById('doRegisterBtn').addEventListener('click',()=>{
+    const name=document.getElementById('regName').value.trim();
+    const email=document.getElementById('regEmail').value.trim();
+    const uid=document.getElementById('regUid').value.trim();
+    const pass1=document.getElementById('regPassword').value;
+    const pass2=document.getElementById('regPassword2').value;
+    const errorDiv=document.getElementById('regError');
+    if(errorDiv) errorDiv.style.display='none';
+    if(!name||!email||!uid||!pass1||!pass2){ if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='All fields required.';} return; }
+    if(pass1!==pass2){ if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';} return; }
+    const users=getUsers();
+    if(users.find(u=>u.email===email)){ if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';} return; }
+    const newUser={name,email,uid,password:pass1};
+    users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();
+  });
+}
+
+// ------------------ PRIZE WHEEL LOGIC ------------------
 let hasFreeSpin = JSON.parse(localStorage.getItem('hasFreeSpin') || 'true');
 let lastPrize = localStorage.getItem('wheelPrize') || null;
 
@@ -179,6 +256,7 @@ const freeSpinText = document.getElementById('freeSpinText');
 
 function updateWheelUI() {
   const user = getCurrentUser();
+  if(!spinBtn || !freeSpinText) return;
   if (!user) {
     spinBtn.disabled = true;
     spinBtn.textContent = "Login required";
@@ -188,103 +266,74 @@ function updateWheelUI() {
 
   if (lastPrize && !hasFreeSpin) {
     freeSpinText.textContent = "Each spin costs $2";
-  } else {
-    freeSpinText.textContent = "Play 1 time for free";
-  }
-}
-
-spinBtn.addEventListener('click', () => {
-  const user = getCurrentUser();
-  if (!user) return alert("You must be logged in to play.");
-
-  if (!hasFreeSpin) {
-    if (!confirm("This spin costs $2. Continue?")) return;
-  }
-
-  spinBtn.disabled = true;
-  spinBtn.textContent = "Spinning...";
-
-  const prizes = ["$1 Credit", "$2 Credit", "$5 Credit", "Free Skin", "50% Discount", "Nothing", "Mystery Box"];
-  const result = prizes[Math.floor(Math.random() * prizes.length)];
-
-  let deg = Math.floor(3000 + Math.random() * 2000);
-  wheel.style.transition = "transform 5s ease";
-  wheel.style.transform = `rotate(${deg}deg)`;
-
-  setTimeout(() => {
-    wheel.style.transition = "none";
-    wheel.style.transform = `rotate(${deg % 360}deg)`;
-
-    alert("You won: " + result);
-
-    lastPrize = result;
-    localStorage.setItem('wheelPrize', result);
-
-    const users = getUsers();
-    const idx = users.findIndex(u => u.uid === user.uid);
-    if (idx >= 0) {
-      users[idx].prize = result;
-      saveUsers(users);
-      setCurrentUser(users[idx]);
-    }
-
-    hasFreeSpin = false;
-    localStorage.setItem('hasFreeSpin', 'false');
-
-    updateWheelUI();
     spinBtn.disabled = false;
     spinBtn.textContent = "Start Wheel";
-  }, 5200);
-});
-
-updateAuthUI();
-updateWheelUI();}
-
-function loadSettingsFields(){
-  const user=getCurrentUser();if(!user)return;
-  document.getElementById('settingsName').value=user.name;
-  document.getElementById('settingsEmail').value=user.email;
-  document.getElementById('settingsPassword').value=user.password;
-  document.getElementById('settingsUid').value=user.uid;
+  } else if (hasFreeSpin) {
+    freeSpinText.textContent = "Play 1 time for free";
+    spinBtn.disabled = false;
+    spinBtn.textContent = "Start Wheel";
+  } else {
+    freeSpinText.textContent = "Each spin costs $2";
+    spinBtn.disabled = false;
+    spinBtn.textContent = "Start Wheel";
+  }
 }
 
-document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{
-  const user=getCurrentUser();if(!user)return;
-  const users=getUsers();
-  const name=document.getElementById('settingsName').value.trim();
-  const email=document.getElementById('settingsEmail').value.trim();
-  const password=document.getElementById('settingsPassword').value;
-  user.name=name;user.email=email;user.password=password;
-  const idx=users.findIndex(u=>u.uid===user.uid);
-  if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);updateAuthUI();closeSettings();}
-});
+if(spinBtn){
+  spinBtn.addEventListener('click', () => {
+    const user = getCurrentUser();
+    if (!user) return alert("You must be logged in to play.");
 
-document.getElementById('doLoginBtn').addEventListener('click',()=>{
-  const email=document.getElementById('loginEmail').value.trim();
-  const password=document.getElementById('loginPassword').value;
-  const users=getUsers();
-  const user=users.find(u=>u.email===email && u.password===password);
-  if(user){setCurrentUser(user);updateAuthUI();closeLogin();}
-  else{alert('Invalid email or password');}
-});
+    if (!hasFreeSpin) {
+      if (!confirm("This spin costs $2. Continue?")) return;
+    }
 
-document.getElementById('doRegisterBtn').addEventListener('click',()=>{
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const uid=document.getElementById('regUid').value.trim();
-  const pass1=document.getElementById('regPassword').value;
-  const pass2=document.getElementById('regPassword2').value;
-  const errorDiv=document.getElementById('regError');
-  errorDiv.style.display='none';
-  if(!name||!email||!uid||!pass1||!pass2){errorDiv.style.display='block';errorDiv.textContent='All fields required.';return;}
-  if(pass1!==pass2){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';return;}
-  const users=getUsers();
-  if(users.find(u=>u.email===email)){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';return;}
-  const newUser={name,email,uid,password:pass1};
-  users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();
-});
+    spinBtn.disabled = true;
+    spinBtn.textContent = "Spinning...";
 
+    const prizes = ["$1 Credit", "$2 Credit", "$5 Credit", "Free Skin", "50% Discount", "Nothing", "Mystery Box"];
+    const result = prizes[Math.floor(Math.random() * prizes.length)];
+
+    // rotate the wheel a random number of degrees with animation
+    let deg = Math.floor(3000 + Math.random() * 2000);
+    if(wheel){
+      wheel.style.transition = "transform 5s ease";
+      wheel.style.transform = `rotate(${deg}deg)`;
+    }
+
+    setTimeout(() => {
+      if(wheel){
+        wheel.style.transition = "none";
+        wheel.style.transform = `rotate(${deg % 360}deg)`;
+      }
+
+      alert("You won: " + result);
+
+      lastPrize = result;
+      localStorage.setItem('wheelPrize', result);
+
+      const users = getUsers();
+      const idx = users.findIndex(u => u.uid === user.uid);
+      if (idx >= 0) {
+        users[idx].prize = result;
+        saveUsers(users);
+        setCurrentUser(users[idx]);
+      }
+
+      hasFreeSpin = false;
+      localStorage.setItem('hasFreeSpin', 'false');
+
+      updateWheelUI();
+      spinBtn.disabled = false;
+      spinBtn.textContent = "Start Wheel";
+    }, 5200);
+  });
+}
+
+// initialize
 updateAuthUI();
+updateWheelUI();
+
 </script>
 </body>
 </html>
