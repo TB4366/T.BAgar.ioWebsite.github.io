@@ -59,10 +59,13 @@ body.dark header{background:#e0e0e0;}
 <div class="highlight-title">💸 Prices Wheel</div>
 
 <div class="price-wheel-container">
-<div class="wheel">Price Wheel Here</div>
+    <div class="wheel" id="wheel">Spin Wheel</div>
 </div>
-
-<div class="divider"></div>
+<div style="text-align:center;margin-top:15px;">
+    <button id="spinBtn" class="btn">Start Wheel</button>
+    <p id="freeSpinText" style="margin-top:10px;">Play 1 time for free</p>
+</div>
+<div class="divider"></div></div>
 
 <!-- Keeping ONLY key section + mods + socials as requested -->
 <div class="highlight-title">🔑 Keys</div>
@@ -115,7 +118,76 @@ function updateAuthUI(){
   else{loginBtn.textContent='Login';loginBtn.onclick=openLogin;settingsBtn.style.display='none';}
 }
 
-function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
+function logout(){localStorage.removeItem('currentUser');// PRICE WHEEL LOGIC
+let hasFreeSpin = JSON.parse(localStorage.getItem('hasFreeSpin') || 'true');
+let lastPrize = localStorage.getItem('wheelPrize') || null;
+
+const wheel = document.getElementById('wheel');
+const spinBtn = document.getElementById('spinBtn');
+const freeSpinText = document.getElementById('freeSpinText');
+
+function updateWheelUI() {
+  const user = getCurrentUser();
+  if (!user) {
+    spinBtn.disabled = true;
+    spinBtn.textContent = "Login required";
+    freeSpinText.textContent = "You must be logged in to play";
+    return;
+  }
+
+  if (lastPrize && !hasFreeSpin) {
+    freeSpinText.textContent = "Each spin costs $2";
+  } else {
+    freeSpinText.textContent = "Play 1 time for free";
+  }
+}
+
+spinBtn.addEventListener('click', () => {
+  const user = getCurrentUser();
+  if (!user) return alert("You must be logged in to play.");
+
+  if (!hasFreeSpin) {
+    if (!confirm("This spin costs $2. Continue?")) return;
+  }
+
+  spinBtn.disabled = true;
+  spinBtn.textContent = "Spinning...";
+
+  const prizes = ["$1 Credit", "$2 Credit", "$5 Credit", "Free Skin", "50% Discount", "Nothing", "Mystery Box"];
+  const result = prizes[Math.floor(Math.random() * prizes.length)];
+
+  let deg = Math.floor(3000 + Math.random() * 2000);
+  wheel.style.transition = "transform 5s ease";
+  wheel.style.transform = `rotate(${deg}deg)`;
+
+  setTimeout(() => {
+    wheel.style.transition = "none";
+    wheel.style.transform = `rotate(${deg % 360}deg)`;
+
+    alert("You won: " + result);
+
+    lastPrize = result;
+    localStorage.setItem('wheelPrize', result);
+
+    const users = getUsers();
+    const idx = users.findIndex(u => u.uid === user.uid);
+    if (idx >= 0) {
+      users[idx].prize = result;
+      saveUsers(users);
+      setCurrentUser(users[idx]);
+    }
+
+    hasFreeSpin = false;
+    localStorage.setItem('hasFreeSpin', 'false');
+
+    updateWheelUI();
+    spinBtn.disabled = false;
+    spinBtn.textContent = "Start Wheel";
+  }, 5200);
+});
+
+updateAuthUI();
+updateWheelUI();}
 
 function loadSettingsFields(){
   const user=getCurrentUser();if(!user)return;
