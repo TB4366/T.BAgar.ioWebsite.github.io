@@ -1,206 +1,98 @@
-<!DOCTYPE html>
-<html lang="nl">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Agar.io Shop</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prize Wheel</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0a0a0a;
-        color: white;
-    }
-
-    .topbar {
-        background: #111;
-        padding: 15px;
-        text-align: center;
-        font-size: 22px;
-        font-weight: bold;
-        border-bottom: 2px solid #333;
-    }
-
-    .uid-box {
-        text-align: center;
-        margin-top: 10px;
-    }
-
-    .uid-box input {
-        padding: 10px;
-        width: 250px;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        font-size: 16px;
-    }
-
-    .offers {
-        padding: 20px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
-    }
-
-    .offer {
-        background: #1d1d1d;
-        padding: 15px;
-        border-radius: 12px;
-        text-align: center;
-        cursor: pointer;
-        border: 2px solid #2c2c2c;
-        transition: 0.15s;
-    }
-
-    .offer:hover {
-        transform: scale(1.05);
-        border-color: #5af;
-    }
-
-    .offer img {
-        width: 110px;
-        height: 110px;
-        border-radius: 10px;
-    }
-
-    .offer-title {
-        font-size: 16px;
-        margin-top: 10px;
-        font-weight: bold;
-    }
-
-    .offer-price {
-        margin-top: 5px;
-        color: #5af;
-        font-size: 14px;
-    }
-
-    /* POPUP */
-    .popup-bg {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .popup {
-        background: #222;
-        padding: 25px;
-        border-radius: 12px;
-        width: 320px;
-        text-align: center;
-    }
-
-    .popup button {
-        margin: 10px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .btn-yes {
-        background: #5af;
-        font-weight: bold;
-        color: black;
-    }
-
-    .btn-no {
-        background: #555;
-        color: white;
-    }
+body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;}
+header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#09172c;border-bottom:2px solid #48cae4;}
+.logo {font-size:1.5rem;font-weight:bold;color:#48cae4;}
+.nav a {margin-left:20px;color:#48cae4;text-decoration:none;font-weight:bold;}
+.btn-login {background:#48cae4;color:#02111a;padding:8px 15px;border-radius:6px;text-decoration:none;font-weight:bold;}
+#wheel-container {text-align:center;margin-top:60px;}
+#wheel {width:350px;height:350px;border-radius:50%;border:10px solid #48cae4;margin:auto;transition:5s;}
+#spinBtn, #freeBtn {margin-top:20px;padding:12px 25px;font-size:1rem;font-weight:bold;border:none;border-radius:8px;cursor:pointer;}
+#spinBtn {background:#48cae4;color:#02111a;}
+#freeBtn {background:#06b6d4;color:#02111a;}
+.message {margin-top:20px;font-size:1.2rem;color:#48cae4;}
 </style>
 </head>
-
 <body>
-
-<div class="topbar">Agar.io Shop</div>
-
-<div class="uid-box">
-    <input id="uidInput" placeholder="Voer jouw UID in…">
+<header>
+<div class="logo">T.B Agar.io</div>
+<div class="nav">
+<a href="#">Home</a>
+<a href="#">Shop</a>
+<a href="#">Contact</a>
+<a href="#" class="btn-login" id="loginBtn">Login</a>
 </div>
+</header>
 
-<div class="offers" id="offers">Aan het laden…</div>
-
-<div class="popup-bg" id="popupBg">
-    <div class="popup">
-        <div id="popupText">Je staat op het punt te betalen…</div>
-        <button class="btn-yes" id="confirmBuy">Toestaan</button>
-        <button class="btn-no" onclick="closePopup()">Annuleren</button>
-    </div>
+<div id="wheel-container">
+<canvas id="wheel" width="350" height="350"></canvas>
+<br>
+<button id="freeBtn">Play 1 Time Free</button>
+<button id="spinBtn">Spin ($2)</button>
+<div class="message" id="msg"></div>
 </div>
 
 <script>
-const configURL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
-
-// DIT VERVANG JIJ STRAKS MET JE ECHTE XSOLLA TEMPLATE:
-let XSOLLA_TEMPLATE = "https://secure.xsolla.com/paystation3/?project_id=JOUWID&purchase={PRODUCT}&uid={UID}";
-
-let selectedProduct = null;
-
-async function loadOffers() {
-    try {
-        const res = await fetch(configURL);
-        const json = await res.json();
-
-        const container = document.getElementById("offers");
-        container.innerHTML = "";
-
-        json.store.offers.forEach(ofr => {
-            if (!ofr.productId) return;
-
-            let div = document.createElement("div");
-            div.className = "offer";
-
-            div.innerHTML = `
-                <img src="${ofr.imageUrl}">
-                <div class="offer-title">${ofr.title}</div>
-                <div class="offer-price">${ofr.price.amount} ${ofr.price.currency}</div>
-            `;
-
-            div.onclick = () => openPopup(ofr);
-
-            container.appendChild(div);
-        });
-
-    } catch (err) {
-        document.getElementById("offers").innerHTML = "Fout bij laden…";
-    }
+let loggedIn=false;
+let freeUsed=false;
+let userBalance=10;
+let prizes=["Skin","Coins","Nothing","2x Coins","VIP 1 Day","Booster"];
+const wheel=document.getElementById("wheel");
+const ctx=wheel.getContext("2d");
+function drawWheel(){
+  let arc=Math.PI*2/prizes.length;
+  for(let i=0;i<prizes.length;i++){
+    ctx.beginPath();
+    ctx.fillStyle=i%2?"#14334d":"#0e2238";
+    ctx.moveTo(175,175);
+    ctx.arc(175,175,175,i*arc,(i+1)*arc);
+    ctx.fill();
+    ctx.save();
+    ctx.translate(175,175);
+    ctx.rotate(i*arc+arc/2);
+    ctx.fillStyle="#48cae4";
+    ctx.font="17px Arial";
+    ctx.fillText(prizes[i],60,5);
+    ctx.restore();
+  }
 }
+drawWheel();
 
-function openPopup(ofr) {
-    selectedProduct = ofr;
-    document.getElementById("popupText").innerHTML =
-        `Venster openen om <b>${ofr.title}</b> te kopen?`;
-
-    document.getElementById("popupBg").style.display = "flex";
-}
-
-function closePopup() {
-    document.getElementById("popupBg").style.display = "none";
-}
-
-document.getElementById("confirmBuy").onclick = () => {
-    const uid = document.getElementById("uidInput").value.trim();
-
-    if (!uid) {
-        alert("Voer eerst je UID in!");
-        return;
-    }
-
-    closePopup();
-
-    let url = XSOLLA_TEMPLATE
-        .replace("{PRODUCT}", selectedProduct.productId)
-        .replace("{UID}", uid);
-
-    window.open(url, "_blank");
+document.getElementById("loginBtn").onclick=()=>{
+  loggedIn=true;
+  alert("Logged in successfully!");
 };
 
-loadOffers();
+document.getElementById("freeBtn").onclick=()=>{
+  if(!loggedIn) return alert("You must be logged in!");
+  if(freeUsed) return alert("Free spin already used!");
+  spinWheel(true);
+};
+
+document.getElementById("spinBtn").onclick=()=>{
+  if(!loggedIn) return alert("You must be logged in!");
+  if(userBalance<2) return alert("Not enough balance!");
+  userBalance-=2;
+  spinWheel(false);
+};
+
+function spinWheel(isFree){
+  freeUsed = freeUsed || isFree;
+  let rand=Math.random()*360 + 1800;
+  wheel.style.transform=`rotate(${rand}deg)`;
+  setTimeout(()=>{
+    let actual=(rand%360);
+    let arc=360/prizes.length;
+    let index=Math.floor(actual/arc);
+    let prize=prizes[prizes.length-index-1];
+    document.getElementById("msg").textContent="You won: "+prize;
+  },5000);
+}
 </script>
 
 </body>
