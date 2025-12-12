@@ -24,6 +24,28 @@ iframe{border:none;border-radius:12px;}
 .divider{max-width:900px;margin:40px auto 10px auto;border-top:2px solid #48cae4;}
 .highlight-title{text-align:center;font-size:1.8rem;font-weight:bold;margin:20px 0 30px 0;color:#48cae4;}
 
+/* ---------- AUTH BUTTONS IN HEADER ---------- */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-btn {
+  background: #1e293b;
+  border: 2px solid #334155;
+  padding: 6px 12px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.auth-btn:hover {
+  background: #334155;
+}
+
 /* ---------- skins area (kept look + added lock visuals) ---------- */
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 900px; margin: 20px auto; padding: 0 10px; }
 
@@ -52,53 +74,28 @@ iframe{border:none;border-radius:12px;}
 .modal .actions .confirm{background:#06b6d4;color:#02111a;}
 .small{font-size:0.9rem;color:#cbd5e1;margin-top:8px;}
 .money-display{font-weight:700;margin-top:8px;color:#ffd166;}
-/* paypal button style small */
 .paypal-btn{display:inline-block;background:#003087;color:white;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;}
-/* responsive tweak */
+
 @media (max-width:720px){ .grid { grid-template-columns: repeat(2, 1fr); } .skin{width:170px;height:170px;} }
 @media (max-width:420px){ .grid { grid-template-columns: repeat(1, 1fr); } .skin{width:140px;height:140px;} }
-
-/* ---------- AUTH BUTTONS IN HEADER ---------- */
-.auth-buttons {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-right: 15px;
-}
-
-.auth-btn {
-  background: #1e293b;
-  border: 2px solid #334155;
-  padding: 6px 12px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.auth-btn:hover {
-  background: #334155;
-}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-container">
+  <div class="left-header">
     <img src="IMG_2718.png" alt="Logo" class="logo" />
     <span class="site-title">T.B Agar.io</span>
+
+    <div class="auth-buttons">
+      <button class="auth-btn" id="loginBtn">Login</button>
+      <button class="auth-btn" id="settingsBtn" style="display:none;">Settings</button>
+    </div>
+
     <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
 
-  <!-- Buttons now correctly placed -->
-  <div class="auth-buttons">
-    <button id="settingsBtn" class="auth-btn">⚙️</button>
-    <button id="loginBtn" class="auth-btn">Login</button>
-  </div>
-
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
   <div class="menu" id="menu">
     <a href="index.html">🏠 Home Pagina</a>
     <a href="custom-skins.html">🎨 Custom Skins</a>
@@ -130,7 +127,7 @@ iframe{border:none;border-radius:12px;}
   </div>
 </div>
 
-<!-- Login/Register/Settings modals (kept) -->
+<!-- Login Modal -->
 <div id="loginModal" class="modal-backdrop">
 <div class="modal">
 <h2>Login</h2>
@@ -144,6 +141,7 @@ iframe{border:none;border-radius:12px;}
 </div>
 </div>
 
+<!-- Register Modal -->
 <div id="registerModal" class="modal-backdrop">
 <div class="modal">
 <h2>Register</h2>
@@ -160,6 +158,7 @@ iframe{border:none;border-radius:12px;}
 </div>
 </div>
 
+<!-- Settings Modal -->
 <div id="settingsModal" class="modal-backdrop">
 <div class="modal">
 <h2>Settings</h2>
@@ -172,7 +171,6 @@ iframe{border:none;border-radius:12px;}
 
 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
   <a href="https://www.paypal.com/paypalme/TBYTagario" target="_blank" class="paypal-btn">Pay via PayPal</a>
-  <button id="addMoneyManual" class="confirm">Add money (manual)</button>
 </div>
 
 <label style="margin-top:12px">Redeem code</label>
@@ -190,22 +188,25 @@ iframe{border:none;border-radius:12px;}
 </div>
 
 <script>
-/* ---------- existing utilities kept (menu + darkmode) ---------- */
+/* ---------- menu + darkmode ---------- */
 function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
 const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;
 const savedTheme=localStorage.getItem('theme');
 if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
 toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
 
-/* ---------- AUTH / ACCOUNT (integrated + money + ownedSkins) ---------- */
-const loginBtn = document.getElementById('loginBtn'); /* FIX */
-const settingsBtn = document.getElementById('settingsBtn'); /* FIX */
-
+/* ---------- AUTH / ACCOUNT ---------- */
+const loginBtn=document.getElementById('loginBtn');
+const settingsBtn=document.getElementById('settingsBtn');
 const loginModal=document.getElementById('loginModal');
 const registerModal=document.getElementById('registerModal');
 const settingsModal=document.getElementById('settingsModal');
 
-document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
+document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{
+  e.preventDefault();
+  closeLogin();
+  openRegister();
+});
 
 function openLogin(){loginModal.style.display='flex';}
 function closeLogin(){loginModal.style.display='none';}
@@ -215,7 +216,7 @@ function openSettings(){settingsModal.style.display='flex';loadSettingsFields();
 function closeSettings(){settingsModal.style.display='none';}
 settingsBtn.addEventListener('click', openSettings);
 
-/* Storage helpers */
+/* storage helpers */
 function getUsers(){ return JSON.parse(localStorage.getItem('users')||'[]'); }
 function saveUsers(users){ localStorage.setItem('users', JSON.stringify(users)); }
 function getCurrentUser(){ return JSON.parse(localStorage.getItem('currentUser')||'null'); }
@@ -237,7 +238,7 @@ function updateAuthUI(){
   if(sm && user) sm.textContent = formatMoney(user.money || 0);
 }
 
-/* registration/login logic (adapted to store money + ownedSkins) */
+/* register */
 document.getElementById('doRegisterBtn').addEventListener('click', ()=>{
   const name=document.getElementById('regName').value.trim();
   const email=document.getElementById('regEmail').value.trim();
@@ -253,6 +254,7 @@ document.getElementById('doRegisterBtn').addEventListener('click', ()=>{
   users.push(newUser); saveUsers(users); setCurrentUser(newUser); updateAuthUI(); closeRegister();
 });
 
+/* login */
 document.getElementById('doLoginBtn').addEventListener('click', ()=>{
   const email=document.getElementById('loginEmail').value.trim();
   const password=document.getElementById('loginPassword').value;
@@ -261,18 +263,18 @@ document.getElementById('doLoginBtn').addEventListener('click', ()=>{
   if(user){ setCurrentUser(user); updateAuthUI(); closeLogin(); } else { alert('Invalid email or password'); }
 });
 
+/* save settings */
 document.getElementById('doSaveSettingsBtn').addEventListener('click', ()=>{
   const user=getCurrentUser(); if(!user) return;
   const users=getUsers();
-  const name=document.getElementById('settingsName').value.trim();
-  const email=document.getElementById('settingsEmail').value.trim();
-  const password=document.getElementById('settingsPassword').value;
-  user.name=name; user.email=email; user.password=password;
+  user.name=document.getElementById('settingsName').value.trim();
+  user.email=document.getElementById('settingsEmail').value.trim();
+  user.password=document.getElementById('settingsPassword').value;
   const idx=users.findIndex(u=>u.uid===user.uid);
   if(idx>=0){ users[idx]=user; saveUsers(users); setCurrentUser(user); updateAuthUI(); closeSettings(); }
 });
 
-/* load settings fields */
+/* load settings */
 function loadSettingsFields(){
   const user=getCurrentUser(); if(!user) return;
   document.getElementById('settingsName').value = user.name || '';
@@ -285,38 +287,25 @@ function loadSettingsFields(){
 /* logout */
 function logout(){ localStorage.removeItem('currentUser'); updateAuthUI(); }
 
-/* helper money formatting */
+/* money formatting */
 function formatMoney(n){ return '$' + (Number(n).toFixed(2)); }
 
-/* redeem code */
+/* redeem codes */
 document.getElementById('doRedeemBtn').addEventListener('click', ()=>{
   const code = (document.getElementById('redeemCode').value || '').trim();
   if(!code){ alert('Enter a code'); return; }
   const user = getCurrentUser(); if(!user){ alert('Login first'); return; }
   const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid);
   if(idx<0) return;
+
   if(code === 'FREE5'){ user.money = (user.money||0) + 5; alert('Redeemed $5'); }
   else if(code === 'FREE10'){ user.money = (user.money||0) + 10; alert('Redeemed $10'); }
   else { alert('Invalid code'); return; }
+
   users[idx] = user; saveUsers(users); setCurrentUser(user); loadSettingsFields();
 });
 
-/* manual add money */
-document.getElementById('addMoneyManual').addEventListener('click', ()=>{
-  const user = getCurrentUser(); if(!user){ alert('Login first'); return; }
-  const amount = prompt('Enter amount to add to your account (e.g. 3.99). Only use after you paid via PayPal and posted proof to Instagram.');
-  if(!amount) return;
-  const value = parseFloat(amount);
-  if(isNaN(value) || value <= 0){ alert('Invalid amount'); return; }
-  const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid);
-  if(idx<0) return;
-  user.money = (user.money || 0) + value;
-  users[idx] = user; saveUsers(users); setCurrentUser(user);
-  loadSettingsFields();
-  alert('Amount added to your account (manual).');
-});
-
-/* ---------- SKINS ---------- */
+/* ---------- SKINS / PURCHASE LOGIC ---------- */
 const paidSkins = [
   { id:"paid_IMG_6174", img:"IMG_6174.webp", price:3.99, priceLabel:"$3.99" },
   { id:"paid_IMG_6175", img:"IMG_6175.webp", price:5.99, priceLabel:"$5.99" },
@@ -339,61 +328,51 @@ const skins = [
     { name: "mouth fire art", url: "IMG_3180.jpeg" },
     { name: "fire snake", url: "IMG_4032.jpeg" },
     { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" },
 ];
 
-const allSkins = skins.concat(paidSkins.map(s=>({ name: 'paid', url: s.img, paidData: s })));
+const allSkins = skins.concat(paidSkins.map(s=>({ name:'paid', url:s.img, paidData:s })));
 
-const gallery = document.getElementById('gallery');
+const gallery=document.getElementById('gallery');
 
 function userOwnsSkin(user, paidId){
-  if(!user) return false;
-  return Array.isArray(user.ownedSkins) && user.ownedSkins.includes(paidId);
+  return user && Array.isArray(user.ownedSkins) && user.ownedSkins.includes(paidId);
 }
 
 function renderGallery(){
-  gallery.innerHTML = '';
-  const user = getCurrentUser();
+  const user=getCurrentUser();
+  gallery.innerHTML='';
 
   allSkins.forEach(skin=>{
-    const card = document.createElement('div');
-    card.className = 'skin';
-    const paidEntry = paidSkins.find(p=>p.img === skin.url || p.img === (skin.paidData && skin.paidData.img));
-    if(paidEntry){
-      card.classList.add('locked');
-      const img = document.createElement('img'); img.src = skin.url; img.alt = paidEntry.id;
-      card.appendChild(img);
+    const card=document.createElement('div');
+    card.className='skin';
 
+    const paidEntry=paidSkins.find(p=>p.img===skin.url);
+    const img=document.createElement('img'); img.src=skin.url;
+
+    if(paidEntry){
       if(userOwnsSkin(user, paidEntry.id)){
-        card.classList.remove('locked');
+        card.appendChild(img);
       } else {
-        const overlay = document.createElement('div'); overlay.className = 'lock-overlay';
-        const lockIcon = document.createElement('div'); lockIcon.className='lock-icon'; lockIcon.innerHTML = '🔒';
+        card.classList.add('locked');
+        card.appendChild(img);
+
+        const overlay=document.createElement('div'); overlay.className='lock-overlay';
+        const lockIcon=document.createElement('div'); lockIcon.className='lock-icon'; lockIcon.innerHTML='🔒';
         overlay.appendChild(lockIcon);
         card.appendChild(overlay);
 
-        const priceTag = document.createElement('div');
-        priceTag.className='lock-price';
-        priceTag.textContent = paidEntry.priceLabel;
-        priceTag.addEventListener('click', (ev)=>{
-          ev.stopPropagation();
-          openPurchase(paidEntry, card);
-        });
-        card.appendChild(priceTag);
+        const price=document.createElement('div'); price.className='lock-price'; price.textContent=paidEntry.priceLabel;
+        price.addEventListener('click',(e)=>{ e.stopPropagation(); openPurchase(paidEntry, card); });
+        card.appendChild(price);
       }
     } else {
-      const img = document.createElement('img'); img.src = skin.url; img.alt = skin.name || ''; card.appendChild(img);
+      card.appendChild(img);
     }
 
-    card.addEventListener('click', ()=>{
+    card.addEventListener('click',()=>{
       if(card.classList.contains('locked')) return;
-      const prev = document.querySelector('.skin.selected');
-      if(prev && prev !== card) prev.classList.remove('selected');
+      const prev=document.querySelector('.skin.selected');
+      if(prev && prev!==card) prev.classList.remove('selected');
       card.classList.toggle('selected');
     });
 
@@ -403,65 +382,65 @@ function renderGallery(){
 
 renderGallery();
 
-/* ---------- Purchase modal logic ---------- */
-const purchaseModal = document.getElementById('purchaseModal');
-const purchaseTitle = document.getElementById('purchaseTitle');
-const purchasePreview = document.getElementById('purchasePreview');
-const purchasePrice = document.getElementById('purchasePrice');
-const userBalanceEl = document.getElementById('userBalance');
-const buyWithBalanceBtn = document.getElementById('buyWithBalanceBtn');
-const paypalLink = document.getElementById('paypalLink');
-const paidConfirmBtn = document.getElementById('paidConfirmBtn');
+/* PURCHASE MODAL */
+const purchaseModal=document.getElementById('purchaseModal');
+const purchaseTitle=document.getElementById('purchaseTitle');
+const purchasePreview=document.getElementById('purchasePreview');
+const purchasePrice=document.getElementById('purchasePrice');
+const userBalanceEl=document.getElementById('userBalance');
+const buyWithBalanceBtn=document.getElementById('buyWithBalanceBtn');
+const paypalLink=document.getElementById('paypalLink');
+const paidConfirmBtn=document.getElementById('paidConfirmBtn');
+let currentPurchase=null;
 
-let currentPurchase = null;
+function openPurchase(paidEntry){
+  const user=getCurrentUser();
+  currentPurchase=paidEntry;
 
-function openPurchase(paidEntry, cardEl){
-  currentPurchase = { paidEntry, cardEl };
-  const user = getCurrentUser();
-  purchaseTitle.textContent = 'Buy this skin';
-  purchasePreview.innerHTML = `<img src="${paidEntry.img}" style="width:120px;height:120px;border-radius:50%;">`;
-  purchasePrice.textContent = paidEntry.priceLabel;
-  userBalanceEl.textContent = formatMoney(user ? (user.money||0) : 0);
-  paypalLink.href = 'https://www.paypal.com/paypalme/TBYTagario';
-  if(user && (user.money || 0) >= paidEntry.price){
-    buyWithBalanceBtn.disabled = false;
-    buyWithBalanceBtn.textContent = 'Buy with balance';
-  } else {
-    buyWithBalanceBtn.disabled = true;
-    buyWithBalanceBtn.textContent = 'Buy with balance (insufficient)';
-  }
-  purchaseModal.style.display = 'flex';
+  purchaseTitle.textContent='Buy this skin';
+  purchasePreview.innerHTML=`<img src="${paidEntry.img}" style="width:120px;height:120px;border-radius:50%;">`;
+  purchasePrice.textContent=paidEntry.priceLabel;
+  userBalanceEl.textContent=formatMoney(user ? (user.money||0) : 0);
+  paypalLink.href='https://www.paypal.com/paypalme/TBYTagario';
+
+  buyWithBalanceBtn.disabled = !(user && user.money >= paidEntry.price);
+
+  purchaseModal.style.display='flex';
 }
 
-function closePurchase(){ purchaseModal.style.display = 'none'; currentPurchase = null; }
+function closePurchase(){
+  purchaseModal.style.display='none';
+  currentPurchase=null;
+}
 
-buyWithBalanceBtn.addEventListener('click', ()=>{
-  if(!currentPurchase){ return; }
-  const user = getCurrentUser();
-  if(!user){ alert('Login first'); closePurchase(); openLogin(); return; }
-  const price = currentPurchase.paidEntry.price;
-  if((user.money||0) < price){ alert('Not enough balance.'); return; }
-  user.money = (user.money || 0) - price;
-  user.ownedSkins = user.ownedSkins || [];
-  if(!user.ownedSkins.includes(currentPurchase.paidEntry.id)) user.ownedSkins.push(currentPurchase.paidEntry.id);
+buyWithBalanceBtn.addEventListener('click',()=>{
+  const user=getCurrentUser();
+  if(!user){ alert('Login first'); return; }
+  if(!currentPurchase) return;
 
-  const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid);
-  if(idx>=0){ users[idx]=user; saveUsers(users); setCurrentUser(user); }
+  if(user.money < currentPurchase.price){
+    alert('Not enough balance.');
+    return;
+  }
 
-  alert('Purchase successful! The skin is now unlocked.');
+  user.money -= currentPurchase.price;
+  user.ownedSkins.push(currentPurchase.id);
+
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.uid===user.uid);
+  users[idx]=user; saveUsers(users); setCurrentUser(user);
+
+  alert('Purchase successful!');
   closePurchase();
   renderGallery();
 });
 
-paidConfirmBtn.addEventListener('click', ()=>{
-  if(!currentPurchase){ return; }
-  const user = getCurrentUser();
-  if(!user){ alert('Login first'); closePurchase(); openLogin(); return; }
-  const confirmGo = confirm('After paying via PayPal, add the funds manually in Settings.');
-  if(confirmGo){ closePurchase(); openSettings(); }
+/* manual confirm (no more add money) */
+paidConfirmBtn.addEventListener('click',()=>{
+  alert('After paying via PayPal, contact Instagram @t.bagar.io for manual confirmation.');
 });
 
-/* ---------- startup ---------- */
+/* startup */
 updateAuthUI();
 
 window.addEventListener('storage', ()=>{
@@ -469,6 +448,5 @@ window.addEventListener('storage', ()=>{
   renderGallery();
 });
 </script>
-
 </body>
 </html>
