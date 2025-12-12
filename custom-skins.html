@@ -23,6 +23,7 @@ body.dark header{background:#e0e0e0;}
 iframe{border:none;border-radius:12px;}
 .divider{max-width:900px;margin:40px auto 10px auto;border-top:2px solid #48cae4;}
 .highlight-title{text-align:center;font-size:1.8rem;font-weight:bold;margin:20px 0 30px 0;color:#48cae4;}
+
 /* ---------- skins area (kept look + added lock visuals) ---------- */
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 900px; margin: 20px auto; padding: 0 10px; }
 
@@ -56,22 +57,53 @@ iframe{border:none;border-radius:12px;}
 /* responsive tweak */
 @media (max-width:720px){ .grid { grid-template-columns: repeat(2, 1fr); } .skin{width:170px;height:170px;} }
 @media (max-width:420px){ .grid { grid-template-columns: repeat(1, 1fr); } .skin{width:140px;height:140px;} }
+
+/* ---------- AUTH BUTTONS IN HEADER ---------- */
+.auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 15px;
+}
+
+.auth-btn {
+  background: #1e293b;
+  border: 2px solid #334155;
+  padding: 6px 12px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.auth-btn:hover {
+  background: #334155;
+}
 </style>
 </head>
 <body>
 
 <header>
-<div class="logo-container">
-  <img src="IMG_2718.png" alt="Logo" class="logo" />
-  <span class="site-title">T.B Agar.io</span>
-  <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-</div>
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div class="menu" id="menu">
-  <a href="index.html">🏠 Home Pagina</a>
-  <a href="custom-skins.html">🎨 Custom Skins</a>
-  <a href="mod-menu.html">🛠️ Mod Menu</a>
-</div>
+  <div class="logo-container">
+    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <span class="site-title">T.B Agar.io</span>
+    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
+  </div>
+
+  <!-- Buttons now correctly placed -->
+  <div class="auth-buttons">
+    <button id="settingsBtn" class="auth-btn">⚙️</button>
+    <button id="loginBtn" class="auth-btn">Login</button>
+  </div>
+
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+  <div class="menu" id="menu">
+    <a href="index.html">🏠 Home Pagina</a>
+    <a href="custom-skins.html">🎨 Custom Skins</a>
+    <a href="mod-menu.html">🛠️ Mod Menu</a>
+  </div>
 </header>
 
 <main>
@@ -166,12 +198,15 @@ if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️
 toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
 
 /* ---------- AUTH / ACCOUNT (integrated + money + ownedSkins) ---------- */
-const loginBtn=document.getElementById('loginBtn') || (function(){const b=document.createElement('button');b.id='loginBtn';document.body.prepend(b);return b;})();
-const settingsBtn=document.getElementById('settingsBtn') || (function(){const b=document.createElement('button');b.id='settingsBtn';b.style.display='none';document.body.prepend(b);return b;})();
+const loginBtn = document.getElementById('loginBtn'); /* FIX */
+const settingsBtn = document.getElementById('settingsBtn'); /* FIX */
+
 const loginModal=document.getElementById('loginModal');
 const registerModal=document.getElementById('registerModal');
 const settingsModal=document.getElementById('settingsModal');
+
 document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});
+
 function openLogin(){loginModal.style.display='flex';}
 function closeLogin(){loginModal.style.display='none';}
 function openRegister(){registerModal.style.display='flex';}
@@ -198,7 +233,6 @@ function updateAuthUI(){
     loginBtn.onclick = openLogin;
     settingsBtn.style.display='none';
   }
-  // update settings money display if modal is open
   const sm = document.getElementById('settingsMoney');
   if(sm && user) sm.textContent = formatMoney(user.money || 0);
 }
@@ -254,7 +288,7 @@ function logout(){ localStorage.removeItem('currentUser'); updateAuthUI(); }
 /* helper money formatting */
 function formatMoney(n){ return '$' + (Number(n).toFixed(2)); }
 
-/* redeem code (simple demo: code "FREE5" gives $5) */
+/* redeem code */
 document.getElementById('doRedeemBtn').addEventListener('click', ()=>{
   const code = (document.getElementById('redeemCode').value || '').trim();
   if(!code){ alert('Enter a code'); return; }
@@ -267,7 +301,7 @@ document.getElementById('doRedeemBtn').addEventListener('click', ()=>{
   users[idx] = user; saveUsers(users); setCurrentUser(user); loadSettingsFields();
 });
 
-/* manual add money (simulate after PayPal payment) */
+/* manual add money */
 document.getElementById('addMoneyManual').addEventListener('click', ()=>{
   const user = getCurrentUser(); if(!user){ alert('Login first'); return; }
   const amount = prompt('Enter amount to add to your account (e.g. 3.99). Only use after you paid via PayPal and posted proof to Instagram.');
@@ -282,15 +316,13 @@ document.getElementById('addMoneyManual').addEventListener('click', ()=>{
   alert('Amount added to your account (manual).');
 });
 
-/* ---------- SKINS: render + locked logic (paid skins locked) ---------- */
-/* Define paid skins (locked by default) */
+/* ---------- SKINS ---------- */
 const paidSkins = [
   { id:"paid_IMG_6174", img:"IMG_6174.webp", price:3.99, priceLabel:"$3.99" },
   { id:"paid_IMG_6175", img:"IMG_6175.webp", price:5.99, priceLabel:"$5.99" },
   { id:"paid_IMG_6260", img:"IMG_6260.webp", price:7.99, priceLabel:"$7.99" }
 ];
 
-/* Your existing skins list (kept exactly as you provided) */
 const skins = [
     { name: "evil halloween spider", url: "A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" },
     { name: "evil halloween spider", url: "A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" },
@@ -315,10 +347,8 @@ const skins = [
     { name: "the tiger king", url: "IMG_4037.jpeg" },
 ];
 
-/* Merge skins + paidSkins so paid ones appear too (locked) */
 const allSkins = skins.concat(paidSkins.map(s=>({ name: 'paid', url: s.img, paidData: s })));
 
-/* Render gallery */
 const gallery = document.getElementById('gallery');
 
 function userOwnsSkin(user, paidId){
@@ -333,40 +363,35 @@ function renderGallery(){
   allSkins.forEach(skin=>{
     const card = document.createElement('div');
     card.className = 'skin';
-    // identify if this is a paid skin by checking paidSkins
     const paidEntry = paidSkins.find(p=>p.img === skin.url || p.img === (skin.paidData && skin.paidData.img));
     if(paidEntry){
-      // this is a paid skin
       card.classList.add('locked');
       const img = document.createElement('img'); img.src = skin.url; img.alt = paidEntry.id;
       card.appendChild(img);
 
-      // if current user owns it, unlock visually
       if(userOwnsSkin(user, paidEntry.id)){
         card.classList.remove('locked');
       } else {
-        // overlay lock & price
         const overlay = document.createElement('div'); overlay.className = 'lock-overlay';
         const lockIcon = document.createElement('div'); lockIcon.className='lock-icon'; lockIcon.innerHTML = '🔒';
         overlay.appendChild(lockIcon);
         card.appendChild(overlay);
-        const priceTag = document.createElement('div'); priceTag.className='lock-price'; priceTag.textContent = paidEntry.priceLabel;
+
+        const priceTag = document.createElement('div');
+        priceTag.className='lock-price';
+        priceTag.textContent = paidEntry.priceLabel;
         priceTag.addEventListener('click', (ev)=>{
           ev.stopPropagation();
-          // open purchase modal for this skin
           openPurchase(paidEntry, card);
         });
         card.appendChild(priceTag);
       }
     } else {
-      // normal skin
       const img = document.createElement('img'); img.src = skin.url; img.alt = skin.name || ''; card.appendChild(img);
     }
 
-    // click selection: only when not locked
     card.addEventListener('click', ()=>{
       if(card.classList.contains('locked')) return;
-      // toggle selection single-select
       const prev = document.querySelector('.skin.selected');
       if(prev && prev !== card) prev.classList.remove('selected');
       card.classList.toggle('selected');
@@ -388,7 +413,7 @@ const buyWithBalanceBtn = document.getElementById('buyWithBalanceBtn');
 const paypalLink = document.getElementById('paypalLink');
 const paidConfirmBtn = document.getElementById('paidConfirmBtn');
 
-let currentPurchase = null; // {paidEntry, cardEl}
+let currentPurchase = null;
 
 function openPurchase(paidEntry, cardEl){
   currentPurchase = { paidEntry, cardEl };
@@ -397,9 +422,7 @@ function openPurchase(paidEntry, cardEl){
   purchasePreview.innerHTML = `<img src="${paidEntry.img}" style="width:120px;height:120px;border-radius:50%;">`;
   purchasePrice.textContent = paidEntry.priceLabel;
   userBalanceEl.textContent = formatMoney(user ? (user.money||0) : 0);
-  // paypal link (direct to paypalme)
   paypalLink.href = 'https://www.paypal.com/paypalme/TBYTagario';
-  // set buy button enabled state
   if(user && (user.money || 0) >= paidEntry.price){
     buyWithBalanceBtn.disabled = false;
     buyWithBalanceBtn.textContent = 'Buy with balance';
@@ -417,15 +440,15 @@ buyWithBalanceBtn.addEventListener('click', ()=>{
   const user = getCurrentUser();
   if(!user){ alert('Login first'); closePurchase(); openLogin(); return; }
   const price = currentPurchase.paidEntry.price;
-  if((user.money||0) < price){ alert('Not enough balance. Use PayPal or add money in Settings.'); return; }
-  // deduct & add to ownedSkins
+  if((user.money||0) < price){ alert('Not enough balance.'); return; }
   user.money = (user.money || 0) - price;
   user.ownedSkins = user.ownedSkins || [];
   if(!user.ownedSkins.includes(currentPurchase.paidEntry.id)) user.ownedSkins.push(currentPurchase.paidEntry.id);
-  // save
+
   const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid);
   if(idx>=0){ users[idx]=user; saveUsers(users); setCurrentUser(user); }
-  alert('Purchase successful! The skin is now unlocked for your account.');
+
+  alert('Purchase successful! The skin is now unlocked.');
   closePurchase();
   renderGallery();
 });
@@ -434,21 +457,18 @@ paidConfirmBtn.addEventListener('click', ()=>{
   if(!currentPurchase){ return; }
   const user = getCurrentUser();
   if(!user){ alert('Login first'); closePurchase(); openLogin(); return; }
-  const confirm = confirm('If you already paid via PayPal, you can manually add the amount to your account in Settings (click "Add money (manual)"). After you add funds, come back and use "Buy with balance".\n\nDo you want to open Settings now?');
-  if(confirm){ closePurchase(); openSettings(); }
+  const confirmGo = confirm('After paying via PayPal, add the funds manually in Settings.');
+  if(confirmGo){ closePurchase(); openSettings(); }
 });
 
-/* ---------- startup UI ---------- */
+/* ---------- startup ---------- */
 updateAuthUI();
 
-/* If currentUser changes in other pages, re-render gallery (use storage event) */
 window.addEventListener('storage', ()=>{
   updateAuthUI();
   renderGallery();
 });
-
-/* Utility: ensure if user logs in/out in same page, UI updates; already handled by setCurrentUser. */
-/* End of script */
 </script>
+
 </body>
 </html>
