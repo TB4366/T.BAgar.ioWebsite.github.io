@@ -27,8 +27,10 @@ body.dark header{background:#e0e0e0;}
 .modal h2{margin:0 0 10px 0;font-size:1.2rem;}
 .btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;cursor:pointer;border:none;}
 .note{font-size:0.85rem;color:#9ca3af;margin-top:8px;}
-.prices-list{margin-top:15px;max-height:150px;overflow-y:auto;border-top:1px solid #ccc;padding-top:10px;}
-.prices-list div{margin-bottom:5px;}
+.prices-list{margin-top:15px;max-height:200px;overflow-y:auto;border-top:1px solid #ccc;padding-top:10px;}
+.prices-list div{margin-bottom:8px;padding:6px;border-radius:6px;background:rgba(255,255,255,0.03);}
+.prize-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;text-align:center}
+.prize-segment{position:absolute;width:100%;height:100%;border-radius:50%;clip-path:polygon(50% 50%, 100% 0, 100% 100%);} /* simple visual helper */
 </style>
 </head>
 <body>
@@ -59,12 +61,15 @@ body.dark header{background:#e0e0e0;}
 <div class="divider"></div>
 <div class="highlight-title">💸 Prize Wheel</div>
 <div class="price-wheel-container">
-<div class="wheel" id="wheel">Spin Wheel</div>
+<div class="wheel" id="wheel">
+  <div class="prize-label" id="wheelLabel">Spin Wheel</div>
+</div>
 </div>
 <div style="text-align:center;margin-top:15px;">
 <button id="spinBtn" class="btn">Start Wheel</button>
 <p id="freeSpinText" style="margin-top:10px;color:#ccc">Play 1 time for free</p>
 </div>
+<div style="text-align:center;margin-top:10px;color:#ccc">You can win: <span id="prizeListInline"></span></div>
 <div class="divider"></div>
 </main>
 
@@ -137,53 +142,36 @@ const loginModal=document.getElementById('loginModal');
 const registerModal=document.getElementById('registerModal');
 const settingsModal=document.getElementById('settingsModal');
 
-function openLogin(){loginModal.style.display='flex';}
-function closeLogin(){loginModal.style.display='none';}
-function openRegister(){registerModal.style.display='flex';}
-function closeRegister(){registerModal.style.display='none';}
-function openSettings(){settingsModal.style.display='flex';loadSettingsFields();loadUserPrizes();}
-function closeSettings(){settingsModal.style.display='none';}
+function openLogin(){if(loginModal)loginModal.style.display='flex';}
+function closeLogin(){if(loginModal)loginModal.style.display='none';}
+function openRegister(){if(registerModal)registerModal.style.display='flex';}
+function closeRegister(){if(registerModal)registerModal.style.display='none';}
+function openSettings(){if(settingsModal){settingsModal.style.display='flex';loadSettingsFields();loadUserPrizes();}}
+function closeSettings(){if(settingsModal)settingsModal.style.display='none';}
 
 // Login / logout button
-loginBtn.addEventListener('click',()=>{const user=getCurrentUser();if(user){logout();}else{openLogin();}});
-settingsBtn.addEventListener('click',openSettings);
+if(loginBtn)loginBtn.addEventListener('click',()=>{const user=getCurrentUser();if(user){logout();}else{openLogin();}});
+if(settingsBtn)settingsBtn.addEventListener('click',openSettings);
 
-function updateAuthUI(){const user=getCurrentUser();if(user){loginBtn.textContent='Logout';settingsBtn.style.display='inline-block';}else{loginBtn.textContent='Login';settingsBtn.style.display='none';}}
+function updateAuthUI(){const user=getCurrentUser();if(loginBtn){if(user){loginBtn.textContent='Logout';settingsBtn.style.display='inline-block';}else{loginBtn.textContent='Login';settingsBtn.style.display='none';}}}
 function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
 
 // Settings fields
-function loadSettingsFields(){const user=getCurrentUser();if(!user)return;document.getElementById('settingsName').value=user.name;document.getElementById('settingsEmail').value=user.email;document.getElementById('settingsPassword').value=user.password;document.getElementById('settingsUid').value=user.uid;}
+function loadSettingsFields(){const user=getCurrentUser();if(!user)return;const n=document.getElementById('settingsName');const e=document.getElementById('settingsEmail');const p=document.getElementById('settingsPassword');const u=document.getElementById('settingsUid');if(n)n.value=user.name||'';if(e)e.value=user.email||'';if(p)p.value=user.password||'';if(u)u.value=user.uid||'';}
 
 // User prizes
-function loadUserPrizes(){const user=getCurrentUser();const container=document.getElementById('userPrizes');if(!user||!container){return;}container.innerHTML='';if(user.prizes){user.prizes.forEach(p=>{const div=document.createElement('div');div.textContent=`${p.name} - Status: ${p.status}`;container.appendChild(div);});}}
+function loadUserPrizes(){const user=getCurrentUser();const container=document.getElementById('userPrizes');if(!user||!container){return;}container.innerHTML='';if(user.prizes){user.prizes.forEach((p,idx)=>{const div=document.createElement('div');div.innerHTML=`<strong>${p.name}</strong><br>Status: ${p.status}`; // admin control for demo
+ if(p.status==='Pending'){const approve=document.createElement('button');approve.textContent='Approve';approve.style.marginLeft='8px';approve.addEventListener('click',()=>{p.status='Approved';saveUpdatedPrizes(user);loadUserPrizes();});div.appendChild(approve);const reject=document.createElement('button');reject.textContent='Reject';reject.style.marginLeft='6px';reject.addEventListener('click',()=>{p.status='Rejected';saveUpdatedPrizes(user);loadUserPrizes();});div.appendChild(reject);}container.appendChild(div);});}}
+function saveUpdatedPrizes(user){const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);} }
 
 // Modal actions
-document.getElementById('doLoginBtn').addEventListener('click',()=>{
-const email=document.getElementById('loginEmail').value.trim();
-const password=document.getElementById('loginPassword').value;
-const users=getUsers();
-const user=users.find(u=>u.email===email&&u.password===password);
-if(user){setCurrentUser(user);updateAuthUI();closeLogin();}else{alert('Invalid email or password');}});
+if(document.getElementById('openRegisterFromLogin')){document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});}
 
-document.getElementById('doRegisterBtn').addEventListener('click',()=>{
-const name=document.getElementById('regName').value.trim();
-const email=document.getElementById('regEmail').value.trim();
-const uid=document.getElementById('regUid').value.trim();
-const pass1=document.getElementById('regPassword').value;
-const pass2=document.getElementById('regPassword2').value;
-const errorDiv=document.getElementById('regError');errorDiv.style.display='none';
-if(!name||!email||!uid||!pass1||!pass2){errorDiv.style.display='block';errorDiv.textContent='All fields required.';return;}
-if(pass1!==pass2){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';return;}
-const users=getUsers();if(users.find(u=>u.email===email)){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';return;}
-const newUser={name,email,uid,password:pass1,prizes:[]};users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();});
+if(document.getElementById('doLoginBtn')){document.getElementById('doLoginBtn').addEventListener('click',()=>{const email=document.getElementById('loginEmail').value.trim();const password=document.getElementById('loginPassword').value;const users=getUsers();const user=users.find(u=>u.email===email&&u.password===password);if(user){setCurrentUser(user);updateAuthUI();closeLogin();}else{alert('Invalid email or password');}})}
 
-document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{
-const user=getCurrentUser();if(!user)return;
-const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);
-user.name=document.getElementById('settingsName').value.trim();
-user.email=document.getElementById('settingsEmail').value.trim();
-user.password=document.getElementById('settingsPassword').value;
-users[idx]=user;saveUsers(users);setCurrentUser(user);loadUserPrizes();closeSettings();});
+if(document.getElementById('doRegisterBtn')){document.getElementById('doRegisterBtn').addEventListener('click',()=>{const name=document.getElementById('regName').value.trim();const email=document.getElementById('regEmail').value.trim();const uid=document.getElementById('regUid').value.trim();const pass1=document.getElementById('regPassword').value;const pass2=document.getElementById('regPassword2').value;const errorDiv=document.getElementById('regError');if(errorDiv)errorDiv.style.display='none';if(!name||!email||!uid||!pass1||!pass2){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='All fields required.';}return;}if(pass1!==pass2){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';}return;}const users=getUsers();if(users.find(u=>u.email===email)){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';}return;}const newUser={name,email,uid,password:pass1,prizes:[]};users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();})}
+
+if(document.getElementById('doSaveSettingsBtn')){document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{const user=getCurrentUser();if(!user)return;const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);user.name=document.getElementById('settingsName').value.trim();user.email=document.getElementById('settingsEmail').value.trim();user.password=document.getElementById('settingsPassword').value;users[idx]=user;saveUsers(users);setCurrentUser(user);loadUserPrizes();closeSettings();})}
 
 // Prize wheel logic
 let hasFreeSpin=JSON.parse(localStorage.getItem('hasFreeSpin')||'true');
@@ -191,28 +179,63 @@ let lastPrize=null;
 const wheel=document.getElementById('wheel');
 const spinBtn=document.getElementById('spinBtn');
 const freeSpinText=document.getElementById('freeSpinText');
+const prizeListInline=document.getElementById('prizeListInline');
 
-function updateWheelUI(){const user=getCurrentUser();if(!user){spinBtn.disabled=true;spinBtn.textContent='Login required';freeSpinText.textContent='You must be logged in to play';return;}
-spinBtn.disabled=false;spinBtn.textContent='Start Wheel';freeSpinText.textContent=hasFreeSpin?'Play 1 time for free':'$2 per spin';}
+const PRIZES=['$1 Credit','$2 Credit','$5 Credit','Free Skin','50% Discount','Nothing','Mystery Box'];
+if(prizeListInline)prizeListInline.textContent=PRIZES.join(' • ');
 
-spinBtn.addEventListener('click',()=>{
-const user=getCurrentUser();if(!user){alert('Login required');return;}
-if(!hasFreeSpin){
-    window.location.href = 'https://www.paypal.com/paypalme/TBYTagario';
-    alert('Payment pending admin approval');
-}}
-const prizes=['$1 Credit','$2 Credit','$5 Credit','Free Skin','50% Discount','Nothing','Mystery Box'];
-const result=prizes[Math.floor(Math.random()*prizes.length)];
-const deg=Math.floor(3000+Math.random()*2000);
-wheel.style.transition='transform 5s ease';wheel.style.transform=`rotate(${deg}deg)`;
-setTimeout(()=>{wheel.style.transition='none';wheel.style.transform=`rotate(${deg%360}deg)`;
-alert(`You won: ${result}`);
-if(!user.prizes)user.prizes=[];
-user.prizes.push({name:result,status:hasFreeSpin?'Free':'Pending'});
-const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);users[idx]=user;saveUsers(users);setCurrentUser(user);hasFreeSpin=false;localStorage.setItem('hasFreeSpin','false');updateWheelUI();},5200);});
+function updateWheelUI(){const user=getCurrentUser();if(!spinBtn||!freeSpinText)return; if(!user){spinBtn.disabled=true;spinBtn.textContent='Login required';freeSpinText.textContent='You must be logged in to play';return;}spinBtn.disabled=false;spinBtn.textContent='Start Wheel';freeSpinText.textContent=hasFreeSpin?'Play 1 time for free':'$2 per spin';}
 
+if(spinBtn){spinBtn.addEventListener('click',()=>{
+  const user=getCurrentUser();
+  if(!user){alert('Login required');return;}
+
+  if(!hasFreeSpin){
+    // start payment flow: open PayPal in new tab and record pending payment
+    const paypalUrl = 'https://www.paypal.com/paypalme/TBYTagario';
+    // record pending payment on user's account so admin can approve later
+    if(!user.prizes) user.prizes = [];
+    user.prizes.push({name:'$2 Spin Payment', status:'PendingPayment'});
+    const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid); if(idx>=0){users[idx]=user; saveUsers(users); setCurrentUser(user);}    
+    window.open(paypalUrl, '_blank');
+    alert('Payment started — status set to PendingPayment. After you complete payment, ask admin to approve.');
+    loadUserPrizes();
+    updateWheelUI();
+    return;
+  }
+
+  // perform spin
+  const result = PRIZES[Math.floor(Math.random()*PRIZES.length)];
+  const deg = Math.floor(3000+Math.random()*2000);
+  if(wheel){
+    wheel.style.transition = 'transform 5s ease';
+    wheel.style.transform = `rotate(${deg}deg)`;
+  }
+
+  // show inline label while spinning
+  const labelEl = document.getElementById('wheelLabel'); if(labelEl) labelEl.textContent = 'Spinning...';
+
+  setTimeout(()=>{
+    if(wheel){
+      wheel.style.transition = 'none';
+      wheel.style.transform = `rotate(${deg%360}deg)`;
+    }
+    if(labelEl) labelEl.textContent = result;
+
+    // save prize to user account
+    if(!user.prizes) user.prizes = [];
+    user.prizes.push({name:result, status: hasFreeSpin? 'Free' : 'Pending'});
+    const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid); if(idx>=0){users[idx]=user; saveUsers(users); setCurrentUser(user);}    
+
+    hasFreeSpin = false; localStorage.setItem('hasFreeSpin','false');
+    updateWheelUI(); loadUserPrizes();
+  }, 5200);
+});}
+
+// init
 updateAuthUI();
 updateWheelUI();
+
 </script>
 </body>
 </html>
