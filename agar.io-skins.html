@@ -197,8 +197,10 @@ spinBtn.disabled=false;spinBtn.textContent='Start Wheel';freeSpinText.textConten
 
 spinBtn.addEventListener('click',()=>{
 const user=getCurrentUser();if(!user){alert('Login required');return;}
-if(!hasFreeSpin){if(!confirm('This spin costs $2. Pay via PayPal?')) return;
-alert('Payment pending admin approval');}
+if(!hasFreeSpin){
+    window.location.href = 'https://www.paypal.com/paypalme/TBYTagario';
+    alert('Payment pending admin approval');
+}}
 const prizes=['$1 Credit','$2 Credit','$5 Credit','Free Skin','50% Discount','Nothing','Mystery Box'];
 const result=prizes[Math.floor(Math.random()*prizes.length)];
 const deg=Math.floor(3000+Math.random()*2000);
