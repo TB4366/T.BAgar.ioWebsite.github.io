@@ -2,157 +2,143 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Agar.io Special Deals – Live Skins</title>
-
+<title>Agar.io Special Deals – Full Clone</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f0f0f0;
-  padding: 20px;
-}
-
-.special-deals {
-  background: #fff;
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 3px 12px rgba(0,0,0,.15);
-}
-
-h2 {
-  margin-top: 0;
-}
-
-label {
-  font-weight: bold;
-  margin-top: 15px;
-  display: block;
-}
-
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-}
-
-.preview {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.preview img {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 4px solid #ddd;
-  background: #222;
-}
-
-.note {
-  margin-top: 15px;
-  font-size: 12px;
-  color: #666;
-}
+body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+.special-deals { max-width: 700px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+h2 { margin-top: 0; }
+label { display:block; font-weight:bold; margin-top:15px; }
+input, select { width: 100%; padding: 8px; margin-top:5px; }
+.offer { display:flex; align-items:center; margin-top:15px; padding:10px; background:#f9f9f9; border-radius:6px; }
+.offer img { width:80px; height:80px; border-radius:50%; border:2px solid #ddd; margin-right:15px; background:#222; }
+.offer-details { flex:1; }
+.offer-details div { margin-bottom:5px; }
+.buy-btn { padding:8px 12px; background:#d35400; color:#fff; border:none; border-radius:4px; cursor:pointer; }
+.buy-btn:hover { background:#e67e22; }
+.note { margin-top:15px; font-size:12px; color:#666; }
 </style>
 </head>
-
 <body>
 
 <div class="special-deals">
   <h2>Special Deals</h2>
 
   <label>Encoded UID</label>
-  <input type="text" placeholder="Paste Encoded UID here">
+  <input type="text" id="encodedUid" placeholder="Paste Encoded UID here">
 
-  <label>Select Skin (live from config)</label>
+  <label>Filter skin (optioneel)</label>
   <select id="skinSelect">
     <option>Loading skins...</option>
   </select>
 
-  <div class="preview">
-    <img id="skinPreview" src="" alt="Skin preview">
-  </div>
+  <div id="offersContainer"></div>
 
   <div class="note">
-    Skins geladen uit:<br>
+    Skins en bundles geladen uit:<br>
     <code>GameConfiguration.json (v15/10850)</code>
   </div>
 </div>
 
 <script>
-const CONFIG_URL =
-  "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
-
+const CONFIG_URL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
 const SKIN_BASE_URL = "https://agar.io/skins/";
 
-async function loadGameConfig() {
+// Load JSON config
+async function loadConfig() {
   const res = await fetch(CONFIG_URL);
   return await res.json();
 }
 
+// Extract all skins
 function extractAllSkins(config) {
   const skins = new Set();
-
-  if (config.skins) {
-    Object.keys(config.skins).forEach(id => skins.add(id));
-  }
-
-  if (config.skinPackages) {
-    Object.values(config.skinPackages).forEach(pkg => {
-      if (Array.isArray(pkg.skins)) {
-        pkg.skins.forEach(s => skins.add(s));
-      }
-    });
-  }
-
-  if (config.shopOffers) {
-    Object.values(config.shopOffers).forEach(offer => {
-      if (Array.isArray(offer.skins)) {
-        offer.skins.forEach(s => skins.add(s));
-      }
-    });
-  }
-
+  if (config.skins) Object.keys(config.skins).forEach(s=>skins.add(s));
+  if (config.skinPackages) Object.values(config.skinPackages).forEach(pkg=>pkg.skins?.forEach(s=>skins.add(s)));
+  if (config.shopOffers) Object.values(config.shopOffers).forEach(offer=>offer.skins?.forEach(s=>skins.add(s)));
   return Array.from(skins).sort();
 }
 
-function loadSkinPreview(skinId) {
-  const img = document.getElementById("skinPreview");
-  img.src = SKIN_BASE_URL + skinId + ".png";
-
-  img.onerror = () => {
-    img.src = "";
-  };
+// Build offers list
+function extractOffers(config) {
+  const offers = [];
+  if(config.shopOffers) {
+    Object.values(config.shopOffers).forEach(offer=>{
+      offers.push({
+        id: offer.id,
+        coins: offer.coins || 0,
+        skins: offer.skins || [],
+        price: offer.price?.USD || offer.price?.EUR || 0
+      });
+    });
+  }
+  return offers;
 }
 
-async function init() {
+// Display skins in select
+function populateSkinSelect(skins) {
   const select = document.getElementById("skinSelect");
-  select.innerHTML = "";
+  select.innerHTML = '<option value="">-- All skins --</option>';
+  skins.forEach(skin=>{
+    const option = document.createElement("option");
+    option.value = skin;
+    option.textContent = skin;
+    select.appendChild(option);
+  });
+}
 
-  try {
-    const config = await loadGameConfig();
-    const skins = extractAllSkins(config);
+// Create offer HTML
+function renderOffer(offer, filterSkin='') {
+  const div = document.createElement("div");
+  div.className = "offer";
 
-    skins.forEach(skinId => {
-      const option = document.createElement("option");
-      option.value = skinId;
-      option.textContent = skinId;
-      select.appendChild(option);
-    });
+  // Use first skin as preview
+  const previewSkin = filterSkin || offer.skins[0] || '';
+  const img = document.createElement("img");
+  if(previewSkin) img.src = SKIN_BASE_URL+previewSkin+".png";
+  div.appendChild(img);
 
-    if (skins.length > 0) {
-      loadSkinPreview(skins[0]);
-    }
+  const details = document.createElement("div");
+  details.className = "offer-details";
+  details.innerHTML = `
+    <div><strong>ID:</strong> ${offer.id}</div>
+    <div><strong>Coins:</strong> ${offer.coins}</div>
+    <div><strong>Skins:</strong> ${offer.skins.join(', ') || 'None'}</div>
+    <div><strong>Price:</strong> $${offer.price}</div>
+  `;
+  div.appendChild(details);
 
-    select.addEventListener("change", () => {
-      loadSkinPreview(select.value);
-    });
+  const btn = document.createElement("button");
+  btn.className = "buy-btn";
+  btn.textContent = "Buy";
+  btn.onclick = ()=>alert(`Simulated purchase:\nUID: ${document.getElementById('encodedUid').value}\nOffer: ${offer.id}`);
+  div.appendChild(btn);
 
-  } catch (e) {
-    select.innerHTML = "<option>Error loading skins</option>";
-    console.error(e);
-  }
+  return div;
+}
+
+// Populate offers
+function displayOffers(offers, filterSkin='') {
+  const container = document.getElementById("offersContainer");
+  container.innerHTML = "";
+  offers.forEach(offer=>{
+    // Filter by selected skin if set
+    if(filterSkin && !offer.skins.includes(filterSkin)) return;
+    container.appendChild(renderOffer(offer, filterSkin));
+  });
+}
+
+// Initialize
+async function init() {
+  const config = await loadConfig();
+  const skins = extractAllSkins(config);
+  const offers = extractOffers(config);
+
+  populateSkinSelect(skins);
+  displayOffers(offers);
+
+  document.getElementById("skinSelect").addEventListener("change", e=>{
+    displayOffers(offers, e.target.value);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);
