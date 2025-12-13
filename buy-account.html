@@ -1,153 +1,140 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Agar.io Special Deals</title>
-<style>
+  <meta charset="UTF-8">
+  <title>Agar.io Special Deals – Config Skins</title>
+  <style>
     body {
-        background: #111;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        padding-top: 40px;
-        color: #000;
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
     }
 
-    .window {
-        width: 420px;
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    .special-deals {
+      background: #fff;
+      border-radius: 6px;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     }
 
-    .title {
-        font-size: 22px;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    input[type=text] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 8px;
-        border-radius: 6px;
-        border: 1px solid #bbb;
-        font-size: 14px;
+    h2 {
+      margin-top: 0;
     }
 
     label {
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 10px;
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
     }
 
-    select {
-        width: 100%;
-        padding: 10px;
-        border-radius: 6px;
-        font-size: 14px;
-        border: 1px solid #aaa;
-        margin-bottom: 15px;
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
     }
 
-    .card {
-        background: #FF8E00;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        color: #fff;
-        margin-bottom: 20px;
-        cursor: pointer;
-        position: relative;
-    }
-    .card:hover {
-        opacity: 0.9;
+    .price {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #d35400;
     }
 
-    .buy-button {
-        display: block;
-        width: 100%;
-        padding: 13px;
-        font-size: 17px;
-        border: none;
-        border-radius: 10px;
-        background: #6e3eff;
-        color: #fff;
-        cursor: pointer;
-        font-weight: bold;
+    .note {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #666;
     }
-    .buy-button:hover {
-        background: #532ed0;
-    }
-
-    .warning-box {
-        background: #fff9d6;
-        border: 1px solid #f2e79e;
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 13px;
-        margin-top: 15px;
-    }
-</style>
+  </style>
 </head>
-
 <body>
 
-<div class="window">
-    <div class="title">Special Deals</div>
+<div class="special-deals">
+  <h2>Special Deals</h2>
 
-    <!-- UID invoerveld -->
-    <input type="text" id="uid" placeholder="%3D">
+  <label>Encoded UID</label>
+  <input type="text" placeholder="Paste Encoded UID here">
 
-    <label>
-        <input type="checkbox" id="frienduid">
-        Friend Encoded UID
-    </label>
+  <label>Skin (geladen uit GameConfiguration)</label>
+  <select id="promotionpack">
+    <option>Loading skins...</option>
+  </select>
 
-    <!-- Select menu EXACT zoals screenshot -->
-    <select id="productSelect">
-        <option value="125000">125000_coins = 99.99 $</option>
-        <option value="30000">30000_coins_1_skin_blue_swirl = 9.99 $</option>
-        <option value="16000">16000_coins_1_skin_blue_swirl = 4.99 $</option>
-        <option value="3250">3250_coins_1_skin_king_lion = 1.99 $</option>
-        <option value="7000">7000_coins_1_skin_zodiac_2017_libra = 4.99 $</option>
-        <option value="1800">1800_dna_1_skin_special = 1.99 $</option>
-    </select>
+  <div class="price">Prijs: afhankelijk van deal</div>
 
-    <!-- OFFER KAART -->
-    <div class="card" onclick="openXsolla()">
-        <div style="font-size: 35px;">💰 + 🎁</div>
-        <div style="margin-top: 10px; font-size: 20px;">Klik om te kopen</div>
-    </div>
-
-    <!-- Betaal knop -->
-    <button class="buy-button" onclick="openXsolla()">Koop nu</button>
-
-    <!-- Config link info -->
-    <div class="warning-box">
-        Om aankoop te doen moet je ingelogd zijn.<br>
-        Config geladen van:<br>
-        <b>https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json</b><br><br>
-        Encoded UID wordt gebruikt om de skin aan jouw account toe te voegen.
-    </div>
+  <div class="note">
+    Skins worden automatisch geladen uit:<br>
+    <code>GameConfiguration.json (v15/10850)</code>
+  </div>
 </div>
 
 <script>
-function openXsolla() {
-    const uid = document.getElementById("uid").value.trim();
-    if (!uid) {
-        alert("Voer eerst je UID in!");
-        return;
+const CONFIG_URL =
+  "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
+
+async function loadGameConfig() {
+  const response = await fetch(CONFIG_URL);
+  return await response.json();
+}
+
+function extractAllSkins(config) {
+  const skins = new Set();
+
+  // Direct skins object
+  if (config.skins) {
+    Object.keys(config.skins).forEach(id => skins.add(id));
+  }
+
+  // Skin packages / bundles
+  if (config.skinPackages) {
+    Object.values(config.skinPackages).forEach(pkg => {
+      if (Array.isArray(pkg.skins)) {
+        pkg.skins.forEach(skin => skins.add(skin));
+      }
+    });
+  }
+
+  // Shop / IAP offers
+  if (config.shopOffers) {
+    Object.values(config.shopOffers).forEach(offer => {
+      if (Array.isArray(offer.skins)) {
+        offer.skins.forEach(skin => skins.add(skin));
+      }
+    });
+  }
+
+  return Array.from(skins).sort();
+}
+
+async function populateSkinSelect() {
+  const select = document.getElementById("promotionpack");
+  select.innerHTML = "";
+
+  try {
+    const config = await loadGameConfig();
+    const skins = extractAllSkins(config);
+
+    skins.forEach(skinId => {
+      const option = document.createElement("option");
+      option.value = skinId;
+      option.textContent = skinId;
+      select.appendChild(option);
+    });
+
+    if (skins.length === 0) {
+      select.innerHTML = "<option>No skins found</option>";
     }
 
-    // “Open nieuw venster + toestaan popup” EXACT zoals op iPad
-    window.open("https://secure.xsolla.com/paystation3/", "_blank");
+  } catch (err) {
+    select.innerHTML = "<option>Error loading config</option>";
+    console.error(err);
+  }
 }
+
+document.addEventListener("DOMContentLoaded", populateSkinSelect);
 </script>
 
 </body>
