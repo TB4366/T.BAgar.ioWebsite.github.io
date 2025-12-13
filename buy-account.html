@@ -34,22 +34,31 @@ input, select { width: 100%; padding: 8px; margin-top:5px; }
   <div id="offersContainer"></div>
 
   <div class="note">
-    Skins en bundles geladen uit:<br>
-    <code>GameConfiguration.json (v15/10850)</code>
+    Skins en bundles geladen uit lokale config.<br>
   </div>
 </div>
 
 <script>
-const CONFIG_URL = "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
+// ---- Inline Game Configuration ----
+const config = {
+  "skins": {
+    "Skull": {},
+    "Virus": {},
+    "Rainbow": {}
+  },
+  "skinPackages": {
+    "StarterPack": { "skins": ["Skull", "Virus"] },
+    "ProPack": { "skins": ["Rainbow"] }
+  },
+  "shopOffers": {
+    "offer1": { "id": "offer1", "coins": 500, "skins": ["Skull"], "price": { "USD": 2.99 } },
+    "offer2": { "id": "offer2", "coins": 1000, "skins": ["Virus", "Rainbow"], "price": { "USD": 4.99 } }
+  }
+};
+
 const SKIN_BASE_URL = "https://agar.io/skins/";
 
-// Load JSON config
-async function loadConfig() {
-  const res = await fetch(CONFIG_URL);
-  return await res.json();
-}
-
-// Extract all skins
+// ---- Functions ----
 function extractAllSkins(config) {
   const skins = new Set();
   if (config.skins) Object.keys(config.skins).forEach(s=>skins.add(s));
@@ -58,7 +67,6 @@ function extractAllSkins(config) {
   return Array.from(skins).sort();
 }
 
-// Build offers list
 function extractOffers(config) {
   const offers = [];
   if(config.shopOffers) {
@@ -74,7 +82,6 @@ function extractOffers(config) {
   return offers;
 }
 
-// Display skins in select
 function populateSkinSelect(skins) {
   const select = document.getElementById("skinSelect");
   select.innerHTML = '<option value="">-- All skins --</option>';
@@ -86,12 +93,10 @@ function populateSkinSelect(skins) {
   });
 }
 
-// Create offer HTML
 function renderOffer(offer, filterSkin='') {
   const div = document.createElement("div");
   div.className = "offer";
 
-  // Use first skin as preview
   const previewSkin = filterSkin || offer.skins[0] || '';
   const img = document.createElement("img");
   if(previewSkin) img.src = SKIN_BASE_URL+previewSkin+".png";
@@ -116,20 +121,17 @@ function renderOffer(offer, filterSkin='') {
   return div;
 }
 
-// Populate offers
 function displayOffers(offers, filterSkin='') {
   const container = document.getElementById("offersContainer");
   container.innerHTML = "";
   offers.forEach(offer=>{
-    // Filter by selected skin if set
     if(filterSkin && !offer.skins.includes(filterSkin)) return;
     container.appendChild(renderOffer(offer, filterSkin));
   });
 }
 
-// Initialize
-async function init() {
-  const config = await loadConfig();
+// ---- Init ----
+function init() {
   const skins = extractAllSkins(config);
   const offers = extractOffers(config);
 
