@@ -1,55 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Agar.io Special Deals – Config Skins</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<title>Agar.io Special Deals – Live Skins</title>
 
-    .special-deals {
-      background: #fff;
-      border-radius: 6px;
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  padding: 20px;
+}
 
-    h2 {
-      margin-top: 0;
-    }
+.special-deals {
+  background: #fff;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.15);
+}
 
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
+h2 {
+  margin-top: 0;
+}
 
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      box-sizing: border-box;
-    }
+label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
 
-    .price {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: #d35400;
-    }
+input, select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+}
 
-    .note {
-      margin-top: 15px;
-      font-size: 12px;
-      color: #666;
-    }
-  </style>
+.preview {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.preview img {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid #ddd;
+  background: #222;
+}
+
+.note {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #666;
+}
+</style>
 </head>
+
 <body>
 
 <div class="special-deals">
@@ -58,15 +65,17 @@
   <label>Encoded UID</label>
   <input type="text" placeholder="Paste Encoded UID here">
 
-  <label>Skin (geladen uit GameConfiguration)</label>
-  <select id="promotionpack">
+  <label>Select Skin (live from config)</label>
+  <select id="skinSelect">
     <option>Loading skins...</option>
   </select>
 
-  <div class="price">Prijs: afhankelijk van deal</div>
+  <div class="preview">
+    <img id="skinPreview" src="" alt="Skin preview">
+  </div>
 
   <div class="note">
-    Skins worden automatisch geladen uit:<br>
+    Skins geladen uit:<br>
     <code>GameConfiguration.json (v15/10850)</code>
   </div>
 </div>
@@ -75,33 +84,32 @@
 const CONFIG_URL =
   "https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json";
 
+const SKIN_BASE_URL = "https://agar.io/skins/";
+
 async function loadGameConfig() {
-  const response = await fetch(CONFIG_URL);
-  return await response.json();
+  const res = await fetch(CONFIG_URL);
+  return await res.json();
 }
 
 function extractAllSkins(config) {
   const skins = new Set();
 
-  // Direct skins object
   if (config.skins) {
     Object.keys(config.skins).forEach(id => skins.add(id));
   }
 
-  // Skin packages / bundles
   if (config.skinPackages) {
     Object.values(config.skinPackages).forEach(pkg => {
       if (Array.isArray(pkg.skins)) {
-        pkg.skins.forEach(skin => skins.add(skin));
+        pkg.skins.forEach(s => skins.add(s));
       }
     });
   }
 
-  // Shop / IAP offers
   if (config.shopOffers) {
     Object.values(config.shopOffers).forEach(offer => {
       if (Array.isArray(offer.skins)) {
-        offer.skins.forEach(skin => skins.add(skin));
+        offer.skins.forEach(s => skins.add(s));
       }
     });
   }
@@ -109,8 +117,17 @@ function extractAllSkins(config) {
   return Array.from(skins).sort();
 }
 
-async function populateSkinSelect() {
-  const select = document.getElementById("promotionpack");
+function loadSkinPreview(skinId) {
+  const img = document.getElementById("skinPreview");
+  img.src = SKIN_BASE_URL + skinId + ".png";
+
+  img.onerror = () => {
+    img.src = "";
+  };
+}
+
+async function init() {
+  const select = document.getElementById("skinSelect");
   select.innerHTML = "";
 
   try {
@@ -124,17 +141,21 @@ async function populateSkinSelect() {
       select.appendChild(option);
     });
 
-    if (skins.length === 0) {
-      select.innerHTML = "<option>No skins found</option>";
+    if (skins.length > 0) {
+      loadSkinPreview(skins[0]);
     }
 
-  } catch (err) {
-    select.innerHTML = "<option>Error loading config</option>";
-    console.error(err);
+    select.addEventListener("change", () => {
+      loadSkinPreview(select.value);
+    });
+
+  } catch (e) {
+    select.innerHTML = "<option>Error loading skins</option>";
+    console.error(e);
   }
 }
 
-document.addEventListener("DOMContentLoaded", populateSkinSelect);
+document.addEventListener("DOMContentLoaded", init);
 </script>
 
 </body>
