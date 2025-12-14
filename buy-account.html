@@ -47,7 +47,7 @@ let catalog = { skins: [], emoji: [] };
 let selectedItem = null;
 let currentType = 'skins';
 
-// Catalog ophalen van server of config
+// Catalog ophalen van officiële Agar.io config
 async function loadCatalog() {
     try {
         const res = await fetch('https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json');
@@ -55,11 +55,12 @@ async function loadCatalog() {
         const skinsSet = new Set();
         const emojiSet = new Set();
 
+        // Door alle shopItems lopen
         if(data.shopItems){
             data.shopItems.forEach(item => {
                 if(item.productId){
                     if(item.productId.startsWith('skin_')) skinsSet.add(item.productId);
-                    if(item.productId.startsWith('emoji_')) emojisSet.add(item.productId);
+                    if(item.productId.startsWith('emoji_')) emojiSet.add(item.productId);
                 }
             });
         }
