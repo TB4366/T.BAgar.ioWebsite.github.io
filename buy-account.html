@@ -1,111 +1,106 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <title>T.B Agar.io VIP</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
-    header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
-    header img { height:40px; }
-    h1 { font-size:20px; margin:0; }
-    main { padding:20px; max-width:700px; margin:auto; }
-    hr { margin:25px 0; border:0; border-top:1px solid #333; }
-    input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
-    button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
-    button:hover { background:#00e676; }
-    .tabs { display:flex; gap:10px; margin-top:10px; }
-    .tab { flex:1; text-align:center; padding:10px; background:#222; cursor:pointer; border-radius:6px; }
-    .tab.active { background:#00c853; color:#000; }
-    .items { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px; margin-top:15px; }
-    .item { background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
-    .item.selected { border-color:#00c853; }
-    .note { font-size:12px; color:#aaa; margin-top:10px; }
-  </style>
+<meta charset="UTF-8">
+<title>T.B Agar.io VIP</title>
+<style>
+body { font-family: Arial; background:#111; color:#fff; margin:0; }
+header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
+header img { height:40px; }
+h1 { font-size:20px; margin:0; }
+main { padding:20px; max-width:700px; margin:auto; }
+hr { margin:25px 0; border:0; border-top:1px solid #333; }
+input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
+button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
+button:hover { background:#00e676; }
+.tabs { display:flex; gap:10px; margin-top:10px; }
+.tab { flex:1; text-align:center; padding:10px; background:#222; cursor:pointer; border-radius:6px; }
+.tab.active { background:#00c853; color:#000; }
+.items { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px; margin-top:15px; }
+.item { background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+.item.selected { border-color:#00c853; }
+.note { font-size:12px; color:#aaa; margin-top:10px; }
+</style>
 </head>
 <body>
-
 <header>
-  <img src="https://agar.io/favicon.ico" alt="Agar.io" />
-  <h1>T.B Agar.io VIP</h1>
+<img src="https://agar.io/favicon.ico" alt="Agar.io" />
+<h1>T.B Agar.io VIP</h1>
 </header>
-
 <main>
-  <h2>AGAR.IO PAID SKINS OFFICIEEL</h2>
-  <hr />
-  <label>Vul je UID in</label>
-  <input id="uid" placeholder="Bijv. 123456789" />
-  
-  <div class="tabs">
-    <div class="tab active" data-type="skins">Skins</div>
-    <div class="tab" data-type="emoji">Emoji</div>
-  </div>
+<h2>AGAR.IO PAID SKINS OFFICIEEL</h2>
+<hr />
+<label>Vul je UID in</label>
+<input id="uid" placeholder="Bijv. 123456789" />
 
-  <div id="items" class="items"></div>
-  <button onclick="betalen()">Betalen</button>
-  <div class="note">Betaling verloopt veilig via Xsolla (server-side)</div>
-</main>
+<div class="tabs">
+  <div class="tab active" data-type="skins">Skins</div>
+  <div class="tab" data-type="emoji">Emoji</div>
+</div>
+
+<div id="items" class="items"></div>
+<button onclick="betalen()">Betalen</button>
+<div class="note">Betaling verloopt veilig via Xsolla (sandbox test)</div>
 
 <script>
+// ---- Agar.io config (niet zichtbaar) ----
+const config = {
+  skins: [
+    "skin_shadowfire","skin_voidstalker","skin_techno_quack","skin_mecha_parrot",
+    "skin_bass_bomb","skin_techno_ninja","skin_cactus","skin_mad_monkey",
+    "skin_hot_taco","skin_mega_power","skin_beetoothven","skin_tape_guy"
+  ],
+  emoji: [
+    "emoji_agario_games_2024","emoji_flashback_star_4_2024","emoji_halloween_2025",
+    "emoji_agarrr_mateys_2025","emoji_10th_anniversary_2025","emoji_universe_2025"
+  ]
+};
+
+// ---- Frontend selectie ----
 let selectedItem = null;
 let currentType = 'skins';
 
-// Verborgen catalogus met skins en emoji
-const config = {
-  skins: ['skin_shadowfire','skin_voidstalker','skin_techno_quack','skin_mecha_parrot','skin_bass_bomb'],
-  emoji: ['emoji_agario_games_2024','emoji_flashback_star_4_2024','emoji_halloween_2025','emoji_agarrr_mateys_2025']
-};
-
-// Render items
 function render() {
-  const wrap = document.getElementById('items');
-  wrap.innerHTML = '';
-  selectedItem = null;
-  config[currentType].forEach(it => {
-    const d = document.createElement('div');
-    d.className = 'item';
-    d.innerText = it;
-    d.onclick = () => {
-      document.querySelectorAll('.item').forEach(x => x.classList.remove('selected'));
-      d.classList.add('selected');
-      selectedItem = it;
-    };
-    wrap.appendChild(d);
-  });
+    const wrap = document.getElementById('items');
+    wrap.innerHTML='';
+    selectedItem=null;
+    config[currentType].forEach(it=>{
+        const d = document.createElement('div');
+        d.className='item';
+        d.innerText=it;
+        d.onclick=()=>{
+            document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
+            d.classList.add('selected');
+            selectedItem=it;
+        };
+        wrap.appendChild(d);
+    });
 }
 render();
 
-// Tabs
-document.querySelectorAll('.tab').forEach(t => {
-  t.onclick = () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    currentType = t.dataset.type;
-    render();
-  };
+// Tab-switch
+document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        currentType=t.dataset.type;
+        render();
+    };
 });
 
-// Betalen
-async function betalen() {
-  const uid = document.getElementById('uid').value.trim();
-  if(!uid || !selectedItem){
-    alert('Vul UID in en selecteer een item');
-    return;
-  }
+// ---- Betalen knop ----
+function betalen(){
+    const uid=document.getElementById('uid').value.trim();
+    if(!uid||!selectedItem){ alert('Vul UID in en selecteer een item'); return; }
 
-  const res = await fetch('http://localhost:3000/create-payment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ uid, item: selectedItem })
-  });
-
-  const data = await res.json();
-  if(data.paymentUrl){
-    window.location.href = data.paymentUrl; // Doorsturen naar Xsolla
-  } else {
-    alert('Fout bij aanmaken betaling');
-  }
+    // Sandbox Xsolla redirect (simulatie)
+    // Vervang FAKE_SANDBOX_TOKEN door je echte Xsolla access token
+    const price = 4.99; // vaste prijs, kan per item anders
+    const paymentUrl = `https://sandbox-secure.xsolla.com/paystation3/?access_token=FAKE_SANDBOX_TOKEN&sku=agar_special_pack&user_id=${uid}&amount=${price}`;
+    
+    window.location.href = paymentUrl;
 }
 </script>
-
+</main>
 </body>
 </html>
