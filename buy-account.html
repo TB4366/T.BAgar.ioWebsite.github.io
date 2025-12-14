@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>T.B Agar.io VIP</title>
   <style>
     body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
@@ -32,17 +32,15 @@
 <main>
   <h2>AGAR.IO PAID SKINS OFFICIEEL</h2>
   <hr />
-
   <label>Vul je UID in</label>
   <input id="uid" placeholder="Bijv. 123456789" />
-
+  
   <div class="tabs">
     <div class="tab active" data-type="skins">Skins</div>
     <div class="tab" data-type="emoji">Emoji</div>
   </div>
 
   <div id="items" class="items"></div>
-
   <button onclick="betalen()">Betalen</button>
   <div class="note">Betaling verloopt veilig via Xsolla (server-side)</div>
 </main>
@@ -51,19 +49,13 @@
 let selectedItem = null;
 let currentType = 'skins';
 
-// Config met alle skins en emoji's (verborgen voor gebruiker)
+// Verborgen catalogus met skins en emoji
 const config = {
-  skins: [
-    'skin_shadowfire','skin_voidstalker','skin_techno_quack','skin_mecha_parrot','skin_bass_bomb','skin_cactus','skin_mad_monkey','skin_hot_taco','skin_mega_power','skin_beetoothven','skin_tape_guy','skin_kami','skin_trumpi',
-    'skin_melting_man','skin_crazy_rudolph','skin_terrorskeleton','skin_citrus_crunch','skin_sinister_meow','skin_wrathborne','skin_blizzard_beast','skin_tentashroom','skin_blubbernaut','skin_fungi_warlord','skin_drakon','skin_flamewrath',
-    'skin_raptor_reptile','skin_snugglehorn','skin_blossom_totem','skin_valve_guardian','skin_steam_knight','skin_glowstone','skin_incinerator','skin_rad_chimp','skin_rad_rodent','skin_nebula_nomad','skin_jurassic_fury','skin_ancient_fangs','skin_skully_spores',
-    'skin_shroom_shaman','skin_froggwarts','skin_thunder_beast','skin_nightwatcher','skin_shroomcoon','skin_glamour_grizzly','skin_ping_goat','skin_professor_fluff','skin_dreadful_jack','skin_ice_hawk','skin_goo-cado','skin_tribal_beak','skin_astro_zombie','skin_loco_guac','skin_goldphin','skin_olympink_horse','skin_puncheroo','skin_cool_canine','skin_giggle_tower','skin_victory_spark','skin_orbit_invaders','skin_soggy_sentinel','skin_terror_tooth','skin_plumetastic','skin_frostbringer','skin_flame_roar','skin_kitty_quack','skin_captain_seal','skin_dapper_hippo','skin_bamboo_cutie','skin_furious_horn','skin_savage','skin_steelclaw','skin_midnight_stalker','skin_professor_chaos','skin_warlord_kong','skin_ghostpelt','skin_stormpelt','skin_stormzilla','skin_hydra_wrath','skin_tentacle_terror','skin_fox_of_ages','skin_neon_undead','skin_dune_phantom','skin_desert_ruler','skin_gentleporker','skin_paradise_bird','skin_desert_explorer','skin_eagle_rocker','skin_midnight_majesty','skin_voidstalker','skin_moon_witch','skin_road_howler'
-  ],
-  emoji: [
-    'emoji_agario_games_2024','emoji_missions_takedown_v11','emoji_flashback_star_4_2024','emoji_safari_2024','emoji_missions_takedown_v12','emoji_missions_takedown_v13','emoji_missions_takedown_v14','emoji_odyssey_2024','emoji_pirate_quest_prize_shop_1','emoji_pirate_quest_prize_shop_2','emoji_pirate_quest_prize_shop_3','emoji_halloween_2024','emoji_brainrot_2025','emoji_flashback_star_5_2025','emoji_agarrr_mateys_2025'
-  ]
+  skins: ['skin_shadowfire','skin_voidstalker','skin_techno_quack','skin_mecha_parrot','skin_bass_bomb'],
+  emoji: ['emoji_agario_games_2024','emoji_flashback_star_4_2024','emoji_halloween_2025','emoji_agarrr_mateys_2025']
 };
 
+// Render items
 function render() {
   const wrap = document.getElementById('items');
   wrap.innerHTML = '';
@@ -71,7 +63,7 @@ function render() {
   config[currentType].forEach(it => {
     const d = document.createElement('div');
     d.className = 'item';
-    d.innerHTML = it;
+    d.innerText = it;
     d.onclick = () => {
       document.querySelectorAll('.item').forEach(x => x.classList.remove('selected'));
       d.classList.add('selected');
@@ -80,9 +72,9 @@ function render() {
     wrap.appendChild(d);
   });
 }
-
 render();
 
+// Tabs
 document.querySelectorAll('.tab').forEach(t => {
   t.onclick = () => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
@@ -92,9 +84,10 @@ document.querySelectorAll('.tab').forEach(t => {
   };
 });
 
+// Betalen
 async function betalen() {
   const uid = document.getElementById('uid').value.trim();
-  if (!uid || !selectedItem) {
+  if(!uid || !selectedItem){
     alert('Vul UID in en selecteer een item');
     return;
   }
@@ -106,8 +99,8 @@ async function betalen() {
   });
 
   const data = await res.json();
-  if (data.paymentUrl) {
-    window.location.href = data.paymentUrl;
+  if(data.paymentUrl){
+    window.location.href = data.paymentUrl; // Doorsturen naar Xsolla
   } else {
     alert('Fout bij aanmaken betaling');
   }
