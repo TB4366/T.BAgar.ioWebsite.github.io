@@ -51,13 +51,16 @@
 let selectedItem = null;
 let currentType = 'skins';
 
-const catalog = {
+// Config met alle skins en emoji's (verborgen voor gebruiker)
+const config = {
   skins: [
-    { id: 'skin_shadowfire', name: 'Shadowfire', price: '€4,99' },
-    { id: 'skin_voidstalker', name: 'Voidstalker', price: '€4,99' }
+    'skin_shadowfire','skin_voidstalker','skin_techno_quack','skin_mecha_parrot','skin_bass_bomb','skin_cactus','skin_mad_monkey','skin_hot_taco','skin_mega_power','skin_beetoothven','skin_tape_guy','skin_kami','skin_trumpi',
+    'skin_melting_man','skin_crazy_rudolph','skin_terrorskeleton','skin_citrus_crunch','skin_sinister_meow','skin_wrathborne','skin_blizzard_beast','skin_tentashroom','skin_blubbernaut','skin_fungi_warlord','skin_drakon','skin_flamewrath',
+    'skin_raptor_reptile','skin_snugglehorn','skin_blossom_totem','skin_valve_guardian','skin_steam_knight','skin_glowstone','skin_incinerator','skin_rad_chimp','skin_rad_rodent','skin_nebula_nomad','skin_jurassic_fury','skin_ancient_fangs','skin_skully_spores',
+    'skin_shroom_shaman','skin_froggwarts','skin_thunder_beast','skin_nightwatcher','skin_shroomcoon','skin_glamour_grizzly','skin_ping_goat','skin_professor_fluff','skin_dreadful_jack','skin_ice_hawk','skin_goo-cado','skin_tribal_beak','skin_astro_zombie','skin_loco_guac','skin_goldphin','skin_olympink_horse','skin_puncheroo','skin_cool_canine','skin_giggle_tower','skin_victory_spark','skin_orbit_invaders','skin_soggy_sentinel','skin_terror_tooth','skin_plumetastic','skin_frostbringer','skin_flame_roar','skin_kitty_quack','skin_captain_seal','skin_dapper_hippo','skin_bamboo_cutie','skin_furious_horn','skin_savage','skin_steelclaw','skin_midnight_stalker','skin_professor_chaos','skin_warlord_kong','skin_ghostpelt','skin_stormpelt','skin_stormzilla','skin_hydra_wrath','skin_tentacle_terror','skin_fox_of_ages','skin_neon_undead','skin_dune_phantom','skin_desert_ruler','skin_gentleporker','skin_paradise_bird','skin_desert_explorer','skin_eagle_rocker','skin_midnight_majesty','skin_voidstalker','skin_moon_witch','skin_road_howler'
   ],
   emoji: [
-    { id: 'emoji_halloween_2025', name: 'Halloween 2025', price: '€0,99' }
+    'emoji_agario_games_2024','emoji_missions_takedown_v11','emoji_flashback_star_4_2024','emoji_safari_2024','emoji_missions_takedown_v12','emoji_missions_takedown_v13','emoji_missions_takedown_v14','emoji_odyssey_2024','emoji_pirate_quest_prize_shop_1','emoji_pirate_quest_prize_shop_2','emoji_pirate_quest_prize_shop_3','emoji_halloween_2024','emoji_brainrot_2025','emoji_flashback_star_5_2025','emoji_agarrr_mateys_2025'
   ]
 };
 
@@ -65,14 +68,14 @@ function render() {
   const wrap = document.getElementById('items');
   wrap.innerHTML = '';
   selectedItem = null;
-  catalog[currentType].forEach(it => {
+  config[currentType].forEach(it => {
     const d = document.createElement('div');
     d.className = 'item';
-    d.innerHTML = `<strong>${it.name}</strong><br>${it.price}`;
+    d.innerHTML = it;
     d.onclick = () => {
       document.querySelectorAll('.item').forEach(x => x.classList.remove('selected'));
       d.classList.add('selected');
-      selectedItem = it.id;
+      selectedItem = it;
     };
     wrap.appendChild(d);
   });
