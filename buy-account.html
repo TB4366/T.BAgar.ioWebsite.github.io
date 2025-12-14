@@ -43,79 +43,64 @@ button:hover { background:#00e676; }
 <div class="note">Betaling verloopt veilig via Xsolla</div>
 
 <script>
-// DIRECT IN SCRIPT: Alleen betaalde skins, season skins en emoji
+// Voeg hier ALLE betaalde skins / season skins / emoji in
 let catalog = {
   skins: [
-    "skin_techno_quack", "skin_electro_jelly", "skin_bass_bomb",
-    "skin_techno_ninja", "skin_cyber_punk", "skin_mecha_parrot",
-    "skin_mecha_destroyer", "skin_hard_shroom", "skin_frog_thai",
-    "skin_birthday_lol", "skin_bull_king", "skin_burger_face",
-    "skin_dunk", "skin_electronic_girl", "skin_nuke", "skin_pumpkin",
-    "skin_tiny_fairy", "skin_small_goblin", "skin_young_elf",
-    "skin_grove_spirit", "skin_mystical_dwarf", "skin_brave_halfling",
-    "skin_wild_werewolf", "skin_powerful_sorcerer", "skin_stealthy_assassin",
-    "skin_valiant_knight", "skin_cactus", "skin_mad_monkey",
-    "skin_hot_taco", "skin_mega_power", "skin_beetoothven", "skin_tape_guy",
-    "skin_melting_man", "skin_crazy_rudolph", "skin_kami", "skin_trumpi"
+    {name:"Techno Quack", url:"https://secure.xsolla.com/paystation3/.../techno_quack?uid="},
+    {name:"Electro Jelly", url:"https://secure.xsolla.com/paystation3/.../electro_jelly?uid="},
+    {name:"Bass Bomb", url:"https://secure.xsolla.com/paystation3/.../bass_bomb?uid="},
+    {name:"Techno Ninja", url:"https://secure.xsolla.com/paystation3/.../techno_ninja?uid="},
+    {name:"Cyber Punk", url:"https://secure.xsolla.com/paystation3/.../cyber_punk?uid="},
+    // ... voeg hier alle skins toe
   ],
   emoji: [
-    "emoji_agario_games_2024", "emoji_missions_takedown_v11", "emoji_flashback_star_4_2024",
-    "emoji_safari_2024", "emoji_missions_takedown_v12", "emoji_missions_takedown_v13",
-    "emoji_missions_takedown_v14", "emoji_odyssey_2024", "emoji_pirate_quest_prize_shop_1",
-    "emoji_halloween_2024", "emoji_beast_2025", "emoji_universe_2025"
+    {name:"Agario Games 2024", url:"https://secure.xsolla.com/paystation3/.../emoji_agario_games_2024?uid="},
+    {name:"Missions Takedown v11", url:"https://secure.xsolla.com/paystation3/.../emoji_missions_takedown_v11?uid="},
+    // ... voeg hier alle emoji toe
   ]
 };
 
 let selectedItem = null;
 let currentType = 'skins';
 
-// Render grid
-function render() {
-    const wrap = document.getElementById('items');
-    wrap.innerHTML='';
-    selectedItem=null;
-    catalog[currentType].forEach(it=>{
-        const d = document.createElement('div');
-        d.className='item';
-        d.innerText=it.replace(currentType+'_','').replace(/_/g,' ');
-        d.title=it;
-        d.onclick=()=>{
-            document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
-            d.classList.add('selected');
-            selectedItem=it;
-        };
-        wrap.appendChild(d);
-    });
+function render(){
+  const wrap = document.getElementById('items');
+  wrap.innerHTML='';
+  selectedItem=null;
+
+  catalog[currentType].forEach(it=>{
+    const d = document.createElement('div');
+    d.className='item';
+    d.innerText=it.name;
+    d.title=it.name;
+    d.onclick=()=>{
+      document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
+      d.classList.add('selected');
+      selectedItem=it;
+    };
+    wrap.appendChild(d);
+  });
 }
 
 // Tab switching
 document.querySelectorAll('.tab').forEach(t=>{
-    t.onclick=()=>{
-        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-        t.classList.add('active');
-        currentType=t.dataset.type;
-        render();
-    };
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    currentType=t.dataset.type;
+    render();
+  };
 });
 
-// Betalen knop (verzend naar server)
-async function betalen(){
-    const uid = document.getElementById('uid').value.trim();
-    if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
-
-    try {
-        const res = await fetch('/create-payment',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ uid, item:selectedItem })
-        });
-        const data = await res.json();
-        if(data.paymentUrl) window.location.href = data.paymentUrl;
-        else alert('Fout bij aanmaken betaling');
-    } catch(e){ console.error(e); alert('Serverfout'); }
+// Betalen knop
+function betalen(){
+  const uid = document.getElementById('uid').value.trim();
+  if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
+  const url = selectedItem.url + encodeURIComponent(uid);
+  window.location.href = url;
 }
 
-// Init render
+// Init
 render();
 </script>
 </main>
