@@ -8,14 +8,17 @@
     header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
     header img { height:40px; }
     h1 { font-size:20px; margin:0; }
-    main { padding:20px; max-width:600px; margin:auto; }
+    main { padding:20px; max-width:700px; margin:auto; }
     hr { margin:25px 0; border:0; border-top:1px solid #333; }
-    input, select, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
+    input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
     button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
     button:hover { background:#00e676; }
-    .skins { display:flex; gap:15px; margin-top:15px; }
-    .skin { flex:1; background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
-    .skin.selected { border-color:#00c853; }
+    .tabs { display:flex; gap:10px; margin-top:10px; }
+    .tab { flex:1; text-align:center; padding:10px; background:#222; cursor:pointer; border-radius:6px; }
+    .tab.active { background:#00c853; color:#000; }
+    .items { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px; margin-top:15px; }
+    .item { background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+    .item.selected { border-color:#00c853; }
     .note { font-size:12px; color:#aaa; margin-top:10px; }
   </style>
 </head>
@@ -33,32 +36,63 @@
   <label>Vul je UID in</label>
   <input id="uid" placeholder="Bijv. 123456789" />
 
-  <h3>Selecteer een skin</h3>
-  <div class="skins">
-    <div class="skin" data-item="skin_shadowfire">Shadowfire<br>€4,99</div>
-    <div class="skin" data-item="skin_voidstalker">Voidstalker<br>€4,99</div>
+  <div class="tabs">
+    <div class="tab active" data-type="skins">Skins</div>
+    <div class="tab" data-type="emoji">Emoji</div>
   </div>
 
-  <button onclick="betalen()">Betalen</button>
+  <div id="items" class="items"></div>
 
-  <div class="note">Betaling verloopt veilig via Xsolla</div>
+  <button onclick="betalen()">Betalen</button>
+  <div class="note">Betaling verloopt veilig via Xsolla (server-side)</div>
 </main>
 
 <script>
 let selectedItem = null;
+let currentType = 'skins';
 
-document.querySelectorAll('.skin').forEach(el => {
-  el.addEventListener('click', () => {
-    document.querySelectorAll('.skin').forEach(s => s.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedItem = el.dataset.item;
+const catalog = {
+  skins: [
+    { id: 'skin_shadowfire', name: 'Shadowfire', price: '€4,99' },
+    { id: 'skin_voidstalker', name: 'Voidstalker', price: '€4,99' }
+  ],
+  emoji: [
+    { id: 'emoji_halloween_2025', name: 'Halloween 2025', price: '€0,99' }
+  ]
+};
+
+function render() {
+  const wrap = document.getElementById('items');
+  wrap.innerHTML = '';
+  selectedItem = null;
+  catalog[currentType].forEach(it => {
+    const d = document.createElement('div');
+    d.className = 'item';
+    d.innerHTML = `<strong>${it.name}</strong><br>${it.price}`;
+    d.onclick = () => {
+      document.querySelectorAll('.item').forEach(x => x.classList.remove('selected'));
+      d.classList.add('selected');
+      selectedItem = it.id;
+    };
+    wrap.appendChild(d);
   });
+}
+
+render();
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    currentType = t.dataset.type;
+    render();
+  };
 });
 
 async function betalen() {
   const uid = document.getElementById('uid').value.trim();
   if (!uid || !selectedItem) {
-    alert('Vul UID in en selecteer een skin');
+    alert('Vul UID in en selecteer een item');
     return;
   }
 
