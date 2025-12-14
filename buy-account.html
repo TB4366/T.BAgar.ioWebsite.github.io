@@ -2,80 +2,141 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>T.B Agar.io VIP</title>
+<title>Agar.io™ | Speciale Deals</title>
+
 <style>
-body { font-family: Arial; background:#111; color:#fff; margin:0; }
-header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
-header img { height:40px; }
-h1 { font-size:20px; margin:0; }
-main { padding:20px; max-width:1200px; margin:auto; }
-hr { margin:25px 0; border:0; border-top:1px solid #333; }
-input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
-button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
-button:hover { background:#00e676; }
-.items { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px; margin-top:15px; }
-.item { background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
-.item.selected { border-color:#00c853; }
-.note { font-size:12px; color:#aaa; margin-top:10px; }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f0f0f;
+    color: #fff;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #1a1a1a;
+    padding: 15px 20px;
+    border-bottom: 3px solid #ff9800;
+}
+
+header img {
+    height: 40px;
+}
+
+header h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.warning {
+    background: #1e1e1e;
+    border-left: 6px solid #ff9800;
+    padding: 15px;
+    margin-bottom: 30px;
+}
+
+.deal {
+    background: #1c1c1c;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.deal h3 {
+    margin-top: 0;
+    color: #ff9800;
+}
+
+button {
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: bold;
+    background: #ff9800;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
 </style>
 </head>
-<body>
-<header>
-<img src="https://agar.io/favicon.ico" alt="Agar.io" />
-<h1>T.B Agar.io VIP</h1>
-</header>
-<main>
-<h2>AGAR.IO PAID & SEASON SKINS OFFICIEEL</h2>
-<hr />
-<label>Vul je UID in</label>
-<input id="uid" placeholder="Bijv. 123456789" />
 
-<div id="items" class="items"></div>
-<button onclick="betalen()">Betalen</button>
-<div class="note">Betaling verloopt veilig via Xsolla</div>
+<body>
+
+<header>
+    <img src="https://agar.io/favicon.ico">
+    <h1>T.B Agar.io VIP</h1>
+</header>
+
+<div class="container">
+
+<h2>AGAR.IO PAID SKINS – OFFICIEEL</h2>
+
+<div class="warning">
+⚠️ <b>Let op</b><br><br>
+Alle aankopen worden gekoppeld aan het <b>Agar.io account waarop je NU bent ingelogd</b>.<br>
+Wil je voor iemand anders kopen? Log dan eerst in op dat account.
+</div>
+
+<!-- DEAL 1 -->
+<div class="deal">
+    <h3>Agar.io™ | Special Pack</h3>
+    <p>
+        • 25.000 Coins<br>
+        • 1.200 DNA<br>
+        • Skin: Melting Man<br>
+        • Skin: Crazy Rudolph
+    </p>
+    <p><b>$9.99</b></p>
+    <button onclick="goPay()">Kopen via Xsolla</button>
+</div>
+
+<!-- DEAL 2 -->
+<div class="deal">
+    <h3>Season Skin Pack</h3>
+    <p>
+        • Techno Quack<br>
+        • Electro Jelly
+    </p>
+    <p><b>Officieel Agar.io pack</b></p>
+    <button onclick="goPay()">Kopen via Xsolla</button>
+</div>
+
+<!-- DEAL 3 -->
+<div class="deal">
+    <h3>Mecha Bundle</h3>
+    <p>
+        • Mecha Parrot<br>
+        • Mecha Destroyer<br>
+        • 1.200 DNA
+    </p>
+    <button onclick="goPay()">Kopen via Xsolla</button>
+</div>
+
+</div>
 
 <script>
-// Voorbeeld catalog: één product, prijs $9.99
-let catalog = [
-  {
-    name: "Melting Man & Crazy Rudolph",
-    // Gebruik exact jouw Xsolla-link, met uid= toegevoegd via JS
-    url: "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolviKFeZxUfnm1YHhSROyXEGsvPxoA_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6WyIyNTAwMF9jb2luc18xMjAwX2QtbmFfMV9za2luX21lbHRpbmdfbWFuXzFfc2tpbl9jcmF6eV9ydWRvbGh9Il0sInNlc3Npb25hbCI6eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV19fQ--&uid="
-  }
-];
+function goPay() {
+    const ok = confirm(
+        "Controleer voordat je betaalt:\n\n" +
+        "✔ Je bent ingelogd op het juiste Agar.io account\n" +
+        "✔ Deze aankoop kan NIET worden verplaatst\n\n" +
+        "Doorgaan naar betaling?"
+    );
 
-let selectedItem = null;
+    if (!ok) return;
 
-function render(){
-  const wrap = document.getElementById('items');
-  wrap.innerHTML='';
-  selectedItem=null;
-
-  catalog.forEach(it=>{
-    const d = document.createElement('div');
-    d.className='item';
-    d.innerText=it.name;
-    d.title=it.name;
-    d.onclick=()=>{
-      document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
-      d.classList.add('selected');
-      selectedItem=it;
-    };
-    wrap.appendChild(d);
-  });
+    window.location.href =
+        "https://secure.xsolla.com/paystation3/desktop/list/?" +
+        "access_token=ryolviKFeZxUfnm1YHhSROyXEGsvPxoA_lc_en";
 }
-
-function betalen(){
-  const uid = document.getElementById('uid').value.trim();
-  if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
-  // Voeg UID toe aan de Xsolla-link
-  const url = selectedItem.url + encodeURIComponent(uid);
-  window.location.href = url;
-}
-
-// Init
-render();
 </script>
-</main>
+
 </body>
 </html>
