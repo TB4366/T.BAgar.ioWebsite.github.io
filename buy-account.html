@@ -1,149 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>Agar.io Special Deals – Full Clone</title>
-<style>
-body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-.special-deals { max-width: 700px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-h2 { margin-top: 0; }
-label { display:block; font-weight:bold; margin-top:15px; }
-input, select { width: 100%; padding: 8px; margin-top:5px; }
-.offer { display:flex; align-items:center; margin-top:15px; padding:10px; background:#f9f9f9; border-radius:6px; }
-.offer img { width:80px; height:80px; border-radius:50%; border:2px solid #ddd; margin-right:15px; background:#222; }
-.offer-details { flex:1; }
-.offer-details div { margin-bottom:5px; }
-.buy-btn { padding:8px 12px; background:#d35400; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-.buy-btn:hover { background:#e67e22; }
-.note { margin-top:15px; font-size:12px; color:#666; }
-</style>
+  <meta charset="UTF-8" />
+  <title>T.B Agar.io VIP</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; }
+    header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
+    header img { height:40px; }
+    h1 { font-size:20px; margin:0; }
+    main { padding:20px; max-width:600px; margin:auto; }
+    hr { margin:25px 0; border:0; border-top:1px solid #333; }
+    input, select, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
+    button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
+    button:hover { background:#00e676; }
+    .skins { display:flex; gap:15px; margin-top:15px; }
+    .skin { flex:1; background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+    .skin.selected { border-color:#00c853; }
+    .note { font-size:12px; color:#aaa; margin-top:10px; }
+  </style>
 </head>
 <body>
 
-<div class="special-deals">
-  <h2>Special Deals</h2>
+<header>
+  <img src="https://agar.io/favicon.ico" alt="Agar.io" />
+  <h1>T.B Agar.io VIP</h1>
+</header>
 
-  <label>Encoded UID</label>
-  <input type="text" id="encodedUid" placeholder="Paste Encoded UID here">
+<main>
+  <h2>AGAR.IO PAID SKINS OFFICIEEL</h2>
+  <hr />
 
-  <label>Filter skin (optioneel)</label>
-  <select id="skinSelect">
-    <option>Loading skins...</option>
-  </select>
+  <label>Vul je UID in</label>
+  <input id="uid" placeholder="Bijv. 123456789" />
 
-  <div id="offersContainer"></div>
-
-  <div class="note">
-    Skins en bundles geladen uit lokale config.<br>
+  <h3>Selecteer een skin</h3>
+  <div class="skins">
+    <div class="skin" data-item="skin_shadowfire">Shadowfire<br>€4,99</div>
+    <div class="skin" data-item="skin_voidstalker">Voidstalker<br>€4,99</div>
   </div>
-</div>
+
+  <button onclick="betalen()">Betalen</button>
+
+  <div class="note">Betaling verloopt veilig via Xsolla</div>
+</main>
 
 <script>
-// ---- Inline Game Configuration ----
-const config = {
-  "skins": {
-    "Skull": {},
-    "Virus": {},
-    "Rainbow": {}
-  },
-  "skinPackages": {
-    "StarterPack": { "skins": ["Skull", "Virus"] },
-    "ProPack": { "skins": ["Rainbow"] }
-  },
-  "shopOffers": {
-    "offer1": { "id": "offer1", "coins": 500, "skins": ["Skull"], "price": { "USD": 2.99 } },
-    "offer2": { "id": "offer2", "coins": 1000, "skins": ["Virus", "Rainbow"], "price": { "USD": 4.99 } }
+let selectedItem = null;
+
+document.querySelectorAll('.skin').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.skin').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedItem = el.dataset.item;
+  });
+});
+
+async function betalen() {
+  const uid = document.getElementById('uid').value.trim();
+  if (!uid || !selectedItem) {
+    alert('Vul UID in en selecteer een skin');
+    return;
   }
-};
 
-const SKIN_BASE_URL = "https://agar.io/skins/";
+  const res = await fetch('http://localhost:3000/create-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ uid, item: selectedItem })
+  });
 
-// ---- Functions ----
-function extractAllSkins(config) {
-  const skins = new Set();
-  if (config.skins) Object.keys(config.skins).forEach(s=>skins.add(s));
-  if (config.skinPackages) Object.values(config.skinPackages).forEach(pkg=>pkg.skins?.forEach(s=>skins.add(s)));
-  if (config.shopOffers) Object.values(config.shopOffers).forEach(offer=>offer.skins?.forEach(s=>skins.add(s)));
-  return Array.from(skins).sort();
-}
-
-function extractOffers(config) {
-  const offers = [];
-  if(config.shopOffers) {
-    Object.values(config.shopOffers).forEach(offer=>{
-      offers.push({
-        id: offer.id,
-        coins: offer.coins || 0,
-        skins: offer.skins || [],
-        price: offer.price?.USD || offer.price?.EUR || 0
-      });
-    });
+  const data = await res.json();
+  if (data.paymentUrl) {
+    window.location.href = data.paymentUrl;
+  } else {
+    alert('Fout bij aanmaken betaling');
   }
-  return offers;
 }
-
-function populateSkinSelect(skins) {
-  const select = document.getElementById("skinSelect");
-  select.innerHTML = '<option value="">-- All skins --</option>';
-  skins.forEach(skin=>{
-    const option = document.createElement("option");
-    option.value = skin;
-    option.textContent = skin;
-    select.appendChild(option);
-  });
-}
-
-function renderOffer(offer, filterSkin='') {
-  const div = document.createElement("div");
-  div.className = "offer";
-
-  const previewSkin = filterSkin || offer.skins[0] || '';
-  const img = document.createElement("img");
-  if(previewSkin) img.src = SKIN_BASE_URL+previewSkin+".png";
-  div.appendChild(img);
-
-  const details = document.createElement("div");
-  details.className = "offer-details";
-  details.innerHTML = `
-    <div><strong>ID:</strong> ${offer.id}</div>
-    <div><strong>Coins:</strong> ${offer.coins}</div>
-    <div><strong>Skins:</strong> ${offer.skins.join(', ') || 'None'}</div>
-    <div><strong>Price:</strong> $${offer.price}</div>
-  `;
-  div.appendChild(details);
-
-  const btn = document.createElement("button");
-  btn.className = "buy-btn";
-  btn.textContent = "Buy";
-  btn.onclick = ()=>alert(`Simulated purchase:\nUID: ${document.getElementById('encodedUid').value}\nOffer: ${offer.id}`);
-  div.appendChild(btn);
-
-  return div;
-}
-
-function displayOffers(offers, filterSkin='') {
-  const container = document.getElementById("offersContainer");
-  container.innerHTML = "";
-  offers.forEach(offer=>{
-    if(filterSkin && !offer.skins.includes(filterSkin)) return;
-    container.appendChild(renderOffer(offer, filterSkin));
-  });
-}
-
-// ---- Init ----
-function init() {
-  const skins = extractAllSkins(config);
-  const offers = extractOffers(config);
-
-  populateSkinSelect(skins);
-  displayOffers(offers);
-
-  document.getElementById("skinSelect").addEventListener("change", e=>{
-    displayOffers(offers, e.target.value);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", init);
 </script>
 
 </body>
