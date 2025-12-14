@@ -40,45 +40,32 @@ button:hover { background:#00e676; }
 
 <div id="items" class="items"></div>
 <button onclick="betalen()">Betalen</button>
-<div class="note">Betaling verloopt veilig via Xsolla (sandbox test)</div>
+<div class="note">Betaling verloopt veilig via Xsolla</div>
 
 <script>
-// ---- Agar.io config (niet zichtbaar) ----
-const config = {
-  skins: [
-    "skin_shadowfire","skin_voidstalker","skin_techno_quack","skin_mecha_parrot",
-    "skin_bass_bomb","skin_techno_ninja","skin_cactus","skin_mad_monkey",
-    "skin_hot_taco","skin_mega_power","skin_beetoothven","skin_tape_guy"
-  ],
-  emoji: [
-    "emoji_agario_games_2024","emoji_flashback_star_4_2024","emoji_halloween_2025",
-    "emoji_agarrr_mateys_2025","emoji_10th_anniversary_2025","emoji_universe_2025"
-  ]
-};
-
-// ---- Frontend selectie ----
+let catalog = {};
 let selectedItem = null;
 let currentType = 'skins';
+
+async function loadCatalog() {
+    const res = await fetch('/catalog');
+    catalog = await res.json();
+    render();
+}
 
 function render() {
     const wrap = document.getElementById('items');
     wrap.innerHTML='';
     selectedItem=null;
-    config[currentType].forEach(it=>{
+    catalog[currentType].forEach(it=>{
         const d = document.createElement('div');
         d.className='item';
         d.innerText=it;
-        d.onclick=()=>{
-            document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
-            d.classList.add('selected');
-            selectedItem=it;
-        };
+        d.onclick=()=>{document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); selectedItem=it;};
         wrap.appendChild(d);
     });
 }
-render();
 
-// Tab-switch
 document.querySelectorAll('.tab').forEach(t=>{
     t.onclick=()=>{
         document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -88,18 +75,22 @@ document.querySelectorAll('.tab').forEach(t=>{
     };
 });
 
-// ---- Betalen knop ----
-function betalen(){
-    const uid=document.getElementById('uid').value.trim();
-    if(!uid||!selectedItem){ alert('Vul UID in en selecteer een item'); return; }
+async function betalen(){
+    const uid = document.getElementById('uid').value.trim();
+    if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
 
-    // Sandbox Xsolla redirect (simulatie)
-    // Vervang FAKE_SANDBOX_TOKEN door je echte Xsolla access token
-    const price = 4.99; // vaste prijs, kan per item anders
-    const paymentUrl = `https://sandbox-secure.xsolla.com/paystation3/?access_token=FAKE_SANDBOX_TOKEN&sku=agar_special_pack&user_id=${uid}&amount=${price}`;
-    
-    window.location.href = paymentUrl;
+    const res = await fetch('/create-payment', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ uid, item: selectedItem })
+    });
+
+    const data = await res.json();
+    if(data.paymentUrl){ window.location.href = data.paymentUrl; }
+    else{ alert('Fout bij aanmaken betaling'); }
 }
+
+loadCatalog();
 </script>
 </main>
 </body>
