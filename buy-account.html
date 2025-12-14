@@ -8,7 +8,7 @@ body { font-family: Arial; background:#111; color:#fff; margin:0; }
 header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
 header img { height:40px; }
 h1 { font-size:20px; margin:0; }
-main { padding:20px; max-width:900px; margin:auto; }
+main { padding:20px; max-width:1200px; margin:auto; }
 hr { margin:25px 0; border:0; border-top:1px solid #333; }
 input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
 button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
@@ -47,12 +47,13 @@ let catalog = { skins: [], emoji: [] };
 let selectedItem = null;
 let currentType = 'skins';
 
+// Catalog ophalen van server of config
 async function loadCatalog() {
     try {
         const res = await fetch('https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json');
         const data = await res.json();
         const skinsSet = new Set();
-        const emojisSet = new Set();
+        const emojiSet = new Set();
 
         if(data.shopItems){
             data.shopItems.forEach(item => {
@@ -63,15 +64,16 @@ async function loadCatalog() {
             });
         }
 
-        catalog.skins = Array.from(skinsSet);
-        catalog.emoji = Array.from(emojisSet);
+        catalog.skins = Array.from(skinsSet).sort();
+        catalog.emoji = Array.from(emojiSet).sort();
         render();
     } catch(err){
-        console.error('Kon config niet laden:', err);
+        console.error('Kon catalog niet laden:', err);
         document.getElementById('items').innerHTML = '<p>Kon catalogus niet laden</p>';
     }
 }
 
+// Render grid
 function render() {
     const wrap = document.getElementById('items');
     wrap.innerHTML='';
@@ -79,12 +81,18 @@ function render() {
     catalog[currentType].forEach(it=>{
         const d = document.createElement('div');
         d.className='item';
-        d.innerText=it;
-        d.onclick=()=>{document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected')); d.classList.add('selected'); selectedItem=it;};
+        d.innerText=it.replace(currentType+'_','').replace(/_/g,' ');
+        d.title=it;
+        d.onclick=()=>{
+            document.querySelectorAll('.item').forEach(x=>x.classList.remove('selected'));
+            d.classList.add('selected');
+            selectedItem=it;
+        };
         wrap.appendChild(d);
     });
 }
 
+// Tab switching
 document.querySelectorAll('.tab').forEach(t=>{
     t.onclick=()=>{
         document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -94,13 +102,21 @@ document.querySelectorAll('.tab').forEach(t=>{
     };
 });
 
+// Betalen knop
 async function betalen(){
     const uid = document.getElementById('uid').value.trim();
     if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
 
-    // Let op: Hier moet je een echte Xsolla-payment link genereren via server
-    alert(`Je wordt doorgestuurd naar Xsolla voor UID: ${uid} en item: ${selectedItem}`);
-    // window.location.href = `https://secure.xsolla.com/paystation3/...`;
+    try {
+        const res = await fetch('/create-payment',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ uid, item:selectedItem })
+        });
+        const data = await res.json();
+        if(data.paymentUrl) window.location.href = data.paymentUrl;
+        else alert('Fout bij aanmaken betaling');
+    } catch(e){ console.error(e); alert('Serverfout'); }
 }
 
 loadCatalog();
