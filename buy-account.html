@@ -8,7 +8,7 @@ body { font-family: Arial; background:#111; color:#fff; margin:0; }
 header { display:flex; align-items:center; gap:15px; background:#1e1e1e; padding:15px; }
 header img { height:40px; }
 h1 { font-size:20px; margin:0; }
-main { padding:20px; max-width:700px; margin:auto; }
+main { padding:20px; max-width:900px; margin:auto; }
 hr { margin:25px 0; border:0; border-top:1px solid #333; }
 input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
 button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
@@ -43,14 +43,33 @@ button:hover { background:#00e676; }
 <div class="note">Betaling verloopt veilig via Xsolla</div>
 
 <script>
-let catalog = {};
+let catalog = { skins: [], emoji: [] };
 let selectedItem = null;
 let currentType = 'skins';
 
 async function loadCatalog() {
-    const res = await fetch('/catalog');
-    catalog = await res.json();
-    render();
+    try {
+        const res = await fetch('https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json');
+        const data = await res.json();
+        const skinsSet = new Set();
+        const emojisSet = new Set();
+
+        if(data.shopItems){
+            data.shopItems.forEach(item => {
+                if(item.productId){
+                    if(item.productId.startsWith('skin_')) skinsSet.add(item.productId);
+                    if(item.productId.startsWith('emoji_')) emojisSet.add(item.productId);
+                }
+            });
+        }
+
+        catalog.skins = Array.from(skinsSet);
+        catalog.emoji = Array.from(emojisSet);
+        render();
+    } catch(err){
+        console.error('Kon config niet laden:', err);
+        document.getElementById('items').innerHTML = '<p>Kon catalogus niet laden</p>';
+    }
 }
 
 function render() {
@@ -79,15 +98,9 @@ async function betalen(){
     const uid = document.getElementById('uid').value.trim();
     if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
 
-    const res = await fetch('/create-payment', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ uid, item: selectedItem })
-    });
-
-    const data = await res.json();
-    if(data.paymentUrl){ window.location.href = data.paymentUrl; }
-    else{ alert('Fout bij aanmaken betaling'); }
+    // Let op: Hier moet je een echte Xsolla-payment link genereren via server
+    alert(`Je wordt doorgestuurd naar Xsolla voor UID: ${uid} en item: ${selectedItem}`);
+    // window.location.href = `https://secure.xsolla.com/paystation3/...`;
 }
 
 loadCatalog();
