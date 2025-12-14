@@ -28,7 +28,7 @@ button:hover { background:#00e676; }
 <h1>T.B Agar.io VIP</h1>
 </header>
 <main>
-<h2>AGAR.IO PAID SKINS OFFICIEEL</h2>
+<h2>AGAR.IO PAID & SEASON SKINS OFFICIEEL</h2>
 <hr />
 <label>Vul je UID in</label>
 <input id="uid" placeholder="Bijv. 123456789" />
@@ -43,36 +43,31 @@ button:hover { background:#00e676; }
 <div class="note">Betaling verloopt veilig via Xsolla</div>
 
 <script>
-let catalog = { skins: [], emoji: [] };
+// DIRECT IN SCRIPT: Alleen betaalde skins, season skins en emoji
+let catalog = {
+  skins: [
+    "skin_techno_quack", "skin_electro_jelly", "skin_bass_bomb",
+    "skin_techno_ninja", "skin_cyber_punk", "skin_mecha_parrot",
+    "skin_mecha_destroyer", "skin_hard_shroom", "skin_frog_thai",
+    "skin_birthday_lol", "skin_bull_king", "skin_burger_face",
+    "skin_dunk", "skin_electronic_girl", "skin_nuke", "skin_pumpkin",
+    "skin_tiny_fairy", "skin_small_goblin", "skin_young_elf",
+    "skin_grove_spirit", "skin_mystical_dwarf", "skin_brave_halfling",
+    "skin_wild_werewolf", "skin_powerful_sorcerer", "skin_stealthy_assassin",
+    "skin_valiant_knight", "skin_cactus", "skin_mad_monkey",
+    "skin_hot_taco", "skin_mega_power", "skin_beetoothven", "skin_tape_guy",
+    "skin_melting_man", "skin_crazy_rudolph", "skin_kami", "skin_trumpi"
+  ],
+  emoji: [
+    "emoji_agario_games_2024", "emoji_missions_takedown_v11", "emoji_flashback_star_4_2024",
+    "emoji_safari_2024", "emoji_missions_takedown_v12", "emoji_missions_takedown_v13",
+    "emoji_missions_takedown_v14", "emoji_odyssey_2024", "emoji_pirate_quest_prize_shop_1",
+    "emoji_halloween_2024", "emoji_beast_2025", "emoji_universe_2025"
+  ]
+};
+
 let selectedItem = null;
 let currentType = 'skins';
-
-// Catalog ophalen van officiële Agar.io config
-async function loadCatalog() {
-    try {
-        const res = await fetch('https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json');
-        const data = await res.json();
-        const skinsSet = new Set();
-        const emojiSet = new Set();
-
-        // Door alle shopItems lopen
-        if(data.shopItems){
-            data.shopItems.forEach(item => {
-                if(item.productId){
-                    if(item.productId.startsWith('skin_')) skinsSet.add(item.productId);
-                    if(item.productId.startsWith('emoji_')) emojiSet.add(item.productId);
-                }
-            });
-        }
-
-        catalog.skins = Array.from(skinsSet).sort();
-        catalog.emoji = Array.from(emojiSet).sort();
-        render();
-    } catch(err){
-        console.error('Kon catalog niet laden:', err);
-        document.getElementById('items').innerHTML = '<p>Kon catalogus niet laden</p>';
-    }
-}
 
 // Render grid
 function render() {
@@ -103,7 +98,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     };
 });
 
-// Betalen knop
+// Betalen knop (verzend naar server)
 async function betalen(){
     const uid = document.getElementById('uid').value.trim();
     if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
@@ -120,7 +115,8 @@ async function betalen(){
     } catch(e){ console.error(e); alert('Serverfout'); }
 }
 
-loadCatalog();
+// Init render
+render();
 </script>
 </main>
 </body>
