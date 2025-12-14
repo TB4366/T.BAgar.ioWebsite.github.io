@@ -13,9 +13,6 @@ hr { margin:25px 0; border:0; border-top:1px solid #333; }
 input, button { width:100%; padding:10px; margin-top:10px; border-radius:5px; border:none; }
 button { background:#00c853; color:#000; font-weight:bold; cursor:pointer; }
 button:hover { background:#00e676; }
-.tabs { display:flex; gap:10px; margin-top:10px; }
-.tab { flex:1; text-align:center; padding:10px; background:#222; cursor:pointer; border-radius:6px; }
-.tab.active { background:#00c853; color:#000; }
 .items { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:15px; margin-top:15px; }
 .item { background:#222; padding:10px; text-align:center; border-radius:8px; cursor:pointer; border:2px solid transparent; }
 .item.selected { border-color:#00c853; }
@@ -33,42 +30,28 @@ button:hover { background:#00e676; }
 <label>Vul je UID in</label>
 <input id="uid" placeholder="Bijv. 123456789" />
 
-<div class="tabs">
-  <div class="tab active" data-type="skins">Skins</div>
-  <div class="tab" data-type="emoji">Emoji</div>
-</div>
-
 <div id="items" class="items"></div>
 <button onclick="betalen()">Betalen</button>
 <div class="note">Betaling verloopt veilig via Xsolla</div>
 
 <script>
-// Voeg hier ALLE betaalde skins / season skins / emoji in
-let catalog = {
-  skins: [
-    {name:"Techno Quack", url:"https://secure.xsolla.com/paystation3/.../techno_quack?uid="},
-    {name:"Electro Jelly", url:"https://secure.xsolla.com/paystation3/.../electro_jelly?uid="},
-    {name:"Bass Bomb", url:"https://secure.xsolla.com/paystation3/.../bass_bomb?uid="},
-    {name:"Techno Ninja", url:"https://secure.xsolla.com/paystation3/.../techno_ninja?uid="},
-    {name:"Cyber Punk", url:"https://secure.xsolla.com/paystation3/.../cyber_punk?uid="},
-    // ... voeg hier alle skins toe
-  ],
-  emoji: [
-    {name:"Agario Games 2024", url:"https://secure.xsolla.com/paystation3/.../emoji_agario_games_2024?uid="},
-    {name:"Missions Takedown v11", url:"https://secure.xsolla.com/paystation3/.../emoji_missions_takedown_v11?uid="},
-    // ... voeg hier alle emoji toe
-  ]
-};
+// Voorbeeld catalog: één product, prijs $9.99
+let catalog = [
+  {
+    name: "Melting Man & Crazy Rudolph",
+    // Gebruik exact jouw Xsolla-link, met uid= toegevoegd via JS
+    url: "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolviKFeZxUfnm1YHhSROyXEGsvPxoA_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6WyIyNTAwMF9jb2luc18xMjAwX2QtbmFfMV9za2luX21lbHRpbmdfbWFuXzFfc2tpbl9jcmF6eV9ydWRvbGh9Il0sInNlc3Npb25hbCI6eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCJdLFsibGlzdCIsdHJ1ZV19fQ--&uid="
+  }
+];
 
 let selectedItem = null;
-let currentType = 'skins';
 
 function render(){
   const wrap = document.getElementById('items');
   wrap.innerHTML='';
   selectedItem=null;
 
-  catalog[currentType].forEach(it=>{
+  catalog.forEach(it=>{
     const d = document.createElement('div');
     d.className='item';
     d.innerText=it.name;
@@ -82,20 +65,10 @@ function render(){
   });
 }
 
-// Tab switching
-document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick=()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    currentType=t.dataset.type;
-    render();
-  };
-});
-
-// Betalen knop
 function betalen(){
   const uid = document.getElementById('uid').value.trim();
   if(!uid || !selectedItem){ alert('Vul UID in en selecteer een item'); return; }
+  // Voeg UID toe aan de Xsolla-link
   const url = selectedItem.url + encodeURIComponent(uid);
   window.location.href = url;
 }
