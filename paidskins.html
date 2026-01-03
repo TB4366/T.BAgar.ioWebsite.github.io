@@ -6,7 +6,6 @@
 <title>T.B Agar.io Paid Skins — Store</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
-
 <style>
   .card-img{width:120px;height:120px;object-fit:cover;border-radius:9999px}
   .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px}
@@ -15,29 +14,22 @@
 </head>
 
 <body class="bg-gray-100">
-
 <header class="bg-gray-900 text-white">
   <div class="max-w-6xl mx-auto p-4 flex justify-between items-center">
     <h1 class="font-bold text-lg">T.B Agar.io Paid Skins</h1>
 
-    <div class="flex-1 max-w-lg flex">
-      <input id="navbarSearch" placeholder="Zoek skins..."
-        class="flex-1 border px-3 py-2 rounded-l">
-      <div id="google_translate_element" class="border px-2 rounded-r bg-white"></div>
-    </div>
+    <input id="navbarSearch" placeholder="Zoek skins..."
+      class="border px-3 py-2 rounded hidden sm:block">
 
     <button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
       <i data-feather="shopping-cart"></i>
-      Winkelwagen
-      <span id="cartCount"
-        class="bg-red-500 text-white px-2 rounded-full text-sm">0</span>
+      Cart
+      <span id="cartCount" class="bg-red-500 text-white px-2 rounded-full text-sm">0</span>
     </button>
   </div>
 </header>
 
 <div class="max-w-6xl mx-auto px-6 mt-4 flex gap-3 items-center">
-  <label for="sortSelect" class="text-sm font-medium">Categorie & sorteren</label>
-
   <select id="sortSelect" class="border rounded px-3 py-2">
     <option value="all">Alle skins</option>
     <option value="low">Van laag naar hoog</option>
@@ -53,6 +45,39 @@
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
+<!-- Cart Modal -->
+<div id="cartModal" class="fixed inset-0 hidden bg-black/60 z-50">
+  <div class="bg-white max-w-lg mx-auto mt-12 rounded shadow p-6">
+    <h2 class="text-xl font-semibold mb-3">Your cart</h2>
+    <div id="cartList" class="space-y-2 mb-3"></div>
+    <p class="font-semibold mt-2">Total: <span id="cartTotal">USD 0.00</span></p>
+
+    <div class="mt-4 space-y-2">
+      <input id="emailInput" class="border rounded w-full px-3 py-2"
+        placeholder="Enter your email address">
+      <input id="uidInput" class="border rounded w-full px-3 py-2"
+        placeholder="Enter your Agar.io UID">
+
+      <label class="flex gap-2 text-sm">
+        <input type="checkbox" id="termsChk"> I agree to the terms
+      </label>
+      <label class="flex gap-2 text-sm">
+        <input type="checkbox" id="paypalChk"> I agree to the PayPal payment
+      </label>
+    </div>
+
+    <button id="payBtn"
+      class="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded flex items-center justify-center gap-2">
+      <i data-feather="credit-card"></i>
+      Pay
+    </button>
+    <p class="text-center text-xs mt-1">Pay via PayPal</p>
+
+    <button id="closeCart"
+      class="mt-4 w-full border px-4 py-2 rounded">Close</button>
+  </div>
+</div>
+
 <template id="card-template">
   <div class="bg-white rounded shadow p-4 text-center">
     <div class="imgs-row"></div>
@@ -60,9 +85,17 @@
     <p class="text-sm text-gray-500 card-cat mt-1"></p>
     <p class="text-sm text-gray-600 card-desc mt-1"></p>
     <p class="font-medium mt-2 card-price"></p>
-    <button class="selectBtn bg-green-600 text-white mt-3 px-4 py-2 rounded">
-      Select
-    </button>
+
+    <div class="flex gap-2 justify-center mt-3">
+      <button class="selectBtn bg-green-600 text-white px-3 py-2 rounded flex-1">
+        Select
+      </button>
+      <button class="shareBtn bg-gray-200 px-3 py-2 rounded flex items-center justify-center gap-1">
+        <i data-feather="share-2" class="w-4 h-4"></i> Share
+      </button>
+    </div>
+
+    <p class="mt-2 text-xs status-msg text-green-700 hidden"></p>
   </div>
 </template>
 
@@ -73,28 +106,27 @@ feather.replace();
 const bundles = [
   {id:"skin_01",cat:"Alle skins",name:"Bananananito Bandito + Trippi Troppi",price:8.49,image1:"IMG_6621.webp",image2:"IMG_6622.webp",note:"9300 coin • 300 dna",sold:300},
   {id:"skin_02",cat:"Alle skins",name:"U din din din dun ma",price:5.99,image1:"IMG_6620.webp",note:"5000 coin",sold:300},
-
-  /* ---- Old Paid Skins (blijven ook in Alle skins) ---- */
   {id:"old_01",cat:"Old Paid Skins",name:"Classic Shadow Orb",price:3.99,image1:"OLD_001.webp",note:"Legacy skin",sold:120},
   {id:"old_02",cat:"Old Paid Skins",name:"Neon Spike",price:2.99,image1:"OLD_002.webp",note:"Legacy skin",sold:95},
 ];
 
-const grid = document.getElementById("grid");
-const tmpl = document.getElementById("card-template");
-const cart = [];
-const cartCount = document.getElementById("cartCount");
+const grid=document.getElementById("grid");
+const tmpl=document.getElementById("card-template");
+const cart=[];
+const cartCount=document.getElementById("cartCount");
 
 function price(p){return `USD ${p.toFixed(2)}`;}
 
+function inCart(id){return cart.some(i=>i.id===id);}
+
 function makeCard(item){
-  const el = tmpl.content.cloneNode(true);
-  const imgs = el.querySelector(".imgs-row");
+  const el=tmpl.content.cloneNode(true);
+  const imgs=el.querySelector(".imgs-row");
 
-  const img = document.createElement("img");
-  img.src = item.image1;
-  img.className = item.image2 ? "small-img" : "card-img";
+  const img=document.createElement("img");
+  img.src=item.image1;
+  img.className=item.image2?"small-img":"card-img";
   imgs.appendChild(img);
-
   if(item.image2){
     const img2=document.createElement("img");
     img2.src=item.image2;
@@ -106,7 +138,35 @@ function makeCard(item){
   el.querySelector(".card-cat").textContent=`Categorie: ${item.cat}`;
   el.querySelector(".card-desc").textContent=item.note;
   el.querySelector(".card-price").textContent=price(item.price);
-  el.querySelector(".selectBtn").onclick=()=>{cart.push(item);cartCount.textContent=cart.length;};
+
+  const status=el.querySelector(".status-msg");
+  const selectBtn=el.querySelector(".selectBtn");
+  const shareBtn=el.querySelector(".shareBtn");
+
+  function showAdded(){
+    status.textContent="This item has been added to the cart ✓";
+    status.classList.remove("hidden");
+    selectBtn.classList.replace("bg-green-600","bg-green-800");
+  }
+
+  if(inCart(item.id)) showAdded();
+
+  selectBtn.onclick=()=>{
+    if(!inCart(item.id)){
+      cart.push(item);
+      cartCount.textContent=cart.length;
+      showAdded();
+    }
+  };
+
+  shareBtn.onclick=async()=>{
+    const url=location.origin+location.pathname+"#"+item.id;
+    try{
+      await navigator.clipboard.writeText(url);
+    }catch{}
+    status.textContent="URL copied ✓";
+    status.classList.remove("hidden");
+  };
 
   return el;
 }
@@ -116,47 +176,68 @@ function render(list){
   list.forEach(i=>grid.appendChild(makeCard(i)));
 }
 
-/* ---- SORT / CATEGORY ---- */
+/* ---- SORT ---- */
 const sortSelect=document.getElementById("sortSelect");
 const original=bundles.slice();
 
 sortSelect.addEventListener("change",()=>{
   let list=bundles.slice();
-
   switch(sortSelect.value){
-    case "all":
-      list = original.slice();
-      break;
-    case "low":
-      list.sort((a,b)=>a.price-b.price);
-      break;
-    case "high":
-      list.sort((a,b)=>b.price-a.price);
-      break;
-    case "oldpaid":
-      list = bundles.filter(b=>b.cat==="Old Paid Skins");
-      break;
-    case "popular":
-      list.sort((a,b)=>(b.sold||0)-(a.sold||0));
-      break;
-    case "shuffle":
-      list.sort(()=>Math.random()-.5);
-      break;
+    case "all": list=original.slice(); break;
+    case "low": list.sort((a,b)=>a.price-b.price); break;
+    case "high": list.sort((a,b)=>b.price-a.price); break;
+    case "oldpaid": list=bundles.filter(b=>b.cat==="Old Paid Skins"); break;
+    case "popular": list.sort((a,b)=>(b.sold||0)-(a.sold||0)); break;
+    case "shuffle": list.sort(()=>Math.random()-.5); break;
   }
-
   render(list);
 });
 
 /* ---- SEARCH ---- */
-document.getElementById("navbarSearch").addEventListener("input",e=>{
+document.getElementById("navbarSearch")?.addEventListener("input",e=>{
   const q=e.target.value.toLowerCase();
   render(
-    bundles.filter(b =>
-      b.name.toLowerCase().includes(q) ||
-      b.cat.toLowerCase().includes(q)
-    )
+    bundles.filter(b=>b.name.toLowerCase().includes(q)||b.cat.toLowerCase().includes(q))
   );
 });
+
+/* ---- CART UI ---- */
+const cartModal=document.getElementById("cartModal");
+const cartList=document.getElementById("cartList");
+const cartTotal=document.getElementById("cartTotal");
+
+function openCart(){
+  cartList.innerHTML="";
+  let total=0;
+  cart.forEach(i=>{
+    total+=i.price;
+    const row=document.createElement("div");
+    row.className="flex justify-between text-sm";
+    row.innerHTML=`<span>${i.name}</span><span>${price(i.price)}</span>`;
+    cartList.appendChild(row);
+  });
+  cartTotal.textContent=price(total);
+  cartModal.classList.remove("hidden");
+}
+
+document.getElementById("cartBtn").onclick=openCart;
+document.getElementById("closeCart").onclick=()=>cartModal.classList.add("hidden");
+
+/* ---- PAY ---- */
+document.getElementById("payBtn").onclick=()=>{
+  const email=document.getElementById("emailInput").value.trim();
+  const uid=document.getElementById("uidInput").value.trim();
+  const t=document.getElementById("termsChk").checked;
+  const p=document.getElementById("paypalChk").checked;
+
+  if(!email||!uid||!t||!p||cart.length===0){alert("Please complete all fields and confirmations.");return;}
+
+  const total=cart.reduce((s,i)=>s+i.price,0).toFixed(2);
+
+  // Redirect to your PayPal.me with amount
+  const paypalUrl=`https://www.paypal.com/paypalme/TBYTagario/${total}`;
+  window.location.href=paypalUrl;
+};
 
 /* INIT */
 render(bundles);
