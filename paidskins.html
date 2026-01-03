@@ -11,10 +11,10 @@
   .card-img{width:120px;height:120px;object-fit:cover;border-radius:9999px;box-shadow:0 6px 12px rgba(0,0,0,0.08);}
   .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px;box-shadow:0 4px 8px rgba(0,0,0,0.08);}
   .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
-  .card{bg:white p-4 rounded shadow flex flex-col items-center text-center;}
+  .card{background:white;padding:16px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);flex-direction:column;display:flex;align-items:center;text-align:center;}
   .status-msg{color:green;margin-top:6px;}
   #cartModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000;}
-  #cartModal > div{background:white;padding:16px;width:90%;max-width:400px;border-radius:12px;}
+  #cartModal > div{background:white;padding:16px;width:90%;max-width:500px;border-radius:12px;}
   .hidden{display:none;}
 </style>
 </head>
@@ -81,7 +81,7 @@
 <script>
 feather.replace();
 
-/* --------- DATA --------- */
+/* ---------------- DATA ---------------- */
 const bundles = [
   {id:"skin_01",cat:"All Skins",name:"Bananananito Bandito + Trippi Troppi",price:8.49,image1:"IMG_6621.webp",image2:"IMG_6622.webp",note:"9300 coin • 300 dna"},
   {id:"skin_02",cat:"All Skins",name:"U din din din dun ma",price:5.99,image1:"IMG_6620.webp",note:"5000 coin"},
@@ -89,16 +89,22 @@ const bundles = [
   {id:"old_02",cat:"Old Paid Skins",name:"Neon Spike",price:2.99,image1:"OLD_002.webp",note:"Legacy skin"},
 ];
 
+/* ---------------- VARIABLES ---------------- */
 const grid = document.getElementById("grid");
 const tmpl = document.getElementById("card-template");
 let cart = [];
 const cartCount = document.getElementById("cartCount");
+const sortSelect = document.getElementById("sortSelect");
+const navbarSearch = document.getElementById("navbarSearch");
+const cartModal = document.getElementById("cartModal");
+const cartList  = document.getElementById("cartList");
+const cartTotal = document.getElementById("cartTotal");
 
-/* Helpers */
+/* ---------------- HELPERS ---------------- */
 function price(p){return `USD ${p.toFixed(2)}`;}
 function inCart(id){return cart.some(i=>i.id===id);}
 
-/* ------- CARDS ------- */
+/* ---------------- RENDER CARDS ---------------- */
 function makeCard(item){
   const el = tmpl.content.cloneNode(true);
   const imgs = el.querySelector(".imgs-row");
@@ -155,10 +161,8 @@ function render(list){
   list.forEach(i=>grid.appendChild(makeCard(i)));
 }
 
-/* ------- SORT ------- */
-const sortSelect = document.getElementById("sortSelect");
+/* ---------------- SORT ---------------- */
 const original = bundles.slice();
-
 sortSelect.addEventListener("change",()=>{
   let list = bundles.slice();
   switch(sortSelect.value){
@@ -171,8 +175,8 @@ sortSelect.addEventListener("change",()=>{
   render(list);
 });
 
-/* ------- SEARCH ------- */
-document.getElementById("navbarSearch")?.addEventListener("input",e=>{
+/* ---------------- SEARCH ---------------- */
+navbarSearch.addEventListener("input",e=>{
   const q = e.target.value.toLowerCase();
   render(
     bundles.filter(
@@ -181,11 +185,7 @@ document.getElementById("navbarSearch")?.addEventListener("input",e=>{
   );
 });
 
-/* ------- CART MODAL ------- */
-const cartModal = document.getElementById("cartModal");
-const cartList  = document.getElementById("cartList");
-const cartTotal = document.getElementById("cartTotal");
-
+/* ---------------- CART MODAL ---------------- */
 function renderCart(){
   cartList.innerHTML = "";
   let total = 0;
@@ -219,7 +219,7 @@ document.getElementById("cartBtn").onclick = ()=>{
 };
 document.getElementById("closeCart").onclick = ()=>cartModal.classList.add("hidden");
 
-/* ------- PAYPAL ------- */
+/* ---------------- PAYPAL ---------------- */
 document.getElementById("payBtn").onclick = ()=>{
   if(cart.length===0){alert("Your cart is empty.");return;}
   const total = cart.reduce((s,i)=>s+i.price,0).toFixed(2);
@@ -227,8 +227,9 @@ document.getElementById("payBtn").onclick = ()=>{
   window.location.href = paypalUrl;
 };
 
-/* INITIAL RENDER */
+/* ---------------- INITIAL RENDER ---------------- */
 render(bundles);
+cartCount.textContent = cart.length;
 </script>
 
 </body>
