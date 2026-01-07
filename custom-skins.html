@@ -11,9 +11,7 @@ body {
   font-family:Arial,sans-serif;
   background:#0b1220;
   color:white;
-  transition:background-color 0.3s ease,color 0.3s ease;
 }
-body.dark{background:#f0f0f0;color:#222;}
 
 header{
   display:flex;
@@ -21,17 +19,11 @@ header{
   justify-content:space-between;
   padding:10px 20px;
   background:#0f172a;
-  position:relative;
 }
-body.dark header{background:#e0e0e0;}
 
 .left-header{display:flex;align-items:center;gap:12px;}
 .logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
 .site-title{font-size:1.3rem;font-weight:bold;}
-
-.toggle-btn-header{
-  background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;
-}
 
 .menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
 .menu{
@@ -42,7 +34,6 @@ body.dark header{background:#e0e0e0;}
   background:#1e293b;
   border-radius:8px;
   min-width:170px;
-  z-index:50;
 }
 .menu a{
   display:block;
@@ -57,7 +48,7 @@ body.dark header{background:#e0e0e0;}
   grid-template-columns:repeat(3,1fr);
   gap:30px;
   max-width:900px;
-  margin:20px auto;
+  margin:30px auto;
 }
 
 .skin{
@@ -66,7 +57,7 @@ body.dark header{background:#e0e0e0;}
   display:flex;
   flex-direction:column;
   align-items:center;
-  transition:0.2s;
+  transition:transform 0.25s ease;
 }
 
 .skin img{
@@ -75,62 +66,42 @@ body.dark header{background:#e0e0e0;}
   border-radius:50%;
   border:4px solid #222;
   object-fit:cover;
+  transition:all 0.25s ease;
 }
 
+/* geselecteerde skin */
 .skin.selected img{
-  border-color:#22c55e;
-  box-shadow:0 0 0 6px rgba(34,197,94,0.4);
+  border-color:#facc15; /* geel */
+  box-shadow:0 0 0 8px rgba(250,204,21,0.4);
 }
 
+.skin.selected{
+  transform:scale(1.08);
+}
+
+/* Download button */
 .skin-actions{
-  display:flex;
-  gap:10px;
   width:100%;
-  margin-top:8px;
-}
-
-.share-btn{
-  flex:1;
-  background:#22c55e;
-  border:none;
-  border-radius:8px;
-  padding:6px;
-  font-weight:700;
-  cursor:pointer;
+  margin-top:10px;
 }
 
 .download-btn{
-  flex:1;
-  background:#0ea5e9;
+  width:100%;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
   border:none;
-  border-radius:8px;
-  padding:6px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.lock-overlay{
-  position:absolute;
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  background:rgba(0,0,0,0.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:36px;
-  color:white;
-}
-
-.lock-btn{
-  margin-top:8px;
-  background:#ef4444;
-  border:none;
-  border-radius:8px;
-  padding:6px 12px;
+  border-radius:10px;
+  padding:10px;
+  font-size:15px;
   font-weight:700;
   color:white;
   cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,0.4);
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+
+.download-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(0,0,0,0.6);
 }
 </style>
 </head>
@@ -141,7 +112,6 @@ body.dark header{background:#e0e0e0;}
   <div class="left-header">
     <img src="IMG_2718.png" class="logo">
     <span class="site-title">T.B Agar.io</span>
-    <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
   <div class="menu" id="menu">
@@ -152,7 +122,7 @@ body.dark header{background:#e0e0e0;}
 </header>
 
 <main>
-  <h1 style="text-align:center">Custom Skins</h1>
+  <h1 style="text-align:center;margin-top:20px;">Custom Skins</h1>
   <div class="grid" id="gallery"></div>
 </main>
 
@@ -162,20 +132,14 @@ function toggleMenu(){
   m.style.display=m.style.display==='block'?'none':'block';
 }
 
-const toggleBtn=document.getElementById('themeToggleBtn');
-const body=document.body;
-toggleBtn.onclick=()=>{
-  body.classList.toggle('dark');
-  toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';
-};
-
 const skins=[
   {name:"evil halloween spider",url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"},
   {name:"haloween man",url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"},
   {name:"evil halloween cat",url:"610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg"},
   {name:"Baby Dragon",url:"IMG_4073.png"},
   {name:"Thor Hamer",url:"IMG_4027.jpeg"},
-  {name:"Sting wasp",url:"IMG_4028.jpeg"}
+  {name:"Sting wasp",url:"IMG_4028.jpeg"},
+  {name:"fire wolf",url:"IMG_4025.jpeg"}
 ];
 
 const gallery=document.getElementById('gallery');
@@ -198,18 +162,9 @@ function renderGallery(){
     const actions=document.createElement('div');
     actions.className='skin-actions';
 
-    const shareBtn=document.createElement('button');
-    shareBtn.className='share-btn';
-    shareBtn.textContent='Share';
-    shareBtn.onclick=e=>{
-      e.stopPropagation();
-      navigator.clipboard.writeText(skin.url);
-      alert('Skin gekopieerd!');
-    };
-
     const downloadBtn=document.createElement('button');
     downloadBtn.className='download-btn';
-    downloadBtn.textContent='Download';
+    downloadBtn.textContent='⬇ Download Skin';
     downloadBtn.onclick=e=>{
       e.stopPropagation();
       const a=document.createElement('a');
@@ -220,7 +175,6 @@ function renderGallery(){
       document.body.removeChild(a);
     };
 
-    actions.appendChild(shareBtn);
     actions.appendChild(downloadBtn);
     card.appendChild(actions);
 
