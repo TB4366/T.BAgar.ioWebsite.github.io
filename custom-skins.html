@@ -4,158 +4,229 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io Website</title>
+
 <style>
-body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;transition:background-color 0.3s ease,color 0.3s ease;}
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0b1220;
+  color:white;
+  transition:background-color 0.3s ease,color 0.3s ease;
+}
 body.dark{background:#f0f0f0;color:#222;}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;position:relative;transition:background-color 0.3s ease;}
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 20px;
+  background:#0f172a;
+  position:relative;
+}
 body.dark header{background:#e0e0e0;}
+
 .left-header{display:flex;align-items:center;gap:12px;}
 .logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
 .site-title{font-size:1.3rem;font-weight:bold;}
-.toggle-btn-header{background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;padding:6px 10px;border-radius:8px;transition:background-color 0.3s ease,color 0.3s ease;}
+
+.toggle-btn-header{
+  background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;
+}
+
 .menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
-.menu{display:none;position:absolute;top:65px;right:20px;background:#1e293b;border-radius:8px;overflow:hidden;min-width:170px;z-index:50;}
-.menu a{display:block;padding:12px;color:white;text-decoration:none;border-bottom:1px solid #334155;}
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 900px; margin: 20px auto; padding: 0 10px; }
-.skin { width: 220px; height: 220px; margin: auto; border-radius: 50%; overflow: hidden; border: 4px solid #222; position: relative; background: transparent; display:flex; flex-direction:column; align-items:center; transition:0.2s; }
-.skin img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; pointer-events:none; }
-.skin .lock-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; border-radius:50%; font-size:36px; color:white; display:none; pointer-events:none; }
-.lock-btn { margin-top:8px; background:#ef4444; border:none; border-radius:8px; padding:6px 12px; font-weight:700; color:white; cursor:pointer; transition:0.2s; }
-.lock-btn:hover { background:#ff5959; }
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
-.modal{background:#071028;padding:20px;border-radius:12px;max-width:520px;width:92%;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:white;position:relative;display:flex;flex-direction:column;align-items:center;}
-.modal img{width:200px;height:200px;border-radius:50%;object-fit:cover;pointer-events:none;}
-.modal button{margin-top:12px;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:700;background:#06b6d4;color:#02111a;}
-.auth-buttons { display: flex; align-items: center; gap: 10px; }
-.auth-btn { background: #1e293b; border: 2px solid #334155; padding: 6px 12px; color: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-.auth-btn:hover { background: #334155; }
+.menu{
+  display:none;
+  position:absolute;
+  top:65px;
+  right:20px;
+  background:#1e293b;
+  border-radius:8px;
+  min-width:170px;
+  z-index:50;
+}
+.menu a{
+  display:block;
+  padding:12px;
+  color:white;
+  text-decoration:none;
+  border-bottom:1px solid #334155;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:30px;
+  max-width:900px;
+  margin:20px auto;
+}
+
+.skin{
+  width:220px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transition:0.2s;
+}
+
+.skin img{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  border:4px solid #222;
+  object-fit:cover;
+}
+
+.skin.selected img{
+  border-color:#22c55e;
+  box-shadow:0 0 0 6px rgba(34,197,94,0.4);
+}
+
+.skin-actions{
+  display:flex;
+  gap:10px;
+  width:100%;
+  margin-top:8px;
+}
+
+.share-btn{
+  flex:1;
+  background:#22c55e;
+  border:none;
+  border-radius:8px;
+  padding:6px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.download-btn{
+  flex:1;
+  background:#0ea5e9;
+  border:none;
+  border-radius:8px;
+  padding:6px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.lock-overlay{
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36px;
+  color:white;
+}
+
+.lock-btn{
+  margin-top:8px;
+  background:#ef4444;
+  border:none;
+  border-radius:8px;
+  padding:6px 12px;
+  font-weight:700;
+  color:white;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
 <header>
   <div class="left-header">
-    <img src="IMG_2718.png" alt="Logo" class="logo" />
+    <img src="IMG_2718.png" class="logo">
     <span class="site-title">T.B Agar.io</span>
-    <div class="auth-buttons">
-      <button class="auth-btn" id="loginBtn">Login</button>
-      <button class="auth-btn" id="settingsBtn" style="display:none;">Settings</button>
-    </div>
     <button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
   </div>
   <button class="menu-btn" onclick="toggleMenu()">☰</button>
   <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Pagina</a>
+    <a href="index.html">🏠 Home</a>
     <a href="custom-skins.html">🎨 Custom Skins</a>
     <a href="mod-menu.html">🛠️ Mod Menu</a>
   </div>
 </header>
 
 <main>
-  <h1 style="text-align:center;margin-top:18px;">Custom Skins</h1>
+  <h1 style="text-align:center">Custom Skins</h1>
   <div class="grid" id="gallery"></div>
 </main>
 
-<div id="purchaseModal" class="modal-backdrop">
-  <div class="modal">
-    <h2>Skin Preview</h2>
-    <img id="modalSkinImg" src="">
-    <div style="margin-top:12px;display:flex;gap:8px;">
-      <button onclick="closePurchase()">Close</button>
-    </div>
-  </div>
-</div>
-
 <script>
-function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
-const toggleBtn=document.getElementById('themeToggleBtn');const body=document.body;
-const savedTheme=localStorage.getItem('theme');
-if(savedTheme==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
-toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
-
-/* Auth buttons logic */
-const loginBtn=document.getElementById('loginBtn');
-const settingsBtn=document.getElementById('settingsBtn');
-let users = JSON.parse(localStorage.getItem('users')||'[]');
-let currentUser = JSON.parse(localStorage.getItem('currentUser')||'null');
-
-function updateAuthUI(){
-  if(currentUser){ 
-    loginBtn.textContent='Logout'; 
-    loginBtn.onclick=()=>{ currentUser=null;localStorage.removeItem('currentUser'); updateAuthUI(); renderGallery(); settingsBtn.style.display='inline-block'; }; 
-  } else { 
-    loginBtn.textContent='Login'; 
-    loginBtn.onclick=()=>{ alert('Login modal here'); settingsBtn.style.display='none'; };
-  }
+function toggleMenu(){
+  const m=document.getElementById('menu');
+  m.style.display=m.style.display==='block'?'none':'block';
 }
-updateAuthUI();
 
-/* Skins */
-const skins = [
-    { name: "evil halloween spider", url: "A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg" },
-    { name: "haloween man", url: "3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg" },
-    { name: "evil halloween cat", url: "610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg" },
-    { name: "Baby Dragon", url: "IMG_4073.png" },
-    { name: "Thor Hamer", url: "IMG_4027.jpeg" },
-    { name: "Sting wasp", url: "IMG_4028.jpeg" },
-    { name: "fire skeleton", url: "IMG_4024.jpeg" },
-    { name: "fire wolf", url: "IMG_4025.jpeg" },
-    { name: "captain jay", url: "IMG_4026.jpeg" },
-    { name: "Fire Art", url: "IMG_4022.jpeg" },
-    { name: "mouth fire art", url: "IMG_3180.jpeg" },
-    { name: "fire snake", url: "IMG_4032.jpeg" },
-    { name: "the tiger king", url: "IMG_4037.jpeg" }
+const toggleBtn=document.getElementById('themeToggleBtn');
+const body=document.body;
+toggleBtn.onclick=()=>{
+  body.classList.toggle('dark');
+  toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';
+};
+
+const skins=[
+  {name:"evil halloween spider",url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"},
+  {name:"haloween man",url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"},
+  {name:"evil halloween cat",url:"610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg"},
+  {name:"Baby Dragon",url:"IMG_4073.png"},
+  {name:"Thor Hamer",url:"IMG_4027.jpeg"},
+  {name:"Sting wasp",url:"IMG_4028.jpeg"}
 ];
 
-const paidSkins = [
-  { id:"paid_IMG_6174", img:"IMG_6174.webp", price:3.99 },
-  { id:"paid_IMG_6175", img:"IMG_6175.webp", price:5.99 },
-  { id:"paid_IMG_6260", img:"IMG_6260.webp", price:7.99 }
-];
-
-const allSkins = skins.concat(paidSkins.map(s=>({ name:'paid', url:s.img, paidData:s })));
-
-const gallery = document.getElementById('gallery');
-const modal = document.getElementById('purchaseModal');
-const modalImg = document.getElementById('modalSkinImg');
+const gallery=document.getElementById('gallery');
 
 function renderGallery(){
   gallery.innerHTML='';
-  allSkins.forEach(skin=>{
-    const card = document.createElement('div'); card.className='skin';
-    const img = document.createElement('img'); img.src=skin.url; card.appendChild(img);
+  skins.forEach(skin=>{
+    const card=document.createElement('div');
+    card.className='skin';
 
-    const isPaid = skin.paidData!==undefined;
-    let owned = currentUser && currentUser.ownedSkins && currentUser.ownedSkins.includes(isPaid?skin.paidData.id:null);
+    const img=document.createElement('img');
+    img.src=skin.url;
+    card.appendChild(img);
 
-    if(isPaid && !owned){
-      const overlay = document.createElement('div'); overlay.className='lock-overlay'; overlay.textContent='🔒';
-      card.appendChild(overlay);
+    card.onclick=()=>{
+      document.querySelectorAll('.skin').forEach(s=>s.classList.remove('selected'));
+      card.classList.add('selected');
+    };
 
-      const btn = document.createElement('button'); btn.className='lock-btn'; btn.textContent='Koop'; 
-      btn.onclick=()=>{ 
-        modalImg.src=skin.url; 
-        modal.style.display='flex'; 
-        overlay.style.display='flex'; 
-        // Simulate purchase: redeem code / PayPal
-        const buy = confirm(`Koop skin voor $${skin.paidData.price} via PayPal/redeem?`);
-        if(buy && currentUser){
-          currentUser.ownedSkins = currentUser.ownedSkins || [];
-          currentUser.ownedSkins.push(skin.paidData.id);
-          localStorage.setItem('currentUser', JSON.stringify(currentUser));
-          overlay.style.display='none'; btn.style.display='none';
-          renderGallery();
-          alert('Skin gekocht!'); 
-        }
-      };
-      card.appendChild(btn);
-    }
+    const actions=document.createElement('div');
+    actions.className='skin-actions';
+
+    const shareBtn=document.createElement('button');
+    shareBtn.className='share-btn';
+    shareBtn.textContent='Share';
+    shareBtn.onclick=e=>{
+      e.stopPropagation();
+      navigator.clipboard.writeText(skin.url);
+      alert('Skin gekopieerd!');
+    };
+
+    const downloadBtn=document.createElement('button');
+    downloadBtn.className='download-btn';
+    downloadBtn.textContent='Download';
+    downloadBtn.onclick=e=>{
+      e.stopPropagation();
+      const a=document.createElement('a');
+      a.href=skin.url;
+      a.download=skin.url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    actions.appendChild(shareBtn);
+    actions.appendChild(downloadBtn);
+    card.appendChild(actions);
 
     gallery.appendChild(card);
   });
 }
-
-function closePurchase(){ modal.style.display='none'; }
 
 renderGallery();
 </script>
