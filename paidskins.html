@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,230 +7,183 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-  body{background:#f3f4f6;color:#1f2937;font-family:sans-serif;}
   .card-img{width:120px;height:120px;object-fit:cover;border-radius:9999px;box-shadow:0 6px 12px rgba(0,0,0,0.08);}
   .small-img{width:96px;height:96px;object-fit:cover;border-radius:9999px;box-shadow:0 4px 8px rgba(0,0,0,0.08);}
-  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
-  .card{background:white;padding:16px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,0.08);flex-direction:column;display:flex;align-items:center;text-align:center;}
-  .status-msg{color:green;margin-top:6px;}
-  #cartModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000;}
-  #cartModal > div{background:white;padding:16px;width:90%;max-width:500px;border-radius:12px;}
-  .hidden{display:none;}
+  .cart-badge{background-color:#ef4444;color:white;font-weight:700;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;justify-content:center;align-items:center;position:absolute;top:-6px;right:-6px;}
+  .imgs-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:6px;}
 </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-800">
 
-<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
-  <div class="flex items-center gap-2">
-    <img src="https://via.placeholder.com/40/111827/ffffff?text=TB" alt="Logo" class="w-10 h-10 rounded-full">
-    <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
+<header class="bg-gray-900 text-white">
+  <div class="max-w-6xl mx-auto flex items-center justify-between p-4 gap-4">
+    <div class="flex items-center gap-3">
+      <img src="https://via.placeholder.com/40/111827/ffffff?text=TB" alt="Logo" class="w-10 h-10 rounded-full">
+      <div class="font-bold text-lg">T.B Agar.io Paid Skins</div>
+    </div>
+    <input id="navbarSearch" type="text" placeholder="Search skins..." class="flex-1 max-w-xl rounded px-3 py-2 text-gray-800">
+    <div class="flex items-center gap-4">
+      <select id="langSelect" class="rounded text-gray-800 px-2 py-2">
+        <option value="nl">Nederlands</option>
+        <option value="en">English</option>
+      </select>
+      <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
+        <i data-feather="shopping-cart"></i><span>Winkelwagen</span>
+        <span id="cartCount" class="cart-badge">0</span>
+      </button>
+    </div>
   </div>
-
-  <input id="navbarSearch" type="text" placeholder="Search skins..." class="rounded px-2 py-1 text-gray-800">
-
-  <button id="cartBtn" class="bg-teal-500 px-3 py-2 rounded flex items-center gap-2">
-    <i data-feather="shopping-cart"></i> Cart (<span id="cartCount">0</span>)
-  </button>
 </header>
 
-<div class="p-4 flex items-center gap-4">
-  <label for="sortSelect">Sort:</label>
-  <select id="sortSelect" class="rounded border px-2 py-1">
-    <option value="all">All Skins</option>
-    <option value="low">Price Low → High</option>
-    <option value="high">Price High → Low</option>
-    <option value="oldpaid">Old Paid Skins</option>
-    <option value="shuffle">Shuffle</option>
-  </select>
+<div class="max-w-6xl mx-auto px-6 mt-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <label for="sortSelect" class="text-sm font-medium">Prijzen</label>
+    <select id="sortSelect" class="rounded border px-3 py-2">
+      <option value="default">Algemeen</option>
+      <option value="low">Van laag naar hoog</option>
+      <option value="high">Van hoog naar laag</option>
+      <option value="popular">Populair</option>
+      <option value="shuffle">Shuffle</option>
+    </select>
+  </div>
 </div>
 
-<main class="p-4">
-  <div id="grid" class="grid"></div>
+<main class="max-w-6xl mx-auto p-6">
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
-<template id="card-template">
-  <div class="card">
-    <div class="imgs-row flex gap-2 justify-center"></div>
-    <h3 class="card-title font-semibold mt-2"></h3>
-    <p class="card-cat text-xs opacity-70 mt-1"></p>
-    <p class="card-desc text-sm mt-1"></p>
-    <div class="flex justify-between items-center mt-2 w-full">
-      <span class="card-price font-bold"></span>
-      <button class="selectBtn bg-green-600 text-white px-2 py-1 rounded">Select</button>
+<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded shadow-lg max-w-2xl w-full p-6 relative max-h-[90vh] overflow-auto">
+    <h2 class="text-2xl font-bold text-center mb-4">Winkelwagen</h2>
+    <button id="closeModal" class="absolute top-3 right-4 text-gray-600 text-2xl">&times;</button>
+    <div id="cartItems" class="space-y-4 mb-4"></div>
+    <hr class="my-4">
+    <div class="flex justify-between font-bold text-lg mb-4">
+      <span>Totaal:</span><span id="totalAmount">USD 0.00</span>
     </div>
-    <button class="shareBtn text-xs underline mt-1">Share</button>
-    <p class="status-msg text-xs mt-1 hidden"></p>
-  </div>
-</template>
-
-<!-- CART MODAL -->
-<div id="cartModal" class="hidden flex">
-  <div>
-    <h2 class="font-bold text-lg mb-2">Your Cart</h2>
-    <div id="cartList" class="space-y-2 mb-2"></div>
-    <p class="font-bold">Total: <span id="cartTotal">USD 0.00</span></p>
-    <div class="mt-2 flex flex-col gap-2">
-      <button id="payBtn" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-2">
-        <i data-feather="credit-card"></i> Pay with PayPal
-      </button>
-      <button id="closeCart" class="bg-gray-300 px-4 py-2 rounded">Close</button>
+    <div class="flex gap-4">
+      <button class="flex-1 bg-gray-200 p-3 rounded">Apple Gift Card</button>
+      <a id="paypalBtn" class="flex-1 bg-yellow-400 p-3 rounded text-white font-semibold text-center" target="_blank">PayPal</a>
     </div>
   </div>
 </div>
+
+<template id="card-template">
+  <div class="bg-white rounded shadow p-4 flex flex-col items-center text-center">
+    <div class="imgs-row"></div>
+    <h3 class="font-semibold mt-4 card-title text-lg"></h3>
+    <p class="text-sm text-gray-600 mt-1 card-desc"></p>
+    <p class="text-md font-medium text-gray-800 mt-2 card-price"></p>
+    <div class="mt-4 flex gap-3">
+      <button class="shareBtn bg-blue-500 text-white rounded px-4 py-2">Share</button>
+      <button class="selectBtn bg-green-600 text-white rounded px-4 py-2">Select</button>
+    </div>
+  </div>
+</template>
 
 <script>
 feather.replace();
 
-/* ---------------- DATA ---------------- */
-const bundles = [
-  {id:"skin_01",cat:"All Skins",name:"Bananananito Bandito + Trippi Troppi",price:8.49,image1:"IMG_6621.webp",image2:"IMG_6622.webp",note:"9300 coin • 300 dna"},
-  {id:"skin_02",cat:"All Skins",name:"U din din din dun ma",price:5.99,image1:"IMG_6620.webp",note:"5000 coin"},
-  {id:"old_01",cat:"Old Paid Skins",name:"Classic Shadow Orb",price:3.99,image1:"OLD_001.webp",note:"Legacy skin"},
-  {id:"old_02",cat:"Old Paid Skins",name:"Neon Spike",price:2.99,image1:"OLD_002.webp",note:"Legacy skin"},
+const bundles=[
+  {id:"skin_1",name:{nl:"Jack Odoom",en:"Jack Odoom"},price:3.99,image1:"IMG_6174.webp",image2:null,note:{nl:"1800 coins",en:"1800 coins"},sold:300},
+  {id:"skin_2",name:{nl:"Flame Gremlin",en:"Flame Gremlin"},price:5.99,image1:"IMG_6175.webp",image2:"IMG_6176.webp",note:{nl:"3600 coins",en:"3600 coins"},sold:260},
+  {id:"skin_3",name:{nl:"Lava King",en:"Lava King"},price:4.49,image1:"https://via.placeholder.com/160/f87171/ffffff?text=Lava+King",image2:null,note:{nl:"2000 coins",en:"2000 coins"},sold:200},
+  {id:"skin_4",name:{nl:"Blue Dragon",en:"Blue Dragon"},price:6.99,image1:"https://via.placeholder.com/160/3b82f6/ffffff?text=Blue+Dragon",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"4200 coins",en:"4200 coins"},sold:180},
+  {id:"skin_5",name:{nl:"Ghost Rider",en:"Ghost Rider"},price:7.99,image1:"https://via.placeholder.com/160/111827/ffffff?text=Ghost",image2:null,note:{nl:"4800 coins",en:"4800 coins"},sold:170},
+  {id:"skin_6",name:{nl:"Inferno Orb",en:"Inferno Orb"},price:4.99,image1:"https://via.placeholder.com/160/f97316/ffffff?text=Inferno",image2:null,note:{nl:"3000 coins",en:"3000 coins"},sold:150},
+  {id:"skin_7",name:{nl:"Toxic Slime",en:"Toxic Slime"},price:2.49,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1200 coins",en:"1200 coins"},sold:140},
+  {id:"skin_8",name:{nl:"Shadow Skull",en:"Shadow Skull"},price:8.99,image1:"https://via.placeholder.com/160/111827/ffffff?text=Shadow",image2:"https://via.placeholder.com/160/0f172a/ffffff?text=Alt",note:{nl:"5600 coins",en:"5600 coins"},sold:120},
+  {id:"skin_9",name:{nl:"Cyber Core",en:"Cyber Core"},price:5.49,image1:"https://via.placeholder.com/160/0ea5e9/ffffff?text=Cyber",image2:null,note:{nl:"3100 coins",en:"3100 coins"},sold:115},
+  {id:"skin_10",name:{nl:"Frozen Titan",en:"Frozen Titan"},price:6.79,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Frozen",image2:null,note:{nl:"3500 coins",en:"3500 coins"},sold:110},
+  {id:"skin_11",name:{nl:"Galaxy Orb",en:"Galaxy Orb"},price:9.99,image1:"https://via.placeholder.com/160/7c3aed/ffffff?text=Galaxy",image2:"https://via.placeholder.com/160/a855f7/ffffff?text=Alt",note:{nl:"6200 coins",en:"6200 coins"},sold:105},
+  {id:"skin_12",name:{nl:"Crimson Blade",en:"Crimson Blade"},price:4.59,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Crimson",image2:null,note:{nl:"2000 coins",en:"2000 coins"},sold:98},
+  {id:"skin_13",name:{nl:"Storm Rider",en:"Storm Rider"},price:3.49,image1:"https://via.placeholder.com/160/0ea5e9/ffffff?text=Storm",image2:null,note:{nl:"1600 coins",en:"1600 coins"},sold:95},
+  {id:"skin_14",name:{nl:"Ocean Wave",en:"Ocean Wave"},price:2.99,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Ocean",image2:null,note:{nl:"1400 coins",en:"1400 coins"},sold:90},
+  {id:"skin_15",name:{nl:"Thunder Orb",en:"Thunder Orb"},price:6.29,image1:"https://via.placeholder.com/160/facc15/000000?text=Thunder",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:88},
+  {id:"skin_16",name:{nl:"Emerald Eye",en:"Emerald Eye"},price:4.39,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Emerald",image2:"https://via.placeholder.com/160/16a34a/ffffff?text=Alt",note:{nl:"2200 coins",en:"2200 coins"},sold:80},
+  {id:"skin_17",name:{nl:"Purple Flame",en:"Purple Flame"},price:5.79,image1:"https://via.placeholder.com/160/9333ea/ffffff?text=Purple",image2:null,note:{nl:"3400 coins",en:"3400 coins"},sold:76},
+  {id:"skin_18",name:{nl:"Golden Mask",en:"Golden Mask"},price:8.19,image1:"https://via.placeholder.com/160/fbbf24/000000?text=Golden",image2:null,note:{nl:"5100 coins",en:"5100 coins"},sold:70},
+  {id:"skin_19",name:{nl:"Obsidian Orb",en:"Obsidian Orb"},price:3.99,image1:"https://via.placeholder.com/160/000000/ffffff?text=Obsidian",image2:null,note:{nl:"1900 coins",en:"1900 coins"},sold:64},
+  {id:"skin_20",name:{nl:"Star Burst",en:"Star Burst"},price:7.59,image1:"https://via.placeholder.com/160/fde047/000000?text=Star",image2:null,note:{nl:"4900 coins",en:"4900 coins"},sold:60},
+  {id:"skin_21",name:{nl:"Toxic Eye",en:"Toxic Eye"},price:3.19,image1:"https://via.placeholder.com/160/22c55e/ffffff?text=Toxic",image2:null,note:{nl:"1300 coins",en:"1300 coins"},sold:56},
+  {id:"skin_22",name:{nl:"Vortex Core",en:"Vortex Core"},price:5.39,image1:"https://via.placeholder.com/160/2563eb/ffffff?text=Vortex",image2:"https://via.placeholder.com/160/1d4ed8/ffffff?text=Alt",note:{nl:"3000 coins",en:"3000 coins"},sold:50},
+  {id:"skin_23",name:{nl:"Ruby Fang",en:"Ruby Fang"},price:6.19,image1:"https://via.placeholder.com/160/ef4444/ffffff?text=Ruby",image2:null,note:{nl:"3600 coins",en:"3600 coins"},sold:46},
+  {id:"skin_24",name:{nl:"Cursed Skull",en:"Cursed Skull"},price:8.49,image1:"https://via.placeholder.com/160/111827/ffffff?text=Cursed",image2:null,note:{nl:"5800 coins",en:"5800 coins"},sold:44},
+  {id:"skin_25",name:{nl:"Night Phantom",en:"Night Phantom"},price:5.69,image1:"https://via.placeholder.com/160/0f172a/ffffff?text=Night",image2:"https://via.placeholder.com/160/1e293b/ffffff?text=Alt",note:{nl:"3300 coins",en:"3300 coins"},sold:42},
+  {id:"skin_26",name:{nl:"Silver Orb",en:"Silver Orb"},price:4.99,image1:"https://via.placeholder.com/160/d1d5db/000000?text=Silver",image2:null,note:{nl:"2700 coins",en:"2700 coins"},sold:40},
+  {id:"skin_27",name:{nl:"Bronze King",en:"Bronze King"},price:3.79,image1:"https://via.placeholder.com/160/b45309/ffffff?text=Bronze",image2:null,note:{nl:"2100 coins",en:"2100 coins"},sold:36},
+  {id:"skin_28",name:{nl:"Fire Ball",en:"Fire Ball"},price:7.99,image1:"https://via.placeholder.com/160/f97316/ffffff?text=Fire",image2:null,note:{nl:"4500 coins",en:"4500 coins"},sold:34},
+  {id:"skin_29",name:{nl:"Aqua Lord",en:"Aqua Lord"},price:5.49,image1:"https://via.placeholder.com/160/38bdf8/ffffff?text=Aqua",image2:null,note:{nl:"3100 coins",en:"3100 coins"},sold:32},
+  {id:"skin_30",name:{nl:"Plasma Nova",en:"Plasma Nova"},price:9.49,image1:"https://via.placeholder.com/160/7c3aed/ffffff?text=Plasma",image2:"https://via.placeholder.com/160/a855f7/ffffff?text=Alt",note:{nl:"6200 coins",en:"6200 coins"},sold:30}
 ];
 
-/* ---------------- VARIABLES ---------------- */
-const grid = document.getElementById("grid");
-const tmpl = document.getElementById("card-template");
-let cart = [];
-const cartCount = document.getElementById("cartCount");
-const sortSelect = document.getElementById("sortSelect");
-const navbarSearch = document.getElementById("navbarSearch");
-const cartModal = document.getElementById("cartModal");
-const cartList  = document.getElementById("cartList");
-const cartTotal = document.getElementById("cartTotal");
+const grid=document.getElementById('grid');
+const template=document.getElementById('card-template');
+const cartCount=document.getElementById('cartCount');
+const cartItemsContainer=document.getElementById('cartItems');
+const totalAmount=document.getElementById('totalAmount');
+const cartModal=document.getElementById('cartModal');
+const paypalBtn=document.getElementById('paypalBtn');
+const navbarSearch=document.getElementById('navbarSearch');
+const sortSelect=document.getElementById('sortSelect');
+const fallbackImg="https://via.placeholder.com/120?text=No+Image";
+let cart=[];
+let originalOrder=bundles.slice();
 
-/* ---------------- HELPERS ---------------- */
-function price(p){return `USD ${p.toFixed(2)}`;}
-function inCart(id){return cart.some(i=>i.id===id);}
-
-/* ---------------- RENDER CARDS ---------------- */
-function makeCard(item){
-  const el = tmpl.content.cloneNode(true);
-  const imgs = el.querySelector(".imgs-row");
-
-  const img = document.createElement("img");
-  img.src = item.image1;
-  img.className = item.image2 ? "small-img" : "card-img";
-  imgs.appendChild(img);
-  if(item.image2){
-    const img2 = document.createElement("img");
-    img2.src = item.image2;
-    img2.className = "small-img";
-    imgs.appendChild(img2);
-  }
-
-  el.querySelector(".card-title").textContent = item.name;
-  el.querySelector(".card-cat").textContent = `Category: ${item.cat}`;
-  el.querySelector(".card-desc").textContent = item.note ?? "";
-  el.querySelector(".card-price").textContent = price(item.price);
-
-  const status = el.querySelector(".status-msg");
-  const selectBtn = el.querySelector(".selectBtn");
-  const shareBtn = el.querySelector(".shareBtn");
-
-  function showAdded(){
-    status.textContent = "This item has been added to the cart ✓";
-    status.classList.remove("hidden");
-    selectBtn.classList.replace("bg-green-600","bg-green-800");
-  }
-
-  if(inCart(item.id)) showAdded();
-
-  selectBtn.onclick = () => {
-    if(!inCart(item.id)){
-      cart.push(item);
-      cartCount.textContent = cart.length;
-      showAdded();
-      renderCart();
-    }
-  };
-
-  shareBtn.onclick = async()=>{
-    const url = location.origin+location.pathname+"#"+item.id;
-    try{ await navigator.clipboard.writeText(url); }catch{}
-    status.textContent = "URL copied ✓";
-    status.classList.remove("hidden");
-  };
-
-  return el;
-}
-
+function formatPrice(p){return`USD ${p.toFixed(2)}`;}
+function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function render(list){
-  grid.innerHTML = "";
-  list.forEach(i=>grid.appendChild(makeCard(i)));
-}
-
-/* ---------------- SORT ---------------- */
-const original = bundles.slice();
-sortSelect.addEventListener("change",()=>{
-  let list = bundles.slice();
-  switch(sortSelect.value){
-    case "all": list = original.slice(); break;
-    case "low": list.sort((a,b)=>a.price-b.price); break;
-    case "high": list.sort((a,b)=>b.price-a.price); break;
-    case "oldpaid": list = bundles.filter(b=>b.cat==="Old Paid Skins"); break;
-    case "shuffle": list.sort(()=>Math.random()-.5); break;
-  }
-  render(list);
-});
-
-/* ---------------- SEARCH ---------------- */
-navbarSearch.addEventListener("input",e=>{
-  const q = e.target.value.toLowerCase();
-  render(
-    bundles.filter(
-      b=>b.name.toLowerCase().includes(q)||b.cat.toLowerCase().includes(q)
-    )
-  );
-});
-
-/* ---------------- CART MODAL ---------------- */
-function renderCart(){
-  cartList.innerHTML = "";
-  let total = 0;
-
-  cart.forEach(item=>{
-    total += item.price;
-    const row = document.createElement("div");
-    row.className = "flex justify-between items-center text-sm bg-gray-50 px-2 py-2 rounded";
-    row.innerHTML = `
-      <span>${item.name}</span>
-      <div class="flex items-center gap-3">
-        <span>${price(item.price)}</span>
-        <button class="removeBtn text-red-600 text-xs underline">Remove</button>
-      </div>
-    `;
-    row.querySelector(".removeBtn").onclick = ()=>{
-      cart = cart.filter(i=>i.id!==item.id);
-      cartCount.textContent = cart.length;
-      renderCart();
-      render(bundles);
-    };
-    cartList.appendChild(row);
+  grid.innerHTML='';
+  list.forEach(item=>{
+    if(!item.image1&&!item.image2)return;
+    const el=template.content.cloneNode(true);
+    const imgsRow=el.querySelector('.imgs-row');
+    if(item.image1){const img=document.createElement('img');img.src=item.image1;img.className=item.image2?'small-img':'card-img';img.onerror=()=>img.src=fallbackImg;imgsRow.appendChild(img);}
+    if(item.image2){const img2=document.createElement('img');img2.src=item.image2;img2.className='small-img';img2.onerror=()=>img2.src=fallbackImg;imgsRow.appendChild(img2);}
+    el.querySelector('.card-title').textContent=item.name.nl;
+    el.querySelector('.card-desc').textContent=item.note.nl;
+    el.querySelector('.card-price').textContent=formatPrice(item.price);
+    el.querySelector('.shareBtn').addEventListener('click',()=>{navigator.clipboard.writeText(location.href+'#'+item.id);alert('Link gekopieerd');});
+    el.querySelector('.selectBtn').addEventListener('click',()=>{cart.push(item);cartCount.textContent=cart.length;alert(`${item.name.nl} toegevoegd aan winkelwagen`);});
+    grid.appendChild(el);
   });
-
-  cartTotal.textContent = price(total);
+}
+function updateCartModal(){
+  cartItemsContainer.innerHTML='';
+  cart.forEach((item,i)=>{
+    const div=document.createElement('div');
+    div.className='flex items-center justify-between gap-4 p-2 border rounded';
+    div.innerHTML=`<img src="${item.image1||fallbackImg}" class="w-16 h-16 rounded-full"><div class="flex-1"><h4>${item.name.nl}</h4><p>${formatPrice(item.price)}</p></div><button class="removeBtn text-red-500 font-bold text-xl">&times;</button>`;
+    div.querySelector('.removeBtn').addEventListener('click',()=>{cart.splice(i,1);cartCount.textContent=cart.length;updateCartModal();});
+    cartItemsContainer.appendChild(div);
+  });
+  const total=cart.reduce((s,it)=>s+it.price,0);
+  totalAmount.textContent=formatPrice(total);
+  paypalBtn.href=`https://paypal.me/TBYTagario/${total}`;
 }
 
-document.getElementById("cartBtn").onclick = ()=>{
-  renderCart();
-  cartModal.classList.remove("hidden");
-};
-document.getElementById("closeCart").onclick = ()=>cartModal.classList.add("hidden");
+document.getElementById('cartBtn').onclick=()=>{updateCartModal();cartModal.classList.remove('hidden');};
+document.getElementById('closeModal').onclick=()=>cartModal.classList.add('hidden');
 
-/* ---------------- PAYPAL ---------------- */
-document.getElementById("payBtn").onclick = ()=>{
-  if(cart.length===0){alert("Your cart is empty.");return;}
-  const total = cart.reduce((s,i)=>s+i.price,0).toFixed(2);
-  const paypalUrl = `https://www.paypal.com/paypalme/TBYTagario/${total}`;
-  window.location.href = paypalUrl;
-};
+navbarSearch.addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase();
+  const filtered=bundles.filter(b=>b.name.nl.toLowerCase().includes(q));
+  render(filtered);
+});
 
-/* ---------------- INITIAL RENDER ---------------- */
+sortSelect.addEventListener('change',()=>{
+  let sorted=[];
+  switch(sortSelect.value){
+    case'low':sorted=bundles.slice().sort((a,b)=>a.price-b.price);break;
+    case'high':sorted=bundles.slice().sort((a,b)=>b.price-a.price);break;
+    case'popular':sorted=bundles.slice().sort((a,b)=>b.sold-a.sold);break;
+    case'shuffle':sorted=shuffleArray(bundles);break;
+    default:sorted=originalOrder;
+  }
+  render(sorted);
+});
+
 render(bundles);
-cartCount.textContent = cart.length;
 </script>
-
 </body>
 </html>
