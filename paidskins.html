@@ -2,41 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>T.B Agar.io Paid Skins</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 
 <style>
-.card-img{width:120px;height:120px;border-radius:9999px;object-fit:cover}
-.small-img{width:90px;height:90px;border-radius:9999px;object-fit:cover}
-.imgs-row{display:flex;gap:10px;justify-content:center}
-.cart-badge{position:absolute;top:-6px;right:-6px;background:red;color:white;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
+.circle-big{width:120px;height:120px;border-radius:9999px;object-fit:cover}
+.circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
+.img-row{display:flex;gap:10px;justify-content:center}
+.badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 
 <body class="bg-gray-100">
 
-<!-- NAVBAR -->
+<!-- TOP BAR -->
 <header class="bg-gray-900 text-white">
   <div class="max-w-6xl mx-auto p-4 flex items-center gap-4">
     <div class="flex items-center gap-3">
-      <img src="https://via.placeholder.com/40?text=TB" class="rounded-full">
-      <span class="font-bold text-lg" data-i18n="title">T.B Agar.io Paid Skins</span>
+      <div class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold">TB</div>
+      <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
     </div>
 
-    <input id="search" class="flex-1 px-3 py-2 rounded text-black" placeholder="Search skins...">
-
-    <select id="lang" class="text-black px-2 py-2 rounded">
-      <option value="en">English</option>
-      <option value="nl">Nederlands</option>
-    </select>
+    <input id="search" placeholder="Search skins..."
+      class="flex-1 px-3 py-2 rounded text-black">
 
     <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
       <i data-feather="shopping-cart"></i>
-      <span data-i18n="cart">Cart</span>
-      <span id="cartCount" class="cart-badge">0</span>
+      Cart
+      <span id="cartCount" class="badge">0</span>
     </button>
   </div>
 </header>
@@ -45,8 +41,8 @@
 <div class="max-w-6xl mx-auto p-4">
   <select id="sort" class="px-3 py-2 rounded border">
     <option value="default">General</option>
-    <option value="low">Low → High</option>
-    <option value="high">High → Low</option>
+    <option value="low">Price: Low → High</option>
+    <option value="high">Price: High → Low</option>
     <option value="popular">Popular</option>
     <option value="shuffle">Shuffle</option>
   </select>
@@ -59,25 +55,30 @@
 
 <!-- CART MODAL -->
 <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-  <div class="bg-white rounded w-full max-w-xl p-6 relative">
+  <div class="bg-white w-full max-w-xl p-6 rounded relative">
     <button id="closeCart" class="absolute right-4 top-2 text-2xl">&times;</button>
-    <h2 class="text-2xl font-bold text-center mb-4" data-i18n="cart">Cart</h2>
+    <h2 class="text-2xl font-bold text-center mb-4">Cart</h2>
+
     <div id="cartItems" class="space-y-3"></div>
+
     <hr class="my-4">
-    <div class="flex justify-between font-bold text-lg">
-      <span data-i18n="total">Total</span>
+
+    <div class="flex justify-between text-lg font-bold">
+      <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-    <a id="paypal" target="_blank" class="block mt-4 bg-yellow-400 text-center py-3 rounded font-bold">
-      PayPal
+
+    <a id="paypal" target="_blank"
+      class="block mt-4 bg-yellow-400 text-center py-3 rounded font-bold">
+      Pay with PayPal
     </a>
   </div>
 </div>
 
-<!-- TEMPLATE -->
+<!-- CARD TEMPLATE -->
 <template id="card">
   <div class="bg-white p-4 rounded shadow text-center">
-    <div class="imgs-row"></div>
+    <div class="img-row"></div>
     <h3 class="font-bold mt-3 title"></h3>
     <p class="text-sm text-gray-600 desc"></p>
     <p class="font-semibold price mt-2"></p>
@@ -91,65 +92,143 @@
 <script>
 feather.replace();
 
-/* ======================
-   30 SKINS (ECHT)
-====================== */
-const skins=[
- {id:1,name:{en:"Jack Odoom",nl:"Jack Odoom"},desc:{en:"Halloween premium skin",nl:"Halloween premium skin"},price:3.99,image1:"IMG_6174.webp",image2:null,sold:320},
- {id:2,name:{en:"Flame Gremlin",nl:"Flame Gremlin"},desc:{en:"Fire demon skin",nl:"Vuur demon skin"},price:5.99,image1:"IMG_6175.webp",image2:"IMG_6176.webp",sold:280},
- {id:3,name:{en:"Blue Dragon",nl:"Blue Dragon"},desc:{en:"Legendary dragon",nl:"Legendarische draak"},price:6.99,image1:"IMG_6177.webp",image2:null,sold:260},
- {id:4,name:{en:"Shadow Skull",nl:"Shadow Skull"},desc:{en:"Dark skull skin",nl:"Donkere schedel"},price:7.49,image1:"IMG_6178.webp",image2:"IMG_6179.webp",sold:240},
- {id:5,name:{en:"Inferno Orb",nl:"Inferno Orb"},desc:{en:"Burning orb",nl:"Brandende orb"},price:4.99,image1:"IMG_6180.webp",image2:null,sold:220},
- {id:6,name:{en:"Frozen Titan",nl:"Frozen Titan"},desc:{en:"Ice giant skin",nl:"IJs reus"},price:6.49,image1:"IMG_6181.webp",image2:null,sold:210},
- {id:7,name:{en:"Galaxy Core",nl:"Galaxy Core"},desc:{en:"Cosmic skin",nl:"Kosmische skin"},price:8.99,image1:"IMG_6182.webp",image2:"IMG_6183.webp",sold:200},
- {id:8,name:{en:"Toxic Slime",nl:"Toxic Slime"},desc:{en:"Poison skin",nl:"Gif skin"},price:2.99,image1:"IMG_6184.webp",image2:null,sold:190},
- {id:9,name:{en:"Thunder Eye",nl:"Thunder Eye"},desc:{en:"Electric eye",nl:"Elektrisch oog"},price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
- {id:10,name:{en:"Night Phantom",nl:"Night Phantom"},desc:{en:"Ghost skin",nl:"Spook skin"},price:7.99,image1:"IMG_6186.webp",image2:"IMG_6187.webp",sold:170},
+/* =====================
+   30 SKINS
+===================== */
+const skins = [
+ {id:1,name:"Jack Odoom",desc:"Halloween premium skin",price:3.99,image1:"IMG_6174.webp",image2:null,sold:320},
+ {id:2,name:"Flame Gremlin",desc:"Fire demon skin",price:5.99,image1:"IMG_6175.webp",image2:"IMG_6176.webp",sold:280},
+ {id:3,name:"Blue Dragon",desc:"Legendary dragon",price:6.99,image1:"IMG_6177.webp",image2:null,sold:260},
+ {id:4,name:"Shadow Skull",desc:"Dark skull skin",price:7.49,image1:"IMG_6178.webp",image2:"IMG_6179.webp",sold:240},
+ {id:5,name:"Inferno Orb",desc:"Burning orb",price:4.99,image1:"IMG_6180.webp",image2:null,sold:220},
+ {id:6,name:"Frozen Titan",desc:"Ice giant skin",price:6.49,image1:"IMG_6181.webp",image2:null,sold:210},
+ {id:7,name:"Galaxy Core",desc:"Cosmic skin",price:8.99,image1:"IMG_6182.webp",image2:"IMG_6183.webp",sold:200},
+ {id:8,name:"Toxic Slime",desc:"Poison skin",price:2.99,image1:"IMG_6184.webp",image2:null,sold:190},
+ {id:9,name:"Thunder Eye",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
+ {id:10,name:"Night Phantom",desc:"Ghost skin",price:7.99,image1:"IMG_6186.webp",image2:"IMG_6187.webp",sold:170},
 
- {id:11,name:{en:"Crimson Blade",nl:"Crimson Blade"},desc:{en:"Red blade skin",nl:"Rood zwaard"},price:4.59,image1:"IMG_6188.webp",image2:null,sold:165},
- {id:12,name:{en:"Emerald Eye",nl:"Emerald Eye"},desc:{en:"Green gem eye",nl:"Groene edelsteen"},price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
- {id:13,name:{en:"Storm Rider",nl:"Storm Rider"},desc:{en:"Storm skin",nl:"Storm skin"},price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
- {id:14,name:{en:"Golden Mask",nl:"Golden Mask"},desc:{en:"Gold premium",nl:"Goud premium"},price:8.19,image1:"IMG_6192.webp",image2:null,sold:145},
- {id:15,name:{en:"Obsidian Orb",nl:"Obsidian Orb"},desc:{en:"Black stone",nl:"Zwarte steen"},price:3.99,image1:"IMG_6193.webp",image2:null,sold:140},
- {id:16,name:{en:"Star Burst",nl:"Star Burst"},desc:{en:"Star explosion",nl:"Ster explosie"},price:7.59,image1:"IMG_6194.webp",image2:null,sold:135},
- {id:17,name:{en:"Vortex Core",nl:"Vortex Core"},desc:{en:"Energy vortex",nl:"Energie vortex"},price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp",sold:130},
- {id:18,name:{en:"Ruby Fang",nl:"Ruby Fang"},desc:{en:"Red fang",nl:"Rode tand"},price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
- {id:19,name:{en:"Cursed Skull",nl:"Cursed Skull"},desc:{en:"Cursed skin",nl:"Vervloekte skin"},price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
- {id:20,name:{en:"Silver Orb",nl:"Silver Orb"},desc:{en:"Silver glow",nl:"Zilveren gloed"},price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
+ {id:11,name:"Crimson Blade",desc:"Red blade skin",price:4.59,image1:"IMG_6188.webp",image2:null,sold:165},
+ {id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
+ {id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
+ {id:14,name:"Golden Mask",desc:"Gold premium",price:8.19,image1:"IMG_6192.webp",image2:null,sold:145},
+ {id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp",image2:null,sold:140},
+ {id:16,name:"Star Burst",desc:"Star explosion",price:7.59,image1:"IMG_6194.webp",image2:null,sold:135},
+ {id:17,name:"Vortex Core",desc:"Energy vortex",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp",sold:130},
+ {id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
+ {id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
+ {id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
 
- {id:21,name:{en:"Bronze King",nl:"Bronze King"},desc:{en:"Bronze ruler",nl:"Bronzen heerser"},price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
- {id:22,name:{en:"Fire Ball",nl:"Fire Ball"},desc:{en:"Fire sphere",nl:"Vuur bol"},price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
- {id:23,name:{en:"Aqua Lord",nl:"Aqua Lord"},desc:{en:"Water lord",nl:"Water heer"},price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
- {id:24,name:{en:"Plasma Nova",nl:"Plasma Nova"},desc:{en:"Plasma energy",nl:"Plasma energie"},price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp",sold:85},
- {id:25,name:{en:"Dark Samurai",nl:"Dark Samurai"},desc:{en:"Samurai skin",nl:"Samurai skin"},price:6.79,image1:"IMG_6205.webp",image2:null,sold:80},
- {id:26,name:{en:"Ice Reaper",nl:"Ice Reaper"},desc:{en:"Ice skull",nl:"IJs schedel"},price:5.99,image1:"IMG_6206.webp",image2:null,sold:75},
- {id:27,name:{en:"Solar Eye",nl:"Solar Eye"},desc:{en:"Sun eye",nl:"Zon oog"},price:4.29,image1:"IMG_6207.webp",image2:null,sold:70},
- {id:28,name:{en:"Void Core",nl:"Void Core"},desc:{en:"Void energy",nl:"Leegte energie"},price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp",sold:65},
- {id:29,name:{en:"Crystal Fang",nl:"Crystal Fang"},desc:{en:"Crystal teeth",nl:"Kristal tanden"},price:6.59,image1:"IMG_6210.webp",image2:null,sold:60},
- {id:30,name:{en:"Phantom Glow",nl:"Phantom Glow"},desc:{en:"Glow phantom",nl:"Gloei phantom"},price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
+ {id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
+ {id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
+ {id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
+ {id:24,name:"Plasma Nova",desc:"Plasma energy",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp",sold:85},
+ {id:25,name:"Dark Samurai",desc:"Samurai skin",price:6.79,image1:"IMG_6205.webp",image2:null,sold:80},
+ {id:26,name:"Ice Reaper",desc:"Ice skull",price:5.99,image1:"IMG_6206.webp",image2:null,sold:75},
+ {id:27,name:"Solar Eye",desc:"Sun eye",price:4.29,image1:"IMG_6207.webp",image2:null,sold:70},
+ {id:28,name:"Void Core",desc:"Void energy",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp",sold:65},
+ {id:29,name:"Crystal Fang",desc:"Crystal teeth",price:6.59,image1:"IMG_6210.webp",image2:null,sold:60},
+ {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
-let cart=JSON.parse(localStorage.getItem("cart")||"[]");
-const grid=document.getElementById("grid");
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+const grid = document.getElementById("grid");
+const cartBtn = document.getElementById("cartBtn");
+const cartModal = document.getElementById("cartModal");
+const closeCart = document.getElementById("closeCart");
+const cartItems = document.getElementById("cartItems");
+const totalEl = document.getElementById("total");
+const cartCount = document.getElementById("cartCount");
 
 function render(list){
- grid.innerHTML="";
- list.forEach(s=>{
-  if(!s.image1 && !s.image2) return;
-  const c=document.getElementById("card").content.cloneNode(true);
-  const imgs=c.querySelector(".imgs-row");
-  if(s.image1){let i=document.createElement("img");i.src=s.image1;i.className=s.image2?"small-img":"card-img";imgs.appendChild(i);}
-  if(s.image2){let i=document.createElement("img");i.src=s.image2;i.className="small-img";imgs.appendChild(i);}
-  c.querySelector(".title").textContent=s.name.en;
-  c.querySelector(".desc").textContent=s.desc.en;
-  c.querySelector(".price").textContent="$"+s.price;
-  c.querySelector(".select").onclick=()=>{cart.push(s);localStorage.setItem("cart",JSON.stringify(cart));document.getElementById("cartCount").textContent=cart.length};
-  grid.appendChild(c);
- });
+  grid.innerHTML="";
+  list.forEach(s=>{
+    if(!s.image1 && !s.image2) return;
+
+    const c = document.getElementById("card").content.cloneNode(true);
+    const imgRow = c.querySelector(".img-row");
+
+    if(s.image1){
+      const i=document.createElement("img");
+      i.src=s.image1;
+      i.className=s.image2?"circle-small":"circle-big";
+      imgRow.appendChild(i);
+    }
+    if(s.image2){
+      const i=document.createElement("img");
+      i.src=s.image2;
+      i.className="circle-small";
+      imgRow.appendChild(i);
+    }
+
+    c.querySelector(".title").textContent=s.name;
+    c.querySelector(".desc").textContent=s.desc;
+    c.querySelector(".price").textContent="$"+s.price;
+
+    c.querySelector(".select").onclick=()=>{
+      cart.push(s);
+      localStorage.setItem("cart",JSON.stringify(cart));
+      updateCart();
+    };
+
+    c.querySelector(".share").onclick=()=>{
+      navigator.clipboard.writeText(s.name+" - $"+s.price);
+      alert("Copied to clipboard");
+    };
+
+    grid.appendChild(c);
+  });
 }
 
+function updateCart(){
+  cartItems.innerHTML="";
+  let total=0;
+
+  cart.forEach((s,i)=>{
+    total+=s.price;
+    const d=document.createElement("div");
+    d.className="flex justify-between items-center border p-2 rounded";
+    d.innerHTML=`
+      <span>${s.name}</span>
+      <div class="flex gap-2">
+        <span>$${s.price}</span>
+        <button onclick="removeItem(${i})" class="text-red-600 font-bold">✕</button>
+      </div>`;
+    cartItems.appendChild(d);
+  });
+
+  totalEl.textContent="$"+total.toFixed(2);
+  cartCount.textContent=cart.length;
+  document.getElementById("paypal").href=
+    "https://paypal.me/TBYTagario/"+total.toFixed(2);
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+}
+
+cartBtn.onclick=()=>{cartModal.classList.remove("hidden");updateCart();}
+closeCart.onclick=()=>cartModal.classList.add("hidden");
+
+document.getElementById("search").oninput=e=>{
+  const q=e.target.value.toLowerCase();
+  render(skins.filter(s=>s.name.toLowerCase().includes(q)));
+};
+
+document.getElementById("sort").onchange=e=>{
+  let list=[...skins];
+  if(e.target.value==="low") list.sort((a,b)=>a.price-b.price);
+  if(e.target.value==="high") list.sort((a,b)=>b.price-a.price);
+  if(e.target.value==="popular") list.sort((a,b)=>b.sold-a.sold);
+  if(e.target.value==="shuffle") list.sort(()=>Math.random()-0.5);
+  render(list);
+};
+
 render(skins);
-document.getElementById("cartCount").textContent=cart.length;
+updateCart();
 </script>
+
 </body>
 </html>
