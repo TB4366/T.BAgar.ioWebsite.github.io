@@ -140,6 +140,7 @@ const cartItems = document.getElementById("cartItems");
 const totalEl = document.getElementById("total");
 const cartCount = document.getElementById("cartCount");
 
+/* ===== RENDER SKINS ===== */
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
@@ -169,6 +170,7 @@ function render(list){
       cart.push(s);
       localStorage.setItem("cart",JSON.stringify(cart));
       updateCart();
+      alert("Item added to cart");
     };
 
     c.querySelector(".share").onclick=()=>{
@@ -180,20 +182,28 @@ function render(list){
   });
 }
 
+/* ===== CART ===== */
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
 
   cart.forEach((s,i)=>{
     total+=s.price;
+
     const d=document.createElement("div");
-    d.className="flex justify-between items-center border p-2 rounded";
+    d.className="flex items-center justify-between gap-3 border p-2 rounded";
+
     d.innerHTML=`
-      <span>${s.name}</span>
-      <div class="flex gap-2">
-        <span>$${s.price}</span>
-        <button onclick="removeItem(${i})" class="text-red-600 font-bold">✕</button>
-      </div>`;
+      <div class="flex items-center gap-3">
+        <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
+        <div>
+          <div class="font-bold">${s.name}</div>
+          <div class="text-sm text-gray-500">$${s.price}</div>
+        </div>
+      </div>
+      <button onclick="removeItem(${i})" class="text-red-600 font-bold text-xl">✕</button>
+    `;
+
     cartItems.appendChild(d);
   });
 
@@ -209,8 +219,14 @@ function removeItem(i){
   updateCart();
 }
 
-cartBtn.onclick=()=>{cartModal.classList.remove("hidden");updateCart();}
-closeCart.onclick=()=>cartModal.classList.add("hidden");
+cartBtn.onclick=()=>{
+  cartModal.classList.remove("hidden");
+  updateCart();
+};
+
+closeCart.onclick=()=>{
+  cartModal.classList.add("hidden");
+};
 
 document.getElementById("search").oninput=e=>{
   const q=e.target.value.toLowerCase();
@@ -229,6 +245,3 @@ document.getElementById("sort").onchange=e=>{
 render(skins);
 updateCart();
 </script>
-
-</body>
-</html>
