@@ -10,6 +10,9 @@
 body{background:#f0f0f0}
 .badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
 .user-item{cursor:pointer;padding:6px; border-b:1px solid #ccc; display:flex;justify-content:space-between; align-items:center}
+.payment-icon{position:fixed;top:16px;right:16px;cursor:pointer;font-size:24px;background:#fff;border-radius:9999px;padding:8px;box-shadow:0 0 6px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center}
+#paymentDropdown{position:fixed;top:60px;right:16px;width:300px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,0.2);border-radius:8px;display:none;max-height:400px;overflow:auto;z-index:50;}
+.payment-item{padding:8px;border-bottom:1px solid #ccc;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
 </style>
 </head>
 <body class="p-4">
@@ -43,6 +46,13 @@ body{background:#f0f0f0}
     <div class="font-semibold price mt-1"></div>
   </div>
 </template>
+
+<!-- Betalingen icoon -->
+<div class="payment-icon" id="paymentIcon">
+  <i data-feather="credit-card"></i>
+  <span id="paymentCount" class="badge">0</span>
+</div>
+<div id="paymentDropdown"></div>
 
 <script>
 feather.replace();
@@ -83,12 +93,37 @@ const skins = [
  {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
+/* ===== USERS & PAYMENTS ===== */
 let users = JSON.parse(localStorage.getItem("users")||"[]");
 let payments = JSON.parse(localStorage.getItem("payments")||"[]");
 
-/* ===== RENDER USERS ===== */
+/* ===== ADMIN FUNCTIONS ===== */
 const userList=document.getElementById("userList");
 const userDetails=document.getElementById("userDetails");
+const paymentIcon=document.getElementById("paymentIcon");
+const paymentDropdown=document.getElementById("paymentDropdown");
+const paymentCount=document.getElementById("paymentCount");
+
+function updatePaymentBadge(){
+  const pending=payments.filter(p=>p.status==="Pending").length;
+  paymentCount.textContent=pending;
+}
+
+paymentIcon.onclick=()=>{
+  paymentDropdown.style.display = paymentDropdown.style.display==="block"?"none":"block";
+  renderPayments();
+};
+
+function renderPayments(){
+  paymentDropdown.innerHTML="";
+  payments.filter(p=>p.status==="Pending").forEach((p,i)=>{
+    const div=document.createElement("div");
+    div.className="payment-item";
+    div.textContent=`${p.name} - $${p.amount}`;
+    div.onclick=()=>alert(`Gebruiker: ${p.name}\nEmail: ${p.email}\nUID: ${p.uid}\nBedrag: $${p.amount}`);
+    paymentDropdown.appendChild(div);
+  });
+}
 
 function renderUsers(list){
   userList.innerHTML="";
@@ -117,9 +152,7 @@ function showUserDetails(u,idx){
   let purchasedList = "";
   if(u.purchases && u.purchases.length>0){
     purchasedList = "<ul>"+u.purchases.map(p=>`<li>${p.name} - $${p.price}</li>`).join("")+"</ul>";
-  } else {
-    purchasedList = "<p>Geen aankopen</p>";
-  }
+  } else purchasedList = "<p>Geen aankopen</p>";
 
   userDetails.innerHTML=`
     <p><strong>Naam:</strong> ${u.name}</p>
@@ -161,6 +194,7 @@ function showUserDetails(u,idx){
       localStorage.setItem("payments",JSON.stringify(payments));
       alert("Betaling verwerkt!");
       showUserDetails(u,idx);
+      updatePaymentBadge();
     };
   });
 }
@@ -191,6 +225,7 @@ function renderSkins(){
 /* ===== INIT ===== */
 renderUsers(users);
 renderSkins();
+updatePaymentBadge();
 </script>
 
 </body>
