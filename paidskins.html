@@ -1,95 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Agar.io Skins Shop</title>
+<meta charset="utf-8">
+<title>T.B Agar.io Paid Skins</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0}
-header{background:#111;color:#fff;padding:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-header input{flex:1;padding:6px;border-radius:4px;border:none}
-button{cursor:pointer;border:none;border-radius:4px;padding:6px 12px}
-#skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:10px}
-.skin{background:#fff;padding:10px;border-radius:8px;text-align:center;box-shadow:0 0 5px rgba(0,0,0,0.2)}
-.skin img{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:5px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:50}
-.modal-content{background:#fff;padding:20px;width:320px;border-radius:8px;position:relative}
-.close{position:absolute;top:5px;right:10px;font-size:22px;cursor:pointer}
-.hidden{display:none}
-.menu{position:absolute;top:50px;left:10px;background:#222;color:#fff;padding:10px;border-radius:8px;display:none;flex-direction:column;gap:5px;z-index:60}
-.menu a{color:#fff;text-decoration:none}
-.badge{background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;position:absolute;top:-6px;right:-6px}
+.circle-big{width:120px;height:120px;border-radius:9999px;object-fit:cover}
+.circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
+.img-row{display:flex;gap:10px;justify-content:center}
+.badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
+.hidden{display:none;}
 </style>
 </head>
-<body>
+<body class="bg-gray-100">
 
-<header>
-<button id="hamburgerBtn">☰</button>
-<input id="search" placeholder="Search skins...">
-<button id="cartBtn" class="relative">🛒 Cart <span id="cartCount" class="badge">0</span></button>
-<button id="loginBtn" onclick="openLogin()">Login</button>
-<button id="registerBtn" onclick="openRegister()">Register</button>
-<button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
-<div id="menu" class="menu">
-  <a href="#">Home</a>
-  <a href="#">Agar.io Skins</a>
-  <a href="#">Custom Skins</a>
-  <a href="#">Paid Skins</a>
-</div>
+<!-- TOP BAR -->
+<header class="bg-gray-900 text-white">
+  <div class="max-w-6xl mx-auto p-4 flex items-center gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold">TB</div>
+      <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
+    </div>
+
+    <input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
+
+    <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
+      <i data-feather="shopping-cart"></i> Cart
+      <span id="cartCount" class="badge">0</span>
+    </button>
+
+    <button id="menuBtn" class="bg-gray-700 px-3 py-2 rounded">☰</button>
+
+    <button id="loginBtn" class="bg-blue-500 px-3 py-2 rounded">Login</button>
+    <button id="registerBtn" class="bg-green-500 px-3 py-2 rounded">Register</button>
+    <button id="accountBtn" class="bg-yellow-500 px-3 py-2 rounded hidden">💰</button>
+    <button id="logoutBtn" class="bg-red-500 px-3 py-2 rounded hidden">Logout</button>
+  </div>
 </header>
 
-<div id="skins"></div>
-
-<!-- LOGIN -->
-<div id="loginModal" class="modal hidden">
-  <div class="modal-content">
-    <span class="close" onclick="closeAll()">×</span>
-    <h3>Login</h3>
-    <input id="loginEmail" placeholder="Email"><br><br>
-    <input id="loginPass" type="password" placeholder="Password"><br><br>
-    <input id="loginKey" placeholder="Login key"><br><br>
-    <button onclick="login()">Login</button>
-  </div>
+<!-- SORT -->
+<div class="max-w-6xl mx-auto p-4">
+  <select id="sort" class="px-3 py-2 rounded border">
+    <option value="default">General</option>
+    <option value="low">Price: Low → High</option>
+    <option value="high">Price: High → Low</option>
+    <option value="popular">Popular</option>
+    <option value="shuffle">Shuffle</option>
+  </select>
 </div>
 
-<!-- REGISTER -->
-<div id="registerModal" class="modal hidden">
-  <div class="modal-content">
-    <span class="close" onclick="closeAll()">×</span>
-    <h3>Register</h3>
-    <input id="rName" placeholder="Name"><br><br>
-    <input id="rEmail" placeholder="Email"><br><br>
-    <input id="rUID" placeholder="Agar.io UID"><br><br>
-    <input id="rPass" type="password" placeholder="Password"><br><br>
-    <input id="rPass2" type="password" placeholder="Repeat password"><br><br>
-    <button onclick="register()">Register</button>
-  </div>
-</div>
+<!-- GRID -->
+<main class="max-w-6xl mx-auto p-6">
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+</main>
 
-<!-- CART -->
+<!-- CART MODAL -->
 <div id="cartModal" class="modal hidden">
-  <div class="modal-content">
-    <span class="close" onclick="closeAll()">×</span>
-    <h3>Cart</h3>
-    <div id="cartItems"></div>
-    <button onclick="payWithBalance()">Pay with my account</button>
+  <div class="bg-white w-full max-w-xl p-6 rounded relative">
+    <button id="closeCart" class="absolute right-4 top-2 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold text-center mb-4">Cart</h2>
+    <div id="cartItems" class="space-y-3"></div>
+    <hr class="my-4">
+    <div class="flex justify-between text-lg font-bold">
+      <span>Total</span>
+      <span id="total">$0.00</span>
+    </div>
+    <div class="flex gap-4 mt-4">
+      <button id="payVoucherBtn" class="flex-1 bg-blue-600 text-white py-3 rounded font-bold">Pay with Gift Voucher</button>
+      <button id="payAccountBtn" class="flex-1 bg-green-600 text-white py-3 rounded font-bold">Pay with My Account</button>
+    </div>
   </div>
 </div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeLogin()">×</span>
+    <h2 class="text-xl font-bold mb-4">Login</h2>
+    <input id="loginEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="loginPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="loginKey" placeholder="Key" class="w-full mb-2 px-3 py-2 border rounded">
+    <button id="loginSubmit" class="bg-blue-500 text-white w-full py-2 rounded">Login</button>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div id="registerModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeRegister()">×</span>
+    <h2 class="text-xl font-bold mb-4">Register</h2>
+    <input id="regName" placeholder="Your Name" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="regEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="regUID" placeholder="Agar.io UID" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="regPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="regPassword2" type="password" placeholder="Repeat Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <button id="registerSubmit" class="bg-green-500 text-white w-full py-2 rounded">Register</button>
+  </div>
+</div>
+
+<!-- ACCOUNT MODAL -->
+<div id="accountModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeAccount()">×</span>
+    <h2 class="text-xl font-bold mb-4">Account Balance</h2>
+    <p>Current Balance: $<span id="userBalanceDisplay">0</span></p>
+  </div>
+</div>
+
+<!-- CARD TEMPLATE -->
+<template id="card">
+  <div class="bg-white p-4 rounded shadow text-center">
+    <div class="img-row"></div>
+    <h3 class="font-bold mt-3 title"></h3>
+    <p class="text-sm text-gray-600 desc"></p>
+    <p class="font-semibold price mt-2"></p>
+    <div class="flex justify-center gap-3 mt-3">
+      <button class="share bg-blue-500 text-white px-3 py-2 rounded">Share</button>
+      <button class="select bg-green-600 text-white px-3 py-2 rounded">Select</button>
+    </div>
+  </div>
+</template>
 
 <script>
 feather.replace();
 
-/* ================= USERS & SESSION ================= */
-let users = JSON.parse(localStorage.getItem("users")||"[]");
-let currentUser = JSON.parse(localStorage.getItem("currentUser")||"null");
-let cart = [];
-let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-const SESSION_DAYS = 3;
-
-/* ================= 30 SKINS ================= */
-const skins = [
+/* =====================
+   30 SKINS
+===================== */
+  const skins = [
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
  {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
  {id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
@@ -122,123 +163,187 @@ const skins = [
  {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
-/* ================= INIT ================= */
-const skinsDiv = document.getElementById("skins");
-const loginModal = document.getElementById("loginModal");
-const registerModal = document.getElementById("registerModal");
+/* =====================
+   USER DATA
+===================== */
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
+
+const grid = document.getElementById("grid");
+const cartBtn = document.getElementById("cartBtn");
 const cartModal = document.getElementById("cartModal");
+const closeCartBtn = document.getElementById("closeCart");
 const cartItems = document.getElementById("cartItems");
+const totalEl = document.getElementById("total");
+const cartCount = document.getElementById("cartCount");
 const loginBtn = document.getElementById("loginBtn");
 const registerBtn = document.getElementById("registerBtn");
 const logoutBtn = document.getElementById("logoutBtn");
-const balanceBtn = document.getElementById("balanceBtn");
-const cartCount = document.getElementById("cartCount");
-const menu = document.getElementById("menu");
-const hamburgerBtn = document.getElementById("hamburgerBtn");
+const accountBtn = document.getElementById("accountBtn");
 
-hamburgerBtn.onclick=()=>menu.style.display=menu.style.display==="flex"?"none":"flex";
+/* === SHOW/HIDE MODALS === */
+loginBtn.onclick = () => document.getElementById("loginModal").classList.remove("hidden");
+registerBtn.onclick = () => document.getElementById("registerModal").classList.remove("hidden");
+function closeLogin(){document.getElementById("loginModal").classList.add("hidden");}
+function closeRegister(){document.getElementById("registerModal").classList.add("hidden");}
+function closeAccount(){document.getElementById("accountModal").classList.add("hidden");}
 
-renderSkins();
-if(currentUser) restoreSession();
+/* === REGISTER FUNCTION === */
+document.getElementById("registerSubmit").onclick = () => {
+  let name = document.getElementById("regName").value.trim();
+  let email = document.getElementById("regEmail").value.trim();
+  let uid = document.getElementById("regUID").value.trim();
+  let pass = document.getElementById("regPassword").value;
+  let pass2 = document.getElementById("regPassword2").value;
 
-/* ================= UI FUNCTIONS ================= */
-function closeAll(){
-  document.querySelectorAll(".modal").forEach(m=>m.classList.add("hidden"));
-}
-function openLogin(){closeAll();loginModal.classList.remove("hidden")}
-function openRegister(){closeAll();registerModal.classList.remove("hidden")}
-function openCart(){closeAll();cartModal.classList.remove("hidden");renderCart()}
+  if(!name || !email || !uid || !pass || !pass2){ alert("All fields are required."); return; }
+  if(pass !== pass2){ alert("Passwords do not match."); return; }
 
-/* ================= AUTH ================= */
-function register(){
-  let n=rName.value,e=rEmail.value,u=rUID.value,p=rPass.value,p2=rPass2.value;
-  if(!n||!e||!u||!p||p!==p2) return alert("Fill everything correctly");
-  let key=Math.floor(10000+Math.random()*90000);
-  users.push({name:n,email:e,uid:u,password:p,key,balance:0});
+  let key = Math.floor(10000 + Math.random()*90000); // 5 digits
+  let user = {name,email,uid,password:pass,key,balance:0};
+  users.push(user);
   localStorage.setItem("users",JSON.stringify(users));
-  alert("Success! Your key: "+key);
-  closeAll();
-}
-function login(){
-  let u=users.find(x=>x.email===loginEmail.value&&x.password===loginPass.value&&String(x.key)===loginKey.value);
-  if(!u) return alert("Invalid login");
-  currentUser={...u,lastActive:Date.now()};
-  localStorage.setItem("currentUser",JSON.stringify(currentUser));
-  updateUI();
-  closeAll();
-}
-function logout(){
-  localStorage.removeItem("currentUser");
-  currentUser=null;
-  updateUI();
-}
-function restoreSession(){
-  if(Date.now()-currentUser.lastActive>SESSION_DAYS*86400000){
-    logout();return;
-  }
-  currentUser.lastActive=Date.now();
-  localStorage.setItem("currentUser",JSON.stringify(currentUser));
-  updateUI();
-}
-function updateUI(){
-  loginBtn.classList.toggle("hidden",!!currentUser);
-  registerBtn.classList.toggle("hidden",!!currentUser);
-  logoutBtn.classList.toggle("hidden",!currentUser);
-  balanceBtn.classList.toggle("hidden",!currentUser);
-  if(currentUser) balanceBtn.textContent="💰 $"+currentUser.balance;
-}
+  alert(`Registration successful! Your key: ${key}`);
+  closeRegister();
+};
 
-/* ================= SHOP ================= */
-function renderSkins(){
-  skinsDiv.innerHTML="";
-  skins.forEach(s=>{
-    let d=document.createElement("div");
-    d.className="skin";
-    let imgs = `<img src="${s.image1}">`;
-    if(s.image2) imgs+=`<img src="${s.image2}">`;
-    d.innerHTML=`${imgs}<br><b>${s.name}</b><br>${s.desc}<br>$${s.price}<br>
-      <button onclick='addCart(${s.id})'>Add to cart</button>`;
-    skinsDiv.appendChild(d);
+/* === LOGIN FUNCTION === */
+document.getElementById("loginSubmit").onclick = () => {
+  let email = document.getElementById("loginEmail").value.trim();
+  let pass = document.getElementById("loginPassword").value;
+  let key = parseInt(document.getElementById("loginKey").value);
+
+  let user = users.find(u => u.email===email && u.password===pass && u.key===key);
+  if(!user){ alert("Invalid login."); return; }
+  currentUser = user;
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  alert(`Welcome, ${user.name}`);
+  closeLogin();
+  loginBtn.classList.add("hidden");
+  registerBtn.classList.add("hidden");
+  logoutBtn.classList.remove("hidden");
+  accountBtn.classList.remove("hidden");
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+};
+
+/* === LOGOUT FUNCTION === */
+logoutBtn.onclick = () => {
+  currentUser = null;
+  localStorage.setItem("currentUser",null);
+  loginBtn.classList.remove("hidden");
+  registerBtn.classList.remove("hidden");
+  logoutBtn.classList.add("hidden");
+  accountBtn.classList.add("hidden");
+  alert("Logged out.");
+};
+
+/* === ACCOUNT BUTTON === */
+accountBtn.onclick = () => {
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+  document.getElementById("accountModal").classList.remove("hidden");
+};
+
+/* === CART FUNCTIONS === */
+function render(list){
+  grid.innerHTML="";
+  list.forEach(s=>{
+    if(!s.image1 && !s.image2) return;
+
+    const c = document.getElementById("card").content.cloneNode(true);
+    const imgRow = c.querySelector(".img-row");
+
+    if(s.image1){
+      const i=document.createElement("img");
+      i.src=s.image1;
+      i.className=s.image2?"circle-small":"circle-big";
+      imgRow.appendChild(i);
+    }
+    if(s.image2){
+      const i=document.createElement("img");
+      i.src=s.image2;
+      i.className="circle-small";
+      imgRow.appendChild(i);
+    }
+
+    c.querySelector(".title").textContent=s.name;
+    c.querySelector(".desc").textContent=s.desc;
+    c.querySelector(".price").textContent="$"+s.price;
+
+    c.querySelector(".select").onclick=()=>{
+      cart.push(s);
+      localStorage.setItem("cart",JSON.stringify(cart));
+      updateCart();
+      alert("Item added to cart");
+    };
+
+    c.querySelector(".share").onclick=()=>{
+      navigator.clipboard.writeText(s.name+" - $"+s.price);
+      alert("Copied to clipboard");
+    };
+
+    grid.appendChild(c);
   });
 }
-function addCart(id){cart.push(skins.find(s=>s.id===id));renderCart();}
-function renderCart(){
+
+render(skins);
+
+function updateCart(){
   cartItems.innerHTML="";
-  cart.forEach(i=>cartItems.innerHTML+=`<div>${i.name} - $${i.price}</div>`);
+  let total=0;
+
+  cart.forEach((s,i)=>{
+    total+=s.price;
+
+    const d=document.createElement("div");
+    d.className="flex items-center justify-between gap-3 border p-2 rounded";
+
+    d.innerHTML=`
+      <div class="flex items-center gap-3">
+        <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
+        <div>
+          <div class="font-bold">${s.name}</div>
+          <div class="text-sm text-gray-500">$${s.price}</div>
+        </div>
+      </div>
+      <button onclick="removeItem(${i})" class="text-red-600 font-bold text-xl">✕</button>
+    `;
+
+    cartItems.appendChild(d);
+  });
+
+  totalEl.textContent="$"+total.toFixed(2);
   cartCount.textContent=cart.length;
 }
 
-/* ================= PAYMENTS ================= */
-function payWithBalance(){
-  if(!currentUser) return alert("Login first");
-  let total=cart.reduce((a,b)=>a+b.price,0);
-  if(currentUser.balance<total) return alert("Not enough balance");
-  currentUser.balance-=total;
-  saveOrder("balance");
-  alert("Payment successful!");
-  cart=[];
-  renderCart();
-  closeAll();
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
 }
-function saveOrder(method){
-  orders.push({
-    name:currentUser.name,
-    uid:currentUser.uid,
-    items:cart,
-    method,
-    status:"pending",
-    date:new Date().toISOString()
-  });
-  localStorage.setItem("orders",JSON.stringify(orders));
-  updateUser();
-}
-function updateUser(){
-  let i=users.findIndex(u=>u.email===currentUser.email);
-  users[i]=currentUser;
-  localStorage.setItem("users",JSON.stringify(users));
-  localStorage.setItem("currentUser",JSON.stringify(currentUser));
-  updateUI();
-}
+
+cartBtn.onclick=()=>{ cartModal.classList.remove("hidden"); updateCart(); };
+closeCartBtn.onclick=()=>{ cartModal.classList.add("hidden"); };
+
+// PAY WITH MY ACCOUNT
+document.getElementById("payAccountBtn").onclick = () => {
+  if(!currentUser){ alert("Please login first!"); return; }
+  let total = parseFloat(totalEl.textContent.replace("$",""));
+  if(currentUser.balance >= total){
+    currentUser.balance -= total;
+    localStorage.setItem("currentUser",JSON.stringify(currentUser));
+    let index = users.findIndex(u=>u.email===currentUser.email);
+    users[index] = currentUser;
+    localStorage.setItem("users",JSON.stringify(users));
+    cart = [];
+    localStorage.setItem("cart",JSON.stringify(cart));
+    updateCart();
+    cartModal.classList.add("hidden");
+    alert("Payment successful! Your skins will be processed in 2-3 days.");
+  } else {
+    alert("Insufficient balance. Please add funds to your account.");
+  }
+};
 </script>
 </body>
 </html>
