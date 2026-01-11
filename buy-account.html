@@ -2,138 +2,164 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Paid Skins Admin</title>
+<title>Admin Panel - T.B Agar.io</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
 <style>
-img{border-radius:9999px;object-fit:cover}
+body { background:#f3f4f6; }
+.header { background:#111827; color:white; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
+.search { flex:1; margin-left:1rem; }
+.table-container { max-width:1200px; margin:2rem auto; background:white; border-radius:0.5rem; padding:1rem; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { padding:0.75rem; border-bottom:1px solid #e5e7eb; text-align:left; }
+.button { padding:0.5rem 1rem; border-radius:0.375rem; cursor:pointer; }
+.edit-input { width:100%; padding:0.25rem; border:1px solid #d1d5db; border-radius:0.25rem; }
+.modal { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:50; }
+.modal-content { background:white; padding:2rem; border-radius:0.5rem; width:400px; position:relative; }
+.close { position:absolute; top:0.5rem; right:0.5rem; font-size:1.5rem; cursor:pointer; }
 </style>
 </head>
+<body>
 
-<body class="bg-gray-100">
-
-<header class="bg-gray-900 text-white p-4 text-center text-xl font-bold">
-  Paid Skins Admin Panel
+<header class="header">
+  <h1 class="font-bold text-xl">Admin Panel - T.B Agar.io</h1>
+  <input type="text" id="searchUser" placeholder="Zoek gebruiker..." class="search px-3 py-2 rounded">
 </header>
 
-<main class="max-w-6xl mx-auto p-6 grid md:grid-cols-2 gap-6">
+<div class="table-container">
+  <table class="table" id="usersTable">
+    <thead>
+      <tr>
+        <th>Naam</th>
+        <th>E-mail</th>
+        <th>Agario UID</th>
+        <th>Geld</th>
+        <th>Acties</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
 
-<!-- ADD / EDIT -->
-<section class="bg-white p-4 rounded shadow">
-  <h2 class="font-bold text-lg mb-3">Add / Edit Skin</h2>
-
-  <input id="nameEN" class="w-full border p-2 mb-2" placeholder="Name (EN)">
-  <input id="nameNL" class="w-full border p-2 mb-2" placeholder="Name (NL)">
-
-  <textarea id="descEN" class="w-full border p-2 mb-2" placeholder="Description (EN)"></textarea>
-  <textarea id="descNL" class="w-full border p-2 mb-2" placeholder="Description (NL)"></textarea>
-
-  <input id="price" type="number" step="0.01" class="w-full border p-2 mb-2" placeholder="Price">
-
-  <input id="img1" class="w-full border p-2 mb-2" placeholder="Image 1 (required)">
-  <input id="img2" class="w-full border p-2 mb-2" placeholder="Image 2 (optional)">
-
-  <input id="sold" type="number" class="w-full border p-2 mb-2" placeholder="Sold count">
-
-  <button onclick="saveSkin()" class="w-full bg-green-600 text-white py-2 rounded">
-    Save Skin
-  </button>
-
-  <button onclick="resetForm()" class="w-full bg-gray-400 text-white py-2 rounded mt-2">
-    Clear
-  </button>
-</section>
-
-<!-- LIST -->
-<section class="bg-white p-4 rounded shadow">
-  <h2 class="font-bold text-lg mb-3">Skins</h2>
-  <div id="list" class="space-y-3"></div>
-</section>
-
-</main>
+<!-- MODAL GEBRUIKER BEHEREN -->
+<div class="modal hidden" id="userModal">
+  <div class="modal-content">
+    <span class="close" id="closeUserModal">&times;</span>
+    <h2 class="font-bold text-xl mb-4">Gebruiker beheren</h2>
+    <div>
+      <label>Naam</label>
+      <input type="text" id="editName" class="edit-input" disabled>
+    </div>
+    <div class="mt-2">
+      <label>E-mail</label>
+      <input type="email" id="editEmail" class="edit-input">
+    </div>
+    <div class="mt-2">
+      <label>Agario UID</label>
+      <input type="text" id="editUID" class="edit-input">
+    </div>
+    <div class="mt-2">
+      <label>Wachtwoord</label>
+      <input type="text" id="editPassword" class="edit-input">
+    </div>
+    <div class="mt-2">
+      <label>Geld</label>
+      <input type="number" id="editMoney" class="edit-input">
+    </div>
+    <div class="mt-4 flex justify-between">
+      <button class="button bg-green-500 text-white" id="saveUser">Opslaan</button>
+      <button class="button bg-blue-500 text-white" id="addMoney">Stort geld</button>
+    </div>
+  </div>
+</div>
 
 <script>
-let skins = JSON.parse(localStorage.getItem("skins") || "[]");
-let editId = null;
+feather.replace();
 
-function saveSkin(){
-  const skin={
-    id: editId ?? Date.now(),
-    name:{en:nameEN.value,nl:nameNL.value},
-    desc:{en:descEN.value,nl:descNL.value},
-    price:parseFloat(price.value||0),
-    image1:img1.value,
-    image2:img2.value || null,
-    sold:parseInt(sold.value||0)
-  };
+// USERS ARRAY
+let users = JSON.parse(localStorage.getItem("users") || "[]");
 
-  if(!skin.image1){
-    alert("Image 1 is required");
-    return;
-  }
+// SELECT ELEMENTEN
+const usersTableBody = document.querySelector("#usersTable tbody");
+const searchInput = document.getElementById("searchUser");
+const userModal = document.getElementById("userModal");
+const closeUserModal = document.getElementById("closeUserModal");
+const editName = document.getElementById("editName");
+const editEmail = document.getElementById("editEmail");
+const editUID = document.getElementById("editUID");
+const editPassword = document.getElementById("editPassword");
+const editMoney = document.getElementById("editMoney");
+const saveUser = document.getElementById("saveUser");
+const addMoney = document.getElementById("addMoney");
 
-  if(editId){
-    skins = skins.map(s=>s.id===editId?skin:s);
-  }else{
-    skins.push(skin);
-  }
+let selectedUserIndex = null;
 
-  localStorage.setItem("skins",JSON.stringify(skins));
-  resetForm();
-  render();
-}
-
-function render(){
-  list.innerHTML="";
-  skins.forEach(s=>{
-    const d=document.createElement("div");
-    d.className="flex items-center justify-between border p-2 rounded";
-
-    d.innerHTML=`
-      <div class="flex items-center gap-3">
-        <img src="${s.image1}" width="50" height="50">
-        <div>
-          <div class="font-bold">${s.name.en}</div>
-          <div class="text-sm text-gray-500">$${s.price}</div>
-        </div>
-      </div>
-      <div class="flex gap-2">
-        <button class="bg-blue-500 text-white px-3 py-1 rounded" onclick="edit(${s.id})">Edit</button>
-        <button class="bg-red-600 text-white px-3 py-1 rounded" onclick="remove(${s.id})">Delete</button>
-      </div>
+// RENDER USERS
+function renderUsers(list){
+  usersTableBody.innerHTML = "";
+  list.forEach((u,i)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.uid}</td>
+      <td>$${u.money.toFixed(2)}</td>
+      <td><button class="button bg-gray-500 text-white manageBtn">Beheer</button></td>
     `;
-    list.appendChild(d);
+    tr.querySelector(".manageBtn").onclick = ()=>openUserModal(i);
+    usersTableBody.appendChild(tr);
   });
 }
 
-function edit(id){
-  const s=skins.find(x=>x.id===id);
-  editId=id;
-  nameEN.value=s.name.en;
-  nameNL.value=s.name.nl;
-  descEN.value=s.desc.en;
-  descNL.value=s.desc.nl;
-  price.value=s.price;
-  img1.value=s.image1;
-  img2.value=s.image2||"";
-  sold.value=s.sold;
+// OPEN MODAL
+function openUserModal(index){
+  selectedUserIndex = index;
+  const u = users[index];
+  editName.value = u.name;
+  editEmail.value = u.email;
+  editUID.value = u.uid;
+  editPassword.value = u.password;
+  editMoney.value = u.money;
+  userModal.classList.remove("hidden");
 }
 
-function remove(id){
-  if(confirm("Delete this skin?")){
-    skins=skins.filter(s=>s.id!==id);
-    localStorage.setItem("skins",JSON.stringify(skins));
-    render();
-  }
+// CLOSE MODAL
+closeUserModal.onclick = ()=> userModal.classList.add("hidden");
+
+// SAVE USER INFO
+saveUser.onclick = ()=>{
+  if(selectedUserIndex === null) return;
+  const u = users[selectedUserIndex];
+  u.email = editEmail.value.trim();
+  u.uid = editUID.value.trim();
+  u.password = editPassword.value;
+  u.money = parseFloat(editMoney.value) || 0;
+  localStorage.setItem("users",JSON.stringify(users));
+  renderUsers(users);
+  alert("Gebruiker bijgewerkt!");
 }
 
-function resetForm(){
-  editId=null;
-  document.querySelectorAll("input,textarea").forEach(i=>i.value="");
+// ADD MONEY
+addMoney.onclick = ()=>{
+  if(selectedUserIndex === null) return;
+  let amount = parseFloat(prompt("Voer bedrag in om toe te voegen:"));
+  if(isNaN(amount)) return alert("Ongeldig bedrag");
+  users[selectedUserIndex].money += amount;
+  localStorage.setItem("users",JSON.stringify(users));
+  renderUsers(users);
+  editMoney.value = users[selectedUserIndex].money;
+  alert(`$${amount.toFixed(2)} toegevoegd!`);
 }
 
-render();
+// SEARCH
+searchInput.oninput = e=>{
+  const q = e.target.value.toLowerCase();
+  renderUsers(users.filter(u=>u.name.toLowerCase().includes(q)));
+}
+
+// INIT
+renderUsers(users);
 </script>
-
 </body>
 </html>
