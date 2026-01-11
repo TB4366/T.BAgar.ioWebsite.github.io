@@ -1,70 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Admin Panel</title>
+
 <style>
-body{font-family:Arial;background:#111;color:#fff}
-.user{padding:8px;border-bottom:1px solid #333;cursor:pointer}
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+header{background:#020617;padding:12px;display:flex;justify-content:space-between;align-items:center}
+header h2{margin:0}
+.icon{cursor:pointer;position:relative;font-size:20px}
+.badge{position:absolute;top:-6px;right:-10px;background:red;color:#fff;
+border-radius:50%;padding:2px 6px;font-size:12px}
+
+.container{display:flex}
+.sidebar{width:280px;border-right:1px solid #1e293b;padding:10px}
+.content{flex:1;padding:20px}
+
+input,button{padding:6px;margin:4px 0;width:100%}
+.user{padding:8px;border-bottom:1px solid #334155;cursor:pointer}
+.user:hover{background:#1e293b}
+
+.card{background:#020617;padding:15px;border-radius:8px;margin-bottom:15px}
+.small{font-size:12px;color:#94a3b8}
+button{cursor:pointer}
 </style>
 </head>
+
 <body>
 
-<h2>Admin Panel</h2>
-<input id="search" placeholder="Search user"><br><br>
+<header>
+  <h2>Admin Panel</h2>
+  <div class="icon" onclick="toggleOrders()">
+    🛒
+    <span id="orderBadge" class="badge hidden">0</span>
+  </div>
+</header>
 
-<h3>Users</h3>
-<div id="usersList"></div>
+<div class="container">
 
-<h3>Orders <span id="orderCount"></span></h3>
-<div id="ordersList"></div>
+  <!-- USERS -->
+  <div class="sidebar">
+    <input id="search" placeholder="Search user">
+    <div id="userList"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+    <div class="card">Select a user or order</div>
+  </div>
+
+</div>
 
 <script>
-let users=JSON.parse(localStorage.getItem("users")||"[]");
-let orders=JSON.parse(localStorage.getItem("orders")||"[]");
+/* ================= DATA ================= */
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let viewingOrders = false;
 
+/* ================= INIT ================= */
+renderUsers();
+renderOrderBadge();
+
+/* ================= USERS ================= */
 function renderUsers(){
-usersList.innerHTML="";
-users.forEach((u,i)=>{
-if(search.value && !u.name.toLowerCase().includes(search.value.toLowerCase()))return;
-let d=document.createElement("div");
-d.className="user";
-d.textContent=u.name;
-d.onclick=()=>editUser(i);
-usersList.appendChild(d);
-});
+  userList.innerHTML="";
+  users.forEach((u,i)=>{
+    if(search.value && !u.name.toLowerCase().includes(search.value.toLowerCase())) return;
+    let d=document.createElement("div");
+    d.className="user";
+    d.textContent=u.name;
+    d.onclick=()=>openUser(i);
+    userList.appendChild(d);
+  });
 }
 
-function editUser(i){
-let u=users[i];
-let bal=prompt("Set balance:",u.balance);
-if(bal!==null) u.balance=Number(bal);
-let pass=prompt("Change password:",u.password);
-if(pass!==null) u.password=pass;
-if(confirm("Delete user?")) users.splice(i,1);
-localStorage.setItem("users",JSON.stringify(users));
-renderUsers();
+function openUser(i){
+  let u=users[i];
+  content.innerHTML=`
+    <div class="card">
+      <h3>${u.name}</h3>
+      <p class="small">Email: ${u.email}</p>
+      <p class="small">Agar.io UID: ${u.uid}</p>
+      <p class="small">Login key: ${u.key}</p>
+
+      <label>Password</label>
+      <input id="pw" value="${u.password}">
+
+      <label>Balance</label>
+      <input id="bal" type="number" value="${u.balance}">
+
+      <button onclick="saveUser(${i})">Save</button>
+      <button onclick="deleteUser(${i})" style="background:#b91c1c;color:#fff">Delete user</button>
+    </div>
+  `;
+}
+
+function saveUser(i){
+  users[i].password = pw.value;
+  users[i].balance = Number(bal.value);
+  localStorage.setItem("users",JSON.stringify(users));
+  alert("User updated");
+}
+
+function deleteUser(i){
+  if(!confirm("Delete this user?")) return;
+  users.splice(i,1);
+  localStorage.setItem("users",JSON.stringify(users));
+  renderUsers();
+  content.innerHTML="<div class='card'>User deleted</div>";
+}
+
+/* ================= ORDERS ================= */
+function renderOrderBadge(){
+  const pending = orders.filter(o=>o.status==="pending").length;
+  if(pending>0){
+    orderBadge.textContent=pending;
+    orderBadge.classList.remove("hidden");
+  } else {
+    orderBadge.classList.add("hidden");
+  }
+}
+
+function toggleOrders(){
+  viewingOrders=!viewingOrders;
+  if(viewingOrders) renderOrders();
+  else content.innerHTML="<div class='card'>Select a user or order</div>";
 }
 
 function renderOrders(){
-orderCount.textContent="("+orders.length+")";
-ordersList.innerHTML="";
-orders.forEach((o,i)=>{
-ordersList.innerHTML+=`<div>
-${o.name} (${o.uid}) - ${o.method} - ${o.status}
-<button onclick="process(${i})">Process</button>
-</div>`;
-});
+  content.innerHTML="";
+  orders.forEach((o,i)=>{
+    content.innerHTML+=`
+      <div class="card">
+        <b>${o.name}</b> <span class="small">(${o.uid})</span><br>
+        Method: ${o.method}<br>
+        Status: ${o.status}<br>
+        Date: ${o.date}<br>
+        <ul>
+          ${o.items.map(it=>`<li>${it.name} - $${it.price}</li>`).join("")}
+        </ul>
+        ${o.status==="pending"
+          ? `<button onclick="processOrder(${i})">Mark as processed</button>`
+          : `<span class="small">Processed</span>`
+        }
+      </div>
+    `;
+  });
 }
 
-function process(i){
-orders[i].status="processed";
-localStorage.setItem("orders",JSON.stringify(orders));
-renderOrders();
+function processOrder(i){
+  orders[i].status="processed";
+  localStorage.setItem("orders",JSON.stringify(orders));
+  renderOrders();
+  renderOrderBadge();
 }
 
+/* ================= SEARCH ================= */
 search.oninput=renderUsers;
-renderUsers();
-renderOrders();
 </script>
+
 </body>
 </html>
