@@ -11,6 +11,8 @@
 .circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
 .img-row{display:flex;gap:10px;justify-content:center}
 .badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
+.hidden{display:none;}
 </style>
 </head>
 <body class="bg-gray-100">
@@ -26,8 +28,7 @@
     <input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
 
     <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
-      <i data-feather="shopping-cart"></i>
-      Cart
+      <i data-feather="shopping-cart"></i> Cart
       <span id="cartCount" class="badge">0</span>
     </button>
 
@@ -57,20 +58,16 @@
 </main>
 
 <!-- CART MODAL -->
-<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+<div id="cartModal" class="modal hidden">
   <div class="bg-white w-full max-w-xl p-6 rounded relative">
     <button id="closeCart" class="absolute right-4 top-2 text-2xl">&times;</button>
     <h2 class="text-2xl font-bold text-center mb-4">Cart</h2>
-
     <div id="cartItems" class="space-y-3"></div>
-
     <hr class="my-4">
-
     <div class="flex justify-between text-lg font-bold">
       <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-
     <div class="flex gap-4 mt-4">
       <button id="payVoucherBtn" class="flex-1 bg-blue-600 text-white py-3 rounded font-bold">Pay with Gift Voucher</button>
       <button id="payAccountBtn" class="flex-1 bg-green-600 text-white py-3 rounded font-bold">Pay with My Account</button>
@@ -79,7 +76,7 @@
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+<div id="loginModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeLogin()">×</span>
     <h2 class="text-xl font-bold mb-4">Login</h2>
@@ -91,7 +88,7 @@
 </div>
 
 <!-- REGISTER MODAL -->
-<div id="registerModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+<div id="registerModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeRegister()">×</span>
     <h2 class="text-xl font-bold mb-4">Register</h2>
@@ -105,7 +102,7 @@
 </div>
 
 <!-- ACCOUNT MODAL -->
-<div id="accountModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+<div id="accountModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeAccount()">×</span>
     <h2 class="text-xl font-bold mb-4">Account Balance</h2>
@@ -169,7 +166,7 @@ const skins = [
 ];
 
 /* =====================
-   USER ACCOUNT DATA
+   USER DATA
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
@@ -187,7 +184,69 @@ const registerBtn = document.getElementById("registerBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const accountBtn = document.getElementById("accountBtn");
 
-// === RENDER SKINS ===
+/* === SHOW/HIDE MODALS === */
+loginBtn.onclick = () => document.getElementById("loginModal").classList.remove("hidden");
+registerBtn.onclick = () => document.getElementById("registerModal").classList.remove("hidden");
+function closeLogin(){document.getElementById("loginModal").classList.add("hidden");}
+function closeRegister(){document.getElementById("registerModal").classList.add("hidden");}
+function closeAccount(){document.getElementById("accountModal").classList.add("hidden");}
+
+/* === REGISTER FUNCTION === */
+document.getElementById("registerSubmit").onclick = () => {
+  let name = document.getElementById("regName").value.trim();
+  let email = document.getElementById("regEmail").value.trim();
+  let uid = document.getElementById("regUID").value.trim();
+  let pass = document.getElementById("regPassword").value;
+  let pass2 = document.getElementById("regPassword2").value;
+
+  if(!name || !email || !uid || !pass || !pass2){ alert("All fields are required."); return; }
+  if(pass !== pass2){ alert("Passwords do not match."); return; }
+
+  let key = Math.floor(10000 + Math.random()*90000); // 5 digits
+  let user = {name,email,uid,password:pass,key,balance:0};
+  users.push(user);
+  localStorage.setItem("users",JSON.stringify(users));
+  alert(`Registration successful! Your key: ${key}`);
+  closeRegister();
+};
+
+/* === LOGIN FUNCTION === */
+document.getElementById("loginSubmit").onclick = () => {
+  let email = document.getElementById("loginEmail").value.trim();
+  let pass = document.getElementById("loginPassword").value;
+  let key = parseInt(document.getElementById("loginKey").value);
+
+  let user = users.find(u => u.email===email && u.password===pass && u.key===key);
+  if(!user){ alert("Invalid login."); return; }
+  currentUser = user;
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  alert(`Welcome, ${user.name}`);
+  closeLogin();
+  loginBtn.classList.add("hidden");
+  registerBtn.classList.add("hidden");
+  logoutBtn.classList.remove("hidden");
+  accountBtn.classList.remove("hidden");
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+};
+
+/* === LOGOUT FUNCTION === */
+logoutBtn.onclick = () => {
+  currentUser = null;
+  localStorage.setItem("currentUser",null);
+  loginBtn.classList.remove("hidden");
+  registerBtn.classList.remove("hidden");
+  logoutBtn.classList.add("hidden");
+  accountBtn.classList.add("hidden");
+  alert("Logged out.");
+};
+
+/* === ACCOUNT BUTTON === */
+accountBtn.onclick = () => {
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+  document.getElementById("accountModal").classList.remove("hidden");
+};
+
+/* === CART FUNCTIONS === */
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
@@ -231,9 +290,6 @@ function render(list){
 
 render(skins);
 
-/* =====================
-   CART FUNCTIONS
-===================== */
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
@@ -271,13 +327,16 @@ function removeItem(i){
 cartBtn.onclick=()=>{ cartModal.classList.remove("hidden"); updateCart(); };
 closeCartBtn.onclick=()=>{ cartModal.classList.add("hidden"); };
 
-// === PAY WITH MY ACCOUNT ===
+// PAY WITH MY ACCOUNT
 document.getElementById("payAccountBtn").onclick = () => {
   if(!currentUser){ alert("Please login first!"); return; }
   let total = parseFloat(totalEl.textContent.replace("$",""));
   if(currentUser.balance >= total){
     currentUser.balance -= total;
     localStorage.setItem("currentUser",JSON.stringify(currentUser));
+    let index = users.findIndex(u=>u.email===currentUser.email);
+    users[index] = currentUser;
+    localStorage.setItem("users",JSON.stringify(users));
     cart = [];
     localStorage.setItem("cart",JSON.stringify(cart));
     updateCart();
