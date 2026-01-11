@@ -114,33 +114,38 @@ function renderUsers(list){
 }
 
 function showUserDetails(u,idx){
+  let purchasedList = "";
+  if(u.purchases && u.purchases.length>0){
+    purchasedList = "<ul>"+u.purchases.map(p=>`<li>${p.name} - $${p.price}</li>`).join("")+"</ul>";
+  } else {
+    purchasedList = "<p>Geen aankopen</p>";
+  }
+
   userDetails.innerHTML=`
     <p><strong>Naam:</strong> ${u.name}</p>
     <p><strong>Email:</strong> <input id="editEmail" value="${u.email}" class="border p-1 rounded w-full"></p>
     <p><strong>UID:</strong> <input id="editUid" value="${u.uid}" class="border p-1 rounded w-full"></p>
-    <p><strong>Wachtwoord:</strong> <input id="editPw" value="${u.password}" class="border p-1 rounded w-full></p>
-    <p><strong>Geld:</strong> $<span id="editMoney">${u.money}</span></p>
+    <p><strong>Wachtwoord:</strong> <input id="editPw" value="${u.password}" class="border p-1 rounded w-full"></p>
+    <p><strong>Geld:</strong> $<input id="editMoney" type="number" value="${u.money||0}" class="border p-1 rounded w-full"></p>
     <button id="saveUser" class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">Opslaan</button>
+    <hr class="my-2">
+    <h3 class="font-bold">Aankopen</h3>
+    <div>${purchasedList}</div>
     <hr class="my-2">
     <h3 class="font-bold">Betalingen</h3>
     <div id="paymentList"></div>
-    <button id="addMoney" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">Geld Storten</button>
   `;
+
   const saveBtn=document.getElementById("saveUser");
   saveBtn.onclick=()=>{
     u.email=document.getElementById("editEmail").value;
     u.uid=document.getElementById("editUid").value;
     u.password=document.getElementById("editPw").value;
+    u.money=parseFloat(document.getElementById("editMoney").value)||0;
     users[idx]=u;
     localStorage.setItem("users",JSON.stringify(users));
     alert("Gebruiker opgeslagen!");
     renderUsers(users);
-  };
-
-  const addMoneyBtn=document.getElementById("addMoney");
-  addMoneyBtn.onclick=()=>{
-    const amount=parseFloat(prompt("Bedrag storten?"));
-    if(!isNaN(amount)){u.money+=amount; users[idx]=u; localStorage.setItem("users",JSON.stringify(users)); document.getElementById("editMoney").textContent=u.money; alert("Geld toegevoegd!");}
   };
 
   const paymentList=document.getElementById("paymentList");
