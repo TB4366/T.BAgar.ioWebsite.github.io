@@ -140,9 +140,9 @@
 <script>
 feather.replace();
 
-/* =====================
-   30 SKINS
-===================== */
+// =====================
+// 30 SKINS
+// =====================
 const skins = [
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
  {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
@@ -180,6 +180,7 @@ const skins = [
    VARIABLES
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+let users = JSON.parse(localStorage.getItem("users") || "[]");
 let user = JSON.parse(localStorage.getItem("user") || "null");
 
 const grid=document.getElementById("grid");
@@ -224,6 +225,7 @@ function render(list){
     c.querySelector(".price").textContent="$"+s.price;
 
     c.querySelector(".select").onclick=()=>{
+      if(!user){ alert("Login eerst om skins te selecteren"); return; }
       cart.push(s);
       localStorage.setItem("cart",JSON.stringify(cart));
       updateCart();
@@ -266,12 +268,11 @@ function updateCart(){
 }
 
 function removeItem(i){cart.splice(i,1); localStorage.setItem("cart",JSON.stringify(cart)); updateCart();}
-
 cartBtn.onclick=()=>cartModal.classList.remove("hidden");
 closeCart.onclick=()=>cartModal.classList.add("hidden");
 
 /* =====================
-   LOGIN & REGISTER
+   LOGIN / REGISTER FUNCTIONS
 ===================== */
 loginBtn.onclick = ()=> loginModal.classList.remove("hidden");
 registerBtn.onclick = ()=> registerModal.classList.remove("hidden");
@@ -281,23 +282,69 @@ function updateUI(){
     loginBtn.style.display="none";
     registerBtn.style.display="none";
     moneyBtn.style.display="inline-block";
-  }else{
+  } else {
     loginBtn.style.display="inline-block";
     registerBtn.style.display="inline-block";
     moneyBtn.style.display="none";
   }
 }
 
+document.getElementById("doRegister").onclick=()=>{
+  const name=document.getElementById("regName").value.trim();
+  const email=document.getElementById("regEmail").value.trim();
+  const uid=document.getElementById("regUID").value.trim();
+  const pw=document.getElementById("regPassword").value;
+  const pw2=document.getElementById("regPassword2").value;
+  if(!name||!email||!uid||!pw||!pw2){alert("Alles invullen verplicht"); return;}
+  if(pw!==pw2){alert("Wachtwoorden komen niet overeen"); return;}
+  const key=Math.floor(10000+Math.random()*90000);
+  const newUser={name,email,uid,password:pw,key,money:0};
+  users.push(newUser);
+  localStorage.setItem("users",JSON.stringify(users));
+  alert("Registratie geslaagd! Key: "+key);
+  registerModal.classList.add("hidden");
+};
+
+document.getElementById("doLogin").onclick=()=>{
+  const email=document.getElementById("loginEmail").value.trim();
+  const pw=document.getElementById("loginPassword").value;
+  const key=document.getElementById("loginKey").value.trim();
+  const u=users.find(u=>u.email===email && u.password===pw && u.key==key);
+  if(!u){alert("Login mislukt"); return;}
+  user=u;
+  localStorage.setItem("user",JSON.stringify(user));
+  alert("Login succesvol");
+  loginModal.classList.add("hidden");
+  updateUI();
+};
+
 /* =====================
-   HAMBURGER MENU
+   HAMBURGER
 ===================== */
 function toggleMenu(){
-  const m=document.getElementById("menu");
-  m.style.display=(m.style.display==="flex")?"none":"flex";
+  const menu=document.getElementById("menu");
+  menu.style.display=menu.style.display==="flex"?"none":"flex";
 }
 
 /* =====================
-   INITIALIZE
+   SEARCH & SORT
+===================== */
+document.getElementById("search").oninput=e=>{
+  const q=e.target.value.toLowerCase();
+  render(skins.filter(s=>s.name.toLowerCase().includes(q)));
+};
+
+document.getElementById("sort").onchange=e=>{
+  let list=[...skins];
+  if(e.target.value==="low") list.sort((a,b)=>a.price-b.price);
+  if(e.target.value==="high") list.sort((a,b)=>b.price-a.price);
+  if(e.target.value==="popular") list.sort((a,b)=>b.sold-a.sold);
+  if(e.target.value==="shuffle") list.sort(()=>Math.random()-0.5);
+  render(list);
+};
+
+/* =====================
+   INIT
 ===================== */
 render(skins);
 updateCart();
