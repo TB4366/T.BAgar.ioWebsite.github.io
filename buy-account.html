@@ -8,225 +8,158 @@
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
 body{background:#f0f0f0}
-.badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
-.user-item{cursor:pointer;padding:6px; border-b:1px solid #ccc; display:flex;justify-content:space-between; align-items:center}
-.payment-icon{position:fixed;top:16px;right:16px;cursor:pointer;font-size:24px;background:#fff;border-radius:9999px;padding:8px;box-shadow:0 0 6px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center}
-#paymentDropdown{position:fixed;top:60px;right:16px;width:300px;background:#fff;box-shadow:0 0 6px rgba(0,0,0,0.2);border-radius:8px;display:none;max-height:400px;overflow:auto;z-index:50;}
-.payment-item{padding:8px;border-bottom:1px solid #ccc;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+header{background:#111;color:white;padding:10px;display:flex;align-items:center;justify-content:space-between}
+input,button,select{padding:5px;margin:2px;border-radius:4px}
+.user-row{padding:5px;border-bottom:1px solid #ccc;cursor:pointer}
+.user-row:hover{background:#eee}
+.payment-row{padding:5px;border-bottom:1px solid #ccc}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center}
+.modal-content{background:white;padding:20px;border-radius:5px;width:90%;max-width:600px;position:relative}
+.modal-close{position:absolute;top:10px;right:10px;font-size:24px;cursor:pointer}
 </style>
 </head>
-<body class="p-4">
+<body>
 
-<h1 class="text-3xl font-bold mb-4">Admin Panel - T.B Agar.io</h1>
-
-<input id="searchUser" placeholder="Zoek gebruiker..." class="p-2 border rounded mb-4 w-full">
-
-<div class="flex gap-6">
-  <div class="w-1/3">
-    <h2 class="text-xl font-bold mb-2">Gebruikers</h2>
-    <div id="userList" class="bg-white rounded shadow max-h-[500px] overflow-auto"></div>
+<header>
+  <span>Admin Panel - T.B Agar.io</span>
+  <div>
+    <input type="text" id="searchUser" placeholder="Zoek gebruiker...">
+    <button id="paymentIcon" class="relative">💰<span id="paymentCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1">0</span></button>
   </div>
+</header>
 
-  <div class="w-2/3">
-    <h2 class="text-xl font-bold mb-2">Gebruiker Details</h2>
-    <div id="userDetails" class="bg-white rounded shadow p-4 min-h-[500px]">
-      <p>Kies een gebruiker links</p>
-    </div>
-  </div>
+<div class="max-w-6xl mx-auto p-4">
+  <h2 class="text-xl font-bold mb-2">Gebruikers</h2>
+  <div id="userList" class="bg-white rounded shadow"></div>
 </div>
 
-<h2 class="text-xl font-bold mt-6 mb-2">30 Skins</h2>
-<div id="skinsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+<!-- USER MODAL -->
+<div id="userModal" class="modal flex">
+  <div class="modal-content">
+    <span class="modal-close" onclick="userModal.style.display='none'">&times;</span>
+    <h2 class="text-xl font-bold mb-2" id="userNameModal"></h2>
+    <p>UID: <span id="userUID"></span></p>
+    <p>Email: <span id="userEmail"></span></p>
+    <p>Wachtwoord: <input id="userPassword" type="text"></p>
+    <p>Saldo: $<input id="userBalance" type="number" min="0"></p>
+    <button id="saveUserBtn" class="bg-green-500 text-white rounded px-3 py-1 mt-2">Opslaan</button>
+    <button id="deleteUserBtn" class="bg-red-500 text-white rounded px-3 py-1 mt-2">Verwijderen</button>
 
-<template id="skinCard">
-  <div class="bg-white p-4 rounded shadow text-center">
-    <div class="flex justify-center gap-2 mb-2 img-row"></div>
-    <div class="font-bold title"></div>
-    <div class="text-sm desc"></div>
-    <div class="font-semibold price mt-1"></div>
+    <h3 class="text-lg font-bold mt-4">Betalingen</h3>
+    <div id="userPayments"></div>
   </div>
-</template>
-
-<!-- Betalingen icoon -->
-<div class="payment-icon" id="paymentIcon">
-  <i data-feather="credit-card"></i>
-  <span id="paymentCount" class="badge">0</span>
 </div>
-<div id="paymentDropdown"></div>
 
 <script>
 feather.replace();
 
-/* =====================
-   30 SKINS
-===================== */
-const skins = [
- {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
- {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
- {id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
- {id:4,name:"Birthday lol + Bull king",desc:"16000 coins 1 skin birthday lol 1 skin bull king",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp",sold:240},
- {id:5,name:"Tiny jack + Jade",desc:"30000 coins 1 skin tiny jack 1 skin jade",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp",sold:220},
- {id:6,name:"Evil master",desc:"16000 coins 1 skin evil master",price:11.49,image1:"IMG_5443.webp",image2:null,sold:210},
- {id:7,name:"Space warden + Evil master",desc:"50000 coins 1 skin space warden 1 skin evil master",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp",sold:200},
- {id:8,name:"Space warden",desc:"7000 coins 1 skin space warden",price:6.59,image1:"IMG_7150.webp",image2:null,sold:190},
- {id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
- {id:10,name:"King lion + Magic hat",desc:"50000 coins 1 skin king lion 1 skin magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp",sold:170},
- {id:11,name:"Ice Crystal",desc:"3250 coins 1 skin winter ice crystal",price:7.89,image1:"IMG_5938.webp",image2:null,sold:165},
- {id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
- {id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
- {id:14,name:"Golden Mask",desc:"Gold premium",price:8.19,image1:"IMG_6192.webp",image2:null,sold:145},
- {id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp",image2:null,sold:140},
- {id:16,name:"Star Burst",desc:"Star explosion",price:7.59,image1:"IMG_6194.webp",image2:null,sold:135},
- {id:17,name:"Vortex Core",desc:"Energy vortex",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp",sold:130},
- {id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
- {id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
- {id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
- {id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
- {id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
- {id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
- {id:24,name:"Plasma Nova",desc:"Plasma energy",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp",sold:85},
- {id:25,name:"Dark Samurai",desc:"Samurai skin",price:6.79,image1:"IMG_6205.webp",image2:null,sold:80},
- {id:26,name:"Ice Reaper",desc:"Ice skull",price:5.99,image1:"IMG_6206.webp",image2:null,sold:75},
- {id:27,name:"Solar Eye",desc:"Sun eye",price:4.29,image1:"IMG_6207.webp",image2:null,sold:70},
- {id:28,name:"Void Core",desc:"Void energy",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp",sold:65},
- {id:29,name:"Crystal Fang",desc:"Crystal teeth",price:6.59,image1:"IMG_6210.webp",image2:null,sold:60},
- {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
-];
+// === DATA ===
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+let payments = JSON.parse(localStorage.getItem("payments") || "[]");
+let selectedUserIndex = null;
 
-/* ===== USERS & PAYMENTS ===== */
-let users = JSON.parse(localStorage.getItem("users")||"[]");
-let payments = JSON.parse(localStorage.getItem("payments")||"[]");
-
-/* ===== ADMIN FUNCTIONS ===== */
-const userList=document.getElementById("userList");
-const userDetails=document.getElementById("userDetails");
-const paymentIcon=document.getElementById("paymentIcon");
-const paymentDropdown=document.getElementById("paymentDropdown");
-const paymentCount=document.getElementById("paymentCount");
-
-function updatePaymentBadge(){
-  const pending=payments.filter(p=>p.status==="Pending").length;
-  paymentCount.textContent=pending;
-}
-
-paymentIcon.onclick=()=>{
-  paymentDropdown.style.display = paymentDropdown.style.display==="block"?"none":"block";
-  renderPayments();
-};
-
-function renderPayments(){
-  paymentDropdown.innerHTML="";
-  payments.filter(p=>p.status==="Pending").forEach((p,i)=>{
-    const div=document.createElement("div");
-    div.className="payment-item";
-    div.textContent=`${p.name} - $${p.amount}`;
-    div.onclick=()=>alert(`Gebruiker: ${p.name}\nEmail: ${p.email}\nUID: ${p.uid}\nBedrag: $${p.amount}`);
-    paymentDropdown.appendChild(div);
-  });
-}
-
+// === RENDER USERS ===
+const userList = document.getElementById("userList");
 function renderUsers(list){
   userList.innerHTML="";
-  list.forEach((u,idx)=>{
-    const div=document.createElement("div");
-    div.className="user-item";
+  list.forEach((u,i)=>{
+    const div = document.createElement("div");
+    div.className="user-row";
     div.textContent=u.name;
-    const delBtn=document.createElement("button");
-    delBtn.textContent="🗑️";
-    delBtn.onclick=(e)=>{
-      e.stopPropagation();
-      if(confirm("Weet je zeker dat je deze gebruiker wilt verwijderen?")){
-        users.splice(idx,1);
-        localStorage.setItem("users",JSON.stringify(users));
-        renderUsers(users);
-        userDetails.innerHTML="<p>Kies een gebruiker links</p>";
-      }
+    div.onclick=()=>{
+      selectedUserIndex=i;
+      openUserModal(u);
     };
-    div.appendChild(delBtn);
-    div.onclick=()=>showUserDetails(u,idx);
     userList.appendChild(div);
   });
 }
+renderUsers(users);
 
-function showUserDetails(u,idx){
-  let purchasedList = "";
-  if(u.purchases && u.purchases.length>0){
-    purchasedList = "<ul>"+u.purchases.map(p=>`<li>${p.name} - $${p.price}</li>`).join("")+"</ul>";
-  } else purchasedList = "<p>Geen aankopen</p>";
-
-  userDetails.innerHTML=`
-    <p><strong>Naam:</strong> ${u.name}</p>
-    <p><strong>Email:</strong> <input id="editEmail" value="${u.email}" class="border p-1 rounded w-full"></p>
-    <p><strong>UID:</strong> <input id="editUid" value="${u.uid}" class="border p-1 rounded w-full"></p>
-    <p><strong>Wachtwoord:</strong> <input id="editPw" value="${u.password}" class="border p-1 rounded w-full"></p>
-    <p><strong>Geld:</strong> $<input id="editMoney" type="number" value="${u.money||0}" class="border p-1 rounded w-full"></p>
-    <button id="saveUser" class="mt-2 bg-blue-500 text-white px-3 py-1 rounded">Opslaan</button>
-    <hr class="my-2">
-    <h3 class="font-bold">Aankopen</h3>
-    <div>${purchasedList}</div>
-    <hr class="my-2">
-    <h3 class="font-bold">Betalingen</h3>
-    <div id="paymentList"></div>
-  `;
-
-  const saveBtn=document.getElementById("saveUser");
-  saveBtn.onclick=()=>{
-    u.email=document.getElementById("editEmail").value;
-    u.uid=document.getElementById("editUid").value;
-    u.password=document.getElementById("editPw").value;
-    u.money=parseFloat(document.getElementById("editMoney").value)||0;
-    users[idx]=u;
-    localStorage.setItem("users",JSON.stringify(users));
-    alert("Gebruiker opgeslagen!");
-    renderUsers(users);
-  };
-
-  const paymentList=document.getElementById("paymentList");
-  paymentList.innerHTML="";
-  payments.filter(p=>p.email===u.email).forEach((p,i)=>{
-    const d=document.createElement("div");
-    d.className="flex justify-between p-1 border-b";
-    d.innerHTML=`<span>${p.amount}$ - ${p.status}</span><button id="process${i}" class="text-green-600">Verwerk</button>`;
-    paymentList.appendChild(d);
-    document.getElementById(`process${i}`).onclick=()=>{
-      p.status="Verwerkt";
-      payments[i]=p;
-      localStorage.setItem("payments",JSON.stringify(payments));
-      alert("Betaling verwerkt!");
-      showUserDetails(u,idx);
-      updatePaymentBadge();
-    };
-  });
-}
-
-/* ===== SEARCH ===== */
+// === SEARCH USER ===
 document.getElementById("searchUser").oninput=e=>{
   const q=e.target.value.toLowerCase();
   renderUsers(users.filter(u=>u.name.toLowerCase().includes(q)));
 };
 
-/* ===== RENDER SKINS ===== */
-const skinsGrid=document.getElementById("skinsGrid");
-const skinTemplate=document.getElementById("skinCard").content;
-function renderSkins(){
-  skinsGrid.innerHTML="";
-  skins.forEach(s=>{
-    const c=skinTemplate.cloneNode(true);
-    const imgRow=c.querySelector(".img-row");
-    if(s.image1){const i=document.createElement("img");i.src=s.image1;i.style.width="80px";i.style.borderRadius="9999px";imgRow.appendChild(i);}
-    if(s.image2){const i=document.createElement("img");i.src=s.image2;i.style.width="50px";i.style.borderRadius="9999px";imgRow.appendChild(i);}
-    c.querySelector(".title").textContent=s.name;
-    c.querySelector(".desc").textContent=s.desc;
-    c.querySelector(".price").textContent="$"+s.price;
-    skinsGrid.appendChild(c);
+// === USER MODAL ===
+const userModal=document.getElementById("userModal");
+const userNameModal=document.getElementById("userNameModal");
+const userUID=document.getElementById("userUID");
+const userEmail=document.getElementById("userEmail");
+const userPassword=document.getElementById("userPassword");
+const userBalance=document.getElementById("userBalance");
+const userPayments=document.getElementById("userPayments");
+const saveUserBtn=document.getElementById("saveUserBtn");
+const deleteUserBtn=document.getElementById("deleteUserBtn");
+
+function openUserModal(user){
+  userModal.style.display="flex";
+  userNameModal.textContent=user.name;
+  userUID.textContent=user.uid;
+  userEmail.textContent=user.email;
+  userPassword.value=user.password;
+  userBalance.value=user.balance || 0;
+
+  // render payments
+  userPayments.innerHTML="";
+  payments.filter(p=>p.email===user.email).forEach((p,i)=>{
+    const div=document.createElement("div");
+    div.className="payment-row";
+    div.textContent=`${p.skins.join(", ")} - $${p.amount} - ${p.status}`;
+    const processBtn=document.createElement("button");
+    processBtn.textContent="Verwerk";
+    processBtn.className="bg-blue-500 text-white px-2 py-1 ml-2 rounded";
+    processBtn.onclick=()=>{
+      payments.find(pay=>pay===p).status="Processed";
+      localStorage.setItem("payments",JSON.stringify(payments));
+      div.textContent=`${p.skins.join(", ")} - $${p.amount} - ${p.status}`;
+      updatePaymentCount();
+    };
+    div.appendChild(processBtn);
+    userPayments.appendChild(div);
   });
 }
 
-/* ===== INIT ===== */
-renderUsers(users);
-renderSkins();
-updatePaymentBadge();
-</script>
+// === SAVE USER ===
+saveUserBtn.onclick=()=>{
+  const u=users[selectedUserIndex];
+  u.password=userPassword.value;
+  u.balance=parseFloat(userBalance.value);
+  users[selectedUserIndex]=u;
+  localStorage.setItem("users",JSON.stringify(users));
+  renderUsers(users);
+  alert("Gebruiker bijgewerkt!");
+};
 
+// === DELETE USER ===
+deleteUserBtn.onclick=()=>{
+  if(confirm("Weet je zeker dat je deze gebruiker wilt verwijderen?")){
+    users.splice(selectedUserIndex,1);
+    localStorage.setItem("users",JSON.stringify(users));
+    renderUsers(users);
+    userModal.style.display="none";
+  }
+};
+
+// === PAYMENT ICON ===
+const paymentIcon=document.getElementById("paymentIcon");
+const paymentCount=document.getElementById("paymentCount");
+function updatePaymentCount(){
+  const pending = payments.filter(p=>p.status==="Pending").length;
+  paymentCount.textContent=pending;
+}
+updatePaymentCount();
+
+paymentIcon.onclick=()=>{
+  const pending = payments.filter(p=>p.status==="Pending");
+  if(pending.length===0){ alert("Geen nieuwe betalingen"); return; }
+  const p = pending[0];
+  const u = users.find(u=>u.email===p.email);
+  if(u){
+    selectedUserIndex = users.indexOf(u);
+    openUserModal(u);
+  }
+};
+</script>
 </body>
 </html>
