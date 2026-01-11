@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <title>T.B Agar.io Paid Skins</title>
@@ -13,116 +13,117 @@
 .circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
 .img-row{display:flex;gap:10px;justify-content:center}
 .badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
-.menu-btn{font-size:24px;background:none;border:none;color:white;cursor:pointer}
-.menu{display:none;position:absolute;top:72px;right:0;width:240px;background:#1f2937;z-index:50}
-.menu a{display:block;padding:12px 16px;color:white;border-bottom:1px solid #374151}
-.menu a:hover{background:#374151}
+.menu {display:none;flex-direction:column;gap:2px;background:#111;color:white;position:absolute;top:60px;left:0;width:200px;padding:10px;border-radius:5px;}
+.menu a{padding:5px;}
+.menu-btn{background:#333;color:white;padding:5px 10px;border-radius:5px;}
 </style>
 </head>
 
 <body class="bg-gray-100">
 
-<!-- HEADER -->
+<!-- TOP BAR -->
 <header class="bg-gray-900 text-white relative">
-<div class="max-w-6xl mx-auto p-4 flex items-center gap-3">
+  <div class="max-w-6xl mx-auto p-4 flex items-center gap-3">
+    <div class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold">TB</div>
+    <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
 
-<div class="font-bold text-xl">TB</div>
+    <input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
 
-<input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
+    <button id="loginBtn" class="bg-blue-600 px-3 py-2 rounded text-white">Login</button>
+    <button id="registerBtn" class="bg-green-600 px-3 py-2 rounded text-white">Registreren</button>
+    <button id="moneyBtn" class="bg-yellow-500 px-3 py-2 rounded text-white hidden">💰</button>
+    <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded text-white">
+      🛒 <span id="cartCount" class="badge">0</span>
+    </button>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
 
-<button id="loginBtn" onclick="openLogin()" class="bg-blue-600 px-3 py-2 rounded">Login</button>
-<button id="registerBtn" onclick="openRegister()" class="bg-green-600 px-3 py-2 rounded">Registreren</button>
-
-<button id="moneyBtn" onclick="openWallet()" class="hidden">💰</button>
-
-<button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded">
-🛒 <span id="cartCount" class="badge">0</span>
-</button>
-
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-</div>
-
-<div class="menu" id="menu">
-<a href="#">🏠 Home</a>
-<a href="#">🎱 Agar.io Skins</a>
-<a href="#">🎨 Custom Skins</a>
-<a href="#">🛠️ Mod Menu</a>
-<a href="#">🔑 Keys</a>
-<a href="#">💰 Buy Account</a>
-<a href="#">💎 Paid Skins</a>
-</div>
+    <div class="menu" id="menu">
+      <a href="index.html">🏠 Home Page</a>
+      <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
+      <a href="custom-skins.html">🎨 Custom Skins</a>
+      <a href="mod-menu.html">🛠️ Mod Menu</a>
+      <a href="key-access.html">🔑 Keys</a>
+      <a href="buy-account.html">💰 Buy Account</a>
+      <a href="paidskins.html">💎 Paid Skins</a>
+    </div>
+  </div>
 </header>
+
+<!-- SORT -->
+<div class="max-w-6xl mx-auto p-4">
+  <select id="sort" class="px-3 py-2 rounded border">
+    <option value="default">General</option>
+    <option value="low">Price: Low → High</option>
+    <option value="high">Price: High → Low</option>
+    <option value="popular">Popular</option>
+    <option value="shuffle">Shuffle</option>
+  </select>
+</div>
 
 <!-- GRID -->
 <main class="max-w-6xl mx-auto p-6">
-<div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-<div class="bg-white p-6 rounded w-80">
-<h2 class="font-bold mb-3">Login</h2>
-<input id="loginEmail" placeholder="E-mail" class="w-full mb-2 p-2 border">
-<input id="loginPass" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border">
-<input id="loginKey" placeholder="Key" class="w-full mb-3 p-2 border">
-<button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded">Login</button>
-</div>
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-80 p-6 rounded relative">
+    <h2 class="text-2xl font-bold mb-3">Login</h2>
+    <input id="loginEmail" placeholder="E-mail" class="w-full mb-2 p-2 border rounded">
+    <input id="loginPass" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border rounded">
+    <input id="loginKey" placeholder="Key" class="w-full mb-3 p-2 border rounded">
+    <button onclick="login()" class="w-full bg-blue-600 text-white py-2 rounded">Login</button>
+    <button onclick="loginModal.classList.add('hidden')" class="absolute top-2 right-4 text-xl">&times;</button>
+  </div>
 </div>
 
 <!-- REGISTER MODAL -->
-<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
-<div class="bg-white p-6 rounded w-96">
-<h2 class="font-bold mb-3">Registreren</h2>
-<input id="rName" placeholder="Naam" class="w-full mb-2 p-2 border">
-<input id="rEmail" placeholder="E-mail" class="w-full mb-2 p-2 border">
-<input id="rUID" placeholder="Agar.io UID" class="w-full mb-2 p-2 border">
-<input id="rPass" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border">
-<input id="rPass2" type="password" placeholder="Herhaal wachtwoord" class="w-full mb-3 p-2 border">
-<button onclick="register()" class="w-full bg-green-600 text-white py-2 rounded">Registreren</button>
-<div id="registerResult" class="mt-3 text-center"></div>
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-96 p-6 rounded relative">
+    <h2 class="text-2xl font-bold mb-3">Registreren</h2>
+    <input id="rName" placeholder="Naam" class="w-full mb-2 p-2 border rounded">
+    <input id="rEmail" placeholder="E-mail" class="w-full mb-2 p-2 border rounded">
+    <input id="rUID" placeholder="Agar.io UID" class="w-full mb-2 p-2 border rounded">
+    <input id="rPass" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border rounded">
+    <input id="rPass2" type="password" placeholder="Herhaal wachtwoord" class="w-full mb-3 p-2 border rounded">
+    <button onclick="register()" class="w-full bg-green-600 text-white py-2 rounded">Registreren</button>
+    <button onclick="registerModal.classList.add('hidden')" class="absolute top-2 right-4 text-xl">&times;</button>
+    <div id="registerResult" class="mt-3 text-center text-green-700"></div>
+  </div>
 </div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-96 p-6 rounded relative">
+    <h2 class="text-2xl font-bold mb-3">Winkelwagen</h2>
+    <div id="cartItems" class="space-y-2 max-h-64 overflow-y-auto"></div>
+    <div class="flex justify-between mt-3 font-bold">
+      <span>Totaal</span>
+      <span id="total">$0.00</span>
+    </div>
+    <button onclick="cartModal.classList.add('hidden')" class="mt-3 w-full py-2 border rounded">Sluiten</button>
+  </div>
 </div>
+
+<!-- CARD TEMPLATE -->
+<template id="card">
+  <div class="bg-white p-4 rounded shadow text-center">
+    <div class="img-row"></div>
+    <h3 class="font-bold mt-3 title"></h3>
+    <p class="text-sm text-gray-600 desc"></p>
+    <p class="font-semibold price mt-2"></p>
+    <div class="flex justify-center gap-3 mt-3">
+      <button class="share bg-blue-500 text-white px-3 py-2 rounded">Share</button>
+      <button class="select bg-green-600 text-white px-3 py-2 rounded">Select</button>
+    </div>
+  </div>
+</template>
 
 <script>
 feather.replace();
 
-/* USERS */
-let users = JSON.parse(localStorage.getItem("users")||"[]");
-let currentUser = JSON.parse(localStorage.getItem("currentUser")||"null");
-
-/* UI */
-function updateUI(){
-loginBtn.classList.toggle("hidden",!!currentUser);
-registerBtn.classList.toggle("hidden",!!currentUser);
-moneyBtn.classList.toggle("hidden",!currentUser);
-}
-updateUI();
-
-/* REGISTER */
-function register(){
-if(!rName.value||!rEmail.value||!rUID.value||!rPass.value||!rPass2.value) return alert("Alles invullen");
-if(rPass.value!==rPass2.value) return alert("Wachtwoorden kloppen niet");
-const key=Math.floor(10000+Math.random()*90000);
-users.push({name:rName.value,email:rEmail.value,uid:rUID.value,pass:rPass.value,key,balance:0});
-localStorage.setItem("users",JSON.stringify(users));
-registerResult.innerHTML=`<b>Geslaagd</b><br>Key:<br><b>${key}</b><br>Je moet deze key goed opslaan`;
-}
-
-/* LOGIN */
-function login(){
-const u=users.find(x=>x.email===loginEmail.value&&x.pass===loginPass.value&&x.key==loginKey.value);
-if(!u) return alert("Foutieve gegevens");
-currentUser=u;
-localStorage.setItem("currentUser",JSON.stringify(u));
-location.reload();
-}
-function logout(){
-localStorage.removeItem("currentUser");
-location.reload();
-}
-
 /* =====================
-   30 SKINS
+   SKINS
 ===================== */
 const skins = [
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
@@ -135,7 +136,6 @@ const skins = [
  {id:8,name:"Space warden",desc:"7000 coins 1 skin space warden",price:6.59,image1:"IMG_7150.webp",image2:null,sold:190},
  {id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
  {id:10,name:"King lion + Magic hat",desc:"50000 coins 1 skin king lion 1 skin magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp",sold:170},
-
  {id:11,name:"Ice Crystal",desc:"3250 coins 1 skin winter ice crystal",price:7.89,image1:"IMG_5938.webp",image2:null,sold:165},
  {id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
  {id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
@@ -146,7 +146,6 @@ const skins = [
  {id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
  {id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
  {id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
-
  {id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
  {id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
  {id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
@@ -159,32 +158,171 @@ const skins = [
  {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
-/* RENDER GRID */
-let cart=[];
-function render(list=skins){
-grid.innerHTML="";
-list.forEach(s=>{
-const d=document.createElement("div");
-d.className="bg-white p-4 rounded text-center shadow";
-d.innerHTML=`<div class="img-row">
-<img src="${s.image1}" class="${s.image2?'circle-small':'circle-big'}">
-${s.image2?`<img src="${s.image2}" class="circle-small">`:""}
-</div>
-<b>${s.name}</b>
-<p>${s.desc}</p>
-<p>€${s.price}</p>
-<button class="bg-green-600 text-white px-3 py-1 rounded mt-2">Select</button>`;
-d.querySelector("button").onclick=()=>{
-if(!currentUser)return alert("Login vereist");
-cart.push(s);cartCount.textContent=cart.length;};
-grid.appendChild(d);
-});
+/* =====================
+   BASIC LOGIN SYSTEM
+===================== */
+let currentUser = null;
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+
+function login(){
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPass").value;
+  const key = document.getElementById("loginKey").value;
+
+  const u = users.find(x=>x.email===email && x.pass===pass && x.key===key);
+  if(u){currentUser=u; alert("Login geslaagd!"); loginModal.classList.add("hidden"); updateUI();} 
+  else alert("Login mislukt");
 }
 
-search.oninput=e=>render(skins.filter(s=>s.name.toLowerCase().includes(e.target.value.toLowerCase())));
-function toggleMenu(){menu.style.display=menu.style.display==="block"?"none":"block";}
+function register(){
+  const name = document.getElementById("rName").value;
+  const email = document.getElementById("rEmail").value;
+  const uid = document.getElementById("rUID").value;
+  const pass = document.getElementById("rPass").value;
+  const pass2 = document.getElementById("rPass2").value;
 
-render();
+  if(!name||!email||!uid||!pass||!pass2){alert("Vul alles in"); return;}
+  if(pass!==pass2){alert("Wachtwoorden komen niet overeen"); return;}
+  const key=Math.floor(10000+Math.random()*90000).toString();
+
+  const u={name,email,uid,pass,key,money:0};
+  users.push(u);
+  localStorage.setItem("users",JSON.stringify(users));
+
+  document.getElementById("registerResult").innerHTML=`Geslaagd!<br>Key: ${key}`;
+}
+
+/* =====================
+   UPDATE UI
+===================== */
+const loginBtn=document.getElementById("loginBtn");
+const registerBtn=document.getElementById("registerBtn");
+const moneyBtn=document.getElementById("moneyBtn");
+function updateUI(){
+  if(currentUser){
+    loginBtn.classList.add("hidden");
+    registerBtn.classList.add("hidden");
+    moneyBtn.classList.remove("hidden");
+  } else{
+    loginBtn.classList.remove("hidden");
+    registerBtn.classList.remove("hidden");
+    moneyBtn.classList.add("hidden");
+  }
+}
+
+/* =====================
+   GRID RENDER
+===================== */
+const grid = document.getElementById("grid");
+function render(list){
+  grid.innerHTML="";
+  list.forEach(s=>{
+    if(!s.image1 && !s.image2) return;
+
+    const c = document.getElementById("card").content.cloneNode(true);
+    const imgRow = c.querySelector(".img-row");
+
+    if(s.image1){
+      const i=document.createElement("img");
+      i.src=s.image1;
+      i.className=s.image2?"circle-small":"circle-big";
+      imgRow.appendChild(i);
+    }
+    if(s.image2){
+      const i=document.createElement("img");
+      i.src=s.image2;
+      i.className="circle-small";
+      imgRow.appendChild(i);
+    }
+
+    c.querySelector(".title").textContent=s.name;
+    c.querySelector(".desc").textContent=s.desc;
+    c.querySelector(".price").textContent="$"+s.price;
+
+    c.querySelector(".select").onclick=()=>{
+      cart.push(s);
+      localStorage.setItem("cart",JSON.stringify(cart));
+      updateCart();
+      alert("Item added to cart");
+    };
+
+    c.querySelector(".share").onclick=()=>{
+      navigator.clipboard.writeText(s.name+" - $"+s.price);
+      alert("Copied to clipboard");
+    };
+
+    grid.appendChild(c);
+  });
+}
+
+/* =====================
+   CART
+===================== */
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+const cartBtn=document.getElementById("cartBtn");
+const cartModal=document.getElementById("cartModal");
+const cartItems=document.getElementById("cartItems");
+const totalEl=document.getElementById("total");
+
+function updateCart(){
+  cartItems.innerHTML="";
+  let total=0;
+  cart.forEach((s,i)=>{
+    total+=s.price;
+    const d=document.createElement("div");
+    d.className="flex items-center justify-between gap-3 border p-2 rounded";
+    d.innerHTML=`
+      <div class="flex items-center gap-3">
+        <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
+        <div>
+          <div class="font-bold">${s.name}</div>
+          <div class="text-sm text-gray-500">$${s.price}</div>
+        </div>
+      </div>
+      <button onclick="removeItem(${i})" class="text-red-600 font-bold text-xl">✕</button>
+    `;
+    cartItems.appendChild(d);
+  });
+  totalEl.textContent="$"+total.toFixed(2);
+  document.getElementById("cartCount").textContent=cart.length;
+}
+
+function removeItem(i){cart.splice(i,1); localStorage.setItem("cart",JSON.stringify(cart)); updateCart();}
+
+cartBtn.onclick=()=>cartModal.classList.remove("hidden");
+
+/* =====================
+   SEARCH & SORT
+===================== */
+document.getElementById("search").oninput=e=>{
+  const q=e.target.value.toLowerCase();
+  render(skins.filter(s=>s.name.toLowerCase().includes(q)));
+};
+
+document.getElementById("sort").onchange=e=>{
+  let list=[...skins];
+  if(e.target.value==="low") list.sort((a,b)=>a.price-b.price);
+  if(e.target.value==="high") list.sort((a,b)=>b.price-a.price);
+  if(e.target.value==="popular") list.sort((a,b)=>b.sold-a.sold);
+  if(e.target.value==="shuffle") list.sort(()=>Math.random()-0.5);
+  render(list);
+};
+
+/* =====================
+   HAMBURGER MENU
+===================== */
+function toggleMenu(){
+  const m=document.getElementById("menu");
+  m.style.display=(m.style.display==="flex")?"none":"flex";
+}
+
+/* =====================
+   INITIALIZE
+===================== */
+render(skins);
+updateCart();
+updateUI();
 </script>
+
 </body>
 </html>
