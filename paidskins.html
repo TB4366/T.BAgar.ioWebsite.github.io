@@ -3,105 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skins Shop</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4}
-header{background:#111;color:#fff;padding:10px;display:flex;gap:10px;align-items:center}
-header input{flex:1;padding:6px}
-button{cursor:pointer}
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0}
+header{background:#111;color:#fff;padding:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+header input{flex:1;padding:6px;border-radius:4px;border:none}
+button{cursor:pointer;border:none;border-radius:4px;padding:6px 12px}
+#skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:10px}
+.skin{background:#fff;padding:10px;border-radius:8px;text-align:center;box-shadow:0 0 5px rgba(0,0,0,0.2)}
+.skin img{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:5px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:50}
+.modal-content{background:#fff;padding:20px;width:320px;border-radius:8px;position:relative}
+.close{position:absolute;top:5px;right:10px;font-size:22px;cursor:pointer}
 .hidden{display:none}
-
-.skin{background:#fff;padding:10px;margin:10px;border-radius:6px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);
-display:flex;align-items:center;justify-content:center}
-.modal>div{background:#fff;padding:20px;width:320px;border-radius:8px;position:relative}
-.close{position:absolute;right:10px;top:5px;font-size:22px;cursor:pointer}
-
-/* Hamburger menu */
-.menu{position:fixed;left:0;top:0;height:100%;width:220px;
-background:#020617;color:#fff;padding:15px;transform:translateX(-100%);
-transition:.3s;z-index:10}
-.menu.open{transform:translateX(0)}
-.menu h3{margin-top:0}
-.menu button{width:100%;margin-bottom:8px}
+.menu{position:absolute;top:50px;left:10px;background:#222;color:#fff;padding:10px;border-radius:8px;display:none;flex-direction:column;gap:5px;z-index:60}
+.menu a{color:#fff;text-decoration:none}
+.badge{background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;position:absolute;top:-6px;right:-6px}
 </style>
 </head>
-
 <body>
 
-<!-- HAMBURGER MENU -->
-<div id="menu" class="menu">
-<h3>Menu</h3>
-<button onclick="openCart()">Cart</button>
-<button onclick="openLogin()">Login</button>
-<button onclick="openRegister()">Register</button>
-<button onclick="logout()">Logout</button>
-</div>
-
 <header>
-<button onclick="toggleMenu()">☰</button>
-<input placeholder="Search skins">
-<button onclick="openCart()">🛒</button>
-
+<button id="hamburgerBtn">☰</button>
+<input id="search" placeholder="Search skins...">
+<button id="cartBtn" class="relative">🛒 Cart <span id="cartCount" class="badge">0</span></button>
 <button id="loginBtn" onclick="openLogin()">Login</button>
 <button id="registerBtn" onclick="openRegister()">Register</button>
 <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
-<button id="balanceBtn" class="hidden">💰 $<span id="balance">0</span></button>
+<div id="menu" class="menu">
+  <a href="#">Home</a>
+  <a href="#">Agar.io Skins</a>
+  <a href="#">Custom Skins</a>
+  <a href="#">Paid Skins</a>
+</div>
 </header>
 
 <div id="skins"></div>
 
 <!-- LOGIN -->
 <div id="loginModal" class="modal hidden">
-<div>
-<span class="close" onclick="closeAll()">×</span>
-<h3>Login</h3>
-<input id="loginEmail" placeholder="Email"><br><br>
-<input id="loginPass" type="password" placeholder="Password"><br><br>
-<input id="loginKey" placeholder="Login key"><br><br>
-<button onclick="login()">Login</button>
-</div>
+  <div class="modal-content">
+    <span class="close" onclick="closeAll()">×</span>
+    <h3>Login</h3>
+    <input id="loginEmail" placeholder="Email"><br><br>
+    <input id="loginPass" type="password" placeholder="Password"><br><br>
+    <input id="loginKey" placeholder="Login key"><br><br>
+    <button onclick="login()">Login</button>
+  </div>
 </div>
 
 <!-- REGISTER -->
 <div id="registerModal" class="modal hidden">
-<div>
-<span class="close" onclick="closeAll()">×</span>
-<h3>Register</h3>
-<input id="rName" placeholder="Name"><br><br>
-<input id="rEmail" placeholder="Email"><br><br>
-<input id="rUID" placeholder="Agar.io UID"><br><br>
-<input id="rPass" type="password" placeholder="Password"><br><br>
-<input id="rPass2" type="password" placeholder="Repeat password"><br><br>
-<button onclick="register()">Register</button>
-</div>
+  <div class="modal-content">
+    <span class="close" onclick="closeAll()">×</span>
+    <h3>Register</h3>
+    <input id="rName" placeholder="Name"><br><br>
+    <input id="rEmail" placeholder="Email"><br><br>
+    <input id="rUID" placeholder="Agar.io UID"><br><br>
+    <input id="rPass" type="password" placeholder="Password"><br><br>
+    <input id="rPass2" type="password" placeholder="Repeat password"><br><br>
+    <button onclick="register()">Register</button>
+  </div>
 </div>
 
 <!-- CART -->
 <div id="cartModal" class="modal hidden">
-<div>
-<span class="close" onclick="closeAll()">×</span>
-<h3>Cart</h3>
-<div id="cartItems"></div>
-<button onclick="payWithBalance()">Pay with my account</button>
-</div>
+  <div class="modal-content">
+    <span class="close" onclick="closeAll()">×</span>
+    <h3>Cart</h3>
+    <div id="cartItems"></div>
+    <button onclick="payWithBalance()">Pay with my account</button>
+  </div>
 </div>
 
 <script>
-/* ================= GLOBAL ================= */
-const skinsDiv = document.getElementById("skins");
-const cartItems = document.getElementById("cartItems");
-const menu = document.getElementById("menu");
+feather.replace();
 
-let cart = [];
+/* ================= USERS & SESSION ================= */
 let users = JSON.parse(localStorage.getItem("users")||"[]");
 let currentUser = JSON.parse(localStorage.getItem("currentUser")||"null");
+let cart = [];
 let orders = JSON.parse(localStorage.getItem("orders")||"[]");
 const SESSION_DAYS = 3;
 
-/* =====================
-   30 SKINS
-===================== */
+/* ================= 30 SKINS ================= */
 const skins = [
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
  {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
@@ -113,7 +100,6 @@ const skins = [
  {id:8,name:"Space warden",desc:"7000 coins 1 skin space warden",price:6.59,image1:"IMG_7150.webp",image2:null,sold:190},
  {id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
  {id:10,name:"King lion + Magic hat",desc:"50000 coins 1 skin king lion 1 skin magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp",sold:170},
-
  {id:11,name:"Ice Crystal",desc:"3250 coins 1 skin winter ice crystal",price:7.89,image1:"IMG_5938.webp",image2:null,sold:165},
  {id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
  {id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
@@ -124,7 +110,6 @@ const skins = [
  {id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
  {id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
  {id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
-
  {id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
  {id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
  {id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
@@ -138,16 +123,27 @@ const skins = [
 ];
 
 /* ================= INIT ================= */
+const skinsDiv = document.getElementById("skins");
+const loginModal = document.getElementById("loginModal");
+const registerModal = document.getElementById("registerModal");
+const cartModal = document.getElementById("cartModal");
+const cartItems = document.getElementById("cartItems");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const balanceBtn = document.getElementById("balanceBtn");
+const cartCount = document.getElementById("cartCount");
+const menu = document.getElementById("menu");
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+
+hamburgerBtn.onclick=()=>menu.style.display=menu.style.display==="flex"?"none":"flex";
+
 renderSkins();
 if(currentUser) restoreSession();
 
-/* ================= UI ================= */
-function toggleMenu(){
-menu.classList.toggle("open");
-}
+/* ================= UI FUNCTIONS ================= */
 function closeAll(){
-document.querySelectorAll(".modal").forEach(m=>m.classList.add("hidden"));
-menu.classList.remove("open");
+  document.querySelectorAll(".modal").forEach(m=>m.classList.add("hidden"));
 }
 function openLogin(){closeAll();loginModal.classList.remove("hidden")}
 function openRegister(){closeAll();registerModal.classList.remove("hidden")}
@@ -155,112 +151,94 @@ function openCart(){closeAll();cartModal.classList.remove("hidden");renderCart()
 
 /* ================= AUTH ================= */
 function register(){
-if(rPass.value!==rPass2.value) return alert("Passwords do not match");
-let key=Math.floor(10000+Math.random()*90000);
-users.push({
-name:rName.value,
-email:rEmail.value,
-uid:rUID.value,
-password:rPass.value,
-key,
-balance:0
-});
-localStorage.setItem("users",JSON.stringify(users));
-alert("Registered successfully.\nYour login key: "+key);
-closeAll();
+  let n=rName.value,e=rEmail.value,u=rUID.value,p=rPass.value,p2=rPass2.value;
+  if(!n||!e||!u||!p||p!==p2) return alert("Fill everything correctly");
+  let key=Math.floor(10000+Math.random()*90000);
+  users.push({name:n,email:e,uid:u,password:p,key,balance:0});
+  localStorage.setItem("users",JSON.stringify(users));
+  alert("Success! Your key: "+key);
+  closeAll();
 }
-
 function login(){
-let u=users.find(x=>x.email===loginEmail.value &&
-x.password===loginPass.value &&
-String(x.key)===loginKey.value);
-if(!u) return alert("Invalid login details");
-currentUser={...u,lastActive:Date.now()};
-localStorage.setItem("currentUser",JSON.stringify(currentUser));
-updateUI();
-closeAll();
+  let u=users.find(x=>x.email===loginEmail.value&&x.password===loginPass.value&&String(x.key)===loginKey.value);
+  if(!u) return alert("Invalid login");
+  currentUser={...u,lastActive:Date.now()};
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  updateUI();
+  closeAll();
 }
-
 function logout(){
-currentUser=null;
-localStorage.removeItem("currentUser");
-updateUI();
-closeAll();
+  localStorage.removeItem("currentUser");
+  currentUser=null;
+  updateUI();
 }
-
 function restoreSession(){
-if(Date.now()-currentUser.lastActive>SESSION_DAYS*86400000){
-logout();return;
+  if(Date.now()-currentUser.lastActive>SESSION_DAYS*86400000){
+    logout();return;
+  }
+  currentUser.lastActive=Date.now();
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  updateUI();
 }
-currentUser.lastActive=Date.now();
-localStorage.setItem("currentUser",JSON.stringify(currentUser));
-updateUI();
-}
-
 function updateUI(){
-loginBtn.classList.toggle("hidden",!!currentUser);
-registerBtn.classList.toggle("hidden",!!currentUser);
-logoutBtn.classList.toggle("hidden",!currentUser);
-balanceBtn.classList.toggle("hidden",!currentUser);
-if(currentUser) balance.textContent=currentUser.balance;
+  loginBtn.classList.toggle("hidden",!!currentUser);
+  registerBtn.classList.toggle("hidden",!!currentUser);
+  logoutBtn.classList.toggle("hidden",!currentUser);
+  balanceBtn.classList.toggle("hidden",!currentUser);
+  if(currentUser) balanceBtn.textContent="💰 $"+currentUser.balance;
 }
 
 /* ================= SHOP ================= */
 function renderSkins(){
-skinsDiv.innerHTML="";
-skins.forEach(s=>{
-skinsDiv.innerHTML+=`
-<div class="skin">
-<b>${s.name}</b><br>
-$${s.price}<br>
-<button onclick="addCart(${s.id})">Add to cart</button>
-</div>`;
-});
+  skinsDiv.innerHTML="";
+  skins.forEach(s=>{
+    let d=document.createElement("div");
+    d.className="skin";
+    let imgs = `<img src="${s.image1}">`;
+    if(s.image2) imgs+=`<img src="${s.image2}">`;
+    d.innerHTML=`${imgs}<br><b>${s.name}</b><br>${s.desc}<br>$${s.price}<br>
+      <button onclick='addCart(${s.id})'>Add to cart</button>`;
+    skinsDiv.appendChild(d);
+  });
 }
-
-function addCart(id){
-cart.push(skins.find(s=>s.id===id));
-alert("Added to cart");
-}
-
+function addCart(id){cart.push(skins.find(s=>s.id===id));renderCart();}
 function renderCart(){
-cartItems.innerHTML="";
-cart.forEach(i=>cartItems.innerHTML+=`<div>${i.name} - $${i.price}</div>`);
+  cartItems.innerHTML="";
+  cart.forEach(i=>cartItems.innerHTML+=`<div>${i.name} - $${i.price}</div>`);
+  cartCount.textContent=cart.length;
 }
 
-/* ================= PAYMENT ================= */
+/* ================= PAYMENTS ================= */
 function payWithBalance(){
-if(!currentUser) return alert("Login first");
-let total=cart.reduce((a,b)=>a+b.price,0);
-if(currentUser.balance<total) return alert("Not enough balance");
-currentUser.balance-=total;
-saveOrder();
-alert("Payment successful");
-cart=[];
-closeAll();
+  if(!currentUser) return alert("Login first");
+  let total=cart.reduce((a,b)=>a+b.price,0);
+  if(currentUser.balance<total) return alert("Not enough balance");
+  currentUser.balance-=total;
+  saveOrder("balance");
+  alert("Payment successful!");
+  cart=[];
+  renderCart();
+  closeAll();
 }
-
-function saveOrder(){
-orders.push({
-name:currentUser.name,
-uid:currentUser.uid,
-items:cart,
-method:"balance",
-status:"pending",
-date:new Date().toISOString()
-});
-localStorage.setItem("orders",JSON.stringify(orders));
-updateUser();
+function saveOrder(method){
+  orders.push({
+    name:currentUser.name,
+    uid:currentUser.uid,
+    items:cart,
+    method,
+    status:"pending",
+    date:new Date().toISOString()
+  });
+  localStorage.setItem("orders",JSON.stringify(orders));
+  updateUser();
 }
-
 function updateUser(){
-let i=users.findIndex(u=>u.email===currentUser.email);
-users[i]=currentUser;
-localStorage.setItem("users",JSON.stringify(users));
-localStorage.setItem("currentUser",JSON.stringify(currentUser));
-updateUI();
+  let i=users.findIndex(u=>u.email===currentUser.email);
+  users[i]=currentUser;
+  localStorage.setItem("users",JSON.stringify(users));
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  updateUI();
 }
 </script>
-
 </body>
 </html>
