@@ -4,21 +4,17 @@
 <meta charset="utf-8">
 <title>T.B Agar.io Paid Skins</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
-
 <style>
 .circle-big{width:120px;height:120px;border-radius:9999px;object-fit:cover}
 .circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
 .img-row{display:flex;gap:10px;justify-content:center}
 .badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
-.menu{display:none;flex-direction:column;gap:5px;position:absolute;top:60px;left:0;background:#1f2937;width:200px;padding:10px;border-radius:5px;z-index:1000}
-.menu a{color:white;text-decoration:none;padding:5px;border-radius:3px}
-.menu a:hover{background:#374151}
+.menu{display:none;flex-direction:column;gap:0.5rem;position:absolute;top:100%;right:0;background:white;border:1px solid #ccc;padding:0.5rem;border-radius:0.25rem;}
+.menu a{padding:0.5rem;text-decoration:none;color:black;}
 </style>
 </head>
-
 <body class="bg-gray-100">
 
 <!-- TOP BAR -->
@@ -29,37 +25,31 @@
       <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
     </div>
 
-    <input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
+    <input id="search" placeholder="Search skins..."
+      class="flex-1 px-3 py-2 rounded text-black">
 
-    <!-- LOGIN & REGISTER -->
-    <button id="loginBtn" class="bg-blue-500 px-3 py-2 rounded">Login</button>
-    <button id="registerBtn" class="bg-green-500 px-3 py-2 rounded">Registreren</button>
-
-    <!-- HAMBURGER -->
-    <button class="menu-btn bg-gray-700 px-3 py-2 rounded" onclick="toggleMenu()">☰</button>
-
-    <!-- CART -->
     <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
       <i data-feather="shopping-cart"></i>
       Cart
       <span id="cartCount" class="badge">0</span>
     </button>
 
-    <!-- MONEY ICON -->
-    <button id="moneyBtn" class="relative bg-yellow-400 px-3 py-2 rounded hidden">
+    <button id="moneyBtn" class="relative bg-yellow-500 px-4 py-2 rounded flex items-center gap-2 hidden">
       <i data-feather="dollar-sign"></i>
+      $<span id="moneyAmount">0.00</span>
     </button>
-  </div>
 
-  <!-- HAMBURGER MENU ITEMS -->
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home Page</a>
-    <a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-    <a href="key-access.html">🔑 Keys</a>
-    <a href="buy-account.html">💰 Buy Account</a>
-    <a href="paidskins.html">💎 Paid Skins</a>
+    <button id="loginBtn" class="bg-blue-500 px-4 py-2 rounded">Login</button>
+    <button id="registerBtn" class="bg-green-500 px-4 py-2 rounded">Registreren</button>
+
+    <!-- Hamburger -->
+    <button class="bg-gray-700 px-3 py-2 ml-2 rounded" onclick="toggleMenu()">☰</button>
+    <div class="menu" id="menu">
+      <a href="#">🏠 Home</a>
+      <a href="#">🎱 Agar.io Skins</a>
+      <a href="#">🎨 Custom Skins</a>
+      <a href="#">💎 Paid Skins</a>
+    </div>
   </div>
 </header>
 
@@ -90,35 +80,35 @@
       <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-    <div class="flex gap-4 mt-4">
-      <button id="giftBtn" class="flex-1 bg-purple-500 text-white py-3 rounded">Pay with Gift Voucher</button>
-      <button id="accountPayBtn" class="flex-1 bg-gray-500 text-white py-3 rounded">Betaal met mijn account</button>
+    <div class="flex justify-between mt-4">
+      <button id="payGift" class="bg-yellow-400 text-white px-4 py-2 rounded">Pay with Gift Voucher</button>
+      <button id="payAccount" class="bg-green-500 text-white px-4 py-2 rounded">Betaal met mijn account</button>
     </div>
   </div>
 </div>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-  <div class="bg-white w-full max-w-md p-6 rounded relative">
-    <button onclick="loginModal.classList.add('hidden')" class="absolute right-4 top-2 text-2xl">&times;</button>
+<div class="modal hidden" id="loginModal">
+  <div class="modal-content">
+    <span class="close" id="closeLogin">&times;</span>
     <h2 class="text-xl font-bold mb-4">Login</h2>
-    <input id="loginEmail" placeholder="Email" class="w-full mb-2 p-2 border rounded">
-    <input id="loginPassword" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border rounded">
-    <input id="loginKey" placeholder="Key" class="w-full mb-2 p-2 border rounded">
+    <input type="email" id="loginEmail" placeholder="E-mail" class="edit-input mb-2">
+    <input type="password" id="loginPassword" placeholder="Wachtwoord" class="edit-input mb-2">
+    <input type="text" id="loginKey" placeholder="Key" class="edit-input mb-2">
     <button id="doLogin" class="bg-blue-500 text-white px-4 py-2 rounded mt-2 w-full">Login</button>
   </div>
 </div>
 
 <!-- REGISTER MODAL -->
-<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-  <div class="bg-white w-full max-w-md p-6 rounded relative">
-    <button onclick="registerModal.classList.add('hidden')" class="absolute right-4 top-2 text-2xl">&times;</button>
+<div class="modal hidden" id="registerModal">
+  <div class="modal-content">
+    <span class="close" id="closeRegister">&times;</span>
     <h2 class="text-xl font-bold mb-4">Registreren</h2>
-    <input id="regName" placeholder="Naam" class="w-full mb-2 p-2 border rounded">
-    <input id="regEmail" placeholder="Email" class="w-full mb-2 p-2 border rounded">
-    <input id="regUID" placeholder="Agar.io UID" class="w-full mb-2 p-2 border rounded">
-    <input id="regPassword" type="password" placeholder="Wachtwoord" class="w-full mb-2 p-2 border rounded">
-    <input id="regPassword2" type="password" placeholder="Herhaal wachtwoord" class="w-full mb-2 p-2 border rounded">
+    <input type="text" id="regName" placeholder="Naam" class="edit-input mb-2">
+    <input type="email" id="regEmail" placeholder="E-mail" class="edit-input mb-2">
+    <input type="text" id="regUID" placeholder="Agario UID" class="edit-input mb-2">
+    <input type="password" id="regPassword" placeholder="Wachtwoord" class="edit-input mb-2">
+    <input type="password" id="regPassword2" placeholder="Herhaal wachtwoord" class="edit-input mb-2">
     <button id="doRegister" class="bg-green-500 text-white px-4 py-2 rounded mt-2 w-full">Registreren</button>
   </div>
 </div>
@@ -140,10 +130,11 @@
 <script>
 feather.replace();
 
-// =====================
-// 30 SKINS
-// =====================
+/* =====================
+   30 SKINS
+===================== */
 const skins = [
+ /* hier komen dezelfde 30 skins die je eerder gaf */
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
  {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
  {id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
@@ -177,36 +168,35 @@ const skins = [
 ];
 
 /* =====================
-   VARIABLES
+   CART & USERS
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
 let user = JSON.parse(localStorage.getItem("user") || "null");
 
-const grid=document.getElementById("grid");
-const cartBtn=document.getElementById("cartBtn");
-const cartModal=document.getElementById("cartModal");
-const closeCart=document.getElementById("closeCart");
-const cartItems=document.getElementById("cartItems");
-const totalEl=document.getElementById("total");
-const cartCount=document.getElementById("cartCount");
+const grid = document.getElementById("grid");
+const cartBtn = document.getElementById("cartBtn");
+const cartModal = document.getElementById("cartModal");
+const closeCart = document.getElementById("closeCart");
+const cartItems = document.getElementById("cartItems");
+const totalEl = document.getElementById("total");
+const cartCount = document.getElementById("cartCount");
 
-const loginBtn=document.getElementById("loginBtn");
-const registerBtn=document.getElementById("registerBtn");
-const loginModal=document.getElementById("loginModal");
-const registerModal=document.getElementById("registerModal");
-const moneyBtn=document.getElementById("moneyBtn");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const loginModal = document.getElementById("loginModal");
+const registerModal = document.getElementById("registerModal");
+const closeLogin = document.getElementById("closeLogin");
+const closeRegister = document.getElementById("closeRegister");
+const moneyBtn = document.getElementById("moneyBtn");
+const moneyAmount = document.getElementById("moneyAmount");
 
-/* =====================
-   RENDER SKINS
-===================== */
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
     if(!s.image1 && !s.image2) return;
-    const c=document.getElementById("card").content.cloneNode(true);
-    const imgRow=c.querySelector(".img-row");
-
+    const c = document.getElementById("card").content.cloneNode(true);
+    const imgRow = c.querySelector(".img-row");
     if(s.image1){
       const i=document.createElement("img");
       i.src=s.image1;
@@ -219,31 +209,26 @@ function render(list){
       i.className="circle-small";
       imgRow.appendChild(i);
     }
-
     c.querySelector(".title").textContent=s.name;
     c.querySelector(".desc").textContent=s.desc;
     c.querySelector(".price").textContent="$"+s.price;
-
     c.querySelector(".select").onclick=()=>{
-      if(!user){ alert("Login eerst om skins te selecteren"); return; }
+      if(!user){alert("Login eerst!"); return;}
+      if(user.money < s.price){alert("Niet genoeg geld"); return;}
       cart.push(s);
       localStorage.setItem("cart",JSON.stringify(cart));
       updateCart();
-      alert("Item added to cart");
+      alert("Item toegevoegd!");
     };
-
     c.querySelector(".share").onclick=()=>{
       navigator.clipboard.writeText(s.name+" - $"+s.price);
-      alert("Copied to clipboard");
+      alert("Gekopieerd!");
     };
-
     grid.appendChild(c);
   });
 }
 
-/* =====================
-   CART FUNCTIONS
-===================== */
+/* ===== CART ===== */
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
@@ -267,27 +252,37 @@ function updateCart(){
   cartCount.textContent=cart.length;
 }
 
-function removeItem(i){cart.splice(i,1); localStorage.setItem("cart",JSON.stringify(cart)); updateCart();}
-cartBtn.onclick=()=>cartModal.classList.remove("hidden");
-closeCart.onclick=()=>cartModal.classList.add("hidden");
+/* REMOVE ITEM */
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+}
 
 /* =====================
-   LOGIN / REGISTER FUNCTIONS
+   LOGIN & REGISTER
 ===================== */
-loginBtn.onclick = ()=> loginModal.classList.remove("hidden");
-registerBtn.onclick = ()=> registerModal.classList.remove("hidden");
-
 function updateUI(){
   if(user){
-    loginBtn.style.display="none";
+    loginBtn.textContent="Logout";
     registerBtn.style.display="none";
-    moneyBtn.style.display="inline-block";
-  } else {
-    loginBtn.style.display="inline-block";
+    moneyBtn.style.display="inline-flex";
+    moneyAmount.textContent=user.money.toFixed(2);
+  }else{
+    loginBtn.textContent="Login";
     registerBtn.style.display="inline-block";
     moneyBtn.style.display="none";
   }
 }
+
+loginBtn.onclick=()=>{
+  if(user){user=null; localStorage.setItem("user",null); updateUI();}
+  else loginModal.classList.remove("hidden");
+};
+registerBtn.onclick=()=>registerModal.classList.remove("hidden");
+
+closeLogin.onclick=()=>loginModal.classList.add("hidden");
+closeRegister.onclick=()=>registerModal.classList.add("hidden");
 
 document.getElementById("doRegister").onclick=()=>{
   const name=document.getElementById("regName").value.trim();
@@ -295,13 +290,12 @@ document.getElementById("doRegister").onclick=()=>{
   const uid=document.getElementById("regUID").value.trim();
   const pw=document.getElementById("regPassword").value;
   const pw2=document.getElementById("regPassword2").value;
-  if(!name||!email||!uid||!pw||!pw2){alert("Alles invullen verplicht"); return;}
+  if(!name||!email||!uid||!pw||!pw2){alert("Alles invullen!"); return;}
   if(pw!==pw2){alert("Wachtwoorden komen niet overeen"); return;}
   const key=Math.floor(10000+Math.random()*90000);
-  const newUser={name,email,uid,password:pw,key,money:0};
-  users.push(newUser);
+  users.push({name,email,uid,password:pw,key,money:0});
   localStorage.setItem("users",JSON.stringify(users));
-  alert("Registratie geslaagd! Key: "+key);
+  alert(`Registratie geslaagd! Je key: ${key}`);
   registerModal.classList.add("hidden");
 };
 
@@ -309,22 +303,32 @@ document.getElementById("doLogin").onclick=()=>{
   const email=document.getElementById("loginEmail").value.trim();
   const pw=document.getElementById("loginPassword").value;
   const key=document.getElementById("loginKey").value.trim();
-  const u=users.find(u=>u.email===email && u.password===pw && u.key==key);
-  if(!u){alert("Login mislukt"); return;}
-  user=u;
-  localStorage.setItem("user",JSON.stringify(user));
-  alert("Login succesvol");
+  const u=users.find(x=>x.email===email && x.password===pw && x.key==key);
+  if(!u){alert("Inloggen mislukt"); return;}
+  user=u; localStorage.setItem("user",JSON.stringify(user));
   loginModal.classList.add("hidden");
   updateUI();
 };
 
 /* =====================
-   HAMBURGER
+   GELD FUNCTIES
 ===================== */
-function toggleMenu(){
-  const menu=document.getElementById("menu");
-  menu.style.display=menu.style.display==="flex"?"none":"flex";
-}
+moneyBtn.onclick=()=>{
+  const action=prompt(`Je hebt $${user.money.toFixed(2)}. Wil je geld toevoegen via cadeaubon? (ja/nee)`);
+  if(action.toLowerCase()==="ja"){
+    const code=prompt("Voer je cadeaubon code in (16 tekens)");
+    if(code && code.length===16){
+      const amount=Math.floor(Math.random()*50)+1;
+      user.money+=amount;
+      localStorage.setItem("user",JSON.stringify(user));
+      const uidx=users.findIndex(x=>x.email===user.email);
+      users[idx]=user;
+      localStorage.setItem("users",JSON.stringify(users));
+      alert(`Cadeaubon geclaimd! $${amount} toegevoegd.`);
+      updateUI();
+    }else alert("Ongeldige code");
+  }
+};
 
 /* =====================
    SEARCH & SORT
@@ -342,6 +346,24 @@ document.getElementById("sort").onchange=e=>{
   if(e.target.value==="shuffle") list.sort(()=>Math.random()-0.5);
   render(list);
 };
+
+/* =====================
+   CART BUTTON
+===================== */
+cartBtn.onclick=()=>{
+  if(!user){alert("Login eerst!"); return;}
+  cartModal.classList.remove("hidden");
+  updateCart();
+};
+closeCart.onclick=()=>cartModal.classList.add("hidden");
+
+/* =====================
+   HAMBURGER MENU
+===================== */
+function toggleMenu(){
+  const menu=document.getElementById("menu");
+  menu.style.display=(menu.style.display==="flex")?"none":"flex";
+}
 
 /* =====================
    INIT
