@@ -9,48 +9,39 @@
 <style>
 .circle-big{width:120px;height:120px;border-radius:9999px;object-fit:cover}
 .circle-small{width:90px;height:90px;border-radius:9999px;object-fit:cover}
-.img-row{display:flex;gap:10px;justify-content:center}
+.img-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
-.menu{display:none;flex-direction:column;gap:0.5rem;position:absolute;top:100%;right:0;background:white;border:1px solid #ccc;padding:0.5rem;border-radius:0.25rem;}
-.menu a{padding:0.5rem;text-decoration:none;color:black;}
+.menu{display:none;flex-direction:column;gap:4px;margin-top:4px}
+.menu a{color:white;text-decoration:none;padding:2px 6px;background-gray:700;border-radius:4px}
 </style>
 </head>
 <body class="bg-gray-100">
 
-<!-- TOP BAR -->
-<header class="bg-gray-900 text-white relative">
-  <div class="max-w-6xl mx-auto p-4 flex items-center gap-4 relative">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold">TB</div>
-      <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
-    </div>
-
-    <input id="search" placeholder="Search skins..."
-      class="flex-1 px-3 py-2 rounded text-black">
-
-    <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
-      <i data-feather="shopping-cart"></i>
-      Cart
-      <span id="cartCount" class="badge">0</span>
-    </button>
-
-    <button id="moneyBtn" class="relative bg-yellow-500 px-4 py-2 rounded flex items-center gap-2 hidden">
-      <i data-feather="dollar-sign"></i>
-      $<span id="moneyAmount">0.00</span>
-    </button>
-
-    <button id="loginBtn" class="bg-blue-500 px-4 py-2 rounded">Login</button>
-    <button id="registerBtn" class="bg-green-500 px-4 py-2 rounded">Registreren</button>
-
-    <!-- Hamburger -->
-    <button class="bg-gray-700 px-3 py-2 ml-2 rounded" onclick="toggleMenu()">☰</button>
-    <div class="menu" id="menu">
-      <a href="#">🏠 Home</a>
-      <a href="#">🎱 Agar.io Skins</a>
-      <a href="#">🎨 Custom Skins</a>
-      <a href="#">💎 Paid Skins</a>
-    </div>
+<!-- HEADER -->
+<header class="bg-gray-900 text-white p-4 flex items-center gap-4 max-w-6xl mx-auto">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center font-bold">TB</div>
+    <span class="font-bold text-lg">T.B Agar.io Paid Skins</span>
   </div>
+
+  <input id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded text-black">
+
+  <button class="menu-btn px-3 py-2 bg-gray-700 rounded" onclick="toggleMenu()">☰</button>
+  <div class="menu" id="menu">
+    <a href="#">🏠 Home</a>
+    <a href="#">🎱 Agar.io Skins</a>
+    <a href="#">🎨 Custom Skins</a>
+    <a href="#">💎 Paid Skins</a>
+  </div>
+
+  <button id="loginBtn" class="px-3 py-2 bg-blue-500 rounded">Login</button>
+  <button id="registerBtn" class="px-3 py-2 bg-green-600 rounded">Registreren</button>
+  <button id="moneyBtn" class="px-3 py-2 bg-yellow-400 rounded hidden">💰</button>
+
+  <button id="cartBtn" class="relative bg-teal-500 px-4 py-2 rounded flex items-center gap-2">
+    <i data-feather="shopping-cart"></i> Cart
+    <span id="cartCount" class="badge">0</span>
+  </button>
 </header>
 
 <!-- SORT -->
@@ -80,36 +71,36 @@
       <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-    <div class="flex justify-between mt-4">
-      <button id="payGift" class="bg-yellow-400 text-white px-4 py-2 rounded">Pay with Gift Voucher</button>
-      <button id="payAccount" class="bg-green-500 text-white px-4 py-2 rounded">Betaal met mijn account</button>
+    <div class="flex justify-between mt-4 gap-2">
+      <button id="payGift" class="flex-1 bg-yellow-400 py-2 rounded">Pay with Gift Voucher</button>
+      <button id="payAccount" class="flex-1 bg-green-500 py-2 rounded">Betaal met mijn account</button>
     </div>
   </div>
 </div>
 
 <!-- LOGIN MODAL -->
-<div class="modal hidden" id="loginModal">
-  <div class="modal-content">
-    <span class="close" id="closeLogin">&times;</span>
-    <h2 class="text-xl font-bold mb-4">Login</h2>
-    <input type="email" id="loginEmail" placeholder="E-mail" class="edit-input mb-2">
-    <input type="password" id="loginPassword" placeholder="Wachtwoord" class="edit-input mb-2">
-    <input type="text" id="loginKey" placeholder="Key" class="edit-input mb-2">
-    <button id="doLogin" class="bg-blue-500 text-white px-4 py-2 rounded mt-2 w-full">Login</button>
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-md p-6 rounded relative">
+    <button onclick="loginModal.classList.add('hidden')" class="absolute right-4 top-2 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold text-center mb-4">Login</h2>
+    <input id="loginEmail" placeholder="E-mail" class="w-full p-2 border mb-2 rounded">
+    <input id="loginPassword" type="password" placeholder="Wachtwoord" class="w-full p-2 border mb-2 rounded">
+    <input id="loginKey" placeholder="Key" class="w-full p-2 border mb-2 rounded">
+    <button id="doLogin" class="w-full bg-blue-500 text-white py-2 rounded">Login</button>
   </div>
 </div>
 
 <!-- REGISTER MODAL -->
-<div class="modal hidden" id="registerModal">
-  <div class="modal-content">
-    <span class="close" id="closeRegister">&times;</span>
-    <h2 class="text-xl font-bold mb-4">Registreren</h2>
-    <input type="text" id="regName" placeholder="Naam" class="edit-input mb-2">
-    <input type="email" id="regEmail" placeholder="E-mail" class="edit-input mb-2">
-    <input type="text" id="regUID" placeholder="Agario UID" class="edit-input mb-2">
-    <input type="password" id="regPassword" placeholder="Wachtwoord" class="edit-input mb-2">
-    <input type="password" id="regPassword2" placeholder="Herhaal wachtwoord" class="edit-input mb-2">
-    <button id="doRegister" class="bg-green-500 text-white px-4 py-2 rounded mt-2 w-full">Registreren</button>
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-full max-w-md p-6 rounded relative">
+    <button onclick="registerModal.classList.add('hidden')" class="absolute right-4 top-2 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold text-center mb-4">Registreren</h2>
+    <input id="regName" placeholder="Vul je naam in" class="w-full p-2 border mb-2 rounded">
+    <input id="regEmail" placeholder="Vul je e-mail adres in" class="w-full p-2 border mb-2 rounded">
+    <input id="regUid" placeholder="Vul je Agar.io UID in" class="w-full p-2 border mb-2 rounded">
+    <input id="regPassword" type="password" placeholder="Maak een wachtwoord" class="w-full p-2 border mb-2 rounded">
+    <input id="regPassword2" type="password" placeholder="Herhaal wachtwoord" class="w-full p-2 border mb-2 rounded">
+    <button id="doRegister" class="w-full bg-green-500 text-white py-2 rounded">Registreren</button>
   </div>
 </div>
 
@@ -134,7 +125,6 @@ feather.replace();
    30 SKINS
 ===================== */
 const skins = [
- /* hier komen dezelfde 30 skins die je eerder gaf */
  {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
  {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
  {id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
@@ -167,71 +157,45 @@ const skins = [
  {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
-/* =====================
-   CART & USERS
-===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
 let user = JSON.parse(localStorage.getItem("user") || "null");
 
+/* ===== RENDER SKINS ===== */
 const grid = document.getElementById("grid");
-const cartBtn = document.getElementById("cartBtn");
-const cartModal = document.getElementById("cartModal");
-const closeCart = document.getElementById("closeCart");
-const cartItems = document.getElementById("cartItems");
-const totalEl = document.getElementById("total");
-const cartCount = document.getElementById("cartCount");
-
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const loginModal = document.getElementById("loginModal");
-const registerModal = document.getElementById("registerModal");
-const closeLogin = document.getElementById("closeLogin");
-const closeRegister = document.getElementById("closeRegister");
-const moneyBtn = document.getElementById("moneyBtn");
-const moneyAmount = document.getElementById("moneyAmount");
-
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
     if(!s.image1 && !s.image2) return;
     const c = document.getElementById("card").content.cloneNode(true);
     const imgRow = c.querySelector(".img-row");
-    if(s.image1){
-      const i=document.createElement("img");
-      i.src=s.image1;
-      i.className=s.image2?"circle-small":"circle-big";
-      imgRow.appendChild(i);
-    }
-    if(s.image2){
-      const i=document.createElement("img");
-      i.src=s.image2;
-      i.className="circle-small";
-      imgRow.appendChild(i);
-    }
+    if(s.image1){const i=document.createElement("img"); i.src=s.image1;i.className=s.image2?"circle-small":"circle-big";imgRow.appendChild(i);}
+    if(s.image2){const i=document.createElement("img");i.src=s.image2;i.className="circle-small";imgRow.appendChild(i);}
     c.querySelector(".title").textContent=s.name;
     c.querySelector(".desc").textContent=s.desc;
     c.querySelector(".price").textContent="$"+s.price;
     c.querySelector(".select").onclick=()=>{
       if(!user){alert("Login eerst!"); return;}
-      if(user.money < s.price){alert("Niet genoeg geld"); return;}
-      cart.push(s);
-      localStorage.setItem("cart",JSON.stringify(cart));
+      cart.push(s); localStorage.setItem("cart",JSON.stringify(cart));
       updateCart();
-      alert("Item toegevoegd!");
+      alert("Item added to cart");
     };
     c.querySelector(".share").onclick=()=>{
       navigator.clipboard.writeText(s.name+" - $"+s.price);
-      alert("Gekopieerd!");
+      alert("Copied to clipboard");
     };
     grid.appendChild(c);
   });
 }
 
 /* ===== CART ===== */
+const cartBtn=document.getElementById("cartBtn");
+const cartModal=document.getElementById("cartModal");
+const closeCart=document.getElementById("closeCart");
+const cartItems=document.getElementById("cartItems");
+const totalEl=document.getElementById("total");
 function updateCart(){
-  cartItems.innerHTML="";
-  let total=0;
+  cartItems.innerHTML=""; let total=0;
   cart.forEach((s,i)=>{
     total+=s.price;
     const d=document.createElement("div");
@@ -249,45 +213,23 @@ function updateCart(){
     cartItems.appendChild(d);
   });
   totalEl.textContent="$"+total.toFixed(2);
-  cartCount.textContent=cart.length;
+  document.getElementById("cartCount").textContent=cart.length;
 }
+function removeItem(i){cart.splice(i,1); localStorage.setItem("cart",JSON.stringify(cart)); updateCart();}
 
-/* REMOVE ITEM */
-function removeItem(i){
-  cart.splice(i,1);
-  localStorage.setItem("cart",JSON.stringify(cart));
-  updateCart();
-}
-
-/* =====================
-   LOGIN & REGISTER
-===================== */
-function updateUI(){
-  if(user){
-    loginBtn.textContent="Logout";
-    registerBtn.style.display="none";
-    moneyBtn.style.display="inline-flex";
-    moneyAmount.textContent=user.money.toFixed(2);
-  }else{
-    loginBtn.textContent="Login";
-    registerBtn.style.display="inline-block";
-    moneyBtn.style.display="none";
-  }
-}
-
-loginBtn.onclick=()=>{
-  if(user){user=null; localStorage.setItem("user",null); updateUI();}
-  else loginModal.classList.remove("hidden");
-};
+/* ===== LOGIN & REGISTER ===== */
+const loginBtn=document.getElementById("loginBtn");
+const registerBtn=document.getElementById("registerBtn");
+const loginModal=document.getElementById("loginModal");
+const registerModal=document.getElementById("registerModal");
+const moneyBtn=document.getElementById("moneyBtn");
+loginBtn.onclick=()=>loginModal.classList.remove("hidden");
 registerBtn.onclick=()=>registerModal.classList.remove("hidden");
-
-closeLogin.onclick=()=>loginModal.classList.add("hidden");
-closeRegister.onclick=()=>registerModal.classList.add("hidden");
 
 document.getElementById("doRegister").onclick=()=>{
   const name=document.getElementById("regName").value.trim();
   const email=document.getElementById("regEmail").value.trim();
-  const uid=document.getElementById("regUID").value.trim();
+  const uid=document.getElementById("regUid").value.trim();
   const pw=document.getElementById("regPassword").value;
   const pw2=document.getElementById("regPassword2").value;
   if(!name||!email||!uid||!pw||!pw2){alert("Alles invullen!"); return;}
@@ -310,34 +252,37 @@ document.getElementById("doLogin").onclick=()=>{
   updateUI();
 };
 
-/* =====================
-   GELD FUNCTIES
-===================== */
-moneyBtn.onclick=()=>{
-  const action=prompt(`Je hebt $${user.money.toFixed(2)}. Wil je geld toevoegen via cadeaubon? (ja/nee)`);
-  if(action.toLowerCase()==="ja"){
-    const code=prompt("Voer je cadeaubon code in (16 tekens)");
-    if(code && code.length===16){
-      const amount=Math.floor(Math.random()*50)+1;
-      user.money+=amount;
-      localStorage.setItem("user",JSON.stringify(user));
-      const uidx=users.findIndex(x=>x.email===user.email);
-      users[idx]=user;
-      localStorage.setItem("users",JSON.stringify(users));
-      alert(`Cadeaubon geclaimd! $${amount} toegevoegd.`);
-      updateUI();
-    }else alert("Ongeldige code");
+/* ===== LOGOUT & UI UPDATE ===== */
+function updateUI(){
+  if(user){
+    loginBtn.textContent="Log out";
+    registerBtn.style.display="none";
+    moneyBtn.style.display="inline-block";
+    moneyBtn.textContent="💰 $"+user.money.toFixed(2);
+    loginBtn.onclick=()=>{user=null; localStorage.setItem("user",null); updateUI();}
+  }else{
+    loginBtn.textContent="Login";
+    registerBtn.style.display="inline-block";
+    moneyBtn.style.display="none";
+    loginBtn.onclick=()=>loginModal.classList.remove("hidden");
+    registerBtn.onclick=()=>registerModal.classList.remove("hidden");
   }
+}
+moneyBtn.onclick=()=>{
+  alert("Saldo: $"+user.money.toFixed(2));
 };
 
-/* =====================
-   SEARCH & SORT
-===================== */
+/* ===== HAMBURGER MENU ===== */
+function toggleMenu(){
+  const m=document.getElementById("menu");
+  m.style.display=m.style.display==="flex"?"none":"flex";
+}
+
+/* ===== SEARCH & SORT ===== */
 document.getElementById("search").oninput=e=>{
   const q=e.target.value.toLowerCase();
   render(skins.filter(s=>s.name.toLowerCase().includes(q)));
 };
-
 document.getElementById("sort").onchange=e=>{
   let list=[...skins];
   if(e.target.value==="low") list.sort((a,b)=>a.price-b.price);
@@ -347,30 +292,44 @@ document.getElementById("sort").onchange=e=>{
   render(list);
 };
 
-/* =====================
-   CART BUTTON
-===================== */
-cartBtn.onclick=()=>{
-  if(!user){alert("Login eerst!"); return;}
-  cartModal.classList.remove("hidden");
-  updateCart();
-};
+/* ===== CART MODAL TOGGLE ===== */
+cartBtn.onclick=()=>{if(!user){alert("Login eerst!"); return;}cartModal.classList.remove("hidden"); updateCart();}
 closeCart.onclick=()=>cartModal.classList.add("hidden");
 
-/* =====================
-   HAMBURGER MENU
-===================== */
-function toggleMenu(){
-  const menu=document.getElementById("menu");
-  menu.style.display=(menu.style.display==="flex")?"none":"flex";
-}
+/* ===== PAYMENT BUTTONS ===== */
+document.getElementById("payGift").onclick=()=>{
+  const code=prompt("Voer je cadeaubon code in (16 tekens)");
+  if(code && code.length===16){
+    const amount=Math.floor(Math.random()*50)+1;
+    user.money+=amount;
+    localStorage.setItem("user",JSON.stringify(user));
+    const idx=users.findIndex(x=>x.email===user.email);
+    users[idx]=user;
+    localStorage.setItem("users",JSON.stringify(users));
+    alert(`Cadeaubon geclaimd! $${amount} toegevoegd.`);
+    updateUI();
+  }else alert("Ongeldige code");
+};
+document.getElementById("payAccount").onclick=()=>{
+  const total=cart.reduce((acc,s)=>acc+s.price,0);
+  if(user.money<total){alert("Niet genoeg geld op je account"); return;}
+  user.money-=total;
+  localStorage.setItem("user",JSON.stringify(user));
+  const idx=users.findIndex(x=>x.email===user.email);
+  users[idx]=user;
+  localStorage.setItem("users",JSON.stringify(users));
+  cart=[]; localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+  updateUI();
+  cartModal.classList.add("hidden");
+  alert("Betaling geslaagd!\nJe ontvangt binnenkort een e-mail met je bon en skins.\nJe skins zijn in verwerking, wacht 2-3 dagen.");
+};
 
-/* =====================
-   INIT
-===================== */
+/* ===== INIT ===== */
 render(skins);
 updateCart();
 updateUI();
 </script>
+
 </body>
 </html>
