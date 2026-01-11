@@ -1,168 +1,70 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8">
-<title>Admin Panel - T.B Agar.io</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/feather-icons"></script>
+<title>Admin Panel</title>
 <style>
-body{background:#f0f0f0}
-header{background:#111;color:white;padding:10px;display:flex;align-items:center;justify-content:space-between}
-input,button,select{padding:5px;margin:2px;border-radius:4px}
-.user-row{padding:5px;border-bottom:1px solid #ccc;cursor:pointer}
-.user-row:hover{background:#eee}
-.payment-row{padding:5px;border-bottom:1px solid #ccc}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center}
-.modal-content{background:white;padding:20px;border-radius:5px;width:90%;max-width:600px;position:relative}
-.modal-close{position:absolute;top:10px;right:10px;font-size:24px;cursor:pointer}
+body{font-family:Arial;background:#111;color:#fff}
+.user{padding:8px;border-bottom:1px solid #333;cursor:pointer}
 </style>
 </head>
 <body>
 
-<header>
-  <span>Admin Panel - T.B Agar.io</span>
-  <div>
-    <input type="text" id="searchUser" placeholder="Zoek gebruiker...">
-    <button id="paymentIcon" class="relative">💰<span id="paymentCount" class="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-1">0</span></button>
-  </div>
-</header>
+<h2>Admin Panel</h2>
+<input id="search" placeholder="Search user"><br><br>
 
-<div class="max-w-6xl mx-auto p-4">
-  <h2 class="text-xl font-bold mb-2">Gebruikers</h2>
-  <div id="userList" class="bg-white rounded shadow"></div>
-</div>
+<h3>Users</h3>
+<div id="usersList"></div>
 
-<!-- USER MODAL -->
-<div id="userModal" class="modal flex">
-  <div class="modal-content">
-    <span class="modal-close" onclick="userModal.style.display='none'">&times;</span>
-    <h2 class="text-xl font-bold mb-2" id="userNameModal"></h2>
-    <p>UID: <span id="userUID"></span></p>
-    <p>Email: <span id="userEmail"></span></p>
-    <p>Login Key: <span id="userKey"></span></p>
-    <p>Wachtwoord: <input id="userPassword" type="text"></p>
-    <p>Saldo: $<input id="userBalance" type="number" min="0"></p>
-    <button id="saveUserBtn" class="bg-green-500 text-white rounded px-3 py-1 mt-2">Opslaan</button>
-    <button id="deleteUserBtn" class="bg-red-500 text-white rounded px-3 py-1 mt-2">Verwijderen</button>
-
-    <h3 class="text-lg font-bold mt-4">Betalingen</h3>
-    <div id="userPayments"></div>
-  </div>
-</div>
+<h3>Orders <span id="orderCount"></span></h3>
+<div id="ordersList"></div>
 
 <script>
-feather.replace();
+let users=JSON.parse(localStorage.getItem("users")||"[]");
+let orders=JSON.parse(localStorage.getItem("orders")||"[]");
 
-// === DATA ===
-let users = JSON.parse(localStorage.getItem("users") || "[]");
-let payments = JSON.parse(localStorage.getItem("payments") || "[]");
-let selectedUserIndex = null;
-
-// === RENDER USERS ===
-const userList = document.getElementById("userList");
-function renderUsers(list){
-  userList.innerHTML="";
-  list.forEach((u,i)=>{
-    const div = document.createElement("div");
-    div.className="user-row";
-    div.textContent=u.name;
-    div.onclick=()=>{
-      selectedUserIndex=i;
-      openUserModal(u);
-    };
-    userList.appendChild(div);
-  });
-}
-renderUsers(users);
-
-// === SEARCH USER ===
-document.getElementById("searchUser").oninput=e=>{
-  const q=e.target.value.toLowerCase();
-  renderUsers(users.filter(u=>u.name.toLowerCase().includes(q)));
-};
-
-// === USER MODAL ===
-const userModal=document.getElementById("userModal");
-const userNameModal=document.getElementById("userNameModal");
-const userUID=document.getElementById("userUID");
-const userEmail=document.getElementById("userEmail");
-const userKey=document.getElementById("userKey");
-const userPassword=document.getElementById("userPassword");
-const userBalance=document.getElementById("userBalance");
-const userPayments=document.getElementById("userPayments");
-const saveUserBtn=document.getElementById("saveUserBtn");
-const deleteUserBtn=document.getElementById("deleteUserBtn");
-
-function openUserModal(user){
-  userModal.style.display="flex";
-  userNameModal.textContent=user.name;
-  userUID.textContent=user.uid;
-  userEmail.textContent=user.email;
-  userKey.textContent=user.key; // Login key toegevoegd
-  userPassword.value=user.password;
-  userBalance.value=user.balance || 0;
-
-  // render payments
-  userPayments.innerHTML="";
-  payments.filter(p=>p.email===user.email).forEach((p,i)=>{
-    const div=document.createElement("div");
-    div.className="payment-row";
-    div.textContent=`${p.skins.join(", ")} - $${p.amount} - ${p.status}`;
-    const processBtn=document.createElement("button");
-    processBtn.textContent="Verwerk";
-    processBtn.className="bg-blue-500 text-white px-2 py-1 ml-2 rounded";
-    processBtn.onclick=()=>{
-      payments.find(pay=>pay===p).status="Processed";
-      localStorage.setItem("payments",JSON.stringify(payments));
-      div.textContent=`${p.skins.join(", ")} - $${p.amount} - ${p.status}`;
-      updatePaymentCount();
-    };
-    div.appendChild(processBtn);
-    userPayments.appendChild(div);
-  });
+function renderUsers(){
+usersList.innerHTML="";
+users.forEach((u,i)=>{
+if(search.value && !u.name.toLowerCase().includes(search.value.toLowerCase()))return;
+let d=document.createElement("div");
+d.className="user";
+d.textContent=u.name;
+d.onclick=()=>editUser(i);
+usersList.appendChild(d);
+});
 }
 
-// === SAVE USER ===
-saveUserBtn.onclick=()=>{
-  const u=users[selectedUserIndex];
-  u.password=userPassword.value;
-  u.balance=parseFloat(userBalance.value);
-  users[selectedUserIndex]=u;
-  localStorage.setItem("users",JSON.stringify(users));
-  renderUsers(users);
-  alert("Gebruiker bijgewerkt!");
-};
-
-// === DELETE USER ===
-deleteUserBtn.onclick=()=>{
-  if(confirm("Weet je zeker dat je deze gebruiker wilt verwijderen?")){
-    users.splice(selectedUserIndex,1);
-    localStorage.setItem("users",JSON.stringify(users));
-    renderUsers(users);
-    userModal.style.display="none";
-  }
-};
-
-// === PAYMENT ICON ===
-const paymentIcon=document.getElementById("paymentIcon");
-const paymentCount=document.getElementById("paymentCount");
-function updatePaymentCount(){
-  const pending = payments.filter(p=>p.status==="Pending").length;
-  paymentCount.textContent=pending;
+function editUser(i){
+let u=users[i];
+let bal=prompt("Set balance:",u.balance);
+if(bal!==null) u.balance=Number(bal);
+let pass=prompt("Change password:",u.password);
+if(pass!==null) u.password=pass;
+if(confirm("Delete user?")) users.splice(i,1);
+localStorage.setItem("users",JSON.stringify(users));
+renderUsers();
 }
-updatePaymentCount();
 
-paymentIcon.onclick=()=>{
-  const pending = payments.filter(p=>p.status==="Pending");
-  if(pending.length===0){ alert("Geen nieuwe betalingen"); return; }
-  const p = pending[0];
-  const u = users.find(u=>u.email===p.email);
-  if(u){
-    selectedUserIndex = users.indexOf(u);
-    openUserModal(u);
-  }
-};
+function renderOrders(){
+orderCount.textContent="("+orders.length+")";
+ordersList.innerHTML="";
+orders.forEach((o,i)=>{
+ordersList.innerHTML+=`<div>
+${o.name} (${o.uid}) - ${o.method} - ${o.status}
+<button onclick="process(${i})">Process</button>
+</div>`;
+});
+}
+
+function process(i){
+orders[i].status="processed";
+localStorage.setItem("orders",JSON.stringify(orders));
+renderOrders();
+}
+
+search.oninput=renderUsers;
+renderUsers();
+renderOrders();
 </script>
 </body>
 </html>
