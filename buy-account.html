@@ -15,7 +15,7 @@ body { background:#f0f0f0; font-family:sans-serif; }
 button { cursor:pointer; }
 .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }
 .hidden { display:none; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
+.modal-content { background:white; padding:20px; border-radius:10px; width:400px; max-height:80%; overflow:auto; }
 </style>
 </head>
 <body>
@@ -60,6 +60,17 @@ button { cursor:pointer; }
   </div>
 </div>
 
+<!-- VIEW ORDERS MODAL -->
+<div id="ordersModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 class="text-xl font-bold mb-2">User Orders</h2>
+    <div id="ordersList"></div>
+    <div class="flex justify-end mt-4">
+      <button id="closeOrdersBtn" class="bg-red-500 text-white px-3 py-1 rounded">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 feather.replace();
 
@@ -67,6 +78,7 @@ feather.replace();
    DATA
 ===================== */
 let users = JSON.parse(localStorage.getItem("users") || "[]");
+let orders = JSON.parse(localStorage.getItem("orders") || "[]"); // all orders
 let currentEditIndex = null;
 
 /* =====================
@@ -126,7 +138,7 @@ document.getElementById("saveBtn").onclick = ()=>{
   // Update users in localStorage
   localStorage.setItem("users", JSON.stringify(users));
 
-  // Check if current logged-in user needs to update
+  // Update current user if logged in
   let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
   if(currentUser && currentUser.email === u.email){
     localStorage.setItem("currentUser", JSON.stringify(u));
@@ -142,12 +154,27 @@ document.getElementById("saveBtn").onclick = ()=>{
 ===================== */
 function viewOrders(index){
   const u = users[index];
-  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  // filter cart by user email
-  let userOrders = cart.filter(c=>c.userEmail===u.email);
-  let msg = userOrders.length ? userOrders.map(c=>`${c.name} - $${c.price}`).join("\n") : "No orders";
-  alert(msg);
+  const userOrders = orders.filter(o => o.userEmail === u.email);
+  const ordersList = document.getElementById("ordersList");
+  ordersList.innerHTML = "";
+
+  if(userOrders.length === 0){
+    ordersList.textContent = "No orders for this user.";
+  } else {
+    userOrders.forEach((o, i)=>{
+      const div = document.createElement("div");
+      div.className = "border p-2 mb-2 rounded";
+      div.innerHTML = `<strong>Order #${i+1}</strong> - Total: $${o.total.toFixed(2)} <br> Date: ${o.date}<br> Items: ${o.items.map(s=>s.name+" ($"+s.price+")").join(", ")}`;
+      ordersList.appendChild(div);
+    });
+  }
+
+  document.getElementById("ordersModal").classList.remove("hidden");
 }
+
+document.getElementById("closeOrdersBtn").onclick = ()=>{
+  document.getElementById("ordersModal").classList.add("hidden");
+};
 </script>
 
 </body>
