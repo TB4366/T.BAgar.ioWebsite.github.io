@@ -2,182 +2,153 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Admin Panel - T.B Agar.io Paid Skins</title>
+<title>Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-.hidden{display:none;}
+body { background:#f0f0f0; font-family:sans-serif; }
+.container { max-width:1000px; margin:auto; padding:20px; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { border:1px solid #ccc; padding:8px; text-align:left; }
+.table th { background:#eee; }
+button { cursor:pointer; }
+.modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }
+.hidden { display:none; }
+.modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
 </style>
 </head>
-<body class="bg-gray-100">
+<body>
 
-<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
-  <h1 class="font-bold text-lg">Admin Panel</h1>
-  <button id="logoutBtn" class="bg-red-500 px-3 py-1 rounded">Logout</button>
-</header>
+<div class="container">
+  <h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>UID</th>
+        <th>Password</th>
+        <th>Key</th>
+        <th>Balance</th>
+        <th>Orders</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+</div>
 
-<main class="max-w-6xl mx-auto p-6 space-y-6">
-
-  <!-- ADMIN LOGIN -->
-  <div id="loginSection">
-    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
-    <input id="adminPassword" type="password" placeholder="Password" class="border p-2 rounded mb-2 w-full">
-    <button id="adminLoginBtn" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Login</button>
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 class="text-xl font-bold mb-2">Edit User</h2>
+    <label>Name</label>
+    <input id="editName" class="w-full mb-2 px-2 py-1 border rounded">
+    <label>Email</label>
+    <input id="editEmail" class="w-full mb-2 px-2 py-1 border rounded">
+    <label>UID</label>
+    <input id="editUID" class="w-full mb-2 px-2 py-1 border rounded">
+    <label>Password</label>
+    <input id="editPass" class="w-full mb-2 px-2 py-1 border rounded">
+    <label>Balance</label>
+    <input id="editBalance" type="number" class="w-full mb-4 px-2 py-1 border rounded">
+    <div class="flex justify-end gap-2">
+      <button id="saveBtn" class="bg-green-500 text-white px-3 py-1 rounded">Save</button>
+      <button id="cancelBtn" class="bg-red-500 text-white px-3 py-1 rounded">Cancel</button>
+    </div>
   </div>
-
-  <!-- USERS PANEL -->
-  <div id="adminPanel" class="hidden space-y-4">
-
-    <!-- SEARCH -->
-    <input id="userSearch" placeholder="Search users by name/email/UID..." class="border p-2 rounded w-full">
-
-    <!-- USERS TABLE -->
-    <table class="min-w-full border border-gray-300">
-      <thead class="bg-gray-200">
-        <tr>
-          <th class="border p-2">Name</th>
-          <th class="border p-2">Email</th>
-          <th class="border p-2">UID</th>
-          <th class="border p-2">Key</th>
-          <th class="border p-2">Balance</th>
-          <th class="border p-2">Orders</th>
-          <th class="border p-2">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersTable" class="bg-white"></tbody>
-    </table>
-
-  </div>
-</main>
+</div>
 
 <script>
 feather.replace();
 
-// =====================
-// ADMIN DATA
-// =====================
+/* =====================
+   DATA
+===================== */
 let users = JSON.parse(localStorage.getItem("users") || "[]");
-let carts = JSON.parse(localStorage.getItem("cart") || "[]");
-let currentAdmin = JSON.parse(localStorage.getItem("currentAdmin") || null);
+let currentEditIndex = null;
 
-// Dummy admin password
-const ADMIN_PASSWORD = "admin123";
+/* =====================
+   RENDER TABLE
+===================== */
+function renderTable(){
+  const tbody = document.getElementById("userTable");
+  tbody.innerHTML = "";
 
-// =====================
-// LOGIN
-// =====================
-const loginSection = document.getElementById("loginSection");
-const adminPanel = document.getElementById("adminPanel");
-const adminLoginBtn = document.getElementById("adminLoginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-adminLoginBtn.onclick = () => {
-  let pass = document.getElementById("adminPassword").value;
-
-  if(pass === ADMIN_PASSWORD){
-    currentAdmin = {email: "admin@tbskins.com"};
-    localStorage.setItem("currentAdmin", JSON.stringify(currentAdmin));
-    loginSection.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-    renderUsers(users);
-  } else {
-    alert("Invalid admin password.");
-  }
-};
-
-logoutBtn.onclick = () => {
-  currentAdmin = null;
-  localStorage.setItem("currentAdmin", null);
-  loginSection.classList.remove("hidden");
-  adminPanel.classList.add("hidden");
-};
-
-// =====================
-// RENDER USERS
-// =====================
-const usersTable = document.getElementById("usersTable");
-const userSearch = document.getElementById("userSearch");
-
-function renderUsers(list){
-  usersTable.innerHTML = "";
-  list.forEach((u, index) => {
+  users.forEach((u,i)=>{
     const tr = document.createElement("tr");
-    tr.className = "border";
-
-    const orders = carts.filter(c => c.userEmail === u.email);
-
     tr.innerHTML = `
-      <td class="border p-2"><input type="text" value="${u.name}" class="border p-1 w-full" data-field="name" data-index="${index}"></td>
-      <td class="border p-2"><input type="text" value="${u.email}" class="border p-1 w-full" data-field="email" data-index="${index}"></td>
-      <td class="border p-2"><input type="text" value="${u.uid}" class="border p-1 w-full" data-field="uid" data-index="${index}"></td>
-      <td class="border p-2">${u.key}</td>
-      <td class="border p-2"><input type="number" value="${u.balance}" class="border p-1 w-full" data-field="balance" data-index="${index}"></td>
-      <td class="border p-2">
-        ${orders.length} order(s)
-        <button class="bg-blue-500 text-white px-2 py-1 rounded ml-2" data-index="${index}" onclick="viewOrders(${index})">View</button>
-      </td>
-      <td class="border p-2">
-        <button class="bg-green-500 text-white px-2 py-1 rounded saveBtn" data-index="${index}">Save</button>
-      </td>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.uid}</td>
+      <td>${u.password}</td>
+      <td>${u.key}</td>
+      <td>$${u.balance}</td>
+      <td><button onclick="viewOrders(${i})" class="bg-blue-500 text-white px-2 py-1 rounded">View</button></td>
+      <td><button onclick="editUser(${i})" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button></td>
     `;
-
-    usersTable.appendChild(tr);
-  });
-
-  // SAVE BUTTONS
-  document.querySelectorAll(".saveBtn").forEach(btn => {
-    btn.onclick = () => {
-      const i = parseInt(btn.dataset.index);
-      const tr = usersTable.children[i];
-      const inputs = tr.querySelectorAll("input");
-      inputs.forEach(inp => {
-        const field = inp.dataset.field;
-        users[i][field] = field === "balance" ? parseFloat(inp.value) : inp.value;
-      });
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("User updated.");
-    };
+    tbody.appendChild(tr);
   });
 }
 
-// =====================
-// VIEW ORDERS
-// =====================
-function viewOrders(index){
-  const user = users[index];
-  const userOrders = carts.filter(c => c.userEmail === user.email);
-  if(userOrders.length === 0){ alert("No orders."); return; }
+renderTable();
 
-  let msg = `Orders for ${user.name}:\n`;
-  userOrders.forEach((o,i)=>{
-    msg += `${i+1}. ${o.name} - $${o.price}\n`;
-  });
+/* =====================
+   EDIT USER
+===================== */
+function editUser(index){
+  currentEditIndex = index;
+  const u = users[index];
+
+  document.getElementById("editName").value = u.name;
+  document.getElementById("editEmail").value = u.email;
+  document.getElementById("editUID").value = u.uid;
+  document.getElementById("editPass").value = u.password;
+  document.getElementById("editBalance").value = u.balance;
+
+  document.getElementById("editModal").classList.remove("hidden");
+}
+
+document.getElementById("cancelBtn").onclick = ()=>{
+  document.getElementById("editModal").classList.add("hidden");
+};
+
+document.getElementById("saveBtn").onclick = ()=>{
+  if(currentEditIndex===null) return;
+  const u = users[currentEditIndex];
+  u.name = document.getElementById("editName").value.trim();
+  u.email = document.getElementById("editEmail").value.trim();
+  u.uid = document.getElementById("editUID").value.trim();
+  u.password = document.getElementById("editPass").value;
+  u.balance = parseFloat(document.getElementById("editBalance").value);
+
+  // Update users in localStorage
+  localStorage.setItem("users", JSON.stringify(users));
+
+  // Check if current logged-in user needs to update
+  let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
+  if(currentUser && currentUser.email === u.email){
+    localStorage.setItem("currentUser", JSON.stringify(u));
+  }
+
+  document.getElementById("editModal").classList.add("hidden");
+  renderTable();
+  alert("User updated successfully!");
+};
+
+/* =====================
+   VIEW ORDERS
+===================== */
+function viewOrders(index){
+  const u = users[index];
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  // filter cart by user email
+  let userOrders = cart.filter(c=>c.userEmail===u.email);
+  let msg = userOrders.length ? userOrders.map(c=>`${c.name} - $${c.price}`).join("\n") : "No orders";
   alert(msg);
 }
-
-// =====================
-// SEARCH USERS
-// =====================
-userSearch.oninput = () => {
-  const query = userSearch.value.toLowerCase();
-  const filtered = users.filter(u => 
-    u.name.toLowerCase().includes(query) ||
-    u.email.toLowerCase().includes(query) ||
-    u.uid.toLowerCase().includes(query)
-  );
-  renderUsers(filtered);
-};
-
-// =====================
-// AUTO LOGIN IF ADMIN SESSION
-// =====================
-if(currentAdmin){
-  loginSection.classList.add("hidden");
-  adminPanel.classList.remove("hidden");
-  renderUsers(users);
-}
-
 </script>
+
 </body>
 </html>
