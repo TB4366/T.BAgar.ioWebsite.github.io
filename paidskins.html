@@ -15,6 +15,7 @@
 .hidden{display:none;}
 </style>
 </head>
+
 <body class="bg-gray-100">
 
 <header class="bg-gray-900 text-white">
@@ -40,20 +41,11 @@
   </div>
 </header>
 
-<div class="max-w-6xl mx-auto p-4">
-  <select id="sort" class="px-3 py-2 rounded border">
-    <option value="default">General</option>
-    <option value="low">Price: Low → High</option>
-    <option value="high">Price: High → Low</option>
-    <option value="popular">Popular</option>
-    <option value="shuffle">Shuffle</option>
-  </select>
-</div>
-
 <main class="max-w-6xl mx-auto p-6">
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
 
+<!-- CART MODAL -->
 <div id="cartModal" class="modal hidden">
   <div class="bg-white w-full max-w-xl p-6 rounded relative">
     <button id="closeCart" class="absolute right-4 top-2 text-2xl">&times;</button>
@@ -64,13 +56,13 @@
       <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-    <div class="flex gap-4 mt-4">
-      <button id="payVoucherBtn" class="flex-1 bg-blue-600 text-white py-3 rounded font-bold">Pay with Gift Voucher</button>
-      <button id="payAccountBtn" class="flex-1 bg-green-600 text-white py-3 rounded font-bold">Pay with My Account</button>
-    </div>
+    <button id="payAccountBtn" class="w-full bg-green-600 text-white py-3 rounded font-bold mt-4">
+      Pay with My Account
+    </button>
   </div>
 </div>
 
+<!-- LOGIN -->
 <div id="loginModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeLogin()">×</span>
@@ -82,6 +74,7 @@
   </div>
 </div>
 
+<!-- REGISTER -->
 <div id="registerModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeRegister()">×</span>
@@ -95,11 +88,12 @@
   </div>
 </div>
 
+<!-- ACCOUNT -->
 <div id="accountModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeAccount()">×</span>
-    <h2 class="text-xl font-bold mb-4">Account Balance</h2>
-    <p>Current Balance: $<span id="userBalanceDisplay">0</span></p>
+    <h2 class="text-xl font-bold mb-4">Account</h2>
+    Balance: $<span id="userBalanceDisplay">0</span>
   </div>
 </div>
 
@@ -109,74 +103,78 @@
     <h3 class="font-bold mt-3 title"></h3>
     <p class="text-sm text-gray-600 desc"></p>
     <p class="font-semibold price mt-2"></p>
-    <div class="flex justify-center gap-3 mt-3">
-      <button class="share bg-blue-500 text-white px-3 py-2 rounded">Share</button>
-      <button class="select bg-green-600 text-white px-3 py-2 rounded">Select</button>
-    </div>
+    <button class="select bg-green-600 text-white px-3 py-2 rounded mt-3">Select</button>
   </div>
 </template>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+let cart, users, currentUser;
+
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
 
 feather.replace();
 
-/* =====================
-   30 SKINS
-===================== */
-const skins = [ /* ⬅️ exact jouw 30 skins, ongewijzigd */
-{id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
-{id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
-{id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
-{id:4,name:"Birthday lol + Bull king",desc:"16000 coins 1 skin birthday lol 1 skin bull king",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp",sold:240},
-{id:5,name:"Tiny jack + Jade",desc:"30000 coins 1 skin tiny jack 1 skin jade",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp",sold:220},
-{id:6,name:"Evil master",desc:"16000 coins 1 skin evil master",price:11.49,image1:"IMG_5443.webp",image2:null,sold:210},
-{id:7,name:"Space warden + Evil master",desc:"50000 coins 1 skin space warden 1 skin evil master",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp",sold:200},
-{id:8,name:"Space warden",desc:"7000 coins 1 skin space warden",price:6.59,image1:"IMG_7150.webp",image2:null,sold:190},
-{id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
-{id:10,name:"King lion + Magic hat",desc:"50000 coins 1 skin king lion 1 skin magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp",sold:170},
-{id:11,name:"Ice Crystal",desc:"3250 coins 1 skin winter ice crystal",price:7.89,image1:"IMG_5938.webp",image2:null,sold:165},
-{id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
-{id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
-{id:14,name:"Golden Mask",desc:"Gold premium",price:8.19,image1:"IMG_6192.webp",image2:null,sold:145},
-{id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp",image2:null,sold:140},
-{id:16,name:"Star Burst",desc:"Star explosion",price:7.59,image1:"IMG_6194.webp",image2:null,sold:135},
-{id:17,name:"Vortex Core",desc:"Energy vortex",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp",sold:130},
-{id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
-{id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
-{id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
-{id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
-{id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
-{id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
-{id:24,name:"Plasma Nova",desc:"Plasma energy",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp",sold:85},
-{id:25,name:"Dark Samurai",desc:"Samurai skin",price:6.79,image1:"IMG_6205.webp",image2:null,sold:80},
-{id:26,name:"Ice Reaper",desc:"Ice skull",price:5.99,image1:"IMG_6206.webp",image2:null,sold:75},
-{id:27,name:"Solar Eye",desc:"Sun eye",price:4.29,image1:"IMG_6207.webp",image2:null,sold:70},
-{id:28,name:"Void Core",desc:"Void energy",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp",sold:65},
-{id:29,name:"Crystal Fang",desc:"Crystal teeth",price:6.59,image1:"IMG_6210.webp",image2:null,sold:60},
-{id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
+/* === 30 SKINS === */
+const skins = [
+{id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp"},
+{id:2,name:"Scar + Seer",desc:"30000 coins",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp"},
+{id:3,name:"Bull King",desc:"3250 coins",price:4.29,image1:"IMG_7147.webp"},
+{id:4,name:"Birthday lol + Bull king",desc:"16000 coins",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp"},
+{id:5,name:"Tiny jack + Jade",desc:"30000 coins",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp"},
+{id:6,name:"Evil master",desc:"16000 coins",price:11.49,image1:"IMG_5443.webp"},
+{id:7,name:"Space warden + Evil master",desc:"50000 coins",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp"},
+{id:8,name:"Space warden",desc:"7000 coins",price:6.59,image1:"IMG_7150.webp"},
+{id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp"},
+{id:10,name:"King lion + Magic hat",desc:"50000 coins",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp"},
+{id:11,name:"Ice Crystal",desc:"Winter skin",price:7.89,image1:"IMG_5938.webp"},
+{id:12,name:"Emerald Eye",desc:"Green gem",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp"},
+{id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp"},
+{id:14,name:"Golden Mask",desc:"Gold",price:8.19,image1:"IMG_6192.webp"},
+{id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp"},
+{id:16,name:"Star Burst",desc:"Explosion",price:7.59,image1:"IMG_6194.webp"},
+{id:17,name:"Vortex Core",desc:"Energy",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp"},
+{id:18,name:"Ruby Fang",desc:"Red",price:6.19,image1:"IMG_6197.webp"},
+{id:19,name:"Cursed Skull",desc:"Cursed",price:8.49,image1:"IMG_6198.webp"},
+{id:20,name:"Silver Orb",desc:"Silver",price:4.99,image1:"IMG_6199.webp"},
+{id:21,name:"Bronze King",desc:"Bronze",price:3.79,image1:"IMG_6200.webp"},
+{id:22,name:"Fire Ball",desc:"Fire",price:7.99,image1:"IMG_6201.webp"},
+{id:23,name:"Aqua Lord",desc:"Water",price:5.49,image1:"IMG_6202.webp"},
+{id:24,name:"Plasma Nova",desc:"Plasma",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp"},
+{id:25,name:"Dark Samurai",desc:"Samurai",price:6.79,image1:"IMG_6205.webp"},
+{id:26,name:"Ice Reaper",desc:"Ice",price:5.99,image1:"IMG_6206.webp"},
+{id:27,name:"Solar Eye",desc:"Sun",price:4.29,image1:"IMG_6207.webp"},
+{id:28,name:"Void Core",desc:"Void",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp"},
+{id:29,name:"Crystal Fang",desc:"Crystal",price:6.59,image1:"IMG_6210.webp"},
+{id:30,name:"Phantom Glow",desc:"Glow",price:7.19,image1:"IMG_6211.webp"}
 ];
 
-/* =====================
-   USER DATA + FIXES
-===================== */
-let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-let users = JSON.parse(localStorage.getItem("users") || "[]");
-let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
+cart = JSON.parse(localStorage.getItem("cart")||"[]");
+users = JSON.parse(localStorage.getItem("users")||"[]");
+currentUser = JSON.parse(localStorage.getItem("currentUser")||null);
 
-const grid = document.getElementById("grid");
-const cartBtn = document.getElementById("cartBtn");
-const cartModal = document.getElementById("cartModal");
-const closeCartBtn = document.getElementById("closeCart");
-const cartItems = document.getElementById("cartItems");
-const totalEl = document.getElementById("total");
-const cartCount = document.getElementById("cartCount");
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const accountBtn = document.getElementById("accountBtn");
+const grid=document.getElementById("grid");
+const cartBtn=document.getElementById("cartBtn");
+const cartModal=document.getElementById("cartModal");
+const closeCartBtn=document.getElementById("closeCart");
+const cartItems=document.getElementById("cartItems");
+const totalEl=document.getElementById("total");
+const cartCount=document.getElementById("cartCount");
+const loginBtn=document.getElementById("loginBtn");
+const registerBtn=document.getElementById("registerBtn");
+const logoutBtn=document.getElementById("logoutBtn");
+const accountBtn=document.getElementById("accountBtn");
 
-/* === RESTORE LOGIN STATE === */
+const loginModal=document.getElementById("loginModal");
+const registerModal=document.getElementById("registerModal");
+const accountModal=document.getElementById("accountModal");
+
+/* UI restore */
 if(currentUser){
   loginBtn.classList.add("hidden");
   registerBtn.classList.add("hidden");
@@ -184,43 +182,51 @@ if(currentUser){
   accountBtn.classList.remove("hidden");
 }
 
-/* === MODALS === */
 loginBtn.onclick=()=>loginModal.classList.remove("hidden");
 registerBtn.onclick=()=>registerModal.classList.remove("hidden");
-function closeLogin(){loginModal.classList.add("hidden")}
-function closeRegister(){registerModal.classList.add("hidden")}
-function closeAccount(){accountModal.classList.add("hidden")}
+logoutBtn.onclick=()=>{localStorage.removeItem("currentUser");location.reload()}
+accountBtn.onclick=()=>accountModal.classList.remove("hidden");
 
-/* === RENDER === */
-function render(list){
+window.closeLogin=()=>loginModal.classList.add("hidden");
+window.closeRegister=()=>registerModal.classList.add("hidden");
+window.closeAccount=()=>accountModal.classList.add("hidden");
+
+/* Render */
+function render(){
   grid.innerHTML="";
-  list.forEach(s=>{
+  skins.forEach(s=>{
     const c=document.getElementById("card").content.cloneNode(true);
     const imgRow=c.querySelector(".img-row");
-    if(s.image1){let i=document.createElement("img");i.src=s.image1;i.className=s.image2?"circle-small":"circle-big";imgRow.appendChild(i);}
-    if(s.image2){let i=document.createElement("img");i.src=s.image2;i.className="circle-small";imgRow.appendChild(i);}
+    let i=document.createElement("img");
+    i.src=s.image1;
+    i.className="circle-big";
+    imgRow.appendChild(i);
     c.querySelector(".title").textContent=s.name;
     c.querySelector(".desc").textContent=s.desc;
     c.querySelector(".price").textContent="$"+s.price;
-    c.querySelector(".select").onclick=()=>{cart.push(s);localStorage.setItem("cart",JSON.stringify(cart));updateCart();};
+    c.querySelector(".select").onclick=()=>{cart.push(s);localStorage.setItem("cart",JSON.stringify(cart));updateCart();}
     grid.appendChild(c);
   });
 }
-render(skins);
+render();
 
-/* === CART === */
+/* Cart */
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
-  cart.forEach((s,i)=>{total+=s.price});
+  cart.forEach((s,i)=>{
+    total+=s.price;
+    cartItems.innerHTML+=`<div>${s.name} <button onclick="removeItem(${i})">✕</button></div>`;
+  });
   totalEl.textContent="$"+total.toFixed(2);
   cartCount.textContent=cart.length;
 }
 
-cartBtn.onclick=()=>{cartModal.classList.remove("hidden");updateCart();}
+cartBtn.onclick=()=>{cartModal.classList.remove("hidden");updateCart()}
 if(closeCartBtn){closeCartBtn.onclick=()=>cartModal.classList.add("hidden")}
 
 });
 </script>
+
 </body>
 </html>
