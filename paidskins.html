@@ -170,21 +170,6 @@ let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
 let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 
-/* =====================
-   🔹 AUTO LOGOUT NA 7 DAGEN
-===================== */
-const MAX_INACTIVE_DAYS = 7;
-if(currentUser && currentUser.lastActive){
-  const diffDays = (Date.now() - currentUser.lastActive) / (1000*60*60*24);
-  if(diffDays > MAX_INACTIVE_DAYS){
-    currentUser = null;
-    localStorage.setItem("currentUser", null);
-  }
-}
-
-/* =====================
-   UI HERSTEL BIJ REFRESH
-===================== */
 const grid = document.getElementById("grid");
 const cartBtn = document.getElementById("cartBtn");
 const cartModal = document.getElementById("cartModal");
@@ -197,25 +182,14 @@ const registerBtn = document.getElementById("registerBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const accountBtn = document.getElementById("accountBtn");
 
-if(currentUser){
-  loginBtn.classList.add("hidden");
-  registerBtn.classList.add("hidden");
-  logoutBtn.classList.remove("hidden");
-  accountBtn.classList.remove("hidden");
-}
-
-/* =====================
-   SHOW/HIDE MODALS
-===================== */
+/* === SHOW/HIDE MODALS === */
 loginBtn.onclick = () => document.getElementById("loginModal").classList.remove("hidden");
 registerBtn.onclick = () => document.getElementById("registerModal").classList.remove("hidden");
 function closeLogin(){document.getElementById("loginModal").classList.add("hidden");}
 function closeRegister(){document.getElementById("registerModal").classList.add("hidden");}
 function closeAccount(){document.getElementById("accountModal").classList.add("hidden");}
 
-/* =====================
-   REGISTER FUNCTION
-===================== */
+/* === REGISTER FUNCTION === */
 document.getElementById("registerSubmit").onclick = () => {
   let name = document.getElementById("regName").value.trim();
   let email = document.getElementById("regEmail").value.trim();
@@ -227,16 +201,14 @@ document.getElementById("registerSubmit").onclick = () => {
   if(pass !== pass2){ alert("Passwords do not match."); return; }
 
   let key = Math.floor(10000 + Math.random()*90000); // 5 digits
-  let user = {name,email,uid,password:pass,key,balance:0,lastActive:Date.now()};
+  let user = {name,email,uid,password:pass,key,balance:0};
   users.push(user);
   localStorage.setItem("users",JSON.stringify(users));
   alert(`Registration successful! Your key: ${key}`);
   closeRegister();
 };
 
-/* =====================
-   LOGIN FUNCTION
-===================== */
+/* === LOGIN FUNCTION === */
 document.getElementById("loginSubmit").onclick = () => {
   let email = document.getElementById("loginEmail").value.trim();
   let pass = document.getElementById("loginPassword").value;
@@ -244,23 +216,18 @@ document.getElementById("loginSubmit").onclick = () => {
 
   let user = users.find(u => u.email===email && u.password===pass && u.key===key);
   if(!user){ alert("Invalid login."); return; }
-
-  user.lastActive = Date.now();
   currentUser = user;
   localStorage.setItem("currentUser",JSON.stringify(currentUser));
-
+  alert(`Welcome, ${user.name}`);
+  closeLogin();
   loginBtn.classList.add("hidden");
   registerBtn.classList.add("hidden");
   logoutBtn.classList.remove("hidden");
   accountBtn.classList.remove("hidden");
-
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
-  closeLogin();
 };
 
-/* =====================
-   LOGOUT FUNCTION
-===================== */
+/* === LOGOUT FUNCTION === */
 logoutBtn.onclick = () => {
   currentUser = null;
   localStorage.setItem("currentUser",null);
@@ -268,19 +235,18 @@ logoutBtn.onclick = () => {
   registerBtn.classList.remove("hidden");
   logoutBtn.classList.add("hidden");
   accountBtn.classList.add("hidden");
+  alert("Logged out.");
 };
 
-/* =====================
-   ACCOUNT BUTTON
-===================== */
+/* === ACCOUNT BUTTON === */
 accountBtn.onclick = () => {
+  // always fetch the latest currentUser from localStorage in case admin updated balance
+  currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
   document.getElementById("accountModal").classList.remove("hidden");
 };
 
-/* =====================
-   CART FUNCTIONS
-===================== */
+/* === CART FUNCTIONS === */
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
@@ -367,7 +333,6 @@ document.getElementById("payAccountBtn").onclick = () => {
   let total = parseFloat(totalEl.textContent.replace("$",""));
   if(currentUser.balance >= total){
     currentUser.balance -= total;
-    currentUser.lastActive = Date.now();
     localStorage.setItem("currentUser",JSON.stringify(currentUser));
     let index = users.findIndex(u=>u.email===currentUser.email);
     users[index] = currentUser;
@@ -381,21 +346,6 @@ document.getElementById("payAccountBtn").onclick = () => {
     alert("Insufficient balance. Please add funds to your account.");
   }
 };
-
-/* =====================
-   🔹 ACTIVITY TRACKING (UPDATE lastActive)
-===================== */
-function updateActivity(){
-  if(currentUser){
-    currentUser.lastActive = Date.now();
-    localStorage.setItem("currentUser",JSON.stringify(currentUser));
-    let i = users.findIndex(u=>u.email===currentUser.email);
-    if(i>-1){ users[i]=currentUser; localStorage.setItem("users",JSON.stringify(users)); }
-  }
-}
-["click","keydown"].forEach(e=>{
-  document.addEventListener(e, updateActivity);
-});
 </script>
 </body>
 </html>
