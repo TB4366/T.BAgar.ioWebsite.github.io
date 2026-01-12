@@ -22,7 +22,6 @@
   <!-- ADMIN LOGIN -->
   <div id="loginSection">
     <h2 class="text-xl font-bold mb-4">Admin Login</h2>
-    <input id="adminEmail" placeholder="Email" class="border p-2 rounded mb-2 w-full">
     <input id="adminPassword" type="password" placeholder="Password" class="border p-2 rounded mb-2 w-full">
     <button id="adminLoginBtn" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Login</button>
   </div>
@@ -62,8 +61,7 @@ let users = JSON.parse(localStorage.getItem("users") || "[]");
 let carts = JSON.parse(localStorage.getItem("cart") || "[]");
 let currentAdmin = JSON.parse(localStorage.getItem("currentAdmin") || null);
 
-// Dummy admin account
-const ADMIN_EMAIL = "admin@tbskins.com";
+// Dummy admin password
 const ADMIN_PASSWORD = "admin123";
 
 // =====================
@@ -75,17 +73,16 @@ const adminLoginBtn = document.getElementById("adminLoginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 
 adminLoginBtn.onclick = () => {
-  let email = document.getElementById("adminEmail").value.trim();
   let pass = document.getElementById("adminPassword").value;
 
-  if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD){
-    currentAdmin = {email};
+  if(pass === ADMIN_PASSWORD){
+    currentAdmin = {email: "admin@tbskins.com"};
     localStorage.setItem("currentAdmin", JSON.stringify(currentAdmin));
     loginSection.classList.add("hidden");
     adminPanel.classList.remove("hidden");
     renderUsers(users);
   } else {
-    alert("Invalid admin login.");
+    alert("Invalid admin password.");
   }
 };
 
