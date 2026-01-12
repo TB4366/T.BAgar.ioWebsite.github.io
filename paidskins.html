@@ -15,9 +15,9 @@
 .hidden{display:none;}
 </style>
 </head>
-
 <body class="bg-gray-100">
 
+<!-- TOP BAR -->
 <header class="bg-gray-900 text-white">
   <div class="max-w-6xl mx-auto p-4 flex items-center gap-4">
     <div class="flex items-center gap-3">
@@ -41,6 +41,18 @@
   </div>
 </header>
 
+<!-- SORT -->
+<div class="max-w-6xl mx-auto p-4">
+  <select id="sort" class="px-3 py-2 rounded border">
+    <option value="default">General</option>
+    <option value="low">Price: Low → High</option>
+    <option value="high">Price: High → Low</option>
+    <option value="popular">Popular</option>
+    <option value="shuffle">Shuffle</option>
+  </select>
+</div>
+
+<!-- GRID -->
 <main class="max-w-6xl mx-auto p-6">
   <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
 </main>
@@ -56,13 +68,14 @@
       <span>Total</span>
       <span id="total">$0.00</span>
     </div>
-    <button id="payAccountBtn" class="w-full bg-green-600 text-white py-3 rounded font-bold mt-4">
-      Pay with My Account
-    </button>
+    <div class="flex gap-4 mt-4">
+      <button id="payVoucherBtn" class="flex-1 bg-blue-600 text-white py-3 rounded font-bold">Pay with Gift Voucher</button>
+      <button id="payAccountBtn" class="flex-1 bg-green-600 text-white py-3 rounded font-bold">Pay with My Account</button>
+    </div>
   </div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeLogin()">×</span>
@@ -74,7 +87,7 @@
   </div>
 </div>
 
-<!-- REGISTER -->
+<!-- REGISTER MODAL -->
 <div id="registerModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeRegister()">×</span>
@@ -88,93 +101,102 @@
   </div>
 </div>
 
-<!-- ACCOUNT -->
+<!-- ACCOUNT MODAL -->
 <div id="accountModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-full max-w-sm relative">
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeAccount()">×</span>
-    <h2 class="text-xl font-bold mb-4">Account</h2>
-    Balance: $<span id="userBalanceDisplay">0</span>
+    <h2 class="text-xl font-bold mb-4">Account Balance</h2>
+    <p>Current Balance: $<span id="userBalanceDisplay">0</span></p>
   </div>
 </div>
 
+<!-- CARD TEMPLATE -->
 <template id="card">
   <div class="bg-white p-4 rounded shadow text-center">
     <div class="img-row"></div>
     <h3 class="font-bold mt-3 title"></h3>
     <p class="text-sm text-gray-600 desc"></p>
     <p class="font-semibold price mt-2"></p>
-    <button class="select bg-green-600 text-white px-3 py-2 rounded mt-3">Select</button>
+    <div class="flex justify-center gap-3 mt-3">
+      <button class="share bg-blue-500 text-white px-3 py-2 rounded">Share</button>
+      <button class="select bg-green-600 text-white px-3 py-2 rounded">Select</button>
+    </div>
   </div>
 </template>
 
 <script>
-let cart, users, currentUser;
-
-function removeItem(i){
-  cart.splice(i,1);
-  localStorage.setItem("cart",JSON.stringify(cart));
-  updateCart();
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-
 feather.replace();
 
-/* === 30 SKINS === */
+/* =====================
+   30 SKINS
+===================== */
 const skins = [
-{id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp"},
-{id:2,name:"Scar + Seer",desc:"30000 coins",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp"},
-{id:3,name:"Bull King",desc:"3250 coins",price:4.29,image1:"IMG_7147.webp"},
-{id:4,name:"Birthday lol + Bull king",desc:"16000 coins",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp"},
-{id:5,name:"Tiny jack + Jade",desc:"30000 coins",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp"},
-{id:6,name:"Evil master",desc:"16000 coins",price:11.49,image1:"IMG_5443.webp"},
-{id:7,name:"Space warden + Evil master",desc:"50000 coins",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp"},
-{id:8,name:"Space warden",desc:"7000 coins",price:6.59,image1:"IMG_7150.webp"},
-{id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp"},
-{id:10,name:"King lion + Magic hat",desc:"50000 coins",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp"},
-{id:11,name:"Ice Crystal",desc:"Winter skin",price:7.89,image1:"IMG_5938.webp"},
-{id:12,name:"Emerald Eye",desc:"Green gem",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp"},
-{id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp"},
-{id:14,name:"Golden Mask",desc:"Gold",price:8.19,image1:"IMG_6192.webp"},
-{id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp"},
-{id:16,name:"Star Burst",desc:"Explosion",price:7.59,image1:"IMG_6194.webp"},
-{id:17,name:"Vortex Core",desc:"Energy",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp"},
-{id:18,name:"Ruby Fang",desc:"Red",price:6.19,image1:"IMG_6197.webp"},
-{id:19,name:"Cursed Skull",desc:"Cursed",price:8.49,image1:"IMG_6198.webp"},
-{id:20,name:"Silver Orb",desc:"Silver",price:4.99,image1:"IMG_6199.webp"},
-{id:21,name:"Bronze King",desc:"Bronze",price:3.79,image1:"IMG_6200.webp"},
-{id:22,name:"Fire Ball",desc:"Fire",price:7.99,image1:"IMG_6201.webp"},
-{id:23,name:"Aqua Lord",desc:"Water",price:5.49,image1:"IMG_6202.webp"},
-{id:24,name:"Plasma Nova",desc:"Plasma",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp"},
-{id:25,name:"Dark Samurai",desc:"Samurai",price:6.79,image1:"IMG_6205.webp"},
-{id:26,name:"Ice Reaper",desc:"Ice",price:5.99,image1:"IMG_6206.webp"},
-{id:27,name:"Solar Eye",desc:"Sun",price:4.29,image1:"IMG_6207.webp"},
-{id:28,name:"Void Core",desc:"Void",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp"},
-{id:29,name:"Crystal Fang",desc:"Crystal",price:6.59,image1:"IMG_6210.webp"},
-{id:30,name:"Phantom Glow",desc:"Glow",price:7.19,image1:"IMG_6211.webp"}
+ {id:1,name:"Scar",desc:"3250 coins 1 skin Scar",price:2.89,image1:"IMG_7141.webp",image2:null,sold:320},
+ {id:2,name:"Scar + Seer",desc:"30000 coins 1 skin Scar 1 skin Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp",sold:280},
+ {id:3,name:"Bull King",desc:"3250 coins 1 skin bull king",price:4.29,image1:"IMG_7147.webp",image2:null,sold:260},
+ {id:4,name:"Birthday lol + Bull king",desc:"16000 coins 1 skin birthday lol 1 skin bull king",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp",sold:240},
+ {id:5,name:"Tiny jack + Jade",desc:"30000 coins 1 skin tiny jack 1 skin jade",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp",sold:220},
+ {id:6,name:"Evil master",desc:"16000 coins 1 skin evil master",price:11.49,image1:"IMG_5443.webp",image2:null,sold:210},
+ {id:7,name:"Space warden + Evil master",desc:"50000 coins 1 skin space warden 1 skin evil master",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp",sold:200},
+ {id:8,name:"Space warden",desc:"7000 coins 1 skin space warden",price:6.59,image1:"IMG_7150.webp",image2:null,sold:190},
+ {id:9,name:"Thund",desc:"Electric eye",price:5.49,image1:"IMG_6185.webp",image2:null,sold:180},
+ {id:10,name:"King lion + Magic hat",desc:"50000 coins 1 skin king lion 1 skin magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp",sold:170},
+ {id:11,name:"Ice Crystal",desc:"3250 coins 1 skin winter ice crystal",price:7.89,image1:"IMG_5938.webp",image2:null,sold:165},
+ {id:12,name:"Emerald Eye",desc:"Green gem eye",price:4.39,image1:"IMG_6189.webp",image2:"IMG_6190.webp",sold:160},
+ {id:13,name:"Storm Rider",desc:"Storm skin",price:3.49,image1:"IMG_6191.webp",image2:null,sold:150},
+ {id:14,name:"Golden Mask",desc:"Gold premium",price:8.19,image1:"IMG_6192.webp",image2:null,sold:145},
+ {id:15,name:"Obsidian Orb",desc:"Black stone",price:3.99,image1:"IMG_6193.webp",image2:null,sold:140},
+ {id:16,name:"Star Burst",desc:"Star explosion",price:7.59,image1:"IMG_6194.webp",image2:null,sold:135},
+ {id:17,name:"Vortex Core",desc:"Energy vortex",price:5.39,image1:"IMG_6195.webp",image2:"IMG_6196.webp",sold:130},
+ {id:18,name:"Ruby Fang",desc:"Red fang",price:6.19,image1:"IMG_6197.webp",image2:null,sold:120},
+ {id:19,name:"Cursed Skull",desc:"Cursed skin",price:8.49,image1:"IMG_6198.webp",image2:null,sold:110},
+ {id:20,name:"Silver Orb",desc:"Silver glow",price:4.99,image1:"IMG_6199.webp",image2:null,sold:105},
+ {id:21,name:"Bronze King",desc:"Bronze ruler",price:3.79,image1:"IMG_6200.webp",image2:null,sold:100},
+ {id:22,name:"Fire Ball",desc:"Fire sphere",price:7.99,image1:"IMG_6201.webp",image2:null,sold:95},
+ {id:23,name:"Aqua Lord",desc:"Water lord",price:5.49,image1:"IMG_6202.webp",image2:null,sold:90},
+ {id:24,name:"Plasma Nova",desc:"Plasma energy",price:9.49,image1:"IMG_6203.webp",image2:"IMG_6204.webp",sold:85},
+ {id:25,name:"Dark Samurai",desc:"Samurai skin",price:6.79,image1:"IMG_6205.webp",image2:null,sold:80},
+ {id:26,name:"Ice Reaper",desc:"Ice skull",price:5.99,image1:"IMG_6206.webp",image2:null,sold:75},
+ {id:27,name:"Solar Eye",desc:"Sun eye",price:4.29,image1:"IMG_6207.webp",image2:null,sold:70},
+ {id:28,name:"Void Core",desc:"Void energy",price:8.89,image1:"IMG_6208.webp",image2:"IMG_6209.webp",sold:65},
+ {id:29,name:"Crystal Fang",desc:"Crystal teeth",price:6.59,image1:"IMG_6210.webp",image2:null,sold:60},
+ {id:30,name:"Phantom Glow",desc:"Glow phantom",price:7.19,image1:"IMG_6211.webp",image2:null,sold:55}
 ];
 
-cart = JSON.parse(localStorage.getItem("cart")||"[]");
-users = JSON.parse(localStorage.getItem("users")||"[]");
-currentUser = JSON.parse(localStorage.getItem("currentUser")||null);
+/* =====================
+   USER DATA
+===================== */
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 
-const grid=document.getElementById("grid");
-const cartBtn=document.getElementById("cartBtn");
-const cartModal=document.getElementById("cartModal");
-const closeCartBtn=document.getElementById("closeCart");
-const cartItems=document.getElementById("cartItems");
-const totalEl=document.getElementById("total");
-const cartCount=document.getElementById("cartCount");
-const loginBtn=document.getElementById("loginBtn");
-const registerBtn=document.getElementById("registerBtn");
-const logoutBtn=document.getElementById("logoutBtn");
-const accountBtn=document.getElementById("accountBtn");
+/* =====================
+   🔹 AUTO LOGOUT NA 7 DAGEN
+===================== */
+const MAX_INACTIVE_DAYS = 7;
+if(currentUser && currentUser.lastActive){
+  const diffDays = (Date.now() - currentUser.lastActive) / (1000*60*60*24);
+  if(diffDays > MAX_INACTIVE_DAYS){
+    currentUser = null;
+    localStorage.setItem("currentUser", null);
+  }
+}
 
-const loginModal=document.getElementById("loginModal");
-const registerModal=document.getElementById("registerModal");
-const accountModal=document.getElementById("accountModal");
+/* =====================
+   UI HERSTEL BIJ REFRESH
+===================== */
+const grid = document.getElementById("grid");
+const cartBtn = document.getElementById("cartBtn");
+const cartModal = document.getElementById("cartModal");
+const closeCartBtn = document.getElementById("closeCart");
+const cartItems = document.getElementById("cartItems");
+const totalEl = document.getElementById("total");
+const cartCount = document.getElementById("cartCount");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const accountBtn = document.getElementById("accountBtn");
 
-/* UI restore */
 if(currentUser){
   loginBtn.classList.add("hidden");
   registerBtn.classList.add("hidden");
@@ -182,51 +204,198 @@ if(currentUser){
   accountBtn.classList.remove("hidden");
 }
 
-loginBtn.onclick=()=>loginModal.classList.remove("hidden");
-registerBtn.onclick=()=>registerModal.classList.remove("hidden");
-logoutBtn.onclick=()=>{localStorage.removeItem("currentUser");location.reload()}
-accountBtn.onclick=()=>accountModal.classList.remove("hidden");
+/* =====================
+   SHOW/HIDE MODALS
+===================== */
+loginBtn.onclick = () => document.getElementById("loginModal").classList.remove("hidden");
+registerBtn.onclick = () => document.getElementById("registerModal").classList.remove("hidden");
+function closeLogin(){document.getElementById("loginModal").classList.add("hidden");}
+function closeRegister(){document.getElementById("registerModal").classList.add("hidden");}
+function closeAccount(){document.getElementById("accountModal").classList.add("hidden");}
 
-window.closeLogin=()=>loginModal.classList.add("hidden");
-window.closeRegister=()=>registerModal.classList.add("hidden");
-window.closeAccount=()=>accountModal.classList.add("hidden");
+/* =====================
+   REGISTER FUNCTION
+===================== */
+document.getElementById("registerSubmit").onclick = () => {
+  let name = document.getElementById("regName").value.trim();
+  let email = document.getElementById("regEmail").value.trim();
+  let uid = document.getElementById("regUID").value.trim();
+  let pass = document.getElementById("regPassword").value;
+  let pass2 = document.getElementById("regPassword2").value;
 
-/* Render */
-function render(){
+  if(!name || !email || !uid || !pass || !pass2){ alert("All fields are required."); return; }
+  if(pass !== pass2){ alert("Passwords do not match."); return; }
+
+  let key = Math.floor(10000 + Math.random()*90000); // 5 digits
+  let user = {name,email,uid,password:pass,key,balance:0,lastActive:Date.now()};
+  users.push(user);
+  localStorage.setItem("users",JSON.stringify(users));
+  alert(`Registration successful! Your key: ${key}`);
+  closeRegister();
+};
+
+/* =====================
+   LOGIN FUNCTION
+===================== */
+document.getElementById("loginSubmit").onclick = () => {
+  let email = document.getElementById("loginEmail").value.trim();
+  let pass = document.getElementById("loginPassword").value;
+  let key = parseInt(document.getElementById("loginKey").value);
+
+  let user = users.find(u => u.email===email && u.password===pass && u.key===key);
+  if(!user){ alert("Invalid login."); return; }
+
+  user.lastActive = Date.now();
+  currentUser = user;
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+
+  loginBtn.classList.add("hidden");
+  registerBtn.classList.add("hidden");
+  logoutBtn.classList.remove("hidden");
+  accountBtn.classList.remove("hidden");
+
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+  closeLogin();
+};
+
+/* =====================
+   LOGOUT FUNCTION
+===================== */
+logoutBtn.onclick = () => {
+  currentUser = null;
+  localStorage.setItem("currentUser",null);
+  loginBtn.classList.remove("hidden");
+  registerBtn.classList.remove("hidden");
+  logoutBtn.classList.add("hidden");
+  accountBtn.classList.add("hidden");
+};
+
+/* =====================
+   ACCOUNT BUTTON
+===================== */
+accountBtn.onclick = () => {
+  document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+  document.getElementById("accountModal").classList.remove("hidden");
+};
+
+/* =====================
+   CART FUNCTIONS
+===================== */
+function render(list){
   grid.innerHTML="";
-  skins.forEach(s=>{
-    const c=document.getElementById("card").content.cloneNode(true);
-    const imgRow=c.querySelector(".img-row");
-    let i=document.createElement("img");
-    i.src=s.image1;
-    i.className="circle-big";
-    imgRow.appendChild(i);
+  list.forEach(s=>{
+    if(!s.image1 && !s.image2) return;
+
+    const c = document.getElementById("card").content.cloneNode(true);
+    const imgRow = c.querySelector(".img-row");
+
+    if(s.image1){
+      const i=document.createElement("img");
+      i.src=s.image1;
+      i.className=s.image2?"circle-small":"circle-big";
+      imgRow.appendChild(i);
+    }
+    if(s.image2){
+      const i=document.createElement("img");
+      i.src=s.image2;
+      i.className="circle-small";
+      imgRow.appendChild(i);
+    }
+
     c.querySelector(".title").textContent=s.name;
     c.querySelector(".desc").textContent=s.desc;
     c.querySelector(".price").textContent="$"+s.price;
-    c.querySelector(".select").onclick=()=>{cart.push(s);localStorage.setItem("cart",JSON.stringify(cart));updateCart();}
+
+    c.querySelector(".select").onclick=()=>{
+      cart.push(s);
+      localStorage.setItem("cart",JSON.stringify(cart));
+      updateCart();
+      alert("Item added to cart");
+    };
+
+    c.querySelector(".share").onclick=()=>{
+      navigator.clipboard.writeText(s.name+" - $"+s.price);
+      alert("Copied to clipboard");
+    };
+
     grid.appendChild(c);
   });
 }
-render();
 
-/* Cart */
+render(skins);
+
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
+
   cart.forEach((s,i)=>{
     total+=s.price;
-    cartItems.innerHTML+=`<div>${s.name} <button onclick="removeItem(${i})">✕</button></div>`;
+
+    const d=document.createElement("div");
+    d.className="flex items-center justify-between gap-3 border p-2 rounded";
+
+    d.innerHTML=`
+      <div class="flex items-center gap-3">
+        <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
+        <div>
+          <div class="font-bold">${s.name}</div>
+          <div class="text-sm text-gray-500">$${s.price}</div>
+        </div>
+      </div>
+      <button onclick="removeItem(${i})" class="text-red-600 font-bold text-xl">✕</button>
+    `;
+
+    cartItems.appendChild(d);
   });
+
   totalEl.textContent="$"+total.toFixed(2);
   cartCount.textContent=cart.length;
 }
 
-cartBtn.onclick=()=>{cartModal.classList.remove("hidden");updateCart()}
-if(closeCartBtn){closeCartBtn.onclick=()=>cartModal.classList.add("hidden")}
+function removeItem(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+}
 
+cartBtn.onclick=()=>{ cartModal.classList.remove("hidden"); updateCart(); };
+closeCartBtn.onclick=()=>{ cartModal.classList.add("hidden"); };
+
+// PAY WITH MY ACCOUNT
+document.getElementById("payAccountBtn").onclick = () => {
+  if(!currentUser){ alert("Please login first!"); return; }
+  let total = parseFloat(totalEl.textContent.replace("$",""));
+  if(currentUser.balance >= total){
+    currentUser.balance -= total;
+    currentUser.lastActive = Date.now();
+    localStorage.setItem("currentUser",JSON.stringify(currentUser));
+    let index = users.findIndex(u=>u.email===currentUser.email);
+    users[index] = currentUser;
+    localStorage.setItem("users",JSON.stringify(users));
+    cart = [];
+    localStorage.setItem("cart",JSON.stringify(cart));
+    updateCart();
+    cartModal.classList.add("hidden");
+    alert("Payment successful! Your skins will be processed in 2-3 days.");
+  } else {
+    alert("Insufficient balance. Please add funds to your account.");
+  }
+};
+
+/* =====================
+   🔹 ACTIVITY TRACKING (UPDATE lastActive)
+===================== */
+function updateActivity(){
+  if(currentUser){
+    currentUser.lastActive = Date.now();
+    localStorage.setItem("currentUser",JSON.stringify(currentUser));
+    let i = users.findIndex(u=>u.email===currentUser.email);
+    if(i>-1){ users[i]=currentUser; localStorage.setItem("users",JSON.stringify(users)); }
+  }
+}
+["click","keydown"].forEach(e=>{
+  document.addEventListener(e, updateActivity);
 });
 </script>
-
 </body>
 </html>
