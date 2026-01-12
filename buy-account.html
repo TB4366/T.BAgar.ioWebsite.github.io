@@ -2,149 +2,185 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Admin Panel - T.B Agar.io</title>
+<title>Admin Panel - T.B Agar.io Paid Skins</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<style>
+.hidden{display:none;}
+</style>
 </head>
+<body class="bg-gray-100">
 
-<body class="bg-gray-100 p-6">
+<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
+  <h1 class="font-bold text-lg">Admin Panel</h1>
+  <button id="logoutBtn" class="bg-red-500 px-3 py-1 rounded">Logout</button>
+</header>
 
-<h1 class="text-3xl font-bold mb-6">Admin Panel</h1>
+<main class="max-w-6xl mx-auto p-6 space-y-6">
 
-<!-- LOGIN -->
-<div id="loginBox" class="bg-white p-6 rounded max-w-sm">
-  <input id="adminPass" type="password" placeholder="Admin Password"
-    class="border p-2 w-full mb-4">
-  <button onclick="adminLogin()" class="bg-black text-white w-full py-2 rounded">
-    Login
-  </button>
-</div>
+  <!-- ADMIN LOGIN -->
+  <div id="loginSection">
+    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+    <input id="adminEmail" placeholder="Email" class="border p-2 rounded mb-2 w-full">
+    <input id="adminPassword" type="password" placeholder="Password" class="border p-2 rounded mb-2 w-full">
+    <button id="adminLoginBtn" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Login</button>
+  </div>
 
-<!-- PANEL -->
-<div id="panel" class="hidden">
+  <!-- USERS PANEL -->
+  <div id="adminPanel" class="hidden space-y-4">
 
-  <!-- ORDERS -->
-  <h2 class="text-2xl font-bold mt-8 mb-4">Orders</h2>
-  <div id="orders"></div>
+    <!-- SEARCH -->
+    <input id="userSearch" placeholder="Search users by name/email/UID..." class="border p-2 rounded w-full">
 
-  <!-- USERS -->
-  <h2 class="text-2xl font-bold mt-10 mb-4">Users</h2>
-  <div id="users"></div>
+    <!-- USERS TABLE -->
+    <table class="min-w-full border border-gray-300">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border p-2">Name</th>
+          <th class="border p-2">Email</th>
+          <th class="border p-2">UID</th>
+          <th class="border p-2">Key</th>
+          <th class="border p-2">Balance</th>
+          <th class="border p-2">Orders</th>
+          <th class="border p-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTable" class="bg-white"></tbody>
+    </table>
 
-</div>
+  </div>
+</main>
 
 <script>
-const ADMIN_PASSWORD = "admin123"; // <<< VERANDER DIT
+feather.replace();
 
-function adminLogin(){
-  if(document.getElementById("adminPass").value !== ADMIN_PASSWORD){
-    alert("Wrong password");
-    return;
+// =====================
+// ADMIN DATA
+// =====================
+let users = JSON.parse(localStorage.getItem("users") || "[]");
+let carts = JSON.parse(localStorage.getItem("cart") || "[]");
+let currentAdmin = JSON.parse(localStorage.getItem("currentAdmin") || null);
+
+// Dummy admin account
+const ADMIN_EMAIL = "admin@tbskins.com";
+const ADMIN_PASSWORD = "admin123";
+
+// =====================
+// LOGIN
+// =====================
+const loginSection = document.getElementById("loginSection");
+const adminPanel = document.getElementById("adminPanel");
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+adminLoginBtn.onclick = () => {
+  let email = document.getElementById("adminEmail").value.trim();
+  let pass = document.getElementById("adminPassword").value;
+
+  if(email === ADMIN_EMAIL && pass === ADMIN_PASSWORD){
+    currentAdmin = {email};
+    localStorage.setItem("currentAdmin", JSON.stringify(currentAdmin));
+    loginSection.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+    renderUsers(users);
+  } else {
+    alert("Invalid admin login.");
   }
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("panel").classList.remove("hidden");
-  loadOrders();
-  loadUsers();
-}
+};
 
-/* =====================
-   ORDERS
-===================== */
-function loadOrders(){
-  const orders = JSON.parse(localStorage.getItem("orders") || "[]");
-  const box = document.getElementById("orders");
-  box.innerHTML = "";
+logoutBtn.onclick = () => {
+  currentAdmin = null;
+  localStorage.setItem("currentAdmin", null);
+  loginSection.classList.remove("hidden");
+  adminPanel.classList.add("hidden");
+};
 
-  if(!orders.length){
-    box.innerHTML = "<p class='text-gray-500'>No orders</p>";
-    return;
-  }
+// =====================
+// RENDER USERS
+// =====================
+const usersTable = document.getElementById("usersTable");
+const userSearch = document.getElementById("userSearch");
 
-  orders.forEach((o,i)=>{
-    box.innerHTML += `
-    <div class="bg-white p-4 rounded mb-4 shadow">
-      <div class="font-bold mb-2">
-        ${o.user.name} (${o.user.email})
-      </div>
-      <div class="text-sm mb-1">UID: ${o.user.uid}</div>
-      <div class="text-sm mb-1">Date: ${o.date}</div>
-      <div class="text-sm mb-1">Total: $${o.total}</div>
+function renderUsers(list){
+  usersTable.innerHTML = "";
+  list.forEach((u, index) => {
+    const tr = document.createElement("tr");
+    tr.className = "border";
 
-      <div class="mt-2 mb-2">
-        ${o.items.map(s=>`<span class="inline-block bg-gray-200 px-2 py-1 rounded mr-2 mb-1">${s.name}</span>`).join("")}
-      </div>
+    const orders = carts.filter(c => c.userEmail === u.email);
 
-      <select onchange="changeStatus(${i},this.value)"
-        class="border px-2 py-1 rounded">
-        <option ${o.status==="Pending"?"selected":""}>Pending</option>
-        <option ${o.status==="Done"?"selected":""}>Done</option>
-      </select>
-    </div>`;
+    tr.innerHTML = `
+      <td class="border p-2"><input type="text" value="${u.name}" class="border p-1 w-full" data-field="name" data-index="${index}"></td>
+      <td class="border p-2"><input type="text" value="${u.email}" class="border p-1 w-full" data-field="email" data-index="${index}"></td>
+      <td class="border p-2"><input type="text" value="${u.uid}" class="border p-1 w-full" data-field="uid" data-index="${index}"></td>
+      <td class="border p-2">${u.key}</td>
+      <td class="border p-2"><input type="number" value="${u.balance}" class="border p-1 w-full" data-field="balance" data-index="${index}"></td>
+      <td class="border p-2">
+        ${orders.length} order(s)
+        <button class="bg-blue-500 text-white px-2 py-1 rounded ml-2" data-index="${index}" onclick="viewOrders(${index})">View</button>
+      </td>
+      <td class="border p-2">
+        <button class="bg-green-500 text-white px-2 py-1 rounded saveBtn" data-index="${index}">Save</button>
+      </td>
+    `;
+
+    usersTable.appendChild(tr);
+  });
+
+  // SAVE BUTTONS
+  document.querySelectorAll(".saveBtn").forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.index);
+      const tr = usersTable.children[i];
+      const inputs = tr.querySelectorAll("input");
+      inputs.forEach(inp => {
+        const field = inp.dataset.field;
+        users[i][field] = field === "balance" ? parseFloat(inp.value) : inp.value;
+      });
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("User updated.");
+    };
   });
 }
 
-function changeStatus(index,status){
-  let orders = JSON.parse(localStorage.getItem("orders"));
-  orders[index].status = status;
-  localStorage.setItem("orders",JSON.stringify(orders));
-}
+// =====================
+// VIEW ORDERS
+// =====================
+function viewOrders(index){
+  const user = users[index];
+  const userOrders = carts.filter(c => c.userEmail === user.email);
+  if(userOrders.length === 0){ alert("No orders."); return; }
 
-/* =====================
-   USERS
-===================== */
-function loadUsers(){
-  const users = JSON.parse(localStorage.getItem("users") || "[]");
-  const box = document.getElementById("users");
-  box.innerHTML = "";
-
-  if(!users.length){
-    box.innerHTML = "<p class='text-gray-500'>No users</p>";
-    return;
-  }
-
-  users.forEach((u,i)=>{
-    box.innerHTML += `
-    <div class="bg-white p-4 rounded mb-3 shadow flex justify-between items-center">
-      <div>
-        <div class="font-bold">${u.name}</div>
-        <div class="text-sm">${u.email}</div>
-        <div class="text-sm">UID: ${u.uid}</div>
-        <div class="text-sm">Balance: $${u.balance}</div>
-      </div>
-
-      <div class="flex gap-2">
-        <input type="number" value="${u.balance}"
-          onchange="updateBalance(${i},this.value)"
-          class="border w-24 px-2 py-1 rounded">
-
-        <button onclick="deleteUser(${i})"
-          class="bg-red-600 text-white px-3 py-1 rounded">
-          Delete
-        </button>
-      </div>
-    </div>`;
+  let msg = `Orders for ${user.name}:\n`;
+  userOrders.forEach((o,i)=>{
+    msg += `${i+1}. ${o.name} - $${o.price}\n`;
   });
+  alert(msg);
 }
 
-function updateBalance(index,value){
-  let users = JSON.parse(localStorage.getItem("users"));
-  users[index].balance = parseFloat(value) || 0;
-  localStorage.setItem("users",JSON.stringify(users));
+// =====================
+// SEARCH USERS
+// =====================
+userSearch.oninput = () => {
+  const query = userSearch.value.toLowerCase();
+  const filtered = users.filter(u => 
+    u.name.toLowerCase().includes(query) ||
+    u.email.toLowerCase().includes(query) ||
+    u.uid.toLowerCase().includes(query)
+  );
+  renderUsers(filtered);
+};
 
-  let current = JSON.parse(localStorage.getItem("currentUser"));
-  if(current && current.email === users[index].email){
-    localStorage.setItem("currentUser",JSON.stringify(users[index]));
-  }
+// =====================
+// AUTO LOGIN IF ADMIN SESSION
+// =====================
+if(currentAdmin){
+  loginSection.classList.add("hidden");
+  adminPanel.classList.remove("hidden");
+  renderUsers(users);
 }
 
-function deleteUser(index){
-  if(!confirm("Delete this user?")) return;
-  let users = JSON.parse(localStorage.getItem("users"));
-  users.splice(index,1);
-  localStorage.setItem("users",JSON.stringify(users));
-  loadUsers();
-}
 </script>
-
 </body>
 </html>
