@@ -1,162 +1,149 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Admin Panel</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
-header{background:#020617;padding:12px;display:flex;justify-content:space-between;align-items:center}
-header h2{margin:0}
-.icon{cursor:pointer;position:relative;font-size:20px}
-.badge{position:absolute;top:-6px;right:-10px;background:red;color:#fff;
-border-radius:50%;padding:2px 6px;font-size:12px}
-
-.container{display:flex}
-.sidebar{width:280px;border-right:1px solid #1e293b;padding:10px}
-.content{flex:1;padding:20px}
-
-input,button{padding:6px;margin:4px 0;width:100%}
-.user{padding:8px;border-bottom:1px solid #334155;cursor:pointer}
-.user:hover{background:#1e293b}
-
-.card{background:#020617;padding:15px;border-radius:8px;margin-bottom:15px}
-.small{font-size:12px;color:#94a3b8}
-button{cursor:pointer}
-</style>
+<meta charset="utf-8">
+<title>Admin Panel - T.B Agar.io</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
+<body class="bg-gray-100 p-6">
 
-<header>
-  <h2>Admin Panel</h2>
-  <div class="icon" onclick="toggleOrders()">
-    🛒
-    <span id="orderBadge" class="badge hidden">0</span>
-  </div>
-</header>
+<h1 class="text-3xl font-bold mb-6">Admin Panel</h1>
 
-<div class="container">
+<!-- LOGIN -->
+<div id="loginBox" class="bg-white p-6 rounded max-w-sm">
+  <input id="adminPass" type="password" placeholder="Admin Password"
+    class="border p-2 w-full mb-4">
+  <button onclick="adminLogin()" class="bg-black text-white w-full py-2 rounded">
+    Login
+  </button>
+</div>
+
+<!-- PANEL -->
+<div id="panel" class="hidden">
+
+  <!-- ORDERS -->
+  <h2 class="text-2xl font-bold mt-8 mb-4">Orders</h2>
+  <div id="orders"></div>
 
   <!-- USERS -->
-  <div class="sidebar">
-    <input id="search" placeholder="Search user">
-    <div id="userList"></div>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content" id="content">
-    <div class="card">Select a user or order</div>
-  </div>
+  <h2 class="text-2xl font-bold mt-10 mb-4">Users</h2>
+  <div id="users"></div>
 
 </div>
 
 <script>
-/* ================= DATA ================= */
-let users = JSON.parse(localStorage.getItem("users") || "[]");
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
-let viewingOrders = false;
+const ADMIN_PASSWORD = "admin123"; // <<< VERANDER DIT
 
-/* ================= INIT ================= */
-renderUsers();
-renderOrderBadge();
+function adminLogin(){
+  if(document.getElementById("adminPass").value !== ADMIN_PASSWORD){
+    alert("Wrong password");
+    return;
+  }
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("panel").classList.remove("hidden");
+  loadOrders();
+  loadUsers();
+}
 
-/* ================= USERS ================= */
-function renderUsers(){
-  userList.innerHTML="";
-  users.forEach((u,i)=>{
-    if(search.value && !u.name.toLowerCase().includes(search.value.toLowerCase())) return;
-    let d=document.createElement("div");
-    d.className="user";
-    d.textContent=u.name;
-    d.onclick=()=>openUser(i);
-    userList.appendChild(d);
+/* =====================
+   ORDERS
+===================== */
+function loadOrders(){
+  const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+  const box = document.getElementById("orders");
+  box.innerHTML = "";
+
+  if(!orders.length){
+    box.innerHTML = "<p class='text-gray-500'>No orders</p>";
+    return;
+  }
+
+  orders.forEach((o,i)=>{
+    box.innerHTML += `
+    <div class="bg-white p-4 rounded mb-4 shadow">
+      <div class="font-bold mb-2">
+        ${o.user.name} (${o.user.email})
+      </div>
+      <div class="text-sm mb-1">UID: ${o.user.uid}</div>
+      <div class="text-sm mb-1">Date: ${o.date}</div>
+      <div class="text-sm mb-1">Total: $${o.total}</div>
+
+      <div class="mt-2 mb-2">
+        ${o.items.map(s=>`<span class="inline-block bg-gray-200 px-2 py-1 rounded mr-2 mb-1">${s.name}</span>`).join("")}
+      </div>
+
+      <select onchange="changeStatus(${i},this.value)"
+        class="border px-2 py-1 rounded">
+        <option ${o.status==="Pending"?"selected":""}>Pending</option>
+        <option ${o.status==="Done"?"selected":""}>Done</option>
+      </select>
+    </div>`;
   });
 }
 
-function openUser(i){
-  let u=users[i];
-  content.innerHTML=`
-    <div class="card">
-      <h3>${u.name}</h3>
-      <p class="small">Email: ${u.email}</p>
-      <p class="small">Agar.io UID: ${u.uid}</p>
-      <p class="small">Login key: ${u.key}</p>
-
-      <label>Password</label>
-      <input id="pw" value="${u.password}">
-
-      <label>Balance</label>
-      <input id="bal" type="number" value="${u.balance}">
-
-      <button onclick="saveUser(${i})">Save</button>
-      <button onclick="deleteUser(${i})" style="background:#b91c1c;color:#fff">Delete user</button>
-    </div>
-  `;
+function changeStatus(index,status){
+  let orders = JSON.parse(localStorage.getItem("orders"));
+  orders[index].status = status;
+  localStorage.setItem("orders",JSON.stringify(orders));
 }
 
-function saveUser(i){
-  users[i].password = pw.value;
-  users[i].balance = Number(bal.value);
+/* =====================
+   USERS
+===================== */
+function loadUsers(){
+  const users = JSON.parse(localStorage.getItem("users") || "[]");
+  const box = document.getElementById("users");
+  box.innerHTML = "";
+
+  if(!users.length){
+    box.innerHTML = "<p class='text-gray-500'>No users</p>";
+    return;
+  }
+
+  users.forEach((u,i)=>{
+    box.innerHTML += `
+    <div class="bg-white p-4 rounded mb-3 shadow flex justify-between items-center">
+      <div>
+        <div class="font-bold">${u.name}</div>
+        <div class="text-sm">${u.email}</div>
+        <div class="text-sm">UID: ${u.uid}</div>
+        <div class="text-sm">Balance: $${u.balance}</div>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="number" value="${u.balance}"
+          onchange="updateBalance(${i},this.value)"
+          class="border w-24 px-2 py-1 rounded">
+
+        <button onclick="deleteUser(${i})"
+          class="bg-red-600 text-white px-3 py-1 rounded">
+          Delete
+        </button>
+      </div>
+    </div>`;
+  });
+}
+
+function updateBalance(index,value){
+  let users = JSON.parse(localStorage.getItem("users"));
+  users[index].balance = parseFloat(value) || 0;
   localStorage.setItem("users",JSON.stringify(users));
-  alert("User updated");
-}
 
-function deleteUser(i){
-  if(!confirm("Delete this user?")) return;
-  users.splice(i,1);
-  localStorage.setItem("users",JSON.stringify(users));
-  renderUsers();
-  content.innerHTML="<div class='card'>User deleted</div>";
-}
-
-/* ================= ORDERS ================= */
-function renderOrderBadge(){
-  const pending = orders.filter(o=>o.status==="pending").length;
-  if(pending>0){
-    orderBadge.textContent=pending;
-    orderBadge.classList.remove("hidden");
-  } else {
-    orderBadge.classList.add("hidden");
+  let current = JSON.parse(localStorage.getItem("currentUser"));
+  if(current && current.email === users[index].email){
+    localStorage.setItem("currentUser",JSON.stringify(users[index]));
   }
 }
 
-function toggleOrders(){
-  viewingOrders=!viewingOrders;
-  if(viewingOrders) renderOrders();
-  else content.innerHTML="<div class='card'>Select a user or order</div>";
+function deleteUser(index){
+  if(!confirm("Delete this user?")) return;
+  let users = JSON.parse(localStorage.getItem("users"));
+  users.splice(index,1);
+  localStorage.setItem("users",JSON.stringify(users));
+  loadUsers();
 }
-
-function renderOrders(){
-  content.innerHTML="";
-  orders.forEach((o,i)=>{
-    content.innerHTML+=`
-      <div class="card">
-        <b>${o.name}</b> <span class="small">(${o.uid})</span><br>
-        Method: ${o.method}<br>
-        Status: ${o.status}<br>
-        Date: ${o.date}<br>
-        <ul>
-          ${o.items.map(it=>`<li>${it.name} - $${it.price}</li>`).join("")}
-        </ul>
-        ${o.status==="pending"
-          ? `<button onclick="processOrder(${i})">Mark as processed</button>`
-          : `<span class="small">Processed</span>`
-        }
-      </div>
-    `;
-  });
-}
-
-function processOrder(i){
-  orders[i].status="processed";
-  localStorage.setItem("orders",JSON.stringify(orders));
-  renderOrders();
-  renderOrderBadge();
-}
-
-/* ================= SEARCH ================= */
-search.oninput=renderUsers;
 </script>
 
 </body>
