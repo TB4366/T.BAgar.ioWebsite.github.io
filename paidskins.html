@@ -82,7 +82,6 @@
     <h2 class="text-xl font-bold mb-4">Login</h2>
     <input id="loginEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
     <input id="loginPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
-    <input id="loginKey" placeholder="Key" class="w-full mb-2 px-3 py-2 border rounded">
     <button id="loginSubmit" class="bg-blue-500 text-white w-full py-2 rounded">Login</button>
   </div>
 </div>
@@ -168,6 +167,7 @@ const skins = [
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
 let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 
 const grid = document.getElementById("grid");
@@ -212,9 +212,8 @@ document.getElementById("registerSubmit").onclick = () => {
 document.getElementById("loginSubmit").onclick = () => {
   let email = document.getElementById("loginEmail").value.trim();
   let pass = document.getElementById("loginPassword").value;
-  let key = parseInt(document.getElementById("loginKey").value);
 
-  let user = users.find(u => u.email===email && u.password===pass && u.key===key);
+  let user = users.find(u => u.email===email && u.password===pass);
   if(!user){ alert("Invalid login."); return; }
   currentUser = user;
   localStorage.setItem("currentUser",JSON.stringify(currentUser));
@@ -240,8 +239,6 @@ logoutBtn.onclick = () => {
 
 /* === ACCOUNT BUTTON === */
 accountBtn.onclick = () => {
-  // always fetch the latest currentUser from localStorage in case admin updated balance
-  currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
   document.getElementById("accountModal").classList.remove("hidden");
 };
@@ -337,6 +334,11 @@ document.getElementById("payAccountBtn").onclick = () => {
     let index = users.findIndex(u=>u.email===currentUser.email);
     users[index] = currentUser;
     localStorage.setItem("users",JSON.stringify(users));
+
+    // ADD ORDER TO ORDERS
+    orders.push({userEmail: currentUser.email, items: [...cart], total: total, date: new Date().toLocaleString()});
+    localStorage.setItem("orders", JSON.stringify(orders));
+
     cart = [];
     localStorage.setItem("cart",JSON.stringify(cart));
     updateCart();
