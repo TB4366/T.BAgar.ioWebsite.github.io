@@ -106,6 +106,8 @@
     <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeAccount()">×</span>
     <h2 class="text-xl font-bold mb-4">Account Balance</h2>
     <p>Current Balance: $<span id="userBalanceDisplay">0</span></p>
+    <h3 class="font-bold mt-4">Your Orders:</h3>
+    <div id="userOrders" class="space-y-2 max-h-64 overflow-y-auto"></div>
   </div>
 </div>
 
@@ -167,8 +169,8 @@ const skins = [
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
 let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
+let orders = JSON.parse(localStorage.getItem("orders") || "[]"); // alle orders van alle users
 
 const grid = document.getElementById("grid");
 const cartBtn = document.getElementById("cartBtn");
@@ -181,6 +183,7 @@ const loginBtn = document.getElementById("loginBtn");
 const registerBtn = document.getElementById("registerBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const accountBtn = document.getElementById("accountBtn");
+const userOrdersEl = document.getElementById("userOrders");
 
 /* === SHOW/HIDE MODALS === */
 loginBtn.onclick = () => document.getElementById("loginModal").classList.remove("hidden");
@@ -240,6 +243,7 @@ logoutBtn.onclick = () => {
 /* === ACCOUNT BUTTON === */
 accountBtn.onclick = () => {
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
+  renderUserOrders();
   document.getElementById("accountModal").classList.remove("hidden");
 };
 
@@ -261,22 +265,24 @@ function render(list){
     if(s.image2){
       const i=document.createElement("img");
       i.src=s.image2;
-      i.className="circle-small";
+         i.className="circle-small";
       imgRow.appendChild(i);
     }
 
-    c.querySelector(".title").textContent=s.name;
-    c.querySelector(".desc").textContent=s.desc;
-    c.querySelector(".price").textContent="$"+s.price;
+    c.querySelector(".title").textContent = s.name;
+    c.querySelector(".desc").textContent = s.desc;
+    c.querySelector(".price").textContent = "$"+s.price;
 
-    c.querySelector(".select").onclick=()=>{
+    // Voeg item toe aan cart
+    c.querySelector(".select").onclick = () => {
       cart.push(s);
-      localStorage.setItem("cart",JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
       updateCart();
       alert("Item added to cart");
     };
 
-    c.querySelector(".share").onclick=()=>{
+    // Share knop
+    c.querySelector(".share").onclick = () => {
       navigator.clipboard.writeText(s.name+" - $"+s.price);
       alert("Copied to clipboard");
     };
@@ -287,17 +293,17 @@ function render(list){
 
 render(skins);
 
-function updateCart(){
-  cartItems.innerHTML="";
-  let total=0;
+function updateCart() {
+  cartItems.innerHTML = "";
+  let total = 0;
 
-  cart.forEach((s,i)=>{
-    total+=s.price;
+  cart.forEach((s, i) => {
+    total += s.price;
 
-    const d=document.createElement("div");
-    d.className="flex items-center justify-between gap-3 border p-2 rounded";
+    const d = document.createElement("div");
+    d.className = "flex items-center justify-between gap-3 border p-2 rounded";
 
-    d.innerHTML=`
+    d.innerHTML = `
       <div class="flex items-center gap-3">
         <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
         <div>
@@ -311,36 +317,47 @@ function updateCart(){
     cartItems.appendChild(d);
   });
 
-  totalEl.textContent="$"+total.toFixed(2);
-  cartCount.textContent=cart.length;
+  totalEl.textContent = "$" + total.toFixed(2);
+  cartCount.textContent = cart.length;
 }
 
-function removeItem(i){
-  cart.splice(i,1);
-  localStorage.setItem("cart",JSON.stringify(cart));
+function removeItem(i) {
+  cart.splice(i, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
   updateCart();
 }
 
-cartBtn.onclick=()=>{ cartModal.classList.remove("hidden"); updateCart(); };
-closeCartBtn.onclick=()=>{ cartModal.classList.add("hidden"); };
+cartBtn.onclick = () => { 
+  cartModal.classList.remove("hidden"); 
+  updateCart(); 
+};
+closeCartBtn.onclick = () => { cartModal.classList.add("hidden"); };
 
 // PAY WITH MY ACCOUNT
 document.getElementById("payAccountBtn").onclick = () => {
-  if(!currentUser){ alert("Please login first!"); return; }
+  if (!currentUser) { alert("Please login first!"); return; }
   let total = parseFloat(totalEl.textContent.replace("$",""));
-  if(currentUser.balance >= total){
+  if (currentUser.balance >= total) {
     currentUser.balance -= total;
-    localStorage.setItem("currentUser",JSON.stringify(currentUser));
-    let index = users.findIndex(u=>u.email===currentUser.email);
-    users[index] = currentUser;
-    localStorage.setItem("users",JSON.stringify(users));
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-    // ADD ORDER TO ORDERS
-    orders.push({userEmail: currentUser.email, items: [...cart], total: total, date: new Date().toLocaleString()});
+    let index = users.findIndex(u => u.email === currentUser.email);
+    users[index] = currentUser;
+    localStorage.setItem("users", JSON.stringify(users));
+
+    // Voeg orders toe
+    cart.forEach(item => {
+      orders.push({
+        user: currentUser.email,
+        name: item.name,
+        price: item.price,
+        date: new Date().toISOString()
+      });
+    });
     localStorage.setItem("orders", JSON.stringify(orders));
 
     cart = [];
-    localStorage.setItem("cart",JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart));
     updateCart();
     cartModal.classList.add("hidden");
     alert("Payment successful! Your skins will be processed in 2-3 days.");
@@ -348,6 +365,26 @@ document.getElementById("payAccountBtn").onclick = () => {
     alert("Insufficient balance. Please add funds to your account.");
   }
 };
+
+// Render orders van de ingelogde user
+function renderUserOrders() {
+  userOrdersEl.innerHTML = "";
+  if (!currentUser) return;
+
+  let userOrders = orders.filter(o => o.user === currentUser.email);
+  if (userOrders.length === 0) {
+    userOrdersEl.innerHTML = "<p class='text-gray-500'>No orders yet.</p>";
+    return;
+  }
+
+  userOrders.forEach(o => {
+    const div = document.createElement("div");
+    div.className = "border p-2 rounded flex justify-between";
+    div.innerHTML = `<span>${o.name}</span><span>$${o.price}</span>`;
+    userOrdersEl.appendChild(div);
+  });
+}
 </script>
 </body>
 </html>
+  
