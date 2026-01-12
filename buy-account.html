@@ -2,134 +2,199 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Admin Panel - T.B Agar.io Paid Skins</title>
+<title>T.B Agar.io Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-body{background:#f0f0f0;}
-.table{width:100%;border-collapse:collapse;}
-.table th,.table td{border:1px solid #ccc;padding:8px;text-align:left;}
-.table th{background:#333;color:#fff;}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
 .hidden{display:none;}
+.badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;}
 </style>
 </head>
-<body>
+<body class="bg-gray-100">
 
+<!-- TOP BAR -->
 <header class="bg-gray-900 text-white p-4 flex justify-between items-center">
-  <h1 class="font-bold text-lg">Admin Panel</h1>
-  <button id="ordersBtn" class="bg-blue-600 px-3 py-1 rounded">Orders</button>
+  <div class="font-bold text-lg">T.B Agar.io Admin Panel</div>
+  <div class="flex items-center gap-4">
+    <button id="orderBtn" class="relative bg-teal-500 px-3 py-2 rounded flex items-center gap-2">
+      Orders <span id="orderCount" class="badge">0</span>
+    </button>
+    <button id="logoutBtn" class="bg-red-500 px-3 py-2 rounded hidden">Logout</button>
+  </div>
 </header>
 
-<!-- LOGIN -->
-<div id="loginDiv" class="p-6 max-w-sm mx-auto mt-10 bg-white rounded shadow">
-  <h2 class="font-bold text-xl mb-4">Admin Login</h2>
-  <input id="adminPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
-  <button id="loginAdminBtn" class="bg-green-500 text-white w-full py-2 rounded">Login</button>
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+    <input id="adminPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <button id="loginSubmit" class="bg-blue-500 text-white w-full py-2 rounded">Login</button>
+  </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="hidden p-6 max-w-6xl mx-auto">
-  <h2 class="font-bold text-xl mb-4">Users</h2>
-  <table class="table mb-6">
-    <thead>
+<!-- USERS TABLE -->
+<div class="max-w-6xl mx-auto mt-6 p-4">
+  <table id="usersTable" class="min-w-full bg-white rounded shadow hidden">
+    <thead class="bg-gray-200">
       <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>UID</th>
-        <th>Password</th>
-        <th>Key</th>
-        <th>Balance</th>
-        <th>Actions</th>
+        <th class="p-2 border">Name</th>
+        <th class="p-2 border">Email</th>
+        <th class="p-2 border">UID</th>
+        <th class="p-2 border">Password</th>
+        <th class="p-2 border">Key</th>
+        <th class="p-2 border">Balance</th>
+        <th class="p-2 border">Edit</th>
       </tr>
     </thead>
-    <tbody id="usersTable"></tbody>
+    <tbody id="usersBody"></tbody>
   </table>
 </div>
 
 <!-- ORDERS MODAL -->
-<div id="ordersModal" class="modal hidden">
-  <div class="bg-white w-full max-w-xl p-6 rounded relative">
-    <button id="closeOrders" class="absolute right-4 top-2 text-2xl">&times;</button>
-    <h2 class="text-2xl font-bold text-center mb-4">Orders</h2>
-    <div id="ordersList" class="space-y-3"></div>
+<div id="ordersModal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded w-full max-w-lg relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeOrders()">×</span>
+    <h2 class="text-xl font-bold mb-4">Orders</h2>
+    <div id="ordersList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div id="editModal" class="hidden fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeEdit()">×</span>
+    <h2 class="text-xl font-bold mb-4">Edit User</h2>
+    <input id="editName" placeholder="Name" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="editEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="editUID" placeholder="UID" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="editPassword" type="text" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="editBalance" type="number" placeholder="Balance" class="w-full mb-2 px-3 py-2 border rounded">
+    <button id="saveUser" class="bg-green-500 text-white w-full py-2 rounded">Save Changes</button>
   </div>
 </div>
 
 <script>
 feather.replace();
 
-// ==== ADMIN PASSWORD ====
-const ADMIN_PASSWORD = "admin123"; // wijzig dit naar jouw eigen wachtwoord
-const loginDiv = document.getElementById("loginDiv");
-const adminPanel = document.getElementById("adminPanel");
-const loginAdminBtn = document.getElementById("loginAdminBtn");
-const ordersBtn = document.getElementById("ordersBtn");
-const ordersModal = document.getElementById("ordersModal");
-const closeOrders = document.getElementById("closeOrders");
-const ordersList = document.getElementById("ordersList");
-
+/* =====================
+   ADMIN DATA
+===================== */
+const adminPass = "admin123"; // admin wachtwoord
 let users = JSON.parse(localStorage.getItem("users") || "[]");
-let orders = JSON.parse(localStorage.getItem("orders") || "[]"); // alle orders van users
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let currentEdit = null;
 
-// ==== ADMIN LOGIN ====
-loginAdminBtn.onclick = () => {
+/* === DOM ELEMENTS === */
+const loginModal = document.getElementById("loginModal");
+const loginSubmit = document.getElementById("loginSubmit");
+const logoutBtn = document.getElementById("logoutBtn");
+const usersTable = document.getElementById("usersTable");
+const usersBody = document.getElementById("usersBody");
+const editModal = document.getElementById("editModal");
+const saveUserBtn = document.getElementById("saveUser");
+const orderBtn = document.getElementById("orderBtn");
+const ordersModal = document.getElementById("ordersModal");
+const ordersList = document.getElementById("ordersList");
+const orderCount = document.getElementById("orderCount");
+
+/* === LOGIN === */
+loginModal.classList.remove("hidden");
+loginSubmit.onclick = () => {
   const pass = document.getElementById("adminPassword").value;
-  if(pass !== ADMIN_PASSWORD){ alert("Wrong password"); return; }
-  alert("Welcome Admin");
-  loginDiv.classList.add("hidden");
-  adminPanel.classList.remove("hidden");
-  renderUsers();
+  if(pass === adminPass){
+    alert("Welcome Admin!");
+    loginModal.classList.add("hidden");
+    usersTable.classList.remove("hidden");
+    logoutBtn.classList.remove("hidden");
+    renderUsers();
+    updateOrderCount();
+  } else {
+    alert("Incorrect password.");
+  }
 };
 
-// ==== RENDER USERS ====
-function renderUsers(){
-  const tbody = document.getElementById("usersTable");
-  tbody.innerHTML="";
-  users.forEach((u,index)=>{
-    const tr = document.createElement("tr");
-    tr.innerHTML=`
-      <td><input value="${u.name}" data-index="${index}" data-field="name" class="border px-1 w-full"></td>
-      <td><input value="${u.email}" data-index="${index}" data-field="email" class="border px-1 w-full"></td>
-      <td><input value="${u.uid}" data-index="${index}" data-field="uid" class="border px-1 w-full"></td>
-      <td><input value="${u.password}" data-index="${index}" data-field="password" class="border px-1 w-full"></td>
-      <td>${u.key}</td>
-      <td><input value="${u.balance}" data-index="${index}" data-field="balance" class="border px-1 w-full"></td>
-      <td><button data-index="${index}" class="saveBtn bg-green-500 text-white px-2 py-1 rounded">Save</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
+/* === LOGOUT === */
+logoutBtn.onclick = () => {
+  usersTable.classList.add("hidden");
+  logoutBtn.classList.add("hidden");
+  loginModal.classList.remove("hidden");
+};
 
-  document.querySelectorAll(".saveBtn").forEach(btn=>{
-    btn.onclick = ()=>{
-      const idx = btn.getAttribute("data-index");
-      ["name","email","uid","password","balance"].forEach(f=>{
-        const val = document.querySelector(`input[data-index='${idx}'][data-field='${f}']`).value;
-        if(f==="balance") users[idx][f] = parseFloat(val);
-        else users[idx][f] = val;
-      });
-      localStorage.setItem("users",JSON.stringify(users));
-      alert("User updated!");
-    };
+/* === RENDER USERS === */
+function renderUsers(){
+  usersBody.innerHTML = "";
+  users.forEach((u,i)=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="p-2 border">${u.name}</td>
+      <td class="p-2 border">${u.email}</td>
+      <td class="p-2 border">${u.uid}</td>
+      <td class="p-2 border">${u.password}</td>
+      <td class="p-2 border">${u.key}</td>
+      <td class="p-2 border">$${u.balance.toFixed(2)}</td>
+      <td class="p-2 border text-center">
+        <button onclick="editUser(${i})" class="bg-blue-500 text-white px-2 py-1 rounded">Edit</button>
+      </td>
+    `;
+    usersBody.appendChild(tr);
   });
 }
 
-// ==== ORDERS MODAL ====
-ordersBtn.onclick = ()=>{
-  ordersList.innerHTML="";
-  if(orders.length===0){ ordersList.innerHTML="<p>No orders yet.</p>"; }
-  orders.forEach(o=>{
-    const div = document.createElement("div");
-    div.className="border p-2 rounded";
-    div.innerHTML=`<strong>User:</strong> ${o.user} <br> <strong>Product:</strong> ${o.product} - $${o.price.toFixed(2)} <br> <strong>Date:</strong> ${o.date}`;
-    ordersList.appendChild(div);
-  });
+/* === EDIT USER === */
+function editUser(index){
+  currentEdit = index;
+  const u = users[index];
+  document.getElementById("editName").value = u.name;
+  document.getElementById("editEmail").value = u.email;
+  document.getElementById("editUID").value = u.uid;
+  document.getElementById("editPassword").value = u.password;
+  document.getElementById("editBalance").value = u.balance;
+  editModal.classList.remove("hidden");
+}
+
+saveUserBtn.onclick = () => {
+  if(currentEdit === null) return;
+  let u = users[currentEdit];
+  u.name = document.getElementById("editName").value;
+  u.email = document.getElementById("editEmail").value;
+  u.uid = document.getElementById("editUID").value;
+  u.password = document.getElementById("editPassword").value;
+  u.balance = parseFloat(document.getElementById("editBalance").value);
+  users[currentEdit] = u;
+  localStorage.setItem("users",JSON.stringify(users));
+  renderUsers();
+  editModal.classList.add("hidden");
+  alert("User updated!");
+}
+
+/* === ORDERS === */
+function updateOrderCount(){
+  orderCount.textContent = orders.length;
+}
+
+orderBtn.onclick = () => {
+  ordersList.innerHTML = "";
+  if(orders.length === 0){
+    ordersList.innerHTML = "<p>No orders yet.</p>";
+  } else {
+    orders.forEach(o=>{
+      const div = document.createElement("div");
+      div.className = "border p-2 rounded";
+      div.innerHTML = `<strong>${o.userName}</strong> bought <strong>${o.itemName}</strong> for $${o.itemPrice.toFixed(2)}`;
+      ordersList.appendChild(div);
+    });
+  }
   ordersModal.classList.remove("hidden");
-};
+}
 
-closeOrders.onclick = ()=>{ ordersModal.classList.add("hidden"); };
+function closeOrders(){
+  ordersModal.classList.add("hidden");
+}
 
+function closeEdit(){
+  editModal.classList.add("hidden");
+}
 </script>
 </body>
 </html>
