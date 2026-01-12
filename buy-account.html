@@ -7,123 +7,187 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-.hidden{display:none;}
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
-.modal-content{background:white;padding:20px;border-radius:10px;max-width:600px;width:100%;}
-.button{padding:10px 15px;border-radius:5px;color:white;cursor:pointer;}
-.button-blue{background:blue;}
-.button-red{background:red;}
-.button-green{background:green;}
+.hidden{display:none;}
+.badge{position:absolute;top:-6px;right:-6px;background:red;color:#fff;border-radius:9999px;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body class="bg-gray-100">
 
 <header class="bg-gray-900 text-white p-4 flex justify-between items-center">
-  <h1 class="font-bold text-lg">Admin Panel</h1>
-  <div>
-    <button id="ordersBtn" class="button button-blue relative">Orders <span id="orderCount" class="bg-red-500 text-white rounded-full px-2 py-0 text-sm">0</span></button>
-    <button id="logoutBtn" class="button button-red">Logout</button>
+  <h1 class="font-bold text-xl">Admin Panel</h1>
+  <div class="flex gap-2 items-center">
+    <button id="adminOrdersBtn" class="bg-purple-600 px-4 py-2 rounded relative hidden">
+      Orders <span id="adminOrdersCount" class="badge">0</span>
+    </button>
+    <button id="logoutBtn" class="bg-red-500 px-3 py-2 rounded hidden">Logout</button>
   </div>
 </header>
 
-<main class="p-4">
-  <table class="w-full border-collapse" border="1">
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-full max-w-sm relative">
+    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeLogin()">×</span>
+    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+    <input id="loginEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="loginPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <button id="loginSubmit" class="bg-blue-500 text-white w-full py-2 rounded">Login</button>
+  </div>
+</div>
+
+<!-- USERS TABLE -->
+<main class="max-w-6xl mx-auto p-6 hidden" id="adminPanel">
+  <h2 class="text-2xl font-bold mb-4">Users</h2>
+  <table class="w-full border">
     <thead>
       <tr class="bg-gray-200">
-        <th>Name</th>
-        <th>Email</th>
-        <th>UID</th>
-        <th>Password</th>
-        <th>Key</th>
-        <th>Balance</th>
+        <th class="p-2 border">Name</th>
+        <th class="p-2 border">Email</th>
+        <th class="p-2 border">UID</th>
+        <th class="p-2 border">Password</th>
+        <th class="p-2 border">Key</th>
+        <th class="p-2 border">Balance</th>
+        <th class="p-2 border">Actions</th>
       </tr>
     </thead>
-    <tbody id="userTable"></tbody>
+    <tbody id="usersTable"></tbody>
   </table>
 </main>
 
-<!-- Orders Modal -->
-<div id="ordersModal" class="modal hidden">
-  <div class="modal-content relative">
-    <span onclick="ordersModal.classList.add('hidden')" class="absolute top-2 right-4 text-2xl cursor-pointer">×</span>
-    <h2 class="font-bold text-xl mb-4">Orders</h2>
-    <div id="ordersList" class="space-y-2 max-h-96 overflow-y-auto"></div>
+<!-- ADMIN ORDERS MODAL -->
+<div id="adminOrdersModal" class="modal hidden">
+  <div class="bg-white w-full max-w-2xl p-6 rounded relative">
+    <button id="closeAdminOrders" class="absolute right-4 top-2 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold text-center mb-4">All Orders</h2>
+    <div id="adminOrdersList" class="space-y-2 max-h-96 overflow-y-auto"></div>
   </div>
 </div>
 
 <script>
 feather.replace();
 
-// DATA
+/* ========== DATA ========== */
 let users = JSON.parse(localStorage.getItem("users") || "[]");
 let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 
-// DOM
-const userTable = document.getElementById("userTable");
-const ordersBtn = document.getElementById("ordersBtn");
-const ordersModal = document.getElementById("ordersModal");
-const ordersList = document.getElementById("ordersList");
-const orderCount = document.getElementById("orderCount");
+/* ========== DOM ELEMENTS ========== */
+const loginModal = document.getElementById("loginModal");
+const adminPanel = document.getElementById("adminPanel");
+const loginSubmit = document.getElementById("loginSubmit");
 const logoutBtn = document.getElementById("logoutBtn");
+const usersTable = document.getElementById("usersTable");
 
-// RENDER USERS
+const adminOrdersBtn = document.getElementById("adminOrdersBtn");
+const adminOrdersCount = document.getElementById("adminOrdersCount");
+const adminOrdersModal = document.getElementById("adminOrdersModal");
+const adminOrdersList = document.getElementById("adminOrdersList");
+const closeAdminOrders = document.getElementById("closeAdminOrders");
+
+/* ========== MODAL FUNCTIONS ========== */
+function closeLogin(){ loginModal.classList.add("hidden"); }
+function openAdminPanel(){ adminPanel.classList.remove("hidden"); logoutBtn.classList.remove("hidden"); }
+function hideAdminPanel(){ adminPanel.classList.add("hidden"); logoutBtn.classList.add("hidden"); }
+
+/* ========== LOGIN ========== */
+loginSubmit.onclick = () => {
+  let email = document.getElementById("loginEmail").value.trim();
+  let password = document.getElementById("loginPassword").value;
+
+  if(email === "admin@example.com" && password === "admin123"){ // pas aan
+    currentUser = {email, name:"Admin"};
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    closeLogin();
+    openAdminPanel();
+    renderUsers();
+    updateAdminOrdersBadge();
+    adminOrdersBtn.classList.remove("hidden");
+    alert("Welcome Admin");
+  } else {
+    alert("Invalid admin credentials");
+  }
+};
+
+/* ========== LOGOUT ========== */
+logoutBtn.onclick = () => {
+  currentUser = null;
+  localStorage.setItem("currentUser", null);
+  hideAdminPanel();
+  alert("Logged out");
+};
+
+/* ========== RENDER USERS ========== */
 function renderUsers(){
-  userTable.innerHTML = "";
-  users.forEach((u,i) => {
+  usersTable.innerHTML = "";
+  users.forEach((u,i)=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td contenteditable="true" onblur="updateUser(${i}, 'name', this.textContent)">${u.name}</td>
-      <td contenteditable="true" onblur="updateUser(${i}, 'email', this.textContent)">${u.email}</td>
-      <td contenteditable="true" onblur="updateUser(${i}, 'uid', this.textContent)">${u.uid}</td>
-      <td contenteditable="true" onblur="updateUser(${i}, 'password', this.textContent)">${u.password}</td>
-      <td>${u.key}</td>
-      <td contenteditable="true" onblur="updateUser(${i}, 'balance', parseFloat(this.textContent) || 0)">${u.balance}</td>
+      <td class="border p-2"><input class="w-full" value="${u.name}" onchange="updateUser(${i}, 'name', this.value)"></td>
+      <td class="border p-2"><input class="w-full" value="${u.email}" onchange="updateUser(${i}, 'email', this.value)"></td>
+      <td class="border p-2"><input class="w-full" value="${u.uid}" onchange="updateUser(${i}, 'uid', this.value)"></td>
+      <td class="border p-2"><input class="w-full" value="${u.password}" onchange="updateUser(${i}, 'password', this.value)"></td>
+      <td class="border p-2">${u.key}</td>
+      <td class="border p-2"><input class="w-full" type="number" value="${u.balance}" onchange="updateUser(${i}, 'balance', this.value)"></td>
+      <td class="border p-2 text-center"><button onclick="deleteUser(${i})" class="bg-red-500 px-2 py-1 rounded text-white">Delete</button></td>
     `;
-    userTable.appendChild(tr);
+    usersTable.appendChild(tr);
   });
 }
-renderUsers();
 
-// UPDATE USER FUNCTION
+/* ========== UPDATE USER ========== */
 function updateUser(index, field, value){
+  if(field === "balance") value = parseFloat(value);
   users[index][field] = value;
   localStorage.setItem("users", JSON.stringify(users));
+  alert("User updated");
 }
 
-// LOGOUT
-logoutBtn.onclick = () => {
-  alert("Logged out");
-  location.reload();
+/* ========== DELETE USER ========== */
+function deleteUser(index){
+  if(confirm("Are you sure you want to delete this user?")){
+    users.splice(index,1);
+    localStorage.setItem("users", JSON.stringify(users));
+    renderUsers();
+  }
 }
 
-// ORDERS BUTTON
-function renderOrders(){
-  ordersList.innerHTML = "";
+/* ========== ORDERS ========== */
+function updateAdminOrdersBadge(){
+  adminOrdersCount.textContent = orders.length;
+}
+
+adminOrdersBtn.onclick = () => {
+  adminOrdersList.innerHTML = "";
   if(orders.length === 0){
-    ordersList.innerHTML = "<p>No orders yet.</p>";
+    adminOrdersList.innerHTML = "<p class='text-center'>No orders yet.</p>";
   } else {
-    orders.forEach(o => {
+    orders.forEach(o=>{
       const div = document.createElement("div");
-      div.className = "border p-2 rounded";
+      div.className = "border p-2 rounded flex justify-between items-center";
       div.innerHTML = `
-        <strong>${o.userName}</strong> bought 
-        <strong>${o.itemName}</strong> for $${parseFloat(o.itemPrice).toFixed(2)}
+        <div>
+          <div><strong>User:</strong> ${o.userName} (${o.userEmail})</div>
+          <div><strong>Product:</strong> ${o.itemName}</div>
+          <div><strong>Price:</strong> $${o.itemPrice}</div>
+        </div>
       `;
-      ordersList.appendChild(div);
+      adminOrdersList.appendChild(div);
     });
   }
-  orderCount.textContent = orders.length;
-}
+  adminOrdersModal.classList.remove("hidden");
+};
 
-ordersBtn.onclick = () => {
-  orders = JSON.parse(localStorage.getItem("orders") || "[]"); // refresh orders
-  renderOrders();
-  ordersModal.classList.remove("hidden");
-}
+closeAdminOrders.onclick = () => { adminOrdersModal.classList.add("hidden"); };
 
-// INIT
-renderOrders();
+/* ========== INITIALIZE ADMIN ========== */
+if(currentUser && currentUser.email === "admin@example.com"){
+  openAdminPanel();
+  renderUsers();
+  updateAdminOrdersBadge();
+  adminOrdersBtn.classList.remove("hidden");
+} else {
+  loginModal.classList.remove("hidden");
+}
 </script>
-
 </body>
 </html>
