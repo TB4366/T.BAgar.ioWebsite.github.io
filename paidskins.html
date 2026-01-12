@@ -82,6 +82,7 @@
     <h2 class="text-xl font-bold mb-4">Login</h2>
     <input id="loginEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
     <input id="loginPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+    <input id="loginKey" placeholder="Key (5-digit)" class="w-full mb-2 px-3 py-2 border rounded">
     <button id="loginSubmit" class="bg-blue-500 text-white w-full py-2 rounded">Login</button>
   </div>
 </div>
@@ -167,10 +168,9 @@ const skins = [
 ===================== */
 let cart = JSON.parse(localStorage.getItem("cart") || "[]");
 let users = JSON.parse(localStorage.getItem("users") || "[]");
-let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
 
-// DOM
 const grid = document.getElementById("grid");
 const cartBtn = document.getElementById("cartBtn");
 const cartModal = document.getElementById("cartModal");
@@ -190,7 +190,7 @@ function closeLogin(){document.getElementById("loginModal").classList.add("hidde
 function closeRegister(){document.getElementById("registerModal").classList.add("hidden");}
 function closeAccount(){document.getElementById("accountModal").classList.add("hidden");}
 
-/* === REGISTER === */
+/* === REGISTER FUNCTION === */
 document.getElementById("registerSubmit").onclick = () => {
   let name = document.getElementById("regName").value.trim();
   let email = document.getElementById("regEmail").value.trim();
@@ -201,7 +201,7 @@ document.getElementById("registerSubmit").onclick = () => {
   if(!name || !email || !uid || !pass || !pass2){ alert("All fields are required."); return; }
   if(pass !== pass2){ alert("Passwords do not match."); return; }
 
-  let key = Math.floor(10000 + Math.random()*90000);
+  let key = Math.floor(10000 + Math.random()*90000); // 5 digits
   let user = {name,email,uid,password:pass,key,balance:0};
   users.push(user);
   localStorage.setItem("users",JSON.stringify(users));
@@ -209,11 +209,13 @@ document.getElementById("registerSubmit").onclick = () => {
   closeRegister();
 };
 
-/* === LOGIN === */
+/* === LOGIN FUNCTION === */
 document.getElementById("loginSubmit").onclick = () => {
   let email = document.getElementById("loginEmail").value.trim();
   let pass = document.getElementById("loginPassword").value;
-  let user = users.find(u => u.email===email && u.password===pass);
+  let key = parseInt(document.getElementById("loginKey").value);
+
+  let user = users.find(u => u.email===email && u.password===pass && u.key===key);
   if(!user){ alert("Invalid login."); return; }
   currentUser = user;
   localStorage.setItem("currentUser",JSON.stringify(currentUser));
@@ -226,7 +228,7 @@ document.getElementById("loginSubmit").onclick = () => {
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
 };
 
-/* === LOGOUT === */
+/* === LOGOUT FUNCTION === */
 logoutBtn.onclick = () => {
   currentUser = null;
   localStorage.setItem("currentUser",null);
@@ -237,13 +239,15 @@ logoutBtn.onclick = () => {
   alert("Logged out.");
 };
 
-/* === ACCOUNT === */
+/* === ACCOUNT BUTTON === */
 accountBtn.onclick = () => {
   document.getElementById("userBalanceDisplay").textContent = currentUser.balance;
   document.getElementById("accountModal").classList.remove("hidden");
 };
 
-/* === CART RENDER === */
+/* =====================
+   CART & RENDER
+===================== */
 function render(list){
   grid.innerHTML="";
   list.forEach(s=>{
@@ -270,7 +274,8 @@ function render(list){
     c.querySelector(".price").textContent="$"+s.price;
 
     c.querySelector(".select").onclick=()=>{
-      cart.push(s);
+      if(!currentUser){ alert("Please login first!"); return; }
+      cart.push({...s,buyerEmail:currentUser.email});
       localStorage.setItem("cart",JSON.stringify(cart));
       updateCart();
       alert("Item added to cart");
@@ -286,17 +291,13 @@ function render(list){
 }
 render(skins);
 
-/* === UPDATE CART === */
 function updateCart(){
   cartItems.innerHTML="";
   let total=0;
-
-  cart.forEach((s,i)=>{
+  cart.filter(c=>currentUser && c.buyerEmail===currentUser.email).forEach((s,i)=>{
     total+=s.price;
-
     const d=document.createElement("div");
     d.className="flex items-center justify-between gap-3 border p-2 rounded";
-
     d.innerHTML=`
       <div class="flex items-center gap-3">
         <img src="${s.image1}" class="w-12 h-12 rounded-full object-cover">
@@ -307,59 +308,55 @@ function updateCart(){
       </div>
       <button onclick="removeItem(${i})" class="text-red-600 font-bold text-xl">✕</button>
     `;
-
     cartItems.appendChild(d);
   });
-
   totalEl.textContent="$"+total.toFixed(2);
-  cartCount.textContent=cart.length;
+  cartCount.textContent = cart.filter(c=>currentUser && c.buyerEmail===currentUser.email).length;
 }
 
 function removeItem(i){
-  cart.splice(i,1);
+  const userCart = cart.filter(c=>c.buyerEmail===currentUser.email);
+  if(!userCart[i]) return;
+  const index = cart.findIndex(c=>c===userCart[i]);
+  cart.splice(index,1);
   localStorage.setItem("cart",JSON.stringify(cart));
   updateCart();
 }
 
-cartBtn.onclick=()=>{ cartModal.classList.remove("hidden"); updateCart(); };
+cartBtn.onclick=()=>{ 
+  if(!currentUser){ alert("Please login first!"); return; }  
+  cartModal.classList.remove("hidden"); 
+  updateCart(); 
+};
 closeCartBtn.onclick=()=>{ cartModal.classList.add("hidden"); };
 
-/* === PAY WITH ACCOUNT === */
+/* =====================
+   PAYMENT
+===================== */
 document.getElementById("payAccountBtn").onclick = () => {
   if(!currentUser){ alert("Please login first!"); return; }
-  if(cart.length===0){ alert("Cart is empty!"); return; }
+  const userCart = cart.filter(c=>c.buyerEmail===currentUser.email);
+  let total = userCart.reduce((a,b)=>a+b.price,0);
+  if(total===0){ alert("Your cart is empty!"); return; }
+  if(currentUser.balance < total){ alert("Insufficient balance."); return; }
 
-  let total = parseFloat(totalEl.textContent.replace("$",""));
-  if(currentUser.balance >= total){
-    currentUser.balance -= total;
-    localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  currentUser.balance -= total;
+  localStorage.setItem("currentUser",JSON.stringify(currentUser));
+  const idx = users.findIndex(u=>u.email===currentUser.email);
+  users[idx] = currentUser;
+  localStorage.setItem("users",JSON.stringify(users));
 
-    // Update user in users array
-    let index = users.findIndex(u=>u.email===currentUser.email);
-    users[index] = currentUser;
-    localStorage.setItem("users",JSON.stringify(users));
+  // save orders
+  orders.push({buyer: currentUser.email, items: userCart, total: total, date:new Date().toISOString()});
+  localStorage.setItem("orders",JSON.stringify(orders));
 
-    // Add orders
-    cart.forEach(item => {
-      orders.push({
-        userName: currentUser.name,
-        userEmail: currentUser.email,
-        itemName: item.name,
-        itemPrice: item.price
-      });
-    });
-    localStorage.setItem("orders", JSON.stringify(orders));
-
-    cart = [];
-    localStorage.setItem("cart",JSON.stringify(cart));
-    updateCart();
-    cartModal.classList.add("hidden");
-    alert("Payment successful! Your skins will be processed in 2-3 days.");
-  } else {
-    alert("Insufficient balance. Please add funds to your account.");
-  }
+  // remove items from cart
+  cart = cart.filter(c=>c.buyerEmail!==currentUser.email);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  updateCart();
+  cartModal.classList.add("hidden");
+  alert("Payment successful! Your skins will be processed in 2-3 days.");
 };
-
 </script>
 </body>
 </html>
