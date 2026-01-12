@@ -2,27 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Admin Panel</title>
+<title>Admin Panel - T.B Agar.io Paid Skins</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/feather-icons"></script>
 <style>
-body { background:#f0f0f0; font-family:sans-serif; }
-.container { max-width:1000px; margin:auto; padding:20px; }
-.table { width:100%; border-collapse:collapse; }
-.table th, .table td { border:1px solid #ccc; padding:8px; text-align:left; }
-.table th { background:#eee; }
-button { cursor:pointer; }
-.modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }
-.hidden { display:none; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:400px; max-height:80%; overflow:auto; }
+body{background:#f0f0f0;}
+.table{width:100%;border-collapse:collapse;}
+.table th,.table td{border:1px solid #ccc;padding:8px;text-align:left;}
+.table th{background:#333;color:#fff;}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
+.hidden{display:none;}
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1 class="text-2xl font-bold mb-4">Admin Panel</h1>
-  <table class="table">
+<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
+  <h1 class="font-bold text-lg">Admin Panel</h1>
+  <button id="ordersBtn" class="bg-blue-600 px-3 py-1 rounded">Orders</button>
+</header>
+
+<!-- LOGIN -->
+<div id="loginDiv" class="p-6 max-w-sm mx-auto mt-10 bg-white rounded shadow">
+  <h2 class="font-bold text-xl mb-4">Admin Login</h2>
+  <input id="adminPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
+  <button id="loginAdminBtn" class="bg-green-500 text-white w-full py-2 rounded">Login</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden p-6 max-w-6xl mx-auto">
+  <h2 class="font-bold text-xl mb-4">Users</h2>
+  <table class="table mb-6">
     <thead>
       <tr>
         <th>Name</th>
@@ -31,151 +41,95 @@ button { cursor:pointer; }
         <th>Password</th>
         <th>Key</th>
         <th>Balance</th>
-        <th>Orders</th>
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody id="userTable"></tbody>
+    <tbody id="usersTable"></tbody>
   </table>
 </div>
 
-<!-- EDIT MODAL -->
-<div id="editModal" class="modal hidden">
-  <div class="modal-content">
-    <h2 class="text-xl font-bold mb-2">Edit User</h2>
-    <label>Name</label>
-    <input id="editName" class="w-full mb-2 px-2 py-1 border rounded">
-    <label>Email</label>
-    <input id="editEmail" class="w-full mb-2 px-2 py-1 border rounded">
-    <label>UID</label>
-    <input id="editUID" class="w-full mb-2 px-2 py-1 border rounded">
-    <label>Password</label>
-    <input id="editPass" class="w-full mb-2 px-2 py-1 border rounded">
-    <label>Balance</label>
-    <input id="editBalance" type="number" class="w-full mb-4 px-2 py-1 border rounded">
-    <div class="flex justify-end gap-2">
-      <button id="saveBtn" class="bg-green-500 text-white px-3 py-1 rounded">Save</button>
-      <button id="cancelBtn" class="bg-red-500 text-white px-3 py-1 rounded">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<!-- VIEW ORDERS MODAL -->
+<!-- ORDERS MODAL -->
 <div id="ordersModal" class="modal hidden">
-  <div class="modal-content">
-    <h2 class="text-xl font-bold mb-2">User Orders</h2>
-    <div id="ordersList"></div>
-    <div class="flex justify-end mt-4">
-      <button id="closeOrdersBtn" class="bg-red-500 text-white px-3 py-1 rounded">Close</button>
-    </div>
+  <div class="bg-white w-full max-w-xl p-6 rounded relative">
+    <button id="closeOrders" class="absolute right-4 top-2 text-2xl">&times;</button>
+    <h2 class="text-2xl font-bold text-center mb-4">Orders</h2>
+    <div id="ordersList" class="space-y-3"></div>
   </div>
 </div>
 
 <script>
 feather.replace();
 
-/* =====================
-   DATA
-===================== */
+// ==== ADMIN PASSWORD ====
+const ADMIN_PASSWORD = "admin123"; // wijzig dit naar jouw eigen wachtwoord
+const loginDiv = document.getElementById("loginDiv");
+const adminPanel = document.getElementById("adminPanel");
+const loginAdminBtn = document.getElementById("loginAdminBtn");
+const ordersBtn = document.getElementById("ordersBtn");
+const ordersModal = document.getElementById("ordersModal");
+const closeOrders = document.getElementById("closeOrders");
+const ordersList = document.getElementById("ordersList");
+
 let users = JSON.parse(localStorage.getItem("users") || "[]");
-let orders = JSON.parse(localStorage.getItem("orders") || "[]"); // all orders
-let currentEditIndex = null;
+let orders = JSON.parse(localStorage.getItem("orders") || "[]"); // alle orders van users
 
-/* =====================
-   RENDER TABLE
-===================== */
-function renderTable(){
-  const tbody = document.getElementById("userTable");
-  tbody.innerHTML = "";
+// ==== ADMIN LOGIN ====
+loginAdminBtn.onclick = () => {
+  const pass = document.getElementById("adminPassword").value;
+  if(pass !== ADMIN_PASSWORD){ alert("Wrong password"); return; }
+  alert("Welcome Admin");
+  loginDiv.classList.add("hidden");
+  adminPanel.classList.remove("hidden");
+  renderUsers();
+};
 
-  users.forEach((u,i)=>{
+// ==== RENDER USERS ====
+function renderUsers(){
+  const tbody = document.getElementById("usersTable");
+  tbody.innerHTML="";
+  users.forEach((u,index)=>{
     const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${u.name}</td>
-      <td>${u.email}</td>
-      <td>${u.uid}</td>
-      <td>${u.password}</td>
+    tr.innerHTML=`
+      <td><input value="${u.name}" data-index="${index}" data-field="name" class="border px-1 w-full"></td>
+      <td><input value="${u.email}" data-index="${index}" data-field="email" class="border px-1 w-full"></td>
+      <td><input value="${u.uid}" data-index="${index}" data-field="uid" class="border px-1 w-full"></td>
+      <td><input value="${u.password}" data-index="${index}" data-field="password" class="border px-1 w-full"></td>
       <td>${u.key}</td>
-      <td>$${u.balance}</td>
-      <td><button onclick="viewOrders(${i})" class="bg-blue-500 text-white px-2 py-1 rounded">View</button></td>
-      <td><button onclick="editUser(${i})" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button></td>
+      <td><input value="${u.balance}" data-index="${index}" data-field="balance" class="border px-1 w-full"></td>
+      <td><button data-index="${index}" class="saveBtn bg-green-500 text-white px-2 py-1 rounded">Save</button></td>
     `;
     tbody.appendChild(tr);
   });
+
+  document.querySelectorAll(".saveBtn").forEach(btn=>{
+    btn.onclick = ()=>{
+      const idx = btn.getAttribute("data-index");
+      ["name","email","uid","password","balance"].forEach(f=>{
+        const val = document.querySelector(`input[data-index='${idx}'][data-field='${f}']`).value;
+        if(f==="balance") users[idx][f] = parseFloat(val);
+        else users[idx][f] = val;
+      });
+      localStorage.setItem("users",JSON.stringify(users));
+      alert("User updated!");
+    };
+  });
 }
 
-renderTable();
-
-/* =====================
-   EDIT USER
-===================== */
-function editUser(index){
-  currentEditIndex = index;
-  const u = users[index];
-
-  document.getElementById("editName").value = u.name;
-  document.getElementById("editEmail").value = u.email;
-  document.getElementById("editUID").value = u.uid;
-  document.getElementById("editPass").value = u.password;
-  document.getElementById("editBalance").value = u.balance;
-
-  document.getElementById("editModal").classList.remove("hidden");
-}
-
-document.getElementById("cancelBtn").onclick = ()=>{
-  document.getElementById("editModal").classList.add("hidden");
+// ==== ORDERS MODAL ====
+ordersBtn.onclick = ()=>{
+  ordersList.innerHTML="";
+  if(orders.length===0){ ordersList.innerHTML="<p>No orders yet.</p>"; }
+  orders.forEach(o=>{
+    const div = document.createElement("div");
+    div.className="border p-2 rounded";
+    div.innerHTML=`<strong>User:</strong> ${o.user} <br> <strong>Product:</strong> ${o.product} - $${o.price.toFixed(2)} <br> <strong>Date:</strong> ${o.date}`;
+    ordersList.appendChild(div);
+  });
+  ordersModal.classList.remove("hidden");
 };
 
-document.getElementById("saveBtn").onclick = ()=>{
-  if(currentEditIndex===null) return;
-  const u = users[currentEditIndex];
-  u.name = document.getElementById("editName").value.trim();
-  u.email = document.getElementById("editEmail").value.trim();
-  u.uid = document.getElementById("editUID").value.trim();
-  u.password = document.getElementById("editPass").value;
-  u.balance = parseFloat(document.getElementById("editBalance").value);
+closeOrders.onclick = ()=>{ ordersModal.classList.add("hidden"); };
 
-  // Update users in localStorage
-  localStorage.setItem("users", JSON.stringify(users));
-
-  // Update current user if logged in
-  let currentUser = JSON.parse(localStorage.getItem("currentUser") || null);
-  if(currentUser && currentUser.email === u.email){
-    localStorage.setItem("currentUser", JSON.stringify(u));
-  }
-
-  document.getElementById("editModal").classList.add("hidden");
-  renderTable();
-  alert("User updated successfully!");
-};
-
-/* =====================
-   VIEW ORDERS
-===================== */
-function viewOrders(index){
-  const u = users[index];
-  const userOrders = orders.filter(o => o.userEmail === u.email);
-  const ordersList = document.getElementById("ordersList");
-  ordersList.innerHTML = "";
-
-  if(userOrders.length === 0){
-    ordersList.textContent = "No orders for this user.";
-  } else {
-    userOrders.forEach((o, i)=>{
-      const div = document.createElement("div");
-      div.className = "border p-2 mb-2 rounded";
-      div.innerHTML = `<strong>Order #${i+1}</strong> - Total: $${o.total.toFixed(2)} <br> Date: ${o.date}<br> Items: ${o.items.map(s=>s.name+" ($"+s.price+")").join(", ")}`;
-      ordersList.appendChild(div);
-    });
-  }
-
-  document.getElementById("ordersModal").classList.remove("hidden");
-}
-
-document.getElementById("closeOrdersBtn").onclick = ()=>{
-  document.getElementById("ordersModal").classList.add("hidden");
-};
 </script>
-
 </body>
 </html>
