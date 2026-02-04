@@ -154,11 +154,6 @@ iframe{
 .youtube{background:#ff0000;}
 .instagram{background:linear-gradient(45deg,#f97316,#facc15);}
 .discord{background:#5865F2;}
-
-@media(max-width:800px){.options{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:500px){
-    .options{grid-template-columns:1fr;}
-}
 </style>
 </head>
 
@@ -172,7 +167,7 @@ iframe{
     </div>
 
     <div class="right">
-        <button class="login-btn">Login</button>
+        <button class="login-btn" id="loginBtn">Login</button>
         <button class="toggle-theme" id="themeBtn">🌙</button>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
     </div>
@@ -220,12 +215,26 @@ iframe{
     </div>
 </main>
 
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#0f172a;padding:25px;border-radius:14px;width:320px;text-align:center;">
+    <h2>Login</h2>
+    <hr style="border:1px solid #334155;margin:15px 0;">
+    <input id="loginUser" placeholder="Username" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
+    <input id="loginKey" placeholder="Key" style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:none;">
+    <button onclick="doLogin()" style="margin-top:12px;padding:10px 20px;border:none;border-radius:8px;background:#48cae4;font-weight:bold;">Login</button>
+    <br><br>
+    <button onclick="closeLogin()" style="background:none;border:none;color:#94a3b8;">Cancel</button>
+  </div>
+</div>
+
 <script>
 function toggleMenu(){
     const m=document.getElementById("menu");
     m.style.display=m.style.display==="block"?"none":"block";
 }
 
+/* DARK MODE */
 const btn=document.getElementById("themeBtn");
 if(localStorage.getItem("theme")==="light"){
     document.body.classList.add("light");
@@ -237,6 +246,29 @@ btn.onclick=()=>{
     btn.textContent=light?"☀️":"🌙";
     localStorage.setItem("theme",light?"light":"dark");
 };
+
+/* LOGIN SYSTEM */
+const loginModal=document.getElementById("loginModal");
+document.getElementById("loginBtn").onclick=()=>loginModal.style.display="flex";
+
+function closeLogin(){loginModal.style.display="none";}
+
+function getUsers(){
+  return JSON.parse(localStorage.getItem("users")||"[]");
+}
+
+function doLogin(){
+  const u=document.getElementById("loginUser").value.trim();
+  const k=document.getElementById("loginKey").value.trim();
+  const users=getUsers();
+  const found=users.find(x=>x.username===u&&x.key===k);
+  if(found){
+    localStorage.setItem("loggedUser",u);
+    window.location.href="user.html";
+  }else{
+    alert("Wrong username or key");
+  }
+}
 </script>
 
 </body>
