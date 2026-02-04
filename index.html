@@ -216,7 +216,7 @@ iframe{
 </main>
 
 <!-- LOGIN MODAL -->
-<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;">
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:9999;">
   <div style="background:#0f172a;padding:25px;border-radius:14px;width:320px;text-align:center;">
     <h2>Login</h2>
     <hr style="border:1px solid #334155;margin:15px 0;">
@@ -229,12 +229,13 @@ iframe{
 </div>
 
 <script>
+// HAMBURGER MENU
 function toggleMenu(){
     const m=document.getElementById("menu");
     m.style.display=m.style.display==="block"?"none":"block";
 }
 
-/* DARK MODE */
+// DARK MODE
 const btn=document.getElementById("themeBtn");
 if(localStorage.getItem("theme")==="light"){
     document.body.classList.add("light");
@@ -247,39 +248,37 @@ btn.onclick=()=>{
     localStorage.setItem("theme",light?"light":"dark");
 };
 
-/* LOGIN SYSTEM */
-const loginModal=document.getElementById("loginModal");
+// LOGIN SYSTEM
 const loginBtnEl = document.getElementById("loginBtn");
+const loginModal = document.getElementById("loginModal");
 
-// Open login modal
-loginBtnEl.onclick=()=>loginModal.style.display="flex";
+// Open modal alleen bij knop
+loginBtnEl.onclick = () => loginModal.style.display = "flex";
 
-// Close login modal
-function closeLogin(){loginModal.style.display="none";}
+// Close modal
+function closeLogin(){ loginModal.style.display = "none"; }
 
-// Users from localStorage
-function getUsers(){
-  return JSON.parse(localStorage.getItem("users")||"[]");
-}
+// Users ophalen
+function getUsers(){ return JSON.parse(localStorage.getItem("users")||"[]"); }
 
-// LOGIN - blijft op dezelfde pagina
+// Login uitvoeren
 function doLogin(){
-  const u=document.getElementById("loginUser").value.trim();
-  const k=document.getElementById("loginKey").value.trim();
-  const users=getUsers();
-  const found=users.find(x=>x.username===u && x.key===k);
+  const u = document.getElementById("loginUser").value.trim();
+  const k = document.getElementById("loginKey").value.trim();
+  const users = getUsers();
+  const found = users.find(x => x.username === u && x.key === k);
   if(found){
     localStorage.setItem("loggedUser", u);
     updateLoginButton();
     closeLogin();
-    alert("Welkom, " + u + "! Je bent ingelogd."); // blijft op dezelfde pagina
+    alert("Welkom, " + u + "! Je bent ingelogd.");
   } else {
     alert("Wrong username or key");
   }
 }
 
-// UPDATE LOGIN BUTTON TO LOGOUT
-function updateLoginButton() {
+// Update login knop
+function updateLoginButton(){
   const loggedUser = localStorage.getItem("loggedUser");
   if(loggedUser){
     loginBtnEl.textContent = "Logout";
@@ -288,7 +287,6 @@ function updateLoginButton() {
       loginBtnEl.textContent = "Login";
       loginBtnEl.onclick = () => loginModal.style.display="flex";
       alert("Je bent uitgelogd");
-      location.reload();
     }
   } else {
     loginBtnEl.textContent = "Login";
@@ -296,7 +294,7 @@ function updateLoginButton() {
   }
 }
 
-// RUN ON PAGE LOAD
+// Page load
 updateLoginButton();
 </script>
 
