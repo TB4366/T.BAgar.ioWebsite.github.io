@@ -1,196 +1,90 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>T.B Agar.io Admin Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/feather-icons"></script>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
 <style>
-body{background:#f0f0f0;}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background-color:rgba(0,0,0,0.5);}
-.hidden{display:none;}
+body{background:#0b1220;color:white;font-family:Arial;padding:20px;}
+input,button{padding:8px;margin:5px;border-radius:6px;border:none;}
+table{width:100%;margin-top:20px;border-collapse:collapse;}
+th,td{border:1px solid #334155;padding:10px;text-align:center;}
+button{cursor:pointer;font-weight:bold;}
+.add{background:#22c55e;}
+.del{background:#ef4444;}
+.edit{background:#facc15;color:#111;}
 </style>
 </head>
+
 <body>
 
-<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
-  <h1 class="text-xl font-bold">T.B Agar.io Admin</h1>
-  <div>
-    <button id="logoutBtn" class="bg-red-500 px-3 py-1 rounded hidden">Logout</button>
-  </div>
-</header>
+<h1>👑 Admin Panel</h1>
 
-<main class="max-w-6xl mx-auto p-6">
-  <div id="loginSection">
-    <h2 class="text-lg font-bold mb-2">Admin Login</h2>
-    <input id="adminEmail" placeholder="Email" class="w-full mb-2 px-3 py-2 border rounded">
-    <input id="adminPassword" type="password" placeholder="Password" class="w-full mb-2 px-3 py-2 border rounded">
-    <button id="adminLogin" class="bg-blue-500 text-white px-3 py-2 rounded">Login</button>
-  </div>
+<h2>Add User</h2>
+<input id="newUser" placeholder="Username">
+<input id="newKey" placeholder="Key">
+<button class="add" onclick="addUser()">Add</button>
 
-  <div id="adminPanel" class="hidden mt-6">
-    <h2 class="text-lg font-bold mb-4">Users</h2>
-    <div id="usersList" class="space-y-2"></div>
-
-    <h2 class="text-lg font-bold mt-6 mb-4">Orders</h2>
-    <div id="ordersList" class="space-y-2"></div>
-  </div>
-</main>
-
-<!-- PROCESS MODAL -->
-<div id="processModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-full max-w-lg relative">
-    <span class="absolute top-2 right-2 text-2xl cursor-pointer" onclick="closeProcessModal()">×</span>
-    <h2 class="text-xl font-bold mb-4">Kassa Bon</h2>
-    <div id="receiptContent" class="whitespace-pre font-mono"></div>
-    <button onclick="closeProcessModal()" class="mt-4 bg-blue-500 text-white px-3 py-2 rounded">Close</button>
-  </div>
-</div>
+<h2>Users</h2>
+<table>
+<thead>
+<tr><th>Username</th><th>Key</th><th>Actions</th></tr>
+</thead>
+<tbody id="userTable"></tbody>
+</table>
 
 <script>
-feather.replace();
+function getUsers(){
+  return JSON.parse(localStorage.getItem("users") || "[]");
+}
+function saveUsers(users){
+  localStorage.setItem("users", JSON.stringify(users));
+}
 
-// ======= ADMIN DATA =======
-const adminCred = {email:"admin@tbagario.com", password:"admin123"}; // kan aangepast
-let users = JSON.parse(localStorage.getItem("users")||"[]");
-let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-
-// ======= ELEMENTS =======
-const loginSection = document.getElementById("loginSection");
-const adminPanel = document.getElementById("adminPanel");
-const adminLogin = document.getElementById("adminLogin");
-const logoutBtn = document.getElementById("logoutBtn");
-const usersList = document.getElementById("usersList");
-const ordersList = document.getElementById("ordersList");
-const processModal = document.getElementById("processModal");
-const receiptContent = document.getElementById("receiptContent");
-
-// ======= ADMIN LOGIN =======
-adminLogin.onclick = () => {
-  let email = document.getElementById("adminEmail").value.trim();
-  let pass = document.getElementById("adminPassword").value.trim();
-  if(email===adminCred.email && pass===adminCred.password){
-    loginSection.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-    logoutBtn.classList.remove("hidden");
-    renderUsers();
-    renderOrders();
-  } else {
-    alert("Invalid admin credentials");
-  }
-};
-
-logoutBtn.onclick = () => {
-  loginSection.classList.remove("hidden");
-  adminPanel.classList.add("hidden");
-  logoutBtn.classList.add("hidden");
-};
-
-// ======= RENDER USERS =======
-function renderUsers(){
-  usersList.innerHTML="";
-  users.forEach((u,i)=>{
-    const div = document.createElement("div");
-    div.className="p-2 border rounded bg-white flex justify-between items-center";
-    div.innerHTML=`
-      <div>
-        <div><b>Name:</b> <input type="text" value="${u.name}" id="name${i}"></div>
-        <div><b>Email:</b> <input type="text" value="${u.email}" id="email${i}"></div>
-        <div><b>UID:</b> <input type="text" value="${u.uid}" id="uid${i}"></div>
-        <div><b>Password:</b> <input type="text" value="${u.password}" id="pass${i}"></div>
-        <div><b>Key:</b> ${u.key}</div>
-        <div><b>Balance:</b> $<input type="number" value="${u.balance}" id="balance${i}" min="0"></div>
-      </div>
-      <div class="flex flex-col gap-2">
-        <button onclick="saveUser(${i})" class="bg-green-500 text-white px-2 py-1 rounded">Save</button>
-        <button onclick="deleteUser(${i})" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-      </div>
-    `;
-    usersList.appendChild(div);
+function render(){
+  const table = document.getElementById("userTable");
+  table.innerHTML = "";
+  getUsers().forEach((u,i)=>{
+    table.innerHTML += `
+      <tr>
+        <td>${u.username}</td>
+        <td>${u.key}</td>
+        <td>
+          <button class="edit" onclick="editUser(${i})">Edit</button>
+          <button class="del" onclick="deleteUser(${i})">Delete</button>
+        </td>
+      </tr>`;
   });
 }
 
-function saveUser(i){
-  const user = users[i];
-  user.name=document.getElementById("name"+i).value;
-  user.email=document.getElementById("email"+i).value;
-  user.uid=document.getElementById("uid"+i).value;
-  user.password=document.getElementById("pass"+i).value;
-  user.balance=parseFloat(document.getElementById("balance"+i).value);
-  users[i]=user;
-  localStorage.setItem("users",JSON.stringify(users));
-  alert("User saved");
+function addUser(){
+  const user=document.getElementById("newUser").value.trim();
+  const key=document.getElementById("newKey").value.trim();
+  if(!user||!key)return alert("Fill all fields");
+  const users=getUsers();
+  users.push({username:user,key:key});
+  saveUsers(users);
+  render();
 }
 
 function deleteUser(i){
-  if(confirm("Are you sure you want to delete this user?")){
-    users.splice(i,1);
-    localStorage.setItem("users",JSON.stringify(users));
-    renderUsers();
-    alert("User deleted");
+  const users=getUsers();
+  users.splice(i,1);
+  saveUsers(users);
+  render();
+}
+
+function editUser(i){
+  const users=getUsers();
+  const newUser=prompt("New username",users[i].username);
+  const newKey=prompt("New key",users[i].key);
+  if(newUser && newKey){
+    users[i]={username:newUser,key:newKey};
+    saveUsers(users);
+    render();
   }
 }
 
-// ======= RENDER ORDERS =======
-function renderOrders(){
-  ordersList.innerHTML="";
-  orders.forEach((o,idx)=>{
-    const user = users.find(u=>u.email===o.buyer);
-    const div = document.createElement("div");
-    div.className="p-2 border rounded bg-white flex justify-between items-center";
-    div.innerHTML=`
-      <div>
-        <b>User:</b> ${user?user.name:'Unknown'} (${o.buyer})<br>
-        <b>Date:</b> ${new Date(o.date).toLocaleString()}<br>
-        <b>Total:</b> $${o.total.toFixed(2)}
-      </div>
-      <div class="flex flex-col gap-2">
-        <button onclick="processOrder(${idx})" class="bg-blue-500 text-white px-2 py-1 rounded">Process</button>
-        <button onclick="deleteOrder(${idx})" class="bg-red-500 text-white px-2 py-1 rounded">Delete</button>
-      </div>
-    `;
-    ordersList.appendChild(div);
-  });
-}
-
-function deleteOrder(idx){
-  if(confirm("Delete this order?")){
-    orders.splice(idx,1);
-    localStorage.setItem("orders",JSON.stringify(orders));
-    renderOrders();
-  }
-}
-
-function processOrder(idx){
-  const o = orders[idx];
-  const user = users.find(u=>u.email===o.buyer);
-  if(!user){ alert("User not found"); return; }
-
-  // build receipt
-  let receipt = "T.B Agar.io\n-----------------\nPaid Skins\nUID: "+user.uid+"\n";
-  const itemCount = {};
-  o.items.forEach(it=>{
-    if(!itemCount[it.name]) itemCount[it.name]=0;
-    itemCount[it.name]++;
-  });
-  for(let name in itemCount){
-    receipt += `${itemCount[name]} x ${name}\n`;
-  }
-  receipt += "-----------------\n";
-  receipt += "Total Paid: $"+o.total.toFixed(2)+"\n";
-  receipt += "-----------------\nYour order will be processed in 2-3 days.\nIf not received, contact us on Instagram: @t.bagar.io";
-
-  receiptContent.textContent=receipt;
-  processModal.classList.remove("hidden");
-
-  // remove order after processing
-  orders.splice(idx,1);
-  localStorage.setItem("orders",JSON.stringify(orders));
-  renderOrders();
-}
-
-function closeProcessModal(){ processModal.classList.add("hidden"); }
+render();
 </script>
 
 </body>
