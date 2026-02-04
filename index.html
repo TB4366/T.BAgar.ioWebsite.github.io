@@ -262,18 +262,18 @@ function getUsers(){
   return JSON.parse(localStorage.getItem("users")||"[]");
 }
 
-// LOGIN
+// LOGIN - blijft op dezelfde pagina
 function doLogin(){
   const u=document.getElementById("loginUser").value.trim();
   const k=document.getElementById("loginKey").value.trim();
   const users=getUsers();
-  const found=users.find(x=>x.username===u&&x.key===k);
+  const found=users.find(x=>x.username===u && x.key===k);
   if(found){
-    localStorage.setItem("loggedUser",u);
+    localStorage.setItem("loggedUser", u);
     updateLoginButton();
     closeLogin();
-    window.location.href="user.html"; // redirect to user page
-  }else{
+    alert("Welkom, " + u + "! Je bent ingelogd."); // blijft op dezelfde pagina
+  } else {
     alert("Wrong username or key");
   }
 }
@@ -287,7 +287,7 @@ function updateLoginButton() {
       localStorage.removeItem("loggedUser");
       loginBtnEl.textContent = "Login";
       loginBtnEl.onclick = () => loginModal.style.display="flex";
-      alert("You have logged out");
+      alert("Je bent uitgelogd");
       location.reload();
     }
   } else {
