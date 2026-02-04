@@ -249,14 +249,20 @@ btn.onclick=()=>{
 
 /* LOGIN SYSTEM */
 const loginModal=document.getElementById("loginModal");
-document.getElementById("loginBtn").onclick=()=>loginModal.style.display="flex";
+const loginBtnEl = document.getElementById("loginBtn");
 
+// Open login modal
+loginBtnEl.onclick=()=>loginModal.style.display="flex";
+
+// Close login modal
 function closeLogin(){loginModal.style.display="none";}
 
+// Users from localStorage
 function getUsers(){
   return JSON.parse(localStorage.getItem("users")||"[]");
 }
 
+// LOGIN
 function doLogin(){
   const u=document.getElementById("loginUser").value.trim();
   const k=document.getElementById("loginKey").value.trim();
@@ -264,11 +270,34 @@ function doLogin(){
   const found=users.find(x=>x.username===u&&x.key===k);
   if(found){
     localStorage.setItem("loggedUser",u);
-    window.location.href="user.html";
+    updateLoginButton();
+    closeLogin();
+    window.location.href="user.html"; // redirect to user page
   }else{
     alert("Wrong username or key");
   }
 }
+
+// UPDATE LOGIN BUTTON TO LOGOUT
+function updateLoginButton() {
+  const loggedUser = localStorage.getItem("loggedUser");
+  if(loggedUser){
+    loginBtnEl.textContent = "Logout";
+    loginBtnEl.onclick = () => {
+      localStorage.removeItem("loggedUser");
+      loginBtnEl.textContent = "Login";
+      loginBtnEl.onclick = () => loginModal.style.display="flex";
+      alert("You have logged out");
+      location.reload();
+    }
+  } else {
+    loginBtnEl.textContent = "Login";
+    loginBtnEl.onclick = () => loginModal.style.display="flex";
+  }
+}
+
+// RUN ON PAGE LOAD
+updateLoginButton();
 </script>
 
 </body>
