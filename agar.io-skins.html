@@ -1,241 +1,88 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io Website - Prize Wheel</title>
+<meta charset="UTF-8">
+<title>Agar.io All Skins</title>
+
 <style>
-body {margin:0;font-family:Arial,sans-serif;background:#0b1220;color:white;transition:background-color 0.3s ease,color 0.3s ease;}
-body.dark{background:#f0f0f0;color:#222;}
-header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#0f172a;position:relative;transition:background-color 0.3s ease;}
-body.dark header{background:#e0e0e0;}
-.left-header{display:flex;align-items:center;gap:12px;}
-.logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
-.site-title{font-size:1.3rem;font-weight:bold;}
-.search-bar input{padding:8px 12px;border-radius:6px;border:none;outline:none;font-size:14px;width:180px;}
-.toggle-btn-header{background:none;border:none;cursor:pointer;font-size:22px;color:#0077b6;padding:6px 10px;border-radius:8px;transition:background-color 0.3s ease,color 0.3s ease;}
-.menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
-.menu{display:none;position:absolute;top:65px;right:20px;background:#1e293b;border-radius:8px;overflow:hidden;min-width:170px;z-index:50;}
-.menu a{display:block;padding:12px;color:white;text-decoration:none;border-bottom:1px solid #334155;}
-.auth-area button{background:#06b6d4;color:#02111a;font-weight:700;padding:8px 12px;border-radius:8px;margin-left:5px;border:none;cursor:pointer;}
-.auth-area .settings-btn{background:#888;color:white;}
-.price-wheel-container{display:flex;justify-content:center;margin:40px 0;}
-.wheel{width:300px;height:300px;border-radius:50%;border:6px solid #48cae4;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:bold;background:#0f172a;color:white;position:relative;}
-.wheel:after{content:'';position:absolute;width:8px;height:40px;background:#fff;right:-14px;top:50%;transform:translateY(-50%);border-radius:4px;}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;display:none;}
-.modal{background:#071028;padding:20px;border-radius:12px;max-width:500px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,0.6);color:white;position:relative;}
-.modal h2{margin:0 0 10px 0;font-size:1.2rem;}
-.btn{display:inline-block;background:#06b6d4;color:#02111a;font-weight:700;padding:10px 20px;border-radius:8px;text-decoration:none;margin-top:10px;cursor:pointer;border:none;}
-.note{font-size:0.85rem;color:#9ca3af;margin-top:8px;}
-.prices-list{margin-top:15px;max-height:200px;overflow-y:auto;border-top:1px solid #ccc;padding-top:10px;}
-.prices-list div{margin-bottom:8px;padding:6px;border-radius:6px;background:rgba(255,255,255,0.03);}
-.prize-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;text-align:center}
-.prize-segment{position:absolute;width:100%;height:100%;border-radius:50%;clip-path:polygon(50% 50%, 100% 0, 100% 100%);} /* simple visual helper */
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+}
+
+#skins{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.skin{
+    width:120px;
+    text-align:center;
+}
+
+.skin img{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:#222;
+}
 </style>
 </head>
+
 <body>
-<header>
-<div class="left-header">
-<img src="IMG_2718.png" class="logo" />
-<span class="site-title">T.B Agar.io</span>
-<div class="search-bar"><input type="text" placeholder="Search..." /></div>
-<button class="toggle-btn-header" id="themeToggleBtn">🌙</button>
-</div>
-<div class="auth-area">
-<button id="loginBtn">Login</button>
-<button id="settingsBtn" class="settings-btn" style="display:none;">Settings</button>
-</div>
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div class="menu" id="menu">
-<a href="index.html">🏠 Home Page</a>
-<a href="agar.io-skins.html">🎱 Agar.io Skins</a>
-<a href="custom-skins.html">🎨 Custom Skins</a>
-<a href="mod-menu.html">🛠️ Mod Menu</a>
-<a href="key-access.html">🔑 Keys</a>
-<a href="buy-account.html">💰 Buy Account</a>
-<a href="paidskins.html">💎 Paid Skins</a>
-</div>
-</header>
 
-<main>
-<div class="divider"></div>
-<div class="highlight-title">💸 Prize Wheel</div>
-<div class="price-wheel-container">
-<div class="wheel" id="wheel">
-  <div class="prize-label" id="wheelLabel">Spin Wheel</div>
-</div>
-</div>
-<div style="text-align:center;margin-top:15px;">
-<button id="spinBtn" class="btn">Start Wheel</button>
-<p id="freeSpinText" style="margin-top:10px;color:#ccc">Play 1 time for free</p>
-</div>
-<div style="text-align:center;margin-top:10px;color:#ccc">You can win: <span id="prizeListInline"></span></div>
-<div class="divider"></div>
-</main>
+<h2>Agar.io Skins Gallery</h2>
 
-<!-- Modals -->
-<div id="loginModal" class="modal-backdrop">
-<div class="modal">
-<h2>Login</h2>
-<label>Email</label><input id="loginEmail" type="email">
-<label>Password</label><input id="loginPassword" type="password">
-<div class="note">Don't have an account? <a href="#" id="openRegisterFromLogin">Register here</a></div>
-<div class="actions">
-<button class="cancel" onclick="closeLogin()">Cancel</button>
-<button class="confirm" id="doLoginBtn">Login</button>
-</div>
-</div>
-</div>
-
-<div id="registerModal" class="modal-backdrop">
-<div class="modal">
-<h2>Register</h2>
-<label>Name</label><input id="regName" type="text">
-<label>Email</label><input id="regEmail" type="email">
-<label>Agar.io UID</label><input id="regUid" type="text">
-<label>Password</label><input id="regPassword" type="password">
-<label>Repeat Password</label><input id="regPassword2" type="password">
-<div class="note danger" id="regError" style="display:none;"></div>
-<div class="actions">
-<button class="cancel" onclick="closeRegister()">Cancel</button>
-<button class="confirm" id="doRegisterBtn">Register</button>
-</div>
-</div>
-</div>
-
-<div id="settingsModal" class="modal-backdrop">
-<div class="modal">
-<h2>Settings</h2>
-<label>Name</label><input id="settingsName" type="text">
-<label>Email</label><input id="settingsEmail" type="email">
-<label>Password</label><input id="settingsPassword" type="password">
-<label>Agar.io UID</label><input id="settingsUid" type="text" disabled>
-<div class="note">To change your UID, contact T.B.</div>
-<h3>Your Prizes</h3>
-<div class="prices-list" id="userPrizes"></div>
-<div class="actions">
-<button class="cancel" onclick="closeSettings()">Cancel</button>
-<button class="confirm" id="doSaveSettingsBtn">Save</button>
-</div>
-</div>
-</div>
+<div id="skins"></div>
 
 <script>
-// Menu toggle
-function toggleMenu(){const m=document.getElementById('menu');m.style.display=m.style.display==='block'?'none':'block';}
 
-// Dark mode toggle
-const toggleBtn=document.getElementById('themeToggleBtn');
-const body=document.body;
-if(localStorage.getItem('theme')==='dark'){body.classList.add('dark');toggleBtn.textContent='☀️';}
-toggleBtn.addEventListener('click',()=>{body.classList.toggle('dark');toggleBtn.textContent=body.classList.contains('dark')?'☀️':'🌙';localStorage.setItem('theme',body.classList.contains('dark')?'dark':'light');});
+const configURL =
+"https://configs-web.agario.miniclippt.com/live/v15/10890/GameConfiguration.json";
 
-// Auth helpers
-function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
-function saveUsers(users){localStorage.setItem('users',JSON.stringify(users));}
-function getCurrentUser(){return JSON.parse(localStorage.getItem('currentUser')||'null');}
-function setCurrentUser(user){localStorage.setItem('currentUser',JSON.stringify(user));}
+// CDN waar skins staan
+const skinBase =
+"https://configs-web.agario.miniclippt.com/live/v15/10890/";
 
-const loginBtn=document.getElementById('loginBtn');
-const settingsBtn=document.getElementById('settingsBtn');
-const loginModal=document.getElementById('loginModal');
-const registerModal=document.getElementById('registerModal');
-const settingsModal=document.getElementById('settingsModal');
+// laad config
+fetch(configURL)
+.then(r => r.json())
+.then(data => {
 
-function openLogin(){if(loginModal)loginModal.style.display='flex';}
-function closeLogin(){if(loginModal)loginModal.style.display='none';}
-function openRegister(){if(registerModal)registerModal.style.display='flex';}
-function closeRegister(){if(registerModal)registerModal.style.display='none';}
-function openSettings(){if(settingsModal){settingsModal.style.display='flex';loadSettingsFields();loadUserPrizes();}}
-function closeSettings(){if(settingsModal)settingsModal.style.display='none';}
+    console.log(data);
 
-// Login / logout button
-if(loginBtn)loginBtn.addEventListener('click',()=>{const user=getCurrentUser();if(user){logout();}else{openLogin();}});
-if(settingsBtn)settingsBtn.addEventListener('click',openSettings);
+    const container = document.getElementById("skins");
 
-function updateAuthUI(){const user=getCurrentUser();if(loginBtn){if(user){loginBtn.textContent='Logout';settingsBtn.style.display='inline-block';}else{loginBtn.textContent='Login';settingsBtn.style.display='none';}}}
-function logout(){localStorage.removeItem('currentUser');updateAuthUI();}
+    // probeer skins uit config te halen
+    const skins = data.skins || data.shopSkins || [];
 
-// Settings fields
-function loadSettingsFields(){const user=getCurrentUser();if(!user)return;const n=document.getElementById('settingsName');const e=document.getElementById('settingsEmail');const p=document.getElementById('settingsPassword');const u=document.getElementById('settingsUid');if(n)n.value=user.name||'';if(e)e.value=user.email||'';if(p)p.value=user.password||'';if(u)u.value=user.uid||'';}
+    skins.forEach(skin => {
 
-// User prizes
-function loadUserPrizes(){const user=getCurrentUser();const container=document.getElementById('userPrizes');if(!user||!container){return;}container.innerHTML='';if(user.prizes){user.prizes.forEach((p,idx)=>{const div=document.createElement('div');div.innerHTML=`<strong>${p.name}</strong><br>Status: ${p.status}`; // admin control for demo
- if(p.status==='Pending'){const approve=document.createElement('button');approve.textContent='Approve';approve.style.marginLeft='8px';approve.addEventListener('click',()=>{p.status='Approved';saveUpdatedPrizes(user);loadUserPrizes();});div.appendChild(approve);const reject=document.createElement('button');reject.textContent='Reject';reject.style.marginLeft='6px';reject.addEventListener('click',()=>{p.status='Rejected';saveUpdatedPrizes(user);loadUserPrizes();});div.appendChild(reject);}container.appendChild(div);});}}
-function saveUpdatedPrizes(user){const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);if(idx>=0){users[idx]=user;saveUsers(users);setCurrentUser(user);} }
+        const div = document.createElement("div");
+        div.className = "skin";
 
-// Modal actions
-if(document.getElementById('openRegisterFromLogin')){document.getElementById('openRegisterFromLogin').addEventListener('click',e=>{e.preventDefault();closeLogin();openRegister();});}
+        const img = document.createElement("img");
 
-if(document.getElementById('doLoginBtn')){document.getElementById('doLoginBtn').addEventListener('click',()=>{const email=document.getElementById('loginEmail').value.trim();const password=document.getElementById('loginPassword').value;const users=getUsers();const user=users.find(u=>u.email===email&&u.password===password);if(user){setCurrentUser(user);updateAuthUI();closeLogin();}else{alert('Invalid email or password');}})}
+        // naam van de skin
+        const name = skin.name || skin.id;
 
-if(document.getElementById('doRegisterBtn')){document.getElementById('doRegisterBtn').addEventListener('click',()=>{const name=document.getElementById('regName').value.trim();const email=document.getElementById('regEmail').value.trim();const uid=document.getElementById('regUid').value.trim();const pass1=document.getElementById('regPassword').value;const pass2=document.getElementById('regPassword2').value;const errorDiv=document.getElementById('regError');if(errorDiv)errorDiv.style.display='none';if(!name||!email||!uid||!pass1||!pass2){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='All fields required.';}return;}if(pass1!==pass2){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Passwords do not match.';}return;}const users=getUsers();if(users.find(u=>u.email===email)){if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Email already exists.';}return;}const newUser={name,email,uid,password:pass1,prizes:[]};users.push(newUser);saveUsers(users);setCurrentUser(newUser);updateAuthUI();closeRegister();})}
+        img.src = skinBase + name + "_hi.png";
 
-if(document.getElementById('doSaveSettingsBtn')){document.getElementById('doSaveSettingsBtn').addEventListener('click',()=>{const user=getCurrentUser();if(!user)return;const users=getUsers();const idx=users.findIndex(u=>u.uid===user.uid);user.name=document.getElementById('settingsName').value.trim();user.email=document.getElementById('settingsEmail').value.trim();user.password=document.getElementById('settingsPassword').value;users[idx]=user;saveUsers(users);setCurrentUser(user);loadUserPrizes();closeSettings();})}
+        const label = document.createElement("div");
+        label.textContent = name;
 
-// Prize wheel logic
-let hasFreeSpin=JSON.parse(localStorage.getItem('hasFreeSpin')||'true');
-let lastPrize=null;
-const wheel=document.getElementById('wheel');
-const spinBtn=document.getElementById('spinBtn');
-const freeSpinText=document.getElementById('freeSpinText');
-const prizeListInline=document.getElementById('prizeListInline');
+        div.appendChild(img);
+        div.appendChild(label);
 
-const PRIZES=['$1 Credit','$2 Credit','$5 Credit','Free Skin','50% Discount','Nothing','Mystery Box'];
-if(prizeListInline)prizeListInline.textContent=PRIZES.join(' • ');
+        container.appendChild(div);
 
-function updateWheelUI(){const user=getCurrentUser();if(!spinBtn||!freeSpinText)return; if(!user){spinBtn.disabled=true;spinBtn.textContent='Login required';freeSpinText.textContent='You must be logged in to play';return;}spinBtn.disabled=false;spinBtn.textContent='Start Wheel';freeSpinText.textContent=hasFreeSpin?'Play 1 time for free':'$2 per spin';}
+    });
 
-if(spinBtn){spinBtn.addEventListener('click',()=>{
-  const user=getCurrentUser();
-  if(!user){alert('Login required');return;}
-
-  if(!hasFreeSpin){
-    // start payment flow: open PayPal in new tab and record pending payment
-    const paypalUrl = 'https://www.paypal.com/paypalme/TBYTagario';
-    // record pending payment on user's account so admin can approve later
-    if(!user.prizes) user.prizes = [];
-    user.prizes.push({name:'$2 Spin Payment', status:'PendingPayment'});
-    const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid); if(idx>=0){users[idx]=user; saveUsers(users); setCurrentUser(user);}    
-    window.open(paypalUrl, '_blank');
-    alert('Payment started — status set to PendingPayment. After you complete payment, ask admin to approve.');
-    loadUserPrizes();
-    updateWheelUI();
-    return;
-  }
-
-  // perform spin
-  const result = PRIZES[Math.floor(Math.random()*PRIZES.length)];
-  const deg = Math.floor(3000+Math.random()*2000);
-  if(wheel){
-    wheel.style.transition = 'transform 5s ease';
-    wheel.style.transform = `rotate(${deg}deg)`;
-  }
-
-  // show inline label while spinning
-  const labelEl = document.getElementById('wheelLabel'); if(labelEl) labelEl.textContent = 'Spinning...';
-
-  setTimeout(()=>{
-    if(wheel){
-      wheel.style.transition = 'none';
-      wheel.style.transform = `rotate(${deg%360}deg)`;
-    }
-    if(labelEl) labelEl.textContent = result;
-
-    // save prize to user account
-    if(!user.prizes) user.prizes = [];
-    user.prizes.push({name:result, status: hasFreeSpin? 'Free' : 'Pending'});
-    const users = getUsers(); const idx = users.findIndex(u=>u.uid===user.uid); if(idx>=0){users[idx]=user; saveUsers(users); setCurrentUser(user);}    
-
-    hasFreeSpin = false; localStorage.setItem('hasFreeSpin','false');
-    updateWheelUI(); loadUserPrizes();
-  }, 5200);
-});}
-
-// init
-updateAuthUI();
-updateWheelUI();
+});
 
 </script>
+
 </body>
 </html>
