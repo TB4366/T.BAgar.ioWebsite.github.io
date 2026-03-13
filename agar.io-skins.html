@@ -2,33 +2,48 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Agar.io Skin Viewer</title>
+<title>Agar.io Skin Database</title>
 
 <style>
 
 body{
-background:#111;
+background:#0f0f0f;
 color:white;
 font-family:Arial;
 text-align:center;
 }
 
+h1{
+margin-top:20px;
+}
+
+#search{
+padding:10px;
+width:260px;
+margin:20px;
+border-radius:8px;
+border:none;
+font-size:16px;
+}
+
 #skins{
 display:grid;
 grid-template-columns:repeat(auto-fill,120px);
-gap:12px;
+gap:15px;
 justify-content:center;
 }
 
 .skin{
-background:#1e1e1e;
+background:#1b1b1b;
 padding:10px;
-border-radius:10px;
+border-radius:12px;
+position:relative;
 transition:0.2s;
 }
 
 .skin:hover{
 transform:scale(1.05);
+background:#262626;
 }
 
 .skin img{
@@ -39,7 +54,18 @@ border-radius:50%;
 
 .skin p{
 font-size:12px;
-margin-top:5px;
+margin-top:6px;
+}
+
+.new{
+position:absolute;
+top:6px;
+left:6px;
+background:red;
+color:white;
+font-size:10px;
+padding:2px 6px;
+border-radius:6px;
 }
 
 </style>
@@ -47,7 +73,9 @@ margin-top:5px;
 
 <body>
 
-<h1>Agar.io Skins</h1>
+<h1>Agar.io Skin Viewer</h1>
+
+<input id="search" placeholder="Search skins...">
 
 <div id="skins"></div>
 
@@ -59,11 +87,11 @@ const configURL =
 const skinBase =
 "https://configs-web.agario.miniclippt.com/live/v15/10890/";
 
+let allSkins = [];
+
 fetch(configURL)
 .then(r => r.json())
 .then(data => {
-
-console.log(data);
 
 let skins =
 data.skins ||
@@ -74,9 +102,18 @@ data.defaultSkins ||
 // nieuwste bovenaan
 skins = skins.reverse();
 
-const container = document.getElementById("skins");
+allSkins = skins;
 
-skins.forEach(skin => {
+renderSkins(skins);
+
+});
+
+function renderSkins(list){
+
+const container = document.getElementById("skins");
+container.innerHTML = "";
+
+list.forEach((skin,index) => {
 
 let name =
 skin.name ||
@@ -87,10 +124,24 @@ const div = document.createElement("div");
 div.className = "skin";
 
 const img = document.createElement("img");
+
+// lazy loading
+img.loading = "lazy";
 img.src = skinBase + name + "_hi.png";
 
 const label = document.createElement("p");
 label.textContent = name;
+
+// NEW label voor eerste 20 skins
+if(index < 20){
+
+const badge = document.createElement("div");
+badge.className = "new";
+badge.textContent = "NEW";
+
+div.appendChild(badge);
+
+}
 
 div.appendChild(img);
 div.appendChild(label);
@@ -98,6 +149,20 @@ div.appendChild(label);
 container.appendChild(div);
 
 });
+
+}
+
+// zoekfunctie
+document.getElementById("search").addEventListener("input", e => {
+
+const value = e.target.value.toLowerCase();
+
+const filtered =
+allSkins.filter(s =>
+(s.name || "").toLowerCase().includes(value)
+);
+
+renderSkins(filtered);
 
 });
 
