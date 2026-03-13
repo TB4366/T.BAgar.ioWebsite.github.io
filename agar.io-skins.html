@@ -3,39 +3,26 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Agar.io Skin Gallery</title>
+<title>Agar.io Skin Viewer</title>
 
 <style>
 
 body{
-background:#0f0f0f;
+background:#111;
 color:white;
 font-family:Arial;
 text-align:center;
 }
 
-h1{
-margin-top:20px;
-}
-
-#search{
-padding:10px;
-width:250px;
-font-size:16px;
-margin:20px;
-border-radius:6px;
-border:none;
-}
-
 #skins{
 display:grid;
 grid-template-columns:repeat(auto-fill,120px);
-gap:15px;
+gap:12px;
 justify-content:center;
 }
 
 .skin{
-background:#1b1b1b;
+background:#1e1e1e;
 padding:10px;
 border-radius:10px;
 transition:0.2s;
@@ -43,7 +30,6 @@ transition:0.2s;
 
 .skin:hover{
 transform:scale(1.05);
-background:#2a2a2a;
 }
 
 .skin img{
@@ -64,45 +50,34 @@ margin-top:5px;
 
 <h1>Agar.io Skins</h1>
 
-<input id="search" placeholder="Search skins...">
-
 <div id="skins"></div>
 
 <script>
 
-const config =
+const configURL =
 "https://configs-web.agario.miniclippt.com/live/v15/10890/GameConfiguration.json";
 
-const skinCDN =
+const skinBase =
 "https://configs-web.agario.miniclippt.com/live/v15/10890/";
 
-let allSkins = [];
-
-fetch(config)
+fetch(configURL)
 .then(r => r.json())
 .then(data => {
 
 console.log(data);
 
-// probeer skins uit config te halen
 let skins =
 data.skins ||
 data.shopSkins ||
 data.defaultSkins ||
 [];
 
-allSkins = skins;
-
-renderSkins(skins);
-
-});
-
-function renderSkins(list){
+// nieuwste bovenaan
+skins = skins.reverse();
 
 const container = document.getElementById("skins");
-container.innerHTML = "";
 
-list.forEach(skin => {
+skins.forEach(skin => {
 
 let name =
 skin.name ||
@@ -113,8 +88,7 @@ const div = document.createElement("div");
 div.className = "skin";
 
 const img = document.createElement("img");
-
-img.src = skinCDN + name + "_hi.png";
+img.src = skinBase + name + "_hi.png";
 
 const label = document.createElement("p");
 label.textContent = name;
@@ -125,20 +99,6 @@ div.appendChild(label);
 container.appendChild(div);
 
 });
-
-}
-
-// zoekfunctie
-document.getElementById("search").addEventListener("input", e => {
-
-const value = e.target.value.toLowerCase();
-
-const filtered =
-allSkins.filter(s =>
-(s.name || "").toLowerCase().includes(value)
-);
-
-renderSkins(filtered);
 
 });
 
