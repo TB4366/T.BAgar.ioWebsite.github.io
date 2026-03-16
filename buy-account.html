@@ -2,131 +2,356 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Agar.io simpele clone</title>
+<title>T.B Cells</title>
+
 <style>
+
 body{
-    margin:0;
-    overflow:hidden;
-    font-family:Arial;
-    background:#f0f0f0;
+margin:0;
+font-family:Arial;
+overflow:hidden;
+background:#f0f0f0;
 }
 
-#ui{
-    position:absolute;
-    top:20px;
-    left:20px;
-    background:white;
-    padding:10px 15px;
-    border-radius:10px;
-    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+#menu{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+text-align:center;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+button{
+padding:12px 20px;
+margin:5px;
+border:none;
+border-radius:8px;
+background:#ff6a00;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+input{
+padding:10px;
+width:200px;
+margin-bottom:10px;
 }
 
 canvas{
-    display:block;
+display:block;
 }
+
+#leaderboard{
+position:absolute;
+top:10px;
+right:10px;
+background:white;
+padding:10px;
+border-radius:10px;
+font-size:14px;
+}
+
+#pauseBtn{
+position:absolute;
+top:10px;
+left:10px;
+font-size:20px;
+background:white;
+border-radius:8px;
+padding:8px;
+cursor:pointer;
+}
+
+#emojiBtn{
+position:absolute;
+top:60px;
+left:10px;
+font-size:20px;
+background:white;
+border-radius:8px;
+padding:8px;
+cursor:pointer;
+}
+
+#joystick{
+position:absolute;
+bottom:40px;
+left:40px;
+width:120px;
+height:120px;
+background:rgba(0,0,0,0.1);
+border-radius:50%;
+}
+
+#stick{
+position:absolute;
+width:50px;
+height:50px;
+background:#555;
+border-radius:50%;
+left:35px;
+top:35px;
+}
+
+.panel{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:white;
+padding:20px;
+border-radius:10px;
+display:none;
+}
+
+.skin{
+width:40px;
+height:40px;
+border-radius:50%;
+display:inline-block;
+margin:5px;
+cursor:pointer;
+}
+
 </style>
 </head>
+
 <body>
 
-<div id="ui">
-<b>Agar.io mini clone</b><br>
-Beweeg je muis om te bewegen.<br>
-Eet de kleine bolletjes!
+<div id="menu">
+
+<h1>T.B Cells</h1>
+
+<input id="name" placeholder="Naam">
+
+<br>
+
+<button onclick="openSkins()">Skins</button>
+<button onclick="openSettings()">Instellingen</button>
+<br>
+<button onclick="startGame()">Play</button>
+
+</div>
+
+<div id="skinPanel" class="panel">
+<h3>Kies skin</h3>
+<div class="skin" style="background:red" onclick="setSkin('red')"></div>
+<div class="skin" style="background:blue" onclick="setSkin('blue')"></div>
+<div class="skin" style="background:green" onclick="setSkin('green')"></div>
+<div class="skin" style="background:purple" onclick="setSkin('purple')"></div>
+<br>
+<button onclick="closePanels()">Close</button>
+</div>
+
+<div id="settingsPanel" class="panel">
+<h3>Geluid</h3>
+<input type="range" min="0" max="1" step="0.1" value="1">
+<br><br>
+<button onclick="closePanels()">Close</button>
+</div>
+
+<div id="emojiPanel" class="panel">
+😀 😎 😡 😂
+</div>
+
+<div id="leaderboard"></div>
+
+<div id="pauseBtn" onclick="pauseGame()">⏸</div>
+<div id="emojiBtn" onclick="showEmoji()">😀</div>
+
+<div id="joystick">
+<div id="stick"></div>
 </div>
 
 <canvas id="game"></canvas>
 
 <script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
 
-function resize(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let player;
+let pellets=[];
+let running=false;
+let skin="red";
+let name="Player";
+let emoji="";
+let emojiTimer=0;
+
+function openSkins(){
+document.getElementById("skinPanel").style.display="block";
 }
-resize();
-window.addEventListener("resize",resize);
 
-let mouse = {x:canvas.width/2,y:canvas.height/2};
+function openSettings(){
+document.getElementById("settingsPanel").style.display="block";
+}
 
-canvas.addEventListener("mousemove",e=>{
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-});
+function closePanels(){
+document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+}
 
-let player = {
-    x:canvas.width/2,
-    y:canvas.height/2,
-    r:30,
-    color:"#ff6a00"
+function setSkin(c){
+skin=c;
+}
+
+function startGame(){
+
+name=document.getElementById("name").value||"Player";
+
+document.getElementById("menu").style.display="none";
+
+player={
+x:canvas.width/2,
+y:canvas.height/2,
+r:30
 };
 
-let pellets = [];
+pellets=[];
 
-function spawnPellets(){
-    for(let i=0;i<200;i++){
-        pellets.push({
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height,
-            r:4+Math.random()*4,
-            color:`hsl(${Math.random()*360},70%,60%)`
-        });
-    }
+for(let i=0;i<200;i++){
+
+pellets.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:5,
+color:`hsl(${Math.random()*360},70%,60%)`
+});
+
 }
-spawnPellets();
+
+running=true;
+
+}
+
+function pauseGame(){
+
+if(confirm("Weet je zeker dat je wil leave?")){
+location.reload();
+}
+
+}
+
+function showEmoji(){
+
+const emojis=["😀","😎","😡","😂","🔥"];
+
+emoji=emojis[Math.floor(Math.random()*emojis.length)];
+
+emojiTimer=300;
+
+}
+
+let joyX=0;
+let joyY=0;
+
+const joystick=document.getElementById("joystick");
+
+joystick.addEventListener("touchmove",e=>{
+
+let rect=joystick.getBoundingClientRect();
+
+let x=e.touches[0].clientX-rect.left-60;
+let y=e.touches[0].clientY-rect.top-60;
+
+joyX=x/40;
+joyY=y/40;
+
+});
 
 function update(){
 
-    let dx = mouse.x - player.x;
-    let dy = mouse.y - player.y;
+if(!running) return;
 
-    player.x += dx * 0.02;
-    player.y += dy * 0.02;
+player.x+=joyX*4;
+player.y+=joyY*4;
 
-    pellets.forEach((p,i)=>{
+pellets.forEach((p,i)=>{
 
-        let dist = Math.hypot(player.x-p.x, player.y-p.y);
+let d=Math.hypot(player.x-p.x,player.y-p.y);
 
-        if(dist < player.r){
-            player.r += 0.3;
+if(d<player.r){
 
-            pellets.splice(i,1);
+player.r+=0.3;
 
-            pellets.push({
-                x:Math.random()*canvas.width,
-                y:Math.random()*canvas.height,
-                r:4+Math.random()*4,
-                color:`hsl(${Math.random()*360},70%,60%)`
-            });
-        }
+pellets.splice(i,1);
 
-    });
+}
+
+});
+
+if(emojiTimer>0) emojiTimer--;
+
 }
 
 function draw(){
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    pellets.forEach(p=>{
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=p.color;
-        ctx.fill();
-    });
+pellets.forEach(p=>{
 
-    ctx.beginPath();
-    ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
-    ctx.fillStyle=player.color;
-    ctx.fill();
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fillStyle=p.color;
+ctx.fill();
+
+});
+
+if(player){
+
+ctx.beginPath();
+ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
+ctx.fillStyle=skin;
+ctx.fill();
+
+ctx.fillStyle="white";
+ctx.textAlign="center";
+ctx.fillText(name,player.x,player.y);
+
+if(emojiTimer>0){
+
+ctx.font="30px Arial";
+ctx.fillText(emoji,player.x,player.y-player.r-10);
+
+}
+
+}
+
+drawLeaderboard();
+
+}
+
+function drawLeaderboard(){
+
+let html="<b>Leaderboard</b><br>";
+
+for(let i=1;i<=10;i++){
+
+html+=i+". Bot"+i+"<br>";
+
+}
+
+document.getElementById("leaderboard").innerHTML=html;
+
 }
 
 function loop(){
-    update();
-    draw();
-    requestAnimationFrame(loop);
+
+update();
+draw();
+requestAnimationFrame(loop);
+
 }
 
 loop();
+
 </script>
 
 </body>
