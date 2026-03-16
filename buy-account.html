@@ -1,90 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<title>Agar Style Menu</title>
+
 <style>
-body{background:#0b1220;color:white;font-family:Arial;padding:20px;}
-input,button{padding:8px;margin:5px;border-radius:6px;border:none;}
-table{width:100%;margin-top:20px;border-collapse:collapse;}
-th,td{border:1px solid #334155;padding:10px;text-align:center;}
-button{cursor:pointer;font-weight:bold;}
-.add{background:#22c55e;}
-.del{background:#ef4444;}
-.edit{background:#facc15;color:#111;}
+body{
+    margin:0;
+    font-family:Arial;
+    overflow:hidden;
+    background:#f0f0f0;
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+
+.menu{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    text-align:center;
+}
+
+.logo{
+    font-size:60px;
+    color:#555;
+}
+
+.nickname{
+    padding:12px;
+    width:250px;
+    font-size:18px;
+    margin:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.buttons{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+}
+
+.btn{
+    border:none;
+    padding:20px 40px;
+    font-size:20px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.orange{
+    background:#ff6a00;
+    color:white;
+}
+
+.blue{
+    background:#2b6cff;
+    color:white;
+}
+
+.small{
+    margin-top:15px;
+    background:#ff8c3a;
+    color:white;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>👑 Admin Panel</h1>
+<canvas id="bg"></canvas>
 
-<h2>Add User</h2>
-<input id="newUser" placeholder="Username">
-<input id="newKey" placeholder="Key">
-<button class="add" onclick="addUser()">Add</button>
+<div class="menu">
+<h1 class="logo">Agar.io</h1>
 
-<h2>Users</h2>
-<table>
-<thead>
-<tr><th>Username</th><th>Key</th><th>Actions</th></tr>
-</thead>
-<tbody id="userTable"></tbody>
-</table>
+<input type="text" placeholder="Nickname" class="nickname">
+
+<div class="buttons">
+<button class="btn orange">Classic</button>
+<button class="btn blue">More</button>
+</div>
+
+<button class="btn small">Start Big</button>
+</div>
 
 <script>
-function getUsers(){
-  return JSON.parse(localStorage.getItem("users") || "[]");
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 }
-function saveUsers(users){
-  localStorage.setItem("users", JSON.stringify(users));
+resize();
+window.addEventListener("resize",resize);
+
+let dots=[];
+
+for(let i=0;i<80;i++){
+dots.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:3+Math.random()*5,
+dx:(Math.random()-0.5)*1,
+dy:(Math.random()-0.5)*1,
+color:`hsl(${Math.random()*360},70%,60%)`
+});
 }
 
-function render(){
-  const table = document.getElementById("userTable");
-  table.innerHTML = "";
-  getUsers().forEach((u,i)=>{
-    table.innerHTML += `
-      <tr>
-        <td>${u.username}</td>
-        <td>${u.key}</td>
-        <td>
-          <button class="edit" onclick="editUser(${i})">Edit</button>
-          <button class="del" onclick="deleteUser(${i})">Delete</button>
-        </td>
-      </tr>`;
-  });
+function draw(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+dots.forEach(d=>{
+ctx.beginPath();
+ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+ctx.fillStyle=d.color;
+ctx.fill();
+
+d.x+=d.dx;
+d.y+=d.dy;
+
+if(d.x<0||d.x>canvas.width) d.dx*=-1;
+if(d.y<0||d.y>canvas.height) d.dy*=-1;
+});
+
+requestAnimationFrame(draw);
 }
 
-function addUser(){
-  const user=document.getElementById("newUser").value.trim();
-  const key=document.getElementById("newKey").value.trim();
-  if(!user||!key)return alert("Fill all fields");
-  const users=getUsers();
-  users.push({username:user,key:key});
-  saveUsers(users);
-  render();
-}
-
-function deleteUser(i){
-  const users=getUsers();
-  users.splice(i,1);
-  saveUsers(users);
-  render();
-}
-
-function editUser(i){
-  const users=getUsers();
-  const newUser=prompt("New username",users[i].username);
-  const newKey=prompt("New key",users[i].key);
-  if(newUser && newKey){
-    users[i]={username:newUser,key:newKey};
-    saveUsers(users);
-    render();
-  }
-}
-
-render();
+draw();
 </script>
 
 </body>
