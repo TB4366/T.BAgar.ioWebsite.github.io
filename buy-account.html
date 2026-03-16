@@ -2,140 +2,131 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Agar Style Menu</title>
-
+<title>Agar.io simpele clone</title>
 <style>
 body{
     margin:0;
-    font-family:Arial;
     overflow:hidden;
+    font-family:Arial;
     background:#f0f0f0;
 }
 
-canvas{
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:-1;
-}
-
-.menu{
+#ui{
     position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%, -50%);
-    text-align:center;
-}
-
-.logo{
-    font-size:60px;
-    color:#555;
-}
-
-.nickname{
-    padding:12px;
-    width:250px;
-    font-size:18px;
-    margin:15px;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-.buttons{
-    display:flex;
-    gap:20px;
-    justify-content:center;
-}
-
-.btn{
-    border:none;
-    padding:20px 40px;
-    font-size:20px;
+    top:20px;
+    left:20px;
+    background:white;
+    padding:10px 15px;
     border-radius:10px;
-    cursor:pointer;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
-.orange{
-    background:#ff6a00;
-    color:white;
-}
-
-.blue{
-    background:#2b6cff;
-    color:white;
-}
-
-.small{
-    margin-top:15px;
-    background:#ff8c3a;
-    color:white;
+canvas{
+    display:block;
 }
 </style>
-
 </head>
-
 <body>
 
-<canvas id="bg"></canvas>
-
-<div class="menu">
-<h1 class="logo">Agar.io</h1>
-
-<input type="text" placeholder="Nickname" class="nickname">
-
-<div class="buttons">
-<button class="btn orange">Classic</button>
-<button class="btn blue">More</button>
+<div id="ui">
+<b>Agar.io mini clone</b><br>
+Beweeg je muis om te bewegen.<br>
+Eet de kleine bolletjes!
 </div>
 
-<button class="btn small">Start Big</button>
-</div>
+<canvas id="game"></canvas>
 
 <script>
-const canvas = document.getElementById("bg");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 function resize(){
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
 resize();
 window.addEventListener("resize",resize);
 
-let dots=[];
+let mouse = {x:canvas.width/2,y:canvas.height/2};
 
-for(let i=0;i<80;i++){
-dots.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:3+Math.random()*5,
-dx:(Math.random()-0.5)*1,
-dy:(Math.random()-0.5)*1,
-color:`hsl(${Math.random()*360},70%,60%)`
+canvas.addEventListener("mousemove",e=>{
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
 });
+
+let player = {
+    x:canvas.width/2,
+    y:canvas.height/2,
+    r:30,
+    color:"#ff6a00"
+};
+
+let pellets = [];
+
+function spawnPellets(){
+    for(let i=0;i<200;i++){
+        pellets.push({
+            x:Math.random()*canvas.width,
+            y:Math.random()*canvas.height,
+            r:4+Math.random()*4,
+            color:`hsl(${Math.random()*360},70%,60%)`
+        });
+    }
+}
+spawnPellets();
+
+function update(){
+
+    let dx = mouse.x - player.x;
+    let dy = mouse.y - player.y;
+
+    player.x += dx * 0.02;
+    player.y += dy * 0.02;
+
+    pellets.forEach((p,i)=>{
+
+        let dist = Math.hypot(player.x-p.x, player.y-p.y);
+
+        if(dist < player.r){
+            player.r += 0.3;
+
+            pellets.splice(i,1);
+
+            pellets.push({
+                x:Math.random()*canvas.width,
+                y:Math.random()*canvas.height,
+                r:4+Math.random()*4,
+                color:`hsl(${Math.random()*360},70%,60%)`
+            });
+        }
+
+    });
 }
 
 function draw(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-dots.forEach(d=>{
-ctx.beginPath();
-ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
-ctx.fillStyle=d.color;
-ctx.fill();
+    pellets.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=p.color;
+        ctx.fill();
+    });
 
-d.x+=d.dx;
-d.y+=d.dy;
-
-if(d.x<0||d.x>canvas.width) d.dx*=-1;
-if(d.y<0||d.y>canvas.height) d.dy*=-1;
-});
-
-requestAnimationFrame(draw);
+    ctx.beginPath();
+    ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
+    ctx.fillStyle=player.color;
+    ctx.fill();
 }
 
-draw();
+function loop(){
+    update();
+    draw();
+    requestAnimationFrame(loop);
+}
+
+loop();
 </script>
 
 </body>
