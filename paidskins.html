@@ -4,74 +4,65 @@
 <meta charset="utf-8">
 <title>T.B Agar.io Paid Skins</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <script src="https://cdn.tailwindcss.com"></script>
-
 <style>
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-display:flex;
-align-items:center;
-justify-content:center;
-}
+body {background:#f0f0f0;}
+img {object-fit:cover;}
+.circle-big{width:100px;height:100px;border-radius:9999px;}
+.circle-small{width:60px;height:60px;border-radius:9999px;}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);}
 .hidden{display:none;}
 </style>
 </head>
+<body>
 
-<body class="bg-gray-100">
-
-<header class="bg-gray-900 text-white p-4">
-<div class="max-w-6xl mx-auto flex justify-between items-center">
+<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
 <h1 class="font-bold text-xl">T.B Agar.io Paid Skins</h1>
-
-<button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">
-Cart (<span id="cartCount">0</span>)
-</button>
-</div>
+<button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
 </header>
+
+<div class="max-w-6xl mx-auto p-4 flex gap-4">
+<input type="text" id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded border">
+<select id="sort" class="px-3 py-2 rounded border">
+<option value="default">General</option>
+<option value="low">Price: Low → High</option>
+<option value="high">Price: High → Low</option>
+<option value="shuffle">Shuffle</option>
+</select>
+</div>
 
 <main class="max-w-6xl mx-auto p-6">
 <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- CART -->
+<!-- EMAIL / UID MODAL -->
+<div id="emailModal" class="modal">
+<div class="bg-white p-6 rounded w-full max-w-sm text-center">
+<h2 class="font-bold text-xl mb-4">Enter Your Info</h2>
+<input id="userEmail" placeholder="Your Email" class="w-full mb-2 px-3 py-2 border rounded">
+<input id="userUID" placeholder="Your Agar.io UID" class="w-full mb-2 px-3 py-2 border rounded">
+<button id="proceedBtn" class="bg-blue-500 text-white w-full py-2 rounded mt-2">Proceed to Cart</button>
+</div>
+</div>
+
+<!-- CART MODAL -->
 <div id="cartModal" class="modal hidden">
-
 <div class="bg-white p-6 rounded w-full max-w-lg">
-
 <h2 class="text-xl font-bold mb-4">Your Cart</h2>
-
 <div id="cartItems" class="space-y-3"></div>
-
 <div class="flex justify-between font-bold mt-4">
 <span>Total</span>
 <span id="total">$0.00</span>
 </div>
-
-<button id="paypalBtn" class="w-full bg-yellow-500 mt-4 py-3 rounded font-bold">
-Pay with PayPal
-</button>
-
-<button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-200 rounded">
-Close
-</button>
-
+<button id="paypalBtn" class="w-full bg-yellow-500 mt-4 py-3 rounded font-bold">Pay with PayPal</button>
+<div id="orderMsg" class="mt-2 text-green-600 font-bold hidden">✅ Order confirmed!</div>
+<button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-200 rounded">Close</button>
 </div>
 </div>
 
 <script>
-
-/* =====================
-   SKINS
-===================== */
-
-const skins = [
-
+/* ===================== SKINS ===================== */
+const skins=[
 { id:1,name:"Scar",price:2.89,image1:"IMG_7141.webp"},
 { id:2,name:"Scar + Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp"},
 { id:3,name:"Bull King",price:4.29,image1:"IMG_7147.webp"},
@@ -102,158 +93,128 @@ const skins = [
 { id:28,name:"Eye patch",price:11.99,image1:"IMG_6331.webp"},
 { id:29,name:"Karate parrot",price:2.89,image1:"IMG_7146.webp"},
 { id:30,name:"Karate parrot + Frog thai + Hard shroom",price:12.99,image1:"IMG_7146.webp",image2:"IMG_7145.webp"}
-
 ];
 
-/* =====================
-   CART
-===================== */
-
-let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+/* ===================== VARIABLES ===================== */
+let cart = [];
+let userEmail="", userUID="";
 
 const grid = document.getElementById("grid");
 const cartItems = document.getElementById("cartItems");
 const cartCount = document.getElementById("cartCount");
 const totalEl = document.getElementById("total");
 const cartModal = document.getElementById("cartModal");
+const emailModal = document.getElementById("emailModal");
+const proceedBtn = document.getElementById("proceedBtn");
+const searchInput = document.getElementById("search");
+const sortSelect = document.getElementById("sort");
+const orderMsg = document.getElementById("orderMsg");
 
-/* =====================
-   RENDER PRODUCTS
-===================== */
-
-function render(){
-
+/* ===================== RENDER ===================== */
+function render(list=skins){
 grid.innerHTML="";
-
-skins.forEach(s=>{
-
+list.forEach(s=>{
 let div=document.createElement("div");
 div.className="bg-white p-4 rounded shadow text-center";
-
 let imagesHTML="";
-
 if(s.image2){
-
-imagesHTML=`
-<div class="flex justify-center gap-2">
-<img src="${s.image1}" class="w-16 h-16 rounded-full object-cover">
-<img src="${s.image2}" class="w-16 h-16 rounded-full object-cover">
-</div>
-`;
-
+imagesHTML=`<div class="flex justify-center gap-2">
+<img src="${s.image1}" class="circle-small">
+<img src="${s.image2}" class="circle-small">
+</div>`;
 }else{
-
-imagesHTML=`
-<img src="${s.image1}" class="w-24 h-24 rounded-full object-cover mx-auto">
-`;
-
+imagesHTML=`<img src="${s.image1}" class="circle-big mx-auto">`;
 }
-
 div.innerHTML=`
-
 ${imagesHTML}
-
 <h3 class="font-bold mt-3">${s.name}</h3>
-
 <p class="font-semibold">$${s.price}</p>
-
-<button onclick="addToCart(${s.id})"
-class="bg-green-600 text-white px-4 py-2 mt-2 rounded">
-Add to Cart
-</button>
-
-`;
-
+<div class="flex justify-center gap-2 mt-2">
+<button onclick="addToCart(${s.id})" class="bg-green-600 text-white px-2 py-1 rounded">Add</button>
+<button onclick="shareItem(${s.id})" class="bg-blue-500 text-white px-2 py-1 rounded">Share</button>
+</div>`;
 grid.appendChild(div);
-
 });
-
 }
-
 render();
 
-/* =====================
-   ADD TO CART
-===================== */
-
+/* ===================== CART ===================== */
 function addToCart(id){
-
-let item = skins.find(s=>s.id===id);
-
+let item=skins.find(s=>s.id===id);
 cart.push(item);
-
-localStorage.setItem("cart",JSON.stringify(cart));
-
 updateCart();
-
 alert("Added to cart");
-
 }
-
-/* =====================
-   UPDATE CART
-===================== */
-
 function updateCart(){
-
 cartItems.innerHTML="";
-
 let total=0;
-
 cart.forEach((s,i)=>{
-
 total+=s.price;
-
 let div=document.createElement("div");
-
-div.className="flex justify-between border p-2 rounded";
-
+div.className="flex justify-between border p-2 rounded items-center";
 div.innerHTML=`
-<span>${s.name}</span>
-<span>$${s.price}</span>
-`;
-
+<span>${s.name} - $${s.price}</span>
+<div>
+<button onclick="removeItem(${i})" class="text-red-600 font-bold px-2">🗑</button>
+</div>`;
 cartItems.appendChild(div);
-
 });
-
 totalEl.textContent="$"+total.toFixed(2);
-
 cartCount.textContent=cart.length;
+}
+function removeItem(i){
+cart.splice(i,1);
+updateCart();
+}
+document.getElementById("cartBtn").onclick=()=>{
+if(!userEmail || !userUID){emailModal.classList.remove("hidden"); return;}
+cartModal.classList.remove("hidden"); updateCart();
+}
+function closeCart(){cartModal.classList.add("hidden");}
 
+/* ===================== SEARCH & SORT ===================== */
+searchInput.oninput = ()=>{
+let val=searchInput.value.toLowerCase();
+let filtered=skins.filter(s=>s.name.toLowerCase().includes(val));
+applySort(filtered);
+};
+sortSelect.onchange = ()=>{applySort(skins);}
+function applySort(list){
+let val=sortSelect.value;
+let sorted=[...list];
+if(val=="low") sorted.sort((a,b)=>a.price-b.price);
+if(val=="high") sorted.sort((a,b)=>b.price-a.price);
+if(val=="shuffle") sorted.sort(()=>Math.random()-0.5);
+render(sorted);
 }
 
-updateCart();
+/* ===================== SHARE ===================== */
+function shareItem(id){
+let s=skins.find(s=>s.id===id);
+navigator.clipboard.writeText(`${s.name} - $${s.price}`);
+alert("Copied to clipboard!");
+}
 
-/* CART OPEN */
-
-document.getElementById("cartBtn").onclick=()=>{
+/* ===================== EMAIL / UID ===================== */
+proceedBtn.onclick=()=>{
+let e=document.getElementById("userEmail").value.trim();
+let u=document.getElementById("userUID").value.trim();
+if(!e || !u){alert("Please fill in both email and UID."); return;}
+userEmail=e; userUID=u;
+emailModal.classList.add("hidden");
 cartModal.classList.remove("hidden");
 updateCart();
 }
 
-/* CART CLOSE */
-
-function closeCart(){
-cartModal.classList.add("hidden");
-}
-
-/* PAYPAL */
-
+/* ===================== PAYPAL ===================== */
 document.getElementById("paypalBtn").onclick=()=>{
-
-let total = cart.reduce((a,b)=>a+b.price,0);
-
-if(total===0){
-alert("Cart is empty");
-return;
-}
-
-let url = "https://www.paypal.com/paypalme/TBYTagario/"+total.toFixed(2);
-
+let total=cart.reduce((a,b)=>a+b.price,0);
+if(total==0){alert("Cart is empty"); return;}
+let url=`https://www.paypal.com/paypalme/TBYTagario/${total.toFixed(2)}`;
 window.open(url,"_blank");
-
-};
+orderMsg.classList.remove("hidden");
+cart=[]; updateCart();
+}
 
 </script>
 
