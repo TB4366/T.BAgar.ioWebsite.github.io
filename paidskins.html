@@ -1,230 +1,430 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<title>T.B Agar.io Paid Skins</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>T.B Agar.io Skin Shop</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
+
 <style>
-body {background:#f0f0f0;}
-img {object-fit:cover;}
-.circle-big{width:100px;height:100px;border-radius:9999px;}
-.circle-small{width:60px;height:60px;border-radius:9999px;}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);}
-.hidden{display:none;}
+
+body{
+background:#f2f2f2;
+font-family:sans-serif;
+}
+
+.skinCard{
+position:relative;
+}
+
+.circle{
+width:90px;
+height:90px;
+border-radius:100%;
+object-fit:cover;
+margin:auto;
+}
+
+.badge{
+position:absolute;
+top:8px;
+left:8px;
+background:red;
+color:white;
+font-size:12px;
+padding:4px 8px;
+border-radius:6px;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.hidden{
+display:none;
+}
+
 </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<header class="bg-gray-900 text-white p-4 flex justify-between items-center">
+<header class="bg-black text-white p-4 flex justify-between">
 <h1 class="font-bold text-xl">T.B Agar.io Paid Skins</h1>
-<button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
+<button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">
+Cart (<span id="cartCount">0</span>)
+</button>
 </header>
 
-<!-- SEARCH + SORT -->
 <div class="max-w-6xl mx-auto p-4 flex gap-4">
-<input type="text" id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded border">
-<select id="sort" class="px-3 py-2 rounded border">
-<option value="default">General</option>
-<option value="low">Price: Low → High</option>
-<option value="high">Price: High → Low</option>
-<option value="shuffle">Shuffle</option>
+<input id="search" class="flex-1 border p-2 rounded" placeholder="Search skins">
+
+<select id="sort" class="border p-2 rounded">
+<option value="default">Sort</option>
+<option value="low">Price Low</option>
+<option value="high">Price High</option>
 </select>
 </div>
 
-<!-- SKINS GRID -->
-<main class="max-w-6xl mx-auto p-6">
-<div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
-</main>
+<div id="grid" class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 p-6"></div>
 
-<!-- EMAIL + UID MODAL -->
-<div id="emailModal" class="modal hidden">
-<div class="bg-white p-6 rounded w-full max-w-sm text-center">
-<h2 class="font-bold text-xl mb-4">Enter Your Info</h2>
-<input id="userEmail" placeholder="Your Email" class="w-full mb-2 px-3 py-2 border rounded">
-<input id="userUID" placeholder="Your Agar.io UID" class="w-full mb-2 px-3 py-2 border rounded">
-<button id="proceedBtn" class="bg-blue-500 text-white w-full py-2 rounded mt-2">Proceed to Cart</button>
-</div>
-</div>
 
-<!-- CART MODAL -->
 <div id="cartModal" class="modal hidden">
-<div class="bg-white p-6 rounded w-full max-w-lg">
-<h2 class="text-xl font-bold mb-4">Your Cart</h2>
-<div id="cartItems" class="space-y-3"></div>
-<div class="flex justify-between font-bold mt-4">
+<div class="bg-white p-6 rounded w-96">
+
+<h2 class="text-xl font-bold mb-4">Cart</h2>
+
+<input id="email" placeholder="Email" class="border p-2 w-full mb-2">
+<input id="uid" placeholder="UID" class="border p-2 w-full mb-3">
+
+<div id="cartItems"></div>
+
+<div class="flex justify-between mt-4 font-bold">
 <span>Total</span>
-<span id="total">$0.00</span>
+<span id="total">$0</span>
 </div>
-<button id="paypalBtn" class="w-full bg-yellow-500 mt-4 py-3 rounded font-bold">Pay with PayPal</button>
-<div id="orderMsg" class="mt-2 text-green-600 font-bold hidden"></div>
-<button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-200 rounded">Close</button>
+
+<button id="payBtn" class="bg-yellow-500 w-full mt-4 py-2 rounded">
+Pay with PayPal
+</button>
+
+<button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-300 rounded">
+Close
+</button>
+
 </div>
 </div>
 
-<!-- EVENT BANNER -->
-<div id="eventBanner" class="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex items-center justify-between px-4 py-2 cursor-pointer">
-  <div class="flex items-center gap-2">
-    <img id="eventThumb" src="event_placeholder.png" class="w-10 h-10 rounded" alt="Event">
-    <span>Special Event! Ends in <span id="eventTimer">00:00:00</span></span>
-  </div>
-  <span class="font-bold">Click for details</span>
-</div>
 
-<!-- EVENT MODAL -->
 <div id="eventModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-full max-w-md text-center relative">
-    <span onclick="closeEvent()" class="absolute top-2 right-2 text-2xl cursor-pointer">×</span>
-    <h2 class="font-bold text-xl mb-4" id="eventTitle">Special Event!</h2>
-    <img id="eventImage" src="event_placeholder.png" class="mx-auto mb-4 w-48 h-48 rounded" alt="Event">
-    <p class="mb-4" id="eventText">Limited time offer! Get this exclusive skin now!</p>
-    <button id="eventPayBtn" class="bg-yellow-500 px-4 py-2 rounded font-bold">Pay with PayPal</button>
-  </div>
+
+<div class="bg-white p-6 rounded text-center w-96">
+
+<h2 id="eventTitle" class="text-xl font-bold mb-2"></h2>
+
+<img id="eventImage" class="mx-auto mb-4 w-40">
+
+<p id="eventText"></p>
+
+<p id="eventTimer" class="font-bold mt-2"></p>
+
+<button id="eventPay" class="bg-yellow-500 mt-4 px-4 py-2 rounded">
+Pay
+</button>
+
+<button onclick="closeEvent()" class="block mt-3 mx-auto">
+Close
+</button>
+
 </div>
+
+</div>
+
+
+<div id="eventBanner" class="fixed bottom-0 left-0 w-full text-white p-3 flex justify-between items-center cursor-pointer">
+<img id="bannerImg" class="w-10 h-10">
+<span id="bannerText"></span>
+</div>
+
 
 <script>
-/* ===================== SKINS ===================== */
+
+
+const PAYPAL_LINK="https://paypal.com/paypalme/TBYTagario"
+
+
+
 const skins=[
-{ id:1,name:"Scar",price:2.89,image1:"IMG_7141.webp"},
-{ id:2,name:"Scar + Seer",price:12.99,image1:"IMG_7141.webp",image2:"IMG_7142.webp"},
-{ id:3,name:"Bull King",price:4.29,image1:"IMG_7147.webp"},
-{ id:4,name:"Birthday lol + Bull king",price:13.49,image1:"IMG_3797.webp",image2:"IMG_7147.webp"},
-{ id:5,name:"Tiny jack + Jade",price:14.39,image1:"IMG_7143.webp",image2:"IMG_4913.webp"},
-{ id:6,name:"Evil master",price:11.49,image1:"IMG_5443.webp"},
-{ id:7,name:"Space warden + Evil master",price:21.99,image1:"IMG_7150.webp",image2:"IMG_5443.webp"},
-{ id:8,name:"Space warden",price:6.59,image1:"IMG_7150.webp"},
-{ id:9,name:"Thund",price:5.49,image1:"IMG_6185.webp"},
-{ id:10,name:"King lion + Magic hat",price:23.99,image1:"IMG_7172.webp",image2:"IMG_7171.webp"},
-{ id:11,name:"Ice Crystal",price:7.89,image1:"IMG_5938.webp"},
-{ id:12,name:"Moofun",price:11.99,image1:"IMG_7227.webp"},
-{ id:13,name:"Sorceress",price:7.99,image1:"IMG_7225.webp"},
-{ id:14,name:"Gnome mage",price:11.99,image1:"IMG_7226.webp"},
-{ id:15,name:"Steel Ram",price:11.99,image1:"IMG_6080.webp"},
-{ id:16,name:"Shuriken",price:6.99,image1:"IMG_7177.webp"},
-{ id:17,name:"Shuriken + Shadow",price:21.99,image1:"IMG_7177.webp",image2:"IMG_7176.webp"},
-{ id:18,name:"Rogue samurai",price:6.89,image1:"IMG_7464.webp"},
-{ id:19,name:"Cursed Skull",price:8.49,image1:"IMG_6198.webp"},
-{ id:20,name:"Silver Orb",price:4.99,image1:"IMG_6199.webp"},
-{ id:21,name:"Gryphon",price:6.49,image1:"IMG_7468.webp"},
-{ id:22,name:"Dark wings",price:21.99,image1:"IMG_7233.webp"},
-{ id:23,name:"Gryphon + Dark wings",price:11.29,image1:"IMG_7468.webp",image2:"IMG_7233.webp"},
-{ id:24,name:"Madjawz",price:18.99,image1:"IMG_5593.webp"},
-{ id:25,name:"Skull ribbon",price:5.99,image1:"IMG_6332.webp"},
-{ id:26,name:"Eye patch + mega power",price:18.99,image1:"IMG_6331.webp",image2:"IMG_5619.webp"},
-{ id:27,name:"Eye patch + amber",price:7.99,image1:"IMG_6331.webp",image2:"IMG_6537.webp"},
-{ id:28,name:"Eye patch",price:11.99,image1:"IMG_6331.webp"},
-{ id:29,name:"Karate parrot",price:2.89,image1:"IMG_7146.webp"},
-{ id:30,name:"Karate parrot + Frog thai + Hard shroom",price:12.99,image1:"IMG_7146.webp",image2:"IMG_7145.webp"}
-];
 
-/* ===================== VARIABLES ===================== */
-let cart=[];
-let userEmail="", userUID="";
-const grid=document.getElementById("grid");
-const cartItems=document.getElementById("cartItems");
-const cartCount=document.getElementById("cartCount");
-const totalEl=document.getElementById("total");
-const cartModal=document.getElementById("cartModal");
-const emailModal=document.getElementById("emailModal");
-const proceedBtn=document.getElementById("proceedBtn");
-const searchInput=document.getElementById("search");
-const sortSelect=document.getElementById("sort");
-const orderMsg=document.getElementById("orderMsg");
+{ name:"Scar", price:2.89, discount:0, image:"IMG_7141.webp" },
+{ name:"Scar + Seer", price:12.99, discount:0, image:"IMG_7141.webp" },
+{ name:"Bull King", price:4.29, discount:0, image:"IMG_7147.webp" },
+{ name:"Birthday lol + Bull king", price:13.49, discount:0, image:"IMG_3797.webp" },
+{ name:"Tiny jack + Jade", price:14.39, discount:0, image:"IMG_7143.webp" },
+{ name:"Evil master", price:11.49, discount:0, image:"IMG_5443.webp" },
+{ name:"Space warden + Evil master", price:21.99, discount:25, image:"IMG_7150.webp" },
+{ name:"Space warden", price:6.59, discount:0, image:"IMG_7150.webp" },
+{ name:"Thund", price:5.49, discount:0, image:"IMG_6185.webp" },
+{ name:"King lion + Magic hat", price:23.99, discount:0, image:"IMG_7172.webp" },
 
-/* ===================== RENDER ===================== */
+{ name:"Ice Crystal", price:7.89, discount:0, image:"IMG_5938.webp" },
+{ name:"Moofun", price:11.99, discount:0, image:"IMG_7227.webp" },
+{ name:"Sorceress", price:7.99, discount:0, image:"IMG_7225.webp" },
+{ name:"Gnome mage", price:11.99, discount:0, image:"IMG_7226.webp" },
+{ name:"Steel Ram", price:11.99, discount:0, image:"IMG_6080.webp" },
+{ name:"Shuriken", price:6.99, discount:0, image:"IMG_7177.webp" },
+{ name:"Shuriken + Shadow", price:21.99, discount:0, image:"IMG_7177.webp" },
+{ name:"Rogue samurai", price:6.89, discount:0, image:"IMG_7464.webp" },
+{ name:"Cursed Skull", price:8.49, discount:0, image:"IMG_6198.webp" },
+{ name:"Silver Orb", price:4.99, discount:0, image:"IMG_6199.webp" },
+
+{ name:"Gryphon", price:6.49, discount:0, image:"IMG_7468.webp" },
+{ name:"Dark wings", price:21.99, discount:0, image:"IMG_7233.webp" },
+{ name:"Gryphon + Dark wings", price:11.29, discount:0, image:"IMG_7468.webp" },
+{ name:"Madjawz", price:18.99, discount:0, image:"IMG_5593.webp" },
+{ name:"Skull ribbon", price:5.99, discount:0, image:"IMG_6332.webp" },
+{ name:"Eye patch + mega power", price:18.99, discount:0, image:"IMG_6331.webp" },
+{ name:"Eye patch + amber", price:7.99, discount:0, image:"IMG_6331.webp" },
+{ name:"Eye patch", price:11.99, discount:0, image:"IMG_6331.webp" },
+{ name:"Karate parrot", price:2.89, discount:0, image:"IMG_7146.webp" },
+{ name:"Karate parrot + Frog thai + Hard shroom", price:12.99, discount:0, image:"IMG_7146.webp" }
+
+]
+
+
+
+let cart=[]
+
+
+const grid=document.getElementById("grid")
+
+
 function render(list=skins){
-grid.innerHTML="";
-list.forEach(s=>{
-let div=document.createElement("div");
-div.className="bg-white p-4 rounded shadow text-center";
-let imagesHTML="";
-if(s.image2){
-imagesHTML=`<div class="flex justify-center gap-2">
-<img src="${s.image1}" class="circle-small">
-<img src="${s.image2}" class="circle-small">
-</div>`;
-}else{
-imagesHTML=`<img src="${s.image1}" class="circle-big mx-auto">`;
-}
-div.innerHTML=`
-${imagesHTML}
+
+grid.innerHTML=""
+
+list.forEach((s,i)=>{
+
+let final=s.price-(s.price*(s.discount/100))
+
+let badge=s.discount>0?`<div class="badge">Action</div>`:""
+
+let priceHTML=s.discount>0
+?`<span class="line-through text-gray-500">$${s.price}</span>
+<span class="text-green-600 font-bold">$${final.toFixed(2)}</span>`
+:`<span>$${s.price}</span>`
+
+let card=document.createElement("div")
+
+card.className="bg-white p-4 rounded shadow skinCard text-center"
+
+card.innerHTML=`
+
+${badge}
+
+<img src="${s.image}" class="circle">
+
 <h3 class="font-bold mt-3">${s.name}</h3>
-<p class="font-semibold">$${s.price}</p>
-<div class="flex justify-center gap-2 mt-2">
-<button onclick="addToCart(${s.id})" class="bg-green-600 text-white px-2 py-1 rounded">Add</button>
-<button onclick="shareItem(${s.id})" class="bg-blue-500 text-white px-2 py-1 rounded">Share</button>
-</div>`;
-grid.appendChild(div);
-});
-}
-render();
 
-/* ===================== CART ===================== */
-function addToCart(id){ cart.push(skins.find(s=>s.id===id)); updateCart(); alert("Added to cart"); }
+<p>${priceHTML}</p>
+
+<button onclick="addCart(${i})" class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
+Add
+</button>
+
+`
+
+grid.appendChild(card)
+
+})
+
+}
+
+render()
+
+
+
+function addCart(i){
+
+cart.push(skins[i])
+updateCart()
+
+}
+
+
+
 function updateCart(){
-cartItems.innerHTML="";
-let total=0;
+
+let items=document.getElementById("cartItems")
+
+items.innerHTML=""
+
+let total=0
+
 cart.forEach((s,i)=>{
-total+=s.price;
-let div=document.createElement("div");
-div.className="flex justify-between border p-2 rounded items-center";
-div.innerHTML=`<span>${s.name} - $${s.price}</span><div><button onclick="removeItem(${i})" class="text-red-600 font-bold px-2">🗑</button></div>`;
-cartItems.appendChild(div);
-});
-totalEl.textContent="$"+total.toFixed(2);
-cartCount.textContent=cart.length;
-}
-function removeItem(i){ cart.splice(i,1); updateCart(); }
-document.getElementById("cartBtn").onclick=()=>{ if(!userEmail||!userUID){emailModal.classList.remove("hidden"); return;} cartModal.classList.remove("hidden"); updateCart(); }
-function closeCart(){cartModal.classList.add("hidden");}
 
-/* ===================== SEARCH & SORT ===================== */
-searchInput.oninput = ()=>{ applySort(skins.filter(s=>s.name.toLowerCase().includes(searchInput.value.toLowerCase()))); }
-sortSelect.onchange = ()=>{ applySort(skins); }
-function applySort(list){
-let sorted=[...list];
-if(sortSelect.value=="low") sorted.sort((a,b)=>a.price-b.price);
-if(sortSelect.value=="high") sorted.sort((a,b)=>b.price-a.price);
-if(sortSelect.value=="shuffle") sorted.sort(()=>Math.random()-0.5);
-render(sorted);
-}
+let final=s.price-(s.price*(s.discount/100))
 
-/* ===================== SHARE ===================== */
-function shareItem(id){ navigator.clipboard.writeText(`${skins.find(s=>s.id===id).name} - $${skins.find(s=>s.id===id).price}`); alert("Copied to clipboard!"); }
+total+=final
 
-/* ===================== EMAIL / UID ===================== */
-proceedBtn.onclick=()=>{ let e=document.getElementById("userEmail").value.trim(); let u=document.getElementById("userUID").value.trim(); if(!e||!u){alert("Please fill in both email and UID."); return;} userEmail=e; userUID=u; emailModal.classList.add("hidden"); cartModal.classList.remove("hidden"); updateCart(); }
+let div=document.createElement("div")
 
-/* ===================== PAYPAL ===================== */
-document.getElementById("paypalBtn").onclick=()=>{
-let total=cart.reduce((a,b)=>a+b.price,0);
-if(total==0){alert("Cart is empty"); return;}
-let url=`https://www.paypal.com/paypalme/TBYTagario/${total.toFixed(2)}`;
-window.open(url,"_blank");
-orderMsg.textContent=`✅ Order confirmed! Email: ${userEmail} | UID: ${userUID} | Total: $${total.toFixed(2)}`;
-orderMsg.classList.remove("hidden");
-cart=[];
-updateCart();
+div.className="flex justify-between"
+
+div.innerHTML=`
+<span>${s.name}</span>
+<button onclick="removeCart(${i})">❌</button>
+`
+
+items.appendChild(div)
+
+})
+
+document.getElementById("total").innerText="$"+total.toFixed(2)
+
+document.getElementById("cartCount").innerText=cart.length
+
 }
 
-/* ===================== EVENT BANNER ===================== */
-let eventEnd=new Date(); eventEnd.setMinutes(eventEnd.getMinutes()+30); // 30 min event
-const eventTimerEl=document.getElementById("eventTimer");
-function updateEventTimer(){ let now=new Date(); let diff=eventEnd-now; if(diff<=0){eventTimerEl.textContent="00:00:00"; clearInterval(eventInterval); document.getElementById("eventBanner").classList.add("opacity-50"); return;} let hrs=Math.floor(diff/1000/60/60); let mins=Math.floor((diff/1000/60)%60); let secs=Math.floor((diff/1000)%60); eventTimerEl.textContent=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;}
-let eventInterval=setInterval(updateEventTimer,1000); updateEventTimer();
 
-const eventBanner=document.getElementById("eventBanner");
-const eventModal=document.getElementById("eventModal");
-eventBanner.onclick=()=>{ eventModal.classList.remove("hidden"); }
-function closeEvent(){eventModal.classList.add("hidden");}
 
-document.getElementById("eventPayBtn").onclick=()=>{
-let price=9.99;
-window.open(`https://www.paypal.com/paypalme/TBYTagario/${price}`,"_blank");
-alert(`Paid $${price}!`);
-closeEvent();
+function removeCart(i){
+
+cart.splice(i,1)
+updateCart()
+
 }
+
+
+
+document.getElementById("cartBtn").onclick=()=>{
+
+document.getElementById("cartModal").classList.remove("hidden")
+
+}
+
+
+
+function closeCart(){
+
+document.getElementById("cartModal").classList.add("hidden")
+
+}
+
+
+
+document.getElementById("payBtn").onclick=()=>{
+
+let email=document.getElementById("email").value
+let uid=document.getElementById("uid").value
+
+if(!email||!uid){
+
+alert("Fill email and UID")
+
+return
+
+}
+
+let total=0
+
+cart.forEach(s=>{
+total+=s.price-(s.price*(s.discount/100))
+})
+
+window.open(PAYPAL_LINK+"/"+total.toFixed(2))
+
+}
+
+
+
+document.getElementById("search").oninput=e=>{
+
+let val=e.target.value.toLowerCase()
+
+let filtered=skins.filter(s=>s.name.toLowerCase().includes(val))
+
+render(filtered)
+
+}
+
+
+
+document.getElementById("sort").onchange=e=>{
+
+let val=e.target.value
+
+let list=[...skins]
+
+if(val==="low") list.sort((a,b)=>a.price-b.price)
+
+if(val==="high") list.sort((a,b)=>b.price-a.price)
+
+render(list)
+
+}
+
+
+
+/* EVENT */
+
+const event={
+
+title:"Special Event Skin",
+price:5,
+image:"event.webp",
+text:"Limited time skin!",
+hours:2
+
+}
+
+const banner=document.getElementById("eventBanner")
+
+banner.style.background="#ff5500"
+
+document.getElementById("bannerImg").src=event.image
+
+document.getElementById("bannerText").innerText="Limited Event Skin"
+
+banner.onclick=()=>{
+
+document.getElementById("eventModal").classList.remove("hidden")
+
+document.getElementById("eventTitle").innerText=event.title
+
+document.getElementById("eventImage").src=event.image
+
+document.getElementById("eventText").innerText=event.text
+
+startTimer()
+
+}
+
+function closeEvent(){
+
+document.getElementById("eventModal").classList.add("hidden")
+
+}
+
+function startTimer(){
+
+let end=new Date()
+
+end.setHours(end.getHours()+event.hours)
+
+setInterval(()=>{
+
+let diff=end-new Date()
+
+let h=Math.floor(diff/1000/60/60)
+
+let m=Math.floor(diff/1000/60)%60
+
+let s=Math.floor(diff/1000)%60
+
+document.getElementById("eventTimer").innerText=
+h+"h "+m+"m "+s+"s"
+
+},1000)
+
+}
+
+document.getElementById("eventPay").onclick=()=>{
+
+window.open(PAYPAL_LINK+"/"+event.price)
+
+}
+
 </script>
+
 </body>
 </html>
