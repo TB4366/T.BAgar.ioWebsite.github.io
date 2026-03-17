@@ -35,8 +35,8 @@ img {object-fit:cover;}
 <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
 </main>
 
-<!-- EMAIL / UID MODAL -->
-<div id="emailModal" class="modal">
+<!-- EMAIL + UID MODAL -->
+<div id="emailModal" class="modal hidden">
 <div class="bg-white p-6 rounded w-full max-w-sm text-center">
 <h2 class="font-bold text-xl mb-4">Enter Your Info</h2>
 <input id="userEmail" placeholder="Your Email" class="w-full mb-2 px-3 py-2 border rounded">
@@ -55,7 +55,7 @@ img {object-fit:cover;}
 <span id="total">$0.00</span>
 </div>
 <button id="paypalBtn" class="w-full bg-yellow-500 mt-4 py-3 rounded font-bold">Pay with PayPal</button>
-<div id="orderMsg" class="mt-2 text-green-600 font-bold hidden">✅ Order confirmed!</div>
+<div id="orderMsg" class="mt-2 text-green-600 font-bold hidden"></div>
 <button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-200 rounded">Close</button>
 </div>
 </div>
@@ -96,19 +96,19 @@ const skins=[
 ];
 
 /* ===================== VARIABLES ===================== */
-let cart = [];
+let cart=[];
 let userEmail="", userUID="";
 
-const grid = document.getElementById("grid");
-const cartItems = document.getElementById("cartItems");
-const cartCount = document.getElementById("cartCount");
-const totalEl = document.getElementById("total");
-const cartModal = document.getElementById("cartModal");
-const emailModal = document.getElementById("emailModal");
-const proceedBtn = document.getElementById("proceedBtn");
-const searchInput = document.getElementById("search");
-const sortSelect = document.getElementById("sort");
-const orderMsg = document.getElementById("orderMsg");
+const grid=document.getElementById("grid");
+const cartItems=document.getElementById("cartItems");
+const cartCount=document.getElementById("cartCount");
+const totalEl=document.getElementById("total");
+const cartModal=document.getElementById("cartModal");
+const emailModal=document.getElementById("emailModal");
+const proceedBtn=document.getElementById("proceedBtn");
+const searchInput=document.getElementById("search");
+const sortSelect=document.getElementById("sort");
+const orderMsg=document.getElementById("orderMsg");
 
 /* ===================== RENDER ===================== */
 function render(list=skins){
@@ -212,11 +212,12 @@ let total=cart.reduce((a,b)=>a+b.price,0);
 if(total==0){alert("Cart is empty"); return;}
 let url=`https://www.paypal.com/paypalme/TBYTagario/${total.toFixed(2)}`;
 window.open(url,"_blank");
+orderMsg.textContent=`✅ Order confirmed! Email: ${userEmail} | UID: ${userUID} | Total: $${total.toFixed(2)}`;
 orderMsg.classList.remove("hidden");
-cart=[]; updateCart();
+cart=[];
+updateCart();
 }
 
 </script>
-
 </body>
 </html>
