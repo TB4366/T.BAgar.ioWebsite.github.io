@@ -16,11 +16,13 @@ img {object-fit:cover;}
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="bg-gray-900 text-white p-4 flex justify-between items-center">
 <h1 class="font-bold text-xl">T.B Agar.io Paid Skins</h1>
 <button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
 </header>
 
+<!-- SEARCH + SORT -->
 <div class="max-w-6xl mx-auto p-4 flex gap-4">
 <input type="text" id="search" placeholder="Search skins..." class="flex-1 px-3 py-2 rounded border">
 <select id="sort" class="px-3 py-2 rounded border">
@@ -31,6 +33,7 @@ img {object-fit:cover;}
 </select>
 </div>
 
+<!-- SKINS GRID -->
 <main class="max-w-6xl mx-auto p-6">
 <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-6"></div>
 </main>
@@ -58,6 +61,26 @@ img {object-fit:cover;}
 <div id="orderMsg" class="mt-2 text-green-600 font-bold hidden"></div>
 <button onclick="closeCart()" class="w-full mt-2 py-2 bg-gray-200 rounded">Close</button>
 </div>
+</div>
+
+<!-- EVENT BANNER -->
+<div id="eventBanner" class="fixed bottom-0 left-0 w-full bg-gray-800 text-white flex items-center justify-between px-4 py-2 cursor-pointer">
+  <div class="flex items-center gap-2">
+    <img id="eventThumb" src="event_placeholder.png" class="w-10 h-10 rounded" alt="Event">
+    <span>Special Event! Ends in <span id="eventTimer">00:00:00</span></span>
+  </div>
+  <span class="font-bold">Click for details</span>
+</div>
+
+<!-- EVENT MODAL -->
+<div id="eventModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-full max-w-md text-center relative">
+    <span onclick="closeEvent()" class="absolute top-2 right-2 text-2xl cursor-pointer">×</span>
+    <h2 class="font-bold text-xl mb-4" id="eventTitle">Special Event!</h2>
+    <img id="eventImage" src="event_placeholder.png" class="mx-auto mb-4 w-48 h-48 rounded" alt="Event">
+    <p class="mb-4" id="eventText">Limited time offer! Get this exclusive skin now!</p>
+    <button id="eventPayBtn" class="bg-yellow-500 px-4 py-2 rounded font-bold">Pay with PayPal</button>
+  </div>
 </div>
 
 <script>
@@ -98,7 +121,6 @@ const skins=[
 /* ===================== VARIABLES ===================== */
 let cart=[];
 let userEmail="", userUID="";
-
 const grid=document.getElementById("grid");
 const cartItems=document.getElementById("cartItems");
 const cartCount=document.getElementById("cartCount");
@@ -139,12 +161,7 @@ grid.appendChild(div);
 render();
 
 /* ===================== CART ===================== */
-function addToCart(id){
-let item=skins.find(s=>s.id===id);
-cart.push(item);
-updateCart();
-alert("Added to cart");
-}
+function addToCart(id){ cart.push(skins.find(s=>s.id===id)); updateCart(); alert("Added to cart"); }
 function updateCart(){
 cartItems.innerHTML="";
 let total=0;
@@ -152,59 +169,32 @@ cart.forEach((s,i)=>{
 total+=s.price;
 let div=document.createElement("div");
 div.className="flex justify-between border p-2 rounded items-center";
-div.innerHTML=`
-<span>${s.name} - $${s.price}</span>
-<div>
-<button onclick="removeItem(${i})" class="text-red-600 font-bold px-2">🗑</button>
-</div>`;
+div.innerHTML=`<span>${s.name} - $${s.price}</span><div><button onclick="removeItem(${i})" class="text-red-600 font-bold px-2">🗑</button></div>`;
 cartItems.appendChild(div);
 });
 totalEl.textContent="$"+total.toFixed(2);
 cartCount.textContent=cart.length;
 }
-function removeItem(i){
-cart.splice(i,1);
-updateCart();
-}
-document.getElementById("cartBtn").onclick=()=>{
-if(!userEmail || !userUID){emailModal.classList.remove("hidden"); return;}
-cartModal.classList.remove("hidden"); updateCart();
-}
+function removeItem(i){ cart.splice(i,1); updateCart(); }
+document.getElementById("cartBtn").onclick=()=>{ if(!userEmail||!userUID){emailModal.classList.remove("hidden"); return;} cartModal.classList.remove("hidden"); updateCart(); }
 function closeCart(){cartModal.classList.add("hidden");}
 
 /* ===================== SEARCH & SORT ===================== */
-searchInput.oninput = ()=>{
-let val=searchInput.value.toLowerCase();
-let filtered=skins.filter(s=>s.name.toLowerCase().includes(val));
-applySort(filtered);
-};
-sortSelect.onchange = ()=>{applySort(skins);}
+searchInput.oninput = ()=>{ applySort(skins.filter(s=>s.name.toLowerCase().includes(searchInput.value.toLowerCase()))); }
+sortSelect.onchange = ()=>{ applySort(skins); }
 function applySort(list){
-let val=sortSelect.value;
 let sorted=[...list];
-if(val=="low") sorted.sort((a,b)=>a.price-b.price);
-if(val=="high") sorted.sort((a,b)=>b.price-a.price);
-if(val=="shuffle") sorted.sort(()=>Math.random()-0.5);
+if(sortSelect.value=="low") sorted.sort((a,b)=>a.price-b.price);
+if(sortSelect.value=="high") sorted.sort((a,b)=>b.price-a.price);
+if(sortSelect.value=="shuffle") sorted.sort(()=>Math.random()-0.5);
 render(sorted);
 }
 
 /* ===================== SHARE ===================== */
-function shareItem(id){
-let s=skins.find(s=>s.id===id);
-navigator.clipboard.writeText(`${s.name} - $${s.price}`);
-alert("Copied to clipboard!");
-}
+function shareItem(id){ navigator.clipboard.writeText(`${skins.find(s=>s.id===id).name} - $${skins.find(s=>s.id===id).price}`); alert("Copied to clipboard!"); }
 
 /* ===================== EMAIL / UID ===================== */
-proceedBtn.onclick=()=>{
-let e=document.getElementById("userEmail").value.trim();
-let u=document.getElementById("userUID").value.trim();
-if(!e || !u){alert("Please fill in both email and UID."); return;}
-userEmail=e; userUID=u;
-emailModal.classList.add("hidden");
-cartModal.classList.remove("hidden");
-updateCart();
-}
+proceedBtn.onclick=()=>{ let e=document.getElementById("userEmail").value.trim(); let u=document.getElementById("userUID").value.trim(); if(!e||!u){alert("Please fill in both email and UID."); return;} userEmail=e; userUID=u; emailModal.classList.add("hidden"); cartModal.classList.remove("hidden"); updateCart(); }
 
 /* ===================== PAYPAL ===================== */
 document.getElementById("paypalBtn").onclick=()=>{
@@ -218,6 +208,23 @@ cart=[];
 updateCart();
 }
 
+/* ===================== EVENT BANNER ===================== */
+let eventEnd=new Date(); eventEnd.setMinutes(eventEnd.getMinutes()+30); // 30 min event
+const eventTimerEl=document.getElementById("eventTimer");
+function updateEventTimer(){ let now=new Date(); let diff=eventEnd-now; if(diff<=0){eventTimerEl.textContent="00:00:00"; clearInterval(eventInterval); document.getElementById("eventBanner").classList.add("opacity-50"); return;} let hrs=Math.floor(diff/1000/60/60); let mins=Math.floor((diff/1000/60)%60); let secs=Math.floor((diff/1000)%60); eventTimerEl.textContent=`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;}
+let eventInterval=setInterval(updateEventTimer,1000); updateEventTimer();
+
+const eventBanner=document.getElementById("eventBanner");
+const eventModal=document.getElementById("eventModal");
+eventBanner.onclick=()=>{ eventModal.classList.remove("hidden"); }
+function closeEvent(){eventModal.classList.add("hidden");}
+
+document.getElementById("eventPayBtn").onclick=()=>{
+let price=9.99;
+window.open(`https://www.paypal.com/paypalme/TBYTagario/${price}`,"_blank");
+alert(`Paid $${price}!`);
+closeEvent();
+}
 </script>
 </body>
 </html>
