@@ -25,137 +25,123 @@ backdrop-filter: blur(5px);
 
 .hidden{display:none;}
 
-#eventBar{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:#e53935;
-color:white;
-padding:10px;
+/* CART */
+.cartItem{
 display:flex;
 justify-content:space-between;
-cursor:pointer;
-font-weight:bold;
-z-index:50;
+margin-bottom:6px;
 }
 
-#eventSkins{
-display:flex;
-gap:10px;
-overflow-x:auto;
-padding-bottom:10px;
-}
-
-.eventCard{
-min-width:160px;
+/* RECEIPT */
+#receipt{
 background:white;
+width:350px;
+padding:20px;
 border-radius:10px;
-padding:10px;
 text-align:center;
-scroll-snap-align:center;
 }
 
-.original-price{text-decoration:line-through;color:#777;margin-left:5px;}
+.line{border-top:1px solid #000;margin:10px 0;}
+.small{font-size:12px;color:#555;}
 </style>
 </head>
 
 <body>
 
 <header class="bg-black text-white p-4 flex justify-between">
-<h1 class="font-bold">T.B Agar.io Paid Skins</h1>
+<h1 class="font-bold">T.B Agar.io Skin Shop</h1>
 
-<button id="cartBtn" class="bg-teal-500 px-4 py-2 rounded">
+<button onclick="openCart()" class="bg-teal-500 px-4 py-2 rounded">
 Cart (<span id="cartCount">0</span>)
 </button>
 </header>
 
-<!-- GRID -->
+<!-- SKINS -->
 <div id="grid" class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 p-6"></div>
 
 <!-- CART -->
 <div id="cartModal" class="modal hidden">
 <div class="bg-white p-6 rounded w-96">
+
 <h2 class="text-xl font-bold mb-3">Cart</h2>
+
 <div id="cartItems"></div>
-<div class="mt-3 font-bold">Total: <span id="total">$0</span></div>
-<button onclick="closeCart()" class="w-full mt-3 bg-gray-300 py-2 rounded">Close</button>
+
+<div class="mt-3 font-bold">
+Total: <span id="cartTotal">$0</span>
+</div>
+
+<button onclick="checkout()" class="w-full mt-4 bg-green-600 text-white py-2 rounded">
+Checkout
+</button>
+
+<button onclick="closeCart()" class="w-full mt-2 bg-gray-300 py-2 rounded">
+Close
+</button>
+
 </div>
 </div>
 
-<!-- POPUP -->
-<div id="popup" class="modal hidden">
-<div class="bg-white p-6 rounded text-center w-80">
-<p id="popupText" class="font-bold mb-4"></p>
-<button onclick="closePopup()" class="bg-green-600 text-white px-4 py-2 rounded">OK</button>
-</div>
-</div>
+<!-- RECEIPT -->
+<div id="receiptModal" class="modal hidden">
+<div id="receipt">
 
-<!-- EVENT FRAME -->
-<div id="eventFrame" class="modal hidden">
-<div class="bg-white p-6 rounded w-[650px]">
-<h2 id="frameTitle" class="text-xl font-bold mb-4"></h2>
-<div id="eventSkins"></div>
-<button onclick="closeFrame()" class="w-full mt-4 bg-gray-300 py-2 rounded">Close</button>
-</div>
-</div>
+<h2 class="font-bold text-lg">T.B Agar.io</h2>
+<div class="line"></div>
 
-<!-- EVENT BAR -->
-<div id="eventBar">
-<span id="eventBarTitle">🔥 Event</span>
-<span id="eventBarTimer">00:00</span>
+<h3 class="font-bold">Skin Shop</h3>
+
+<div class="line"></div>
+
+<p class="font-bold">INSTRUCTIONS</p>
+<p class="small">1. Save this receipt and copy the ID</p>
+<p class="small">2. Contact Instagram @t.bagar.io or @tbagariosupportteam</p>
+
+<div class="line"></div>
+
+<div id="receiptItems"></div>
+
+<div class="line"></div>
+
+<p>Discount: -€<span id="discountTotal">0</span></p>
+<p class="font-bold">TOTAL: €<span id="finalTotal">0</span></p>
+
+<div class="line"></div>
+
+<p class="small">Receipt ID:</p>
+<p id="receiptId" class="font-bold"></p>
+
+<button onclick="copyID()" class="mt-3 bg-black text-white px-3 py-2 rounded">
+Copy ID
+</button>
+
+<button onclick="closeReceipt()" class="mt-2 bg-gray-300 px-3 py-2 rounded w-full">
+Close
+</button>
+
+</div>
 </div>
 
 <script>
 
-// ================= 30 SKINS (FULL) =================
+// ================= SKINS =================
 const skins=[
 { name:"Scar", price:2.89, image:"IMG_7141.webp", discount:25 },
-{ name:"Scar + Seer", price:12.99, image:"IMG_7141.webp", discount:0 },
 { name:"Bull King", price:4.29, image:"IMG_7147.webp", discount:15 },
-{ name:"Birthday lol + Bull king", price:13.49, image:"IMG_3797.webp", discount:20 },
-{ name:"Tiny jack + Jade", price:14.39, image:"IMG_7143.webp", discount:0 },
 { name:"Evil master", price:11.49, image:"IMG_5443.webp", discount:10 },
-{ name:"Space warden + Evil master", price:21.99, image:"IMG_7150.webp", discount:0 },
-{ name:"Space warden", price:6.59, image:"IMG_7150.webp", discount:5 },
-{ name:"Thund", price:5.49, image:"IMG_6185.webp", discount:0 },
-{ name:"King lion + Magic hat", price:23.99, image:"IMG_7172.webp", discount:10 },
-{ name:"Ice Crystal", price:7.89, image:"IMG_5938.webp", discount:0 },
-{ name:"Moofun", price:11.99, image:"IMG_7227.webp", discount:15 },
-{ name:"Sorceress", price:7.99, image:"IMG_7225.webp", discount:0 },
-{ name:"Gnome mage", price:11.99, image:"IMG_7226.webp", discount:10 },
-{ name:"Steel Ram", price:11.99, image:"IMG_6080.webp", discount:0 },
 { name:"Shuriken", price:6.99, image:"IMG_7177.webp", discount:5 },
-{ name:"Shuriken + Shadow", price:21.99, image:"IMG_7177.webp", discount:0 },
-{ name:"Rogue samurai", price:6.89, image:"IMG_7464.webp", discount:0 },
+{ name:"Gryphon", price:6.49, image:"IMG_7468.webp", discount:10 },
+{ name:"Ice Crystal", price:7.89, image:"IMG_5938.webp", discount:0 },
+{ name:"Sorceress", price:7.99, image:"IMG_7225.webp", discount:0 },
 { name:"Cursed Skull", price:8.49, image:"IMG_6198.webp", discount:0 },
 { name:"Silver Orb", price:4.99, image:"IMG_6199.webp", discount:0 },
-{ name:"Gryphon", price:6.49, image:"IMG_7468.webp", discount:10 },
-{ name:"Dark wings", price:21.99, image:"IMG_7233.webp", discount:0 },
-{ name:"Gryphon + Dark wings", price:11.29, image:"IMG_7468.webp", discount:5 },
-{ name:"Madjawz", price:18.99, image:"IMG_5593.webp", discount:0 },
-{ name:"Skull ribbon", price:5.99, image:"IMG_6332.webp", discount:0 },
-{ name:"Eye patch + mega power", price:18.99, image:"IMG_6331.webp", discount:20 },
-{ name:"Eye patch + amber", price:7.99, image:"IMG_6331.webp", discount:0 },
-{ name:"Eye patch", price:11.99, image:"IMG_6331.webp", discount:10 },
-{ name:"Karate parrot", price:2.89, image:"IMG_7146.webp", discount:0 },
-{ name:"Karate parrot + Frog thai + Hard shroom", price:12.99, image:"IMG_7146.webp", discount:15 }
-]
-
-// ================= EVENT =================
-const events=[
-{
-title:"🔥 Double Coins Event",
-start:new Date(Date.now()-1000),
-end:new Date(Date.now()+3600000*24),
-skins:["Scar","Bull King","Shuriken","Gryphon","Moofun","Evil master"]
-}
+{ name:"Dark wings", price:21.99, image:"IMG_7233.webp", discount:0 }
 ]
 
 // ================= CART =================
 let cart=[]
 
-// ================= RENDER =================
+// ================= RENDER SKINS =================
 const grid=document.getElementById("grid")
 
 function renderSkins(){
@@ -171,7 +157,7 @@ ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
 <h3 class="font-bold mt-2">${s.name}</h3>
 <p>$${price}</p>
 
-<button onclick="addCart('${s.name}')"
+<button onclick="addCart(${i})"
 class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
 Add
 </button>
@@ -182,7 +168,7 @@ Add
 
 renderSkins()
 
-// ================= CART =================
+// ================= CART SYSTEM =================
 function openCart(){
 document.getElementById("cartModal").classList.remove("hidden")
 updateCart()
@@ -192,13 +178,16 @@ function closeCart(){
 document.getElementById("cartModal").classList.add("hidden")
 }
 
-document.getElementById("cartBtn").onclick=openCart
-
-function addCart(name){
-cart.push(name)
-document.getElementById("cartCount").innerText=cart.length
-showPopup(name+" added to your cart ✔")
+function addCart(i){
+cart.push(i)
 updateCart()
+document.getElementById("cartCount").innerText=cart.length
+}
+
+function removeItem(index){
+cart.splice(index,1)
+updateCart()
+document.getElementById("cartCount").innerText=cart.length
 }
 
 function updateCart(){
@@ -207,86 +196,66 @@ box.innerHTML=""
 
 let total=0
 
-cart.forEach(name=>{
-let s=skins.find(x=>x.name===name)
+cart.forEach((i,idx)=>{
+let s=skins[i]
 let price=s.price*(100-s.discount)/100
 total+=price
 
 box.innerHTML+=`
-<div class="flex justify-between">
-<span>${name}</span>
+<div class="cartItem">
+<span>${s.name}</span>
 <span>$${price.toFixed(2)}</span>
-</div>`
+<button onclick="removeItem(${idx})">❌</button>
+</div>
+`
 })
 
-document.getElementById("total").innerText="$"+total.toFixed(2)
+document.getElementById("cartTotal").innerText="$"+total.toFixed(2)
 }
 
-// ================= POPUP =================
-function showPopup(text){
-document.getElementById("popupText").innerText=text
-document.getElementById("popup").classList.remove("hidden")
-}
-function closePopup(){
-document.getElementById("popup").classList.add("hidden")
-}
+// ================= CHECKOUT =================
+function checkout(){
+let receiptId="TB-"+Math.floor(Math.random()*99999999)
 
-// ================= EVENT BAR =================
-function getEvent(){
-return events.find(ev=>Date.now()>=ev.start && Date.now()<=ev.end)
-}
+let discount=0
+let total=0
 
-function updateBar(){
-let ev=getEvent()
-if(!ev){
-document.getElementById("eventBar").style.display="none"
-return
-}
+let itemsBox=document.getElementById("receiptItems")
+itemsBox.innerHTML=""
 
-let diff=ev.end-Date.now()
-let h=Math.floor(diff/3600000)
-let m=Math.floor((diff%3600000)/60000)
-let s=Math.floor((diff%60000)/1000)
+cart.forEach(i=>{
+let s=skins[i]
+let original=s.price
+let final=s.price*(100-s.discount)/100
 
-document.getElementById("eventBarTitle").innerText="🔥 "+ev.title
-document.getElementById("eventBarTimer").innerText=`${h}h ${m}m ${s}s`
-}
+discount+=original-final
+total+=final
 
-setInterval(updateBar,1000)
-updateBar()
-
-// ================= EVENT FRAME (SWIPE) =================
-document.getElementById("eventBar").onclick=()=>{
-let ev=getEvent()
-if(!ev) return
-
-document.getElementById("eventFrame").classList.remove("hidden")
-document.getElementById("frameTitle").innerText=ev.title
-
-let box=document.getElementById("eventSkins")
-box.innerHTML=""
-
-ev.skins.forEach(name=>{
-let s=skins.find(x=>x.name===name)
-let price=(s.price*(100-(s.discount+10))/100).toFixed(2)
-
-box.innerHTML+=`
-<div class="eventCard">
-<img src="${s.image}" class="circle">
-<p class="font-bold">${s.name}</p>
-<p>$${price}</p>
-
-<button onclick="addCart('${s.name}')"
-class="bg-green-600 text-white px-2 py-1 mt-2 rounded">
-Add
-</button>
-
-</div>`
+itemsBox.innerHTML+=`
+<p>${s.name} - €${final.toFixed(2)}</p>
+`
 })
+
+document.getElementById("discountTotal").innerText=discount.toFixed(2)
+document.getElementById("finalTotal").innerText=total.toFixed(2)
+document.getElementById("receiptId").innerText=receiptId
+
+document.getElementById("cartModal").classList.add("hidden")
+document.getElementById("receiptModal").classList.remove("hidden")
+
+cart=[]
+document.getElementById("cartCount").innerText=0
 }
 
-function closeFrame(){
-document.getElementById("eventFrame").classList.add("hidden")
+// ================= RECEIPT =================
+function closeReceipt(){
+document.getElementById("receiptModal").classList.add("hidden")
+}
+
+function copyID(){
+let id=document.getElementById("receiptId").innerText
+navigator.clipboard.writeText(id)
+alert("Receipt ID copied ✔")
 }
 
 </script>
