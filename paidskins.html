@@ -15,7 +15,8 @@ body{background:#f5f5f5;font-family:Arial;}
 .modal{
 position:fixed;
 top:0;left:0;
-width:100%;height:100%;
+width:100%;
+height:100%;
 background:rgba(0,0,0,0.6);
 display:flex;
 align-items:center;
@@ -25,24 +26,37 @@ backdrop-filter: blur(5px);
 
 .hidden{display:none;}
 
-/* CART */
-.cartItem{
+#eventBar{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:#e53935;
+color:white;
+padding:10px;
 display:flex;
 justify-content:space-between;
-margin-bottom:6px;
+cursor:pointer;
+font-weight:bold;
+z-index:50;
 }
 
-/* RECEIPT */
-#receipt{
+#eventSkins{
+display:flex;
+gap:10px;
+overflow-x:auto;
+padding-bottom:10px;
+}
+
+.eventCard{
+min-width:160px;
 background:white;
-width:350px;
-padding:20px;
 border-radius:10px;
+padding:10px;
 text-align:center;
 }
 
-.line{border-top:1px solid #000;margin:10px 0;}
-.small{font-size:12px;color:#555;}
+.original-price{text-decoration:line-through;color:#777;margin-left:5px;}
 </style>
 </head>
 
@@ -56,7 +70,7 @@ Cart (<span id="cartCount">0</span>)
 </button>
 </header>
 
-<!-- SKINS -->
+<!-- GRID -->
 <div id="grid" class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 p-6"></div>
 
 <!-- CART -->
@@ -64,7 +78,6 @@ Cart (<span id="cartCount">0</span>)
 <div class="bg-white p-6 rounded w-96">
 
 <h2 class="text-xl font-bold mb-3">Cart</h2>
-
 <div id="cartItems"></div>
 
 <div class="mt-3 font-bold">
@@ -84,31 +97,31 @@ Close
 
 <!-- RECEIPT -->
 <div id="receiptModal" class="modal hidden">
-<div id="receipt">
+<div class="bg-white p-6 rounded w-[350px] text-center">
 
 <h2 class="font-bold text-lg">T.B Agar.io</h2>
-<div class="line"></div>
+<div class="border-t my-2"></div>
 
 <h3 class="font-bold">Skin Shop</h3>
 
-<div class="line"></div>
+<div class="border-t my-2"></div>
 
 <p class="font-bold">INSTRUCTIONS</p>
-<p class="small">1. Save this receipt and copy the ID</p>
-<p class="small">2. Contact Instagram @t.bagar.io or @tbagariosupportteam</p>
+<p class="text-sm">1. Save receipt & copy ID</p>
+<p class="text-sm">2. Contact @t.bagar.io or @tbagariosupportteam</p>
 
-<div class="line"></div>
+<div class="border-t my-2"></div>
 
 <div id="receiptItems"></div>
 
-<div class="line"></div>
+<div class="border-t my-2"></div>
 
 <p>Discount: -€<span id="discountTotal">0</span></p>
 <p class="font-bold">TOTAL: €<span id="finalTotal">0</span></p>
 
-<div class="line"></div>
+<div class="border-t my-2"></div>
 
-<p class="small">Receipt ID:</p>
+<p class="text-sm">Receipt ID:</p>
 <p id="receiptId" class="font-bold"></p>
 
 <button onclick="copyID()" class="mt-3 bg-black text-white px-3 py-2 rounded">
@@ -124,24 +137,54 @@ Close
 
 <script>
 
-// ================= SKINS =================
+// ================= 30 SKINS =================
 const skins=[
-{ name:"Scar", price:2.89, image:"IMG_7141.webp", discount:25 },
-{ name:"Bull King", price:4.29, image:"IMG_7147.webp", discount:15 },
-{ name:"Evil master", price:11.49, image:"IMG_5443.webp", discount:10 },
-{ name:"Shuriken", price:6.99, image:"IMG_7177.webp", discount:5 },
-{ name:"Gryphon", price:6.49, image:"IMG_7468.webp", discount:10 },
-{ name:"Ice Crystal", price:7.89, image:"IMG_5938.webp", discount:0 },
-{ name:"Sorceress", price:7.99, image:"IMG_7225.webp", discount:0 },
-{ name:"Cursed Skull", price:8.49, image:"IMG_6198.webp", discount:0 },
-{ name:"Silver Orb", price:4.99, image:"IMG_6199.webp", discount:0 },
-{ name:"Dark wings", price:21.99, image:"IMG_7233.webp", discount:0 }
+{ name:"Scar", price:2.89, discount:25 },
+{ name:"Scar + Seer", price:12.99, discount:0 },
+{ name:"Bull King", price:4.29, discount:15 },
+{ name:"Birthday lol + Bull king", price:13.49, discount:20 },
+{ name:"Tiny jack + Jade", price:14.39, discount:0 },
+{ name:"Evil master", price:11.49, discount:10 },
+{ name:"Space warden + Evil master", price:21.99, discount:0 },
+{ name:"Space warden", price:6.59, discount:5 },
+{ name:"Thund", price:5.49, discount:0 },
+{ name:"King lion + Magic hat", price:23.99, discount:10 },
+{ name:"Ice Crystal", price:7.89, discount:0 },
+{ name:"Moofun", price:11.99, discount:15 },
+{ name:"Sorceress", price:7.99, discount:0 },
+{ name:"Gnome mage", price:11.99, discount:10 },
+{ name:"Steel Ram", price:11.99, discount:0 },
+{ name:"Shuriken", price:6.99, discount:5 },
+{ name:"Shuriken + Shadow", price:21.99, discount:0 },
+{ name:"Rogue samurai", price:6.89, discount:0 },
+{ name:"Cursed Skull", price:8.49, discount:0 },
+{ name:"Silver Orb", price:4.99, discount:0 },
+{ name:"Gryphon", price:6.49, discount:10 },
+{ name:"Dark wings", price:21.99, discount:0 },
+{ name:"Gryphon + Dark wings", price:11.29, discount:5 },
+{ name:"Madjawz", price:18.99, discount:0 },
+{ name:"Skull ribbon", price:5.99, discount:0 },
+{ name:"Eye patch + mega power", price:18.99, discount:20 },
+{ name:"Eye patch + amber", price:7.99, discount:0 },
+{ name:"Eye patch", price:11.99, discount:10 },
+{ name:"Karate parrot", price:2.89, discount:0 },
+{ name:"Karate parrot + Frog thai + Hard shroom", price:12.99, discount:15 }
+]
+
+// ================= EVENT: GROTE ACTIES =================
+const events=[
+{
+title:"🔥 Grote Acties",
+start:new Date(Date.now()-1000),
+end:new Date(Date.now()+3600000*24),
+skins:skins.map(s=>s.name) // ALLE 30 SKINS IN EVENT
+}
 ]
 
 // ================= CART =================
 let cart=[]
 
-// ================= RENDER SKINS =================
+// ================= RENDER =================
 const grid=document.getElementById("grid")
 
 function renderSkins(){
@@ -153,7 +196,6 @@ let price=(s.price*(100-s.discount)/100).toFixed(2)
 grid.innerHTML+=`
 <div class="bg-white p-4 rounded shadow skin">
 ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
-<img src="${s.image}" class="circle">
 <h3 class="font-bold mt-2">${s.name}</h3>
 <p>$${price}</p>
 
@@ -161,14 +203,13 @@ ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
 class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
 Add
 </button>
-
 </div>`
 })
 }
 
 renderSkins()
 
-// ================= CART SYSTEM =================
+// ================= CART =================
 function openCart(){
 document.getElementById("cartModal").classList.remove("hidden")
 updateCart()
@@ -180,8 +221,8 @@ document.getElementById("cartModal").classList.add("hidden")
 
 function addCart(i){
 cart.push(i)
-updateCart()
 document.getElementById("cartCount").innerText=cart.length
+updateCart()
 }
 
 function removeItem(index){
@@ -202,12 +243,11 @@ let price=s.price*(100-s.discount)/100
 total+=price
 
 box.innerHTML+=`
-<div class="cartItem">
+<div class="flex justify-between">
 <span>${s.name}</span>
 <span>$${price.toFixed(2)}</span>
 <button onclick="removeItem(${idx})">❌</button>
-</div>
-`
+</div>`
 })
 
 document.getElementById("cartTotal").innerText="$"+total.toFixed(2)
@@ -215,36 +255,32 @@ document.getElementById("cartTotal").innerText="$"+total.toFixed(2)
 
 // ================= CHECKOUT =================
 function checkout(){
-let receiptId="TB-"+Math.floor(Math.random()*99999999)
+let id="TB-"+Math.floor(Math.random()*999999999)
 
 let discount=0
 let total=0
 
-let itemsBox=document.getElementById("receiptItems")
-itemsBox.innerHTML=""
+let box=document.getElementById("receiptItems")
+box.innerHTML=""
 
 cart.forEach(i=>{
 let s=skins[i]
-let original=s.price
 let final=s.price*(100-s.discount)/100
-
-discount+=original-final
+discount+=s.price-final
 total+=final
 
-itemsBox.innerHTML+=`
-<p>${s.name} - €${final.toFixed(2)}</p>
-`
+box.innerHTML+=`<p>${s.name} - €${final.toFixed(2)}</p>`
 })
 
 document.getElementById("discountTotal").innerText=discount.toFixed(2)
 document.getElementById("finalTotal").innerText=total.toFixed(2)
-document.getElementById("receiptId").innerText=receiptId
-
-document.getElementById("cartModal").classList.add("hidden")
-document.getElementById("receiptModal").classList.remove("hidden")
+document.getElementById("receiptId").innerText=id
 
 cart=[]
 document.getElementById("cartCount").innerText=0
+
+document.getElementById("cartModal").classList.add("hidden")
+document.getElementById("receiptModal").classList.remove("hidden")
 }
 
 // ================= RECEIPT =================
@@ -253,9 +289,8 @@ document.getElementById("receiptModal").classList.add("hidden")
 }
 
 function copyID(){
-let id=document.getElementById("receiptId").innerText
-navigator.clipboard.writeText(id)
-alert("Receipt ID copied ✔")
+navigator.clipboard.writeText(document.getElementById("receiptId").innerText)
+alert("Copied ✔")
 }
 
 </script>
