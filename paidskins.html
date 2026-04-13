@@ -7,27 +7,12 @@
 
 <style>
 body{background:#f5f5f5;font-family:Arial;}
-
-/* SKINS */
 .skin{text-align:center;position:relative;}
 .circle{width:90px;height:90px;border-radius:100%;object-fit:cover;margin:auto;}
 .badge{position:absolute;top:6px;left:6px;background:red;color:white;font-size:11px;padding:4px 8px;border-radius:5px;}
 .original-price{text-decoration:line-through;color:#777;margin-left:5px;}
-
-/* MODAL */
-.modal{
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,0.6);
-display:flex;
-align-items:center;
-justify-content:center;
-backdrop-filter: blur(5px);
-}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;}
 .hidden{display:none;}
-
-/* EVENT BAR */
 #eventBar{
 position:fixed;
 bottom:0;
@@ -42,16 +27,6 @@ cursor:pointer;
 font-weight:bold;
 z-index:50;
 }
-
-/* FRAME ANIMATIE */
-#eventFrame > div{
-animation: pop .25s ease-out;
-}
-
-@keyframes pop{
-from{transform:scale(0.8);opacity:0}
-to{transform:scale(1);opacity:1}
-}
 </style>
 </head>
 
@@ -64,24 +39,11 @@ Cart (<span id="cartCount">0</span>)
 </button>
 </header>
 
-<!-- SEARCH -->
-<div class="max-w-6xl mx-auto p-4 flex gap-4">
-<input id="search" class="border p-2 flex-1 rounded" placeholder="Search skins">
-<button onclick="renderSkins()" class="bg-gray-500 text-white px-3 rounded">All</button>
+<div class="max-w-6xl mx-auto p-4">
+<input id="search" class="border p-2 w-full rounded" placeholder="Search skins">
 </div>
 
-<!-- SKINS -->
 <div id="grid" class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 p-6"></div>
-
-<!-- CART -->
-<div id="cartModal" class="modal hidden">
-<div class="bg-white p-6 rounded w-96">
-<h2 class="text-xl font-bold mb-3">Cart</h2>
-<div id="cartItems"></div>
-<div class="mt-3 font-bold">Total: <span id="total">$0</span></div>
-<button onclick="closeCart()" class="w-full mt-3 bg-gray-300 py-2 rounded">Close</button>
-</div>
-</div>
 
 <!-- EVENT FRAME -->
 <div id="eventFrame" class="modal hidden">
@@ -100,7 +62,7 @@ Cart (<span id="cartCount">0</span>)
 
 <script>
 
-// ===== SKINS (30) =====
+// ================= SKINS (30) =================
 const skins=[
 { name:"Scar", price:2.89, image1:"IMG_7141.webp", image2:"IMG_7141b.webp", discount:25 },
 { name:"Scar + Seer", price:12.99, image1:"IMG_7141.webp", image2:"IMG_7141b.webp", discount:0 },
@@ -109,37 +71,48 @@ const skins=[
 { name:"Tiny jack + Jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_7143b.webp", discount:0 },
 { name:"Evil master", price:11.49, image1:"IMG_5443.webp", image2:"IMG_5443b.webp", discount:10 },
 { name:"Space warden + Evil master", price:21.99, image1:"IMG_7150.webp", image2:"IMG_7150b.webp", discount:0 },
-{ name:"Shuriken", price:6.99, image1:"IMG_7177.webp", image2:"IMG_7177b.webp", discount:5 },
-{ name:"Gryphon", price:6.49, image1:"IMG_7468.webp", image2:"IMG_7468b.webp", discount:10 },
+{ name:"Space warden", price:6.59, image1:"IMG_7150.webp", image2:"IMG_7150b.webp", discount:5 },
+{ name:"Thund", price:5.49, image1:"IMG_6185.webp", image2:"IMG_6185b.webp", discount:0 },
+{ name:"King lion + Magic hat", price:23.99, image1:"IMG_7172.webp", image2:"IMG_7172b.webp", discount:10 },
 { name:"Ice Crystal", price:7.89, image1:"IMG_5938.webp", image2:"IMG_5938b.webp", discount:0 },
+{ name:"Moofun", price:11.99, image1:"IMG_7227.webp", image2:"IMG_7227b.webp", discount:15 },
 { name:"Sorceress", price:7.99, image1:"IMG_7225.webp", image2:"IMG_7225b.webp", discount:0 },
+{ name:"Gnome mage", price:11.99, image1:"IMG_7226.webp", image2:"IMG_7226b.webp", discount:10 },
+{ name:"Steel Ram", price:11.99, image1:"IMG_6080.webp", image2:"IMG_6080b.webp", discount:0 },
+{ name:"Shuriken", price:6.99, image1:"IMG_7177.webp", image2:"IMG_7177b.webp", discount:5 },
+{ name:"Shuriken + Shadow", price:21.99, image1:"IMG_7177.webp", image2:"IMG_7177b.webp", discount:0 },
+{ name:"Rogue samurai", price:6.89, image1:"IMG_7464.webp", image2:"IMG_7464b.webp", discount:0 },
 { name:"Cursed Skull", price:8.49, image1:"IMG_6198.webp", image2:"IMG_6198b.webp", discount:0 },
 { name:"Silver Orb", price:4.99, image1:"IMG_6199.webp", image2:"IMG_6199b.webp", discount:0 },
+{ name:"Gryphon", price:6.49, image1:"IMG_7468.webp", image2:"IMG_7468b.webp", discount:10 },
 { name:"Dark wings", price:21.99, image1:"IMG_7233.webp", image2:"IMG_7233b.webp", discount:0 },
+{ name:"Gryphon + Dark wings", price:11.29, image1:"IMG_7468.webp", image2:"IMG_7468b.webp", discount:5 },
 { name:"Madjawz", price:18.99, image1:"IMG_5593.webp", image2:"IMG_5593b.webp", discount:0 },
 { name:"Skull ribbon", price:5.99, image1:"IMG_6332.webp", image2:"IMG_6332b.webp", discount:0 },
+{ name:"Eye patch + mega power", price:18.99, image1:"IMG_6331.webp", image2:"IMG_6331b.webp", discount:20 },
+{ name:"Eye patch + amber", price:7.99, image1:"IMG_6331.webp", image2:"IMG_6331b.webp", discount:0 },
 { name:"Eye patch", price:11.99, image1:"IMG_6331.webp", image2:"IMG_6331b.webp", discount:10 },
 { name:"Karate parrot", price:2.89, image1:"IMG_7146.webp", image2:"IMG_7146b.webp", discount:0 },
-{ name:"Rogue samurai", price:6.89, image1:"IMG_7464.webp", image2:"IMG_7464b.webp", discount:0 }
+{ name:"Karate parrot + Frog thai + Hard shroom", price:12.99, image1:"IMG_7146.webp", image2:"IMG_7146b.webp", discount:15 }
 ]
 
-// ===== EVENTS =====
+// ================= EVENTS =================
 const events=[
 {
 title:"🔥 Double Coins Event",
 start:new Date(new Date().getTime()-1000),
 end:new Date(new Date().getTime()+3600*1000*24),
-skins:["Scar","Bull King","Shuriken","Gryphon"]
+skins:["Scar","Bull King","Shuriken","Gryphon","Moofun"]
 }
 ]
 
-// ===== ACTIVE EVENT =====
+// ================= ACTIVE EVENT =================
 function getActiveEvent(){
 let now=new Date()
 return events.find(ev=>now>=ev.start && now<=ev.end)
 }
 
-// ===== RENDER SKINS =====
+// ================= RENDER SKINS =================
 const grid=document.getElementById("grid")
 
 function renderSkins(list=skins){
@@ -151,9 +124,17 @@ let price=(s.price*(100-s.discount)/100).toFixed(2)
 grid.innerHTML+=`
 <div class="bg-white p-4 rounded shadow skin">
 ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
+
 <img src="${s.image1}" class="circle">
+
 <h3 class="font-bold mt-2">${s.name}</h3>
+
 <p>$${price}</p>
+
+<button onclick="addCart(${i})"
+class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
+Add
+</button>
 </div>
 `
 })
@@ -161,7 +142,7 @@ ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
 
 renderSkins()
 
-// ===== EVENT BAR =====
+// ================= EVENT BAR =================
 function updateEventBar(){
 let ev=getActiveEvent()
 let bar=document.getElementById("eventBar")
@@ -183,7 +164,7 @@ document.getElementById("eventBarTimer").innerText=`${h}h ${m}m ${s}s`
 setInterval(updateEventBar,1000)
 updateEventBar()
 
-// ===== CLICK EVENT BAR =====
+// ================= CLICK EVENT BAR =================
 document.getElementById("eventBar").onclick=()=>{
 let ev=getActiveEvent()
 if(!ev) return
@@ -194,8 +175,10 @@ document.getElementById("frameTitle").innerText=ev.title
 let container=document.getElementById("frameSkins")
 container.innerHTML=""
 
-skins.filter(s=>ev.skins.includes(s.name))
+skins
+.filter(s=>ev.skins.includes(s.name))
 .forEach(s=>{
+
 let price=(s.price*(100-(s.discount+10))/100).toFixed(2)
 
 container.innerHTML+=`
@@ -204,6 +187,12 @@ container.innerHTML+=`
 <img src="${s.image1}" class="circle">
 <p>${s.name}</p>
 <p>$${price}</p>
+
+<button onclick="addCart(${skins.indexOf(s)})"
+class="bg-green-600 text-white px-2 py-1 mt-2 rounded">
+Add
+</button>
+
 </div>
 `
 })
@@ -212,6 +201,16 @@ container.innerHTML+=`
 function closeFrame(){
 document.getElementById("eventFrame").classList.add("hidden")
 }
+
+// ================= CART =================
+let cart=[]
+
+function addCart(i){
+cart.push(skins[i])
+document.getElementById("cartCount").innerText=cart.length
+}
+
+// (simpel gehouden zoals jij had)
 
 </script>
 
