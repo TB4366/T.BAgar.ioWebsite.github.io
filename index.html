@@ -87,6 +87,16 @@ header{
     color:white;
 }
 
+/* NIEUWE THEME BUTTON */
+.theme-btn{
+    background:none;
+    border:none;
+    font-size:22px;
+    cursor:pointer;
+    color:white;
+    margin-left:10px;
+}
+
 .menu{
     display:none;
     position:absolute;
@@ -214,6 +224,11 @@ iframe{
     to{transform:translateY(-10vh)}
 }
 
+/* LICHT MODE (alleen achtergrond verandert) */
+.light-mode{
+    background: linear-gradient(135deg,#e0f2fe,#bae6fd,#7dd3fc,#38bdf8);
+}
+
 </style>
 </head>
 
@@ -230,7 +245,10 @@ iframe{
         </div>
     </div>
 
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌞</button>
+    </div>
 
     <div class="menu" id="menu">
         <a href="index.html">Home</a>
@@ -281,6 +299,20 @@ iframe{
 function toggleMenu(){
     const m=document.getElementById("menu");
     m.style.display = m.style.display==="block" ? "none" : "block";
+}
+
+/* THEME SWITCH */
+function toggleTheme(){
+    const body=document.body;
+    const btn=document.getElementById("themeBtn");
+
+    body.classList.toggle("light-mode");
+
+    if(body.classList.contains("light-mode")){
+        btn.textContent="🌙";
+    }else{
+        btn.textContent="🌞";
+    }
 }
 
 // PARTICLES GENERATOR
