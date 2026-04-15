@@ -188,20 +188,29 @@ let grid=document.getElementById("grid")
 grid.innerHTML=""
 
 skins.forEach((s,i)=>{
-let price=(s.price*(100-s.discount)/100).toFixed(2)
+let newPrice=(s.price*(100-s.discount)/100).toFixed(2)
 
 grid.innerHTML+=`
 <div class="bg-white p-4 rounded shadow skin">
+
 ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
 
 <img src="${s.image}" class="circle">
 
 <h3 class="font-bold mt-2">${s.name}</h3>
-<p>€${price}</p>
 
-<button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
+${s.discount>0 ? `
+<p class="text-gray-400 line-through">€${s.price}</p>
+<p class="text-green-600 font-bold">€${newPrice}</p>
+` : `
+<p>€${s.price}</p>
+`}
+
+<button onclick="add(${i})"
+class="bg-green-600 text-white px-3 py-1 mt-2 rounded">
 Add
 </button>
+
 </div>`
 })
 }
@@ -242,7 +251,7 @@ total+=price
 box.innerHTML+=`
 <div class="flex justify-between">
 <span>${s.name}</span>
-<span>€${price.toFixed(2)}</span>
+<span class="text-green-600">€${price.toFixed(2)}</span>
 <button onclick="remove(${idx})">❌</button>
 </div>`
 })
@@ -273,7 +282,9 @@ cart.forEach(i=>{
 let s=skins[i]
 let price=s.price*(100-s.discount)/100
 total+=price
-box.innerHTML+=`<p>${s.name} - €${price.toFixed(2)}</p>`
+
+box.innerHTML+=`
+<p>${s.name} - €${price.toFixed(2)} ${s.discount>0?`(-${s.discount}%)`:''}</p>`
 })
 
 document.getElementById("finalTotal").innerText=total.toFixed(2)
@@ -306,17 +317,29 @@ box.innerHTML=""
 
 eventSkinsIndex.forEach(i=>{
 let s=skins[i]
+let newPrice=(s.price*(100-s.discount)/100).toFixed(2)
 
 box.innerHTML+=`
 <div class="eventCard">
+
+${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
+
 <img src="${s.image}" class="circle">
+
 <p>${s.name}</p>
-<p>€${(s.price*(100-s.discount)/100).toFixed(2)}</p>
+
+${s.discount>0 ? `
+<p class="text-gray-400 line-through">€${s.price}</p>
+<p class="text-green-600 font-bold">€${newPrice}</p>
+` : `
+<p>€${s.price}</p>
+`}
 
 <button onclick="add(${i})"
 class="bg-green-600 text-white px-2 py-1 mt-2 rounded">
 Add
 </button>
+
 </div>`
 })
 }
