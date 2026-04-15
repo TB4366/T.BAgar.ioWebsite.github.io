@@ -13,21 +13,25 @@
     font-family:Arial,sans-serif;
 }
 
-/* DONKER (DEFAULT) */
+/* BASIS (geen background hier meer!) */
 body{
-    background: linear-gradient(135deg,#1e293b,#334155,#475569,#64748b);
     color:white;
     min-height:100vh;
     position:relative;
     overflow-x:hidden;
 }
 
-/* LICHT MODE */
+/* DONKER */
+.dark-mode{
+    background: linear-gradient(135deg,#1e293b,#334155,#475569,#64748b);
+}
+
+/* LICHT */
 .light-mode{
     background: linear-gradient(135deg,#ffffff,#e0f2fe,#bae6fd,#7dd3fc);
 }
 
-/* EXTRA GLOW EFFECT */
+/* GLOW */
 body::after{
     content:"";
     position:fixed;
@@ -92,7 +96,6 @@ header{
     color:white;
 }
 
-/* THEME BUTTON */
 .theme-btn{
     background:none;
     border:none;
@@ -213,7 +216,6 @@ iframe{
 .instagram{background:linear-gradient(45deg,#f97316,#facc15);}
 .discord{background:#5865F2;}
 
-/* PARTICLES */
 .particle{
     position:fixed;
     width:6px;
@@ -232,12 +234,12 @@ iframe{
 </style>
 </head>
 
-<body>
+<body class="dark-mode">
 
 <header>
     <div class="left">
         <div class="logo">
-            <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="T.B Agar.io Logo">
+            <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg">
         </div>
         <div class="site-name">T.B AGAR.IO</div>
         <div class="search">
@@ -263,36 +265,6 @@ iframe{
 
 <main>
     <h1>WELCOME!</h1>
-
-    <hr>
-
-    <h2>T.B CHANNEL</h2>
-
-    <div class="videos">
-        <iframe src="https://www.youtube.com/embed/02x2YFHWh2o" allowfullscreen></iframe>
-        <iframe src="https://www.youtube.com/embed/d8DluzJAd2w" allowfullscreen></iframe>
-    </div>
-
-    <hr>
-
-    <h2>Choose your option!</h2>
-
-    <div class="options">
-        <div class="option" onclick="location.href='custom-skins.html'">Custom Skins</div>
-        <div class="option" onclick="location.href='key-access.html'">Keys</div>
-        <div class="option" onclick="location.href='mod-menu.html'">Mod Menu</div>
-        <div class="option" onclick="location.href='paidskins.html'">Paid Skins</div>
-        <div class="option" onclick="location.href='buy-account.html'">Buy Account</div>
-        <div class="option" onclick="location.href='agar.io-skins.html'">Agar.io Skins</div>
-    </div>
-
-    <hr>
-
-    <div class="social-buttons">
-        <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank">YouTube</a>
-        <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank">Instagram</a>
-        <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank">Discord</a>
-    </div>
 </main>
 
 <script>
@@ -301,16 +273,18 @@ function toggleMenu(){
     m.style.display = m.style.display==="block" ? "none" : "block";
 }
 
-/* THEME SWITCH */
+/* FIXED THEME */
 function toggleTheme(){
     const body=document.body;
     const btn=document.getElementById("themeBtn");
 
-    body.classList.toggle("light-mode");
-
-    if(body.classList.contains("light-mode")){
+    if(body.classList.contains("dark-mode")){
+        body.classList.remove("dark-mode");
+        body.classList.add("light-mode");
         btn.textContent="🌙";
     }else{
+        body.classList.remove("light-mode");
+        body.classList.add("dark-mode");
         btn.textContent="🌞";
     }
 }
