@@ -6,102 +6,134 @@
 <title>T.B Agar.io Website</title>
 
 <style>
-body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#0b1220;
-  color:white;
+:root{
+  --bg:#0b1220;
+  --card:#0f172a;
+  --text:white;
 }
 
+.light{
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --text:#111;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* HEADER */
 header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   padding:10px 20px;
-  background:#0f172a;
+  background:var(--card);
 }
 
-.left-header{display:flex;align-items:center;gap:12px;}
-.logo{width:45px;height:45px;border-radius:50%;object-fit:cover;}
-.site-title{font-size:1.3rem;font-weight:bold;}
+.left-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-.menu-btn{cursor:pointer;font-size:26px;background:none;border:none;color:white;}
+.logo{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+}
+
+.site-title{
+  font-size:1.3rem;
+  font-weight:bold;
+}
+
+.right-header{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.menu-btn, .theme-btn{
+  cursor:pointer;
+  font-size:22px;
+  background:none;
+  border:none;
+  color:var(--text);
+}
+
 .menu{
   display:none;
   position:absolute;
   top:65px;
   right:20px;
-  background:#1e293b;
+  background:var(--card);
   border-radius:8px;
   min-width:170px;
 }
+
 .menu a{
   display:block;
   padding:12px;
-  color:white;
+  color:var(--text);
   text-decoration:none;
-  border-bottom:1px solid #334155;
 }
 
+/* GRID -> 5 naast elkaar */
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:30px;
-  max-width:900px;
+  grid-template-columns:repeat(5,1fr);
+  gap:25px;
+  max-width:1100px;
   margin:30px auto;
 }
 
+/* SKIN */
 .skin{
-  width:220px;
-  margin:auto;
   display:flex;
   flex-direction:column;
   align-items:center;
-  transition:transform 0.25s ease;
+  cursor:pointer;
+  transition:0.2s;
 }
 
 .skin img{
-  width:220px;
-  height:220px;
+  width:120px;
+  height:120px;
   border-radius:50%;
-  border:4px solid #222;
-  object-fit:cover;
-  transition:all 0.25s ease;
+  border:4px solid #333;
+  transition:0.2s;
 }
 
-/* geselecteerde skin */
+/* SELECTED EFFECT (gele cirkel) */
 .skin.selected img{
-  border-color:#facc15; /* geel */
-  box-shadow:0 0 0 8px rgba(250,204,21,0.4);
+  border-color:#facc15;
+  box-shadow:0 0 0 6px rgba(250,204,21,0.5);
 }
 
-.skin.selected{
-  transform:scale(1.08);
+.skin-name{
+  margin-top:8px;
+  font-size:14px;
+  text-align:center;
 }
 
-/* Download button */
-.skin-actions{
-  width:100%;
-  margin-top:10px;
-}
-
+/* DOWNLOAD BUTTON */
 .download-btn{
-  width:100%;
-  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  margin-top:6px;
+  padding:6px 10px;
   border:none;
-  border-radius:10px;
-  padding:10px;
-  font-size:15px;
-  font-weight:700;
-  color:white;
+  border-radius:8px;
+  font-size:13px;
   cursor:pointer;
-  box-shadow:0 6px 14px rgba(0,0,0,0.4);
-  transition:transform 0.2s,box-shadow 0.2s;
+  background:#38bdf8;
+  color:white;
 }
 
 .download-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 22px rgba(0,0,0,0.6);
+  opacity:0.8;
 }
 </style>
 </head>
@@ -113,7 +145,12 @@ header{
     <img src="IMG_2718.png" class="logo">
     <span class="site-title">T.B Agar.io</span>
   </div>
-  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+  <div class="right-header">
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </div>
+
   <div class="menu" id="menu">
     <a href="index.html">🏠 Home</a>
     <a href="custom-skins.html">🎨 Custom Skins</a>
@@ -130,6 +167,11 @@ header{
 function toggleMenu(){
   const m=document.getElementById('menu');
   m.style.display=m.style.display==='block'?'none':'block';
+}
+
+/* DARK/LIGHT MODE */
+function toggleTheme(){
+  document.body.classList.toggle('light');
 }
 
 const skins=[
@@ -150,37 +192,38 @@ const gallery=document.getElementById('gallery');
 
 function renderGallery(){
   gallery.innerHTML='';
+
   skins.forEach(skin=>{
     const card=document.createElement('div');
     card.className='skin';
 
     const img=document.createElement('img');
     img.src=skin.url;
-    card.appendChild(img);
 
     card.onclick=()=>{
       document.querySelectorAll('.skin').forEach(s=>s.classList.remove('selected'));
       card.classList.add('selected');
     };
 
-    const actions=document.createElement('div');
-    actions.className='skin-actions';
+    const name=document.createElement('div');
+    name.className='skin-name';
+    name.textContent=skin.name;
 
-    const downloadBtn=document.createElement('button');
-    downloadBtn.className='download-btn';
-    downloadBtn.textContent='⬇ Download Skin';
-    downloadBtn.onclick=e=>{
+    const btn=document.createElement('button');
+    btn.className='download-btn';
+    btn.textContent='Download';
+
+    btn.onclick=(e)=>{
       e.stopPropagation();
       const a=document.createElement('a');
       a.href=skin.url;
       a.download=skin.url;
-      document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
     };
 
-    actions.appendChild(downloadBtn);
-    card.appendChild(actions);
+    card.appendChild(img);
+    card.appendChild(name);
+    card.appendChild(btn);
 
     gallery.appendChild(card);
   });
