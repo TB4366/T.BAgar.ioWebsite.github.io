@@ -2,355 +2,434 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>T.B Cells</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T.B Agario Store</title>
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
 
 body{
-margin:0;
-font-family:Arial;
-overflow:hidden;
-background:#f0f0f0;
+background:#ececec;
 }
 
-#menu{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-text-align:center;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-button{
-padding:12px 20px;
-margin:5px;
-border:none;
-border-radius:8px;
-background:#ff6a00;
+/* TOP BALK */
+.topbar{
+height:70px;
+background:#1e88e5;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
 color:white;
-font-size:16px;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:24px;
+font-weight:bold;
+}
+
+.logo-icon{
+font-size:35px;
+}
+
+.cart-btn{
+font-size:35px;
 cursor:pointer;
 }
 
-input{
-padding:10px;
-width:200px;
-margin-bottom:10px;
-}
-
-canvas{
-display:block;
-}
-
-#leaderboard{
-position:absolute;
-top:10px;
-right:10px;
-background:white;
-padding:10px;
-border-radius:10px;
-font-size:14px;
-}
-
-#pauseBtn{
-position:absolute;
-top:10px;
-left:10px;
-font-size:20px;
-background:white;
-border-radius:8px;
-padding:8px;
-cursor:pointer;
-}
-
-#emojiBtn{
-position:absolute;
-top:60px;
-left:10px;
-font-size:20px;
-background:white;
-border-radius:8px;
-padding:8px;
-cursor:pointer;
-}
-
-#joystick{
-position:absolute;
-bottom:40px;
-left:40px;
-width:120px;
-height:120px;
-background:rgba(0,0,0,0.1);
-border-radius:50%;
-}
-
-#stick{
-position:absolute;
-width:50px;
-height:50px;
-background:#555;
-border-radius:50%;
-left:35px;
-top:35px;
-}
-
-.panel{
-position:absolute;
-top:50%;
+/* EVENT BANNER */
+.event-banner{
+position:fixed;
+bottom:20px;
 left:50%;
-transform:translate(-50%,-50%);
-background:white;
-padding:20px;
-border-radius:10px;
-display:none;
-}
-
-.skin{
-width:40px;
-height:40px;
-border-radius:50%;
-display:inline-block;
-margin:5px;
+transform:translateX(-50%);
+width:400px;
+height:100px;
+background:linear-gradient(purple,#ff00aa);
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+font-size:30px;
 cursor:pointer;
 }
 
+/* POPUPS */
+.popup{
+display:none;
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.popup-content{
+background:white;
+padding:25px;
+border-radius:15px;
+max-width:700px;
+width:95%;
+text-align:center;
+position:relative;
+}
+
+.close{
+position:absolute;
+right:15px;
+top:10px;
+font-size:30px;
+cursor:pointer;
+color:red;
+}
+
+.product-box{
+margin-top:20px;
+padding:20px;
+background:#f5f5f5;
+border-radius:10px;
+}
+
+.buy-btn{
+background:#00c853;
+color:white;
+border:none;
+padding:15px 30px;
+font-size:25px;
+border-radius:10px;
+cursor:pointer;
+margin-top:15px;
+}
+
+.cart-item{
+display:flex;
+justify-content:space-between;
+margin:10px 0;
+padding:10px;
+background:#f5f5f5;
+border-radius:8px;
+}
+
+.remove{
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+cursor:pointer;
+}
+
+.total{
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.pay-btn{
+margin-top:15px;
+background:#2196f3;
+color:white;
+border:none;
+padding:15px 30px;
+font-size:20px;
+cursor:pointer;
+border-radius:10px;
+}
+
+.loading{
+font-size:30px;
+font-weight:bold;
+}
+
+.receipt{
+text-align:left;
+padding:15px;
+background:#f7f7f7;
+margin-top:20px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="menu">
-
-<h1>T.B Cells</h1>
-
-<input id="name" placeholder="Naam">
-
-<br>
-
-<button onclick="openSkins()">Skins</button>
-<button onclick="openSettings()">Instellingen</button>
-<br>
-<button onclick="startGame()">Play</button>
-
+<div class="topbar">
+<div class="logo">
+<div class="logo-icon">🧫</div>
+<div>T.B Agario - Store</div>
 </div>
 
-<div id="skinPanel" class="panel">
-<h3>Kies skin</h3>
-<div class="skin" style="background:red" onclick="setSkin('red')"></div>
-<div class="skin" style="background:blue" onclick="setSkin('blue')"></div>
-<div class="skin" style="background:green" onclick="setSkin('green')"></div>
-<div class="skin" style="background:purple" onclick="setSkin('purple')"></div>
-<br>
-<button onclick="closePanels()">Close</button>
+<div class="cart-btn" onclick="openCart()">🛒</div>
 </div>
 
-<div id="settingsPanel" class="panel">
-<h3>Geluid</h3>
-<input type="range" min="0" max="1" step="0.1" value="1">
+<!-- EVENT BANNER -->
+<div class="event-banner" onclick="openEvent()">
+SKINS CAULDRON
+</div>
+
+<!-- EVENT POPUP -->
+<div class="popup" id="eventPopup">
+<div class="popup-content">
+
+<span class="close" onclick="closeEvent()">✖</span>
+
+<h1>SKINS CAULDRON</h1>
+
+<div class="product-box">
+<h2>Gemclaw Skin</h2>
+<p>Coins: 10.500</p>
+<p>DNA: 780</p>
+<p>3x Mass Boost 24h</p>
+
+<button class="buy-btn" onclick="startPurchase()">
+€ 7.99
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- CART -->
+<div class="popup" id="cartPopup">
+<div class="popup-content">
+
+<h1>Jouw Winkelwagen</h1>
+
+<div id="cartItems">
+Jouw winkelwagen is leeg.
+</div>
+
+<div class="total" id="totalPrice">
+Totaal bedrag: €0.00
+</div>
+
+<button class="pay-btn" onclick="checkout()">
+Betalen
+</button>
+
+</div>
+</div>
+
+<!-- RECEIPT -->
+<div class="popup" id="receiptPopup">
+<div class="popup-content">
+
+<h2>Betaling Informatie</h2>
+
+<p>
+1. Neem contact op via Instagram @t.bagar.io
+</p>
+
+<p>
+2. Download de kassabon en stuur deze naar T.B.
+</p>
+
+<div id="receiptContent" class="receipt"></div>
+
+<button class="pay-btn" onclick="downloadReceipt()">
+Download Kassabon
+</button>
+
 <br><br>
-<button onclick="closePanels()">Close</button>
+
+<button class="buy-btn" onclick="finishOrder()">
+Okay
+</button>
+
 </div>
-
-<div id="emojiPanel" class="panel">
-😀 😎 😡 😂
 </div>
-
-<div id="leaderboard"></div>
-
-<div id="pauseBtn" onclick="pauseGame()">⏸</div>
-<div id="emojiBtn" onclick="showEmoji()">😀</div>
-
-<div id="joystick">
-<div id="stick"></div>
-</div>
-
-<canvas id="game"></canvas>
 
 <script>
 
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+let cart=[];
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let player;
-let pellets=[];
-let running=false;
-let skin="red";
-let name="Player";
-let emoji="";
-let emojiTimer=0;
-
-function openSkins(){
-document.getElementById("skinPanel").style.display="block";
+function openEvent(){
+document.getElementById("eventPopup").style.display="flex";
 }
 
-function openSettings(){
-document.getElementById("settingsPanel").style.display="block";
+function closeEvent(){
+document.getElementById("eventPopup").style.display="none";
 }
 
-function closePanels(){
-document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+function openCart(){
+document.getElementById("cartPopup").style.display="flex";
+renderCart();
 }
 
-function setSkin(c){
-skin=c;
+function startPurchase(){
+
+let popup=document.querySelector("#eventPopup .popup-content");
+
+popup.innerHTML=`
+<div class="loading">Loading...</div>
+`;
+
+setTimeout(()=>{
+
+popup.innerHTML=`
+<h2>Wil je dit toevoegen aan je winkelwagen?</h2>
+
+<button class="buy-btn" onclick="confirmAdd()">
+Ja
+</button>
+
+<button class="buy-btn" style="background:red"
+onclick="closeEvent()">
+Nee
+</button>
+`;
+
+},5000);
+
 }
 
-function startGame(){
+function confirmAdd(){
 
-name=document.getElementById("name").value||"Player";
+let popup=document.querySelector("#eventPopup .popup-content");
 
-document.getElementById("menu").style.display="none";
+popup.innerHTML=`
+<div class="loading">Loading...</div>
+`;
 
-player={
-x:canvas.width/2,
-y:canvas.height/2,
-r:30
-};
+setTimeout(()=>{
 
-pellets=[];
-
-for(let i=0;i<200;i++){
-
-pellets.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:5,
-color:`hsl(${Math.random()*360},70%,60%)`
+cart.push({
+name:"Gemclaw Skin",
+price:7.99
 });
 
-}
+popup.innerHTML=`
+<h2>
+Dit product is toegevoegd aan jouw winkelwagen ✅
+</h2>
 
-running=true;
+<button class="buy-btn" onclick="closeEvent()">
+OK
+</button>
+`;
 
-}
-
-function pauseGame(){
-
-if(confirm("Weet je zeker dat je wil leave?")){
-location.reload();
-}
-
-}
-
-function showEmoji(){
-
-const emojis=["😀","😎","😡","😂","🔥"];
-
-emoji=emojis[Math.floor(Math.random()*emojis.length)];
-
-emojiTimer=300;
+},5000);
 
 }
 
-let joyX=0;
-let joyY=0;
+function renderCart(){
 
-const joystick=document.getElementById("joystick");
+let container=document.getElementById("cartItems");
 
-joystick.addEventListener("touchmove",e=>{
+if(cart.length===0){
 
-let rect=joystick.getBoundingClientRect();
+container.innerHTML=
+"Jouw winkelwagen is leeg.";
 
-let x=e.touches[0].clientX-rect.left-60;
-let y=e.touches[0].clientY-rect.top-60;
+document.getElementById("totalPrice")
+.innerHTML="Totaal bedrag: €0.00";
 
-joyX=x/40;
-joyY=y/40;
-
-});
-
-function update(){
-
-if(!running) return;
-
-player.x+=joyX*4;
-player.y+=joyY*4;
-
-pellets.forEach((p,i)=>{
-
-let d=Math.hypot(player.x-p.x,player.y-p.y);
-
-if(d<player.r){
-
-player.r+=0.3;
-
-pellets.splice(i,1);
-
+return;
 }
+
+let html="";
+let total=0;
+
+cart.forEach((item,index)=>{
+
+total+=item.price;
+
+html+=`
+<div class="cart-item">
+<span>${item.name} - €${item.price.toFixed(2)}</span>
+
+<button class="remove"
+onclick="removeItem(${index})">
+Verwijderen
+</button>
+</div>
+`;
 
 });
 
-if(emojiTimer>0) emojiTimer--;
+container.innerHTML=html;
+
+document.getElementById("totalPrice")
+.innerHTML=
+"Totaal bedrag: €"+total.toFixed(2);
 
 }
 
-function draw(){
+function removeItem(index){
+cart.splice(index,1);
+renderCart();
+}
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+function checkout(){
 
-pellets.forEach(p=>{
+if(cart.length===0){
+alert("Winkelwagen is leeg.");
+return;
+}
 
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fillStyle=p.color;
-ctx.fill();
+let total=0;
 
+let receipt="";
+
+cart.forEach(item=>{
+receipt+=item.name+
+" - €"+item.price.toFixed(2)+"<br>";
+total+=item.price;
 });
 
-if(player){
+receipt+=`
+<hr>
+<b>Totaal: €${total.toFixed(2)}</b>
+`;
 
-ctx.beginPath();
-ctx.arc(player.x,player.y,player.r,0,Math.PI*2);
-ctx.fillStyle=skin;
-ctx.fill();
+document.getElementById("receiptContent")
+.innerHTML=receipt;
 
-ctx.fillStyle="white";
-ctx.textAlign="center";
-ctx.fillText(name,player.x,player.y);
-
-if(emojiTimer>0){
-
-ctx.font="30px Arial";
-ctx.fillText(emoji,player.x,player.y-player.r-10);
-
+document.getElementById("receiptPopup")
+.style.display="flex";
 }
 
+function downloadReceipt(){
+
+let text=
+document.getElementById("receiptContent")
+.innerText;
+
+let blob=
+new Blob([text],{type:"text/plain"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="kassabon.txt";
+
+a.click();
 }
 
-drawLeaderboard();
+function finishOrder(){
 
+cart=[];
+
+document.getElementById("receiptPopup")
+.style.display="none";
+
+document.getElementById("cartPopup")
+.style.display="none";
+
+renderCart();
 }
-
-function drawLeaderboard(){
-
-let html="<b>Leaderboard</b><br>";
-
-for(let i=1;i<=10;i++){
-
-html+=i+". Bot"+i+"<br>";
-
-}
-
-document.getElementById("leaderboard").innerHTML=html;
-
-}
-
-function loop(){
-
-update();
-draw();
-requestAnimationFrame(loop);
-
-}
-
-loop();
 
 </script>
 
