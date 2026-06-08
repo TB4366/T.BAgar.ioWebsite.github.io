@@ -3,320 +3,864 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>T.B Agario Store</title>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial, sans-serif;
+font-family:'Segoe UI',sans-serif;
 }
 
 body{
-background:#ececec;
+
+background-color:#ececec;
+
+background-image:
+linear-gradient(#d7d7d7 1px, transparent 1px),
+linear-gradient(90deg,#d7d7d7 1px, transparent 1px);
+
+background-size:40px 40px;
+
+height:100vh;
+overflow:hidden;
 }
 
-/* TOP BALK */
+/* =======================
+TOP BAR
+======================= */
+
 .topbar{
-height:70px;
-background:#1e88e5;
+
+position:fixed;
+top:0;
+left:0;
+right:0;
+
+height:75px;
+
+background:#18a7f7;
+
 display:flex;
 align-items:center;
 justify-content:space-between;
+
 padding:0 20px;
-color:white;
+
+box-shadow:0 3px 15px rgba(0,0,0,.2);
+
+z-index:1000;
 }
 
 .logo{
+
 display:flex;
 align-items:center;
-gap:10px;
-font-size:24px;
+gap:12px;
+
+font-size:28px;
 font-weight:bold;
-}
-
-.logo-icon{
-font-size:35px;
-}
-
-.cart-btn{
-font-size:35px;
-cursor:pointer;
-}
-
-/* EVENT BANNER */
-.event-banner{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-width:400px;
-height:100px;
-background:linear-gradient(purple,#ff00aa);
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
 color:white;
-font-size:30px;
-cursor:pointer;
 }
 
-/* POPUPS */
-.popup{
-display:none;
-position:fixed;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.6);
-justify-content:center;
+.logo i{
+
+font-size:35px;
+}
+
+.right-top{
+
+display:flex;
 align-items:center;
-z-index:999;
+gap:15px;
 }
 
-.popup-content{
+.currency{
+
 background:white;
-padding:25px;
+
+border:3px solid #69c700;
+
 border-radius:15px;
-max-width:700px;
-width:95%;
-text-align:center;
-position:relative;
-}
 
-.close{
-position:absolute;
-right:15px;
-top:10px;
-font-size:30px;
-cursor:pointer;
-color:red;
-}
+padding:10px 20px;
 
-.product-box{
-margin-top:20px;
-padding:20px;
-background:#f5f5f5;
-border-radius:10px;
-}
-
-.buy-btn{
-background:#00c853;
-color:white;
-border:none;
-padding:15px 30px;
-font-size:25px;
-border-radius:10px;
-cursor:pointer;
-margin-top:15px;
-}
-
-.cart-item{
-display:flex;
-justify-content:space-between;
-margin:10px 0;
-padding:10px;
-background:#f5f5f5;
-border-radius:8px;
-}
-
-.remove{
-background:red;
-color:white;
-border:none;
-padding:5px 10px;
-cursor:pointer;
-}
-
-.total{
-margin-top:15px;
 font-size:22px;
 font-weight:bold;
 }
 
-.pay-btn{
-margin-top:15px;
-background:#2196f3;
-color:white;
-border:none;
-padding:15px 30px;
-font-size:20px;
+.cart-btn{
+
 cursor:pointer;
-border-radius:10px;
+
+font-size:34px;
+
+color:white;
+
+transition:.3s;
 }
 
-.loading{
-font-size:30px;
+.cart-btn:hover{
+
+transform:scale(1.1);
+}
+
+/* =======================
+BUTTONS TOP
+======================= */
+
+.quick-buttons{
+
+position:absolute;
+top:100px;
+left:20px;
+
+display:flex;
+gap:10px;
+}
+
+.quick-btn{
+
+width:90px;
+height:90px;
+
+background:#27c9ff;
+
+border-radius:15px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:35px;
+
+color:white;
+
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
+
+.vip{
+
+background:#111;
+color:#ffd600;
 font-weight:bold;
 }
 
-.receipt{
-text-align:left;
+/* =======================
+SEASON
+======================= */
+
+.season{
+
+position:absolute;
+top:90px;
+right:20px;
+
+background:#1697ff;
+
+border-radius:20px;
+
+padding:20px;
+
+width:250px;
+
+color:white;
+
+font-size:20px;
+font-weight:bold;
+}
+
+/* =======================
+CENTER
+======================= */
+
+.center-content{
+
+position:absolute;
+
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+text-align:center;
+}
+
+.game-title{
+
+font-size:110px;
+font-weight:bold;
+
+color:#666;
+}
+
+.nickname{
+
+width:550px;
+height:85px;
+
+border-radius:20px;
+
+border:4px solid #cfcfcf;
+
+font-size:35px;
+
+padding-left:20px;
+
+margin-top:15px;
+}
+
+.main-buttons{
+
+display:flex;
+gap:30px;
+
+justify-content:center;
+
+margin-top:40px;
+}
+
+.classic{
+
+width:340px;
+height:180px;
+
+background:#ff6200;
+
+border:none;
+
+border-radius:20px;
+
+color:white;
+
+font-size:55px;
+
+font-weight:bold;
+
+cursor:pointer;
+}
+
+.more{
+
+width:340px;
+height:180px;
+
+background:#1f7fff;
+
+border:none;
+
+border-radius:20px;
+
+color:white;
+
+font-size:55px;
+
+font-weight:bold;
+
+cursor:pointer;
+}
+
+/* =======================
+BOTTOM
+======================= */
+
+.bottom-shop{
+
+position:absolute;
+bottom:25px;
+left:50%;
+
+transform:translateX(-50%);
+
+background:#54cf00;
+
+padding:25px 60px;
+
+border-radius:20px;
+
+color:white;
+
+font-size:45px;
+
+font-weight:bold;
+
+cursor:pointer;
+}
+
+.profile{
+
+position:absolute;
+
+bottom:20px;
+right:20px;
+
+width:320px;
+height:90px;
+
+background:#1976ff;
+
+border-radius:15px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
 padding:15px;
-background:#f7f7f7;
+
+color:white;
+font-size:30px;
+}
+
+/* =======================
+EVENT BANNER
+======================= */
+
+.event-banner{
+
+position:absolute;
+
+bottom:20px;
+left:50px;
+
+width:420px;
+height:120px;
+
+background:
+linear-gradient(135deg,#5a008d,#ff00d4);
+
+border-radius:15px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+font-size:40px;
+font-weight:bold;
+
+color:white;
+
+cursor:pointer;
+}
+
+/* =======================
+POPUPS
+======================= */
+
+.overlay{
+
+display:none;
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.65);
+
+justify-content:center;
+align-items:center;
+
+z-index:9999;
+}
+
+.modal{
+
+background:white;
+
+width:90%;
+max-width:1100px;
+
+border-radius:25px;
+
+padding:25px;
+
+position:relative;
+
+animation:pop .25s ease;
+}
+
+@keyframes pop{
+
+from{
+transform:scale(.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+
+.close{
+
+position:absolute;
+
+right:20px;
+top:15px;
+
+font-size:35px;
+
+cursor:pointer;
+
+color:red;
+}
+
+.event-content{
+
+display:flex;
+gap:30px;
+align-items:center;
+}
+
+.witch{
+
+font-size:220px;
+}
+
+.product-card{
+
+flex:1;
+text-align:center;
+}
+
+.product-card h2{
+
+font-size:50px;
+margin-bottom:15px;
+}
+
+.price-btn{
+
+background:#00c853;
+
+color:white;
+
+border:none;
+
+padding:20px 60px;
+
+font-size:40px;
+
+border-radius:15px;
+
+cursor:pointer;
+}
+
+.loading{
+
+font-size:60px;
+font-weight:bold;
+text-align:center;
+padding:100px;
+}
+/* =======================
+WINKELWAGEN
+======================= */
+
+.cart-title{
+font-size:50px;
+margin-bottom:25px;
+text-align:center;
+}
+
+.cart-items{
+max-height:400px;
+overflow-y:auto;
 margin-top:20px;
 }
+
+.cart-item{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:15px;
+
+margin-bottom:10px;
+
+background:#f5f5f5;
+
+border-radius:12px;
+}
+
+.remove-btn{
+
+background:#ff3b30;
+
+color:white;
+
+border:none;
+
+padding:10px 15px;
+
+border-radius:10px;
+
+cursor:pointer;
+}
+
+.total{
+
+font-size:35px;
+font-weight:bold;
+
+margin-top:25px;
+text-align:center;
+}
+
+.pay-btn{
+
+margin-top:25px;
+
+background:#00c853;
+
+color:white;
+
+border:none;
+
+padding:20px 50px;
+
+font-size:30px;
+
+border-radius:15px;
+
+cursor:pointer;
+}
+
+/* =======================
+KASSABON
+======================= */
+
+.receipt{
+
+background:#f8f8f8;
+
+padding:25px;
+
+border-radius:15px;
+
+text-align:left;
+
+margin-top:20px;
+}
+
+.receipt h2{
+text-align:center;
+margin-bottom:15px;
+}
+
+.receipt-item{
+
+display:flex;
+justify-content:space-between;
+
+padding:8px 0;
+}
+
+.download-btn{
+
+background:#1f7fff;
+
+color:white;
+
+border:none;
+
+padding:15px 40px;
+
+font-size:24px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+margin-top:20px;
+}
+
+.ok-btn{
+
+background:#00c853;
+
+color:white;
+
+border:none;
+
+padding:15px 40px;
+
+font-size:24px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+margin-top:20px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-<div class="logo">
-<div class="logo-icon">🧫</div>
-<div>T.B Agario - Store</div>
-</div>
+<div class="overlay" id="eventPopup">
+<div class="modal">
 
-<div class="cart-btn" onclick="openCart()">🛒</div>
-</div>
+<div class="close" onclick="closeEvent()">✖</div>
 
-<!-- EVENT BANNER -->
-<div class="event-banner" onclick="openEvent()">
-SKINS CAULDRON
-</div>
+<div id="eventBody">
 
-<!-- EVENT POPUP -->
-<div class="popup" id="eventPopup">
-<div class="popup-content">
+<div class="event-content">
 
-<span class="close" onclick="closeEvent()">✖</span>
+<div class="witch">🧙</div>
 
-<h1>SKINS CAULDRON</h1>
+<div class="product-card">
 
-<div class="product-box">
 <h2>Gemclaw Skin</h2>
-<p>Coins: 10.500</p>
-<p>DNA: 780</p>
+
+<p>10.500 Coins</p>
+<p>780 DNA</p>
 <p>3x Mass Boost 24h</p>
 
-<button class="buy-btn" onclick="startPurchase()">
+<br>
+
+<button class="price-btn"
+onclick="startPurchase()">
 € 7.99
 </button>
+
+</div>
+
 </div>
 
 </div>
+
+</div>
 </div>
 
-<!-- CART -->
-<div class="popup" id="cartPopup">
-<div class="popup-content">
+<div class="overlay" id="cartPopup">
 
-<h1>Jouw Winkelwagen</h1>
+<div class="modal">
 
-<div id="cartItems">
+<h1 class="cart-title">
+Jouw Winkelwagen
+</h1>
+
+<div id="cartItems"
+class="cart-items">
+
 Jouw winkelwagen is leeg.
+
 </div>
 
-<div class="total" id="totalPrice">
+<div class="total"
+id="cartTotal">
+
 Totaal bedrag: €0.00
+
 </div>
 
-<button class="pay-btn" onclick="checkout()">
+<center>
+
+<button class="pay-btn"
+onclick="checkout()">
+
 Betalen
+
 </button>
 
-</div>
+</center>
+
 </div>
 
-<!-- RECEIPT -->
-<div class="popup" id="receiptPopup">
-<div class="popup-content">
+</div>
 
-<h2>Betaling Informatie</h2>
+<div class="overlay"
+id="receiptPopup">
+
+<div class="modal">
+
+<h1>Kassabon</h1>
 
 <p>
-1. Neem contact op via Instagram @t.bagar.io
+1. Neem contact op via Instagram
+<b>@t.bagar.io</b>
 </p>
+
+<br>
 
 <p>
 2. Download de kassabon en stuur deze naar T.B.
 </p>
 
-<div id="receiptContent" class="receipt"></div>
+<div id="receiptContent"
+class="receipt"></div>
 
-<button class="pay-btn" onclick="downloadReceipt()">
+<center>
+
+<button class="download-btn"
+onclick="downloadReceipt()">
+
 Download Kassabon
+
 </button>
 
 <br><br>
 
-<button class="buy-btn" onclick="finishOrder()">
+<button class="ok-btn"
+onclick="finishOrder()">
+
 Okay
+
 </button>
 
+</center>
+
 </div>
+
 </div>
 
 <script>
 
-let cart=[];
+let cart =
+JSON.parse(
+localStorage.getItem("tb_cart")
+) || [];
+
+function saveCart(){
+
+localStorage.setItem(
+"tb_cart",
+JSON.stringify(cart)
+);
+
+}
 
 function openEvent(){
-document.getElementById("eventPopup").style.display="flex";
+
+document.getElementById(
+"eventPopup"
+).style.display="flex";
+
 }
 
 function closeEvent(){
-document.getElementById("eventPopup").style.display="none";
+
+document.getElementById(
+"eventPopup"
+).style.display="none";
+
 }
 
 function openCart(){
-document.getElementById("cartPopup").style.display="flex";
+
+document.getElementById(
+"cartPopup"
+).style.display="flex";
+
 renderCart();
+
 }
 
 function startPurchase(){
 
-let popup=document.querySelector("#eventPopup .popup-content");
-
-popup.innerHTML=`
-<div class="loading">Loading...</div>
+document.getElementById(
+"eventBody"
+).innerHTML=
+`
+<div class="loading">
+Loading...
+</div>
 `;
 
 setTimeout(()=>{
 
-popup.innerHTML=`
-<h2>Wil je dit toevoegen aan je winkelwagen?</h2>
+document.getElementById(
+"eventBody"
+).innerHTML=
+`
 
-<button class="buy-btn" onclick="confirmAdd()">
+<h2 style="text-align:center;">
+Wil je dit toevoegen aan je winkelwagen?
+</h2>
+
+<br><br>
+
+<center>
+
+<button class="price-btn"
+onclick="confirmPurchase()">
+
 Ja
+
 </button>
 
-<button class="buy-btn" style="background:red"
+<button class="remove-btn"
 onclick="closeEvent()">
+
 Nee
+
 </button>
+
+</center>
+
 `;
 
 },5000);
 
 }
 
-function confirmAdd(){
+function confirmPurchase(){
 
-let popup=document.querySelector("#eventPopup .popup-content");
-
-popup.innerHTML=`
-<div class="loading">Loading...</div>
+document.getElementById(
+"eventBody"
+).innerHTML=
+`
+<div class="loading">
+Loading...
+</div>
 `;
 
 setTimeout(()=>{
 
 cart.push({
+
 name:"Gemclaw Skin",
 price:7.99
+
 });
 
-popup.innerHTML=`
-<h2>
+saveCart();
+
+document.getElementById(
+"eventBody"
+).innerHTML=
+`
+
+<h2 style="text-align:center;">
 Dit product is toegevoegd aan jouw winkelwagen ✅
 </h2>
 
-<button class="buy-btn" onclick="closeEvent()">
+<br>
+
+<center>
+
+<button class="price-btn"
+onclick="closeEvent()">
+
 OK
+
 </button>
+
+</center>
+
 `;
 
 },5000);
@@ -325,17 +869,23 @@ OK
 
 function renderCart(){
 
-let container=document.getElementById("cartItems");
+const container =
+document.getElementById(
+"cartItems"
+);
 
 if(cart.length===0){
 
 container.innerHTML=
 "Jouw winkelwagen is leeg.";
 
-document.getElementById("totalPrice")
-.innerHTML="Totaal bedrag: €0.00";
+document.getElementById(
+"cartTotal"
+).innerHTML=
+"Totaal bedrag: €0.00";
 
 return;
+
 }
 
 let html="";
@@ -343,16 +893,31 @@ let total=0;
 
 cart.forEach((item,index)=>{
 
-total+=item.price;
+total += item.price;
 
-html+=`
+html +=
+
+`
 <div class="cart-item">
-<span>${item.name} - €${item.price.toFixed(2)}</span>
 
-<button class="remove"
+<div>
+
+<b>${item.name}</b>
+
+<br>
+
+€${item.price.toFixed(2)}
+
+</div>
+
+<button
+class="remove-btn"
 onclick="removeItem(${index})">
+
 Verwijderen
+
 </button>
+
 </div>
 `;
 
@@ -360,76 +925,132 @@ Verwijderen
 
 container.innerHTML=html;
 
-document.getElementById("totalPrice")
-.innerHTML=
-"Totaal bedrag: €"+total.toFixed(2);
+document.getElementById(
+"cartTotal"
+).innerHTML=
+"Totaal bedrag: €"+
+total.toFixed(2);
 
 }
 
 function removeItem(index){
+
 cart.splice(index,1);
+
+saveCart();
+
 renderCart();
+
 }
 
 function checkout(){
 
 if(cart.length===0){
-alert("Winkelwagen is leeg.");
+
+alert(
+"Winkelwagen is leeg."
+);
+
 return;
+
 }
 
 let total=0;
 
-let receipt="";
-
-cart.forEach(item=>{
-receipt+=item.name+
-" - €"+item.price.toFixed(2)+"<br>";
-total+=item.price;
-});
-
-receipt+=`
+let html=
+`
+<h2>T.B Agario Store</h2>
 <hr>
-<b>Totaal: €${total.toFixed(2)}</b>
 `;
 
-document.getElementById("receiptContent")
-.innerHTML=receipt;
+cart.forEach(item=>{
 
-document.getElementById("receiptPopup")
-.style.display="flex";
+total += item.price;
+
+html +=
+`
+<div class="receipt-item">
+
+<span>${item.name}</span>
+
+<span>
+€${item.price.toFixed(2)}
+</span>
+
+</div>
+`;
+
+});
+
+html +=
+`
+<hr>
+
+<h3>
+Totaal:
+€${total.toFixed(2)}
+</h3>
+`;
+
+document.getElementById(
+"receiptContent"
+).innerHTML=html;
+
+document.getElementById(
+"receiptPopup"
+).style.display="flex";
+
 }
 
 function downloadReceipt(){
 
 let text=
-document.getElementById("receiptContent")
-.innerText;
+document.getElementById(
+"receiptContent"
+).innerText;
 
 let blob=
-new Blob([text],{type:"text/plain"});
+new Blob(
+[text],
+{type:'text/plain'}
+);
 
-let a=document.createElement("a");
+let a=
+document.createElement("a");
 
-a.href=URL.createObjectURL(blob);
+a.href=
+URL.createObjectURL(blob);
 
-a.download="kassabon.txt";
+a.download=
+"TBAgario_Kassabon.txt";
 
 a.click();
+
 }
 
 function finishOrder(){
 
 cart=[];
 
-document.getElementById("receiptPopup")
-.style.display="none";
-
-document.getElementById("cartPopup")
-.style.display="none";
+saveCart();
 
 renderCart();
+
+document.getElementById(
+"receiptPopup"
+).style.display="none";
+
+document.getElementById(
+"cartPopup"
+).style.display="none";
+
+alert(
+"Bedankt voor je bestelling!"
+);
+
 }
+
+renderCart();
 
 </script>
 
