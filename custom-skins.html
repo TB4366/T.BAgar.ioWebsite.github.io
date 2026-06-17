@@ -1,261 +1,618 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>T.B Agar.io Website</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T.B AGAR.IO - Custom Skins</title>
 
 <style>
-:root{
-  --bg:#f1f5f9;
-  --card:#ffffff;
-  --text:#111;
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
-/* DARK MODE */
-.dark{
-  --bg:#0b1220;
-  --card:#0f172a;
-  --text:white;
+/* LOADING */
+
+#loader{
+position:fixed;
+inset:0;
+background:#020617;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:15px;
+font-size:28px;
+color:white;
+z-index:9999;
 }
+
+.spinner{
+width:35px;
+height:35px;
+border:5px solid #1e40af;
+border-top:5px solid #38bdf8;
+border-radius:50%;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+/* BODY */
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+background:#020617;
+color:white;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+/* LIGHT MODE */
+
+.light-mode{
+background:#ffffff;
+color:#111827;
+}
+
+/* GLOW */
+
+body::before{
+content:"";
+position:fixed;
+width:500px;
+height:500px;
+background:radial-gradient(circle,#0ea5e9,transparent 70%);
+top:-200px;
+right:-200px;
+opacity:.2;
+pointer-events:none;
 }
 
 /* HEADER */
+
 header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 20px;
-  background:var(--card);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px 30px;
+background:rgba(0,0,0,.5);
+backdrop-filter:blur(15px);
+border-bottom:1px solid #2563eb;
 }
 
 .left-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
+display:flex;
+align-items:center;
+gap:12px;
 }
 
 .logo{
-  width:45px;
-  height:45px;
-  border-radius:50%;
+width:45px;
+height:45px;
+border-radius:50%;
+overflow:hidden;
+box-shadow:0 0 20px #38bdf8;
+}
+
+.logo img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
 
 .site-title{
-  font-size:1.3rem;
-  font-weight:bold;
+font-size:22px;
+font-weight:bold;
+color:#38bdf8;
 }
 
-.right-header{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
+/* BUTTONS */
 
-.menu-btn, .theme-btn{
-  cursor:pointer;
-  font-size:22px;
-  background:none;
-  border:none;
-  color:var(--text);
+.menu-btn,
+.theme-btn{
+background:none;
+border:none;
+font-size:24px;
+cursor:pointer;
+color:white;
 }
 
 /* MENU */
+
 .menu{
-  display:none;
-  position:absolute;
-  top:65px;
-  right:20px;
-  background:var(--card);
-  border-radius:8px;
-  min-width:170px;
+display:none;
+position:absolute;
+right:30px;
+top:70px;
+background:#020617;
+border-radius:12px;
+overflow:hidden;
+z-index:1000;
+min-width:220px;
 }
 
 .menu a{
-  display:block;
-  padding:12px;
-  color:var(--text);
-  text-decoration:none;
-  border-bottom:1px solid #ccc;
+display:block;
+padding:14px 20px;
+text-decoration:none;
+color:white;
 }
 
-/* GRID */
+.menu a:hover{
+background:#2563eb;
+}
+
+/* MAIN */
+
+main{
+padding:40px 20px;
+text-align:center;
+}
+
+h1,h2{
+color:#38bdf8;
+text-shadow:0 0 15px #2563eb;
+}
+
+hr{
+width:80%;
+margin:35px auto;
+border:1px solid #2563eb;
+}
+
+/* FEATURED SKINS */
+
+.featured-grid{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin:35px 0;
+}
+
+.featured-skin{
+cursor:pointer;
+transition:.3s;
+}
+
+.featured-skin:hover{
+transform:scale(1.08);
+}
+
+.featured-skin img{
+width:170px;
+height:170px;
+border-radius:50%;
+object-fit:cover;
+border:5px solid gold;
+box-shadow:0 0 30px gold;
+}
+
+.featured-name{
+margin-top:10px;
+font-weight:bold;
+}
+
+/* NORMAL SKINS */
+
 .grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:25px;
-  max-width:1100px;
-  margin:30px auto;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:25px;
+max-width:1200px;
+margin:30px auto;
 }
 
-/* SKIN */
 .skin{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  cursor:pointer;
-  transition:transform 0.25s ease;
+display:flex;
+flex-direction:column;
+align-items:center;
+cursor:pointer;
+transition:.3s;
 }
 
-/* HOVER EFFECT */
 .skin:hover{
-  transform:scale(1.08);
+transform:scale(1.08);
 }
 
-/* IMAGE */
 .skin img{
-  width:110px;
-  height:110px;
-  border-radius:50%;
-  border:4px solid transparent;
-  transition:all 0.25s ease;
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #38bdf8;
+box-shadow:0 0 15px #38bdf8;
 }
 
-/* GESELECTEERD (alleen groter) */
-.skin.selected{
-  transform:scale(1.25);
-  z-index:2;
-}
-
-/* NAAM */
 .skin-name{
-  margin-top:8px;
-  font-size:14px;
-  text-align:center;
+margin-top:10px;
+font-size:14px;
+text-align:center;
 }
 
-/* DOWNLOAD BUTTON */
-.download-btn{
-  margin-top:6px;
-  padding:6px 10px;
-  border:none;
-  border-radius:8px;
-  font-size:13px;
-  cursor:pointer;
-  background:#38bdf8;
-  color:white;
-  font-weight:bold;
+/* POPUP */
+
+#popup{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.8);
+justify-content:center;
+align-items:center;
+z-index:999;
 }
 
-.download-btn:hover{
-  opacity:0.8;
+.popup-box{
+background:#020617;
+padding:30px;
+border-radius:20px;
+text-align:center;
+border:1px solid #2563eb;
 }
+
+.popup-box button{
+padding:12px 25px;
+margin:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+background:#2563eb;
+color:white;
+font-weight:bold;
+}
+
 </style>
+
 </head>
 
 <body>
 
+<div id="loader">
+
+Loading Custom Skins...
+
+<div class="spinner"></div>
+
+</div>
+
 <header>
-  <div class="left-header">
-    <img src="IMG_2718.png" class="logo">
-    <span class="site-title">T.B Agar.io</span>
-  </div>
 
-  <div class="right-header">
-    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-  </div>
+<div class="left-header">
 
-  <div class="menu" id="menu">
-    <a href="index.html">🏠 Home</a>
-    <a href="custom-skins.html">🎨 Custom Skins</a>
-    <a href="mod-menu.html">🛠️ Mod Menu</a>
-  </div>
+<div class="logo">
+<img src="IMG_2718.png">
+</div>
+
+<div class="site-title">
+T.B AGAR.IO
+</div>
+
+</div>
+
+<div>
+
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+☀️
+</button>
+
+<button class="menu-btn" onclick="toggleMenu()">
+☰
+</button>
+
+</div>
+
+<div class="menu" id="menu">
+
+<a href="index.html">Home</a> <a href="custom-skins.html">Custom Skins</a> <a href="key-access.html">Keys</a> <a href="mod-menu.html">Mod Menu</a> <a href="paidskins.html">Paid Skins</a>
+
+</div>
+
 </header>
 
 <main>
-  <h1 style="text-align:center;margin-top:20px;">Custom Skins</h1>
-  <div class="grid" id="gallery"></div>
-</main>
+
+<h1>CUSTOM SKINS</h1>
+
+<hr>
+
+<h2>FEATURED CUSTOM SKINS</h2>
+
+<div class="featured-grid">
+
+<div class="featured-skin" onclick="openPopup('IMG_9172.png')">
+<img src="IMG_9172.png">
+<div class="featured-name">Featured Skin 1</div>
+</div>
+
+<div class="featured-skin" onclick="openPopup('IMG_9173.png')">
+<img src="IMG_9173.png">
+<div class="featured-name">Featured Skin 2</div>
+</div>
+
+<div class="featured-skin" onclick="openPopup('IMG_9174.png')">
+<img src="IMG_9174.png">
+<div class="featured-name">Featured Skin 3</div>
+</div>
+
+</div>
+
+<hr>
+
+<h2>ALL CUSTOM SKINS</h2>
+
+<div class="grid" id="gallery">
+</div>
+<div id="popup">
+
+<div class="popup-box">
+
+<h2>Custom Skin</h2>
+
+<a id="downloadBtn" download>
+
+<button>
+Download
+</button>
+
+</a>
+
+<button onclick="closePopup()">
+
+Close
+
+</button>
+
+</div>
+
+</div>
 
 <script>
+
+
+/* LOADING SYSTEM */
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.display="none";
+
+},2000 + Math.random()*2000);
+
+
+
+
+
 /* MENU */
+
 function toggleMenu(){
-  const m=document.getElementById('menu');
-  m.style.display=m.style.display==='block'?'none':'block';
+
+const menu=document.getElementById("menu");
+
+menu.style.display =
+menu.style.display==="block"
+? "none"
+: "block";
+
 }
+
+
+
+
 
 /* DARK / LIGHT MODE */
+
 function toggleTheme(){
-  const body=document.body;
-  const btn=document.getElementById("themeBtn");
 
-  body.classList.toggle("dark");
+const body=document.body;
 
-  if(body.classList.contains("dark")){
-    btn.textContent="☀️";
-  }else{
-    btn.textContent="🌙";
-  }
+const btn=document.getElementById("themeBtn");
+
+
+body.classList.toggle("light-mode");
+
+
+if(body.classList.contains("light-mode")){
+
+btn.textContent="🌙";
+
+}else{
+
+btn.textContent="☀️";
+
 }
+
+
+}
+
+
+
+
+
+
 
 /* SKINS */
+
 const skins=[
-  {name:"Christmas bauble",url:"42DD3307-96F0-430C-9763-307B5BF4547C.jpeg"},
-  {name:"Winter T Wolf",url:"C5AA44C2-3232-4796-99D9-23B58C03F165.jpeg"},
-  {name:"Magic Mushroom",url:"8994DECF-36B1-48B3-AD95-8BBC6D4A0206.jpeg"},
-  {name:"Bat",url:"6DE891A5-0CF7-4520-8052-688CF2BE29C2.jpeg"},
-  {name:"evil halloween spider",url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"},
-  {name:"haloween man",url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"},
-  {name:"evil halloween cat",url:"610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg"},
-  {name:"Baby Dragon",url:"IMG_4073.png"},
-  {name:"Thor Hamer",url:"IMG_4027.jpeg"},
-  {name:"Sting wasp",url:"IMG_4028.jpeg"},
-  {name:"fire wolf",url:"IMG_4025.jpeg"}  
-];
 
-const gallery=document.getElementById('gallery');
 
-/* RENDER */
-function renderGallery(){
-  gallery.innerHTML='';
+{
+name:"Christmas bauble",
+url:"42DD3307-96F0-430C-9763-307B5BF4547C.jpeg"
+},
 
-  skins.forEach(skin=>{
-    const card=document.createElement('div');
-    card.className='skin';
 
-    const img=document.createElement('img');
-    img.src=skin.url;
+{
+name:"Winter T Wolf",
+url:"C5AA44C2-3232-4796-99D9-23B58C03F165.jpeg"
+},
 
-    /* SELECT */
-    card.onclick=()=>{
-      document.querySelectorAll('.skin').forEach(s=>s.classList.remove('selected'));
-      card.classList.add('selected');
-    };
 
-    /* NAME */
-    const name=document.createElement('div');
-    name.className='skin-name';
-    name.textContent=skin.name;
+{
+name:"Magic Mushroom",
+url:"8994DECF-36B1-48B3-AD95-8BBC6D4A0206.jpeg"
+},
 
-    /* DOWNLOAD */
-    const btn=document.createElement('button');
-    btn.className='download-btn';
-    btn.textContent='Download';
 
-    btn.onclick=(e)=>{
-      e.stopPropagation();
-      const a=document.createElement('a');
-      a.href=skin.url;
-      a.download=skin.url;
-      a.click();
-    };
+{
+name:"Bat",
+url:"6DE891A5-0CF7-4520-8052-688CF2BE29C2.jpeg"
+},
 
-    card.appendChild(img);
-    card.appendChild(name);
-    card.appendChild(btn);
 
-    gallery.appendChild(card);
-  });
+{
+name:"Evil Halloween Spider",
+url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"
+},
+
+
+{
+name:"Halloween Man",
+url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"
+},
+
+
+{
+name:"Evil Halloween Cat",
+url:"610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg"
+},
+
+
+{
+name:"Baby Dragon",
+url:"IMG_4073.png"
+},
+
+
+{
+name:"Thor Hammer",
+url:"IMG_4027.jpeg"
+},
+
+
+{
+name:"Sting Wasp",
+url:"IMG_4028.jpeg"
+},
+
+
+{
+name:"Fire Wolf",
+url:"IMG_4025.jpeg"
 }
 
+
+];
+
+
+
+
+
+const gallery=document.getElementById("gallery");
+
+
+
+
+function renderGallery(){
+
+
+gallery.innerHTML="";
+
+
+
+skins.forEach(skin=>{
+
+
+const card=document.createElement("div");
+
+card.className="skin";
+
+
+
+const img=document.createElement("img");
+
+img.src=skin.url;
+
+
+
+
+const name=document.createElement("div");
+
+name.className="skin-name";
+
+name.textContent=skin.name;
+
+
+
+
+card.onclick=()=>{
+
+openPopup(skin.url);
+
+};
+
+
+
+
+card.appendChild(img);
+
+card.appendChild(name);
+
+
+gallery.appendChild(card);
+
+
+
+});
+
+
+}
+
+
+
 renderGallery();
+
+
+
+
+
+
+
+
+/* DOWNLOAD POPUP */
+
+
+function openPopup(image){
+
+
+document.getElementById("popup").style.display="flex";
+
+
+document.getElementById("downloadBtn").href=image;
+
+
+}
+
+
+
+
+
+function closePopup(){
+
+
+document.getElementById("popup").style.display="none";
+
+
+}
+
+
+
+
 </script>
 
 </body>
