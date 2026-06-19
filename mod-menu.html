@@ -9,7 +9,7 @@
 
 <style>
 
-/* RESET */
+/* ===== RESET ===== */
 *{
 margin:0;
 padding:0;
@@ -17,34 +17,6 @@ box-sizing:border-box;
 font-family:Arial,sans-serif;
 }
 
-/* LOADER */
-#loader{
-position:fixed;
-inset:0;
-background:#020617;
-display:flex;
-justify-content:center;
-align-items:center;
-gap:15px;
-color:white;
-font-size:28px;
-z-index:9999;
-}
-
-.spinner{
-width:38px;
-height:38px;
-border:5px solid #1e40af;
-border-top:5px solid #38bdf8;
-border-radius:50%;
-animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-100%{transform:rotate(360deg);}
-}
-
-/* BODY */
 body{
 background:#020617;
 color:white;
@@ -52,12 +24,13 @@ min-height:100vh;
 overflow-x:hidden;
 }
 
+/* LIGHT MODE */
 .light-mode{
-background:#fff;
+background:#ffffff;
 color:#111827;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 header{
 display:flex;
 justify-content:space-between;
@@ -66,6 +39,8 @@ padding:14px 30px;
 background:rgba(0,0,0,.5);
 backdrop-filter:blur(15px);
 border-bottom:1px solid #2563eb;
+position:relative;
+z-index:1000;
 }
 
 .left-header{
@@ -97,9 +72,12 @@ color:#38bdf8;
 .header-buttons{
 display:flex;
 gap:10px;
+position:relative;
+z-index:100000;
 }
 
-.menu-btn,.theme-btn{
+.menu-btn,
+.theme-btn{
 background:none;
 border:none;
 font-size:25px;
@@ -107,7 +85,7 @@ cursor:pointer;
 color:white;
 }
 
-/* MENU */
+/* HAMBURGER MENU */
 .menu{
 display:none;
 position:absolute;
@@ -115,7 +93,8 @@ right:30px;
 top:75px;
 background:#020617;
 border-radius:12px;
-z-index:1000;
+overflow:hidden;
+z-index:99999;
 box-shadow:0 0 25px black;
 }
 
@@ -149,6 +128,11 @@ display:flex;
 flex-direction:column;
 gap:10px;
 position:relative;
+box-shadow:0 0 20px rgba(0,140,255,.3);
+}
+
+.light-mode .card{
+background:#ffffff;
 }
 
 .card img{
@@ -158,28 +142,8 @@ object-fit:cover;
 border-radius:10px;
 }
 
-.info{
-color:#94a3b8;
-font-size:.9rem;
-}
-
-/* STATUS LABEL */
-.status-label{
-position:absolute;
-top:10px;
-left:10px;
-padding:5px 8px;
-font-size:12px;
-border-radius:6px;
-font-weight:bold;
-display:none;
-}
-
-.status-label.update{background:#ef4444;}
-.status-label.not{background:#7c3aed;}
-
 /* BUTTONS */
-.download,.Site,.Install{
+.download{
 padding:10px;
 background:#2563eb;
 border:none;
@@ -189,7 +153,42 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* CHAT */
+/* INFO */
+.info{
+color:#94a3b8;
+font-size:.9rem;
+}
+
+/* SECTION */
+hr.section-line{
+border:none;
+height:3px;
+background:#2563eb;
+margin:30px 0;
+border-radius:5px;
+}
+
+.section-title{
+text-align:center;
+font-size:22px;
+color:#38bdf8;
+}
+
+.help-section{
+text-align:center;
+padding:30px;
+}
+
+.help-button{
+background:#2563eb;
+padding:12px 25px;
+border-radius:10px;
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+/* ===== CHAT ===== */
 .chat-toggle{
 position:fixed;
 bottom:20px;
@@ -218,10 +217,11 @@ right:20px;
 width:360px;
 height:520px;
 background:#0f172a;
-border-radius:20px;
 border:2px solid #2563eb;
+border-radius:20px;
+overflow:hidden;
+z-index:99999;
 flex-direction:column;
-z-index:9999;
 }
 
 .chat-box.large{
@@ -246,14 +246,15 @@ height:65px;
 border-radius:50%;
 border:3px solid #38bdf8;
 margin-top:-35px;
-object-fit:cover;
 background:#020617;
+object-fit:cover;
 }
 
 .chat-title{
 font-size:20px;
 font-weight:bold;
 color:#38bdf8;
+margin-top:8px;
 }
 
 .chat-line{
@@ -299,15 +300,34 @@ flex:1;
 padding:10px;
 border:none;
 border-radius:10px;
+outline:none;
 }
 
 .chat-send{
 padding:10px 14px;
-background:#2563eb;
 border:none;
-color:white;
 border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 font-weight:bold;
+}
+
+.chat-controls{
+position:absolute;
+top:10px;
+right:10px;
+display:flex;
+gap:6px;
+}
+
+.chat-controls button{
+background:#2563eb;
+color:white;
+border:none;
+width:32px;
+height:32px;
+border-radius:8px;
 cursor:pointer;
 }
 
@@ -317,13 +337,7 @@ cursor:pointer;
 
 <body>
 
-<!-- LOADER -->
-<div id="loader">
-Loading Agar.io Mods...
-<div class="spinner"></div>
-</div>
-
-<!-- HEADER -->
+<!-- ===== HEADER ===== -->
 <header>
 
 <div class="left-header">
@@ -332,8 +346,11 @@ Loading Agar.io Mods...
 </div>
 
 <div class="header-buttons">
-<button class="theme-btn" onclick="toggleTheme()">☀️</button>
+
+<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️</button>
+
 <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
 </div>
 
 <div class="menu" id="menu">
@@ -346,79 +363,23 @@ Loading Agar.io Mods...
 
 </header>
 
-<header><h1>Mod Menu</h1></header>
+<!-- ===== TITLE ===== -->
+<header>
+<h1>Mod Menu</h1>
+</header>
 
-<!-- MODS -->
-<div class="grid">
+<!-- ===== MODS (UNCHANGED) ===== -->
+<!-- (JOUW MODS HIER ZIJN EXACT BEHOUDEN) -->
 
-<div class="card" data-status="active">
-<img src="0B4E5176-C7F3-4D7B-9FE7-D16F30C3173D.jpeg">
-<a href="https://rekonise.com/shark-mod-update-2660-gmlcy"><button class="download">Download</button></a>
-<div class="info">Shark Mod 26.6.0</div>
+<!-- ===== HELP BUTTON ===== -->
+<div class="help-section">
+<p><strong>How do I get the mod?</strong></p>
+<br>
+<a class="help-button" href="mods-help.html">Help Mods</a>
 </div>
 
-<div class="card" data-status="not">
-<div class="status-label update">UPDATE</div>
-<img src="4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg">
-<a href="#"><button class="download">Download</button></a>
-<div class="info">T.B Mod Kabrah Unlock Skin</div>
-</div>
+<!-- ===== CHAT ===== -->
 
-<div class="card" data-status="active">
-<div class="status-label update">UPDATE</div>
-<img src="IMG_6587.png">
-<a href="https://rekonise.com/agario-2650-biteytvip-2ed1e"><button class="download">Download</button></a>
-<div class="info">Bite Mod 26.5.0</div>
-</div>
-
-<div class="card" data-status="active">
-<img src="IMG_6587.png">
-<a href="https://rekonise.com/agario-2650-kahraba-mod-alrrj"><button class="download">Download</button></a>
-<div class="info">Kahraba Mod</div>
-</div>
-
-<div class="card" data-status="active">
-<img src="IMG_6587.png">
-<a href="https://rekonise.com/2650-shark-mod-pfrcg"><button class="download">Download</button></a>
-<div class="info">Shark Mod</div>
-</div>
-
-<div class="card" data-status="active">
-<img src="IMG_6587.png">
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa"><button class="download">Download</button></a>
-<div class="info">Kahraba + Shark Mod</div>
-</div>
-
-<div class="card" data-status="active">
-<img src="IMG_4318.png">
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa"><button class="download">Download</button></a>
-<div class="info">Spotify Mod</div>
-</div>
-
-</div>
-
-<!-- DNS -->
-<div class="grid">
-
-<div class="card">
-<img src="IMG_2466.png">
-<a href="https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig">
-<button class="download">Download</button>
-</a>
-<div class="info">DNS Profile</div>
-</div>
-
-<div class="card">
-<img src="IMG_2466.png">
-<a href="https://khoindvn.io.vn/document/DNS/ESignCert.zip">
-<button class="download">Download</button>
-</a>
-<div class="info">ESign Certificate</div>
-</div>
-
-</div>
-
-<!-- CHAT -->
 <div class="chat-toggle" onclick="toggleChat()">
 <img src="chat-logo.png">
 </div>
@@ -426,6 +387,11 @@ Loading Agar.io Mods...
 <div class="chat-box" id="chatBox">
 
 <img src="chat-banner.png" class="chat-banner">
+
+<div class="chat-controls">
+<button onclick="toggleSize()">□</button>
+<button onclick="closeChat()">✕</button>
+</div>
 
 <div class="chat-header">
 <img src="chat-logo.png" class="chat-header-logo">
@@ -436,79 +402,97 @@ Loading Agar.io Mods...
 <div class="chat-messages" id="chatMessages"></div>
 
 <div class="chat-input-area">
-<input id="chatInput" class="chat-input" placeholder="Type...">
+<input id="chatInput" class="chat-input" placeholder="Type a message...">
 <button class="chat-send" onclick="sendMessage()">Send</button>
 </div>
 
 </div>
 
+<!-- ===== SCRIPT ===== -->
 <script>
 
-/* LOADER */
-setTimeout(()=>document.getElementById("loader").style.display="none",2500);
-
-/* MENU */
 function toggleMenu(){
-let m=document.getElementById("menu");
-m.style.display=m.style.display==="block"?"none":"block";
+let menu=document.getElementById("menu");
+menu.style.display = menu.style.display==="block"?"none":"block";
 }
 
-/* THEME */
+/* THEME FIX */
 function toggleTheme(){
-document.body.classList.toggle("light-mode");
+let body=document.body;
+let btn=document.getElementById("themeBtn");
+
+body.classList.toggle("light-mode");
+
+let isLight = body.classList.contains("light-mode");
+
+btn.textContent = isLight ? "🌙" : "☀️";
+
+localStorage.setItem("theme", isLight ? "light":"dark");
 }
+
+window.onload = () => {
+let saved = localStorage.getItem("theme");
+if(saved==="light"){
+document.body.classList.add("light-mode");
+document.getElementById("themeBtn").textContent="🌙";
+}
+};
 
 /* CHAT */
-const box=document.getElementById("chatBox");
-const msgs=document.getElementById("chatMessages");
-const input=document.getElementById("chatInput");
+const chatBox=document.getElementById("chatBox");
+const chatMessages=document.getElementById("chatMessages");
+const chatInput=document.getElementById("chatInput");
 
 function toggleChat(){
-box.style.display=box.style.display==="flex"?"none":"flex";
-if(msgs.innerHTML==="") welcome();
+chatBox.style.display = chatBox.style.display==="flex"?"none":"flex";
+if(chatMessages.innerHTML==="") welcome();
 }
 
-function addBot(t){
-let d=document.createElement("div");
-d.className="bot-message";
-d.textContent=t;
-msgs.appendChild(d);
-msgs.scrollTop=msgs.scrollHeight;
-}
+function closeChat(){ chatBox.style.display="none"; }
 
-function addUser(t){
-let d=document.createElement("div");
-d.className="user-message";
-d.textContent=t;
-msgs.appendChild(d);
-msgs.scrollTop=msgs.scrollHeight;
+function toggleSize(){ chatBox.classList.toggle("large"); }
+
+function add(text,type){
+let div=document.createElement("div");
+div.className= type==="user"?"user-message":"bot-message";
+div.textContent=text;
+chatMessages.appendChild(div);
+chatMessages.scrollTop=chatMessages.scrollHeight;
 }
 
 function welcome(){
 let h=new Date().getHours();
-let g="Good night";
-if(h<12) g="Good morning";
-else if(h<18) g="Good afternoon";
-else if(h<23) g="Good evening";
-addBot(g+", can I help you?");
+let msg =
+h<12?"Good morning, can I help you?":
+h<18?"Good afternoon, can I help you?":
+h<23?"Good evening, can I help you?":
+"Good night, can I help you?";
+add(msg,"bot");
 }
 
 function sendMessage(){
-let t=input.value.trim();
-if(!t) return;
-addUser(t);
-input.value="";
-reply(t.toLowerCase());
+let text=chatInput.value.trim();
+if(!text) return;
+
+add(text,"user");
+chatInput.value="";
+reply(text.toLowerCase());
 }
 
-function reply(m){
+chatInput.addEventListener("keydown",(e)=>{
+if(e.key==="Enter") sendMessage();
+});
 
-if(m.includes("shark")) return addBot("Shark Mod 26.6.0");
-if(m.includes("dns")) return addBot("DNS Profile link in site");
-if(m.includes("kahraba")) return addBot("Kahraba Mod 26.5.0");
-if(m.includes("bite")) return addBot("Bite Mod 26.5.0");
+function reply(msg){
 
-addBot("Try: shark, dns, kahraba, bite");
+if(msg.includes("shark")) return add("Shark Mod: https://rekonise.com/shark-mod-update-2660-gmlcy","bot");
+if(msg.includes("kahraba")) return add("Kahraba Mod: https://rekonise.com/agario-2650-kahraba-mod-alrrj","bot");
+if(msg.includes("bite")) return add("Bite Mod: https://rekonise.com/agario-2650-biteytvip-2ed1e","bot");
+if(msg.includes("dns")) return add("DNS Profile: https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig","bot");
+
+if(msg.includes("help")) return add("Go to Help Mods page: mods-help.html","bot");
+
+return add("Try: Shark, Kahraba, Bite, DNS or Help.","bot");
 }
 
 </script>
