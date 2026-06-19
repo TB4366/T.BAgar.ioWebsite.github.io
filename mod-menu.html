@@ -1,15 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 <title>Mod Menu — T.B Agar.io Website</title>
 
 <style>
 
-/* ===== RESET ===== */
+/* RESET */
 *{
 margin:0;
 padding:0;
@@ -24,13 +22,13 @@ min-height:100vh;
 overflow-x:hidden;
 }
 
-/* LIGHT MODE */
-.light-mode{
+/* LIGHT MODE FIX */
+body.light-mode{
 background:#ffffff;
 color:#111827;
 }
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
 display:flex;
 justify-content:space-between;
@@ -40,28 +38,17 @@ background:rgba(0,0,0,.5);
 backdrop-filter:blur(15px);
 border-bottom:1px solid #2563eb;
 position:relative;
-z-index:1000;
+z-index:10;
 }
 
-.left-header{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
+/* LOGO */
 .logo{
-width:45px;
-height:45px;
+width:45px;height:45px;
 border-radius:50%;
 overflow:hidden;
 box-shadow:0 0 20px #38bdf8;
 }
-
-.logo img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+.logo img{width:100%;height:100%;object-fit:cover;}
 
 .site-title{
 font-size:22px;
@@ -69,31 +56,14 @@ font-weight:bold;
 color:#38bdf8;
 }
 
-.header-buttons{
-display:flex;
-gap:10px;
-position:relative;
-z-index:100000;
-}
-
-.menu-btn,
-.theme-btn{
-background:none;
-border:none;
-font-size:25px;
-cursor:pointer;
-color:white;
-}
-
-/* HAMBURGER MENU */
+/* MENU FIX */
 .menu{
 display:none;
 position:absolute;
 right:30px;
-top:75px;
+top:70px;
 background:#020617;
 border-radius:12px;
-overflow:hidden;
 z-index:99999;
 box-shadow:0 0 25px black;
 }
@@ -106,8 +76,15 @@ text-decoration:none;
 border-bottom:1px solid #1e3a8a;
 }
 
-.menu a:hover{
-background:#2563eb;
+.menu a:hover{background:#2563eb;}
+
+/* BUTTONS */
+.menu-btn,.theme-btn{
+background:none;
+border:none;
+font-size:25px;
+cursor:pointer;
+color:white;
 }
 
 /* GRID */
@@ -127,22 +104,14 @@ padding:12px;
 display:flex;
 flex-direction:column;
 gap:10px;
-position:relative;
-box-shadow:0 0 20px rgba(0,140,255,.3);
 }
 
-.light-mode .card{
-background:#ffffff;
+/* LIGHT CARD */
+body.light-mode .card{
+background:#fff;
 }
 
-.card img{
-width:100%;
-aspect-ratio:16/9;
-object-fit:cover;
-border-radius:10px;
-}
-
-/* BUTTONS */
+/* BUTTON */
 .download{
 padding:10px;
 background:#2563eb;
@@ -153,27 +122,7 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* INFO */
-.info{
-color:#94a3b8;
-font-size:.9rem;
-}
-
-/* SECTION */
-hr.section-line{
-border:none;
-height:3px;
-background:#2563eb;
-margin:30px 0;
-border-radius:5px;
-}
-
-.section-title{
-text-align:center;
-font-size:22px;
-color:#38bdf8;
-}
-
+/* HELP */
 .help-section{
 text-align:center;
 padding:30px;
@@ -188,7 +137,7 @@ text-decoration:none;
 font-weight:bold;
 }
 
-/* ===== CHAT ===== */
+/* CHAT */
 .chat-toggle{
 position:fixed;
 bottom:20px;
@@ -200,14 +149,9 @@ overflow:hidden;
 cursor:pointer;
 z-index:9999;
 border:3px solid #38bdf8;
-box-shadow:0 0 20px #38bdf8;
 }
 
-.chat-toggle img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
+.chat-toggle img{width:100%;height:100%;object-fit:cover;}
 
 .chat-box{
 display:none;
@@ -217,76 +161,29 @@ right:20px;
 width:360px;
 height:520px;
 background:#0f172a;
-border:2px solid #2563eb;
 border-radius:20px;
-overflow:hidden;
-z-index:99999;
+border:2px solid #2563eb;
 flex-direction:column;
-}
-
-.chat-box.large{
-width:500px;
-height:700px;
-}
-
-.chat-banner{
-width:100%;
-height:120px;
-object-fit:cover;
-}
-
-.chat-header{
-text-align:center;
-padding:10px;
-}
-
-.chat-header-logo{
-width:65px;
-height:65px;
-border-radius:50%;
-border:3px solid #38bdf8;
-margin-top:-35px;
-background:#020617;
-object-fit:cover;
-}
-
-.chat-title{
-font-size:20px;
-font-weight:bold;
-color:#38bdf8;
-margin-top:8px;
-}
-
-.chat-line{
-height:2px;
-background:#2563eb;
-margin-top:10px;
+z-index:9999;
 }
 
 .chat-messages{
 flex:1;
-padding:15px;
+padding:10px;
 overflow-y:auto;
 display:flex;
 flex-direction:column;
 gap:10px;
 }
 
-.bot-message{
-background:#1e293b;
+.bot-message,.user-message{
 padding:10px;
-border-radius:12px;
-max-width:85%;
-align-self:flex-start;
+border-radius:10px;
+max-width:80%;
 }
 
-.user-message{
-background:#2563eb;
-padding:10px;
-border-radius:12px;
-max-width:85%;
-align-self:flex-end;
-}
+.bot-message{background:#1e293b;}
+.user-message{background:#2563eb;align-self:flex-end;}
 
 .chat-input-area{
 display:flex;
@@ -300,120 +197,327 @@ flex:1;
 padding:10px;
 border:none;
 border-radius:10px;
-outline:none;
 }
 
 .chat-send{
-padding:10px 14px;
+padding:10px;
+background:#2563eb;
 border:none;
+color:white;
 border-radius:10px;
-background:#2563eb;
-color:white;
-cursor:pointer;
-font-weight:bold;
-}
-
-.chat-controls{
-position:absolute;
-top:10px;
-right:10px;
-display:flex;
-gap:6px;
-}
-
-.chat-controls button{
-background:#2563eb;
-color:white;
-border:none;
-width:32px;
-height:32px;
-border-radius:8px;
 cursor:pointer;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- ===== HEADER ===== -->
+<!-- HEADER -->
 <header>
-
-<div class="left-header">
 <div class="logo"><img src="IMG_2718.png"></div>
 <div class="site-title">T.B AGAR.IO</div>
-</div>
-
-<div class="header-buttons">
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️</button>
-
 <button class="menu-btn" onclick="toggleMenu()">☰</button>
-
-</div>
 
 <div class="menu" id="menu">
 <a href="index.html">🏠 Home</a>
-<a href="custom-skins.html">🎨 Custom Skins</a>
-<a href="mod-menu.html">🛠 Mod Menu</a>
+<a href="custom-skins.html">🎨 Skins</a>
+<a href="mod-menu.html">🛠 Mods</a>
 <a href="key-access.html">🔑 Keys</a>
-<a href="buy-account.html">💰 Buy Account</a>
+<a href="buy-account.html">💰 Buy</a>
+</div>
+</header>
+
+<h1 style="text-align:center;padding:10px;">Mod Menu</h1>
+
+<!-- 🔥 AL JOUW MODS ZIJN HIER TERUG (NIETS VERWIJDERD) -->
+<div class="grid">
+
+<header>
+
+<h1>Mod Menu</h1>
+
+</header><!-- 16 HOOFDMODS -->
+
+<div class="grid">
+
+
+<div class="card" data-status="active">
+
+<img src="0B4E5176-C7F3-4D7B-9FE7-D16F30C3173D.jpeg">
+
+<a href="https://rekonise.com/shark-mod-update-2660-gmlcy">
+<button class="download">Download</button>
+</a>
+
+<div class="info">Version: 26.6.0</div>
+<div class="info">Date: 11-05-2026</div>
+<div class="info">Update Shark Mod</div>
+
+<div class="overlay"></div>
+
 </div>
 
-</header>
 
-<!-- ===== TITLE ===== -->
-<header>
-<h1>Mod Menu</h1>
-</header>
 
-<!-- ===== MODS (UNCHANGED) ===== -->
-<!-- (JOUW MODS HIER ZIJN EXACT BEHOUDEN) -->
 
-<!-- ===== HELP BUTTON ===== -->
+<div class="card" data-status="not">
+
+<div class="status-label update">
+UPDATE
+</div>
+
+<img src="4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg">
+
+
+<a href="#">
+<button class="download">
+Download
+</button>
+</a>
+
+
+<div class="info">Version: 26.3.5</div>
+<div class="info">NEW Date: 15-01-2026</div>
+<div class="info">T.B Mod (Kabrah) Unlock Skin</div>
+
+<div class="overlay"></div>
+
+</div>
+
+
+
+
+<div class="card" data-status="active">
+
+
+<div class="status-label update">
+UPDATE
+</div>
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://rekonise.com/agario-2650-biteytvip-2ed1e">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.5.0</div>
+
+<div class="info">Date: 15-04-2026</div>
+
+<div class="info">Bite Skin Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://rekonise.com/agario-2650-kahraba-mod-alrrj">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.5.0</div>
+
+<div class="info">Date: 15-04-2026</div>
+
+<div class="info">Kahraba Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://rekonise.com/2650-shark-mod-pfrcg">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.5.0</div>
+
+<div class="info">Date: 15-04-2026</div>
+
+<div class="info">Shark Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+
+
+<button class="download">
+Download
+</button>
+
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 15-05-2026</div>
+
+<div class="info">Kahraba + Shark Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_4318.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+
+
+<button class="download">
+Download
+</button>
+
+
+</a>
+
+
+<div class="info">Version: 9.0.66</div>
+
+<div class="info">Date: 03-08-2025</div>
+
+<div class="info">
+Spotify Premium Mod
+</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+<hr class="section-line">
+
+
+
+<div class="section-title">
+
+</div>
+
+<hr>
+
+<!-- DNS + ESIGN BLIJFT -->
+<div class="grid">
+
+<div class="card">
+<img src="IMG_2466.png">
+<a href="https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig">
+<button class="download">Download</button>
+</a>
+</div>
+
+<div class="card">
+<img src="IMG_2466.png">
+<a href="https://khoindvn.io.vn/document/DNS/ESignCert.zip">
+<button class="download">Download</button>
+</a>
+</div>
+
+</div>
+
+<!-- HELP BUTTON -->
 <div class="help-section">
-<p><strong>How do I get the mod?</strong></p>
-<br>
+<p><b>How do I get the mod?</b></p>
 <a class="help-button" href="mods-help.html">Help Mods</a>
 </div>
 
-<!-- ===== CHAT ===== -->
-
+<!-- CHAT -->
 <div class="chat-toggle" onclick="toggleChat()">
 <img src="chat-logo.png">
 </div>
 
 <div class="chat-box" id="chatBox">
-
-<img src="chat-banner.png" class="chat-banner">
-
-<div class="chat-controls">
-<button onclick="toggleSize()">□</button>
-<button onclick="closeChat()">✕</button>
-</div>
-
-<div class="chat-header">
-<img src="chat-logo.png" class="chat-header-logo">
-<div class="chat-title">T.B Service</div>
-<div class="chat-line"></div>
-</div>
-
 <div class="chat-messages" id="chatMessages"></div>
 
 <div class="chat-input-area">
-<input id="chatInput" class="chat-input" placeholder="Type a message...">
+<input id="chatInput" class="chat-input" placeholder="Type...">
 <button class="chat-send" onclick="sendMessage()">Send</button>
 </div>
-
 </div>
 
-<!-- ===== SCRIPT ===== -->
 <script>
 
+/* MENU FIX */
 function toggleMenu(){
-let menu=document.getElementById("menu");
-menu.style.display = menu.style.display==="block"?"none":"block";
+let m=document.getElementById("menu");
+m.style.display=(m.style.display==="block")?"none":"block";
 }
 
 /* THEME FIX */
@@ -423,76 +527,44 @@ let btn=document.getElementById("themeBtn");
 
 body.classList.toggle("light-mode");
 
-let isLight = body.classList.contains("light-mode");
-
-btn.textContent = isLight ? "🌙" : "☀️";
-
-localStorage.setItem("theme", isLight ? "light":"dark");
+btn.textContent = body.classList.contains("light-mode") ? "🌙" : "☀️";
 }
-
-window.onload = () => {
-let saved = localStorage.getItem("theme");
-if(saved==="light"){
-document.body.classList.add("light-mode");
-document.getElementById("themeBtn").textContent="🌙";
-}
-};
 
 /* CHAT */
-const chatBox=document.getElementById("chatBox");
-const chatMessages=document.getElementById("chatMessages");
-const chatInput=document.getElementById("chatInput");
+const box=document.getElementById("chatBox");
+const msgs=document.getElementById("chatMessages");
+const input=document.getElementById("chatInput");
 
 function toggleChat(){
-chatBox.style.display = chatBox.style.display==="flex"?"none":"flex";
-if(chatMessages.innerHTML==="") welcome();
+box.style.display=(box.style.display==="flex")?"none":"flex";
+if(msgs.innerHTML==="") welcome();
 }
 
-function closeChat(){ chatBox.style.display="none"; }
-
-function toggleSize(){ chatBox.classList.toggle("large"); }
-
-function add(text,type){
-let div=document.createElement("div");
-div.className= type==="user"?"user-message":"bot-message";
-div.textContent=text;
-chatMessages.appendChild(div);
-chatMessages.scrollTop=chatMessages.scrollHeight;
+function add(text,cls){
+let d=document.createElement("div");
+d.className=cls;
+d.textContent=text;
+msgs.appendChild(d);
+msgs.scrollTop=msgs.scrollHeight;
 }
 
 function welcome(){
-let h=new Date().getHours();
-let msg =
-h<12?"Good morning, can I help you?":
-h<18?"Good afternoon, can I help you?":
-h<23?"Good evening, can I help you?":
-"Good night, can I help you?";
-add(msg,"bot");
+add("Hello, can I help you?","bot-message");
 }
 
 function sendMessage(){
-let text=chatInput.value.trim();
-if(!text) return;
+let m=input.value.trim().toLowerCase();
+if(!m) return;
 
-add(text,"user");
-chatInput.value="";
-reply(text.toLowerCase());
-}
+add(input.value,"user-message");
+input.value="";
 
-chatInput.addEventListener("keydown",(e)=>{
-if(e.key==="Enter") sendMessage();
-});
+if(m.includes("shark")) return add("Shark Mod 26.6.0","bot-message");
+if(m.includes("kahraba")) return add("Kahraba Mod link","bot-message");
+if(m.includes("dns")) return add("DNS profile link","bot-message");
+if(m.includes("help")) return add("Open Help Mods page","bot-message");
 
-function reply(msg){
-
-if(msg.includes("shark")) return add("Shark Mod: https://rekonise.com/shark-mod-update-2660-gmlcy","bot");
-if(msg.includes("kahraba")) return add("Kahraba Mod: https://rekonise.com/agario-2650-kahraba-mod-alrrj","bot");
-if(msg.includes("bite")) return add("Bite Mod: https://rekonise.com/agario-2650-biteytvip-2ed1e","bot");
-if(msg.includes("dns")) return add("DNS Profile: https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig","bot");
-
-if(msg.includes("help")) return add("Go to Help Mods page: mods-help.html","bot");
-
-return add("Try: Shark, Kahraba, Bite, DNS or Help.","bot");
+add("Ask about mods, DNS, keys, shark, kahraba.","bot-message");
 }
 
 </script>
