@@ -1,13 +1,16 @@
 <!doctype html>
 <html lang="en">
 <head>
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <title>Mod Menu — T.B Agar.io Website</title>
+
 
 <style>
 
-/* RESET */
+
 *{
 margin:0;
 padding:0;
@@ -15,231 +18,587 @@ box-sizing:border-box;
 font-family:Arial,sans-serif;
 }
 
+
+
+/* LOADING */
+
+#loader{
+
+position:fixed;
+inset:0;
+background:#020617;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:15px;
+color:white;
+font-size:28px;
+z-index:9999;
+
+}
+
+
+.spinner{
+
+width:38px;
+height:38px;
+border:5px solid #1e40af;
+border-top:5px solid #38bdf8;
+border-radius:50%;
+animation:spin 1s linear infinite;
+
+}
+
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+
+
+
+/* THEME */
+
 body{
+
 background:#020617;
 color:white;
 min-height:100vh;
 overflow-x:hidden;
+
 }
 
-/* LIGHT MODE FIX */
-body.light-mode{
+
+.light-mode{
+
 background:#ffffff;
 color:#111827;
+
 }
 
+
+
+
+/* BLUE GLOW */
+
+body::before{
+
+content:"";
+position:fixed;
+width:600px;
+height:600px;
+
+background:radial-gradient(circle,#0ea5e9,transparent 70%);
+
+top:-250px;
+right:-200px;
+
+opacity:.25;
+z-index:-1;
+
+}
+
+
+
 /* HEADER */
+
 header{
+
 display:flex;
 justify-content:space-between;
 align-items:center;
+
 padding:14px 30px;
+
 background:rgba(0,0,0,.5);
+
 backdrop-filter:blur(15px);
+
 border-bottom:1px solid #2563eb;
-position:relative;
-z-index:10;
+
 }
 
-/* LOGO */
-.logo{
-width:45px;height:45px;
-border-radius:50%;
-overflow:hidden;
-box-shadow:0 0 20px #38bdf8;
+
+
+.left-header{
+
+display:flex;
+align-items:center;
+gap:12px;
+
 }
-.logo img{width:100%;height:100%;object-fit:cover;}
+
+
+
+.logo{
+
+width:45px;
+height:45px;
+
+border-radius:50%;
+
+overflow:hidden;
+
+box-shadow:0 0 20px #38bdf8;
+
+}
+
+
+
+.logo img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+
+}
+
+
 
 .site-title{
+
 font-size:22px;
 font-weight:bold;
+
 color:#38bdf8;
+
 }
 
-/* MENU FIX */
-.menu{
-display:none;
-position:absolute;
-right:30px;
-top:70px;
-background:#020617;
-border-radius:12px;
-z-index:99999;
-box-shadow:0 0 25px black;
+
+
+
+.header-buttons{
+
+display:flex;
+gap:10px;
+
 }
+
+
+
+.menu-btn,
+.theme-btn{
+
+background:none;
+
+border:none;
+
+font-size:25px;
+
+cursor:pointer;
+
+color:white;
+
+}
+
+
+
+/* HAMBURGER MENU */
+
+
+.menu{
+
+display:none;
+
+position:absolute;
+
+right:30px;
+
+top:75px;
+
+background:#020617;
+
+border-radius:12px;
+
+overflow:hidden;
+
+z-index:1000;
+
+box-shadow:0 0 25px black;
+
+}
+
+
 
 .menu a{
+
 display:block;
+
 padding:14px 20px;
+
 color:white;
+
 text-decoration:none;
+
 border-bottom:1px solid #1e3a8a;
+
 }
 
-.menu a:hover{background:#2563eb;}
 
-/* BUTTONS */
-.menu-btn,.theme-btn{
-background:none;
-border:none;
-font-size:25px;
-cursor:pointer;
-color:white;
+
+.menu a:hover{
+
+background:#2563eb;
+
 }
+
+
+
+
+
+/* HEADER TITLE */
+
+header h1{
+
+text-align:center;
+
+}
+
+
+
+
 
 /* GRID */
+
 .grid{
+
 display:grid;
+
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
 gap:20px;
+
 padding:20px;
+
 }
+
+
 
 /* CARD */
+
 .card{
+
 background:#0f172a;
+
 border-radius:15px;
+
 border:1px solid #1e40af;
+
 padding:12px;
+
 display:flex;
+
 flex-direction:column;
+
 gap:10px;
+
+position:relative;
+
+box-shadow:0 0 20px rgba(0,140,255,.3);
+
 }
 
-/* LIGHT CARD */
-body.light-mode .card{
-background:#fff;
+
+
+.light-mode .card{
+
+background:#ffffff;
+
 }
 
-/* BUTTON */
-.download{
-padding:10px;
-background:#2563eb;
-border:none;
+
+
+
+
+.card img{
+
+width:100%;
+
+aspect-ratio:16/9;
+
+object-fit:cover;
+
 border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
+
 }
 
-/* HELP */
-.help-section{
-text-align:center;
-padding:30px;
+
+
+/* STATUS */
+
+.status-label{
+
+position:absolute;
+
+top:12px;
+
+left:12px;
+
+padding:6px 10px;
+
+border-radius:6px;
+
+font-weight:bold;
+
+display:none;
+
 }
+
+
+
+.update{
+
+background:#ef4444;
+
+}
+
+
+.soon{
+
+background:#2563eb;
+
+}
+
+
+.not{
+
+background:#7c3aed;
+
+}
+
+
+
+
+
+/* BUTTONS */
+
+
+.download,
+.Site,
+.Install{
+
+padding:10px;
+
+background:#2563eb;
+
+border:none;
+
+border-radius:10px;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+
+
+.download:hover,
+.Site:hover,
+.Install:hover{
+
+transform:scale(1.05);
+
+}
+
+
+
+
+
+.info{
+
+color:#94a3b8;
+
+font-size:.9rem;
+
+}
+
+
+
+
+
+.overlay{
+
+position:absolute;
+
+inset:0;
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+background:rgba(0,0,0,.6);
+
+border-radius:15px;
+
+font-weight:bold;
+
+}
+
+
+
+
+
+hr.section-line{
+
+border:none;
+
+height:3px;
+
+background:#2563eb;
+
+margin:30px 0;
+
+border-radius:5px;
+
+}
+
+
+
+.section-title{
+
+text-align:center;
+
+font-size:22px;
+
+color:#38bdf8;
+
+}
+
+
+
+
+.help-section{
+
+text-align:center;
+
+padding:30px;
+
+}
+
+
 
 .help-button{
+
 background:#2563eb;
+
 padding:12px 25px;
+
 border-radius:10px;
+
 color:white;
+
 text-decoration:none;
+
 font-weight:bold;
+
 }
 
-/* CHAT */
-.chat-toggle{
-position:fixed;
-bottom:20px;
-right:20px;
-width:70px;
-height:70px;
-border-radius:50%;
-overflow:hidden;
-cursor:pointer;
-z-index:9999;
-border:3px solid #38bdf8;
-}
-
-.chat-toggle img{width:100%;height:100%;object-fit:cover;}
-
-.chat-box{
-display:none;
-position:fixed;
-bottom:100px;
-right:20px;
-width:360px;
-height:520px;
-background:#0f172a;
-border-radius:20px;
-border:2px solid #2563eb;
-flex-direction:column;
-z-index:9999;
-}
-
-.chat-messages{
-flex:1;
-padding:10px;
-overflow-y:auto;
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.bot-message,.user-message{
-padding:10px;
-border-radius:10px;
-max-width:80%;
-}
-
-.bot-message{background:#1e293b;}
-.user-message{background:#2563eb;align-self:flex-end;}
-
-.chat-input-area{
-display:flex;
-padding:10px;
-gap:8px;
-border-top:1px solid #2563eb;
-}
-
-.chat-input{
-flex:1;
-padding:10px;
-border:none;
-border-radius:10px;
-}
-
-.chat-send{
-padding:10px;
-background:#2563eb;
-border:none;
-color:white;
-border-radius:10px;
-cursor:pointer;
-}
 
 </style>
+
 </head>
+
 
 <body>
 
-<!-- HEADER -->
-<header>
-<div class="logo"><img src="IMG_2718.png"></div>
-<div class="site-title">T.B AGAR.IO</div>
 
-<button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️</button>
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+<div id="loader">
+
+Loading Agar.io Mods...
+
+<div class="spinner"></div>
+
+</div>
+
+
+
+
+
+<header>
+
+
+<div class="left-header">
+
+
+<div class="logo">
+
+<img src="IMG_2718.png">
+
+</div>
+
+
+<div class="site-title">
+
+T.B AGAR.IO
+
+</div>
+
+
+</div>
+
+
+
+
+<div class="header-buttons">
+
+
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+
+☀️
+
+</button>
+
+
+<button class="menu-btn" onclick="toggleMenu()">
+
+☰
+
+</button>
+
+
+</div>
+
+
+
 
 <div class="menu" id="menu">
+
+
 <a href="index.html">🏠 Home</a>
-<a href="custom-skins.html">🎨 Skins</a>
-<a href="mod-menu.html">🛠 Mods</a>
+
+<a href="custom-skins.html">🎨 Custom Skins</a>
+
+<a href="mod-menu.html">🛠 Mod Menu</a>
+
 <a href="key-access.html">🔑 Keys</a>
-<a href="buy-account.html">💰 Buy</a>
+
+<a href="buy-account.html">💰 Buy Account</a>
+
+
 </div>
+
+
+
 </header>
 
-<h1 style="text-align:center;padding:10px;">Mod Menu</h1>
 
-<!-- 🔥 AL JOUW MODS ZIJN HIER TERUG (NIETS VERWIJDERD) -->
-<div class="grid">
 
 <header>
 
 <h1>Mod Menu</h1>
 
-</header><!-- 16 HOOFDMODS -->
+</header>
+<!-- 16 HOOFDMODS -->
 
 <div class="grid">
 
@@ -469,105 +828,280 @@ Spotify Premium Mod
 
 <div class="section-title">
 
+DNS PROFILE
+
 </div>
 
-<hr>
 
-<!-- DNS + ESIGN BLIJFT -->
+
+
 <div class="grid">
 
+
+
 <div class="card">
+
+
 <img src="IMG_2466.png">
+
+
 <a href="https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig">
-<button class="download">Download</button>
+
+<button class="download">
+
+Download
+
+</button>
+
 </a>
+
+
+<div class="info">
+UPDATE Download DNS Profile
 </div>
+
+<div class="info">
+Date: 16-02-2026
+</div>
+
+
+</div>
+
+
+
+
 
 <div class="card">
+
+
 <img src="IMG_2466.png">
+
+
 <a href="https://khoindvn.io.vn/document/DNS/ESignCert.zip">
-<button class="download">Download</button>
+
+<button class="download">
+
+Download
+
+</button>
+
 </a>
+
+
+<div class="info">
+UPDATE Download Certificate
 </div>
+
+
+<div class="info">
+Esign Certificate
+</div>
+
 
 </div>
 
-<!-- HELP BUTTON -->
+
+
+</div>
+
+
+
+
+<hr class="section-line">
+
+
+
+
 <div class="help-section">
-<p><b>How do I get the mod?</b></p>
-<a class="help-button" href="mods-help.html">Help Mods</a>
+
+
+<p><strong>How do I get the mod?</strong></p>
+
+
+<br>
+
+
+<a class="help-button" href="mods-help.html">
+
+Help Mods
+
+</a>
+
+
 </div>
 
-<!-- CHAT -->
-<div class="chat-toggle" onclick="toggleChat()">
-<img src="chat-logo.png">
-</div>
 
-<div class="chat-box" id="chatBox">
-<div class="chat-messages" id="chatMessages"></div>
 
-<div class="chat-input-area">
-<input id="chatInput" class="chat-input" placeholder="Type...">
-<button class="chat-send" onclick="sendMessage()">Send</button>
-</div>
-</div>
+
+
 
 <script>
 
-/* MENU FIX */
+
+
+/* LOADING */
+
+setTimeout(()=>{
+
+
+document.getElementById("loader").style.display="none";
+
+
+},2000 + Math.random()*2000);
+
+
+
+
+
+
+
+/* MENU */
+
+
 function toggleMenu(){
-let m=document.getElementById("menu");
-m.style.display=(m.style.display==="block")?"none":"block";
+
+
+let menu=document.getElementById("menu");
+
+
+menu.style.display =
+
+menu.style.display==="block"
+
+?"none"
+
+:"block";
+
+
 }
 
-/* THEME FIX */
+
+
+
+
+
+
+
+/* DARK LIGHT */
+
+
 function toggleTheme(){
+
+
 let body=document.body;
+
 let btn=document.getElementById("themeBtn");
+
+
 
 body.classList.toggle("light-mode");
 
-btn.textContent = body.classList.contains("light-mode") ? "🌙" : "☀️";
+
+
+if(body.classList.contains("light-mode")){
+
+
+btn.textContent="🌙";
+
+
+}else{
+
+
+btn.textContent="☀️";
+
+
 }
 
-/* CHAT */
-const box=document.getElementById("chatBox");
-const msgs=document.getElementById("chatMessages");
-const input=document.getElementById("chatInput");
 
-function toggleChat(){
-box.style.display=(box.style.display==="flex")?"none":"flex";
-if(msgs.innerHTML==="") welcome();
 }
 
-function add(text,cls){
-let d=document.createElement("div");
-d.className=cls;
-d.textContent=text;
-msgs.appendChild(d);
-msgs.scrollTop=msgs.scrollHeight;
+
+
+
+
+
+/* STATUS SYSTEM */
+
+
+document.querySelectorAll(".card").forEach(card=>{
+
+
+let status=card.dataset.status;
+
+let btn=card.querySelector("button");
+
+let label=card.querySelector(".status-label");
+
+let overlay=card.querySelector(".overlay");
+
+
+
+if(label){
+
+label.style.display="none";
+
 }
 
-function welcome(){
-add("Hello, can I help you?","bot-message");
+
+
+if(status==="not"){
+
+
+
+if(label){
+
+label.style.display="block";
+
 }
 
-function sendMessage(){
-let m=input.value.trim().toLowerCase();
-if(!m) return;
 
-add(input.value,"user-message");
-input.value="";
 
-if(m.includes("shark")) return add("Shark Mod 26.6.0","bot-message");
-if(m.includes("kahraba")) return add("Kahraba Mod link","bot-message");
-if(m.includes("dns")) return add("DNS profile link","bot-message");
-if(m.includes("help")) return add("Open Help Mods page","bot-message");
+btn.classList.add("locked");
 
-add("Ask about mods, DNS, keys, shark, kahraba.","bot-message");
+btn.textContent="Unavailable";
+
+
+btn.onclick=(e)=>{
+
+
+e.preventDefault();
+
+
+alert("This mod is not available");
+
+
+};
+
+
+
+card.style.opacity="0.45";
+
+
+
+if(overlay){
+
+
+overlay.style.display="flex";
+
+overlay.textContent="Not Available";
+
+
 }
+
+
+
+}
+
+
+
+});
+
+
 
 </script>
 
+
+
 </body>
+
 </html>
