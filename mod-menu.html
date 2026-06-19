@@ -1098,7 +1098,629 @@ overlay.textContent="Not Available";
 
 
 </script>
+<!-- T.B SERVICE CHAT -->
 
+<style>
+
+.chat-toggle{
+
+position:fixed;
+bottom:20px;
+right:20px;
+
+width:70px;
+height:70px;
+
+border-radius:50%;
+
+overflow:hidden;
+
+cursor:pointer;
+
+z-index:9999;
+
+background:#020617;
+
+border:3px solid #38bdf8;
+
+box-shadow:0 0 20px #38bdf8;
+
+}
+
+.chat-toggle img{
+
+width:100%;
+height:100%;
+object-fit:cover;
+
+}
+
+
+
+.chat-box{
+
+display:none;
+
+position:fixed;
+
+bottom:100px;
+right:20px;
+
+width:360px;
+height:520px;
+
+background:#0f172a;
+
+border:2px solid #2563eb;
+
+border-radius:20px;
+
+overflow:hidden;
+
+z-index:9999;
+
+box-shadow:0 0 35px rgba(0,140,255,.5);
+
+flex-direction:column;
+
+}
+
+
+
+.chat-box.large{
+
+width:500px;
+height:700px;
+
+}
+
+
+
+.chat-banner{
+
+width:100%;
+height:120px;
+
+object-fit:cover;
+
+}
+
+
+
+.chat-header{
+
+text-align:center;
+
+padding:10px;
+
+}
+
+
+
+.chat-header-logo{
+
+width:65px;
+height:65px;
+
+border-radius:50%;
+
+border:3px solid #38bdf8;
+
+margin-top:-35px;
+
+background:#020617;
+
+object-fit:cover;
+
+}
+
+
+
+.chat-title{
+
+font-size:20px;
+font-weight:bold;
+
+color:#38bdf8;
+
+margin-top:8px;
+
+}
+
+
+
+.chat-line{
+
+height:2px;
+
+background:#2563eb;
+
+margin-top:10px;
+
+}
+
+
+
+.chat-messages{
+
+flex:1;
+
+padding:15px;
+
+overflow-y:auto;
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+
+
+.bot-message{
+
+background:#1e293b;
+
+padding:10px 12px;
+
+border-radius:12px;
+
+max-width:85%;
+
+align-self:flex-start;
+
+}
+
+
+
+.user-message{
+
+background:#2563eb;
+
+padding:10px 12px;
+
+border-radius:12px;
+
+max-width:85%;
+
+align-self:flex-end;
+
+}
+
+
+
+.chat-input-area{
+
+display:flex;
+
+padding:10px;
+
+gap:8px;
+
+border-top:1px solid #2563eb;
+
+}
+
+
+
+.chat-input{
+
+flex:1;
+
+padding:10px;
+
+border:none;
+
+border-radius:10px;
+
+outline:none;
+
+}
+
+
+
+.chat-send{
+
+padding:10px 14px;
+
+border:none;
+
+border-radius:10px;
+
+background:#2563eb;
+
+color:white;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+
+
+
+.chat-controls{
+
+position:absolute;
+
+top:10px;
+right:10px;
+
+display:flex;
+gap:6px;
+
+}
+
+
+
+.chat-controls button{
+
+background:#2563eb;
+
+color:white;
+
+border:none;
+
+width:32px;
+height:32px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+</style>
+
+
+
+<div class="chat-toggle" onclick="toggleChat()">
+
+<img src="chat-logo.png" alt="Chat">
+
+</div>
+
+
+
+<div class="chat-box" id="chatBox">
+
+<img src="chat-banner.png" class="chat-banner">
+
+<div class="chat-controls">
+
+<button onclick="toggleSize()">□</button>
+
+<button onclick="closeChat()">✕</button>
+
+</div>
+
+<div class="chat-header">
+
+<img src="chat-logo.png" class="chat-header-logo">
+
+<div class="chat-title">
+
+T.B Service
+
+</div>
+
+<div class="chat-line"></div>
+
+</div>
+
+<div class="chat-messages" id="chatMessages">
+
+</div>
+
+<div class="chat-input-area">
+
+<input
+type="text"
+id="chatInput"
+class="chat-input"
+placeholder="Type a message..."
+>
+
+<button
+class="chat-send"
+onclick="sendMessage()"
+>
+
+Send
+
+</button>
+
+</div>
+
+</div>
+  
+/* =========================
+   T.B SERVICE CHAT
+========================= */
+
+const chatBox = document.getElementById("chatBox");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+
+function toggleChat(){
+
+if(chatBox.style.display==="flex"){
+chatBox.style.display="none";
+}else{
+chatBox.style.display="flex";
+
+if(chatMessages.innerHTML===""){
+welcomeMessage();
+}
+
+}
+
+}
+
+function closeChat(){
+chatBox.style.display="none";
+}
+
+function toggleSize(){
+chatBox.classList.toggle("large");
+}
+
+function addBotMessage(text){
+
+const msg=document.createElement("div");
+
+msg.className="bot-message";
+
+msg.textContent=text;
+
+chatMessages.appendChild(msg);
+
+chatMessages.scrollTop=chatMessages.scrollHeight;
+
+}
+
+function addUserMessage(text){
+
+const msg=document.createElement("div");
+
+msg.className="user-message";
+
+msg.textContent=text;
+
+chatMessages.appendChild(msg);
+
+chatMessages.scrollTop=chatMessages.scrollHeight;
+
+}
+
+function welcomeMessage(){
+
+const hour=new Date().getHours();
+
+let greeting="";
+
+if(hour>=5 && hour<12){
+greeting="Good morning, can I help you?";
+}
+else if(hour>=12 && hour<18){
+greeting="Good afternoon, can I help you?";
+}
+else if(hour>=18 && hour<23){
+greeting="Good evening, can I help you?";
+}
+else{
+greeting="Good night, can I help you?";
+}
+
+addBotMessage(greeting);
+
+}
+
+function sendMessage(){
+
+const text=chatInput.value.trim();
+
+if(text==="") return;
+
+addUserMessage(text);
+
+chatInput.value="";
+
+reply(text.toLowerCase());
+
+}
+
+chatInput.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+sendMessage();
+}
+
+});
+
+function reply(message){
+
+/* HOME */
+
+if(message.includes("home")){
+
+addBotMessage(
+"Home page: index.html"
+);
+
+return;
+
+}
+
+/* DISCORD */
+
+if(message.includes("discord")){
+
+addBotMessage(
+"Discord: https://discord.gg/qhuXPrVzBx"
+);
+
+return;
+
+}
+
+/* YOUTUBE */
+
+if(message.includes("youtube")){
+
+addBotMessage(
+"YouTube: https://www.youtube.com/@T.B6"
+);
+
+return;
+
+}
+
+/* INSTAGRAM */
+
+if(message.includes("instagram")){
+
+addBotMessage(
+"Instagram: https://www.instagram.com/t.bagar.io/"
+);
+
+return;
+
+}
+
+/* SHARK MOD */
+
+if(message.includes("shark")){
+
+addBotMessage(
+"Latest Shark Mod: Version 26.6.0 Download: https://rekonise.com/shark-mod-update-2660-gmlcy"
+);
+
+return;
+
+}
+
+/* KAHRABA */
+
+if(message.includes("kahraba")){
+
+addBotMessage(
+"Kahraba Mod Version 26.5.0 Download: https://rekonise.com/agario-2650-kahraba-mod-alrrj"
+);
+
+return;
+
+}
+
+/* BITE */
+
+if(message.includes("bite")){
+
+addBotMessage(
+"Bite Mod Version 26.5.0 Download: https://rekonise.com/agario-2650-biteytvip-2ed1e"
+);
+
+return;
+
+}
+
+/* DNS */
+
+if(message.includes("dns")){
+
+addBotMessage(
+"DNS Profile Download: https://github.com/dns-khoindvn/top-country-stats/releases/download/DNS/signed_khoindvn_fullchain.mobileconfig"
+);
+
+return;
+
+}
+
+/* CERTIFICATE */
+
+if(
+message.includes("certificate") ||
+message.includes("esign")
+){
+
+addBotMessage(
+"Certificate Download: https://khoindvn.io.vn/document/DNS/ESignCert.zip"
+);
+
+return;
+
+}
+
+/* CUSTOM SKINS */
+
+if(
+message.includes("skin") ||
+message.includes("skins")
+){
+
+addBotMessage(
+"Custom Skins Page: custom-skins.html"
+);
+
+return;
+
+}
+
+/* KEYS */
+
+if(
+message.includes("key") ||
+message.includes("keys")
+){
+
+addBotMessage(
+"Keys Page: key-access.html"
+);
+
+return;
+
+}
+
+/* MODS */
+
+if(
+message.includes("mod") ||
+message.includes("mods")
+){
+
+addBotMessage(
+"Available mods: Shark Mod, Kahraba Mod, Bite Mod, Kahraba + Shark Mod."
+);
+
+return;
+
+}
+
+/* HELP */
+
+if(
+message.includes("help") ||
+message.includes("install")
+){
+
+addBotMessage(
+"Installation help is available on the Help Mods page."
+);
+
+return;
+
+}
+
+/* DEFAULT */
+
+addBotMessage(
+"Sorry, I don't understand that yet. Try asking about Shark Mod, Kahraba Mod, Bite Mod, DNS, Keys, Discord, YouTube, Instagram or Custom Skins."
+);
+
+}
+  
 
 
 </body>
