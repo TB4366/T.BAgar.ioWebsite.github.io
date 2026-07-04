@@ -1151,6 +1151,7 @@ overlay.textContent="Not Available";
 
 
 </script>
+
   <script>
 
 document.querySelectorAll(".card").forEach(card => {
@@ -1163,6 +1164,7 @@ document.querySelectorAll(".card").forEach(card => {
     e.preventDefault();
 
     overlay.style.display = "flex";
+
     overlay.innerHTML = `
       <div>
         Download ${getModName(card)}...
@@ -1202,6 +1204,7 @@ function showVerify(card, overlay, link){
   `;
 
   function runLoader(id, cb){
+
     document.getElementById(id).innerHTML = `
       <div style="width:18px;height:18px;border:3px solid #333;border-top:3px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite;"></div>
     `;
@@ -1210,16 +1213,17 @@ function showVerify(card, overlay, link){
       document.getElementById(id).innerHTML = "✔";
       cb();
     }, Math.random()*7000 + 5000);
+
   }
 
   document.getElementById("ytBtn").onclick = () => {
     window.open("https://www.youtube.com/@T.B6","_blank");
-    runLoader("ytStatus", () => { ytDone = true; check(); });
+    runLoader("ytStatus", () => { ytDone = true; checkUnlock(); });
   };
 
   document.getElementById("igBtn").onclick = () => {
     window.open("https://www.instagram.com/t.bagar.io/","_blank");
-    runLoader("igStatus", () => { igDone = true; check(); });
+    runLoader("igStatus", () => { igDone = true; checkUnlock(); });
   };
 
   const unlockBtn = document.getElementById("unlockBtn");
@@ -1228,33 +1232,42 @@ function showVerify(card, overlay, link){
     alert("Complete YouTube and Instagram first.");
   };
 
-  function check(){
+  function checkUnlock(){
     if(ytDone && igDone){
       unlockBtn.style.background = "#22c55e";
       unlockBtn.innerHTML = "🔓 Unlock";
 
-      unlockBtn.onclick = () => {
-        let texts = ["Downloading...", "Please wait..."];
-        let i = 0;
-
-        overlay.innerHTML = `
-          <div>
-            <div id="dlText">${texts[0]}</div>
-            <div class="spinner"></div>
-          </div>
-        `;
-
-        let interval = setInterval(() => {
-          i = (i + 1) % texts.length;
-          document.getElementById("dlText").innerText = texts[i];
-        }, 2000);
-
-        setTimeout(() => {
-          clearInterval(interval);
-          window.location.href = link;
-        }, Math.random()*10000+10000);
-      };
+      unlockBtn.onclick = startDownload;
     }
+  }
+
+  function startDownload(){
+
+    let texts = [
+      "Downloading...",
+      "Please wait...",
+      "Preparing file..."
+    ];
+
+    let i = 0;
+
+    overlay.innerHTML = `
+      <div>
+        <div id="dlText">${texts[0]}</div>
+        <div class="spinner"></div>
+      </div>
+    `;
+
+    let interval = setInterval(() => {
+      i = (i + 1) % texts.length;
+      document.getElementById("dlText").innerText = texts[i];
+    }, 2000);
+
+    setTimeout(() => {
+      clearInterval(interval);
+      window.location.href = link;
+    }, Math.random()*10000+10000);
+
   }
 
 }
