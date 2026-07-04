@@ -1154,79 +1154,141 @@ overlay.textContent="Not Available";
 
 
 </script>
-
 <script>
 document.querySelectorAll(".card").forEach(card => {
 
   const btn = card.querySelector(".download");
   const overlay = card.querySelector(".overlay");
-  const img = card.querySelector("img");
-
-  const modName = card.querySelectorAll(".info")[2]
-    ? card.querySelectorAll(".info")[2].innerText
-    : "Mod";
-
   const link = card.querySelector("a") ? card.querySelector("a").href : "#";
 
-  btn.addEventListener("click", function(e) {
+  let ytDone = false;
+  let igDone = false;
+
+  btn.addEventListener("click", (e) => {
     e.preventDefault();
 
     overlay.style.display = "flex";
+
     overlay.innerHTML = `
-      <div class="overlay-content">
-        <div>
-          Download ${modName}...
-          <div class="small-spinner"></div>
-        </div>
+      <div>
+        Download ${getModName(card)}...
+        <div class="spinner"></div>
       </div>
     `;
 
-    let loadTime = 3000 + Math.random() * 3000;
+    setTimeout(showVerify, random(3000,6000));
+  });
+
+  function showVerify(){
+
+    overlay.innerHTML = `
+      <div class="verify-box">
+
+        <div class="verify-title">Verificatie</div>
+        <hr style="margin:10px 0;">
+
+        <button id="ytBtn">Abonneer YouTube</button>
+        <div class="status" id="ytStatus">⏳</div>
+
+        <br>
+
+        <button id="igBtn">Follow Instagram</button>
+        <div class="status" id="igStatus">⏳</div>
+
+        <br>
+
+        <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;">
+          🔒 Locked
+        </button>
+
+      </div>
+    `;
+
+    document.getElementById("ytBtn").onclick = () => {
+      window.open("https://www.youtube.com/@T.B6","_blank");
+
+      setTimeout(() => {
+        ytDone = true;
+        document.getElementById("ytStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
+
+    document.getElementById("igBtn").onclick = () => {
+      window.open("https://www.instagram.com/t.bagar.io/","_blank");
+
+      setTimeout(() => {
+        igDone = true;
+        document.getElementById("igStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
+
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    unlockBtn.onclick = () => {
+      alert("Je moet eerst YouTube en Instagram voltooien");
+    };
+
+    function checkUnlock(){
+      if(ytDone && igDone){
+        unlockBtn.style.background = "#22c55e";
+        unlockBtn.innerHTML = "🔓 Unlock";
+        unlockBtn.onclick = startDownload;
+      }
+    }
+
+  }
+
+  function startDownload(){
+
+    let texts = [
+      "Download gestart...",
+      "Even geduld alstublieft...",
+      "Bestand voorbereiden..."
+    ];
+
+    let i = 0;
+
+    overlay.innerHTML = `
+      <div>
+        <div id="dlText">${texts[0]}</div>
+        <div class="spinner"></div>
+      </div>
+    `;
+
+    let interval = setInterval(() => {
+      i = (i + 1) % texts.length;
+      document.getElementById("dlText").innerText = texts[i];
+    }, 2500);
 
     setTimeout(() => {
+      clearInterval(interval);
 
       overlay.innerHTML = `
-        <div class="overlay-content">
-          <div>Verificatie</div>
-          <hr style="width:120px;">
-          
-          <button onclick="window.open('https://www.youtube.com/@T.B6','_blank')">
-            YouTube
-          </button>
-
-          <button onclick="window.open('https://www.instagram.com/t.bagar.io/','_blank')">
-            Instagram
-          </button>
-
-          <br>
-
-          <button id="unlockBtn">🔓 Unlock</button>
+        <div style="text-align:center;">
+          ✔ Download voltooid
         </div>
       `;
 
-      document.getElementById("unlockBtn").onclick = () => {
+      setTimeout(() => {
+        window.location.href = link;
+      }, 1500);
 
-        overlay.innerHTML = `
-          <div class="overlay-content">
-            Download starten...
-            <div class="small-spinner"></div>
-          </div>
-        `;
+    }, random(10000,20000));
 
-        let finalTime = 3000 + Math.random() * 4000;
-
-        setTimeout(() => {
-          overlay.style.display = "none";
-          window.location.href = link;
-        }, finalTime);
-
-      };
-
-    }, loadTime);
-
-  });
+  }
 
 });
+
+function getModName(card){
+  let infos = card.querySelectorAll(".info");
+  return infos.length ? infos[2].innerText : "Mod";
+}
+
+function random(min,max){
+  return Math.random()*(max-min)+min;
+}
 </script>
 
 </body>
