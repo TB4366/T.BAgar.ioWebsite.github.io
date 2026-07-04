@@ -551,10 +551,6 @@ font-weight:bold;
 
 }
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
-
 </style>
 
 </head>
@@ -1153,12 +1149,14 @@ overlay.textContent="Not Available";
 </script>
 
   <script>
-
 document.querySelectorAll(".card").forEach(card => {
 
   const btn = card.querySelector(".download");
   const overlay = card.querySelector(".overlay");
   const link = card.querySelector("a") ? card.querySelector("a").href : "#";
+
+  let ytDone = false;
+  let igDone = false;
 
   btn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -1172,73 +1170,68 @@ document.querySelectorAll(".card").forEach(card => {
       </div>
     `;
 
-    setTimeout(() => showVerify(card, overlay, link), random(3000,6000));
+    setTimeout(showVerify, random(3000,6000));
   });
 
-});
+  function showVerify(){
 
-function showVerify(card, overlay, link){
+    overlay.innerHTML = `
+      <div class="verify-box">
 
-  let ytDone = false;
-  let igDone = false;
+        <div class="verify-title">Verification</div>
+        <hr style="margin:10px 0;">
 
-  overlay.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <button id="ytBtn">Subscribe on YouTube</button>
+        <div class="status" id="ytStatus">⏳</div>
 
-      <h3>Verification</h3>
-      <hr style="width:150px;">
+        <br>
 
-      <button id="ytBtn">Subscribe on YouTube</button>
-      <span id="ytStatus">⏳</span>
+        <button id="igBtn">Follow on Instagram</button>
+        <div class="status" id="igStatus">⏳</div>
 
-      <button id="igBtn">Follow on Instagram</button>
-      <span id="igStatus">⏳</span>
+        <br>
 
-      <br>
+        <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;">
+          🔒 Locked
+        </button>
 
-      <button id="unlockBtn" style="background:gray;color:white;border:none;padding:10px;border-radius:10px;">
-        🔒 Locked
-      </button>
-
-    </div>
-  `;
-
-  function runLoader(id, cb){
-
-    document.getElementById(id).innerHTML = `
-      <div style="width:18px;height:18px;border:3px solid #333;border-top:3px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite;"></div>
+      </div>
     `;
 
-    setTimeout(() => {
-      document.getElementById(id).innerHTML = "✔";
-      cb();
-    }, Math.random()*7000 + 5000);
+    document.getElementById("ytBtn").onclick = () => {
+      window.open("https://www.youtube.com/@T.B6","_blank");
 
-  }
+      setTimeout(() => {
+        ytDone = true;
+        document.getElementById("ytStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
 
-  document.getElementById("ytBtn").onclick = () => {
-    window.open("https://www.youtube.com/@T.B6","_blank");
-    runLoader("ytStatus", () => { ytDone = true; checkUnlock(); });
-  };
+    document.getElementById("igBtn").onclick = () => {
+      window.open("https://www.instagram.com/t.bagar.io/","_blank");
 
-  document.getElementById("igBtn").onclick = () => {
-    window.open("https://www.instagram.com/t.bagar.io/","_blank");
-    runLoader("igStatus", () => { igDone = true; checkUnlock(); });
-  };
+      setTimeout(() => {
+        igDone = true;
+        document.getElementById("igStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
 
-  const unlockBtn = document.getElementById("unlockBtn");
+    const unlockBtn = document.getElementById("unlockBtn");
 
-  unlockBtn.onclick = () => {
-    alert("Complete YouTube and Instagram first.");
-  };
+    unlockBtn.onclick = () => {
+      alert("Complete YouTube and Instagram verification first.");
+    };
 
-  function checkUnlock(){
-    if(ytDone && igDone){
-      unlockBtn.style.background = "#22c55e";
-      unlockBtn.innerHTML = "🔓 Unlock";
-
-      unlockBtn.onclick = startDownload;
+    function checkUnlock(){
+      if(ytDone && igDone){
+        unlockBtn.style.background = "#22c55e";
+        unlockBtn.innerHTML = "🔓 Unlock";
+        unlockBtn.onclick = startDownload;
+      }
     }
+
   }
 
   function startDownload(){
@@ -1265,12 +1258,22 @@ function showVerify(card, overlay, link){
 
     setTimeout(() => {
       clearInterval(interval);
-      window.location.href = link;
-    }, Math.random()*10000+10000);
+
+      overlay.innerHTML = `
+        <div style="text-align:center;">
+          ✔ Download complete
+        </div>
+      `;
+
+      setTimeout(() => {
+        window.location.href = link;
+      }, 1500);
+
+    }, random(10000,20000));
 
   }
 
-}
+});
 
 function getModName(card){
   let infos = card.querySelectorAll(".info");
@@ -1280,7 +1283,8 @@ function getModName(card){
 function random(min,max){
   return Math.random()*(max-min)+min;
 }
-
+</script>
+  
 </script>
   
 </body>
