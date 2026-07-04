@@ -1167,142 +1167,80 @@ overlay.textContent="Not Available";
 
 
 </script>
-<script>
-document.querySelectorAll(".card").forEach(card => {
 
-  const btn = card.querySelector(".download");
-  const overlay = card.querySelector(".overlay");
-  const link = card.querySelector("a") ? card.querySelector("a").href : "#";
+function showVerify(){
+
+  overlay.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+
+      <h3>Verification</h3>
+      <hr style="width:150px;">
+
+      <button id="ytBtn">Subscribe on YouTube</button>
+      <span id="ytStatus">⏳</span>
+
+      <button id="igBtn">Follow on Instagram</button>
+      <span id="igStatus">⏳</span>
+
+      <br>
+
+      <button id="unlockBtn" style="background:gray;color:white;border:none;padding:10px;border-radius:10px;">
+        🔒 Locked
+      </button>
+
+    </div>
+  `;
 
   let ytDone = false;
   let igDone = false;
 
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
+  function runLoader(statusId, doneCallback){
 
-    overlay.style.display = "flex";
-
-    overlay.innerHTML = `
-      <div>
-        Download ${getModName(card)}...
-        <div class="spinner"></div>
-      </div>
+    document.getElementById(statusId).innerHTML = `
+      <div class="spinner" style="width:18px;height:18px;border:3px solid #333;border-top:3px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite;"></div>
     `;
-
-    setTimeout(showVerify, random(3000,6000));
-  });
-
-  function showVerify(){
-
-    overlay.innerHTML = `
-      <div class="verify-box">
-
-        <div class="verify-title">Verification</div>
-        <hr style="margin:10px 0;">
-
-        <button id="ytBtn">Subscribe on YouTube</button>
-        <div class="status" id="ytStatus">⏳</div>
-
-        <br>
-
-        <button id="igBtn">Follow on Instagram</button>
-        <div class="status" id="igStatus">⏳</div>
-
-        <br>
-
-        <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;">
-          🔒 Locked
-        </button>
-
-      </div>
-    `;
-
-    document.getElementById("ytBtn").onclick = () => {
-      window.open("https://www.youtube.com/@T.B6","_blank");
-
-      setTimeout(() => {
-        ytDone = true;
-        document.getElementById("ytStatus").innerHTML = "✔";
-        checkUnlock();
-      }, random(5000,12000));
-    };
-
-    document.getElementById("igBtn").onclick = () => {
-      window.open("https://www.instagram.com/t.bagar.io/","_blank");
-
-      setTimeout(() => {
-        igDone = true;
-        document.getElementById("igStatus").innerHTML = "✔";
-        checkUnlock();
-      }, random(5000,12000));
-    };
-
-    const unlockBtn = document.getElementById("unlockBtn");
-
-    unlockBtn.onclick = () => {
-      alert("Complete YouTube and Instagram verification first.");
-    };
-
-    function checkUnlock(){
-      if(ytDone && igDone){
-        unlockBtn.style.background = "#22c55e";
-        unlockBtn.innerHTML = "🔓 Unlock";
-        unlockBtn.onclick = startDownload;
-      }
-    }
-
-  }
-
-  function startDownload(){
-
-    let texts = [
-      "Downloading...",
-      "Please wait...",
-      "Preparing file..."
-    ];
-
-    let i = 0;
-
-    overlay.innerHTML = `
-      <div>
-        <div id="dlText">${texts[0]}</div>
-        <div class="spinner"></div>
-      </div>
-    `;
-
-    let interval = setInterval(() => {
-      i = (i + 1) % texts.length;
-      document.getElementById("dlText").innerText = texts[i];
-    }, 2000);
 
     setTimeout(() => {
-      clearInterval(interval);
-
-      overlay.innerHTML = `
-        <div style="text-align:center;">
-          ✔ Download complete
-        </div>
-      `;
-
-      setTimeout(() => {
-        window.location.href = link;
-      }, 1500);
-
-    }, random(10000,20000));
+      document.getElementById(statusId).innerHTML = "✔";
+      doneCallback();
+    }, Math.random()*7000 + 5000);
 
   }
 
-});
+  document.getElementById("ytBtn").onclick = () => {
+    window.open("https://www.youtube.com/@T.B6","_blank");
 
-function getModName(card){
-  let infos = card.querySelectorAll(".info");
-  return infos.length ? infos[2].innerText : "Mod";
-}
+    runLoader("ytStatus", () => {
+      ytDone = true;
+      checkUnlock();
+    });
+  };
 
-function random(min,max){
-  return Math.random()*(max-min)+min;
+  document.getElementById("igBtn").onclick = () => {
+    window.open("https://www.instagram.com/t.bagar.io/","_blank");
+
+    runLoader("igStatus", () => {
+      igDone = true;
+      checkUnlock();
+    });
+  };
+
+  const unlockBtn = document.getElementById("unlockBtn");
+
+  unlockBtn.onclick = () => {
+    alert("Complete YouTube and Instagram first.");
+  };
+
+  function checkUnlock(){
+    if(ytDone && igDone){
+      unlockBtn.style.background = "#22c55e";
+      unlockBtn.innerHTML = "🔓 Unlock";
+
+      unlockBtn.onclick = startDownload;
+    }
+  }
+
 }
-</script>
 
 </body>
 
