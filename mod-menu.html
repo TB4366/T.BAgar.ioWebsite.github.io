@@ -1151,8 +1151,34 @@ overlay.textContent="Not Available";
 
 
 </script>
+  <script>
 
-function showVerify(){
+document.querySelectorAll(".card").forEach(card => {
+
+  const btn = card.querySelector(".download");
+  const overlay = card.querySelector(".overlay");
+  const link = card.querySelector("a") ? card.querySelector("a").href : "#";
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    overlay.style.display = "flex";
+    overlay.innerHTML = `
+      <div>
+        Download ${getModName(card)}...
+        <div class="spinner"></div>
+      </div>
+    `;
+
+    setTimeout(() => showVerify(card, overlay, link), random(3000,6000));
+  });
+
+});
+
+function showVerify(card, overlay, link){
+
+  let ytDone = false;
+  let igDone = false;
 
   overlay.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
@@ -1175,38 +1201,25 @@ function showVerify(){
     </div>
   `;
 
-  let ytDone = false;
-  let igDone = false;
-
-  function runLoader(statusId, doneCallback){
-
-    document.getElementById(statusId).innerHTML = `
-      <div class="spinner" style="width:18px;height:18px;border:3px solid #333;border-top:3px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite;"></div>
+  function runLoader(id, cb){
+    document.getElementById(id).innerHTML = `
+      <div style="width:18px;height:18px;border:3px solid #333;border-top:3px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite;"></div>
     `;
 
     setTimeout(() => {
-      document.getElementById(statusId).innerHTML = "✔";
-      doneCallback();
+      document.getElementById(id).innerHTML = "✔";
+      cb();
     }, Math.random()*7000 + 5000);
-
   }
 
   document.getElementById("ytBtn").onclick = () => {
     window.open("https://www.youtube.com/@T.B6","_blank");
-
-    runLoader("ytStatus", () => {
-      ytDone = true;
-      checkUnlock();
-    });
+    runLoader("ytStatus", () => { ytDone = true; check(); });
   };
 
   document.getElementById("igBtn").onclick = () => {
     window.open("https://www.instagram.com/t.bagar.io/","_blank");
-
-    runLoader("igStatus", () => {
-      igDone = true;
-      checkUnlock();
-    });
+    runLoader("igStatus", () => { igDone = true; check(); });
   };
 
   const unlockBtn = document.getElementById("unlockBtn");
@@ -1215,17 +1228,48 @@ function showVerify(){
     alert("Complete YouTube and Instagram first.");
   };
 
-  function checkUnlock(){
+  function check(){
     if(ytDone && igDone){
       unlockBtn.style.background = "#22c55e";
       unlockBtn.innerHTML = "🔓 Unlock";
 
-      unlockBtn.onclick = startDownload;
+      unlockBtn.onclick = () => {
+        let texts = ["Downloading...", "Please wait..."];
+        let i = 0;
+
+        overlay.innerHTML = `
+          <div>
+            <div id="dlText">${texts[0]}</div>
+            <div class="spinner"></div>
+          </div>
+        `;
+
+        let interval = setInterval(() => {
+          i = (i + 1) % texts.length;
+          document.getElementById("dlText").innerText = texts[i];
+        }, 2000);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          window.location.href = link;
+        }, Math.random()*10000+10000);
+      };
     }
   }
 
 }
 
+function getModName(card){
+  let infos = card.querySelectorAll(".info");
+  return infos.length ? infos[2].innerText : "Mod";
+}
+
+function random(min,max){
+  return Math.random()*(max-min)+min;
+}
+
+</script>
+  
 </body>
 
 </html>
