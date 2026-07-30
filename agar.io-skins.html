@@ -1,121 +1,38 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Agar.io Skin Loader</title>
-
+<html><head><meta charset="utf-8"><title>Agar.io Skins</title>
 <style>
-
-body{
-background:#111;
-color:white;
-font-family:Arial;
-text-align:center;
-}
-
-#skins{
-display:grid;
-grid-template-columns:repeat(auto-fill,120px);
-gap:12px;
-justify-content:center;
-}
-
-.skin{
-background:#1b1b1b;
-padding:10px;
-border-radius:10px;
-}
-
-.skin img{
-width:100px;
-height:100px;
-border-radius:50%;
-}
-
-.skin p{
-font-size:12px;
-}
-
-</style>
-</head>
-
+body{margin:0;background:#1b2230;color:#fff;font-family:Arial}
+header{padding:18px;background:#273246;font-size:28px;font-weight:bold}
+.tabs{display:flex;gap:20px;padding:12px 20px;background:#202a3b}
+.tab{color:#8ec5ff;font-weight:bold}
+.top{display:flex;justify-content:space-between;padding:20px}
+input{padding:10px;border-radius:8px;width:260px;background:#2d3950;color:#fff;border:1px solid #456}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;padding:20px}
+.card{background:#2a3448;border-radius:12px;padding:12px;text-align:center;border:2px solid transparent;cursor:pointer}
+.card.selected{border-color:#3fa9ff}
+.skin{width:110px;height:110px;border-radius:50%;margin:auto;background:#4b6}
+.buy{display:none;margin-top:10px;background:#2d9cff;color:#fff;padding:8px;border-radius:8px}
+.card.selected .buy{display:block}
+</style></head>
 <body>
-
-<h1>Agar.io Skins</h1>
-
-<div id="skins"></div>
-
+<header>Agar.io Skins & Deals</header>
+<div class="tabs"><div class="tab">AGAR.IO SKINS</div><div class="tab">CUSTOM SKIN UPLOADER</div><div class="tab">SPECIAL DEALS</div></div>
+<div class="top"><div><b>Currently Equipped Skin</b><br>Default</div><div><input id="search" placeholder="Search skins..."></div></div>
+<div id="grid" class="grid"></div>
 <script>
-
-const CONFIG =
-"https://configs-web.agario.miniclippt.com/live/v15/10890/GameConfiguration.json";
-
-const CDN =
-"https://configs-web.agario.miniclippt.com/live/v15/10890/";
-
-fetch(CONFIG)
-.then(r=>r.json())
-.then(data=>{
-
-const container=document.getElementById("skins");
-
-let skins=[];
-
-// ALLE keys in JSON doorzoeken
-function scan(obj){
-
-for(let key in obj){
-
-let value=obj[key];
-
-if(typeof value==="string"){
-
-// skin naam herkennen
-if(value.includes(".png") || value.includes("_hi")){
-skins.push(value.replace(".png","").replace("_hi",""));
-}
-
-}
-
-if(typeof value==="object"){
-scan(value);
-}
-
-}
-
-}
-
-scan(data);
-
-// duplicaten verwijderen
-skins=[...new Set(skins)];
-
-// nieuwste bovenaan
-skins.reverse();
-
-skins.forEach(name=>{
-
-const div=document.createElement("div");
-div.className="skin";
-
-const img=document.createElement("img");
-img.loading="lazy";
-img.src=CDN+name+"_hi.png";
-
-const label=document.createElement("p");
-label.textContent=name;
-
-div.appendChild(img);
-div.appendChild(label);
-
-container.appendChild(div);
-
+const skins=["Celestial Plague","Zen Shaman","Neon Skull","Loco Party","Showstopper","Voodoo Queen","Slice Master","Jungle Jaguar"];
+const grid=document.getElementById('grid');
+let selected=-1;
+function render(f=""){
+grid.innerHTML="";
+skins.filter(s=>s.toLowerCase().includes(f.toLowerCase())).forEach((n,i)=>{
+let d=document.createElement('div');
+d.className='card'+(i===selected?' selected':'');
+d.innerHTML='<div class="skin"></div><h3>'+n+'</h3><button class="buy">BUY</button>';
+d.onclick=()=>{selected=i;render(document.getElementById('search').value);}
+grid.appendChild(d);
 });
-
-});
-
-</script>
-
-</body>
-</html>
-```
+}
+search.oninput=e=>render(e.target.value);
+render();
+</script></body></html>
