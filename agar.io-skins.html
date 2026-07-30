@@ -1,38 +1,27 @@
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Agar.io Skins</title>
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Shop</title>
 <style>
-body{margin:0;background:#1b2230;color:#fff;font-family:Arial}
-header{padding:18px;background:#273246;font-size:28px;font-weight:bold}
-.tabs{display:flex;position:relative;background:#202a3b}
-.tab{padding:14px 24px;cursor:pointer;font-weight:bold}
-.tab.active{color:#fff}.slider{position:absolute;bottom:0;height:4px;width:160px;background:#3fa9ff;transition:.25s}
-.top{display:flex;justify-content:space-between;padding:20px}
-input{padding:10px;border-radius:8px;width:260px;background:#2d3950;color:#fff;border:1px solid #456}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;padding:20px}
-.card{background:#2a3448;border-radius:12px;padding:12px;text-align:center;border:2px solid transparent;cursor:pointer}
-.card.selected{border-color:#3fa9ff}.skin{width:110px;height:110px;border-radius:50%;margin:auto;overflow:hidden;background:#3b5}
-.skin img{width:100%;height:100%;object-fit:cover}.buy{display:none;margin-top:10px;background:#2d9cff;color:#fff;padding:8px;border:none;border-radius:8px}
-.card.selected .buy{display:block}#deals{display:none;padding:40px;text-align:center}
-</style></head><body>
-<header>Agar.io Skins & Deals</header>
-<div class="tabs">
-<div class="tab active" id="t1">AGAR.IO SKINS</div>
-<div class="tab" id="t2">SPECIAL DEALS</div>
-<div class="slider" id="slider"></div>
-</div>
-<div class="top"><div><b>Currently Equipped Skin</b><br>Default</div><div><input id="search" placeholder="Search skins..."></div></div>
-<div id="skinsPage"><div id="grid" class="grid"></div></div>
-<div id="deals"><h2>Special Deals</h2><p>Voeg hier later deals toe.</p></div>
+body{font-family:Arial;margin:0;background:#1b2230;color:#fff}header{background:#273246;padding:16px;font-size:28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;padding:20px}
+.card{background:#2a3448;padding:10px;border-radius:10px;text-align:center}.skin img{width:110px;height:110px;border-radius:50%}
+button{margin:4px;padding:8px 10px}.modal{display:none;position:fixed;inset:0;background:#0008}.box{background:#2a3448;width:360px;margin:8% auto;padding:18px;border-radius:12px;position:relative}.close{position:absolute;right:12px;top:8px;cursor:pointer}
+hr{border-color:#556}
+</style></head><body><header>Agar.io Skins & Deals</header><div id='grid' class='grid'></div>
+<div id='m' class='modal'><div class='box'><div class='close' onclick='m.style.display="none"'>&times;</div><h2 id='n'></h2><hr><p id='d'></p><p><b id='c'></b><br><b id='dna'></b></p><hr><p>For questions or assistance, please contact our support team!</p><a id='mail'><button>Send Email</button></a></div></div>
 <script>
-const skins=[{name:"Zen Shaman",img:"IMG_9638.webp"}];
-const grid=document.getElementById("grid");let selected=-1;
-function render(f=""){grid.innerHTML="";
-skins.filter(s=>s.name.toLowerCase().includes(f.toLowerCase())).forEach((s,i)=>{
-let d=document.createElement("div");
-d.className="card"+(i===selected?" selected":"");
-d.innerHTML=`<div class="skin"><img src="${s.img}" alt="${s.name}"></div><h3>${s.name}</h3><button class="buy">BUY</button>`;
-d.onclick=()=>{selected=i;render(search.value)};grid.appendChild(d);});}
-search.oninput=e=>render(e.target.value);render();
-t1.onclick=()=>{t1.classList.add("active");t2.classList.remove("active");slider.style.left="0";skinsPage.style.display="block";deals.style.display="none";}
-t2.onclick=()=>{t2.classList.add("active");t1.classList.remove("active");slider.style.left=t1.offsetWidth+"px";skinsPage.style.display="block";skinsPage.style.display="none";deals.style.display="block";}
+const support="support@example.com";
+const skins=[
+{name:"Zen Shaman",image:"IMG_9638.webp",coins:"1250 Coins",dna:"75 DNA",description:"A mysterious warrior blessed with ancient powers."}
+// Kopieer dit blok voor nieuwe skins:
+// ,{name:"Nieuwe Skin",image:"IMG_9999.webp",coins:"1000 Coins",dna:"50 DNA",description:"Beschrijving"}
+];
+grid.innerHTML="";
+skins.forEach(s=>{
+let e=document.createElement("div");
+e.className="card";
+e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;
+e.querySelectorAll("button")[1].onclick=()=>{
+n.textContent=s.name;d.textContent=s.description;c.textContent=s.coins;dna.textContent=s.dna;
+mail.href="mailto:"+support;m.style.display="block";}
+grid.appendChild(e);
+});
 </script></body></html>
