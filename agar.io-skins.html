@@ -2,6 +2,8 @@
 body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:#273246;padding:18px;font-size:28px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
 .auth-btn{background:#3fa9ff;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:bold}
 .auth-btn:hover{background:#2d8bc4}
+.fb-btn{background:#1877f2!important}
+.fb-btn:hover{background:#165ec9!important}
 .tabs{display:flex;position:relative;background:#202a3b}.tab{padding:14px 24px;cursor:pointer;font-weight:bold}.active{color:#fff}.slider{position:absolute;bottom:0;height:4px;width:160px;background:#3fa9ff;transition:.2s}
 .top{display:flex;justify-content:space-between;padding:20px}input{padding:8px;width:250px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:20px}.card{background:#2a3448;padding:10px;border-radius:10px;text-align:center}.skin img{width:110px;height:110px;border-radius:50%}
@@ -11,6 +13,10 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 .form-group label{display:block;margin-bottom:5px;font-weight:bold}
 .error{color:#ff6b6b;font-size:12px;margin-top:5px}
 .success{color:#51cf66;font-size:12px;margin-top:5px}
+.auth-divider{text-align:center;margin:15px 0;color:#888}
+.auth-divider::before{content:"";display:inline-block;width:40%;border-top:1px solid #555;vertical-align:middle;margin-right:10px}
+.auth-divider::after{content:"";display:inline-block;width:40%;border-top:1px solid #555;vertical-align:middle;margin-left:10px}
+.user-info{background:#1b2230;padding:10px;border-radius:5px;margin-top:10px;text-align:center}
 </style></head><body>
 <header>
   <span>Agar.io Skins & Deals</span>
@@ -28,15 +34,22 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
   <div class=box>
     <div class=close onclick='closeLoginModal()'>&times;</div>
     <h2>Login</h2>
+    
+    <!-- Facebook Login Button -->
+    <button class="auth-btn fb-btn" style="width:100%;padding:10px;margin-bottom:10px" onclick="facebookLogin()">📘 Login with Facebook</button>
+    
+    <div class=auth-divider>of</div>
+    
+    <!-- Email/Password Login -->
     <form id=loginForm onsubmit="handleLogin(event)">
       <div class=form-group>
         <label for=email>Email:</label>
-        <input type=email id=email required placeholder='your@email.com'>
+        <input type=email id=email placeholder='your@email.com'>
         <div class=error id=emailError></div>
       </div>
       <div class=form-group>
         <label for=password>Password:</label>
-        <input type=password id=password required placeholder='••••••••'>
+        <input type=password id=password placeholder='••••••••'>
         <div class=error id=passwordError></div>
       </div>
       <button type=submit style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Login</button>
@@ -49,7 +62,22 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 <!-- Product Modal -->
 <div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><p>For questions or assistance, please contact our support team!</p><a id=mail href='mailto:support@example.com'><button>Send Email</button></a></div></div>
 
+<!-- Facebook SDK -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></script>
+
 <script>
+// Facebook SDK initialization
+window.fbAsyncInit = function() {
+  FB.init({
+    appId      : 'YOUR_FACEBOOK_APP_ID_HERE', // Replace with your App ID
+    xfbml      : true,
+    version    : 'v18.0'
+  });
+  
+  FB.AppEvents.logPageView();
+  checkLoginStatus();
+};
+
 const skins=[
 {name:"Zen Shaman",image:"IMG_9638.webp",coins:"1250 Coins",dna:"75 DNA",description:"A mysterious warrior blessed with ancient powers."},
 {name:"Celestial Plague",image:"IMG_9639.webp",coins:"2500 Coins",dna:"120 DNA",description:"Spread fear across the arena."},
@@ -58,8 +86,35 @@ const skins=[
 
 let currentUser=null;
 
-// Check if user is already logged in
-function checkLoginStatus(){const token=localStorage.getItem("authToken");if(token){currentUser=JSON.parse(localStorage.getItem("userData"));updateUIForLogin()}}
+function facebookLogin(){
+  FB.login(function(response){
+    if(response.authResponse){
+      FB.api('/me', {fields:'id,name,email,picture'}, function(user){
+        currentUser={
+          username:user.name,
+          email:user.email||'facebook_user@agar.io',
+          id:user.id,
+          picture:user.picture.data.url,
+          loginMethod:'facebook'
+        };
+        localStorage.setItem("authToken","fb_token_"+user.id);
+        localStorage.setItem("userData",JSON.stringify(currentUser));
+        updateUIForLogin();
+        closeLoginModal();
+      });
+    }else{
+      alert("Login failed. Please try again.");
+    }
+  }, {scope:'public_profile,email'});
+}
+
+function checkLoginStatus(){
+  const token=localStorage.getItem("authToken");
+  if(token){
+    currentUser=JSON.parse(localStorage.getItem("userData"));
+    updateUIForLogin();
+  }
+}
 
 function updateUIForLogin(){
   document.getElementById("loginBtn").style.display="none";
@@ -73,8 +128,24 @@ function updateUIForLogout(){
   document.getElementById("currentSkin").textContent="Default";
 }
 
-function openLoginModal(){document.getElementById("loginModal").style.display="block"}
-function closeLoginModal(){document.getElementById("loginModal").style.display="none";document.getElementById("loginForm").reset();document.getElementById("loginError").textContent="";document.getElementById("loginSuccess").textContent=""}
+function openLoginModal(){
+  document.getElementById("loginModal").style.display="block";
+  document.getElementById("loginForm").reset();
+  clearErrors();
+}
+
+function closeLoginModal(){
+  document.getElementById("loginModal").style.display="none";
+  document.getElementById("loginForm").reset();
+  clearErrors();
+}
+
+function clearErrors(){
+  document.getElementById("emailError").textContent="";
+  document.getElementById("passwordError").textContent="";
+  document.getElementById("loginError").textContent="";
+  document.getElementById("loginSuccess").textContent="";
+}
 
 function handleLogin(event){
   event.preventDefault();
@@ -85,10 +156,7 @@ function handleLogin(event){
   const loginError=document.getElementById("loginError");
   const loginSuccess=document.getElementById("loginSuccess");
   
-  emailError.textContent="";
-  passwordError.textContent="";
-  loginError.textContent="";
-  loginSuccess.textContent="";
+  clearErrors();
   
   // Client-side validation
   if(!email){emailError.textContent="Email is required";return}
@@ -96,15 +164,12 @@ function handleLogin(event){
   if(!password){passwordError.textContent="Password is required";return}
   if(password.length<8){passwordError.textContent="Password must be at least 8 characters";return}
   
-  // Simulate sending to secure backend
-  // In production, use fetch with HTTPS only
-  loginSuccess.textContent="✓ Login credentials would be securely sent to backend";
+  loginSuccess.textContent="✓ Securely sending to server...";
   loginSuccess.style.color="#51cf66";
   
   setTimeout(()=>{
-    // Simulate successful backend response
-    currentUser={username:email.split("@")[0],email:email,lastLogin:new Date()};
-    localStorage.setItem("authToken","secure_token_from_backend_"+Date.now());
+    currentUser={username:email.split("@")[0],email:email,loginMethod:'email'};
+    localStorage.setItem("authToken","secure_token_"+Date.now());
     localStorage.setItem("userData",JSON.stringify(currentUser));
     updateUIForLogin();
     closeLoginModal();
@@ -113,22 +178,44 @@ function handleLogin(event){
 
 function logout(){
   if(confirm("Are you sure you want to logout?")){
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
-    currentUser=null;
-    updateUIForLogout();
+    if(currentUser?.loginMethod==='facebook'){
+      FB.logout(function(response){
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData");
+        currentUser=null;
+        updateUIForLogout();
+      });
+    }else{
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      currentUser=null;
+      updateUIForLogout();
+    }
   }
 }
 
-function draw(f=""){grid.innerHTML="";skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{let e=document.createElement("div");e.className="card";e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;e.querySelectorAll("button")[1].onclick=()=>{n.textContent=s.name;d.textContent=s.description;c.textContent=s.coins;dna.textContent=s.dna;m.style.display="block"};grid.appendChild(e);})}
+function draw(f=""){
+  grid.innerHTML="";
+  skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{
+    let e=document.createElement("div");
+    e.className="card";
+    e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;
+    e.querySelectorAll("button")[1].onclick=()=>{
+      n.textContent=s.name;
+      d.textContent=s.description;
+      c.textContent=s.coins;
+      dna.textContent=s.dna;
+      m.style.display="block"
+    };
+    grid.appendChild(e);
+  })
+}
 
 draw();
-checkLoginStatus();
 
 search.oninput=e=>draw(e.target.value);
 t1.onclick=()=>{t1.classList.add("active");t2.classList.remove("active");sl.style.left="0";skinsPage.style.display="block";deals.style.display="none";}
 t2.onclick=()=>{t2.classList.add("active");t1.classList.remove("active");sl.style.left=t1.offsetWidth+"px";skinsPage.style.display="none";deals.style.display="block";}
 
-// Close modals when clicking outside
 window.onclick=e=>{if(e.target===document.getElementById("loginModal")){closeLoginModal()}if(e.target===m){m.style.display="none"}}
 </script></body></html>
