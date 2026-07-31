@@ -12,31 +12,7 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 <div id=skinsPage><div id=grid class=grid></div></div><div id=deals><h2>Special Deals</h2></div>
 <div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><p>For questions or assistance, please contact our support team!</p><a id=mail href='mailto:support@example.com'><button>Send Email</button></a></div></div>
 <script>
-const skins=[{name: const skins = [
-{
-    name: "Zen Shaman",
-    image: "IMG_9638.webp",
-    coins: "1250 Coins",
-    dna: "75 DNA",
-    description: "A mysterious warrior blessed with ancient powers."
-},
-
-{
-    name: "Celestial Plague",
-    image: "IMG_9639.webp",
-    coins: "2500 Coins",
-    dna: "120 DNA",
-    description: "Spread fear across the arena."
-},
-
-{
-    name: "Neon Skull",
-    image: "IMG_9640.webp",
-    coins: "1800 Coins",
-    dna: "90 DNA",
-    description: "A glowing futuristic skull."
-}
-];
+const skins=[{name:"Zen Shaman",image:"IMG_9638.webp",coins:"1250 Coins",dna:"75 DNA",description:"A mysterious warrior blessed with ancient powers."}];
 function draw(f=""){grid.innerHTML="";skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{let e=document.createElement("div");e.className="card";e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;e.querySelectorAll("button")[1].onclick=()=>{n.textContent=s.name;d.textContent=s.description;c.textContent=s.coins;dna.textContent=s.dna;m.style.display="block"};grid.appendChild(e);})}
 draw();search.oninput=e=>draw(e.target.value);
 t1.onclick=()=>{t1.classList.add("active");t2.classList.remove("active");sl.style.left="0";skinsPage.style.display="block";deals.style.display="none";}
