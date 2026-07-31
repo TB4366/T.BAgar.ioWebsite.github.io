@@ -16,7 +16,8 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 .auth-divider{text-align:center;margin:15px 0;color:#888}
 .auth-divider::before{content:"";display:inline-block;width:40%;border-top:1px solid #555;vertical-align:middle;margin-right:10px}
 .auth-divider::after{content:"";display:inline-block;width:40%;border-top:1px solid #555;vertical-align:middle;margin-left:10px}
-.user-info{background:#1b2230;padding:10px;border-radius:5px;margin-top:10px;text-align:center}
+.user-profile{text-align:center;padding:10px}
+.user-profile img{width:60px;height:60px;border-radius:50%;margin-bottom:10px}
 </style></head><body>
 <header>
   <span>Agar.io Skins & Deals</span>
@@ -26,36 +27,41 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
   </div>
 </header>
 <div class=tabs><div class="tab active" id=t1>AGAR.IO SKINS</div><div class=tab id=t2>SPECIAL DEALS</div><div class=slider id=sl></div></div>
-<div class=top><div><b>Currently Equipped Skin</b><br><span id=currentSkin>Default</span></div><input id=search placeholder='Search skins...'></div>
+<div class=top>
+  <div>
+    <b>Currently Equipped Skin</b><br>
+    <span id=currentSkin>Default</span>
+    <div id=userProfile style="margin-top:10px;display:none">
+      <img id=profilePic src="" style="width:40px;height:40px;border-radius:50%">
+      <span id=playerName></span>
+    </div>
+  </div>
+  <input id=search placeholder='Search skins...'>
+</div>
 <div id=skinsPage><div id=grid class=grid></div></div><div id=deals><h2>Special Deals</h2></div>
 
 <!-- Login Modal -->
 <div id=loginModal class=modal>
   <div class=box>
     <div class=close onclick='closeLoginModal()'>&times;</div>
-    <h2>Login</h2>
+    <h2>Enter Your Username</h2>
+    <p style="color:#aaa;font-size:14px">Create your player profile for Agar.io Skins</p>
     
-    <!-- Facebook Login Button -->
-    <button class="auth-btn fb-btn" style="width:100%;padding:10px;margin-bottom:10px" onclick="facebookLogin()">📘 Login with Facebook</button>
-    
-    <div class=auth-divider>of</div>
-    
-    <!-- Email/Password Login -->
     <form id=loginForm onsubmit="handleLogin(event)">
       <div class=form-group>
-        <label for=email>Email:</label>
-        <input type=email id=email placeholder='your@email.com'>
-        <div class=error id=emailError></div>
+        <label for=username>Username:</label>
+        <input type=text id=username placeholder='Choose your player name' maxlength=20>
+        <div class=error id=usernameError></div>
       </div>
-      <div class=form-group>
-        <label for=password>Password:</label>
-        <input type=password id=password placeholder='••••••••'>
-        <div class=error id=passwordError></div>
-      </div>
-      <button type=submit style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Login</button>
+      <button type=submit style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Start Playing</button>
       <div class=error id=loginError style="text-align:center;margin-top:10px"></div>
       <div class=success id=loginSuccess style="text-align:center;margin-top:10px"></div>
     </form>
+    
+    <div class=auth-divider>of</div>
+    
+    <!-- Facebook Login Button -->
+    <button class="auth-btn fb-btn" style="width:100%;padding:10px" onclick="facebookLogin()">📘 Login with Facebook</button>
   </div>
 </div>
 
@@ -69,7 +75,7 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 // Facebook SDK initialization
 window.fbAsyncInit = function() {
   FB.init({
-    appId      : 'YOUR_FACEBOOK_APP_ID_HERE', // Replace with your App ID
+    appId      : 'YOUR_FACEBOOK_APP_ID_HERE',
     xfbml      : true,
     version    : 'v18.0'
   });
@@ -86,7 +92,40 @@ const skins=[
 
 let currentUser=null;
 
+// Generate random avatar color
+function getRandomColor(){
+  const colors=['#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8','#F7DC6F','#BB8FCE','#85C1E2'];
+  return colors[Math.floor(Math.random()*colors.length)];
+}
+
+// Generate avatar with initials
+function generateAvatar(username){
+  const canvas=document.createElement('canvas');
+  canvas.width=200;
+  canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  const color=getRandomColor();
+  
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.arc(100,100,100,0,Math.PI*2);
+  ctx.fill();
+  
+  ctx.fillStyle='white';
+  ctx.font='bold 80px Arial';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(username.charAt(0).toUpperCase(),100,100);
+  
+  return canvas.toDataURL();
+}
+
 function facebookLogin(){
+  if(typeof FB==='undefined'){
+    alert('Facebook SDK not loaded. Please try again.');
+    return;
+  }
+  
   FB.login(function(response){
     if(response.authResponse){
       FB.api('/me', {fields:'id,name,email,picture'}, function(user){
@@ -95,7 +134,8 @@ function facebookLogin(){
           email:user.email||'facebook_user@agar.io',
           id:user.id,
           picture:user.picture.data.url,
-          loginMethod:'facebook'
+          loginMethod:'facebook',
+          joinDate:new Date().toISOString()
         };
         localStorage.setItem("authToken","fb_token_"+user.id);
         localStorage.setItem("userData",JSON.stringify(currentUser));
@@ -103,7 +143,7 @@ function facebookLogin(){
         closeLoginModal();
       });
     }else{
-      alert("Login failed. Please try again.");
+      alert("Facebook login failed. Please try again.");
     }
   }, {scope:'public_profile,email'});
 }
@@ -119,13 +159,19 @@ function checkLoginStatus(){
 function updateUIForLogin(){
   document.getElementById("loginBtn").style.display="none";
   document.getElementById("logoutBtn").style.display="block";
-  document.getElementById("currentSkin").textContent=currentUser.username||"Player";
+  document.getElementById("currentSkin").textContent=currentUser.username;
+  
+  const profileDiv=document.getElementById("userProfile");
+  document.getElementById("profilePic").src=currentUser.picture||generateAvatar(currentUser.username);
+  document.getElementById("playerName").textContent=currentUser.username;
+  profileDiv.style.display="block";
 }
 
 function updateUIForLogout(){
   document.getElementById("loginBtn").style.display="block";
   document.getElementById("logoutBtn").style.display="none";
   document.getElementById("currentSkin").textContent="Default";
+  document.getElementById("userProfile").style.display="none";
 }
 
 function openLoginModal(){
@@ -141,50 +187,71 @@ function closeLoginModal(){
 }
 
 function clearErrors(){
-  document.getElementById("emailError").textContent="";
-  document.getElementById("passwordError").textContent="";
+  document.getElementById("usernameError").textContent="";
   document.getElementById("loginError").textContent="";
   document.getElementById("loginSuccess").textContent="";
 }
 
 function handleLogin(event){
   event.preventDefault();
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const emailError=document.getElementById("emailError");
-  const passwordError=document.getElementById("passwordError");
-  const loginError=document.getElementById("loginError");
+  const username=document.getElementById("username").value.trim();
+  const usernameError=document.getElementById("usernameError");
   const loginSuccess=document.getElementById("loginSuccess");
   
   clearErrors();
   
-  // Client-side validation
-  if(!email){emailError.textContent="Email is required";return}
-  if(!email.includes("@")){emailError.textContent="Invalid email format";return}
-  if(!password){passwordError.textContent="Password is required";return}
-  if(password.length<8){passwordError.textContent="Password must be at least 8 characters";return}
+  // Validation
+  if(!username){
+    usernameError.textContent="Username is required";
+    return;
+  }
+  if(username.length<3){
+    usernameError.textContent="Username must be at least 3 characters";
+    return;
+  }
+  if(username.length>20){
+    usernameError.textContent="Username must be less than 20 characters";
+    return;
+  }
+  if(!/^[a-zA-Z0-9_-]+$/.test(username)){
+    usernameError.textContent="Username can only contain letters, numbers, _ and -";
+    return;
+  }
   
-  loginSuccess.textContent="✓ Securely sending to server...";
+  // Create player profile
+  currentUser={
+    username:username,
+    id:Date.now().toString(),
+    picture:generateAvatar(username),
+    loginMethod:'username',
+    joinDate:new Date().toISOString(),
+    level:1,
+    score:0,
+    skins:['Default']
+  };
+  
+  loginSuccess.textContent="✓ Welcome to Agar.io!";
   loginSuccess.style.color="#51cf66";
   
   setTimeout(()=>{
-    currentUser={username:email.split("@")[0],email:email,loginMethod:'email'};
-    localStorage.setItem("authToken","secure_token_"+Date.now());
+    localStorage.setItem("authToken","token_"+currentUser.id);
     localStorage.setItem("userData",JSON.stringify(currentUser));
     updateUIForLogin();
     closeLoginModal();
-  },1500);
+  },800);
 }
 
 function logout(){
   if(confirm("Are you sure you want to logout?")){
     if(currentUser?.loginMethod==='facebook'){
-      FB.logout(function(response){
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userData");
-        currentUser=null;
-        updateUIForLogout();
-      });
+      if(typeof FB!=='undefined'){
+        FB.logout(function(response){
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("userData");
+          currentUser=null;
+          updateUIForLogout();
+        });
+      }
     }else{
       localStorage.removeItem("authToken");
       localStorage.removeItem("userData");
@@ -201,6 +268,11 @@ function draw(f=""){
     e.className="card";
     e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;
     e.querySelectorAll("button")[1].onclick=()=>{
+      if(!currentUser){
+        alert("Please login first!");
+        openLoginModal();
+        return;
+      }
       n.textContent=s.name;
       d.textContent=s.description;
       c.textContent=s.coins;
