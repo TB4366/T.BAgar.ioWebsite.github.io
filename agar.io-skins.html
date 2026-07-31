@@ -18,6 +18,10 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 .auth-divider::after{content:"";display:inline-block;width:40%;border-top:1px solid #555;vertical-align:middle;margin-left:10px}
 .user-profile{text-align:center;padding:10px}
 .user-profile img{width:60px;height:60px;border-radius:50%;margin-bottom:10px}
+.setup-modal{text-align:center}
+.setup-modal h3{margin-top:0}
+.setup-code{background:#1b2230;padding:15px;border-radius:5px;margin:15px 0;font-family:monospace;word-break:break-all;border:1px solid #3fa9ff}
+.setup-code code{font-size:12px}
 </style></head><body>
 <header>
   <span>Agar.io Skins & Deals</span>
@@ -61,7 +65,58 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
     <div class=auth-divider>of</div>
     
     <!-- Facebook Login Button -->
-    <button class="auth-btn fb-btn" style="width:100%;padding:10px" onclick="facebookLogin()">📘 Login with Facebook</button>
+    <button class="auth-btn fb-btn" style="width:100%;padding:10px" onclick="openFacebookSetup()">📘 Setup Facebook Login</button>
+  </div>
+</div>
+
+<!-- Facebook Setup Modal -->
+<div id=facebookSetupModal class=modal>
+  <div class=box style="width:500px">
+    <div class=close onclick='closeFacebookSetup()'>&times;</div>
+    <div class=setup-modal>
+      <h2>🔧 Facebook Login Setup</h2>
+      <p style="color:#aaa">Volg deze stappen om Facebook Login in te schakelen:</p>
+      
+      <div style="text-align:left;background:#1b2230;padding:15px;border-radius:5px;margin:20px 0">
+        <h3 style="margin-top:0;color:#3fa9ff">Stap 1: Facebook App Aanmaken</h3>
+        <ol style="line-height:1.8">
+          <li>Ga naar <a href="https://developers.facebook.com" target="_blank" style="color:#3fa9ff">developers.facebook.com</a></li>
+          <li>Klik op "My Apps" → "Create App"</li>
+          <li>Kies "Consumer" als app type</li>
+          <li>Vul app details in en maak aan</li>
+        </ol>
+      </div>
+      
+      <div style="text-align:left;background:#1b2230;padding:15px;border-radius:5px;margin:20px 0">
+        <h3 style="margin-top:0;color:#3fa9ff">Stap 2: App ID Kopieëren</h3>
+        <ol style="line-height:1.8">
+          <li>In je app dashboard, ga naar Settings → Basic</li>
+          <li>Kopieer je <strong>App ID</strong></li>
+          <li>Plak hieronder en klik "Opslaan"</li>
+        </ol>
+      </div>
+      
+      <div class=form-group>
+        <label for=fbAppId>Jouw Facebook App ID:</label>
+        <input type=text id=fbAppId placeholder='123456789' style="font-family:monospace">
+        <div class=error id=fbAppIdError></div>
+      </div>
+      
+      <div style="text-align:left;background:#1b2230;padding:15px;border-radius:5px;margin:20px 0">
+        <h3 style="margin-top:0;color:#3fa9ff">Stap 3: Facebook Login Product Toevoegen</h3>
+        <ol style="line-height:1.8">
+          <li>In je app, ga naar Products</li>
+          <li>Zoek "Facebook Login" en klik "Set Up"</li>
+          <li>Kies "Web" als platform</li>
+          <li>Voeg je website URL toe in Settings → Basic (Valid OAuth Redirect URIs)</li>
+        </ol>
+      </div>
+      
+      <button style="width:100%;padding:12px;background:#51cf66;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff;margin-top:10px" onclick="saveFacebookAppId()">✓ Opslaan & Activeren</button>
+      <button style="width:100%;padding:10px;background:#555;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff;margin-top:10px" onclick="testFacebookLogin()">🧪 Test Facebook Login</button>
+      <div class=success id=fbSuccessMsg style="text-align:center;margin-top:10px"></div>
+      <div class=error id=fbErrorMsg style="text-align:center;margin-top:10px"></div>
+    </div>
   </div>
 </div>
 
@@ -69,21 +124,9 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 <div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><p>For questions or assistance, please contact our support team!</p><a id=mail href='mailto:support@example.com'><button>Send Email</button></a></div></div>
 
 <!-- Facebook SDK -->
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></script>
+<div id=fbSdk></div>
 
 <script>
-// Facebook SDK initialization
-window.fbAsyncInit = function() {
-  FB.init({
-    appId      : 'YOUR_FACEBOOK_APP_ID_HERE',
-    xfbml      : true,
-    version    : 'v18.0'
-  });
-  
-  FB.AppEvents.logPageView();
-  checkLoginStatus();
-};
-
 const skins=[
 {name:"Zen Shaman",image:"IMG_9638.webp",coins:"1250 Coins",dna:"75 DNA",description:"A mysterious warrior blessed with ancient powers."},
 {name:"Celestial Plague",image:"IMG_9639.webp",coins:"2500 Coins",dna:"120 DNA",description:"Spread fear across the arena."},
@@ -91,6 +134,31 @@ const skins=[
 ];
 
 let currentUser=null;
+let fbAppId=localStorage.getItem("fbAppId");
+
+// Load Facebook SDK
+function loadFacebookSDK(){
+  if(fbAppId){
+    const script=document.createElement('script');
+    script.async=true;
+    script.defer=true;
+    script.crossOrigin='anonymous';
+    script.src=`https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=${fbAppId}`;
+    
+    script.onload=()=>{
+      window.fbAsyncInit=function(){
+        FB.init({
+          appId:fbAppId,
+          xfbml:true,
+          version:'v18.0'
+        });
+        FB.AppEvents.logPageView();
+      };
+    };
+    
+    document.getElementById('fbSdk').appendChild(script);
+  }
+}
 
 // Generate random avatar color
 function getRandomColor(){
@@ -120,9 +188,54 @@ function generateAvatar(username){
   return canvas.toDataURL();
 }
 
-function facebookLogin(){
+function openFacebookSetup(){
+  document.getElementById('facebookSetupModal').style.display='block';
+  document.getElementById('fbAppId').value=fbAppId||'';
+}
+
+function closeFacebookSetup(){
+  document.getElementById('facebookSetupModal').style.display='none';
+  document.getElementById('fbAppIdError').textContent='';
+  document.getElementById('fbSuccessMsg').textContent='';
+  document.getElementById('fbErrorMsg').textContent='';
+}
+
+function saveFacebookAppId(){
+  const appId=document.getElementById('fbAppId').value.trim();
+  const errorMsg=document.getElementById('fbAppIdError');
+  const successMsg=document.getElementById('fbSuccessMsg');
+  
+  errorMsg.textContent='';
+  successMsg.textContent='';
+  
+  if(!appId){
+    errorMsg.textContent='Please enter your Facebook App ID';
+    return;
+  }
+  
+  if(!/^\d{15,}$/.test(appId)){
+    errorMsg.textContent='Invalid App ID format (should be numbers only, 15+ digits)';
+    return;
+  }
+  
+  fbAppId=appId;
+  localStorage.setItem('fbAppId',appId);
+  successMsg.textContent='✓ App ID Saved! Reloading...';
+  successMsg.style.color='#51cf66';
+  
+  setTimeout(()=>{
+    window.location.reload();
+  },1500);
+}
+
+function testFacebookLogin(){
+  if(!fbAppId){
+    document.getElementById('fbErrorMsg').textContent='⚠️ Please save App ID first';
+    return;
+  }
+  
   if(typeof FB==='undefined'){
-    alert('Facebook SDK not loaded. Please try again.');
+    document.getElementById('fbErrorMsg').textContent='⚠️ Facebook SDK not loaded. Try again in a moment.';
     return;
   }
   
@@ -137,88 +250,108 @@ function facebookLogin(){
           loginMethod:'facebook',
           joinDate:new Date().toISOString()
         };
-        localStorage.setItem("authToken","fb_token_"+user.id);
-        localStorage.setItem("userData",JSON.stringify(currentUser));
-        updateUIForLogin();
-        closeLoginModal();
+        localStorage.setItem('authToken','fb_token_'+user.id);
+        localStorage.setItem('userData',JSON.stringify(currentUser));
+        
+        document.getElementById('fbSuccessMsg').textContent='✓ Facebook Login Werkt! Je bent ingelogd als '+user.name;
+        document.getElementById('fbSuccessMsg').style.color='#51cf66';
+        
+        setTimeout(()=>{
+          updateUIForLogin();
+          closeFacebookSetup();
+          closeLoginModal();
+        },1500);
       });
     }else{
-      alert("Facebook login failed. Please try again.");
+      document.getElementById('fbErrorMsg').textContent='❌ Login cancelled';
     }
   }, {scope:'public_profile,email'});
 }
 
+function facebookLogin(){
+  if(!fbAppId){
+    alert('Facebook Login is not set up yet. Please click "Setup Facebook Login" first.');
+    openFacebookSetup();
+    return;
+  }
+  
+  if(typeof FB==='undefined'){
+    alert('Facebook SDK still loading. Please try again in a moment.');
+    return;
+  }
+  
+  testFacebookLogin();
+}
+
 function checkLoginStatus(){
-  const token=localStorage.getItem("authToken");
+  const token=localStorage.getItem('authToken');
   if(token){
-    currentUser=JSON.parse(localStorage.getItem("userData"));
+    currentUser=JSON.parse(localStorage.getItem('userData'));
     updateUIForLogin();
   }
 }
 
 function updateUIForLogin(){
-  document.getElementById("loginBtn").style.display="none";
-  document.getElementById("logoutBtn").style.display="block";
-  document.getElementById("currentSkin").textContent=currentUser.username;
+  document.getElementById('loginBtn').style.display='none';
+  document.getElementById('logoutBtn').style.display='block';
+  document.getElementById('currentSkin').textContent=currentUser.username;
   
-  const profileDiv=document.getElementById("userProfile");
-  document.getElementById("profilePic").src=currentUser.picture||generateAvatar(currentUser.username);
-  document.getElementById("playerName").textContent=currentUser.username;
-  profileDiv.style.display="block";
+  const profileDiv=document.getElementById('userProfile');
+  document.getElementById('profilePic').src=currentUser.picture||generateAvatar(currentUser.username);
+  document.getElementById('playerName').textContent=currentUser.username;
+  profileDiv.style.display='block';
 }
 
 function updateUIForLogout(){
-  document.getElementById("loginBtn").style.display="block";
-  document.getElementById("logoutBtn").style.display="none";
-  document.getElementById("currentSkin").textContent="Default";
-  document.getElementById("userProfile").style.display="none";
+  document.getElementById('loginBtn').style.display='block';
+  document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('currentSkin').textContent='Default';
+  document.getElementById('userProfile').style.display='none';
 }
 
 function openLoginModal(){
-  document.getElementById("loginModal").style.display="block";
-  document.getElementById("loginForm").reset();
+  document.getElementById('loginModal').style.display='block';
+  document.getElementById('loginForm').reset();
   clearErrors();
 }
 
 function closeLoginModal(){
-  document.getElementById("loginModal").style.display="none";
-  document.getElementById("loginForm").reset();
+  document.getElementById('loginModal').style.display='none';
+  document.getElementById('loginForm').reset();
   clearErrors();
 }
 
 function clearErrors(){
-  document.getElementById("usernameError").textContent="";
-  document.getElementById("loginError").textContent="";
-  document.getElementById("loginSuccess").textContent="";
+  document.getElementById('usernameError').textContent='';
+  document.getElementById('loginError').textContent='';
+  document.getElementById('loginSuccess').textContent='';
 }
 
 function handleLogin(event){
   event.preventDefault();
-  const username=document.getElementById("username").value.trim();
-  const usernameError=document.getElementById("usernameError");
-  const loginSuccess=document.getElementById("loginSuccess");
+  const username=document.getElementById('username').value.trim();
+  const usernameError=document.getElementById('usernameError');
+  const loginSuccess=document.getElementById('loginSuccess');
   
   clearErrors();
   
-  // Validation
   if(!username){
-    usernameError.textContent="Username is required";
+    usernameError.textContent='Username is required';
     return;
   }
   if(username.length<3){
-    usernameError.textContent="Username must be at least 3 characters";
+    usernameError.textContent='Username must be at least 3 characters';
     return;
   }
   if(username.length>20){
-    usernameError.textContent="Username must be less than 20 characters";
+    usernameError.textContent='Username must be less than 20 characters';
     return;
   }
   if(!/^[a-zA-Z0-9_-]+$/.test(username)){
-    usernameError.textContent="Username can only contain letters, numbers, _ and -";
+    usernameError.textContent='Username can only contain letters, numbers, _ and -';
     return;
   }
   
-  // Create player profile
   currentUser={
     username:username,
     id:Date.now().toString(),
@@ -230,46 +363,46 @@ function handleLogin(event){
     skins:['Default']
   };
   
-  loginSuccess.textContent="✓ Welcome to Agar.io!";
-  loginSuccess.style.color="#51cf66";
+  loginSuccess.textContent='✓ Welcome to Agar.io!';
+  loginSuccess.style.color='#51cf66';
   
   setTimeout(()=>{
-    localStorage.setItem("authToken","token_"+currentUser.id);
-    localStorage.setItem("userData",JSON.stringify(currentUser));
+    localStorage.setItem('authToken','token_'+currentUser.id);
+    localStorage.setItem('userData',JSON.stringify(currentUser));
     updateUIForLogin();
     closeLoginModal();
   },800);
 }
 
 function logout(){
-  if(confirm("Are you sure you want to logout?")){
+  if(confirm('Are you sure you want to logout?')){
     if(currentUser?.loginMethod==='facebook'){
       if(typeof FB!=='undefined'){
         FB.logout(function(response){
-          localStorage.removeItem("authToken");
-          localStorage.removeItem("userData");
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
           currentUser=null;
           updateUIForLogout();
         });
       }
     }else{
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userData");
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
       currentUser=null;
       updateUIForLogout();
     }
   }
 }
 
-function draw(f=""){
-  grid.innerHTML="";
+function draw(f=''){
+  grid.innerHTML='';
   skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{
-    let e=document.createElement("div");
-    e.className="card";
+    let e=document.createElement('div');
+    e.className='card';
     e.innerHTML=`<div class=skin><img src="${s.image}"></div><h3>${s.name}</h3><button>BUY</button><button>VIEW PRODUCT</button>`;
-    e.querySelectorAll("button")[1].onclick=()=>{
+    e.querySelectorAll('button')[1].onclick=()=>{
       if(!currentUser){
-        alert("Please login first!");
+        alert('Please login first!');
         openLoginModal();
         return;
       }
@@ -277,17 +410,20 @@ function draw(f=""){
       d.textContent=s.description;
       c.textContent=s.coins;
       dna.textContent=s.dna;
-      m.style.display="block"
+      m.style.display='block'
     };
     grid.appendChild(e);
   })
 }
 
+// Initialize
+loadFacebookSDK();
 draw();
+checkLoginStatus();
 
 search.oninput=e=>draw(e.target.value);
-t1.onclick=()=>{t1.classList.add("active");t2.classList.remove("active");sl.style.left="0";skinsPage.style.display="block";deals.style.display="none";}
-t2.onclick=()=>{t2.classList.add("active");t1.classList.remove("active");sl.style.left=t1.offsetWidth+"px";skinsPage.style.display="none";deals.style.display="block";}
+t1.onclick=()=>{t1.classList.add('active');t2.classList.remove('active');sl.style.left='0';skinsPage.style.display='block';deals.style.display='none';}
+t2.onclick=()=>{t2.classList.add('active');t1.classList.remove('active');sl.style.left=t1.offsetWidth+'px';skinsPage.style.display='none';deals.style.display='block';}
 
-window.onclick=e=>{if(e.target===document.getElementById("loginModal")){closeLoginModal()}if(e.target===m){m.style.display="none"}}
+window.onclick=e=>{if(e.target===document.getElementById('loginModal')){closeLoginModal()}if(e.target===document.getElementById('facebookSetupModal')){closeFacebookSetup()}if(e.target===m){m.style.display='none'}}
 </script></body></html>
