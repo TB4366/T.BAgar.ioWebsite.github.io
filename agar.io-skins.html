@@ -7,6 +7,7 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 .tabs{display:flex;position:relative;background:#202a3b}.tab{padding:14px 24px;cursor:pointer;font-weight:bold}.active{color:#fff}.slider{position:absolute;bottom:0;height:4px;width:160px;background:#3fa9ff;transition:.2s}
 .top{display:flex;justify-content:space-between;padding:20px}input{padding:8px;width:250px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:20px}.card{background:#2a3448;padding:10px;border-radius:10px;text-align:center;cursor:pointer;transition:transform 0.2s}.card:hover{transform:scale(1.05)}.skin img{width:110px;height:110px;border-radius:50%}
+.owned-badge{position:absolute;top:5px;right:5px;background:#51cf66;color:#000;padding:5px 10px;border-radius:5px;font-size:12px;font-weight:bold}
 .modal{display:none;position:fixed;inset:0;background:#0008;z-index:1000}.box{width:360px;margin:8% auto;background:#2a3448;padding:18px;border-radius:10px;position:relative}.close{position:absolute;right:10px;top:8px;cursor:pointer;font-size:28px}
 #deals{display:none;padding:40px}button{margin:4px}
 .form-group{margin:15px 0}.form-group input{width:100%;padding:10px;box-sizing:border-box;background:#1b2230;border:1px solid #3fa9ff;border-radius:5px;color:#fff}
@@ -19,10 +20,20 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
 .deal-card h3{margin-top:0;color:#3fa9ff}
 .deal-card .price{font-size:24px;font-weight:bold;color:#51cf66;margin:10px 0}
 .deal-card .discount{background:#ff6b6b;padding:5px 10px;border-radius:5px;display:inline-block;margin-bottom:10px}
-.login-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
-.login-option{flex:1}
-.login-option button{width:100%;padding:12px;margin:0;font-size:14px}
 .divider{text-align:center;margin:15px 0;color:#888;font-size:12px}
+.fb-profile-card{background:#1877f2;padding:15px;border-radius:10px;text-align:center;margin-top:20px}
+.fb-profile-card img{width:80px;height:80px;border-radius:50%;margin:10px auto}
+.fb-profile-card p{margin:5px 0;font-size:14px}
+.fb-profile-card button{background:#fff;color:#1877f2;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:bold;margin-top:10px;width:100%}
+.fb-profile-card button:hover{background:#e0e0e0}
+.connecting{text-align:center;padding:20px}
+.connecting-spinner{display:inline-block;width:40px;height:40px;border:4px solid #3fa9ff;border-top:4px solid #51cf66;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.purchase-modal{text-align:center}
+.purchase-modal img{width:150px;height:150px;border-radius:50%;margin:20px auto}
+.purchase-success{background:#51cf66;padding:15px;border-radius:5px;margin:15px 0;color:#000;font-weight:bold}
+.user-coins{background:#1b2230;padding:10px;border-radius:5px;margin-bottom:10px;text-align:center;font-size:14px}
+.card-relative{position:relative}
 </style></head><body>
 <header>
   <span>Agar.io Skins & Deals</span>
@@ -39,6 +50,7 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
     <div id=userProfile style="margin-top:10px;display:none">
       <img id=profilePic src="" style="width:40px;height:40px;border-radius:50%">
       <span id=playerName></span>
+      <p style="margin:5px 0;font-size:12px;color:#aaa">Coins: <span id=playerCoins>0</span></p>
     </div>
   </div>
   <input id=search placeholder='Search skins...'>
@@ -57,7 +69,7 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
     <h2 style="text-align:center">Login to Agar.io</h2>
     
     <!-- Facebook Login (Prominent) -->
-    <button class="auth-btn fb-btn" onclick="facebookLogin()">📘 Continue with Facebook</button>
+    <button class="auth-btn fb-btn" onclick="startFacebookLogin()">📘 Continue with Facebook</button>
     
     <div class=divider>or login with username</div>
     
@@ -75,20 +87,67 @@ body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:
   </div>
 </div>
 
-<!-- Product Modal -->
-<div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><p>For questions or assistance, please contact our support team!</p><a id=mail href='mailto:support@example.com'><button>Send Email</button></a></div></div>
+<!-- Facebook Connecting Modal -->
+<div id=connectingModal class=modal>
+  <div class=box style="text-align:center">
+    <h2>Connecting with Facebook...</h2>
+    <div class=connecting>
+      <div class=connecting-spinner></div>
+      <p style="margin-top:15px;color:#aaa">Waiting for your approval...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Facebook Profile Confirmation Modal -->
+<div id=fbProfileModal class=modal>
+  <div class=box>
+    <div class=close onclick='closeFBProfileModal()'>&times;</div>
+    <h2 style="text-align:center">Connect Facebook Account</h2>
+    
+    <div class=fb-profile-card id=fbProfileCard>
+      <img id=fbProfileImg src="" alt="Profile Picture">
+      <p style="font-size:18px;font-weight:bold" id=fbProfileName></p>
+      <p id=fbProfileEmail></p>
+      <button onclick="confirmFacebookLogin()">✓ Connect Account</button>
+    </div>
+    
+    <button style="width:100%;padding:10px;background:#555;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff;margin-top:10px" onclick="closeFBProfileModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Product Purchase Modal -->
+<div id=purchaseModal class=modal>
+  <div class=box>
+    <div class=close onclick='closePurchaseModal()'>&times;</div>
+    <div class=purchase-modal>
+      <h2 id=productName></h2>
+      <img id=productImg src="">
+      <p id=productDesc style="color:#aaa"></p>
+      <div class=user-coins>
+        Your Coins: <span id=coinsDisplay>0</span>
+      </div>
+      <p style="font-size:20px;color:#51cf66;font-weight:bold">Price: <span id=productPrice></span></p>
+      <button id=buyBtn style="width:100%;padding:12px;background:#51cf66;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#000;font-size:16px;margin-top:15px" onclick="buyProduct()">💰 Buy Now</button>
+      <div id=purchaseError class=error style="text-align:center;margin-top:10px"></div>
+      <div id=purchaseSuccess class=success style="text-align:center;margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Modal (View Details) -->
+<div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><button style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff" onclick="openProductPurchase()">🛒 Buy This Skin</button></div></div>
 
 <!-- Facebook SDK -->
 <div id=fbSdk></div>
 
 <script>
 const skins=[
-{name:"Zen Shaman",image:"IMG_9638.webp",coins:"1250 Coins",dna:"75 DNA",description:"A mysterious warrior blessed with ancient powers."},
-{name:"Celestial Plague",image:"IMG_9639.webp",coins:"2500 Coins",dna:"120 DNA",description:"Spread fear across the arena."},
-{name:"Neon Skull",image:"IMG_9640.webp",coins:"1800 Coins",dna:"90 DNA",description:"A glowing futuristic skull."},
-{name:"Dragon Scale",image:"IMG_9641.webp",coins:"3000 Coins",dna:"150 DNA",description:"A legendary skin from ancient times."},
-{name:"Arctic Frost",image:"IMG_9642.webp",coins:"1600 Coins",dna:"85 DNA",description:"Frozen beauty of the ice realm."},
-{name:"Magma Core",image:"IMG_9643.webp",coins:"1900 Coins",dna:"95 DNA",description:"Burning with the power of the earth."}
+{id:1,name:"Zen Shaman",image:"IMG_9638.webp",coins:1250,dna:75,description:"A mysterious warrior blessed with ancient powers."},
+{id:2,name:"Celestial Plague",image:"IMG_9639.webp",coins:2500,dna:120,description:"Spread fear across the arena."},
+{id:3,name:"Neon Skull",image:"IMG_9640.webp",coins:1800,dna:90,description:"A glowing futuristic skull."},
+{id:4,name:"Dragon Scale",image:"IMG_9641.webp",coins:3000,dna:150,description:"A legendary skin from ancient times."},
+{id:5,name:"Arctic Frost",image:"IMG_9642.webp",coins:1600,dna:85,description:"Frozen beauty of the ice realm."},
+{id:6,name:"Magma Core",image:"IMG_9643.webp",coins:1900,dna:95,description:"Burning with the power of the earth."}
 ];
 
 const specialDeals=[
@@ -100,6 +159,8 @@ const specialDeals=[
 
 let currentUser=null;
 let fbInitialized=false;
+let pendingFBUser=null;
+let selectedProduct=null;
 
 // Initialize Facebook SDK automatically
 function initFacebookSDK(){
@@ -110,7 +171,7 @@ function initFacebookSDK(){
   
   window.fbAsyncInit=function(){
     FB.init({
-      appId:'1234567890123456', // Replace with your actual App ID
+      appId:'1234567890123456',
       xfbml:true,
       version:'v18.0',
       cookie:true,
@@ -119,54 +180,65 @@ function initFacebookSDK(){
     
     FB.AppEvents.logPageView();
     fbInitialized=true;
-    
-    // Check if user is already logged in with Facebook
-    FB.getLoginStatus(function(response){
-      if(response.status==='connected'){
-        getFacebookUserData();
-      }
-    });
   };
   
   script.src='https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=1234567890123456';
   document.getElementById('fbSdk').appendChild(script);
 }
 
-function getFacebookUserData(){
-  FB.api('/me', {fields:'id,name,email,picture'}, function(user){
-    if(user.id){
-      currentUser={
-        username:user.name,
-        email:user.email||'facebook_user@agar.io',
-        id:user.id,
-        picture:user.picture.data.url,
-        loginMethod:'facebook',
-        joinDate:new Date().toISOString(),
-        level:1,
-        score:0,
-        skins:['Default','Zen Shaman']
-      };
-      localStorage.setItem('authToken','fb_token_'+user.id);
-      localStorage.setItem('userData',JSON.stringify(currentUser));
-      updateUIForLogin();
-    }
-  });
-}
-
-function facebookLogin(){
+function startFacebookLogin(){
   if(!fbInitialized){
     alert('Facebook is initializing... please try again in a moment');
     return;
   }
   
+  document.getElementById('connectingModal').style.display='block';
+  
   FB.login(function(response){
+    document.getElementById('connectingModal').style.display='none';
+    
     if(response.authResponse){
-      getFacebookUserData();
-      closeLoginModal();
+      FB.api('/me', {fields:'id,name,email,picture.width(200).height(200)'}, function(user){
+        if(user.id){
+          pendingFBUser={
+            username:user.name,
+            email:user.email||'facebook_user@agar.io',
+            uid:user.id,
+            picture:user.picture.data.url,
+            loginMethod:'facebook',
+            joinDate:new Date().toISOString(),
+            level:1,
+            score:0,
+            coins:0,
+            skins:['Default']
+          };
+          
+          document.getElementById('fbProfileImg').src=user.picture.data.url;
+          document.getElementById('fbProfileName').textContent=user.name;
+          document.getElementById('fbProfileEmail').textContent=user.email||'No email provided';
+          document.getElementById('fbProfileModal').style.display='block';
+        }
+      });
     }else{
-      alert('Login failed or was cancelled');
+      alert('Login cancelled');
     }
   }, {scope:'public_profile,email'});
+}
+
+function confirmFacebookLogin(){
+  if(pendingFBUser){
+    currentUser=pendingFBUser;
+    localStorage.setItem('authToken','fb_token_'+currentUser.uid);
+    localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
+    updateUIForLogin();
+    closeFBProfileModal();
+    closeLoginModal();
+  }
+}
+
+function closeFBProfileModal(){
+  document.getElementById('fbProfileModal').style.display='none';
+  pendingFBUser=null;
 }
 
 // Generate random avatar color
@@ -200,8 +272,12 @@ function generateAvatar(username){
 function checkLoginStatus(){
   const token=localStorage.getItem('authToken');
   if(token){
-    currentUser=JSON.parse(localStorage.getItem('userData'));
-    updateUIForLogin();
+    const uid=token.replace('fb_token_','').replace('token_','');
+    const userData=localStorage.getItem('userData_'+uid);
+    if(userData){
+      currentUser=JSON.parse(userData);
+      updateUIForLogin();
+    }
   }
 }
 
@@ -213,7 +289,10 @@ function updateUIForLogin(){
   const profileDiv=document.getElementById('userProfile');
   document.getElementById('profilePic').src=currentUser.picture||generateAvatar(currentUser.username);
   document.getElementById('playerName').textContent=currentUser.username;
+  document.getElementById('playerCoins').textContent=currentUser.coins||0;
   profileDiv.style.display='block';
+  
+  draw();
 }
 
 function updateUIForLogout(){
@@ -266,14 +345,18 @@ function handleLogin(event){
     return;
   }
   
+  const uid='user_'+Date.now();
+  
   currentUser={
     username:username,
-    id:Date.now().toString(),
+    uid:uid,
+    id:uid,
     picture:generateAvatar(username),
     loginMethod:'username',
     joinDate:new Date().toISOString(),
     level:1,
     score:0,
+    coins:1000,
     skins:['Default']
   };
   
@@ -281,8 +364,8 @@ function handleLogin(event){
   loginSuccess.style.color='#51cf66';
   
   setTimeout(()=>{
-    localStorage.setItem('authToken','token_'+currentUser.id);
-    localStorage.setItem('userData',JSON.stringify(currentUser));
+    localStorage.setItem('authToken','token_'+currentUser.uid);
+    localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
     updateUIForLogin();
     closeLoginModal();
   },800);
@@ -294,38 +377,115 @@ function logout(){
       if(typeof FB!=='undefined'){
         FB.logout(function(response){
           localStorage.removeItem('authToken');
-          localStorage.removeItem('userData');
+          if(currentUser?.uid){
+            localStorage.removeItem('userData_'+currentUser.uid);
+          }
           currentUser=null;
           updateUIForLogout();
         });
       }
     }else{
       localStorage.removeItem('authToken');
-      localStorage.removeItem('userData');
+      if(currentUser?.uid){
+        localStorage.removeItem('userData_'+currentUser.uid);
+      }
       currentUser=null;
       updateUIForLogout();
     }
   }
 }
 
+function openProductPurchase(){
+  if(!selectedProduct) return;
+  
+  document.getElementById('productName').textContent=selectedProduct.name;
+  document.getElementById('productImg').src=selectedProduct.image;
+  document.getElementById('productDesc').textContent=selectedProduct.description;
+  document.getElementById('productPrice').textContent=selectedProduct.coins+' Coins';
+  document.getElementById('coinsDisplay').textContent=currentUser.coins||0;
+  document.getElementById('purchaseError').textContent='';
+  document.getElementById('purchaseSuccess').textContent='';
+  
+  document.getElementById('m').style.display='none';
+  document.getElementById('purchaseModal').style.display='block';
+}
+
+function closePurchaseModal(){
+  document.getElementById('purchaseModal').style.display='none';
+  selectedProduct=null;
+}
+
+function buyProduct(){
+  if(!selectedProduct || !currentUser) return;
+  
+  const errorDiv=document.getElementById('purchaseError');
+  const successDiv=document.getElementById('purchaseSuccess');
+  errorDiv.textContent='';
+  successDiv.textContent='';
+  
+  if(currentUser.coins<selectedProduct.coins){
+    errorDiv.textContent='❌ Not enough coins! You need '+selectedProduct.coins+' coins';
+    return;
+  }
+  
+  if(currentUser.skins.includes('skin_'+selectedProduct.id)){
+    errorDiv.textContent='❌ You already own this skin!';
+    return;
+  }
+  
+  // Deduct coins
+  currentUser.coins-=selectedProduct.coins;
+  
+  // Add skin to user
+  if(!currentUser.skins) currentUser.skins=[];
+  currentUser.skins.push('skin_'+selectedProduct.id);
+  
+  // Save to localStorage
+  localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
+  
+  successDiv.textContent='✓ Skin purchased! '+selectedProduct.name+' added to your account!';
+  successDiv.style.color='#51cf66';
+  
+  document.getElementById('playerCoins').textContent=currentUser.coins;
+  document.getElementById('coinsDisplay').textContent=currentUser.coins;
+  
+  setTimeout(()=>{
+    closePurchaseModal();
+    draw();
+  },2000);
+}
+
 function draw(f=''){
+  const grid=document.getElementById('grid');
   grid.innerHTML='';
   skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{
+    const isOwned=currentUser&&currentUser.skins&&currentUser.skins.includes('skin_'+s.id);
     let e=document.createElement('div');
-    e.className='card';
-    e.innerHTML=`<div class=skin><img src="${s.image}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Ccircle cx=%2255%22 cy=%2255%22 r=%2255%22 fill=%22%234ECDC4%22/%3E%3C/svg%3E'"></div><h3>${s.name}</h3><p style="font-size:12px;color:#aaa">${s.coins} • ${s.dna}</p><button style="background:#3fa9ff;color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">BUY</button><button style="background:#51cf66;color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">VIEW</button>`;
-    e.querySelectorAll('button')[1].onclick=()=>{
+    e.className='card card-relative';
+    let ownedHTML=isOwned?'<div class=owned-badge>✓ OWNED</div>':'';
+    e.innerHTML=`${ownedHTML}<div class=skin><img src="${s.image}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Ccircle cx=%2755%22 cy=%2755%22 r=%2755%22 fill=%22%234ECDC4%22/%3E%3C/svg%3E'"></div><h3>${s.name}</h3><p style="font-size:12px;color:#aaa">${s.coins} Coins</p><button style="background:${isOwned?'#888':'#3fa9ff'};color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">${isOwned?'✓ OWNED':'BUY'}</button><button style="background:#51cf66;color:#000;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">VIEW</button>`;
+    
+    e.querySelectorAll('button')[0].onclick=()=>{
       if(!currentUser){
         alert('Please login first!');
         openLoginModal();
         return;
       }
+      if(!isOwned){
+        selectedProduct=s;
+        openProductPurchase();
+      }
+    };
+    
+    e.querySelectorAll('button')[1].onclick=()=>{
+      selectedProduct=s;
       n.textContent=s.name;
       d.textContent=s.description;
-      c.textContent=s.coins;
-      dna.textContent=s.dna;
-      m.style.display='block'
+      c.textContent=s.coins+' Coins';
+      dna.textContent=s.dna+' DNA';
+      document.getElementById('m').style.display='block';
     };
+    
     grid.appendChild(e);
   })
 }
@@ -340,7 +500,7 @@ function drawDeals(){
         <div class=discount>${deal.discount}</div>
         <p><strong>Items:</strong> ${deal.items}</p>
         <p><strong>Was:</strong> ${deal.oldPrice}</p>
-        <p><strong>Now:</strong> <span class=price>${deal.newPrice}</span></p>
+        <p><strong>Now:</strong> <span style="font-size:24px;font-weight:bold;color:#51cf66;margin:10px 0">${deal.newPrice}</span></p>
         <p>${deal.description}</p>
         <p style="color:#888;font-size:12px">⏰ ${deal.expiry}</p>
         <button style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Claim Deal</button>
@@ -352,13 +512,13 @@ function drawDeals(){
 
 // Initialize
 initFacebookSDK();
-draw();
 drawDeals();
 checkLoginStatus();
+if(!currentUser) draw();
 
 search.oninput=e=>draw(e.target.value);
 t1.onclick=()=>{t1.classList.add('active');t2.classList.remove('active');sl.style.left='0';skinsPage.style.display='block';deals.style.display='none';}
 t2.onclick=()=>{t2.classList.add('active');t1.classList.remove('active');sl.style.left=t1.offsetWidth+'px';skinsPage.style.display='none';deals.style.display='block';}
 
-window.onclick=e=>{if(e.target===document.getElementById('loginModal')){closeLoginModal()}if(e.target===m){m.style.display='none'}}
+window.onclick=e=>{if(e.target===document.getElementById('loginModal')){closeLoginModal()}if(e.target===document.getElementById('fbProfileModal')){closeFBProfileModal()}if(e.target===document.getElementById('m')){document.getElementById('m').style.display='none'}if(e.target===document.getElementById('purchaseModal')){closePurchaseModal()}}
 </script></body></html>
