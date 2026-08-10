@@ -1,985 +1,496 @@
-```javascript
-/**
- * Populate the Deals grid directly from GameConfiguration
- *
- * Sources:
- * - Wallet - In-App Purchases
- * - Wallet - Soft Purchases
- * - Wallet - Offerable Bundles
- * - Visual - Bundles
- * - Wallet - Product Bundles
- * - Gameplay - Equippable Skins
- */
-function populateDealsGrid() {
-    var grid = document.getElementById('dealsGrid');
-    if (!grid) return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    /* ---------------------------------------------------------
-       Get GameConfiguration
-       --------------------------------------------------------- */
+    <title>T.B Agar.io - Login</title>
 
-    var config =
-        window.GameConfiguration &&
-        window.GameConfiguration.gameConfig;
-
-    if (!config) {
-        if (
-            window.master &&
-            window.master.GameConfiguration &&
-            window.master.GameConfiguration.gameConfig
-        ) {
-            window.GameConfiguration =
-                window.master.GameConfiguration;
-
-            config =
-                window.master.GameConfiguration.gameConfig;
-        }
-    }
-
-    if (!config) {
-        grid.innerHTML =
-            '<div style="text-align:center;padding:30px;color:#aaa;">' +
-            '<i class="fa fa-spinner fa-spin fa-2x"></i><br><br>' +
-            'Loading deals...' +
-            '</div>';
-
-        if (
-            !window._isLoadingGameConfig &&
-            typeof LoadGameConfiguration === 'function'
-        ) {
-            window._isLoadingGameConfig = true;
-            LoadGameConfiguration();
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        return;
-    }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-    /* ---------------------------------------------------------
-       Read the exact sections from GameConfiguration
-       --------------------------------------------------------- */
+            font-family: Arial, Helvetica, sans-serif;
 
-    var iaps =
-        config['Wallet - In-App Purchases'] || [];
+            background:
+                radial-gradient(circle at top, #263d68, #101722 55%, #090d14);
 
-    var softPurchases =
-        config['Wallet - Soft Purchases'] || [];
-
-    var offerableBundles =
-        config['Wallet - Offerable Bundles'] || [];
-
-    var visualBundles =
-        config['Visual - Bundles'] || [];
-
-    var productBundles =
-        config['Wallet - Product Bundles'] ||
-        config['Wallet - Bundle Products'] ||
-        [];
-
-    var skins =
-        config['Gameplay - Equippable Skins'] || [];
-
-    var priceMatrix =
-        config['Prices - Matrix'] || [];
-
-    /* ---------------------------------------------------------
-       Lookup tables
-       --------------------------------------------------------- */
-
-    var bundleLookup = {};
-    var productLookup = {};
-    var skinLookup = {};
-
-    for (var b = 0; b < visualBundles.length; b++) {
-        var vb = visualBundles[b];
-
-        if (!vb) continue;
-
-        if (vb.bundleId) {
-            bundleLookup[String(vb.bundleId)] = vb;
-        }
-    }
-
-    for (var p = 0; p < productBundles.length; p++) {
-        var product = productBundles[p];
-
-        if (!product) continue;
-
-        var productId =
-            product.id ||
-            product.productId ||
-            product.bundleId;
-
-        if (!productId) continue;
-
-        productId = String(productId);
-
-        if (!productLookup[productId]) {
-            productLookup[productId] = [];
+            color: white;
         }
 
-        productLookup[productId].push(product);
-    }
-
-    for (var s = 0; s < skins.length; s++) {
-        var skin = skins[s];
-
-        if (!skin || !skin.productId) continue;
-
-        skinLookup[String(skin.productId)] = skin;
-
-        /*
-         * Some configurations use cleanProductId.
-         */
-        if (skin.cleanProductId) {
-            skinLookup[String(skin.cleanProductId)] = skin;
-        }
-    }
-
-    /* ---------------------------------------------------------
-       Helpers
-       --------------------------------------------------------- */
-
-    function cleanName(value) {
-        if (!value) return 'Special Deal';
-
-        return String(value)
-            .replace(/_/g, ' ')
-            .replace(/com\.miniclip\.agar\.io\./gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-    }
-
-    function getPrice(tier) {
-        if (
-            tier !== undefined &&
-            tier !== null &&
-            Array.isArray(priceMatrix)
-        ) {
-            for (var m = 0; m < priceMatrix.length; m++) {
-                var row = priceMatrix[m];
-
-                if (!row) continue;
-
-                if (
-                    String(row.tier) ===
-                    String(tier)
-                ) {
-                    if (
-                        row.USD !== undefined &&
-                        row.USD !== null &&
-                        isFinite(Number(row.USD))
-                    ) {
-                        return '$' +
-                            Number(row.USD).toFixed(2);
-                    }
-
-                    if (
-                        row.EUR !== undefined &&
-                        row.EUR !== null &&
-                        isFinite(Number(row.EUR))
-                    ) {
-                        return '€' +
-                            Number(row.EUR).toFixed(2);
-                    }
-                }
-            }
+        .container {
+            width: 420px;
+            max-width: calc(100% - 30px);
         }
 
-        return 'Price at checkout';
-    }
+        .card {
+            padding: 35px;
+            border-radius: 20px;
 
-    /*
-     * Find every skin belonging to a bundle.
-     * Uses the existing getDealSkinEntries() function
-     * when available.
-     */
-    function getDealSkins(bundleId) {
+            background: rgba(20, 28, 42, .96);
 
-        var result = [];
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.45);
 
-        if (
-            typeof getDealSkinEntries ===
-            'function'
-        ) {
-            try {
-                var entries =
-                    getDealSkinEntries(bundleId) || [];
-
-                for (
-                    var e = 0;
-                    e < entries.length;
-                    e++
-                ) {
-                    var entry = entries[e];
-
-                    if (!entry) continue;
-
-                    var pid =
-                        entry.productId ||
-                        entry.cleanProductId;
-
-                    if (!pid) continue;
-
-                    var resolved =
-                        skinLookup[String(pid)];
-
-                    if (resolved) {
-                        result.push(resolved);
-                    } else if (entry.image) {
-                        result.push(entry);
-                    }
-                }
-            } catch (err) {
-                console.warn(
-                    '[DEALS] Could not resolve skins:',
-                    err
-                );
-            }
+            border: 1px solid rgba(255,255,255,.08);
         }
 
-        /*
-         * Fallback: inspect Product Bundles.
-         */
-        if (!result.length && bundleId) {
+        .logo {
+            width: 70px;
+            height: 70px;
 
-            var products =
-                productLookup[String(bundleId)] ||
-                [];
+            margin: 0 auto 20px;
 
-            for (
-                var x = 0;
-                x < products.length;
-                x++
-            ) {
-                var bp = products[x];
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-                if (!bp) continue;
+            border-radius: 50%;
 
-                var pid =
-                    bp.productId ||
-                    bp.id;
+            background: linear-gradient(135deg, #4da3ff, #1769d1);
 
-                if (!pid) continue;
+            font-size: 23px;
+            font-weight: 900;
 
-                var found =
-                    skinLookup[String(pid)];
-
-                if (found) {
-                    result.push(found);
-                }
-            }
+            box-shadow: 0 8px 30px rgba(35,125,255,.35);
         }
 
-        /*
-         * Remove duplicate skins.
-         */
-        var unique = [];
-        var seen = {};
-
-        for (
-            var u = 0;
-            u < result.length;
-            u++
-        ) {
-            var item = result[u];
-
-            var key =
-                item.productId ||
-                item.cleanProductId ||
-                item.image;
-
-            if (!key) continue;
-
-            key = String(key);
-
-            if (seen[key]) continue;
-
-            seen[key] = true;
-            unique.push(item);
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 27px;
         }
 
-        return unique;
-    }
-
-    /*
-     * Build the skin preview HTML.
-     */
-    function skinPreview(bundleId) {
-
-        var dealSkins =
-            getDealSkins(bundleId);
-
-        if (!dealSkins.length) {
-            return `
-                <div class="deal-no-skin">
-                    <i class="fa fa-gift"></i>
-                </div>
-            `;
+        .subtitle {
+            text-align: center;
+            color: #9ba8ba;
+            margin: 10px 0 28px;
         }
 
-        var max =
-            Math.min(
-                dealSkins.length,
-                4
-            );
+        button {
+            width: 100%;
+            border: 0;
+            border-radius: 11px;
 
-        var html =
-            '<div class="deal-skin-preview">';
+            padding: 14px;
 
-        for (
-            var i = 0;
-            i < max;
-            i++
-        ) {
-            var skin =
-                dealSkins[i];
+            font-size: 15px;
+            font-weight: 700;
 
-            var image =
-                skin.image ||
-                skin.thumbnail ||
-                skin.icon;
+            cursor: pointer;
 
-            if (!image) continue;
-
-            /*
-             * Same CDN logic already used by
-             * the existing script.
-             */
-            var imageUrl = image;
-
-            if (
-                window.LM_CONFIG_CDN &&
-                window.agarversion &&
-                image.indexOf('http') !== 0
-            ) {
-                imageUrl =
-                    window.LM_CONFIG_CDN +
-                    '/' +
-                    window.agarversion +
-                    image;
-            }
-
-            html +=
-                '<div class="deal-skin-thumb">' +
-                    '<img src="' +
-                    imageUrl +
-                    '" ' +
-                    'onerror="this.style.display=\'none\'">' +
-                '</div>';
+            transition: .2s;
         }
 
-        html +=
-            '</div>';
-
-        return html;
-    }
-
-    /*
-     * Return bundle description.
-     */
-    function getBundleName(bundleId) {
-
-        var bundle =
-            bundleLookup[String(bundleId)] ||
-            {};
-
-        if (
-            bundle.description &&
-            bundle.description !== 'na'
-        ) {
-            return cleanName(
-                bundle.description
-            );
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
         }
 
-        return cleanName(bundleId);
-    }
-
-    /* ---------------------------------------------------------
-       Build deals
-       --------------------------------------------------------- */
-
-    var deals = [];
-
-    /* =========================================================
-       1. REAL MONEY IAP DEALS
-       ========================================================= */
-
-    for (
-        var i = 0;
-        i < iaps.length;
-        i++
-    ) {
-        var iap = iaps[i];
-
-        if (!iap) continue;
-
-        var bundleId =
-            iap.bundleId ||
-            iap.id;
-
-        var name =
-            getBundleName(bundleId);
-
-        /*
-         * If the bundle description isn't useful,
-         * use the IAP id.
-         */
-        if (
-            !name ||
-            name === 'Special Deal'
-        ) {
-            name =
-                cleanName(iap.id);
+        .facebook {
+            background: #1877f2;
+            color: white;
         }
 
-        deals.push({
-            type: 'IAP',
-
-            id:
-                iap.id,
-
-            bundleId:
-                bundleId,
-
-            name:
-                name,
-
-            price:
-                getPrice(iap.priceTier),
-
-            priceTier:
-                iap.priceTier,
-
-            skins:
-                getDealSkins(bundleId),
-
-            raw:
-                iap
-        });
-    }
-
-    /* =========================================================
-       2. SOFT PURCHASE DEALS
-       ========================================================= */
-
-    for (
-        var sp = 0;
-        sp < softPurchases.length;
-        sp++
-    ) {
-        var soft =
-            softPurchases[sp];
-
-        if (!soft) continue;
-
-        var softId =
-            soft.id ||
-            soft.productId ||
-            soft.purchaseId;
-
-        var softBundle =
-            soft.bundleId ||
-            softId;
-
-        deals.push({
-            type: 'SOFT',
-
-            id:
-                softId,
-
-            bundleId:
-                softBundle,
-
-            name:
-                cleanName(
-                    soft.name ||
-                    soft.description ||
-                    softId
-                ),
-
-            price:
-                (
-                    soft.price !== undefined
-                )
-                    ? soft.price
-                    : (
-                        soft.cost !== undefined
-                            ? soft.cost
-                            : '—'
-                    ),
-
-            currency:
-                soft.currency ||
-                'DNA',
-
-            skins:
-                getDealSkins(
-                    softBundle
-                ),
-
-            raw:
-                soft
-        });
-    }
-
-    /* =========================================================
-       3. OFFERABLE BUNDLES
-       ========================================================= */
-
-    for (
-        var ob = 0;
-        ob < offerableBundles.length;
-        ob++
-    ) {
-        var offer =
-            offerableBundles[ob];
-
-        if (!offer) continue;
-
-        var offerId =
-            offer.bundleId ||
-            offer.id;
-
-        /*
-         * Don't duplicate an IAP bundle.
-         */
-        var alreadyExists =
-            deals.some(function(d) {
-                return (
-                    String(d.bundleId) ===
-                    String(offerId)
-                );
-            });
-
-        if (alreadyExists) continue;
-
-        deals.push({
-            type: 'OFFER',
-
-            id:
-                offerId,
-
-            bundleId:
-                offerId,
-
-            name:
-                getBundleName(
-                    offerId
-                ),
-
-            price:
-                offer.price ||
-                offer.cost ||
-                'Special Offer',
-
-            skins:
-                getDealSkins(
-                    offerId
-                ),
-
-            raw:
-                offer
-        });
-    }
-
-    /* ---------------------------------------------------------
-       No deals
-       --------------------------------------------------------- */
-
-    if (!deals.length) {
-
-        grid.innerHTML =
-            '<div style="' +
-                'text-align:center;' +
-                'color:' +
-                getShopTheme().tc2 +
-                ';padding:30px;' +
-            '">' +
-                '<i class="fa fa-tag fa-2x"></i>' +
-                '<br><br>' +
-                'No deals available in this configuration.' +
-            '</div>';
-
-        return;
-    }
-
-    /* ---------------------------------------------------------
-       Theme
-       --------------------------------------------------------- */
-
-    var t =
-        getShopTheme();
-
-    /* ---------------------------------------------------------
-       CSS for the real config deal cards
-       --------------------------------------------------------- */
-
-    if (
-        !document.getElementById(
-            'configDealsStyle'
-        )
-    ) {
-
-        var style =
-            document.createElement(
-                'style'
-            );
-
-        style.id =
-            'configDealsStyle';
-
-        style.textContent = `
-
-            #dealsGrid {
-                display:grid;
-                grid-template-columns:
-                    repeat(2,minmax(0,1fr));
-                gap:10px;
-                max-height:390px;
-                overflow-y:auto;
-                padding:8px;
-            }
-
-            .config-deal-card {
-                position:relative;
-                border-radius:10px;
-                overflow:hidden;
-                padding:10px;
-                background:
-                    linear-gradient(
-                        145deg,
-                        rgba(255,255,255,.08),
-                        rgba(0,0,0,.18)
-                    );
-                border:1px solid
-                    rgba(255,255,255,.10);
-                transition:
-                    transform .15s ease,
-                    border-color .15s ease;
-            }
-
-            .config-deal-card:hover {
-                transform:
-                    translateY(-2px);
-                border-color:
-                    ${t.mc};
-            }
-
-            .config-deal-type {
-                position:absolute;
-                top:7px;
-                left:7px;
-                z-index:3;
-                padding:3px 6px;
-                border-radius:4px;
-                background:
-                    ${t.mc};
-                color:
-                    #fff;
-                font-size:8px;
-                font-weight:900;
-                text-transform:uppercase;
-            }
-
-            .config-deal-preview {
-                width:100%;
-                min-height:130px;
-                border-radius:8px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                background:
-                    radial-gradient(
-                        circle,
-                        rgba(255,255,255,.08),
-                        rgba(0,0,0,.25)
-                    );
-            }
-
-            .deal-skin-preview {
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                gap:4px;
-                width:100%;
-                padding:10px;
-            }
-
-            .deal-skin-thumb {
-                width:74px;
-                height:74px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-            }
-
-            .deal-skin-thumb img {
-                width:100%;
-                height:100%;
-                object-fit:contain;
-            }
-
-            .deal-no-skin {
-                font-size:42px;
-                color:
-                    rgba(255,255,255,.18);
-            }
-
-            .config-deal-name {
-                margin-top:9px;
-                color:#fff;
-                font-size:12px;
-                font-weight:900;
-                white-space:nowrap;
-                overflow:hidden;
-                text-overflow:ellipsis;
-            }
-
-            .config-deal-id {
-                margin-top:3px;
-                color:
-                    rgba(255,255,255,.45);
-                font-size:8px;
-                white-space:nowrap;
-                overflow:hidden;
-                text-overflow:ellipsis;
-            }
-
-            .config-deal-price {
-                margin-top:8px;
-                color:
-                    ${t.mc};
-                font-size:12px;
-                font-weight:900;
-            }
-
-            .config-deal-buy {
-                width:100%;
-                margin-top:8px;
-                padding:7px;
-                border:0;
-                border-radius:5px;
-                background:
-                    ${t.b1};
-                color:
-                    ${t.btc};
-                font-size:9px;
-                font-weight:900;
-                cursor:pointer;
-            }
-
-            .config-deal-buy:hover {
-                background:
-                    ${t.b1h};
-            }
-
-            .config-deal-skins {
-                margin-top:5px;
-                color:
-                    rgba(255,255,255,.55);
-                font-size:8px;
-            }
-        `;
-
-        document.head.appendChild(
-            style
-        );
-    }
-
-    /* ---------------------------------------------------------
-       Render
-       --------------------------------------------------------- */
-
-    var html = '';
-
-    for (
-        var d = 0;
-        d < deals.length;
-        d++
-    ) {
-
-        var deal =
-            deals[d];
-
-        var skinCount =
-            deal.skins
-                ? deal.skins.length
-                : 0;
-
-        var buttonText =
-            deal.type === 'IAP'
-                ? 'BUY NOW'
-                : (
-                    deal.type === 'OFFER'
-                        ? 'OPEN DEAL'
-                        : 'BUY'
-                );
-
-        html += `
-
-            <div
-                class="config-deal-card"
-                data-deal-index="${d}"
-            >
-
-                <div class="config-deal-type">
-                    ${deal.type}
-                </div>
-
-                <div
-                    class="config-deal-preview"
-                >
-                    ${skinPreview(
-                        deal.bundleId
-                    )}
-                </div>
-
-                <div
-                    class="config-deal-name"
-                    title="${deal.name}"
-                >
-                    ${deal.name}
-                </div>
-
-                <div
-                    class="config-deal-id"
-                    title="${deal.bundleId}"
-                >
-                    ${deal.bundleId}
-                </div>
-
-                <div
-                    class="config-deal-skins"
-                >
-                    ${
-                        skinCount
-                            ? skinCount +
-                              ' skin' +
-                              (
-                                skinCount !== 1
-                                    ? 's'
-                                    : ''
-                              )
-                            : 'Bundle / Items'
-                    }
-                </div>
-
-                <div
-                    class="config-deal-price"
-                >
-                    ${deal.price}
-                </div>
-
-                <button
-                    type="button"
-                    class="config-deal-buy"
-                    data-deal-index="${d}"
-                >
-                    ${buttonText}
-                </button>
+        .logout {
+            margin-top: 15px;
+            background: #303a49;
+            color: white;
+        }
 
+        .continue {
+            margin-top: 12px;
+            background: #42a5f5;
+            color: white;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px;
+
+            border-radius: 10px;
+
+            border: 1px solid #39465a;
+
+            background: #111925;
+
+            color: white;
+
+            outline: none;
+
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #42a5f5;
+        }
+
+        .profile {
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 10px 0 5px;
+        }
+
+        .status {
+            color: #63d471;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .section {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .section label {
+            display: block;
+            font-size: 13px;
+            color: #aab5c4;
+            margin-bottom: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 13px;
+            color: #8fd3ff;
+        }
+
+        .agario {
+            margin-top: 15px;
+            padding: 12px;
+
+            border-radius: 10px;
+
+            background: #111925;
+
+            text-align: center;
+        }
+
+        .agario span {
+            display: block;
+            color: #8f9aaa;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .agario strong {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGIN -->
+    <div id="loginCard" class="card">
+
+        <div class="logo">
+            T.B
+        </div>
+
+        <h1>Welcome back</h1>
+
+        <p class="subtitle">
+            Log in to continue to T.B Agar.io
+        </p>
+
+        <button
+            class="facebook"
+            onclick="facebookLogin()">
+            🔵 Continue with Facebook
+        </button>
+
+        <div id="loginMessage" class="message"></div>
+
+    </div>
+
+
+    <!-- AGARIO LINK -->
+    <div id="linkCard" class="card hidden">
+
+        <div class="logo">
+            T.B
+        </div>
+
+        <h1>Link your Agar.io account</h1>
+
+        <p class="subtitle">
+            Connect your Agar.io player name to your Facebook account.
+        </p>
+
+        <div class="section">
+
+            <label>
+                Agar.io player name
+            </label>
+
+            <input
+                id="agarioName"
+                type="text"
+                placeholder="Enter your Agar.io name"
+                maxlength="40">
+
+            <button
+                class="continue"
+                onclick="linkAgario()">
+                Continue
+            </button>
+
+        </div>
+
+        <div id="linkMessage" class="message"></div>
+
+    </div>
+
+
+    <!-- LOGGED IN -->
+    <div id="accountCard" class="card hidden">
+
+        <div class="profile">
+
+            <div class="logo">
+                T.B
             </div>
-        `;
+
+            <h1>You're logged in</h1>
+
+            <div class="profile-name" id="facebookName">
+                Facebook User
+            </div>
+
+            <div class="status">
+                ● Facebook account connected
+            </div>
+
+        </div>
+
+        <div class="agario">
+
+            <span>
+                Agar.io player
+            </span>
+
+            <strong id="playerName">
+                -
+            </strong>
+
+        </div>
+
+        <button
+            class="logout"
+            onclick="logout()">
+            Log out
+        </button>
+
+        <div id="accountMessage" class="message"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function checkSession() {
+
+    try {
+
+        const response = await fetch("/api/session");
+
+        const data = await response.json();
+
+        if (!data.loggedIn) {
+
+            showLogin();
+
+            return;
+        }
+
+        if (!data.user.agarioName) {
+
+            showLinkScreen(data.user);
+
+            return;
+        }
+
+        showAccount(data.user);
+
+    } catch (error) {
+
+        console.error(error);
+
+        showLogin();
+    }
+}
+
+
+function facebookLogin() {
+
+    window.location.href = "/auth/facebook";
+}
+
+
+function showLogin() {
+
+    document
+        .getElementById("loginCard")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("linkCard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("accountCard")
+        .classList.add("hidden");
+}
+
+
+function showLinkScreen(user) {
+
+    document
+        .getElementById("loginCard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("accountCard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("linkCard")
+        .classList.remove("hidden");
+}
+
+
+function showAccount(user) {
+
+    document
+        .getElementById("loginCard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("linkCard")
+        .classList.add("hidden");
+
+    document
+        .getElementById("accountCard")
+        .classList.remove("hidden");
+
+    document.getElementById("facebookName").textContent =
+        user.facebookName;
+
+    document.getElementById("playerName").textContent =
+        user.agarioName;
+}
+
+
+async function linkAgario() {
+
+    const input =
+        document.getElementById("agarioName");
+
+    const message =
+        document.getElementById("linkMessage");
+
+    const agarioName =
+        input.value.trim();
+
+    if (!agarioName) {
+
+        message.textContent =
+            "Please enter your Agar.io player name.";
+
+        return;
     }
 
-    grid.innerHTML =
-        html;
+    try {
 
-    /* ---------------------------------------------------------
-       Buy buttons
-       --------------------------------------------------------- */
+        const response = await fetch(
+            "/api/link-agario",
+            {
+                method: "POST",
 
-    $(grid)
-        .off(
-            'click.configDeals',
-            '.config-deal-buy'
-        )
-        .on(
-            'click.configDeals',
-            '.config-deal-buy',
-            function(e) {
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-                e.preventDefault();
-                e.stopPropagation();
-
-                var index =
-                    Number(
-                        this.getAttribute(
-                            'data-deal-index'
-                        )
-                    );
-
-                var deal =
-                    deals[index];
-
-                if (!deal)
-                    return;
-
-                /*
-                 * Use the existing purchase
-                 * functions from your script.
-                 */
-
-                if (
-                    deal.type === 'IAP' &&
-                    typeof window.buyDealIAP ===
-                    'function'
-                ) {
-
-                    window.buyDealIAP(
-                        deal.id,
-                        deal.name
-                    );
-
-                    return;
-                }
-
-                if (
-                    deal.type === 'SOFT' &&
-                    typeof window.buyDealSoft ===
-                    'function'
-                ) {
-
-                    window.buyDealSoft(
-                        deal.id
-                    );
-
-                    return;
-                }
-
-                if (
-                    deal.type === 'OFFER' &&
-                    typeof window.buyDealBundle ===
-                    'function'
-                ) {
-
-                    window.buyDealBundle(
-                        deal.bundleId,
-                        deal.name
-                    );
-
-                    return;
-                }
-
-                console.warn(
-                    '[DEALS] No purchase handler:',
-                    deal
-                );
+                body: JSON.stringify({
+                    agarioName
+                })
             }
         );
 
-    /*
-     * Make the data available for
-     * the rest of the shop.
-     */
-    window._configDeals =
-        deals;
+        const data = await response.json();
 
-    console.log(
-        '[DEALS] Loaded ' +
-        deals.length +
-        ' deals directly from GameConfiguration.'
-    );
+        if (!response.ok) {
+
+            message.textContent =
+                data.message || "Something went wrong.";
+
+            return;
+        }
+
+        checkSession();
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "Connection error.";
+    }
 }
-```
+
+
+async function logout() {
+
+    try {
+
+        const response = await fetch(
+            "/api/logout",
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            showLogin();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+    }
+}
+
+
+checkSession();
+
+</script>
+
+</body>
+</html>
