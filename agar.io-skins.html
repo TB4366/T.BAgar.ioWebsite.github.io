@@ -1,79 +1,361 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skin - @t.bagar.io</title>
+
 <style>
-body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
-h1{font-size:28px;margin:18px 0}
-#version{font-size:20px;margin:8px 0 18px;padding:4px}
-#skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;padding:15px;max-width:1200px;margin:auto}
-.skin{cursor:pointer;padding:6px;background:#111;border:2px solid #222;border-radius:8px}
-.skin:hover,.selected{border-color:#0f0}
-.skin img{width:90px;height:90px;border-radius:50%;object-fit:contain}
-.skin span{display:block;margin-top:4px;font-size:13px}
+body{
+    margin:0;
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    font-weight:bold;
+}
+
+h1{
+    font-size:28px;
+    margin:18px 0;
+}
+
+#version{
+    font-size:20px;
+    margin:8px 0 18px;
+    padding:4px;
+}
+
+/* 10 skins per row */
+#skins{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:10px;
+    padding:15px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.skin{
+    cursor:pointer;
+    padding:6px;
+    background:#111;
+    border:2px solid #222;
+    border-radius:8px;
+}
+
+.skin:hover,
+.selected{
+    border-color:#0f0;
+}
+
+.skin img{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    object-fit:contain;
+}
+
+.skin span{
+    display:block;
+    margin-top:4px;
+    font-size:13px;
+}
+
+/* Paginanummers helemaal onderaan */
+#pages{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    padding:30px 15px 40px;
+}
+
+.page-btn{
+    background:#1683ff;
+    color:#fff;
+    border:0;
+    border-radius:7px;
+    padding:9px 14px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    min-width:42px;
+    box-shadow:0 2px 5px #0008;
+}
+
+.page-btn:hover{
+    background:#0b6ed6;
+}
+
+.page-btn.active{
+    background:#0753a6;
+}
 </style>
 </head>
+
 <body>
 
 <h1>Agar.io Skins<br>@t.bagar.io</h1>
 
+<!-- Version blijft bovenaan -->
 <select id="version"></select>
+
 <div id="skins">Loading skins...</div>
 
+<!-- Paginanummers staan helemaal onderaan -->
+<div id="pages"></div>
+
 <script>
+
 const API="https://configs-web.agario.miniclippt.com/live/";
 let version="v15/3032";
 
 async function versions(){
-  const s=document.getElementById("version");
-  try{
-    const r=await fetch("https://lmsettings.snez.org/",{
-      headers:{username:"LMConfigVersion",password:"LMConfigVersionPass"}
-    });
-    const v=await r.json();
-    Object.values(v).forEach(x=>{
-      const o=new Option(x,x.replace(/\/$/,""));
-      s.add(o);
-    });
-    if(s.options.length)version=s.value=s.options[s.options.length-1].value;
-  }catch(e){
-    s.add(new Option(version,version));
-  }
-  loadSkins();
+
+    const s=document.getElementById("version");
+
+    try{
+
+        const r=await fetch("https://lmsettings.snez.org/",{
+            headers:{
+                username:"LMConfigVersion",
+                password:"LMConfigVersionPass"
+            }
+        });
+
+        const v=await r.json();
+
+        Object.values(v).forEach(x=>{
+
+            const o=new Option(
+                x,
+                x.replace(/\/$/,"")
+            );
+
+            s.add(o);
+
+        });
+
+        if(s.options.length){
+
+            version=s.value=
+                s.options[s.options.length-1].value;
+
+        }
+
+    }catch(e){
+
+        s.add(new Option(version,version));
+
+    }
+
+    loadSkins();
 }
+
 
 async function loadSkins(){
-  const box=document.getElementById("skins");
-  box.innerHTML="Loading skins...";
-  try{
-    const r=await fetch(API+version+"/GameConfiguration.json");
-    const text=await r.text();
-    const a=text.match(/\[(.*?)\]/g)||[];
-    const str=a[25]||"";
-    const ids=str.match(/productId":"(.*?)"/g)||str.match(/productId": "(.*?)"/g)||[];
-    const imgs=str.match(/image":"(.*?)"/g)||str.match(/image": "(.*?)"/g)||[];
-    const skins=[];
-    for(let i=0;i<Math.min(ids.length,imgs.length);i++){
-      const id=ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
-      const img=imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
-      if(!img.includes("uses_spine"))skins.push([id,img]);
+
+    const box=document.getElementById("skins");
+
+    box.innerHTML="Loading skins...";
+
+    try{
+
+        const r=await fetch(
+            API+version+"/GameConfiguration.json"
+        );
+
+        const text=await r.text();
+
+        const a=text.match(/\[(.*?)\]/g)||[];
+
+        const str=a[25]||"";
+
+        const ids=
+            str.match(/productId":"(.*?)"/g)||
+            str.match(/productId": "(.*?)"/g)||
+            [];
+
+        const imgs=
+            str.match(/image":"(.*?)"/g)||
+            str.match(/image": "(.*?)"/g)||
+            [];
+
+        const skins=[];
+
+        for(
+            let i=0;
+            i<Math.min(ids.length,imgs.length);
+            i++
+        ){
+
+            const id=ids[i]
+                .replace(/"/g,"")
+                .replace(/productId:/,"")
+                .replace(/skin_/,"")
+                .replace(/id:/,"")
+                .replace(" ","");
+
+            const img=imgs[i]
+                .replace(/"/g,"")
+                .replace(/image:/,"")
+                .replace(" ","");
+
+            if(!img.includes("uses_spine")){
+
+                skins.push([id,img]);
+
+            }
+
+        }
+
+        /*
+         * Nieuwste skins eerst.
+         * Hierdoor is pagina 1 de nieuwste
+         * en de laatste pagina de oudste.
+         */
+        skins.reverse();
+
+        window.allSkins=skins;
+        window.currentPage=1;
+
+        renderPage(1);
+
+    }catch(e){
+
+        box.textContent="Unable to load skins.";
+
     }
-    box.innerHTML="";
-    skins.reverse().forEach(([id,img])=>{
-      const d=document.createElement("div");
-      d.className="skin";
-      d.innerHTML=`<img src="${API+version+"/"+img}"><span>${id.replace(/_/g," ")}</span>`;
-      box.appendChild(d);
-    });
-  }catch(e){box.textContent="Unable to load skins."}
 }
 
+
+function renderPage(page){
+
+    /*
+     * 10 skins per rij
+     * 12 rijen
+     * = 120 skins per pagina
+     */
+    const perPage=120;
+
+    const box=document.getElementById("skins");
+    const pages=document.getElementById("pages");
+
+    const total=Math.ceil(
+        window.allSkins.length/perPage
+    );
+
+    window.currentPage=page;
+
+    box.innerHTML="";
+
+    const start=(page-1)*perPage;
+
+    const pageSkins=
+        window.allSkins.slice(
+            start,
+            start+perPage
+        );
+
+    pageSkins.forEach(([id,img])=>{
+
+        const d=document.createElement("div");
+
+        d.className="skin";
+
+        d.innerHTML=`
+            <img src="${API+version+"/"+img}">
+            <span>${id.replace(/\_/g," ")}</span>
+        `;
+
+        box.appendChild(d);
+
+    });
+
+
+    /*
+     * Paginanummers worden pas NA alle skins
+     * geplaatst, zodat ze helemaal onderaan staan.
+     */
+    pages.innerHTML="";
+
+    for(let i=1;i<=total;i++){
+
+        const b=document.createElement("button");
+
+        b.className=
+            "page-btn"+
+            (i===page ? " active" : "");
+
+        b.textContent=i;
+
+        b.onclick=()=>{
+
+            renderPage(i);
+
+        };
+
+        pages.appendChild(b);
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
 document.getElementById("version").onchange=e=>{
-  version=e.target.value;
-  loadSkins();
+
+    version=e.target.value;
+
+    loadSkins();
+
 };
+
+
 versions();
+
 </script>
+
+<br>
+
+© <year></year>
+
+<a
+    target="_blank"
+    href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html"
+>
+    T.B Website
+</a>
+
+- T.B Licence -
+
+<script>
+
+function year(){
+
+    var d=new Date();
+
+    var y=d.getFullYear();
+
+    if(
+        document.getElementsByTagName("year").length>0
+    ){
+
+        document.getElementsByTagName("year")[0]
+            .innerHTML=y;
+
+    }
+
+}
+
+year();
+
+</script>
+
 </body>
 </html>
+```
