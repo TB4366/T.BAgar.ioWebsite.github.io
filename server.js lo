@@ -1,0 +1,210 @@
+require("dotenv").config();
+
+const express = require("express");
+const session = require("express-session");
+
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        }
+    })
+);
+
+app.use(express.static("public"));
+
+/*
+    Tijdelijke database.
+
+    Voor productie moet dit vervangen worden door bijvoorbeeld
+    MySQL, PostgreSQL, MongoDB of SQLite.
+*/
+const users = new Map();
+
+/*
+    Start Facebook login
+*/
+app.get("/auth/facebook", (req, res) => {
+    const params = new URLSearchParams({
+        client_id: process.env.FACEBOOK_APP_ID,
+        redirect_uri: process.env.FACEBOOK_REDIRECT_URI,
+        scope: "public_profile",
+        response_type: "code"
+    });
+
+    const url =
+        "https://www.facebook.com/vXX.X/dialog/oauth?" +
+        params.toString();
+
+    res.redirect(url);
+});
+
+/*
+    Facebook callback
+*/
+app.get("/auth/facebook/callback", async (req, res) => {
+    try {
+        const { code } = req.query;
+
+        if (!code) {
+            return res.status(400).send("Facebook login cancelled.");
+        }
+
+        /*
+            Exchange authorization code for access token
+        */
+        const tokenParams = new URLSearchParams({
+            client_id: process.env.FACEBOOK_APP_ID,
+            client_secret: process.env.FACEBOOK_APP_SECRET,
+            redirect_uri: process.env.FACEBOOK_REDIRECT_URI,
+            code
+        });
+
+        const tokenResponse = await fetch(
+            "https://graph.facebook.com/vXX.X/oauth/access_token?" +
+                tokenParams.toString()
+        );
+
+        const tokenData = await tokenResponse.json();
+
+        if (!tokenData.access_token) {
+            console.error(tokenData);
+            return res
+                .status(401)
+                .send("Could not authenticate with Facebook.");
+        }
+
+        const accessToken = tokenData.access_token;
+
+        /*
+            Get Facebook account information
+        */
+        const userResponse = await fetch(
+            "https://graph.facebook.com/vXX.X/me?fields=id,name&access_token=" +
+                encodeURIComponent(accessToken)
+        );
+
+        const facebookUser = await userResponse.json();
+
+        if (!facebookUser.id) {
+            return res.status(401).send("Could not retrieve Facebook account.");
+        }
+
+        /*
+            Create account if it doesn't exist
+        */
+        if (!users.has(facebookUser.id)) {
+            users.set(facebookUser.id, {
+                facebookId: facebookUser.id,
+                facebookName: facebookUser.name,
+                agarioName: null,
+                createdAt: new Date()
+            });
+        }
+
+        /*
+            Create server-side login session
+        */
+        req.session.userId = facebookUser.id;
+
+        res.redirect("/");
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Facebook authentication error.");
+    }
+});
+
+/*
+    Return current login status
+*/
+app.get("/api/session", (req, res) => {
+    if (!req.session.userId) {
+        return res.json({
+            loggedIn: false
+        });
+    }
+
+    const user = users.get(req.session.userId);
+
+    if (!user) {
+        return res.json({
+            loggedIn: false
+        });
+    }
+
+    res.json({
+        loggedIn: true,
+        user: {
+            facebookName: user.facebookName,
+            agarioName: user.agarioName
+        }
+    });
+});
+
+/*
+    Link Agar.io player name
+*/
+app.post("/api/link-agario", (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({
+            success: false,
+            message: "You are not logged in."
+        });
+    }
+
+    const { agarioName } = req.body;
+
+    if (!agarioName || agarioName.trim().length < 1) {
+        return res.status(400).json({
+            success: false,
+            message: "Enter your Agar.io player name."
+        });
+    }
+
+    const user = users.get(req.session.userId);
+
+    user.agarioName = agarioName.trim();
+
+    res.json({
+        success: true,
+        message: "Agar.io account linked.",
+        agarioName: user.agarioName
+    });
+});
+
+/*
+    Logout
+*/
+app.post("/api/logout", (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({
+                success: false
+            });
+        }
+
+        res.clearCookie("connect.sid");
+
+        res.json({
+            success: true
+        });
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`T.B Agar.io login running on http://localhost:${PORT}`);
+});
