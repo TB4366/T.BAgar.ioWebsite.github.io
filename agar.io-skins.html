@@ -137,49 +137,6 @@ h1{
     font-size:13px;
 }
 
-#youtuberSkins .skin .youtuber-name{
-    font-size:16px;
-    margin-top:8px;
-}
-
-.youtuber-status{
-    margin-top:8px;
-    font-size:13px;
-    line-height:1.35;
-}
-
-.youtuber-status-label{
-    color:#aaa;
-}
-
-.status-value{
-    font-weight:bold;
-}
-
-.status-active{
-    color:#22c55e;
-}
-
-.status-less-active{
-    color:#facc15;
-}
-
-.status-low-active{
-    color:#f97316;
-}
-
-.status-inactive{
-    color:#ef4444;
-}
-
-.youtuber-description{
-    margin-top:6px;
-    color:#bbb;
-    font-size:12px;
-    font-weight:normal;
-    line-height:1.35;
-}
-
 
 /* =========================
    PAGINATION
@@ -264,6 +221,49 @@ h1{
 .hidden{
     display:none;
 }
+
+/* =========================
+   YOUTUBER STATUS
+========================= */
+.youtuber-name{
+    display:block;
+    margin-top:8px;
+    font-size:15px;
+}
+
+.youtuber-status{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin-top:6px;
+    font-size:13px;
+}
+
+.status-label{
+    color:#fff;
+}
+
+.status-value{
+    font-weight:bold;
+}
+
+.status-active{ color:#22c55e; }
+.status-less-active{ color:#facc15; }
+.status-not-active{ color:#f97316; }
+.status-inactive{ color:#ef4444; }
+
+.skin-instruction{
+    margin-top:7px;
+    font-size:12px;
+    line-height:1.35;
+    color:#bbb;
+}
+
+.skin-instruction strong{
+    color:#fff;
+}
+
 </style>
 </head>
 
@@ -687,15 +687,16 @@ function renderAgarioPage(page){
  * afbeeldingen van die pagina geladen.
  */
 
-/*
- * Status per Youtuber.
- *
- * Pas hier per Youtuber de status aan:
- * "active"       = Groen / Active
- * "less-active"  = Geel / Minder actief
- * "low-active"   = Oranje / Niet zoveel actief
- * "inactive"    = Rood / Inactief
- */
+
+/* =====================================================
+   YOUTUBER STATUS
+   Pas hier per YouTuber de status aan:
+   active       = Groen / Active
+   less-active  = Geel / Beetje actief
+   not-active   = Oranje / Bijna niet actief
+   inactive     = Rood / Inactief
+===================================================== */
+
 const YOUTUBER_STATUS = {
     "GetDeadKid": "active",
     "7MODKA": "active",
@@ -719,29 +720,29 @@ const YOUTUBER_STATUS = {
     "SonicGames": "active",
     "Sonic": "active",
     "peps": "active",
-    "GetDeadKid (old)": "inactive",
+    "GetDeadKid (old)": "active",
     "Zone": "active",
     "Skills": "active",
-    "Yemeni (old)": "inactive",
-    "Sonic (old)": "inactive",
+    "Yemeni (old)": "active",
+    "Sonic (old)": "active",
     "demon": "active",
     "Ashwin": "active",
     "Ashwinyt": "active",
     "Togoman": "active",
     "alejoyt": "active",
     "bang": "active",
-    "demon (old)": "inactive",
+    "demon (old)": "active",
     "minhvu": "active",
     "mister": "active",
-    "peps (old)": "inactive",
-    "Getdeadkid Xmas": "inactive",
+    "peps (old)": "active",
+    "Getdeadkid Xmas": "active",
     "Majnoon": "active",
     "statik": "active",
-    "Skills (old)": "inactive",
+    "Skills (old)": "active",
     "Woobs": "active",
     "xxnetro": "active",
     "xxnetro2": "active",
-    "Sonic (old)": "inactive",
+    "Sonic (old)": "active",
     "52k": "active",
     "Brax": "active",
     "3LK": "active",
@@ -753,10 +754,10 @@ const YOUTUBER_STATUS = {
     "Snay": "active",
     "Snay-Gang": "active",
     "Snay-Chocolate": "active",
-    "Getdeadkid (old)": "inactive",
+    "Getdeadkid (old)": "active",
     "togomanyt": "active",
-    "Ashwin (old)": "inactive",
-    "Zone (old)": "inactive",
+    "Ashwin (old)": "active",
+    "Zone (old)": "active",
     "Sneddy Gaming": "active",
     "Timid": "active",
     "Matjoy": "active",
@@ -778,9 +779,9 @@ const STATUS_INFO = {
         label: "Beetje actief",
         className: "status-less-active"
     },
-    "low-active": {
+    "not-active": {
         label: "Bijna niet actief",
-        className: "status-low-active"
+        className: "status-not-active"
     },
     "inactive": {
         label: "Inactief",
@@ -788,11 +789,15 @@ const STATUS_INFO = {
     }
 };
 
+function getYoutuberStatus(name){
+    return YOUTUBER_STATUS[name] || "inactive";
+}
+
 const YOUTUBER_DATA = [
 
     ["GetDeadKid",
  "IMG_4450.png",
- "Zet deze naam in de skin."],
+ "Set the nick **GetDeadKid** to use this skin."],
 
     ["7MODKA",
      "IMG_9909.png"],
@@ -1160,7 +1165,10 @@ function renderYoutuberPage(page){
             start + perPage
         )
         .forEach(
-            ([name,img])=>{
+            (skin)=>{
+
+                const name = skin[0];
+                const img = skin[1];
 
                 const d =
                     document.createElement(
@@ -1170,11 +1178,8 @@ function renderYoutuberPage(page){
                 d.className =
                     "skin";
 
-                const statusKey =
-                    YOUTUBER_STATUS[name] || "active";
-
-                const status =
-                    STATUS_INFO[statusKey] || STATUS_INFO.active;
+                const statusKey = getYoutuberStatus(name);
+                const status = STATUS_INFO[statusKey];
 
                 d.innerHTML = `
                     <img
@@ -1187,14 +1192,14 @@ function renderYoutuberPage(page){
                     </span>
 
                     <div class="youtuber-status">
-                        <span class="youtuber-status-label">Status:</span>
+                        <span class="status-label">Status:</span>
                         <span class="status-value ${status.className}">
                             ${status.label}
                         </span>
                     </div>
 
-                    <div class="youtuber-description">
-                        Zet deze naam in de skin.
+                    <div class="skin-instruction">
+                        Set the nick <strong>${name}</strong> to use this skin.
                     </div>
                 `;
 
