@@ -698,8 +698,8 @@ function renderAgarioPage(page){
 ===================================================== */
 
 const YOUTUBER_STATUS = {
-    "Zanax": "Bijna niet actief",
-    "Jonnn": "Bijna niet actief",
+    "Zanax": "not-active",
+    "Jonnn": "not-active",
     "GetDeadKid": "inactive",
     "7MODKA": "inactive",
     "Bn Rhmi": "inactive",
@@ -734,7 +734,7 @@ const YOUTUBER_STATUS = {
     "alejoyt": "inactive",
     "bang": "inactive",
     "demon (old)": "inactive",
-    "minhvu": "Bijna niet actief",
+    "minhvu": "not-active",
     "mister": "inactive",
     "peps (old)": "inactive",
     "Getdeadkid Xmas": "inactive",
@@ -1110,13 +1110,36 @@ async function loadYoutuberSkins(){
 
     try{
 
-        const response =
-            await fetch(
-                "https://www.agario-skins.top/youtuber-skins/"
+        const sourceUrl =
+            "https://www.agario-skins.top/youtuber-skins/";
+
+        let response;
+        let html = "";
+
+        /*
+         * The original direct fetch can be blocked by CORS.
+         * Use a CORS-friendly proxy first, then try the direct URL.
+         */
+        try {
+            response = await fetch(
+                "https://api.allorigins.win/raw?url=" +
+                encodeURIComponent(sourceUrl)
             );
 
-        const html =
-            await response.text();
+            if (!response.ok) {
+                throw new Error("Proxy request failed");
+            }
+
+            html = await response.text();
+        } catch (proxyError) {
+            response = await fetch(sourceUrl);
+
+            if (!response.ok) {
+                throw new Error("Unable to load Youtuber skins");
+            }
+
+            html = await response.text();
+        }
 
         const parser =
             new DOMParser();
@@ -1259,7 +1282,7 @@ function renderYoutuberPage(page){
                     "skin";
 
                 const statusKey = getYoutuberStatus(name);
-                const status = STATUS_INFO[statusKey];
+                const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
 
                 d.innerHTML = `
                     <img
