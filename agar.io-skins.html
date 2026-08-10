@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,13 +19,24 @@ h1{
     margin:18px 0;
 }
 
+.version-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin:8px 0 18px;
+}
+
+.version-label{
+    font-size:20px;
+}
+
 #version{
     font-size:20px;
-    margin:8px 0 18px;
     padding:4px;
 }
 
-/* 10 skins per row */
+/* 10 skins per rij */
 #skins{
     display:grid;
     grid-template-columns:repeat(10,1fr);
@@ -91,6 +101,44 @@ h1{
 .page-btn.active{
     background:#0753a6;
 }
+
+/* Sociale buttons */
+.social-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:0 0 15px;
+}
+
+.social-buttons a{
+    display:inline-block;
+    color:#fff;
+    text-decoration:none;
+    padding:9px 16px;
+    border-radius:7px;
+    font-size:15px;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.social-buttons a:hover{
+    transform:translateY(-2px);
+    opacity:0.9;
+}
+
+.youtube{
+    background:#ff0000;
+}
+
+.instagram{
+    background:#e1306c;
+}
+
+.discord{
+    background:#5865f2;
+}
 </style>
 </head>
 
@@ -98,12 +146,15 @@ h1{
 
 <h1>Agar.io Skins<br>@t.bagar.io</h1>
 
-<!-- Version blijft bovenaan -->
-<select id="version"></select>
+<!-- Version -->
+<div class="version-container">
+    <span class="version-label">Version</span>
+    <select id="version"></select>
+</div>
 
 <div id="skins">Loading skins...</div>
 
-<!-- Paginanummers staan helemaal onderaan -->
+<!-- Paginanummers -->
 <div id="pages"></div>
 
 <script>
@@ -210,11 +261,7 @@ async function loadSkins(){
 
         }
 
-        /*
-         * Nieuwste skins eerst.
-         * Hierdoor is pagina 1 de nieuwste
-         * en de laatste pagina de oudste.
-         */
+        /* Nieuwste skins eerst */
         skins.reverse();
 
         window.allSkins=skins;
@@ -273,11 +320,7 @@ function renderPage(page){
 
     });
 
-
-    /*
-     * Paginanummers worden pas NA alle skins
-     * geplaatst, zodat ze helemaal onderaan staan.
-     */
+    /* Paginanummers */
     pages.innerHTML="";
 
     for(let i=1;i<=total;i++){
@@ -322,6 +365,36 @@ versions();
 
 <br>
 
+<!-- Sociale buttons -->
+<div class="social-buttons">
+
+    <a
+        class="youtube"
+        href="https://www.youtube.com/@T.B6"
+        target="_blank"
+    >
+        YouTube
+    </a>
+
+    <a
+        class="instagram"
+        href="https://www.instagram.com/t.bagar.io/"
+        target="_blank"
+    >
+        Instagram
+    </a>
+
+    <a
+        class="discord"
+        href="https://discord.gg/qhuXPrVzBx"
+        target="_blank"
+    >
+        Discord
+    </a>
+
+</div>
+
+<!-- T.B Licence -->
 © <year></year>
 
 <a
@@ -358,4 +431,3 @@ year();
 
 </body>
 </html>
-```
