@@ -137,6 +137,49 @@ h1{
     font-size:13px;
 }
 
+#youtuberSkins .skin .youtuber-name{
+    font-size:16px;
+    margin-top:8px;
+}
+
+.youtuber-status{
+    margin-top:8px;
+    font-size:13px;
+    line-height:1.35;
+}
+
+.youtuber-status-label{
+    color:#aaa;
+}
+
+.status-value{
+    font-weight:bold;
+}
+
+.status-active{
+    color:#22c55e;
+}
+
+.status-less-active{
+    color:#facc15;
+}
+
+.status-low-active{
+    color:#f97316;
+}
+
+.status-inactive{
+    color:#ef4444;
+}
+
+.youtuber-description{
+    margin-top:6px;
+    color:#bbb;
+    font-size:12px;
+    font-weight:normal;
+    line-height:1.35;
+}
+
 
 /* =========================
    PAGINATION
@@ -644,6 +687,107 @@ function renderAgarioPage(page){
  * afbeeldingen van die pagina geladen.
  */
 
+/*
+ * Status per Youtuber.
+ *
+ * Pas hier per Youtuber de status aan:
+ * "active"       = Groen / Active
+ * "less-active"  = Geel / Minder actief
+ * "low-active"   = Oranje / Niet zoveel actief
+ * "inactive"    = Rood / Inactief
+ */
+const YOUTUBER_STATUS = {
+    "GetDeadKid": "active",
+    "7MODKA": "active",
+    "Bn Rhmi": "active",
+    "Sarok1": "active",
+    "Sarok2": "active",
+    "Sparky": "active",
+    "YemeniYT": "active",
+    "Yemeni": "active",
+    "Hero": "active",
+    "Agarmurfs": "active",
+    "3ezzy": "active",
+    "alejo": "active",
+    "alejoyoutube": "active",
+    "twisted": "active",
+    "silver": "active",
+    "EvilMonkey": "active",
+    "Araizon": "active",
+    "Alejoyt2": "active",
+    "Skillsyt": "active",
+    "SonicGames": "active",
+    "Sonic": "active",
+    "peps": "active",
+    "GetDeadKid (old)": "inactive",
+    "Zone": "active",
+    "Skills": "active",
+    "Yemeni (old)": "inactive",
+    "Sonic (old)": "inactive",
+    "demon": "active",
+    "Ashwin": "active",
+    "Ashwinyt": "active",
+    "Togoman": "active",
+    "alejoyt": "active",
+    "bang": "active",
+    "demon (old)": "inactive",
+    "minhvu": "active",
+    "mister": "active",
+    "peps (old)": "inactive",
+    "Getdeadkid Xmas": "inactive",
+    "Majnoon": "active",
+    "statik": "active",
+    "Skills (old)": "inactive",
+    "Woobs": "active",
+    "xxnetro": "active",
+    "xxnetro2": "active",
+    "Sonic (old)": "inactive",
+    "52k": "active",
+    "Brax": "active",
+    "3LK": "active",
+    "GURI": "active",
+    "kbkb": "active",
+    "strike": "active",
+    "Babadook": "active",
+    "Mistik": "active",
+    "Snay": "active",
+    "Snay-Gang": "active",
+    "Snay-Chocolate": "active",
+    "Getdeadkid (old)": "inactive",
+    "togomanyt": "active",
+    "Ashwin (old)": "inactive",
+    "Zone (old)": "inactive",
+    "Sneddy Gaming": "active",
+    "Timid": "active",
+    "Matjoy": "active",
+    "Kristoffer": "active",
+    "n0psa": "active",
+    "TYT": "active",
+    "Crystal": "active",
+    "Sirius": "active",
+    "Rayday": "active",
+    "M4J": "active"
+};
+
+const STATUS_INFO = {
+    "active": {
+        label: "Active",
+        className: "status-active"
+    },
+    "less-active": {
+        label: "Minder actief",
+        className: "status-less-active"
+    },
+    "low-active": {
+        label: "Niet zoveel actief",
+        className: "status-low-active"
+    },
+    "inactive": {
+        label: "Inactief",
+        className: "status-inactive"
+    }
+};
+
 const YOUTUBER_DATA = [
 
     ["GetDeadKid",
@@ -1026,15 +1170,32 @@ function renderYoutuberPage(page){
                 d.className =
                     "skin";
 
+                const statusKey =
+                    YOUTUBER_STATUS[name] || "active";
+
+                const status =
+                    STATUS_INFO[statusKey] || STATUS_INFO.active;
+
                 d.innerHTML = `
                     <img
                         src="${img}"
                         alt="${name}"
                     >
 
-                    <span>
+                    <span class="youtuber-name">
                         ${name}
                     </span>
+
+                    <div class="youtuber-status">
+                        <span class="youtuber-status-label">Status:</span>
+                        <span class="status-value ${status.className}">
+                            ${status.label}
+                        </span>
+                    </div>
+
+                    <div class="youtuber-description">
+                        Zet deze naam in de skin.
+                    </div>
                 `;
 
                 box.appendChild(d);
