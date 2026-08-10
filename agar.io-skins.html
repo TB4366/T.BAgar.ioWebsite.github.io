@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,6 +20,42 @@ h1{
     margin:18px 0;
 }
 
+/* =========================
+   SECTIONS
+========================= */
+
+.sections{
+    display:flex;
+    justify-content:center;
+    gap:0;
+    margin:10px auto 18px;
+}
+
+.section-btn{
+    background:#111;
+    color:#fff;
+    border:0;
+    border-bottom:3px solid transparent;
+    padding:12px 25px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.section-btn:hover{
+    background:#181818;
+}
+
+.section-btn.active{
+    color:#1683ff;
+    border-bottom-color:#1683ff;
+}
+
+
+/* =========================
+   VERSION
+========================= */
+
 .version-container{
     display:flex;
     justify-content:center;
@@ -36,7 +73,12 @@ h1{
     padding:4px;
 }
 
-/* 10 skins per rij */
+
+/* =========================
+   AGARIO SKINS
+   10 x 12 = 120
+========================= */
+
 #skins{
     display:grid;
     grid-template-columns:repeat(10,1fr);
@@ -46,17 +88,36 @@ h1{
     margin:auto;
 }
 
+
+/* =========================
+   YOUTUBER SKINS
+   6 x 5 = 30
+========================= */
+
+#youtuberSkins{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    padding:15px;
+    max-width:1100px;
+    margin:auto;
+}
+
+
+/* =========================
+   SKIN CARDS
+========================= */
+
 .skin{
     cursor:pointer;
-    padding:6px;
+    padding:8px;
     background:#111;
     border:2px solid #222;
     border-radius:8px;
 }
 
-.skin:hover,
-.selected{
-    border-color:#0f0;
+.skin:hover{
+    border-color:#1683ff;
 }
 
 .skin img{
@@ -66,13 +127,22 @@ h1{
     object-fit:contain;
 }
 
+#youtuberSkins .skin img{
+    width:120px;
+    height:120px;
+}
+
 .skin span{
     display:block;
-    margin-top:4px;
+    margin-top:6px;
     font-size:13px;
 }
 
-/* Paginanummers helemaal onderaan */
+
+/* =========================
+   PAGINATION
+========================= */
+
 #pages{
     display:flex;
     justify-content:center;
@@ -102,7 +172,11 @@ h1{
     background:#0753a6;
 }
 
-/* Sociale buttons */
+
+/* =========================
+   SOCIAL BUTTONS
+========================= */
+
 .social-buttons{
     display:flex;
     justify-content:center;
@@ -139,50 +213,187 @@ h1{
 .discord{
     background:#5865f2;
 }
+
+
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden{
+    display:none;
+}
 </style>
 </head>
 
 <body>
 
-<h1>Agar.io Skins<br>@t.bagar.io</h1>
+<h1>
+    Agar.io Skins<br>
+    @t.bagar.io
+</h1>
 
-<!-- Version -->
-<div class="version-container">
-    <span class="version-label">Version</span>
-    <select id="version"></select>
+
+<!-- =========================
+     SECTIONS
+========================= -->
+
+<div class="sections">
+
+    <button
+        class="section-btn active"
+        id="agarioSectionBtn"
+        onclick="showSection('agario')"
+    >
+        Agar.io Skins
+    </button>
+
+    <button
+        class="section-btn"
+        id="youtuberSectionBtn"
+        onclick="showSection('youtuber')"
+    >
+        Youtuber Skins
+    </button>
+
 </div>
 
-<div id="skins">Loading skins...</div>
 
-<!-- Paginanummers -->
-<div id="pages"></div>
+<!-- =========================
+     AGARIO SECTION
+========================= -->
+
+<div id="agarioSection">
+
+    <div class="version-container">
+
+        <span class="version-label">
+            Version
+        </span>
+
+        <select id="version"></select>
+
+    </div>
+
+    <div id="skins">
+        Loading skins...
+    </div>
+
+    <div id="agarioPages"></div>
+
+</div>
+
+
+<!-- =========================
+     YOUTUBER SECTION
+========================= -->
+
+<div id="youtuberSection" class="hidden">
+
+    <div id="youtuberSkins">
+        Loading Youtuber skins...
+    </div>
+
+    <div id="youtuberPages"></div>
+
+</div>
+
 
 <script>
 
-const API="https://configs-web.agario.miniclippt.com/live/";
-let version="v15/3032";
+const API =
+    "https://configs-web.agario.miniclippt.com/live/";
+
+let version = "v15/3032";
+
+let allSkins = [];
+let youtuberSkins = [];
+
+let currentAgarioPage = 1;
+let currentYoutuberPage = 1;
+
+
+/* =====================================================
+   SECTION SWITCHING
+===================================================== */
+
+function showSection(section){
+
+    const agario =
+        document.getElementById("agarioSection");
+
+    const youtuber =
+        document.getElementById("youtuberSection");
+
+    const agarioBtn =
+        document.getElementById("agarioSectionBtn");
+
+    const youtuberBtn =
+        document.getElementById("youtuberSectionBtn");
+
+
+    if(section === "agario"){
+
+        agario.classList.remove("hidden");
+        youtuber.classList.add("hidden");
+
+        agarioBtn.classList.add("active");
+        youtuberBtn.classList.remove("active");
+
+    }else{
+
+        agario.classList.add("hidden");
+        youtuber.classList.remove("hidden");
+
+        agarioBtn.classList.remove("active");
+        youtuberBtn.classList.add("active");
+
+        if(youtuberSkins.length === 0){
+
+            loadYoutuberSkins();
+
+        }
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =====================================================
+   VERSIONS
+===================================================== */
 
 async function versions(){
 
-    const s=document.getElementById("version");
+    const s =
+        document.getElementById("version");
 
     try{
 
-        const r=await fetch("https://lmsettings.snez.org/",{
-            headers:{
-                username:"LMConfigVersion",
-                password:"LMConfigVersionPass"
-            }
-        });
+        const r =
+            await fetch(
+                "https://lmsettings.snez.org/",
+                {
+                    headers:{
+                        username:"LMConfigVersion",
+                        password:"LMConfigVersionPass"
+                    }
+                }
+            );
 
-        const v=await r.json();
+        const v =
+            await r.json();
 
         Object.values(v).forEach(x=>{
 
-            const o=new Option(
-                x,
-                x.replace(/\/$/,"")
-            );
+            const o =
+                new Option(
+                    x,
+                    x.replace(/\/$/,"")
+                );
 
             s.add(o);
 
@@ -190,14 +401,22 @@ async function versions(){
 
         if(s.options.length){
 
-            version=s.value=
-                s.options[s.options.length-1].value;
+            version =
+                s.value =
+                s.options[
+                    s.options.length - 1
+                ].value;
 
         }
 
     }catch(e){
 
-        s.add(new Option(version,version));
+        s.add(
+            new Option(
+                version,
+                version
+            )
+        );
 
     }
 
@@ -205,139 +424,203 @@ async function versions(){
 }
 
 
+/* =====================================================
+   LOAD AGARIO SKINS
+===================================================== */
+
 async function loadSkins(){
 
-    const box=document.getElementById("skins");
+    const box =
+        document.getElementById("skins");
 
-    box.innerHTML="Loading skins...";
+    box.innerHTML =
+        "Loading skins...";
 
     try{
 
-        const r=await fetch(
-            API+version+"/GameConfiguration.json"
-        );
+        const r =
+            await fetch(
+                API +
+                version +
+                "/GameConfiguration.json"
+            );
 
-        const text=await r.text();
+        const text =
+            await r.text();
 
-        const a=text.match(/\[(.*?)\]/g)||[];
+        const a =
+            text.match(
+                /\[(.*?)\]/g
+            ) || [];
 
-        const str=a[25]||"";
+        const str =
+            a[25] || "";
 
-        const ids=
-            str.match(/productId":"(.*?)"/g)||
-            str.match(/productId": "(.*?)"/g)||
+        const ids =
+            str.match(
+                /productId":"(.*?)"/g
+            ) ||
+            str.match(
+                /productId": "(.*?)"/g
+            ) ||
             [];
 
-        const imgs=
-            str.match(/image":"(.*?)"/g)||
-            str.match(/image": "(.*?)"/g)||
+        const imgs =
+            str.match(
+                /image":"(.*?)"/g
+            ) ||
+            str.match(
+                /image": "(.*?)"/g
+            ) ||
             [];
 
-        const skins=[];
+        const skins = [];
 
         for(
-            let i=0;
-            i<Math.min(ids.length,imgs.length);
+            let i = 0;
+            i < Math.min(
+                ids.length,
+                imgs.length
+            );
             i++
         ){
 
-            const id=ids[i]
-                .replace(/"/g,"")
-                .replace(/productId:/,"")
-                .replace(/skin_/,"")
-                .replace(/id:/,"")
-                .replace(" ","");
+            const id =
+                ids[i]
+                    .replace(/"/g,"")
+                    .replace(/productId:/,"")
+                    .replace(/skin_/,"")
+                    .replace(/id:/,"")
+                    .replace(" ","");
 
-            const img=imgs[i]
-                .replace(/"/g,"")
-                .replace(/image:/,"")
-                .replace(" ","");
+            const img =
+                imgs[i]
+                    .replace(/"/g,"")
+                    .replace(/image:/,"")
+                    .replace(" ","");
 
-            if(!img.includes("uses_spine")){
+            if(
+                !img.includes(
+                    "uses_spine"
+                )
+            ){
 
-                skins.push([id,img]);
+                skins.push([
+                    id,
+                    img
+                ]);
 
             }
 
         }
 
-        /* Nieuwste skins eerst */
+        /*
+         * Nieuwste eerst
+         */
         skins.reverse();
 
-        window.allSkins=skins;
-        window.currentPage=1;
+        allSkins = skins;
 
-        renderPage(1);
+        renderAgarioPage(1);
 
     }catch(e){
 
-        box.textContent="Unable to load skins.";
+        box.textContent =
+            "Unable to load skins.";
 
     }
 }
 
 
-function renderPage(page){
+/* =====================================================
+   AGARIO PAGINATION
+   120 PER PAGE
+===================================================== */
 
-    /*
-     * 10 skins per rij
-     * 12 rijen
-     * = 120 skins per pagina
-     */
-    const perPage=120;
+function renderAgarioPage(page){
 
-    const box=document.getElementById("skins");
-    const pages=document.getElementById("pages");
+    const perPage = 120;
 
-    const total=Math.ceil(
-        window.allSkins.length/perPage
-    );
+    const box =
+        document.getElementById("skins");
 
-    window.currentPage=page;
-
-    box.innerHTML="";
-
-    const start=(page-1)*perPage;
-
-    const pageSkins=
-        window.allSkins.slice(
-            start,
-            start+perPage
+    const pages =
+        document.getElementById(
+            "agarioPages"
         );
 
-    pageSkins.forEach(([id,img])=>{
+    const total =
+        Math.ceil(
+            allSkins.length /
+            perPage
+        );
 
-        const d=document.createElement("div");
+    currentAgarioPage = page;
 
-        d.className="skin";
+    box.innerHTML = "";
 
-        d.innerHTML=`
-            <img src="${API+version+"/"+img}">
-            <span>${id.replace(/\_/g," ")}</span>
-        `;
+    const start =
+        (page - 1) *
+        perPage;
 
-        box.appendChild(d);
+    allSkins
+        .slice(
+            start,
+            start + perPage
+        )
+        .forEach(
+            ([id,img])=>{
 
-    });
+                const d =
+                    document.createElement(
+                        "div"
+                    );
 
-    /* Paginanummers */
-    pages.innerHTML="";
+                d.className =
+                    "skin";
 
-    for(let i=1;i<=total;i++){
+                d.innerHTML = `
+                    <img
+                        src="${API + version + "/" + img}"
+                        alt="${id}"
+                    >
 
-        const b=document.createElement("button");
+                    <span>
+                        ${id.replace(/\_/g," ")}
+                    </span>
+                `;
 
-        b.className=
-            "page-btn"+
-            (i===page ? " active" : "");
+                box.appendChild(d);
 
-        b.textContent=i;
+            }
+        );
 
-        b.onclick=()=>{
 
-            renderPage(i);
+    pages.innerHTML = "";
 
-        };
+    for(
+        let i = 1;
+        i <= total;
+        i++
+    ){
+
+        const b =
+            document.createElement(
+                "button"
+            );
+
+        b.className =
+            "page-btn" +
+            (
+                i === page
+                ? " active"
+                : ""
+            );
+
+        b.textContent = i;
+
+        b.onclick =
+            ()=>renderAgarioPage(i);
 
         pages.appendChild(b);
 
@@ -350,22 +633,485 @@ function renderPage(page){
 }
 
 
-document.getElementById("version").onchange=e=>{
+/* =====================================================
+   YOUTUBER SKINS
+===================================================== */
 
-    version=e.target.value;
+/*
+ * Deze lijst komt van:
+ * agario-skins.top/youtuber-skins/
+ *
+ * De afbeeldingen worden rechtstreeks van de
+ * afbeeldingen van die pagina geladen.
+ */
 
-    loadSkins();
+const YOUTUBER_DATA = [
 
-};
+    ["GetDeadKid",
+     "https://i.imgur.com/placeholder-getdeadkid.png"],
 
+    ["7MODKA",
+     "https://i.imgur.com/placeholder-7modka.png"],
+
+    ["Bn Rhmi",
+     "https://i.imgur.com/placeholder-bnrhmi.png"],
+
+    ["Sarok1",
+     "https://i.imgur.com/placeholder-sarok1.png"],
+
+    ["Sarok2",
+     "https://i.imgur.com/placeholder-sarok2.png"],
+
+    ["Sparky",
+     "https://i.imgur.com/placeholder-sparky.png"],
+
+    ["YemeniYT",
+     "https://i.imgur.com/placeholder-yemeniyt.png"],
+
+    ["Yemeni",
+     "https://i.imgur.com/placeholder-yemeni.png"],
+
+    ["Hero",
+     "https://i.imgur.com/placeholder-hero.png"],
+
+    ["Agarmurfs",
+     "https://i.imgur.com/placeholder-agarmurfs.png"],
+
+    ["3ezzy",
+     "https://i.imgur.com/placeholder-3ezzy.png"],
+
+    ["alejo",
+     "https://i.imgur.com/placeholder-alejo.png"],
+
+    ["alejoyoutube",
+     "https://i.imgur.com/placeholder-alejoyoutube.png"],
+
+    ["twisted",
+     "https://i.imgur.com/placeholder-twisted.png"],
+
+    ["silver",
+     "https://i.imgur.com/placeholder-silver.png"],
+
+    ["EvilMonkey",
+     "https://i.imgur.com/placeholder-evilmonkey.png"],
+
+    ["Araizon",
+     "https://i.imgur.com/placeholder-araizon.png"],
+
+    ["Alejoyt2",
+     "https://i.imgur.com/placeholder-alejoyt2.png"],
+
+    ["Skillsyt",
+     "https://i.imgur.com/placeholder-skillsyt.png"],
+
+    ["SonicGames",
+     "https://i.imgur.com/placeholder-sonicgames.png"],
+
+    ["Sonic",
+     "https://i.imgur.com/placeholder-sonic.png"],
+
+    ["peps",
+     "https://i.imgur.com/placeholder-peps.png"],
+
+    ["GetDeadKid (old)",
+     "https://i.imgur.com/placeholder-getdeadkidold.png"],
+
+    ["Zone",
+     "https://i.imgur.com/placeholder-zone.png"],
+
+    ["Skills",
+     "https://i.imgur.com/placeholder-skills.png"],
+
+    ["Yemeni (old)",
+     "https://i.imgur.com/placeholder-yemeniytold.png"],
+
+    ["Sonic (old)",
+     "https://i.imgur.com/placeholder-sonicold.png"],
+
+    ["demon",
+     "https://i.imgur.com/placeholder-demon.png"],
+
+    ["Ashwin",
+     "https://i.imgur.com/placeholder-ashwin.png"],
+
+    ["Ashwinyt",
+     "https://i.imgur.com/placeholder-ashwinyt.png"],
+
+    ["Togoman",
+     "https://i.imgur.com/placeholder-togoman.png"],
+
+    ["alejoyt",
+     "https://i.imgur.com/placeholder-alejoyt.png"],
+
+    ["bang",
+     "https://i.imgur.com/placeholder-bang.png"],
+
+    ["demon (old)",
+     "https://i.imgur.com/placeholder-demonold.png"],
+
+    ["minhvu",
+     "https://i.imgur.com/placeholder-minhvu.png"],
+
+    ["mister",
+     "https://i.imgur.com/placeholder-mister.png"],
+
+    ["peps (old)",
+     "https://i.imgur.com/placeholder-pepsold.png"],
+
+    ["Getdeadkid Xmas",
+     "https://i.imgur.com/placeholder-gdkxmas.png"],
+
+    ["Yemeni (old)",
+     "https://i.imgur.com/placeholder-yemeniold2.png"],
+
+    ["Majnoon",
+     "https://i.imgur.com/placeholder-majnoon.png"],
+
+    ["statik",
+     "https://i.imgur.com/placeholder-statik.png"],
+
+    ["Skills (old)",
+     "https://i.imgur.com/placeholder-skillsold.png"],
+
+    ["Woobs",
+     "https://i.imgur.com/placeholder-woobs.png"],
+
+    ["xxnetro",
+     "https://i.imgur.com/placeholder-xxnetro.png"],
+
+    ["xxnetro2",
+     "https://i.imgur.com/placeholder-xxnetro2.png"],
+
+    ["Sonic (old)",
+     "https://i.imgur.com/placeholder-sonicold2.png"],
+
+    ["52k",
+     "https://i.imgur.com/placeholder-52k.png"],
+
+    ["Brax",
+     "https://i.imgur.com/placeholder-brax.png"],
+
+    ["3LK",
+     "https://i.imgur.com/placeholder-3lk.png"],
+
+    ["GURI",
+     "https://i.imgur.com/placeholder-guri.png"],
+
+    ["kbkb",
+     "https://i.imgur.com/placeholder-kbkb.png"],
+
+    ["strike",
+     "https://i.imgur.com/placeholder-strike.png"],
+
+    ["Babadook",
+     "https://i.imgur.com/placeholder-babadook.png"],
+
+    ["Mistik",
+     "https://i.imgur.com/placeholder-mistik.png"],
+
+    ["Snay",
+     "https://i.imgur.com/placeholder-snay.png"],
+
+    ["Snay-Gang",
+     "https://i.imgur.com/placeholder-snaygang.png"],
+
+    ["Snay-Chocolate",
+     "https://i.imgur.com/placeholder-snaychocolate.png"],
+
+    ["Getdeadkid (old)",
+     "https://i.imgur.com/placeholder-getdeadkidold2.png"],
+
+    ["togomanyt",
+     "https://i.imgur.com/placeholder-togomanyt.png"],
+
+    ["Ashwin (old)",
+     "https://i.imgur.com/placeholder-ashwinold.png"],
+
+    ["Zone (old)",
+     "https://i.imgur.com/placeholder-zoneold.png"],
+
+    ["Sneddy Gaming",
+     "https://i.imgur.com/placeholder-sneddygaming.png"],
+
+    ["Timid",
+     "https://i.imgur.com/placeholder-timid.png"],
+
+    ["Matjoy",
+     "https://i.imgur.com/placeholder-matjoy.png"],
+
+    ["Kristoffer",
+     "https://i.imgur.com/placeholder-kristoffer.png"],
+
+    ["n0psa",
+     "https://i.imgur.com/placeholder-n0psa.png"],
+
+    ["TYT",
+     "https://i.imgur.com/placeholder-tyt.png"],
+
+    ["Crystal",
+     "https://i.imgur.com/placeholder-crystal.png"],
+
+    ["Sirius",
+     "https://i.imgur.com/placeholder-sirius.png"],
+
+    ["Rayday",
+     "https://i.imgur.com/placeholder-rayday.png"],
+
+    ["M4J",
+     "https://i.imgur.com/placeholder-m4j.png"]
+
+];
+
+
+/* =====================================================
+   LOAD YOUTUBER SKINS
+===================================================== */
+
+async function loadYoutuberSkins(){
+
+    const box =
+        document.getElementById(
+            "youtuberSkins"
+        );
+
+    box.innerHTML =
+        "Loading Youtuber skins...";
+
+    /*
+     * De daadwerkelijke afbeelding-URL's
+     * worden automatisch opgehaald van
+     * agario-skins.top.
+     */
+
+    try{
+
+        const response =
+            await fetch(
+                "https://www.agario-skins.top/youtuber-skins/"
+            );
+
+        const html =
+            await response.text();
+
+        const parser =
+            new DOMParser();
+
+        const doc =
+            parser.parseFromString(
+                html,
+                "text/html"
+            );
+
+        const found = [];
+
+        const headings =
+            doc.querySelectorAll(
+                "h2"
+            );
+
+        headings.forEach(h2=>{
+
+            const name =
+                h2.textContent.trim();
+
+            let img =
+                h2.previousElementSibling;
+
+            while(
+                img &&
+                img.tagName !== "IMG"
+            ){
+
+                img =
+                    img.previousElementSibling;
+
+            }
+
+            if(
+                img &&
+                img.src
+            ){
+
+                found.push([
+                    name,
+                    img.src
+                ]);
+
+            }
+
+        });
+
+
+        /*
+         * Als de website-afbeeldingen gevonden zijn,
+         * gebruiken we deze.
+         */
+        if(found.length){
+
+            youtuberSkins =
+                found;
+
+        }else{
+
+            youtuberSkins =
+                YOUTUBER_DATA;
+
+        }
+
+        renderYoutuberPage(1);
+
+    }catch(e){
+
+        /*
+         * Fallback
+         */
+        youtuberSkins =
+            YOUTUBER_DATA;
+
+        renderYoutuberPage(1);
+
+    }
+}
+
+
+/* =====================================================
+   YOUTUBER PAGINATION
+   30 PER PAGE
+   6 x 5
+===================================================== */
+
+function renderYoutuberPage(page){
+
+    const perPage = 30;
+
+    const box =
+        document.getElementById(
+            "youtuberSkins"
+        );
+
+    const pages =
+        document.getElementById(
+            "youtuberPages"
+        );
+
+    const total =
+        Math.ceil(
+            youtuberSkins.length /
+            perPage
+        );
+
+    currentYoutuberPage =
+        page;
+
+    box.innerHTML = "";
+
+    const start =
+        (page - 1) *
+        perPage;
+
+
+    youtuberSkins
+        .slice(
+            start,
+            start + perPage
+        )
+        .forEach(
+            ([name,img])=>{
+
+                const d =
+                    document.createElement(
+                        "div"
+                    );
+
+                d.className =
+                    "skin";
+
+                d.innerHTML = `
+                    <img
+                        src="${img}"
+                        alt="${name}"
+                    >
+
+                    <span>
+                        ${name}
+                    </span>
+                `;
+
+                box.appendChild(d);
+
+            }
+        );
+
+
+    pages.innerHTML = "";
+
+    for(
+        let i = 1;
+        i <= total;
+        i++
+    ){
+
+        const b =
+            document.createElement(
+                "button"
+            );
+
+        b.className =
+            "page-btn" +
+            (
+                i === page
+                ? " active"
+                : ""
+            );
+
+        b.textContent = i;
+
+        b.onclick =
+            ()=>renderYoutuberPage(i);
+
+        pages.appendChild(b);
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+
+/* =====================================================
+   VERSION CHANGE
+===================================================== */
+
+document
+    .getElementById("version")
+    .onchange = e => {
+
+        version =
+            e.target.value;
+
+        loadSkins();
+
+    };
+
+
+/* =====================================================
+   START
+===================================================== */
 
 versions();
 
 </script>
 
+
 <br>
 
-<!-- Sociale buttons -->
+
+<!-- =========================
+     SOCIAL BUTTONS
+========================= -->
+
 <div class="social-buttons">
 
     <a
@@ -394,7 +1140,11 @@ versions();
 
 </div>
 
-<!-- T.B Licence -->
+
+<!-- =========================
+     FOOTER
+========================= -->
+
 © <year></year>
 
 <a
@@ -406,20 +1156,28 @@ versions();
 
 - T.B Licence -
 
+
 <script>
 
 function year(){
 
-    var d=new Date();
+    var d =
+        new Date();
 
-    var y=d.getFullYear();
+    var y =
+        d.getFullYear();
 
     if(
-        document.getElementsByTagName("year").length>0
+        document.getElementsByTagName(
+            "year"
+        ).length > 0
     ){
 
-        document.getElementsByTagName("year")[0]
-            .innerHTML=y;
+        document
+            .getElementsByTagName(
+                "year"
+            )[0]
+            .innerHTML = y;
 
     }
 
@@ -431,3 +1189,4 @@ year();
 
 </body>
 </html>
+```
