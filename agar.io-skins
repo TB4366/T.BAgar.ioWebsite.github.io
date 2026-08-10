@@ -1,272 +1,524 @@
-import React, { useEffect, useState } from "react";
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Agar.io</title><style>
+body{margin:0;background:#1b2230;color:#fff;font-family:Arial}header{background:#273246;padding:18px;font-size:28px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.auth-btn{background:#3fa9ff;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:bold}
+.auth-btn:hover{background:#2d8bc4}
+.fb-btn{background:#1877f2!important;width:100%;padding:12px!important;font-size:16px!important}
+.fb-btn:hover{background:#165ec9!important}
+.tabs{display:flex;position:relative;background:#202a3b}.tab{padding:14px 24px;cursor:pointer;font-weight:bold}.active{color:#fff}.slider{position:absolute;bottom:0;height:4px;width:160px;background:#3fa9ff;transition:.2s}
+.top{display:flex;justify-content:space-between;padding:20px}input{padding:8px;width:250px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;padding:20px}.card{background:#2a3448;padding:10px;border-radius:10px;text-align:center;cursor:pointer;transition:transform 0.2s}.card:hover{transform:scale(1.05)}.skin img{width:110px;height:110px;border-radius:50%}
+.owned-badge{position:absolute;top:5px;right:5px;background:#51cf66;color:#000;padding:5px 10px;border-radius:5px;font-size:12px;font-weight:bold}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:1000}.box{width:360px;margin:8% auto;background:#2a3448;padding:18px;border-radius:10px;position:relative}.close{position:absolute;right:10px;top:8px;cursor:pointer;font-size:28px}
+#deals{display:none;padding:40px}button{margin:4px}
+.form-group{margin:15px 0}.form-group input{width:100%;padding:10px;box-sizing:border-box;background:#1b2230;border:1px solid #3fa9ff;border-radius:5px;color:#fff}
+.form-group label{display:block;margin-bottom:5px;font-weight:bold}
+.error{color:#ff6b6b;font-size:12px;margin-top:5px}
+.success{color:#51cf66;font-size:12px;margin-top:5px}
+.user-profile{text-align:center;padding:10px}
+.user-profile img{width:60px;height:60px;border-radius:50%;margin-bottom:10px}
+.deal-card{background:#2a3448;padding:15px;border-radius:10px;margin-bottom:15px;border-left:4px solid #3fa9ff}
+.deal-card h3{margin-top:0;color:#3fa9ff}
+.deal-card .price{font-size:24px;font-weight:bold;color:#51cf66;margin:10px 0}
+.deal-card .discount{background:#ff6b6b;padding:5px 10px;border-radius:5px;display:inline-block;margin-bottom:10px}
+.divider{text-align:center;margin:15px 0;color:#888;font-size:12px}
+.fb-profile-card{background:#1877f2;padding:15px;border-radius:10px;text-align:center;margin-top:20px}
+.fb-profile-card img{width:80px;height:80px;border-radius:50%;margin:10px auto}
+.fb-profile-card p{margin:5px 0;font-size:14px}
+.fb-profile-card button{background:#fff;color:#1877f2;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;font-weight:bold;margin-top:10px;width:100%}
+.fb-profile-card button:hover{background:#e0e0e0}
+.connecting{text-align:center;padding:20px}
+.connecting-spinner{display:inline-block;width:40px;height:40px;border:4px solid #3fa9ff;border-top:4px solid #51cf66;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.purchase-modal{text-align:center}
+.purchase-modal img{width:150px;height:150px;border-radius:50%;margin:20px auto}
+.purchase-success{background:#51cf66;padding:15px;border-radius:5px;margin:15px 0;color:#000;font-weight:bold}
+.user-coins{background:#1b2230;padding:10px;border-radius:5px;margin-bottom:10px;text-align:center;font-size:14px}
+.card-relative{position:relative}
+</style></head><body>
+<header>
+  <span>Agar.io Skins & Deals</span>
+  <div>
+    <button class="auth-btn" id=loginBtn onclick="openLoginModal()">Login</button>
+    <button class="auth-btn" id=logoutBtn onclick="logout()" style="display:none">Logout</button>
+  </div>
+</header>
+<div class=tabs><div class="tab active" id=t1>AGAR.IO SKINS</div><div class=tab id=t2>SPECIAL DEALS</div><div class=slider id=sl></div></div>
+<div class=top>
+  <div>
+    <b>Currently Equipped Skin</b><br>
+    <span id=currentSkin>Default</span>
+    <div id=userProfile style="margin-top:10px;display:none">
+      <img id=profilePic src="" style="width:40px;height:40px;border-radius:50%">
+      <span id=playerName></span>
+      <p style="margin:5px 0;font-size:12px;color:#aaa">Coins: <span id=playerCoins>0</span></p>
+    </div>
+  </div>
+  <input id=search placeholder='Search skins...'>
+</div>
+<div id=skinsPage><div id=grid class=grid></div></div>
 
-/**
- * SkinShop.jsx
- * A single-file React component (default export) implementing the behavior you asked for:
- * - skins shown as greyed-out cards with lock icon
- * - clicking a skin gives visible feedback (brighter / scale) so user sees they pressed it
- * - below the skin name we show the price
- * - top-right shows current coins
- * - top-left shows: "Contact T.B to buy more coins!"
- * - under the top bar there is an input for the user's Key (theirKey). When they enter it and press "Load key",
- *   the system will show how many coins belong to that key.
- * - The component supports a simple mock backend (localStorage) so you can test it locally; in production
- *   replace the mock functions (validateKey, purchaseSkin, ownerAddCoins) with calls to your real server endpoints.
- *
- * Notes important to your text:
- * - Everything starts at 0 coins until a key is loaded or the owner adds coins in the owner panel.
- * - Keys are single-use per account: this UI enforces that a key maps to a single owner (simulated). Only the owner
- *   can add coins to keys via the owner panel (set isOwner={true} when rendering for the owner during testing).
- *
- * Usage:
- * <SkinShop isOwner={false} initialSkins={optionalArray} />
- * If you want to test owner-only actions locally, render with isOwner={true}.
- */
+<div id=deals>
+  <h2 style="padding:0 20px">🎁 Special Deals</h2>
+  <div id=dealsContainer style="max-width:1000px;margin:0 auto;padding:20px"></div>
+</div>
 
-const defaultSkins = [
-  { id: "skin_01", name: "Stealth Ops", price: 100 },
-  { id: "skin_02", name: "Crimson Viper", price: 250 },
-  { id: "skin_03", name: "Glacier", price: 500 },
-  { id: "skin_04", name: "Midnight", price: 750 },
-  { id: "skin_05", name: "Solar Flare", price: 1200 },
+<!-- Login Modal -->
+<div id=loginModal class=modal>
+  <div class=box>
+    <div class=close onclick='closeLoginModal()'>&times;</div>
+    <h2 style="text-align:center">Login to Agar.io</h2>
+    
+    <!-- Facebook Login (Prominent) -->
+    <button class="auth-btn fb-btn" onclick="startFacebookLogin()">📘 Continue with Facebook</button>
+    
+    <div class=divider>or login with username</div>
+    
+    <!-- Username Login -->
+    <form id=loginForm onsubmit="handleLogin(event)">
+      <div class=form-group>
+        <label for=username>Username:</label>
+        <input type=text id=username placeholder='Choose your player name' maxlength=20 autofocus>
+        <div class=error id=usernameError></div>
+      </div>
+      <button type=submit style="width:100%;padding:12px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Start Playing</button>
+      <div class=error id=loginError style="text-align:center;margin-top:10px"></div>
+      <div class=success id=loginSuccess style="text-align:center;margin-top:10px"></div>
+    </form>
+  </div>
+</div>
+
+<!-- Facebook Connecting Modal -->
+<div id=connectingModal class=modal>
+  <div class=box style="text-align:center">
+    <h2>Connecting with Facebook...</h2>
+    <div class=connecting>
+      <div class=connecting-spinner></div>
+      <p style="margin-top:15px;color:#aaa">Waiting for your approval...</p>
+    </div>
+  </div>
+</div>
+
+<!-- Facebook Profile Confirmation Modal -->
+<div id=fbProfileModal class=modal>
+  <div class=box>
+    <div class=close onclick='closeFBProfileModal()'>&times;</div>
+    <h2 style="text-align:center">Connect Facebook Account</h2>
+    
+    <div class=fb-profile-card id=fbProfileCard>
+      <img id=fbProfileImg src="" alt="Profile Picture">
+      <p style="font-size:18px;font-weight:bold" id=fbProfileName></p>
+      <p id=fbProfileEmail></p>
+      <button onclick="confirmFacebookLogin()">✓ Connect Account</button>
+    </div>
+    
+    <button style="width:100%;padding:10px;background:#555;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff;margin-top:10px" onclick="closeFBProfileModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Product Purchase Modal -->
+<div id=purchaseModal class=modal>
+  <div class=box>
+    <div class=close onclick='closePurchaseModal()'>&times;</div>
+    <div class=purchase-modal>
+      <h2 id=productName></h2>
+      <img id=productImg src="">
+      <p id=productDesc style="color:#aaa"></p>
+      <div class=user-coins>
+        Your Coins: <span id=coinsDisplay>0</span>
+      </div>
+      <p style="font-size:20px;color:#51cf66;font-weight:bold">Price: <span id=productPrice></span></p>
+      <button id=buyBtn style="width:100%;padding:12px;background:#51cf66;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#000;font-size:16px;margin-top:15px" onclick="buyProduct()">💰 Buy Now</button>
+      <div id=purchaseError class=error style="text-align:center;margin-top:10px"></div>
+      <div id=purchaseSuccess class=success style="text-align:center;margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Modal (View Details) -->
+<div id=m class=modal><div class=box><div class=close onclick='m.style.display="none"'>&times;</div><h2 id=n></h2><hr><p id=d></p><p id=c></p><p id=dna></p><hr><button style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff" onclick="openProductPurchase()">🛒 Buy This Skin</button></div></div>
+
+<!-- Facebook SDK -->
+<div id=fbSdk></div>
+
+<script>
+const skins=[
+{id:1,name:"Zen Shaman",image:"IMG_9638.webp",coins:1250,dna:75,description:"A mysterious warrior blessed with ancient powers."},
+{id:2,name:"Celestial Plague",image:"IMG_9639.webp",coins:2500,dna:120,description:"Spread fear across the arena."},
+{id:3,name:"Neon Skull",image:"IMG_9640.webp",coins:1800,dna:90,description:"A glowing futuristic skull."},
+{id:4,name:"Dragon Scale",image:"IMG_9641.webp",coins:3000,dna:150,description:"A legendary skin from ancient times."},
+{id:5,name:"Arctic Frost",image:"IMG_9642.webp",coins:1600,dna:85,description:"Frozen beauty of the ice realm."},
+{id:6,name:"Magma Core",image:"IMG_9643.webp",coins:1900,dna:95,description:"Burning with the power of the earth."}
 ];
 
-// ---------- Mock backend (replace these with real API calls) ----------
-// We store keys data in localStorage under 'skinshop_keys' as JSON: { keyValue: { coins: number, usedBy: userId|null } }
-// We store purchases per-key in localStorage under 'skinshop_owned_<keyValue>' as array of skin ids.
+const specialDeals=[
+{title:"Weekend Special - 50% Off!",discount:"50%",items:"All Skins",oldPrice:"Full Price",newPrice:"Half Price",description:"This weekend only! Get any skin at 50% discount.",expiry:"Ends Monday"},
+{title:"New Player Bonus",discount:"FREE",items:"Zen Shaman Skin",oldPrice:"1250 Coins",newPrice:"FREE",description:"New players get Zen Shaman absolutely free!",expiry:"Limited Time"},
+{title:"Bundle Deal - Save Big!",discount:"40%",items:"All Skins Pack",oldPrice:"12550 Coins",newPrice:"7530 Coins",description:"Buy all 6 skins together and save 40%!",expiry:"Ends This Month"},
+{title:"Daily Login Reward",discount:"Extra",items:"Bonus DNA",oldPrice:"No Login",newPrice:"100 DNA/Day",description:"Login daily to earn bonus DNA rewards!",expiry:"Ongoing"}
+];
 
-function readKeysStore() {
-  try {
-    const raw = localStorage.getItem("skinshop_keys");
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
+let currentUser=null;
+let fbInitialized=false;
+let pendingFBUser=null;
+let selectedProduct=null;
+
+// Initialize Facebook SDK automatically
+function initFacebookSDK(){
+  const script=document.createElement('script');
+  script.async=true;
+  script.defer=true;
+  script.crossOrigin='anonymous';
+  
+  window.fbAsyncInit=function(){
+    FB.init({
+      appId:'1234567890123456',
+      xfbml:true,
+      version:'v18.0',
+      cookie:true,
+      status:true
+    });
+    
+    FB.AppEvents.logPageView();
+    fbInitialized=true;
+  };
+  
+  script.src='https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0&appId=1234567890123456';
+  document.getElementById('fbSdk').appendChild(script);
+}
+
+function startFacebookLogin(){
+  if(!fbInitialized){
+    alert('Facebook is initializing... please try again in a moment');
+    return;
+  }
+  
+  document.getElementById('connectingModal').style.display='block';
+  
+  FB.login(function(response){
+    document.getElementById('connectingModal').style.display='none';
+    
+    if(response.authResponse){
+      FB.api('/me', {fields:'id,name,email,picture.width(200).height(200)'}, function(user){
+        if(user.id){
+          pendingFBUser={
+            username:user.name,
+            email:user.email||'facebook_user@agar.io',
+            uid:user.id,
+            picture:user.picture.data.url,
+            loginMethod:'facebook',
+            joinDate:new Date().toISOString(),
+            level:1,
+            score:0,
+            coins:0,
+            skins:['Default']
+          };
+          
+          document.getElementById('fbProfileImg').src=user.picture.data.url;
+          document.getElementById('fbProfileName').textContent=user.name;
+          document.getElementById('fbProfileEmail').textContent=user.email||'No email provided';
+          document.getElementById('fbProfileModal').style.display='block';
+        }
+      });
+    }else{
+      alert('Login cancelled');
+    }
+  }, {scope:'public_profile,email'});
+}
+
+function confirmFacebookLogin(){
+  if(pendingFBUser){
+    currentUser=pendingFBUser;
+    localStorage.setItem('authToken','fb_token_'+currentUser.uid);
+    localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
+    updateUIForLogin();
+    closeFBProfileModal();
+    closeLoginModal();
   }
 }
-function writeKeysStore(obj) {
-  localStorage.setItem("skinshop_keys", JSON.stringify(obj));
+
+function closeFBProfileModal(){
+  document.getElementById('fbProfileModal').style.display='none';
+  pendingFBUser=null;
 }
 
-async function validateKey(key) {
-  // Simulate server validation. Returns { valid, coins, ownedSkins: [], keyOwnerId }
-  const store = readKeysStore();
-  if (!store[key]) return { valid: false };
-  const data = store[key];
-  const owned = JSON.parse(localStorage.getItem(`skinshop_owned_${key}`) || "[]");
-  return { valid: true, coins: data.coins || 0, ownedSkins: owned, ownerId: data.ownerId || null };
+// Generate random avatar color
+function getRandomColor(){
+  const colors=['#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8','#F7DC6F','#BB8FCE','#85C1E2'];
+  return colors[Math.floor(Math.random()*colors.length)];
 }
 
-async function purchaseSkin(key, skinId, price) {
-  // Server would deduct coins and add skin to owned list atomically.
-  const store = readKeysStore();
-  if (!store[key]) return { success: false, error: "Invalid key" };
-  if ((store[key].coins || 0) < price) return { success: false, error: "Insufficient coins" };
-  store[key].coins -= price;
-  writeKeysStore(store);
-  const owned = JSON.parse(localStorage.getItem(`skinshop_owned_${key}`) || "[]");
-  if (!owned.includes(skinId)) owned.push(skinId);
-  localStorage.setItem(`skinshop_owned_${key}`, JSON.stringify(owned));
-  return { success: true, coins: store[key].coins, ownedSkins: owned };
+// Generate avatar with initials
+function generateAvatar(username){
+  const canvas=document.createElement('canvas');
+  canvas.width=200;
+  canvas.height=200;
+  const ctx=canvas.getContext('2d');
+  const color=getRandomColor();
+  
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.arc(100,100,100,0,Math.PI*2);
+  ctx.fill();
+  
+  ctx.fillStyle='white';
+  ctx.font='bold 80px Arial';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(username.charAt(0).toUpperCase(),100,100);
+  
+  return canvas.toDataURL();
 }
 
-async function ownerAddCoins(key, amount) {
-  const store = readKeysStore();
-  if (!store[key]) store[key] = { coins: 0, ownerId: key }; // set ownerId to key for demo
-  store[key].coins = (store[key].coins || 0) + amount;
-  writeKeysStore(store);
-  return { success: true, coins: store[key].coins };
-}
-
-async function ownerCreateKey(key, initialCoins = 0) {
-  const store = readKeysStore();
-  if (store[key]) return { success: false, error: "Key exists" };
-  store[key] = { coins: initialCoins, ownerId: key };
-  writeKeysStore(store);
-  return { success: true };
-}
-
-// ---------------------------------------------------------------------
-
-export default function SkinShop({ isOwner = false, initialSkins = defaultSkins }) {
-  const [skins] = useState(initialSkins);
-  const [hovered, setHovered] = useState(null);
-  const [pressed, setPressed] = useState(null);
-  const [keyInput, setKeyInput] = useState("");
-  const [currentKey, setCurrentKey] = useState(null);
-  const [coins, setCoins] = useState(0);
-  const [owned, setOwned] = useState([]);
-  const [message, setMessage] = useState("");
-  const [loadingKey, setLoadingKey] = useState(false);
-  const [ownerAmount, setOwnerAmount] = useState(100);
-  const [ownerKeyCreate, setOwnerKeyCreate] = useState("");
-
-  useEffect(() => {
-    // initial state: everything is 0 and locked (as you said)
-    setCoins(0);
-    setOwned([]);
-  }, []);
-
-  async function handleLoadKey() {
-    setMessage("");
-    if (!keyInput) return setMessage("Please enter a key.");
-    setLoadingKey(true);
-    const res = await validateKey(keyInput);
-    setLoadingKey(false);
-    if (!res.valid) return setMessage("Key not found. Contact the owner (T.B).");
-    setCurrentKey(keyInput);
-    setCoins(res.coins || 0);
-    setOwned(res.ownedSkins || []);
-    setMessage("Key loaded.");
+function checkLoginStatus(){
+  const token=localStorage.getItem('authToken');
+  if(token){
+    const uid=token.replace('fb_token_','').replace('token_','');
+    const userData=localStorage.getItem('userData_'+uid);
+    if(userData){
+      currentUser=JSON.parse(userData);
+      updateUIForLogin();
+    }
   }
+}
 
-  async function handlePurchase(skin) {
-    if (!currentKey) return setMessage("You must load your Key to purchase.");
-    if (owned.includes(skin.id)) return setMessage("You already own this skin.");
-    const res = await purchaseSkin(currentKey, skin.id, skin.price);
-    if (!res.success) return setMessage(res.error || "Purchase failed.");
-    setCoins(res.coins);
-    setOwned(res.ownedSkins);
-    setMessage(`Purchased ${skin.name}!`);
+function updateUIForLogin(){
+  document.getElementById('loginBtn').style.display='none';
+  document.getElementById('logoutBtn').style.display='block';
+  document.getElementById('currentSkin').textContent=currentUser.username;
+  
+  const profileDiv=document.getElementById('userProfile');
+  document.getElementById('profilePic').src=currentUser.picture||generateAvatar(currentUser.username);
+  document.getElementById('playerName').textContent=currentUser.username;
+  document.getElementById('playerCoins').textContent=currentUser.coins||0;
+  profileDiv.style.display='block';
+  
+  draw();
+}
+
+function updateUIForLogout(){
+  document.getElementById('loginBtn').style.display='block';
+  document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('currentSkin').textContent='Default';
+  document.getElementById('userProfile').style.display='none';
+}
+
+function openLoginModal(){
+  document.getElementById('loginModal').style.display='block';
+  document.getElementById('loginForm').reset();
+  clearErrors();
+}
+
+function closeLoginModal(){
+  document.getElementById('loginModal').style.display='none';
+  document.getElementById('loginForm').reset();
+  clearErrors();
+}
+
+function clearErrors(){
+  document.getElementById('usernameError').textContent='';
+  document.getElementById('loginError').textContent='';
+  document.getElementById('loginSuccess').textContent='';
+}
+
+function handleLogin(event){
+  event.preventDefault();
+  const username=document.getElementById('username').value.trim();
+  const usernameError=document.getElementById('usernameError');
+  const loginSuccess=document.getElementById('loginSuccess');
+  
+  clearErrors();
+  
+  if(!username){
+    usernameError.textContent='Username is required';
+    return;
   }
-
-  async function handleOwnerAdd() {
-    if (!isOwner) return setMessage("Owner only action.");
-    if (!currentKey) return setMessage("Load a key first to add coins to it.");
-    const a = Number(ownerAmount) || 0;
-    const res = await ownerAddCoins(currentKey, a);
-    if (!res.success) return setMessage("Failed to add coins.");
-    setCoins(res.coins);
-    setMessage(`Added ${a} coins to key.`);
+  if(username.length<3){
+    usernameError.textContent='Username must be at least 3 characters';
+    return;
   }
-
-  async function handleOwnerCreateKey() {
-    if (!isOwner) return setMessage("Owner only action.");
-    if (!ownerKeyCreate) return setMessage("Enter a new key value to create.");
-    const res = await ownerCreateKey(ownerKeyCreate, Number(ownerAmount) || 0);
-    if (!res.success) return setMessage(res.error || "Failed.");
-    setMessage(`Key ${ownerKeyCreate} created with ${ownerAmount} coins.`);
-    setOwnerKeyCreate("");
+  if(username.length>20){
+    usernameError.textContent='Username must be less than 20 characters';
+    return;
   }
+  if(!/^[a-zA-Z0-9_-]+$/.test(username)){
+    usernameError.textContent='Username can only contain letters, numbers, _ and -';
+    return;
+  }
+  
+  const uid='user_'+Date.now();
+  
+  currentUser={
+    username:username,
+    uid:uid,
+    id:uid,
+    picture:generateAvatar(username),
+    loginMethod:'username',
+    joinDate:new Date().toISOString(),
+    level:1,
+    score:0,
+    coins:1000,
+    skins:['Default']
+  };
+  
+  loginSuccess.textContent='✓ Welcome to Agar.io!';
+  loginSuccess.style.color='#51cf66';
+  
+  setTimeout(()=>{
+    localStorage.setItem('authToken','token_'+currentUser.uid);
+    localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
+    updateUIForLogin();
+    closeLoginModal();
+  },800);
+}
 
-  return (
-    <div className="p-6 max-w-5xl mx-auto">
-      {/* Top bar */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-sm">
-          <strong>Contact T.B</strong> to buy more coins!
-        </div>
-        <div className="text-right">
-          <div className="text-xs text-gray-500">Your coins</div>
-          <div className="text-2xl font-bold">{coins}</div>
-        </div>
+function logout(){
+  if(confirm('Are you sure you want to logout?')){
+    if(currentUser?.loginMethod==='facebook'){
+      if(typeof FB!=='undefined'){
+        FB.logout(function(response){
+          localStorage.removeItem('authToken');
+          if(currentUser?.uid){
+            localStorage.removeItem('userData_'+currentUser.uid);
+          }
+          currentUser=null;
+          updateUIForLogout();
+        });
+      }
+    }else{
+      localStorage.removeItem('authToken');
+      if(currentUser?.uid){
+        localStorage.removeItem('userData_'+currentUser.uid);
+      }
+      currentUser=null;
+      updateUIForLogout();
+    }
+  }
+}
+
+function openProductPurchase(){
+  if(!selectedProduct) return;
+  
+  document.getElementById('productName').textContent=selectedProduct.name;
+  document.getElementById('productImg').src=selectedProduct.image;
+  document.getElementById('productDesc').textContent=selectedProduct.description;
+  document.getElementById('productPrice').textContent=selectedProduct.coins+' Coins';
+  document.getElementById('coinsDisplay').textContent=currentUser.coins||0;
+  document.getElementById('purchaseError').textContent='';
+  document.getElementById('purchaseSuccess').textContent='';
+  
+  document.getElementById('m').style.display='none';
+  document.getElementById('purchaseModal').style.display='block';
+}
+
+function closePurchaseModal(){
+  document.getElementById('purchaseModal').style.display='none';
+  selectedProduct=null;
+}
+
+function buyProduct(){
+  if(!selectedProduct || !currentUser) return;
+  
+  const errorDiv=document.getElementById('purchaseError');
+  const successDiv=document.getElementById('purchaseSuccess');
+  errorDiv.textContent='';
+  successDiv.textContent='';
+  
+  if(currentUser.coins<selectedProduct.coins){
+    errorDiv.textContent='❌ Not enough coins! You need '+selectedProduct.coins+' coins';
+    return;
+  }
+  
+  if(currentUser.skins.includes('skin_'+selectedProduct.id)){
+    errorDiv.textContent='❌ You already own this skin!';
+    return;
+  }
+  
+  // Deduct coins
+  currentUser.coins-=selectedProduct.coins;
+  
+  // Add skin to user
+  if(!currentUser.skins) currentUser.skins=[];
+  currentUser.skins.push('skin_'+selectedProduct.id);
+  
+  // Save to localStorage
+  localStorage.setItem('userData_'+currentUser.uid,JSON.stringify(currentUser));
+  
+  successDiv.textContent='✓ Skin purchased! '+selectedProduct.name+' added to your account!';
+  successDiv.style.color='#51cf66';
+  
+  document.getElementById('playerCoins').textContent=currentUser.coins;
+  document.getElementById('coinsDisplay').textContent=currentUser.coins;
+  
+  setTimeout(()=>{
+    closePurchaseModal();
+    draw();
+  },2000);
+}
+
+function draw(f=''){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  skins.filter(x=>x.name.toLowerCase().includes(f.toLowerCase())).forEach(s=>{
+    const isOwned=currentUser&&currentUser.skins&&currentUser.skins.includes('skin_'+s.id);
+    let e=document.createElement('div');
+    e.className='card card-relative';
+    let ownedHTML=isOwned?'<div class=owned-badge>✓ OWNED</div>':'';
+    e.innerHTML=`${ownedHTML}<div class=skin><img src="${s.image}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Ccircle cx=%2755%22 cy=%2755%22 r=%2755%22 fill=%22%234ECDC4%22/%3E%3C/svg%3E'"></div><h3>${s.name}</h3><p style="font-size:12px;color:#aaa">${s.coins} Coins</p><button style="background:${isOwned?'#888':'#3fa9ff'};color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">${isOwned?'✓ OWNED':'BUY'}</button><button style="background:#51cf66;color:#000;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-weight:bold">VIEW</button>`;
+    
+    e.querySelectorAll('button')[0].onclick=()=>{
+      if(!currentUser){
+        alert('Please login first!');
+        openLoginModal();
+        return;
+      }
+      if(!isOwned){
+        selectedProduct=s;
+        openProductPurchase();
+      }
+    };
+    
+    e.querySelectorAll('button')[1].onclick=()=>{
+      selectedProduct=s;
+      n.textContent=s.name;
+      d.textContent=s.description;
+      c.textContent=s.coins+' Coins';
+      dna.textContent=s.dna+' DNA';
+      document.getElementById('m').style.display='block';
+    };
+    
+    grid.appendChild(e);
+  })
+}
+
+function drawDeals(){
+  const container=document.getElementById('dealsContainer');
+  container.innerHTML='';
+  specialDeals.forEach(deal=>{
+    const dealHtml=`
+      <div class=deal-card>
+        <h3>${deal.title}</h3>
+        <div class=discount>${deal.discount}</div>
+        <p><strong>Items:</strong> ${deal.items}</p>
+        <p><strong>Was:</strong> ${deal.oldPrice}</p>
+        <p><strong>Now:</strong> <span style="font-size:24px;font-weight:bold;color:#51cf66;margin:10px 0">${deal.newPrice}</span></p>
+        <p>${deal.description}</p>
+        <p style="color:#888;font-size:12px">⏰ ${deal.expiry}</p>
+        <button style="width:100%;padding:10px;background:#3fa9ff;border:none;border-radius:5px;cursor:pointer;font-weight:bold;color:#fff">Claim Deal</button>
       </div>
-
-      {/* Key input bar */}
-      <div className="bg-gray-800 text-white rounded p-3 flex items-center gap-3 mb-6">
-        <div className="flex-1">
-          <div className="text-xs text-gray-300">Enter your Key</div>
-          <input
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            placeholder="Paste key here"
-            className="mt-1 w-full rounded px-2 py-1 text-black"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleLoadKey} className="px-3 py-1 rounded bg-sky-600 text-white" disabled={loadingKey}>
-            {loadingKey ? "Loading..." : "Load key"}
-          </button>
-        </div>
-      </div>
-
-      {/* skins grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {skins.map((skin) => {
-          const isOwned = owned.includes(skin.id);
-          return (
-            <div
-              key={skin.id}
-              onMouseEnter={() => setHovered(skin.id)}
-              onMouseLeave={() => setHovered(null)}
-              onMouseDown={() => setPressed(skin.id)}
-              onMouseUp={() => setPressed(null)}
-              onClick={() => handlePurchase(skin)}
-              className={`relative rounded-lg p-4 cursor-pointer transform transition-all duration-150 select-none
-                ${pressed === skin.id ? "scale-98" : ""}`}
-            >
-              {/* Visual "greyed out" card background */}
-              <div
-                className={`rounded-lg h-32 flex items-center justify-center border p-2
-                  ${isOwned ? "bg-white/10 border-gray-600" : "bg-gray-300/30 border-gray-400"}`}
-                style={{ filter: pressed === skin.id || hovered === skin.id ? "brightness(1.15)" : "grayscale(60%)" }}
-              >
-                {/* Image placeholder */}
-                <div className="text-center">
-                  <div className="text-sm font-semibold">{skin.name}</div>
-                  <div className="text-xs mt-2">Preview</div>
-                </div>
-              </div>
-
-              {/* lock icon top-left */}
-              <div className="absolute left-2 top-2 text-sm flex items-center gap-1">
-                {!isOwned ? (
-                  <span className="inline-block bg-black/60 text-white rounded px-2 py-0.5 text-xs">🔒</span>
-                ) : (
-                  <span className="inline-block bg-green-600 text-white rounded px-2 py-0.5 text-xs">✓</span>
-                )}
-              </div>
-
-              {/* price and name area */}
-              <div className="mt-3 flex items-center justify-between">
-                <div className="text-sm font-medium">{skin.name}</div>
-                <div className="text-sm font-semibold">{skin.price} 💠</div>
-              </div>
-
-              {/* subtle overlay when clickable */}
-              <div className="absolute inset-0 rounded-lg pointer-events-none" />
-            </div>
-          );
-        })}
-      </div>
-
-      {/* message area */}
-      <div className="mt-4 text-sm text-yellow-300">{message}</div>
-
-      {/* Owner panel (only visible if isOwner=true) */}
-      {isOwner && (
-        <div className="mt-6 border-t pt-4">
-          <h3 className="font-bold mb-2">Owner panel (for T.B)</h3>
-          <div className="flex gap-2 items-center mb-2">
-            <input
-              value={ownerKeyCreate}
-              onChange={(e) => setOwnerKeyCreate(e.target.value)}
-              placeholder="new key value"
-              className="px-2 py-1 rounded text-black"
-            />
-            <input
-              value={ownerAmount}
-              onChange={(e) => setOwnerAmount(e.target.value)}
-              className="px-2 py-1 rounded text-black w-24"
-            />
-            <button onClick={handleOwnerCreateKey} className="px-3 py-1 rounded bg-indigo-600 text-white">
-              Create Key
-            </button>
-          </div>
-
-          <div className="flex gap-2 items-center">
-            <div className="text-sm">Add coins to currently loaded key:</div>
-            <input value={ownerAmount} onChange={(e) => setOwnerAmount(e.target.value)} className="px-2 py-1 rounded text-black w-28" />
-            <button onClick={handleOwnerAdd} className="px-3 py-1 rounded bg-emerald-600 text-white">
-              Add coins
-            </button>
-          </div>
-
-          <div className="text-xs text-gray-400 mt-2">(Only for demo/testing. In production you must do this server-side. Keys are single-owner.)</div>
-        </div>
-      )}
-
-      <div className="mt-6 text-xs text-gray-500">Note: replace the mock functions in the top of this file with real API calls to enforce
-        single-user key ownership and server-side coin accounting.</div>
-    </div>
-  );
+    `;
+    container.innerHTML+=dealHtml;
+  });
 }
+
+// Initialize
+initFacebookSDK();
+drawDeals();
+checkLoginStatus();
+if(!currentUser) draw();
+
+search.oninput=e=>draw(e.target.value);
+t1.onclick=()=>{t1.classList.add('active');t2.classList.remove('active');sl.style.left='0';skinsPage.style.display='block';deals.style.display='none';}
+t2.onclick=()=>{t2.classList.add('active');t1.classList.remove('active');sl.style.left=t1.offsetWidth+'px';skinsPage.style.display='none';deals.style.display='block';}
+
+window.onclick=e=>{if(e.target===document.getElementById('loginModal')){closeLoginModal()}if(e.target===document.getElementById('fbProfileModal')){closeFBProfileModal()}if(e.target===document.getElementById('m')){document.getElementById('m').style.display='none'}if(e.target===document.getElementById('purchaseModal')){closePurchaseModal()}}
+</script></body></html>
