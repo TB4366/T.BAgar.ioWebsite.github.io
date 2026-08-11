@@ -264,6 +264,158 @@ h1{
     color:#fff;
 }
 
+
+/* =========================
+   SPECIAL DEALS
+========================= */
+#specialDealsSection{
+    max-width:1200px;
+    margin:0 auto;
+    padding:10px 15px 40px;
+}
+.deals-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+}
+.deal-card{
+    background:#111;
+    border:2px solid #222;
+    border-radius:10px;
+    padding:12px;
+    cursor:pointer;
+    transition:.18s;
+}
+.deal-card:hover,.deal-card.selected{
+    border-color:#1683ff;
+    transform:translateY(-2px);
+}
+.deal-card img{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    object-fit:contain;
+}
+.deal-name{
+    display:block;
+    margin-top:8px;
+    font-size:16px;
+}
+.deal-price{
+    margin-top:5px;
+    color:#22c55e;
+    font-size:15px;
+}
+.deal-buy{
+    display:none;
+    width:100%;
+    margin-top:10px;
+    background:#1683ff;
+    color:#fff;
+    border:0;
+    border-radius:7px;
+    padding:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.deal-card.selected .deal-buy{display:block}
+.deals-empty{
+    padding:30px;
+    color:#aaa;
+}
+.modal-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+    padding:20px;
+}
+.modal-backdrop.hidden{display:none}
+.deal-modal{
+    width:min(560px,100%);
+    background:#160000;
+    border:2px solid #d00;
+    border-radius:12px;
+    padding:24px;
+    box-shadow:0 10px 40px #000;
+    text-align:left;
+}
+.deal-modal h2{
+    color:#ff3333;
+    margin:0 0 14px;
+}
+.deal-modal p{
+    color:#eee;
+    line-height:1.5;
+    font-size:15px;
+}
+.agree-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin:18px 0;
+    color:#fff;
+    font-size:14px;
+    line-height:1.4;
+}
+.agree-row input{margin-top:3px}
+.modal-actions{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+}
+.modal-actions button{
+    border:0;
+    border-radius:7px;
+    padding:10px 18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+.cancel-btn{background:#333;color:#fff}
+.continue-btn{background:#1683ff;color:#fff}
+.continue-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+.checkout-modal{
+    background:#111;
+    border-color:#1683ff;
+}
+.checkout-modal h2{color:#1683ff}
+.checkout-form label{
+    display:block;
+    margin:14px 0 6px;
+    color:#ddd;
+}
+.checkout-form input{
+    width:100%;
+    box-sizing:border-box;
+    padding:11px;
+    border-radius:7px;
+    border:1px solid #444;
+    background:#050505;
+    color:#fff;
+    font-size:15px;
+}
+.security-note{
+    color:#ff7777 !important;
+    font-weight:bold;
+}
+.selected-product{
+    background:#080808;
+    border:1px solid #333;
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:14px;
+}
+@media(max-width:600px){
+    .deals-grid{grid-template-columns:repeat(2,1fr)}
+    .deal-card img{width:105px;height:105px}
+}
+
 </style>
 </head>
 
@@ -295,6 +447,14 @@ h1{
         onclick="showSection('youtuber')"
     >
         Youtuber Skins
+    </button>
+
+    <button
+        class="section-btn"
+        id="specialDealsSectionBtn"
+        onclick="showSection('specialDeals')"
+    >
+        Special Deals
     </button>
 
 </div>
@@ -339,6 +499,71 @@ h1{
 
 </div>
 
+<!-- =========================
+     SPECIAL DEALS SECTION
+========================= -->
+<div id="specialDealsSection" class="hidden">
+    <h2>Special Deals</h2>
+    <p style="color:#aaa;">
+        Select a product to view its purchase option.
+    </p>
+    <div id="dealsGrid" class="deals-grid"></div>
+</div>
+
+<!-- WARNING MODAL -->
+<div id="warningModal" class="modal-backdrop hidden">
+    <div class="deal-modal">
+        <h2>⚠ Attention!</h2>
+        <p>
+            T.B provides links to products made available through the official
+            Miniclip/Xsolla purchase system. This website does not control or
+            guarantee the availability or functionality of every product.
+            Please make sure that all information you provide on the official
+            checkout page is correct. Purchases are made at your own risk.
+        </p>
+
+        <label class="agree-row">
+            <input type="checkbox" id="termsCheckbox">
+            <span>I agree to the terms and conditions and understand the
+            information above.</span>
+        </label>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeWarning()">Cancel</button>
+            <button class="continue-btn" id="warningContinue" disabled onclick="openCheckoutForm()">
+                Continue
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- UID / CHECKOUT MODAL -->
+<div id="checkoutModal" class="modal-backdrop hidden">
+    <div class="deal-modal checkout-modal">
+        <h2>Secure Checkout</h2>
+
+        <div id="selectedProduct" class="selected-product"></div>
+
+        <div class="checkout-form">
+            <label for="agarioUid">Enter your Agar.io UID:</label>
+            <input id="agarioUid" type="text" inputmode="numeric"
+                   autocomplete="off" placeholder="Enter your UID">
+
+            <p class="security-note">
+                ⚠ Never share your password, authentication token, or other
+                private account credentials with anyone.
+            </p>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeCheckout()">Cancel</button>
+            <button class="continue-btn" onclick="continueToXsolla()">
+                Continue to Xsolla
+            </button>
+        </div>
+    </div>
+</div>
+
 
 <script>
 
@@ -372,6 +597,12 @@ function showSection(section){
     const youtuberBtn =
         document.getElementById("youtuberSectionBtn");
 
+    const specialDeals =
+        document.getElementById("specialDealsSection");
+
+    const specialDealsBtn =
+        document.getElementById("specialDealsSectionBtn");
+
 
     if(section === "agario"){
 
@@ -380,21 +611,34 @@ function showSection(section){
 
         agarioBtn.classList.add("active");
         youtuberBtn.classList.remove("active");
+        specialDealsBtn.classList.remove("active");
+        specialDeals.classList.add("hidden");
+
+    }else if(section === "youtuber"){
+
+        agario.classList.add("hidden");
+        youtuber.classList.remove("hidden");
+        specialDeals.classList.add("hidden");
+
+        agarioBtn.classList.remove("active");
+        youtuberBtn.classList.add("active");
+        specialDealsBtn.classList.remove("active");
+
+        if(youtuberSkins.length === 0){
+            loadYoutuberSkins();
+        }
 
     }else{
 
         agario.classList.add("hidden");
-        youtuber.classList.remove("hidden");
+        youtuber.classList.add("hidden");
+        specialDeals.classList.remove("hidden");
 
         agarioBtn.classList.remove("active");
-        youtuberBtn.classList.add("active");
+        youtuberBtn.classList.remove("active");
+        specialDealsBtn.classList.add("active");
 
-        if(youtuberSkins.length === 0){
-
-            loadYoutuberSkins();
-
-        }
-
+        renderSpecialDeals();
     }
 
     window.scrollTo({
@@ -1348,6 +1592,139 @@ function renderYoutuberPage(page){
     });
 }
 
+
+
+/* =====================================================
+   SPECIAL DEALS
+===================================================== */
+
+/*
+ * Add products here one by one.
+ * The checkout URL should be an official Xsolla URL supplied
+ * for the corresponding product.
+ */
+const SPECIAL_DEALS = [
+    {
+        id: "deal-1",
+        name: "Special Product #1",
+        price: "See Xsolla",
+        image: "",
+        xsollaUrl: "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19"
+    }
+];
+
+let selectedDeal = null;
+
+function renderSpecialDeals(){
+    const grid = document.getElementById("dealsGrid");
+    if(!grid) return;
+
+    grid.innerHTML = "";
+
+    if(!SPECIAL_DEALS.length){
+        grid.innerHTML = '<div class="deals-empty">No special deals are available right now.</div>';
+        return;
+    }
+
+    SPECIAL_DEALS.forEach(deal => {
+        const card = document.createElement("div");
+        card.className = "deal-card";
+        card.dataset.id = deal.id;
+
+        const image = deal.image
+            ? `<img src="${deal.image}" alt="${escapeHtml(deal.name)}">`
+            : `<div style="width:130px;height:130px;margin:auto;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:#777;">PRODUCT</div>`;
+
+        card.innerHTML = `
+            ${image}
+            <span class="deal-name">${escapeHtml(deal.name)}</span>
+            <div class="deal-price">${escapeHtml(deal.price)}</div>
+            <button class="deal-buy" type="button">BUY</button>
+        `;
+
+        card.addEventListener("click", function(e){
+            if(e.target.classList.contains("deal-buy")){
+                e.stopPropagation();
+                selectDeal(deal.id);
+                openWarning();
+                return;
+            }
+            selectDeal(deal.id);
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+function selectDeal(id){
+    selectedDeal = SPECIAL_DEALS.find(x => x.id === id) || null;
+
+    document.querySelectorAll(".deal-card").forEach(card => {
+        card.classList.toggle("selected", card.dataset.id === id);
+    });
+}
+
+function openWarning(){
+    if(!selectedDeal) return;
+    document.getElementById("termsCheckbox").checked = false;
+    document.getElementById("warningContinue").disabled = true;
+    document.getElementById("warningModal").classList.remove("hidden");
+}
+
+function closeWarning(){
+    document.getElementById("warningModal").classList.add("hidden");
+}
+
+function openCheckoutForm(){
+    if(!selectedDeal) return;
+
+    closeWarning();
+
+    document.getElementById("selectedProduct").innerHTML = `
+        <strong>${escapeHtml(selectedDeal.name)}</strong><br>
+        <span style="color:#22c55e">${escapeHtml(selectedDeal.price)}</span>
+    `;
+
+    document.getElementById("agarioUid").value = "";
+    document.getElementById("checkoutModal").classList.remove("hidden");
+}
+
+function closeCheckout(){
+    document.getElementById("checkoutModal").classList.add("hidden");
+}
+
+function continueToXsolla(){
+    if(!selectedDeal || !selectedDeal.xsollaUrl) return;
+
+    const uid = document.getElementById("agarioUid").value.trim();
+
+    if(!uid){
+        alert("Please enter your Agar.io UID.");
+        return;
+    }
+
+    /*
+     * The UID is intentionally not stored or sent to this website.
+     * It is only validated as non-empty here. The official Xsolla
+     * checkout remains responsible for the actual account/payment flow.
+     */
+    window.location.href = selectedDeal.xsollaUrl;
+}
+
+function escapeHtml(value){
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+document.getElementById("termsCheckbox").addEventListener("change", function(){
+    document.getElementById("warningContinue").disabled = !this.checked;
+});
+
+renderSpecialDeals();
 
 /* =====================================================
    VERSION CHANGE
