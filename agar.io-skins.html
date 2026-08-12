@@ -545,13 +545,15 @@ h1{
         <div id="selectedProduct" class="selected-product"></div>
 
         <div class="checkout-form">
-            <label for="agarioUid">Enter your Agar.io UID:</label>
+            <label for="agarioUid">Enter your Agar.io UID (optional):</label>
             <input id="agarioUid" type="text" inputmode="numeric"
-                   autocomplete="off" placeholder="Enter your UID">
+                   autocomplete="off" placeholder="Enter your Agar.io UID (optional)">
 
             <p class="security-note">
-                ⚠ Never share your password, authentication token, or other
-                private account credentials with anyone.
+                ⚠ The Agar.io UID is optional. If you enter a UID, it is sent
+                only to the checkout backend to create a new Xsolla payment
+                session for that UID. Never enter your password or private
+                authentication token.
             </p>
         </div>
 
@@ -1609,7 +1611,9 @@ const SPECIAL_DEALS = [
         name: "Special Product #1",
         price: "See Xsolla",
         image: "",
-        xsollaUrl: "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19"
+        // The browser never receives an Xsolla API key or permanent access token.
+        // The backend creates a fresh token for every checkout.
+        backendProductId: "deal-1"
     }
 ];
 
@@ -1693,22 +1697,65 @@ function closeCheckout(){
     document.getElementById("checkoutModal").classList.add("hidden");
 }
 
-function continueToXsolla(){
-    if(!selectedDeal || !selectedDeal.xsollaUrl) return;
+async function continueToXsolla(){
 
-    const uid = document.getElementById("agarioUid").value.trim();
-
-    if(!uid){
-        alert("Please enter your Agar.io UID.");
+    if(!selectedDeal){
         return;
     }
 
-    /*
-     * The UID is intentionally not stored or sent to this website.
-     * It is only validated as non-empty here. The official Xsolla
-     * checkout remains responsible for the actual account/payment flow.
-     */
-    window.location.href = selectedDeal.xsollaUrl;
+    const uid =
+        document.getElementById("agarioUid").value.trim();
+
+    const button =
+        document.querySelector("#checkoutModal .continue-btn");
+
+    if(button){
+        button.disabled = true;
+        button.textContent = "Creating secure checkout...";
+    }
+
+    try{
+
+        const response = await fetch(
+            "https://YOUR-BACKEND-DOMAIN.example.com/api/create-checkout",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    productId:selectedDeal.backendProductId,
+                    agarioUid:uid || null
+                })
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if(!response.ok || !data.checkoutUrl){
+            throw new Error(
+                data.error || "Unable to create the Xsolla checkout."
+            );
+        }
+
+        // A fresh Xsolla checkout URL is returned for this purchase.
+        window.location.href = data.checkoutUrl;
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Unable to start the purchase. Please try again."
+        );
+
+    }finally{
+
+        if(button){
+            button.disabled = false;
+            button.textContent = "Continue to Xsolla";
+        }
+    }
 }
 
 function escapeHtml(value){
