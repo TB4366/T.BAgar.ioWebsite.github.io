@@ -1,496 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>T.B Agar.io - Login</title>
-
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            font-family: Arial, Helvetica, sans-serif;
-
-            background:
-                radial-gradient(circle at top, #263d68, #101722 55%, #090d14);
-
-            color: white;
-        }
-
-        .container {
-            width: 420px;
-            max-width: calc(100% - 30px);
-        }
-
-        .card {
-            padding: 35px;
-            border-radius: 20px;
-
-            background: rgba(20, 28, 42, .96);
-
-            box-shadow:
-                0 20px 60px rgba(0,0,0,.45);
-
-            border: 1px solid rgba(255,255,255,.08);
-        }
-
-        .logo {
-            width: 70px;
-            height: 70px;
-
-            margin: 0 auto 20px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background: linear-gradient(135deg, #4da3ff, #1769d1);
-
-            font-size: 23px;
-            font-weight: 900;
-
-            box-shadow: 0 8px 30px rgba(35,125,255,.35);
-        }
-
-        h1 {
-            text-align: center;
-            margin: 0;
-            font-size: 27px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #9ba8ba;
-            margin: 10px 0 28px;
-        }
-
-        button {
-            width: 100%;
-            border: 0;
-            border-radius: 11px;
-
-            padding: 14px;
-
-            font-size: 15px;
-            font-weight: 700;
-
-            cursor: pointer;
-
-            transition: .2s;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.08);
-        }
-
-        .facebook {
-            background: #1877f2;
-            color: white;
-        }
-
-        .logout {
-            margin-top: 15px;
-            background: #303a49;
-            color: white;
-        }
-
-        .continue {
-            margin-top: 12px;
-            background: #42a5f5;
-            color: white;
-        }
-
-        input {
-            width: 100%;
-
-            padding: 14px;
-
-            border-radius: 10px;
-
-            border: 1px solid #39465a;
-
-            background: #111925;
-
-            color: white;
-
-            outline: none;
-
-            font-size: 15px;
-        }
-
-        input:focus {
-            border-color: #42a5f5;
-        }
-
-        .profile {
-            text-align: center;
-        }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 10px 0 5px;
-        }
-
-        .status {
-            color: #63d471;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-
-        .section {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .section label {
-            display: block;
-            font-size: 13px;
-            color: #aab5c4;
-            margin-bottom: 8px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .message {
-            margin-top: 15px;
-            text-align: center;
-            font-size: 13px;
-            color: #8fd3ff;
-        }
-
-        .agario {
-            margin-top: 15px;
-            padding: 12px;
-
-            border-radius: 10px;
-
-            background: #111925;
-
-            text-align: center;
-        }
-
-        .agario span {
-            display: block;
-            color: #8f9aaa;
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .agario strong {
-            font-size: 16px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot Control</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,Arial,sans-serif;background:#0b0d12;color:#f5f7fb;
+  min-height:100vh;display:flex;justify-content:center;padding:28px 14px
+}
+.panel{width:min(760px,100%);background:#11151d;border:1px solid #242b38;border-radius:18px;box-shadow:0 18px 60px #0008;overflow:hidden}
+.header{padding:22px 24px;border-bottom:1px solid #252c38;display:flex;justify-content:space-between;align-items:center}
+h1{margin:0;font-size:22px}.status{font-size:12px;color:#8993a5}
+.content{padding:22px}
+.section{margin-bottom:22px}
+.section h2{font-size:13px;text-transform:uppercase;letter-spacing:1.3px;color:#8f9aae;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.field{background:#171c25;border:1px solid #293140;border-radius:11px;padding:10px}
+label{display:block;font-size:11px;color:#8993a5;margin-bottom:7px}
+input,select{
+  width:100%;border:0;outline:0;background:transparent;color:#fff;font-size:14px
+}
+select option{background:#171c25}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+button{
+  border:0;border-radius:11px;padding:14px;font-weight:800;font-size:14px;cursor:pointer;
+  transition:.15s transform,.15s opacity
+}
+button:active{transform:scale(.98)}
+.start{background:#2fbe72;color:#06140c}.stop{background:#e24b55;color:#fff}
+.secondary{background:#202733;color:#dfe5ef;border:1px solid #303949}
+.message{margin-top:14px;padding:12px;border-radius:10px;background:#171c25;color:#aeb8c9;font-size:13px;min-height:42px}
+.switch{display:flex;align-items:center;gap:10px;color:#c8cfdb;font-size:13px}
+.switch input{width:auto}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.header{padding:18px}.content{padding:16px}}
+</style>
 </head>
-
 <body>
+<div class="panel">
+  <div class="header">
+    <div><h1>BOT CONTROL</h1><div class="status" id="status">Ready</div></div>
+    <div>🤖</div>
+  </div>
 
-<div class="container">
-
-    <!-- LOGIN -->
-    <div id="loginCard" class="card">
-
-        <div class="logo">
-            T.B
+  <div class="content">
+    <div class="section">
+      <h2>Account</h2>
+      <div class="grid">
+        <div class="field">
+          <label>UID</label>
+          <input id="uid" placeholder="Enter UID" autocomplete="off">
         </div>
-
-        <h1>Welcome back</h1>
-
-        <p class="subtitle">
-            Log in to continue to T.B Agar.io
-        </p>
-
-        <button
-            class="facebook"
-            onclick="facebookLogin()">
-            🔵 Continue with Facebook
-        </button>
-
-        <div id="loginMessage" class="message"></div>
-
+        <div class="field">
+          <label>Token</label>
+          <input id="token" type="password" placeholder="Enter your token" autocomplete="off">
+        </div>
+      </div>
     </div>
 
-
-    <!-- AGARIO LINK -->
-    <div id="linkCard" class="card hidden">
-
-        <div class="logo">
-            T.B
+    <div class="section">
+      <h2>Game Settings</h2>
+      <div class="grid">
+        <div class="field">
+          <label>REGION</label>
+          <select id="region">
+            <option>Europe</option><option>North America</option><option>South America</option>
+            <option>Asia</option><option>Oceania</option>
+          </select>
         </div>
-
-        <h1>Link your Agar.io account</h1>
-
-        <p class="subtitle">
-            Connect your Agar.io player name to your Facebook account.
-        </p>
-
-        <div class="section">
-
-            <label>
-                Agar.io player name
-            </label>
-
-            <input
-                id="agarioName"
-                type="text"
-                placeholder="Enter your Agar.io name"
-                maxlength="40">
-
-            <button
-                class="continue"
-                onclick="linkAgario()">
-                Continue
-            </button>
-
+        <div class="field">
+          <label>GAME MODE</label>
+          <select id="mode"><option>Classic</option><option>Burst</option></select>
         </div>
-
-        <div id="linkMessage" class="message"></div>
-
+        <div class="field">
+          <label>BOT NAME</label>
+          <input id="name" placeholder="Bot">
+        </div>
+        <div class="field">
+          <label>PARTY</label>
+          <input id="party" placeholder="Party code">
+        </div>
+      </div>
     </div>
 
-
-    <!-- LOGGED IN -->
-    <div id="accountCard" class="card hidden">
-
-        <div class="profile">
-
-            <div class="logo">
-                T.B
-            </div>
-
-            <h1>You're logged in</h1>
-
-            <div class="profile-name" id="facebookName">
-                Facebook User
-            </div>
-
-            <div class="status">
-                ● Facebook account connected
-            </div>
-
+    <div class="section">
+      <h2>Bot Settings</h2>
+      <div class="grid">
+        <div class="field">
+          <label>BOT COUNT</label>
+          <input id="count" type="number" min="1" max="500" value="10">
         </div>
-
-        <div class="agario">
-
-            <span>
-                Agar.io player
-            </span>
-
-            <strong id="playerName">
-                -
-            </strong>
-
+        <div class="field">
+          <label>BOT MODE</label>
+          <select id="botsMode">
+            <option>Farm</option><option>Track</option><option>Virus Shooter</option><option>Helper</option>
+          </select>
         </div>
-
-        <button
-            class="logout"
-            onclick="logout()">
-            Log out
-        </button>
-
-        <div id="accountMessage" class="message"></div>
-
+        <div class="field">
+          <label>TARGET UID</label>
+          <input id="targetUid" placeholder="Optional target UID">
+        </div>
+        <div class="field">
+          <label>SPEED</label>
+          <input id="speed" type="number" min="1" max="100" value="50">
+        </div>
+      </div>
+      <div style="margin-top:12px" class="switch">
+        <input id="ignoreViruses" type="checkbox">
+        <span>Ignore viruses</span>
+      </div>
     </div>
 
+    <div class="actions">
+      <button class="start" id="start">START BOTS</button>
+      <button class="stop" id="stop">STOP BOTS</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="secondary" id="save">SAVE SETTINGS</button>
+      <button class="secondary" id="reset">RESET</button>
+    </div>
+
+    <div class="message" id="message">No bot process is running.</div>
+  </div>
 </div>
 
-
 <script>
+const ids = ["uid","token","region","mode","name","party","count","botsMode","targetUid","speed","ignoreViruses"];
+const $ = id => document.getElementById(id);
 
-async function checkSession() {
-
-    try {
-
-        const response = await fetch("/api/session");
-
-        const data = await response.json();
-
-        if (!data.loggedIn) {
-
-            showLogin();
-
-            return;
-        }
-
-        if (!data.user.agarioName) {
-
-            showLinkScreen(data.user);
-
-            return;
-        }
-
-        showAccount(data.user);
-
-    } catch (error) {
-
-        console.error(error);
-
-        showLogin();
+function getSettings(){
+  const s={};
+  ids.forEach(id => s[id] = $(id).type === "checkbox" ? $(id).checked : $(id).value);
+  return s;
+}
+function setSettings(s){
+  ids.forEach(id=>{
+    if(s[id] !== undefined){
+      if($(id).type === "checkbox") $(id).checked = !!s[id];
+      else $(id).value = s[id];
     }
+  });
 }
-
-
-function facebookLogin() {
-
-    window.location.href = "/auth/facebook";
+function save(){
+  localStorage.setItem("botControlSettings", JSON.stringify(getSettings()));
+  $("message").textContent="Settings saved locally.";
 }
-
-
-function showLogin() {
-
-    document
-        .getElementById("loginCard")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("linkCard")
-        .classList.add("hidden");
-
-    document
-        .getElementById("accountCard")
-        .classList.add("hidden");
+function load(){
+  try{
+    const s=JSON.parse(localStorage.getItem("botControlSettings")||"null");
+    if(s) setSettings(s);
+  }catch(e){}
 }
-
-
-function showLinkScreen(user) {
-
-    document
-        .getElementById("loginCard")
-        .classList.add("hidden");
-
-    document
-        .getElementById("accountCard")
-        .classList.add("hidden");
-
-    document
-        .getElementById("linkCard")
-        .classList.remove("hidden");
+function setRunning(r){
+  $("status").textContent=r?"Running":"Stopped";
+  $("status").style.color=r?"#55d98b":"#e24b55";
+  $("message").textContent=r
+    ? "Bot configuration loaded. This standalone HTML interface is ready."
+    : "Bots stopped.";
 }
-
-
-function showAccount(user) {
-
-    document
-        .getElementById("loginCard")
-        .classList.add("hidden");
-
-    document
-        .getElementById("linkCard")
-        .classList.add("hidden");
-
-    document
-        .getElementById("accountCard")
-        .classList.remove("hidden");
-
-    document.getElementById("facebookName").textContent =
-        user.facebookName;
-
-    document.getElementById("playerName").textContent =
-        user.agarioName;
-}
-
-
-async function linkAgario() {
-
-    const input =
-        document.getElementById("agarioName");
-
-    const message =
-        document.getElementById("linkMessage");
-
-    const agarioName =
-        input.value.trim();
-
-    if (!agarioName) {
-
-        message.textContent =
-            "Please enter your Agar.io player name.";
-
-        return;
-    }
-
-    try {
-
-        const response = await fetch(
-            "/api/link-agario",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    agarioName
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-
-            message.textContent =
-                data.message || "Something went wrong.";
-
-            return;
-        }
-
-        checkSession();
-
-    } catch (error) {
-
-        console.error(error);
-
-        message.textContent =
-            "Connection error.";
-    }
-}
-
-
-async function logout() {
-
-    try {
-
-        const response = await fetch(
-            "/api/logout",
-            {
-                method: "POST"
-            }
-        );
-
-        const data = await response.json();
-
-        if (data.success) {
-
-            showLogin();
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-    }
-}
-
-
-checkSession();
-
+$("save").onclick=save;
+$("reset").onclick=()=>{
+  localStorage.removeItem("botControlSettings");
+  location.reload();
+};
+$("start").onclick=()=>{
+  const s=getSettings();
+  if(!s.uid){$("message").textContent="Enter a UID first.";return;}
+  if(!s.token){$("message").textContent="Enter your token first.";return;}
+  if(!s.party){$("message").textContent="Enter a party code first.";return;}
+  save();
+  setRunning(true);
+};
+$("stop").onclick=()=>setRunning(false);
+$("botsMode").onchange=()=>{
+  $("message").textContent="Bot mode changed to: "+$("botsMode").value;
+};
+load();
 </script>
-
 </body>
 </html>
