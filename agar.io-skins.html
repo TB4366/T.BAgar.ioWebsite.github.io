@@ -1703,15 +1703,41 @@ async function continueToXsolla(){
         return;
     }
 
-    const uid =
-        document.getElementById("agarioUid").value.trim();
+    const uidInput = document.getElementById("agarioUid");
+    const uid = uidInput ? uidInput.value.trim() : "";
+
+    // Client-side validation before the browser is allowed to open Xsolla.
+    if(uid && !/^[A-Za-z0-9_-]{1,255}$/.test(uid)){
+        alert(
+            "Invalid Agar.io UID. Please check the UID and try again."
+        );
+        if(uidInput) uidInput.focus();
+        return;
+    }
+
+    const confirmed = uid
+        ? confirm(
+            "Confirm Agar.io UID:\n\n" +
+            uid +
+            "\n\n" +
+            "This exact UID will be sent to the checkout backend. Continue?"
+          )
+        : confirm(
+            "No Agar.io UID was entered.\n\n" +
+            "This purchase will use a guest checkout and will NOT be linked " +
+            "to an Agar.io UID.\n\nContinue?"
+          );
+
+    if(!confirmed){
+        return;
+    }
 
     const button =
         document.querySelector("#checkoutModal .continue-btn");
 
     if(button){
         button.disabled = true;
-        button.textContent = "Creating secure checkout...";
+        button.textContent = "Verifying UID...";
     }
 
     try{
@@ -1738,14 +1764,35 @@ async function continueToXsolla(){
             );
         }
 
-        // A fresh Xsolla checkout URL is returned for this purchase.
+        // The backend echoes the exact UID it put into the Xsolla token.
+        const verifiedUid = data.userId || null;
+
+        if(uid && verifiedUid !== uid){
+            throw new Error(
+                "UID verification failed. The checkout was NOT opened."
+            );
+        }
+
+        const message = verifiedUid
+            ? "UID verified for this checkout:\n\n" +
+              verifiedUid +
+              "\n\nXsolla token created for this UID. Open payment now?"
+            : "No UID was supplied.\n\nA guest checkout token was created. " +
+              "Open payment now?";
+
+        if(!confirm(message)){
+            return;
+        }
+
+        // Only after the UID/token check is confirmed do we leave the site.
         window.location.href = data.checkoutUrl;
 
     }catch(error){
 
-        console.error(error);
+        console.error("Checkout error:", error);
 
         alert(
+            error.message ||
             "Unable to start the purchase. Please try again."
         );
 
