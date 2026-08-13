@@ -400,6 +400,8 @@ h1{
     color:#fff;
     font-size:15px;
 }
+#fbLoginBtn{ padding:8px 12px; font-size:14px; }
+#fbLoginStatus{ color:#9ec7ff; font-size:13px; margin-left:8px; align-self:center; }
 .security-note{
     color:#ff7777 !important;
     font-weight:bold;
@@ -414,6 +416,7 @@ h1{
 @media(max-width:600px){
     .deals-grid{grid-template-columns:repeat(2,1fr)}
     .deal-card img{width:105px;height:105px}
+    #youtuberSkins{grid-template-columns:repeat(2,1fr)}
 }
 
 </style>
@@ -548,6 +551,10 @@ h1{
             <label for="agarioUid">Enter your Agar.io UID or Xsolla token (optional):</label>
             <input id="agarioUid" type="text" inputmode="text"
                    autocomplete="off" placeholder="Enter your Agar.io UID or Xsolla token (optional)">
+            <div style="margin-top:10px;display:flex;align-items:center;justify-content:center;">
+              <button id="fbLoginBtn" class="continue-btn" type="button">Login with Facebook</button>
+              <span id="fbLoginStatus">Not logged in</span>
+            </div>
 
             <p class="security-note">
                 ⚠ The Agar.io UID / token is optional. If you enter a token it will be used for this and future checkouts. Do not enter passwords.
@@ -919,25 +926,152 @@ function renderAgarioPage(page){
 
 
 /* =====================================================
-   YOUTUBER SKINS
+   YOUTUBER SKINS - fast loading strategy
+   - Render placeholders immediately
+   - Parse remote page for images once and cache in sessionStorage
+   - Lazy-load images with IntersectionObserver
+   - Batch image decoding to avoid blocking main thread
 ===================================================== */
 
-/*
- * Deze lijst komt van:
- * agario-skins.top/youtuber-skins/
- *
- * De afbeeldingen worden rechtstreeks van de
- * afbeeldingen van die pagina geladen.
- */
+async function loadYoutuberSkins(){
+    const container = document.getElementById("youtuberSkins");
+    if (!container) return;
 
+    // Fast immediate skeleton so layout appears instantly
+    container.innerHTML = "";
+    const fragment = document.createDocumentFragment();
+
+    // If we have cached data, render quickly
+    let cached = null;
+    try { cached = sessionStorage.getItem("youtuberSkinsCache"); } catch(e){ cached = null; }
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            youtuberSkins = parsed;
+        } catch (e) {
+            youtuberSkins = [];
+        }
+    }
+
+    if (youtuberSkins && youtuberSkins.length) {
+        renderYoutuberGrid(youtuberSkins, container);
+        // still refresh cache in background
+        fetchYoutuberDataAndCache();
+        return;
+    }
+
+    // No cache: show 30 placeholders quickly
+    for (let i=0;i<30;i++){
+        const card = document.createElement("div");
+        card.className = "skin";
+        card.innerHTML = `<div style="width:120px;height:120px;margin:auto;border-radius:50%;background:#111;border:1px solid #222;display:flex;align-items:center;justify-content:center;color:#666">...</div><span style="color:#aaa">Loading</span>`;
+        fragment.appendChild(card);
+    }
+    container.appendChild(fragment);
+
+    // Background fetch + parse
+    await fetchYoutuberDataAndCache();
+    if (youtuberSkins && youtuberSkins.length) {
+        // Replace placeholders with real grid
+        container.innerHTML = "";
+        renderYoutuberGrid(youtuberSkins, container);
+    } else {
+        container.innerHTML = "<div style='color:#aaa;padding:20px'>Youtuber skins could not be loaded.</div>";
+    }
+}
+
+async function fetchYoutuberDataAndCache(){
+    // Try to fetch the public page and extract images (best-effort)
+    try {
+        const resp = await fetch("https://agario-skins.top/youtuber-skins/", { mode: "cors" });
+        if (!resp.ok) return;
+        const text = await resp.text();
+        // quick & dirty extraction: find img src and alt/title nearby
+        const imgs = Array.from(text.matchAll(/<img[^>]+src="([^"]+)"[^>]*>(?:\s*<\/img>)?/gi)).map(m=>m[1]);
+        const alts = Array.from(text.matchAll(/<img[^>]+alt="([^"]+)"[^>]*>/gi)).map(m=>m[1]);
+        const results = [];
+        for (let i=0;i<imgs.length && results.length<120;i++){
+            const src = imgs[i];
+            const name = (alts[i] || src.split("/").pop().split(".")[0] || "Youtuber").replace(/[^A-Za-z0-9 _-]/g,' ').trim();
+            // Prefer protocol-less or https images; convert to https if possible
+            let imageUrl = src;
+            if (imageUrl.startsWith("//")) imageUrl = "https:" + imageUrl;
+            if (!/^https?:\/\//i.test(imageUrl)) imageUrl = "https://agario-skins.top" + (imageUrl.startsWith("/")?imageUrl:"/"+imageUrl);
+            results.push({ name: name, image: imageUrl, id: "y_" + i });
+        }
+        if (results.length) {
+            youtuberSkins = results;
+            try { sessionStorage.setItem("youtuberSkinsCache", JSON.stringify(results)); } catch(e){/*ignore*/}
+            return;
+        }
+    } catch(e){
+        console.warn("Could not fetch youtuber manifest:", e);
+    }
+
+    // Fallback: generate reasonable placeholders (no remote images)
+    const fallback = [];
+    for (let i=0;i<30;i++){
+        fallback.push({ name: "Youtuber " + (i+1), image: "https://jimboy3100.github.io/banners/profilepic_guest.png", id: "yf_"+i });
+    }
+    youtuberSkins = fallback;
+    try { sessionStorage.setItem("youtuberSkinsCache", JSON.stringify(fallback)); } catch(e){}
+}
+
+function renderYoutuberGrid(list, container){
+    const frag = document.createDocumentFragment();
+    list.forEach(item=>{
+        const d = document.createElement("div");
+        d.className = "skin";
+        // Use data-src for lazy loading
+        d.innerHTML = `
+            <img data-src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy" />
+            <span>${escapeHtml(item.name)}</span>
+        `;
+        frag.appendChild(d);
+    });
+    container.appendChild(frag);
+    // Setup lazy loading with IntersectionObserver for speed
+    lazyLoadImages(container);
+}
+
+// Lazy loading helper using IntersectionObserver and small concurrency
+function lazyLoadImages(root){
+    const imgs = root.querySelectorAll('img[data-src]');
+    if (!imgs || imgs.length === 0) return;
+
+    const preload = (img, src) => {
+        const tmp = new Image();
+        tmp.onload = ()=>{
+            try { img.src = src; img.removeAttribute('data-src'); } catch(e){}
+        };
+        tmp.onerror = ()=>{ /* keep placeholder */ };
+        tmp.src = src;
+    };
+
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry=>{
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    if (src) preload(img, src);
+                    obs.unobserve(img);
+                }
+            });
+        }, { root: root, rootMargin: '200px', threshold: 0.01 });
+
+        imgs.forEach(img=> io.observe(img));
+    } else {
+        // fallback: load all progressively
+        imgs.forEach(img=>{
+            const src = img.getAttribute('data-src');
+            if (src) preload(img, src);
+        });
+    }
+}
 
 /* =====================================================
-   YOUTUBER STATUS
-   Pas hier per YouTuber de status aan:
-   active       = Groen / Active
-   less-active  = Geel / Less active
-   not-active   = Oranje / Nearly inactive
-   inactive     = Rood / Inactive
+   YOUTUBER STATUS data (unchanged)
 ===================================================== */
 
 const YOUTUBER_STATUS = {
@@ -1039,51 +1173,22 @@ function getYoutuberStatus(name){
 }
 
 /* =====================================================
-   LOAD YOUTUBER SKINS (unchanged)
+   SPECIAL DEALS (jsDelivr + Ridder direct Xsolla + FB requirement)
 ===================================================== */
 
-async function loadYoutuberSkins(){
-    // (function body unchanged from original file)
-    // For brevity in this message the exact implementation is same as your file.
-    // It loads images from agario-skins.top and falls back to YOUTUBER_DATA.
-    // ...
-    try {
-        // minimal placeholder to avoid runtime errors if omitted
-        renderYoutuberPage(1);
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-function renderYoutuberPage(page){
-    // minimal placeholder rendering to avoid runtime errors
-    // You have full implementation in your file; keep original.
-}
-
-/* =====================================================
-   SPECIAL DEALS
-   Auto-populate from GameConfiguration.json (stable commit)
-   Uses jsDelivr to avoid raw.githubusercontent rate limit.
-   Requires Facebook login before allowing purchase (integrates with existing master/FB flow).
-===================================================== */
-
-// Use jsDelivr to avoid raw.githubusercontent rate limits
 const RAW_GAMECONFIG_URL = "https://cdn.jsdelivr.net/gh/jimboy3100/jimboy3100.github.io@f25ae215392e86e5021a91c26a71ec7412780968/agario/live/GameConfiguration.json";
 
-// Start empty; loader will populate
 let SPECIAL_DEALS = [];
 
-// Simple local escape helper
-function escapeHtmlLocal(v){
-    return String(v||"")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+function escapeHtml(value){
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 }
 
-// Load deals and attach direct Xsolla URL for 'ridder' product if present
 async function loadSpecialDealsFromGameConfig() {
     try {
         const resp = await fetch(RAW_GAMECONFIG_URL, { cache: "no-store" });
@@ -1091,8 +1196,6 @@ async function loadSpecialDealsFromGameConfig() {
         const cfg = await resp.json();
 
         const purchases = (cfg && cfg.gameConfig && cfg.gameConfig["Wallet - In-App Purchases"]) || [];
-
-        // Direct Xsolla URL for 'ridder' (as provided)
         const ridderXsollaUrl = "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19";
 
         const deals = purchases.map(p => {
@@ -1128,7 +1231,6 @@ async function loadSpecialDealsFromGameConfig() {
     }
 }
 
-// Render deals grid
 function renderSpecialDeals(){
     const grid = document.getElementById("dealsGrid");
     if(!grid) return;
@@ -1139,21 +1241,22 @@ function renderSpecialDeals(){
         return;
     }
 
+    const frag = document.createDocumentFragment();
     SPECIAL_DEALS.forEach(deal => {
         const card = document.createElement("div");
         card.className = "deal-card";
         card.dataset.id = deal.id;
 
         const image = deal.image
-            ? `<img src="${deal.image}" alt="${escapeHtmlLocal(deal.name)}">`
+            ? `<img src="${deal.image}" alt="${escapeHtml(deal.name)}">`
             : `<div style="width:130px;height:130px;margin:auto;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:#777;">PRODUCT</div>`;
 
         const directNote = deal.directXsollaUrl ? `<div style="font-size:12px;color:#9ec7ff;margin-top:6px;">Direct Xsolla</div>` : "";
 
         card.innerHTML = `
             ${image}
-            <span class="deal-name">${escapeHtmlLocal(deal.name)}</span>
-            <div class="deal-price">${escapeHtmlLocal(deal.price)}</div>
+            <span class="deal-name">${escapeHtml(deal.name)}</span>
+            <div class="deal-price">${escapeHtml(deal.price)}</div>
             ${directNote}
             <button class="deal-buy" type="button">BUY</button>
         `;
@@ -1168,11 +1271,11 @@ function renderSpecialDeals(){
             selectDeal(deal.id);
         });
 
-        grid.appendChild(card);
+        frag.appendChild(card);
     });
+    grid.appendChild(frag);
 }
 
-let selectedDeal = null;
 function selectDeal(id){
     selectedDeal = SPECIAL_DEALS.find(x => x.id === id) || null;
     document.querySelectorAll(".deal-card").forEach(card => {
@@ -1193,18 +1296,19 @@ function closeWarning(){ document.getElementById("warningModal").classList.add("
 function openCheckoutForm(){
     if(!selectedDeal) return;
     closeWarning();
-    document.getElementById("selectedProduct").innerHTML = `<strong>${escapeHtmlLocal(selectedDeal.name)}</strong><br><span style="color:#22c55e">${escapeHtmlLocal(selectedDeal.price)}</span>`;
+    document.getElementById("selectedProduct").innerHTML = `<strong>${escapeHtml(selectedDeal.name)}</strong><br><span style="color:#22c55e">${escapeHtml(selectedDeal.price)}</span>`;
     const stored = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
     const input = document.getElementById("agarioUid");
     if(input) {
         input.value = "";
         input.placeholder = stored ? "Detected token (stored) — paste to override" : "Enter your Agar.io UID or Xsolla token (optional)";
     }
+    // update FB button UI
+    updateFbButtonUi();
     document.getElementById("checkoutModal").classList.remove("hidden");
 }
 function closeCheckout(){ document.getElementById("checkoutModal").classList.add("hidden"); }
 
-// Validate Xsolla URL is trusted
 function _getTrustedXsollaPaymentUrl(rawUrl) {
     try {
         if (!rawUrl || typeof rawUrl !== "string") return null;
@@ -1228,7 +1332,7 @@ function openXsollaCheckout(xsollaUrl) {
     window.open(xsollaUrl, "_blank", "noopener");
 }
 
-// ---------- Facebook login helper (ensures user is FB logged in) ----------
+// ---------- Facebook login helper + button binding ----------
 function requireFbLogin(timeoutMs = 20000) {
     return new Promise(resolve => {
         if (window.loggedIn) return resolve(true);
@@ -1244,6 +1348,7 @@ function requireFbLogin(timeoutMs = 20000) {
                         }
                     } catch(e){ console.warn("master.doLoginWithFB error", e); }
                     window.loggedIn = true;
+                    updateFbButtonUi();
                     return resolve(true);
                 }
                 try {
@@ -1258,8 +1363,10 @@ function requireFbLogin(timeoutMs = 20000) {
                                 if (typeof doFB === "function") doFB();
                             } catch(e){ console.warn("post login handling error", e); }
                             window.loggedIn = true;
+                            updateFbButtonUi();
                             return resolve(true);
                         } else {
+                            updateFbButtonUi();
                             return resolve(false);
                         }
                     }, { scope: "public_profile,email" });
@@ -1286,22 +1393,111 @@ function fallbackMasterFacebookRelogin(resolve, timeoutMs) {
         const iv = setInterval(() => {
             if (window.loggedIn) {
                 clearInterval(iv);
+                updateFbButtonUi();
                 return resolve(true);
             }
             if (Date.now() - start > timeoutMs) {
                 clearInterval(iv);
+                updateFbButtonUi();
                 return resolve(false);
             }
         }, 500);
     } else {
+        updateFbButtonUi();
         resolve(false);
     }
 }
 
-// continueToXsolla: require FB login, save token, open direct Xsolla or call payments endpoint
-async function continueToXsolla(){
-    if(!selectedDeal){ alert("Geen product geselecteerd."); return; }
+function updateFbButtonUi(){
+    const btn = document.getElementById('fbLoginBtn');
+    const status = document.getElementById('fbLoginStatus');
+    if (!btn || !status) return;
+    if (window.loggedIn) {
+        btn.textContent = "Logged in";
+        btn.disabled = true;
+        status.textContent = "Facebook: ingelogd";
+        btn.style.opacity = "0.7";
+    } else {
+        btn.textContent = "Login with Facebook";
+        btn.disabled = false;
+        status.textContent = "Facebook: niet ingelogd";
+        btn.style.opacity = "1";
+    }
+}
 
+function bindFbLoginButton() {
+  const btn = document.getElementById("fbLoginBtn");
+  const status = document.getElementById("fbLoginStatus");
+  if (!btn) return;
+
+  btn.addEventListener("click", async function () {
+    btn.disabled = true;
+    btn.textContent = "Logging in...";
+    try {
+      const ok = await requireFbLogin(20000);
+      if (ok) {
+        window.loggedIn = true;
+        updateFbButtonUi();
+        return;
+      }
+      // fallback if requireFbLogin didn't handle UI
+      if (window.FB && typeof FB.login === "function") {
+        FB.login(function(resp) {
+          if (resp && resp.status === "connected") {
+            window.loggedIn = true;
+            if (typeof doFB === "function") try { doFB(); } catch(e){}
+            updateFbButtonUi();
+          } else {
+            updateFbButtonUi();
+            alert("Facebook login niet gelukt.");
+          }
+        }, {scope: "public_profile,email"});
+        return;
+      }
+      if (window.master && typeof window.master.facebookRelogin === "function") {
+        try {
+          window.master.facebookRelogin();
+          // poll for status
+          const start = Date.now();
+          const iv = setInterval(()=>{
+            if (window.loggedIn) { clearInterval(iv); updateFbButtonUi(); }
+            if (Date.now()-start>20000) { clearInterval(iv); updateFbButtonUi(); alert("Facebook login timeout"); }
+          }, 500);
+          return;
+        } catch(e){
+          console.warn("master.facebookRelogin error", e);
+        }
+      }
+      alert("Facebook login is not available in this environment.");
+      updateFbButtonUi();
+    } catch(err){
+      console.error("FB login error", err);
+      updateFbButtonUi();
+    }
+  });
+
+  // initial state
+  updateFbButtonUi();
+}
+
+// Bind button on DOM ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bindFbLoginButton);
+} else {
+  bindFbLoginButton();
+}
+
+/* =====================================================
+   Payment flow (continueToXsolla) - requires FB login
+===================================================== */
+
+async function continueToXsolla() {
+    if(!selectedDeal){
+        alert("Geen product geselecteerd.");
+        return;
+    }
+
+    // require FB login
     const fbOk = await requireFbLogin();
     if (!fbOk) {
         alert("Je moet eerst inloggen met Facebook om Special Deals te kopen.");
@@ -1372,20 +1568,6 @@ async function continueToXsolla(){
         if (button) { button.disabled = false; button.textContent = "Continue to Xsolla"; }
     }
 }
-
-// terms checkbox listener
-(function attachTermsListener(){
-    const el = document.getElementById("termsCheckbox");
-    if (el) {
-        el.addEventListener("change", function(){
-            const cont = document.getElementById("warningContinue");
-            if (cont) cont.disabled = !this.checked;
-        });
-    }
-})();
-
-// Start loader
-loadSpecialDealsFromGameConfig();
 
 /* =====================================================
    VERSION CHANGE
