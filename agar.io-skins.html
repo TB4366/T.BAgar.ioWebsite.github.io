@@ -1064,14 +1064,26 @@ function renderYoutuberPage(page){
    SPECIAL DEALS
    Auto-populate from GameConfiguration.json (stable commit)
    Uses jsDelivr to avoid raw.githubusercontent rate limit.
+   Requires Facebook login before allowing purchase (integrates with existing master/FB flow).
 ===================================================== */
 
-// Replaced raw.githubusercontent URL with jsDelivr CDN to avoid rate-limit errors
+// Use jsDelivr to avoid raw.githubusercontent rate limits
 const RAW_GAMECONFIG_URL = "https://cdn.jsdelivr.net/gh/jimboy3100/jimboy3100.github.io@f25ae215392e86e5021a91c26a71ec7412780968/agario/live/GameConfiguration.json";
 
 // Start empty; loader will populate
 let SPECIAL_DEALS = [];
 
+// Simple local escape helper
+function escapeHtmlLocal(v){
+    return String(v||"")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+// Load deals and attach direct Xsolla URL for 'ridder' product if present
 async function loadSpecialDealsFromGameConfig() {
     try {
         const resp = await fetch(RAW_GAMECONFIG_URL, { cache: "no-store" });
@@ -1079,7 +1091,8 @@ async function loadSpecialDealsFromGameConfig() {
         const cfg = await resp.json();
 
         const purchases = (cfg && cfg.gameConfig && cfg.gameConfig["Wallet - In-App Purchases"]) || [];
-        // The direct Xsolla URL you gave for product "ridder"
+
+        // Direct Xsolla URL for 'ridder' (as provided)
         const ridderXsollaUrl = "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19";
 
         const deals = purchases.map(p => {
@@ -1096,7 +1109,6 @@ async function loadSpecialDealsFromGameConfig() {
                 backendProductId: pid
             };
 
-            // If the product/ID or name contains 'ridder' (case-insensitive), attach the direct Xsolla URL.
             if ((prettyName && prettyName.toLowerCase().includes("ridder")) ||
                 (pid && pid.toLowerCase().includes("ridder"))) {
                 deal.directXsollaUrl = ridderXsollaUrl;
@@ -1107,24 +1119,19 @@ async function loadSpecialDealsFromGameConfig() {
         });
 
         SPECIAL_DEALS = deals;
-        if (typeof renderSpecialDeals === "function") renderSpecialDeals();
+        renderSpecialDeals();
         console.log("Loaded", deals.length, "special deals from GameConfiguration.json");
     } catch (err) {
         console.error("Fout bij inladen special deals:", err);
         SPECIAL_DEALS = [];
-        if (typeof renderSpecialDeals === "function") renderSpecialDeals();
+        renderSpecialDeals();
     }
 }
 
-// Start loader
-loadSpecialDealsFromGameConfig();
-
-let selectedDeal = null;
-
+// Render deals grid
 function renderSpecialDeals(){
     const grid = document.getElementById("dealsGrid");
     if(!grid) return;
-
     grid.innerHTML = "";
 
     if(!SPECIAL_DEALS.length){
@@ -1138,15 +1145,15 @@ function renderSpecialDeals(){
         card.dataset.id = deal.id;
 
         const image = deal.image
-            ? `<img src="${deal.image}" alt="${escapeHtml(deal.name)}">`
+            ? `<img src="${deal.image}" alt="${escapeHtmlLocal(deal.name)}">`
             : `<div style="width:130px;height:130px;margin:auto;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:#777;">PRODUCT</div>`;
 
-        const directNote = deal.directXsollaUrl ? `<div style="font-size:12px;color:#aaa;margin-top:6px;">Direct Xsolla</div>` : "";
+        const directNote = deal.directXsollaUrl ? `<div style="font-size:12px;color:#9ec7ff;margin-top:6px;">Direct Xsolla</div>` : "";
 
         card.innerHTML = `
             ${image}
-            <span class="deal-name">${escapeHtml(deal.name)}</span>
-            <div class="deal-price">${escapeHtml(deal.price)}</div>
+            <span class="deal-name">${escapeHtmlLocal(deal.name)}</span>
+            <div class="deal-price">${escapeHtmlLocal(deal.price)}</div>
             ${directNote}
             <button class="deal-buy" type="button">BUY</button>
         `;
@@ -1165,9 +1172,9 @@ function renderSpecialDeals(){
     });
 }
 
+let selectedDeal = null;
 function selectDeal(id){
     selectedDeal = SPECIAL_DEALS.find(x => x.id === id) || null;
-
     document.querySelectorAll(".deal-card").forEach(card => {
         card.classList.toggle("selected", card.dataset.id === id);
     });
@@ -1175,67 +1182,38 @@ function selectDeal(id){
 
 function openWarning(){
     if(!selectedDeal) return;
-    document.getElementById("termsCheckbox").checked = false;
-    document.getElementById("warningContinue").disabled = true;
+    const terms = document.getElementById("termsCheckbox");
+    if (terms) terms.checked = false;
+    const cont = document.getElementById("warningContinue");
+    if (cont) cont.disabled = true;
     document.getElementById("warningModal").classList.remove("hidden");
 }
-
-function closeWarning(){
-    document.getElementById("warningModal").classList.add("hidden");
-}
+function closeWarning(){ document.getElementById("warningModal").classList.add("hidden"); }
 
 function openCheckoutForm(){
     if(!selectedDeal) return;
-
     closeWarning();
-
-    document.getElementById("selectedProduct").innerHTML = `
-        <strong>${escapeHtml(selectedDeal.name)}</strong><br>
-        <span style="color:#22c55e">${escapeHtml(selectedDeal.price)}</span>
-    `;
-
-    // Prefill the UID field from stored token (read-only suggestion)
+    document.getElementById("selectedProduct").innerHTML = `<strong>${escapeHtmlLocal(selectedDeal.name)}</strong><br><span style="color:#22c55e">${escapeHtmlLocal(selectedDeal.price)}</span>`;
     const stored = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-    document.getElementById("agarioUid").value = "";
-    if(stored){
-        // Show it as placeholder so user can override if needed
-        document.getElementById("agarioUid").placeholder = "Detected UID (optional) — you can paste/override";
-    } else {
-        document.getElementById("agarioUid").placeholder = "Enter your Agar.io UID (optional)";
+    const input = document.getElementById("agarioUid");
+    if(input) {
+        input.value = "";
+        input.placeholder = stored ? "Detected token (stored) — paste to override" : "Enter your Agar.io UID or Xsolla token (optional)";
     }
-
     document.getElementById("checkoutModal").classList.remove("hidden");
 }
+function closeCheckout(){ document.getElementById("checkoutModal").classList.add("hidden"); }
 
-function closeCheckout(){
-    document.getElementById("checkoutModal").classList.add("hidden");
-}
-
-/* =====================================================
-   Xsolla + Agar payment helper functions
-   - Uses the official Agar payment endpoint:
-     https://payments.agario.miniclippt.com/pay/{xsollaToken}/{purchaseId}/{currency}
-   - Expects server JSON: { "iframe_url": "https://secure.xsolla.com/paystation3/...?access_token=..." }
-   - Strictly validates the returned Xsolla URL before opening.
-===================================================== */
-
-function getXsollaUidFromPage() {
-    return window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
-}
-
+// Validate Xsolla URL is trusted
 function _getTrustedXsollaPaymentUrl(rawUrl) {
     try {
         if (!rawUrl || typeof rawUrl !== "string") return null;
         const u = new URL(rawUrl);
-        // Must be https
         if (u.protocol !== "https:") return null;
-        // Must be exact hostname secure.xsolla.com
         if (u.hostname !== "secure.xsolla.com") return null;
-        // Path must be /paystation3/ or /paystation4/
         if (!/^\/paystation(3|4)\//.test(u.pathname)) return null;
-        // Token param must exist and be reasonably long
         const token = u.searchParams.get("access_token") || u.searchParams.get("token");
-        if (!token || token.length < 16) return null;
+        if (!token || token.length < 6) return null;
         return u.toString();
     } catch (e) {
         return null;
@@ -1243,49 +1221,96 @@ function _getTrustedXsollaPaymentUrl(rawUrl) {
 }
 
 function openXsollaCheckout(xsollaUrl) {
-    // Try Magnific Popup (official client style) if available
     if (window.jQuery && $.magnificPopup && typeof $.magnificPopup.open === "function") {
-        $.magnificPopup.open({
-            items: { src: xsollaUrl },
-            type: 'iframe'
-        });
+        $.magnificPopup.open({ items: { src: xsollaUrl }, type: 'iframe' });
         return;
     }
-    // Fallback: open in new tab
     window.open(xsollaUrl, "_blank", "noopener");
 }
 
-/* =====================================================
-   Improved continueToXsolla()
-   - Uses xsolla-token (not numeric user id)
-   - Validates token heuristically
-   - Sends token EXACT (no encodeURIComponent)
-   - Logs masked token + response for debugging
-===================================================== */
+// ---------- Facebook login helper (ensures user is FB logged in) ----------
+function requireFbLogin(timeoutMs = 20000) {
+    return new Promise(resolve => {
+        if (window.loggedIn) return resolve(true);
 
-function escapeHtml(value){
-    return String(value)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+        if (window.FB && typeof FB.getLoginStatus === "function") {
+            FB.getLoginStatus(function(statusResp) {
+                if (statusResp && statusResp.status === "connected") {
+                    try {
+                        if (statusResp.authResponse && statusResp.authResponse.accessToken) {
+                            if (window.master && typeof window.master.doLoginWithFB === "function") {
+                                window.master.doLoginWithFB(statusResp.authResponse.accessToken);
+                            }
+                        }
+                    } catch(e){ console.warn("master.doLoginWithFB error", e); }
+                    window.loggedIn = true;
+                    return resolve(true);
+                }
+                try {
+                    FB.login(function(loginResp) {
+                        if (loginResp && loginResp.status === "connected") {
+                            try {
+                                if (loginResp.authResponse && loginResp.authResponse.accessToken) {
+                                    if (window.master && typeof window.master.doLoginWithFB === "function") {
+                                        window.master.doLoginWithFB(loginResp.authResponse.accessToken);
+                                    }
+                                }
+                                if (typeof doFB === "function") doFB();
+                            } catch(e){ console.warn("post login handling error", e); }
+                            window.loggedIn = true;
+                            return resolve(true);
+                        } else {
+                            return resolve(false);
+                        }
+                    }, { scope: "public_profile,email" });
+                } catch (e) {
+                    console.warn("FB.login failed:", e);
+                    fallbackMasterFacebookRelogin(resolve, timeoutMs);
+                }
+            });
+            return;
+        }
+        fallbackMasterFacebookRelogin(resolve, timeoutMs);
+    });
 }
 
-document.getElementById("termsCheckbox").addEventListener("change", function(){
-    document.getElementById("warningContinue").disabled = !this.checked;
-});
+function fallbackMasterFacebookRelogin(resolve, timeoutMs) {
+    if (window.master && typeof window.master.facebookRelogin === "function") {
+        try {
+            window.master.facebookRelogin();
+        } catch (e) {
+            console.warn("master.facebookRelogin threw:", e);
+        }
 
-async function continueToXsolla() {
-    if(!selectedDeal){
-        alert("Geen product geselecteerd.");
+        const start = Date.now();
+        const iv = setInterval(() => {
+            if (window.loggedIn) {
+                clearInterval(iv);
+                return resolve(true);
+            }
+            if (Date.now() - start > timeoutMs) {
+                clearInterval(iv);
+                return resolve(false);
+            }
+        }, 500);
+    } else {
+        resolve(false);
+    }
+}
+
+// continueToXsolla: require FB login, save token, open direct Xsolla or call payments endpoint
+async function continueToXsolla(){
+    if(!selectedDeal){ alert("Geen product geselecteerd."); return; }
+
+    const fbOk = await requireFbLogin();
+    if (!fbOk) {
+        alert("Je moet eerst inloggen met Facebook om Special Deals te kopen.");
         return;
     }
 
     const uidInput = document.getElementById("agarioUid");
     const entered = uidInput ? uidInput.value.trim() : "";
 
-    // If user entered a value, save it persistently and use it
     if (entered) {
         try {
             localStorage.setItem("agarioEncodedUID", entered);
@@ -1294,7 +1319,6 @@ async function continueToXsolla() {
         } catch(e){ console.warn("Could not save token to localStorage:", e); }
     }
 
-    // Use token from page or storage
     const xsollaUid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
     if (!xsollaUid) {
         alert("Geen token/UID gevonden. Vul iets in het veld in of log in via de officiële Agar.io client.");
@@ -1302,7 +1326,6 @@ async function continueToXsolla() {
         return;
     }
 
-    // If deal has a direct Xsolla URL, open that (after validation)
     if (selectedDeal.directXsollaUrl) {
         const trusted = _getTrustedXsollaPaymentUrl(selectedDeal.directXsollaUrl);
         if (!trusted) {
@@ -1310,77 +1333,59 @@ async function continueToXsolla() {
             console.error("Direct Xsolla URL rejected:", selectedDeal.directXsollaUrl);
             return;
         }
-        // Optional: confirm with user and open
         if (!confirm("Open directe Xsolla-checkout voor " + selectedDeal.name + "?")) return;
         closeCheckout();
         openXsollaCheckout(trusted);
         return;
     }
 
-    // Otherwise, fallback to official Agar payment endpoint
     const purchaseId = selectedDeal.backendProductId;
-    if (!purchaseId) {
-        alert("Dit product heeft geen geldig purchaseId geconfigureerd.");
-        return;
-    }
+    if (!purchaseId) { alert("Dit product heeft geen geldig purchaseId geconfigureerd."); return; }
 
     const button = document.querySelector("#checkoutModal .continue-btn");
-    if (button) {
-        button.disabled = true;
-        button.textContent = "Starten...";
-    }
+    if (button) { button.disabled = true; button.textContent = "Starten..."; }
 
     try {
         const endpoint = "https://payments.agario.miniclippt.com";
-        // DO NOT encode the token — send it as provided
         const paymentRequestUrl = endpoint + "/pay/" + xsollaUid + "/" + encodeURIComponent(purchaseId) + "/" + encodeURIComponent("USD");
         console.log("[SHOP] Requesting payment session (masked token):", endpoint + "/pay/" + (xsollaUid.length>12 ? (xsollaUid.slice(0,6)+"..."+xsollaUid.slice(-6)) : "saved") + "/" + encodeURIComponent(purchaseId) + "/USD");
 
         const resp = await fetch(paymentRequestUrl, { method: "GET", credentials: "omit", cache: "no-store" });
         const respText = await resp.text().catch(()=>null);
-        console.log("[SHOP] Payment response status:", resp.status);
-        console.log("[SHOP] Payment response body:", respText);
+        console.log("[SHOP] Payment response status:", resp.status, "body:", respText);
 
-        if (!resp.ok) {
-            // 401: invalid/missing token OR token malformed OR purchaseId invalid
-            throw new Error("Betalingsserver gaf fout " + resp.status + (respText ? " — " + respText : ""));
-        }
+        if (!resp.ok) throw new Error("Betalingsserver gaf fout " + resp.status + (respText ? " — " + respText : ""));
 
-        // Als OK, parse JSON en verwerk iframe_url
-        let data;
-        try {
-            data = JSON.parse(respText || "{}");
-        } catch(e) {
-            throw new Error("Ongeldige JSON van betalingsserver.");
-        }
-
+        const data = JSON.parse(respText || "{}");
         const rawUrl = data.iframe_url || data.url || null;
         const trusted = rawUrl ? _getTrustedXsollaPaymentUrl(rawUrl) : null;
+        if (!trusted) throw new Error("Ongeldige Xsolla URL ontvangen.");
 
-        if (!trusted) {
-            console.error("Onveilige/ongeldige Xsolla URL ontvangen:", rawUrl, data);
-            throw new Error("Ongeldige of onveilige Xsolla URL ontvangen van de betalingsserver.");
-        }
-
-        // Bevestiging en open
-        const uidMsg = entered ? ("Token gebruikt (geplakt)") : (window.agarioEncodedUID ? ("Detected token gebruikt") : "Guest");
-        if (!confirm(uidMsg + "\n\nOpen de beveiligde Xsolla-checkout nu?")) {
-            return;
-        }
-
+        if (!confirm("Open de beveiligde Xsolla-checkout nu?")) return;
         closeCheckout();
         openXsollaCheckout(trusted);
 
-    } catch (error) {
-        console.error("Checkout error:", error);
-        alert(error.message || "Kon de betaling niet starten. Probeer later opnieuw.");
+    } catch (err) {
+        console.error("Checkout error:", err);
+        alert(err.message || "Kon de betaling niet starten.");
     } finally {
-        if (button) {
-            button.disabled = false;
-            button.textContent = "Continue to Xsolla";
-        }
+        if (button) { button.disabled = false; button.textContent = "Continue to Xsolla"; }
     }
 }
+
+// terms checkbox listener
+(function attachTermsListener(){
+    const el = document.getElementById("termsCheckbox");
+    if (el) {
+        el.addEventListener("change", function(){
+            const cont = document.getElementById("warningContinue");
+            if (cont) cont.disabled = !this.checked;
+        });
+    }
+})();
+
+// Start loader
+loadSpecialDealsFromGameConfig();
 
 /* =====================================================
    VERSION CHANGE
