@@ -1261,7 +1261,7 @@ const YOUTUBER_DATA = [
 
     ["Babadook",
      "IMG_0151.png",
-     "Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
+     "Babadook has stopped playing Agar.io. The **Bababook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
 
     ["Mistik",
      "IMG_0152.png",
@@ -1598,23 +1598,75 @@ function renderYoutuberPage(page){
 
 /* =====================================================
    SPECIAL DEALS
+   This section is now auto-populated from the GameConfiguration.json
+   in your repo (the raw file at the commit you provided).
 ===================================================== */
 
 /*
- * Add products here one by one.
- * The checkout URL should be an official Xsolla URL supplied
- * for the corresponding product.
+ * Loader: fetches the GameConfiguration.json from the repo commit,
+ * extracts productId and image entries and builds SPECIAL_DEALS.
+ *
+ * Put this in place of a static SPECIAL_DEALS array so the UI is
+ * automatically populated with the official products.
  */
-const SPECIAL_DEALS = [
-    {
-        id: "deal-1",
-        name: "Special Product #1",
-        price: "See Xsolla",
-        image: "",
-        // The value here is used as the Agar/Miniclip purchaseId in the fallback flow.
-        backendProductId: "deal-1"
+
+const RAW_GAMECONFIG_URL = "https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/f25ae215392e86e5021a91c26a71ec7412780968/agario/live/GameConfiguration.json";
+
+// Start empty; this will be replaced by the loader result
+let SPECIAL_DEALS = [];
+
+async function loadSpecialDealsFromGameConfig() {
+    try {
+        const resp = await fetch(RAW_GAMECONFIG_URL, { cache: "no-store" });
+        if (!resp.ok) throw new Error("Kon GameConfiguration.json niet ophalen: " + resp.status);
+        const text = await resp.text();
+
+        // Best-effort extraction: find all productId and image occurrences
+        const idMatches = Array.from(text.matchAll(/productId"\s*:\s*"(.*?)"/g)).map(m => m[1]);
+        const imgMatches = Array.from(text.matchAll(/image"\s*:\s*"(.*?)"/g)).map(m => m[1]);
+
+        // Deduplicate while preserving first-seen order
+        const seen = new Set();
+        const productIds = [];
+        for (const id of idMatches) {
+            if (!seen.has(id)) {
+                seen.add(id);
+                productIds.push(id);
+            }
+        }
+
+        // Build deals array: backendProductId = real productId string from config
+        const deals = productIds.map((pid, i) => {
+            const safeId = pid.replace(/[^A-Za-z0-9_\-]/g, "_");
+            const prettyName = pid.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+            const image = imgMatches[i] || "";
+            return {
+                id: safeId,
+                name: prettyName,
+                price: "See Xsolla",
+                image: image,
+                backendProductId: pid
+            };
+        });
+
+        // Replace global and re-render UI
+        SPECIAL_DEALS = deals;
+        if (typeof renderSpecialDeals === "function") {
+            renderSpecialDeals();
+        }
+
+        console.log("Loaded", deals.length, "special deals from GameConfiguration.json");
+    } catch (err) {
+        console.error("Fout bij inladen special deals:", err);
+        // fallback: keep SPECIAL_DEALS empty so UI shows empty state
+        SPECIAL_DEALS = [];
+        if (typeof renderSpecialDeals === "function") renderSpecialDeals();
     }
-];
+}
+
+// Start loading deals immediately
+loadSpecialDealsFromGameConfig();
+
 
 let selectedDeal = null;
 
