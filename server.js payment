@@ -1,0 +1,154 @@
+/**
+ * Simple Node.js server to proxy Agar.io /pay requests server-side
+ * and to accept a webhook from Xsolla for granting purchased products.
+ *
+ * NOTE:
+ * - Replace product mappings and grant logic with your real DB/account system.
+ * - Configure WEBHOOK_SECRET as an environment variable and set the same secret into Xsolla webhook settings.
+ */
+
+const express = require('express');
+const axios = require('axios');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'replace_with_secure_secret';
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from current directory (so you can serve index.html)
+app.use(express.static(path.join(__dirname, '/')));
+
+// Simple file-based grants store (for demo). Replace with real DB.
+const GRANTS_FILE = path.join(__dirname, 'grants.json');
+function loadGrants(){
+  try { return JSON.parse(fs.readFileSync(GRANTS_FILE, 'utf8')||'{}') } catch(e){ return {} }
+}
+function saveGrants(data){
+  fs.writeFileSync(GRANTS_FILE, JSON.stringify(data, null, 2))
+}
+
+// Health check
+app.get('/health', (req,res) => res.json({ ok: true }));
+
+/**
+ * POST /create_payment
+ * body: { uid: string, productIds: [string], items: [{productId,name,price}] }
+ *
+ * The server will call the official payments endpoint:
+ *  https://payments.agario.miniclippt.com/pay/{uid}/{purchaseId}/EUR
+ *
+ * It returns to the client the JSON returned by that endpoint (iframe_url).
+ */
+app.post('/create_payment', async (req, res) => {
+  try {
+    const { uid, productIds, items } = req.body;
+    if(!uid || !productIds || !Array.isArray(productIds) || productIds.length === 0){
+      return res.status(400).json({ error: 'uid and productIds required' });
+    }
+
+    // Build purchaseId: join productIds with comma (matches the client example)
+    // If Agar.io expects a single product ID, change this logic accordingly.
+    const purchaseId = productIds.join(',');
+
+    const endpoint = 'https://payments.agario.miniclippt.com/pay';
+    const url = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(purchaseId)}/EUR`;
+
+    // Server-side GET to avoid CORS
+    const response = await axios.get(url, { timeout: 10000 });
+    // Forward the response JSON to client
+    return res.json(response.data);
+  } catch (err) {
+    console.error('create_payment error', err.response?.data || err.message || err);
+    const status = err.response?.status || 500;
+    const data = err.response?.data || { error: err.message };
+    return res.status(status).json(data);
+  }
+});
+
+/**
+ * POST /xsolla_webhook
+ * Receives notifications from Xsolla (or Agar.io) about payment events.
+ * Verifies signature header "x-xsolla-signature" using WEBHOOK_SECRET.
+ * Grant purchased items to UID (sample storage).
+ */
+app.post('/xsolla_webhook', (req, res) => {
+  try {
+    const signatureHeader = req.get('x-xsolla-signature') || req.get('x-signature') || '';
+    const rawBody = JSON.stringify(req.body || {});
+
+    // Verify webhook: HMAC SHA256 of body using WEBHOOK_SECRET
+    const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET).update(rawBody).digest('hex');
+    if(signatureHeader && signatureHeader !== hmac){
+      console.warn('Webhook signature mismatch', { header: signatureHeader, computed: hmac });
+      return res.status(401).send('Invalid signature');
+    }
+
+    // Process event (shape varies depending on Xsolla / your integration)
+    const event = req.body;
+    console.log('Webhook received:', JSON.stringify(event).slice(0,1000));
+
+    // Example: find UID and purchased SKUs
+    // The real payload from Xsolla may include purchased items in a specific field.
+    // Here we attempt to read a commonly-used structure; adjust to match your merchant payload.
+    const status = event.status || event.type || event.event;
+    let uid = null;
+    let purchasedProductIds = [];
+
+    // Example possibilities (you must adapt to your exact webhook payload format)
+    if(event.user && event.user.uid) uid = event.user.uid;
+    if(event.user && event.user.external_id) uid = uid || event.user.external_id;
+    // Xsolla sometimes sends custom_parameters or custom_fields with order details:
+    if(event.custom_fields && event.custom_fields.uid) uid = uid || event.custom_fields.uid;
+    if(event.custom_parameters && event.custom_parameters.uid) uid = uid || event.custom_parameters.uid;
+    // Items might be in event.order.items or event.purchase or event.payload
+    if(Array.isArray(event.items)){
+      purchasedProductIds = event.items.map(it => it.sku || it.product || it.productId).filter(Boolean);
+    } else if(event.order && Array.isArray(event.order.items)){
+      purchasedProductIds = event.order.items.map(it => it.sku || it.product || it.productId).filter(Boolean);
+    } else if(event.payload && event.payload.items){
+      purchasedProductIds = event.payload.items.map(it => it.sku || it.productId).filter(Boolean);
+    }
+
+    // If payment completed -> grant items
+    const isCompleted = (
+      (event.status && String(event.status).toLowerCase().includes('completed')) ||
+      (event.type && String(event.type).toLowerCase().includes('payment')) ||
+      (event.event && String(event.event).toLowerCase().includes('payment.completed')) ||
+      (event.action && String(event.action).toLowerCase().includes('paid'))
+    );
+
+    if(isCompleted && uid && purchasedProductIds.length>0){
+      // Load existing grants
+      const grants = loadGrants()
+      grants[uid] = grants[uid] || []
+      purchasedProductIds.forEach(pid => {
+        if(!grants[uid].includes(pid)) grants[uid].push(pid)
+      })
+      saveGrants(grants)
+      console.log(`Granted [${purchasedProductIds.join(',')}] to UID ${uid}`)
+    } else {
+      console.log('Webhook did not contain grantable info (uid/items) or not a completion event.')
+    }
+
+    // Respond success
+    return res.status(200).send('OK')
+  } catch (err) {
+    console.error('Webhook handler error', err)
+    return res.status(500).send('server error')
+  }
+})
+
+// For convenience: view grants (demo only, no auth)
+app.get('/grants', (req, res) => {
+  return res.json(loadGrants());
+})
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+  if(!fs.existsSync(GRANTS_FILE)) fs.writeFileSync(GRANTS_FILE, JSON.stringify({}, null,2));
+});
