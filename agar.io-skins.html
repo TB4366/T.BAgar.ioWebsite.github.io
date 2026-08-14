@@ -264,156 +264,10 @@ h1{
     color:#fff;
 }
 
-
-/* =========================
-   SPECIAL DEALS
-========================= */
-#specialDealsSection{
-    max-width:1200px;
-    margin:0 auto;
-    padding:10px 15px 40px;
-}
-.deals-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:16px;
-}
-.deal-card{
-    background:#111;
-    border:2px solid #222;
-    border-radius:10px;
-    padding:12px;
-    cursor:pointer;
-    transition:.18s;
-}
-.deal-card:hover,.deal-card.selected{
-    border-color:#1683ff;
-    transform:translateY(-2px);
-}
-.deal-card img{
-    width:130px;
-    height:130px;
-    border-radius:50%;
-    object-fit:contain;
-}
-.deal-name{
-    display:block;
-    margin-top:8px;
-    font-size:16px;
-}
-.deal-price{
-    margin-top:5px;
-    color:#22c55e;
-    font-size:15px;
-}
-.deal-buy{
-    display:none;
-    width:100%;
-    margin-top:10px;
-    background:#1683ff;
-    color:#fff;
-    border:0;
-    border-radius:7px;
-    padding:10px;
-    font-weight:bold;
-    cursor:pointer;
-}
-.deal-card.selected .deal-buy{display:block}
-.deals-empty{
-    padding:30px;
-    color:#aaa;
-}
-.modal-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.78);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
-    padding:20px;
-}
-.modal-backdrop.hidden{display:none}
-.deal-modal{
-    width:min(560px,100%);
-    background:#160000;
-    border:2px solid #d00;
-    border-radius:12px;
-    padding:24px;
-    box-shadow:0 10px 40px #000;
-    text-align:left;
-}
-.deal-modal h2{
-    color:#ff3333;
-    margin:0 0 14px;
-}
-.deal-modal p{
-    color:#eee;
-    line-height:1.5;
-    font-size:15px;
-}
-.agree-row{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    margin:18px 0;
-    color:#fff;
-    font-size:14px;
-    line-height:1.4;
-}
-.agree-row input{margin-top:3px}
-.modal-actions{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-}
-.modal-actions button{
-    border:0;
-    border-radius:7px;
-    padding:10px 18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-.cancel-btn{background:#333;color:#fff}
-.continue-btn{background:#1683ff;color:#fff}
-.continue-btn:disabled{
-    opacity:.4;
-    cursor:not-allowed;
-}
-.checkout-modal{
-    background:#111;
-    border-color:#1683ff;
-}
-.checkout-modal h2{color:#1683ff}
-.checkout-form label{
-    display:block;
-    margin:14px 0 6px;
-    color:#ddd;
-}
-.checkout-form input{
-    width:100%;
-    box-sizing:border-box;
-    padding:11px;
-    border-radius:7px;
-    border:1px solid #444;
-    background:#050505;
-    color:#fff;
-    font-size:15px;
-}
-.security-note{
-    color:#ff7777 !important;
-    font-weight:bold;
-}
-.selected-product{
-    background:#080808;
-    border:1px solid #333;
-    border-radius:8px;
-    padding:10px;
-    margin-bottom:14px;
-}
 @media(max-width:600px){
-    .deals-grid{grid-template-columns:repeat(2,1fr)}
-    .deal-card img{width:105px;height:105px}
+    #youtuberSkins{ grid-template-columns: repeat(2, 1fr); }
+    .skin img{ width:80px; height:80px; }
+    #skins{ grid-template-columns: repeat(4, 1fr); gap:8px; }
 }
 
 </style>
@@ -447,14 +301,6 @@ h1{
         onclick="showSection('youtuber')"
     >
         Youtuber Skins
-    </button>
-
-    <button
-        class="section-btn"
-        id="specialDealsSectionBtn"
-        onclick="showSection('specialDeals')"
-    >
-        Special Deals
     </button>
 
 </div>
@@ -499,74 +345,6 @@ h1{
 
 </div>
 
-<!-- =========================
-     SPECIAL DEALS SECTION
-========================= -->
-<div id="specialDealsSection" class="hidden">
-    <h2>Special Deals</h2>
-    <p style="color:#aaa;">
-        Select a product to view its purchase option.
-    </p>
-    <div id="dealsGrid" class="deals-grid"></div>
-</div>
-
-<!-- WARNING MODAL -->
-<div id="warningModal" class="modal-backdrop hidden">
-    <div class="deal-modal">
-        <h2>⚠ Attention!</h2>
-        <p>
-            T.B provides links to products made available through the official
-            Miniclip/Xsolla purchase system. This website does not control or
-            guarantee the availability or functionality of every product.
-            Please make sure that all information you provide on the official
-            checkout page is correct. Purchases are made at your own risk.
-        </p>
-
-        <label class="agree-row">
-            <input type="checkbox" id="termsCheckbox">
-            <span>I agree to the terms and conditions and understand the
-            information above.</span>
-        </label>
-
-        <div class="modal-actions">
-            <button class="cancel-btn" onclick="closeWarning()">Cancel</button>
-            <button class="continue-btn" id="warningContinue" disabled onclick="openCheckoutForm()">
-                Continue
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- UID / CHECKOUT MODAL -->
-<div id="checkoutModal" class="modal-backdrop hidden">
-    <div class="deal-modal checkout-modal">
-        <h2>Secure Checkout</h2>
-
-        <div id="selectedProduct" class="selected-product"></div>
-
-        <div class="checkout-form">
-            <label for="agarioUid">Enter your Agar.io UID (optional):</label>
-            <input id="agarioUid" type="text" inputmode="numeric"
-                   autocomplete="off" placeholder="Enter your Agar.io UID (optional)">
-
-            <p class="security-note">
-                ⚠ The Agar.io UID is optional. If you enter a UID, it is sent
-                only to the checkout backend to create a new Xsolla payment
-                session for that UID. Never enter your password or private
-                authentication token.
-            </p>
-        </div>
-
-        <div class="modal-actions">
-            <button class="cancel-btn" onclick="closeCheckout()">Cancel</button>
-            <button class="continue-btn" onclick="continueToXsolla()">
-                Continue to Xsolla
-            </button>
-        </div>
-    </div>
-</div>
-
-
 <script>
 
 const API =
@@ -599,12 +377,6 @@ function showSection(section){
     const youtuberBtn =
         document.getElementById("youtuberSectionBtn");
 
-    const specialDeals =
-        document.getElementById("specialDealsSection");
-
-    const specialDealsBtn =
-        document.getElementById("specialDealsSectionBtn");
-
 
     if(section === "agario"){
 
@@ -613,34 +385,19 @@ function showSection(section){
 
         agarioBtn.classList.add("active");
         youtuberBtn.classList.remove("active");
-        specialDealsBtn.classList.remove("active");
-        specialDeals.classList.add("hidden");
 
     }else if(section === "youtuber"){
 
         agario.classList.add("hidden");
         youtuber.classList.remove("hidden");
-        specialDeals.classList.add("hidden");
 
         agarioBtn.classList.remove("active");
         youtuberBtn.classList.add("active");
-        specialDealsBtn.classList.remove("active");
 
         if(youtuberSkins.length === 0){
             loadYoutuberSkins();
         }
 
-    }else{
-
-        agario.classList.add("hidden");
-        youtuber.classList.add("hidden");
-        specialDeals.classList.remove("hidden");
-
-        agarioBtn.classList.remove("active");
-        youtuberBtn.classList.remove("active");
-        specialDealsBtn.classList.add("active");
-
-        renderSpecialDeals();
     }
 
     window.scrollTo({
@@ -923,16 +680,8 @@ function renderAgarioPage(page){
 
 /* =====================================================
    YOUTUBER SKINS
+   30 PER PAGE
 ===================================================== */
-
-/*
- * Deze lijst komt van:
- * agario-skins.top/youtuber-skins/
- *
- * De afbeeldingen worden rechtstreeks van de
- * afbeeldingen van die pagina geladen.
- */
-
 
 /* =====================================================
    YOUTUBER STATUS
@@ -1042,295 +791,78 @@ function getYoutuberStatus(name){
 }
 
 const YOUTUBER_DATA = [
-    
-     ["Zanax",
-     "IMG_0171.jpeg",
-     "Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
-
-     ["Jonnn",
-     "IMG_0170.webp",
-     "Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
-    
-    ["GetDeadKid",
- "IMG_4450.png",
- "GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
-
-    ["7MODKA",
-     "IMG_9909.png",
-     "7MODKA has stopped playing Agar.io. The 7MODKA skin is still available in the Agar.io game. Set the nick **7MODKA** to use this skin."],
-
-    ["Bn Rhmi",
-     "IMG_0101.png",
-     "Bn Rhmi has stopped playing Agar.io. The Bn Rhmi skin is still available in the Agar.io game. Set the nick **Bn Rhmi** to use this skin."],
-
-    ["Sarok1",
-     "IMG_1778.png",
-     "Sarok is still actively playing Agar.io. Set the nick **Sarok1** to use this skin."],
-
-    ["Sarok2",
-     "IMG_2511.png",
-     "Sarok is still actively playing Agar.io. Set the nick **Sarok** to use this skin."],
-
-    ["Sparky",
-     "IMG_0439.png",
-     "Sparky has stopped playing Agar.io. The Sparky skin is still available in the Agar.io game. Set the nick **Sparky** to use this skin."],
-
-    ["YemeniYT",
-     "IMG_6082.png",
-     "Yemeni has stopped playing Agar.io. The YemeniYT skin is still available in the Agar.io game. Set the nick **YemeniYT** to use this skin."],
-
-    ["Yemeni",
-     "IMG_0105.png",
-     "Yemeni has stopped playing Agar.io. The Yemeni skin is still available in the Agar.io game. Set the nick **Yemeni** to use this skin."],
-
-    ["Hero",
-     "IMG_4513.png",
-     "Hero has stopped playing Agar.io. The Hero skin is still available in the Agar.io game. Set the nick **Hero** to use this skin."],
-
-    ["Agarmurfs",
-     "IMG_1745.png",
-     "Murfs has stopped playing Agar.io. The Agarmurfs skin is still available in the Agar.io game. Set the nick **Agarmurfs** to use this skin."],
-
-    ["3ezzy",
-     "IMG_1744.png",
-     "3ezzy has stopped playing Agar.io. The 3ezzy skin is still available in the Agar.io game. Set the nick **3ezzy** to use this skin."],
-
-    ["alejo",
-     "IMG_4446.png",
-     "Alejo has stopped playing Agar.io. The Alejo skin is still available in the Agar.io game. Set the nick **Alejo** to use this skin."],
-
-    ["alejoyoutube",
-     "IMG_4436.png",
-     "Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-
-    ["twisted",
-     "IMG_4443.png",
-     "Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-
-    ["silver",
-     "IMG_0112.png",
-     "Set the nick **silver** to use this skin."],
-
-    ["EvilMonkey",
-     "IMG_0114.png",
-     "S"],
-
-    ["Araizon",
-     "IMG_4440.png",
-     "Araizon is still actively playing Agar.io. Set the nick **Araizon** to use this skin."],
-
-    ["Alejoyt2",
-     "IMG_9904.png",
-     "Alejoyt has stopped playing Agar.io. The Alejoyt2 skin is still available in the Agar.io game. Set the nick **Alejoyt2** to use this skin."],
-
-    ["Skillsyt",
-     "IMG_6089.png",
-     "Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-
-    ["SonicGames",
-     "IMG_1747.png",
-     "Sonic has stopped playing Agar.io. The **SonicGames** skin is still available in the Agar.io game. Set the nick **SonicGames** to use this skin."],
-
-    ["Sonic",
-     "IMG_1746.png",
-     "Sonic has stopped playing Agar.io. The **Sonic** skin is still available in the Agar.io game. Set the nick **Sonic** to use this skin."],
-
-    ["peps",
-     "IMG_6090.png",
-     "peps has stopped playing Agar.io. The **peps** skin is still available in the Agar.io game. Set the nick **peps** to use this skin."],
-
-    ["GetDeadKid (old)",
-     "IMG_0119.png",
-     "This old GetDeadKid skin was replaced by a new one."],
-
-    ["Zone",
-     "IMG_6091.png",
-     "Zone has stopped playing Agar.io. The **Zone** skin is still available in the Agar.io game. Set the nick **Zone** to use this skin."],
-
-    ["Skills",
-     "IMG_4439.png",
-     "Skills has stopped playing Agar.io. The **Skills** skin is still available in the Agar.io game. Set the nick **Skills** to use this skin."],
-
-    ["Yemeni (old)",
-     "IMG_1748.png",
-     "This old Yemeni skin was replaced by a new one."],
-
-    ["Sonic (old)",
-     "IMG_0123.png",
-     "This old Sonic skin was replaced by a new one."],
-
-    ["demon",
-     "IMG_6095.png",
-     "demon has stopped playing Agar.io. The **demonx** skin is still available in the Agar.io game. Set the nick **demonx** to use this skin."],
-
-    ["Ashwin",
-     "IMG_4438.png",
-     "Ashwin has stopped playing Agar.io. The **Ashwin** skin is still available in the Agar.io game. Set the nick **Ashwin** to use this skin."],
-
-    ["Ashwinyt",
-     "IMG_6093.png",
-     "Ashwin has stopped playing Agar.io. The **Ashwinyt** skin is still available in the Agar.io game. Set the nick **Ashwinyt** to use this skin."],
-
-    ["Togoman",
-     "IMG_4451.png",
-     "Togoman has stopped playing Agar.io. The **Togoman** skin is still available in the Agar.io game. Set the nick **Togoman** to use this skin."],
-
-    ["alejoyt",
-     "IMG_0136.png",
-     "alejoyt has stopped playing Agar.io. The **alejoyt** skin is still available in the Agar.io game. Set the nick **alejoyt** to use this skin."],
-
-    ["bang",
-     "IMG_0129.png",
-     "bang has stopped playing Agar.io. The **bang** skin is still available in the Agar.io game. Set the nick **bang** to use this skin."],
-
-    ["demon (old)",
-     "IMG_0137.png",
-     "This old demon skin was replaced by a new one."],
-
-    ["minhvu",
-     "IMG_6096.png",
-     "Set the nick **minhvu** to use this skin."],
-
-    ["mister",
-     "IMG_0131.png",
-     "mister has stopped playing Agar.io. The **mister** skin is still available in the Agar.io game. Set the nick **mister** to use this skin."],
-
-    ["peps (old)",
-     "IMG_0138.png",
-     "This old peps skin was replaced by a new one."],
-
-    ["Getdeadkid Xmas",
-     "IMG_0139.png",
-     "Getdeadkid Xmas has stopped playing Agar.io. The **Getdeadkid Xmas** skin is still available in the Agar.io game. Set the nick **Getdeadkid Xmas** to use this skin."],
-
-    ["Yemeni (old)",
-     "IMG_0140.png",
-     "This old Yemeni skin was replaced by a new one"],
-
-    ["Majnoon",
-     "IMG_0133.png",
-     "Majnoon has stopped playing Agar.io. The **Majnoon** skin is still available in the Agar.io game. Set the nick **Majnoon** to use this skin."],
-
-    ["statik",
-     "IMG_6491.png",
-     "statik has stopped playing Agar.io. The **statik** skin is still available in the Agar.io game. Set the nick **statik** to use this skin."],
-
-    ["Skills (old)",
-     "IMG_0141.png",
-     "This old Skills skin was replaced by a new one."],
-
-    ["Woobs",
-     "IMG_6490.png",
-     "Woobs has stopped playing Agar.io. The **Woobs** skin is still available in the Agar.io game. Set the nick **Woobs** to use this skin."],
-
-    ["xxnetro",
-     "IMG_0142.png",
-     "Netro is still actively playing Agar.io. Set the nick **xxnetro** to use this skin."],
-
-    ["xxnetro2",
-     "IMG_0143.png",
-     "Netro is still actively playing Agar.io. Set the nick **xxnetro2** to use this skin.."],
-
-    ["Sonic (old)",
-     "IMG_0144.png",
-     "This old Sonic skin was replaced by a new one."],
-
-    ["52k",
-     "IMG_6489.png",
-     "52k has stopped playing Agar.io. The **52k** skin is still available in the Agar.io game. Set the nick **52k** to use this skin."],
-
-    ["Brax",
-     "IMG_0146.png",
-     "Brax has stopped playing Agar.io. The **Brax** skin is still available in the Agar.io game. Set the nick **Brax** to use this skin."],
-
-    ["3LK",
-     "IMG_0147.png",
-     "3LK has stopped playing Agar.io. The **3LK** skin is still available in the Agar.io game. Set the nick **3LK** to use this skin."],
-
-    ["GURI",
-     "IMG_0148.png",
-     "GURI has stopped playing Agar.io. The **GURI** skin is still available in the Agar.io game. Set the nick **GURI** to use this skin."],
-
-    ["kbkb",
-     "IMG_0149.png",
-     "kbkb has stopped playing Agar.io. The **kbkb** skin is still available in the Agar.io game. Set the nick **kbkb** to use this skin."],
-
-    ["strike",
-     "IMG_0150.png",
-     "strike has stopped playing Agar.io. The **strike** skin is still available in the Agar.io game. Set the nick **strike** to use this skin."],
-
-    ["Babadook",
-     "IMG_0151.png",
-     "Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
-
-    ["Mistik",
-     "IMG_0152.png",
-     "Mistik has stopped playing Agar.io. The **Mistik** skin is still available in the Agar.io game. Set the nick **Mistik** to use this skin."],
-
-    ["Snay",
-     "IMG_0153.png",
-     "Set the nick **Snay** to use this skin."],
-
-    ["Snay-Gang",
-     "IMG_0154.png",
-     "Set the nick **Snay-Gang** to use this skin."],
-
-    ["Snay-Chocolate",
-     "IMG_0155.png",
-     "Set the nick **Snay-Chocolate** to use this skin."],
-
-    ["togomanyt",
-     "IMG_0156.png",
-     "togomanyt has stopped playing Agar.io. The **togomanyt** skin is still available in the Agar.io game. Set the nick **togomanyt** to use this skin."],
-
-    ["Ashwin (old)",
-     "IMG_0157.png",
-     "This old Ashwin skin was replaced by a new one."],
-
-    ["Zone (old)",
-     "IMG_0158.png",
-     "This old Zone skin was replaced by a new one."],
-
-    ["Sneddy Gaming",
-     "IMG_0159.png",
-     "Sneddy Gaming has stopped playing Agar.io. The **Sneddy Gaming** skin is still available in the Agar.io game. Set the nick **Sneddy Gaming** to use this skin."],
-
-    ["Timid",
-     "IMG_0160.png",
-     "Timid has stopped playing Agar.io. The **Timid** skin is still available in the Agar.io game. Set the nick **Timid** to use this skin."],
-
-    ["Matjoy",
-     "IMG_0161.jpeg",
-     "Matjoy has stopped playing Agar.io. The **Matjoy** skin is still available in the Agar.io game. Set the nick **Matjoy** to use this skin."],
-
-    ["Kristoffer",
-     "IMG_0163.jpeg",
-     "Kristoffer has stopped playing Agar.io. The **Kristoffer** skin is still available in the Agar.io game. Set the nick **Kristoffer** to use this skin."],
-
-    ["n0psa",
-     "IMG_0164.jpeg",
-     "n0psa has stopped playing Agar.io. The **n0psa** skin is still available in the Agar.io game. Set the nick **n0psa** to use this skin."],
-
-    ["TYT",
-     "IMG_0165.jpeg",
-     "TYT has stopped playing Agar.io. The **TYT** skin is still available in the Agar.io game. Set the nick **TYT** to use this skin."],
-
-    ["Crystal",
-     "IMG_0166.jpeg",
-     "Crystal has stopped playing Agar.io. The **Crystal** skin is still available in the Agar.io game. Set the nick **Crystal** to use this skin."],
-
-    ["Sirius",
-     "IMG_0167.jpeg",
-     "Sirius has stopped playing Agar.io. The **Sirius** skin is still available in the Agar.io game. Set the nick **Sirius** to use this skin."],
-
-    ["Rayday",
-     "IMG_0168.jpeg",
-     "Rayday has stopped playing Agar.io. The **Rayday** skin is still available in the Agar.io game. Set the nick **Rayday** to use this skin"],
-
-    ["M4J",
-     "IMG_0169.png",
-     "M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
-
+    ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
+    ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
+    ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
+    ["7MODKA","IMG_9909.png","7MODKA has stopped playing Agar.io. The 7MODKA skin is still available in the Agar.io game. Set the nick **7MODKA** to use this skin."],
+    ["Bn Rhmi","IMG_0101.png","Bn Rhmi has stopped playing Agar.io. The Bn Rhmi skin is still available in the Agar.io game. Set the nick **Bn Rhmi** to use this skin."],
+    ["Sarok1","IMG_1778.png","Sarok is still actively playing Agar.io. Set the nick **Sarok1** to use this skin."],
+    ["Sarok2","IMG_2511.png","Sarok is still actively playing Agar.io. Set the nick **Sarok** to use this skin."],
+    ["Sparky","IMG_0439.png","Sparky has stopped playing Agar.io. The Sparky skin is still available in the Agar.io game. Set the nick **Sparky** to use this skin."],
+    ["YemeniYT","IMG_6082.png","Yemeni has stopped playing Agar.io. The YemeniYT skin is still available in the Agar.io game. Set the nick **YemeniYT** to use this skin."],
+    ["Yemeni","IMG_0105.png","Yemeni has stopped playing Agar.io. The Yemeni skin is still available in the Agar.io game. Set the nick **Yemeni** to use this skin."],
+    ["Hero","IMG_4513.png","Hero has stopped playing Agar.io. The Hero skin is still available in the Agar.io game. Set the nick **Hero** to use this skin."],
+    ["Agarmurfs","IMG_1745.png","Murfs has stopped playing Agar.io. The Agarmurfs skin is still available in the Agar.io game. Set the nick **Agarmurfs** to use this skin."],
+    ["3ezzy","IMG_1744.png","3ezzy has stopped playing Agar.io. The 3ezzy skin is still available in the Agar.io game. Set the nick **3ezzy** to use this skin."],
+    ["alejo","IMG_4446.png","Alejo has stopped playing Agar.io. The Alejo skin is still available in the Agar.io game. Set the nick **Alejo** to use this skin."],
+    ["alejoyoutube","IMG_4436.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+    ["twisted","IMG_4443.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+    ["silver","IMG_0112.png","Set the nick **silver** to use this skin."],
+    ["EvilMonkey","IMG_0114.png","S"],
+    ["Araizon","IMG_4440.png","Araizon is still actively playing Agar.io. Set the nick **Araizon** to use this skin."],
+    ["Alejoyt2","IMG_9904.png","Alejoyt has stopped playing Agar.io. The Alejoyt2 skin is still available in the Agar.io game. Set the nick **Alejoyt2** to use this skin."],
+    ["Skillsyt","IMG_6089.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+    ["SonicGames","IMG_1747.png","Sonic has stopped playing Agar.io. The **SonicGames** skin is still available in the Agar.io game. Set the nick **SonicGames** to use this skin."],
+    ["Sonic","IMG_1746.png","Sonic has stopped playing Agar.io. The **Sonic** skin is still available in the Agar.io game. Set the nick **Sonic** to use this skin."],
+    ["peps","IMG_6090.png","peps has stopped playing Agar.io. The **peps** skin is still available in the Agar.io game. Set the nick **peps** to use this skin."],
+    ["GetDeadKid (old)","IMG_0119.png","This old GetDeadKid skin was replaced by a new one."],
+    ["Zone","IMG_6091.png","Zone has stopped playing Agar.io. The **Zone** skin is still available in the Agar.io game. Set the nick **Zone** to use this skin."],
+    ["Skills","IMG_4439.png","Skills has stopped playing Agar.io. The **Skills** skin is still available in the Agar.io game. Set the nick **Skills** to use this skin."],
+    ["Yemeni (old)","IMG_1748.png","This old Yemeni skin was replaced by a new one."],
+    ["Sonic (old)","IMG_0123.png","This old Sonic skin was replaced by a new one."],
+    ["demon","IMG_6095.png","demon has stopped playing Agar.io. The **demonx** skin is still available in the Agar.io game. Set the nick **demonx** to use this skin."],
+    ["Ashwin","IMG_4438.png","Ashwin has stopped playing Agar.io. The **Ashwin** skin is still available in the Agar.io game. Set the nick **Ashwin** to use this skin."],
+    ["Ashwinyt","IMG_6093.png","Ashwin has stopped playing Agar.io. The **Ashwinyt** skin is still available in the Agar.io game. Set the nick **Ashwinyt** to use this skin."],
+    ["Togoman","IMG_4451.png","Togoman has stopped playing Agar.io. The **Togoman** skin is still available in the Agar.io game. Set the nick **Togoman** to use this skin."],
+    ["alejoyt","IMG_0136.png","alejoyt has stopped playing Agar.io. The **alejoyt** skin is still available in the Agar.io game. Set the nick **alejoyt** to use this skin."],
+    ["bang","IMG_0129.png","bang has stopped playing Agar.io. The **bang** skin is still available in the Agar.io game. Set the nick **bang** to use this skin."],
+    ["demon (old)","IMG_0137.png","This old demon skin was replaced by a new one."],
+    ["minhvu","IMG_6096.png","Set the nick **minhvu** to use this skin."],
+    ["mister","IMG_0131.png","mister has stopped playing Agar.io. The **mister** skin is still available in the Agar.io game. Set the nick **mister** to use this skin."],
+    ["peps (old)","IMG_0138.png","This old peps skin was replaced by a new one."],
+    ["Getdeadkid Xmas","IMG_0139.png","Getdeadkid Xmas has stopped playing Agar.io. The **Getdeadkid Xmas** skin is still available in the Agar.io game. Set the nick **Getdeadkid Xmas** to use this skin."],
+    ["Yemeni (old)","IMG_0140.png","This old Yemeni skin was replaced by a new one"],
+    ["Majnoon","IMG_0133.png","Majnoon has stopped playing Agar.io. The **Majnoon** skin is still available in the Agar.io game. Set the nick **Majnoon** to use this skin."],
+    ["statik","IMG_6491.png","statik has stopped playing Agar.io. The **statik** skin is still available in the Agar.io game. Set the nick **statik** to use this skin."],
+    ["Skills (old)","IMG_0141.png","This old Skills skin was replaced by a new one."],
+    ["Woobs","IMG_6490.png","Woobs has stopped playing Agar.io. The **Woobs** skin is still available in the Agar.io game. Set the nick **Woobs** to use this skin."],
+    ["xxnetro","IMG_0142.png","Netro is still actively playing Agar.io. Set the nick **xxnetro** to use this skin."],
+    ["xxnetro2","IMG_0143.png","Netro is still actively playing Agar.io. Set the nick **xxnetro2** to use this skin.."],
+    ["Sonic (old)","IMG_0144.png","This old Sonic skin was replaced by a new one."],
+    ["52k","IMG_6489.png","52k has stopped playing Agar.io. The **52k** skin is still available in the Agar.io game. Set the nick **52k** to use this skin."],
+    ["Brax","IMG_0146.png","Brax has stopped playing Agar.io. The **Brax** skin is still available in the Agar.io game. Set the nick **Brax** to use this skin."],
+    ["3LK","IMG_0147.png","3LK has stopped playing Agar.io. The **3LK** skin is still available in the Agar.io game. Set the nick **3LK** to use this skin."],
+    ["GURI","IMG_0148.png","GURI has stopped playing Agar.io. The **GURI** skin is still available in the Agar.io game. Set the nick **GURI** to use this skin."],
+    ["kbkb","IMG_0149.png","kbkb has stopped playing Agar.io. The **kbkb** skin is still available in the Agar.io game. Set the nick **kbkb** to use this skin."],
+    ["strike","IMG_0150.png","strike has stopped playing Agar.io. The **strike** skin is still available in the Agar.io game. Set the nick **strike** to use this skin."],
+    ["Babadook","IMG_0151.png","Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
+    ["Mistik","IMG_0152.png","Mistik has stopped playing Agar.io. The **Mistik** skin is still available in the Agar.io game. Set the nick **Mistik** to use this skin."],
+    ["Snay","IMG_0153.png","Set the nick **Snay** to use this skin."],
+    ["Snay-Gang","IMG_0154.png","Set the nick **Snay-Gang** to use this skin."],
+    ["Snay-Chocolate","IMG_0155.png","Set the nick **Snay-Chocolate** to use this skin."],
+    ["togomanyt","IMG_0156.png","togomanyt has stopped playing Agar.io. The **togomanyt** skin is still available in the Agar.io game. Set the nick **togomanyt** to use this skin."],
+    ["Ashwin (old)","IMG_0157.png","This old Ashwin skin was replaced by a new one."],
+    ["Zone (old)","IMG_0158.png","This old Zone skin was replaced by a new one."],
+    ["Sneddy Gaming","IMG_0159.png","Sneddy Gaming has stopped playing Agar.io. The **Sneddy Gaming** skin is still available in the Agar.io game. Set the nick **Sneddy Gaming** to use this skin."],
+    ["Timid","IMG_0160.png","Timid has stopped playing Agar.io. The **Timid** skin is still available in the Agar.io game. Set the nick **Timid** to use this skin."],
+    ["Matjoy","IMG_0161.jpeg","Matjoy has stopped playing Agar.io. The **Matjoy** skin is still available in the Agar.io game. Set the nick **Matjoy** to use this skin."],
+    ["Kristoffer","IMG_0163.jpeg","Kristoffer has stopped playing Agar.io. The **Kristoffer** skin is still available in the Agar.io game. Set the nick **Kristoffer** to use this skin."],
+    ["n0psa","IMG_0164.jpeg","n0psa has stopped playing Agar.io. The **n0psa** skin is still available in the Agar.io game. Set the nick **n0psa** to use this skin."],
+    ["TYT","IMG_0165.jpeg","TYT has stopped playing Agar.io. The **TYT** skin is still available in the Agar.io game. Set the nick **TYT** to use this skin."],
+    ["Crystal","IMG_0166.jpeg","Crystal has stopped playing Agar.io. The **Crystal** skin is still available in the Agar.io game. Set the nick **Crystal** to use this skin."],
+    ["Sirius","IMG_0167.jpeg","Sirius has stopped playing Agar.io. The **Sirius** skin is still available in the Agar.io game. Set the nick **Sirius** to use this skin."],
+    ["Rayday","IMG_0168.jpeg","Rayday has stopped playing Agar.io. The **Rayday** skin is still available in the Agar.io game. Set the nick **Rayday** to use this skin"],
+    ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
 ];
 
 
@@ -1597,246 +1129,6 @@ function renderYoutuberPage(page){
 
 
 /* =====================================================
-   SPECIAL DEALS
-===================================================== */
-
-/*
- * Add products here one by one.
- * The checkout URL should be an official Xsolla URL supplied
- * for the corresponding product.
- */
-const SPECIAL_DEALS = [
-    {
-        id: "deal-1",
-        name: "Special Product #1",
-        price: "See Xsolla",
-        image: "",
-        // The browser never receives an Xsolla API key or permanent access token.
-        // The backend creates a fresh token for every checkout.
-        backendProductId: "deal-1"
-    }
-];
-
-let selectedDeal = null;
-
-function renderSpecialDeals(){
-    const grid = document.getElementById("dealsGrid");
-    if(!grid) return;
-
-    grid.innerHTML = "";
-
-    if(!SPECIAL_DEALS.length){
-        grid.innerHTML = '<div class="deals-empty">No special deals are available right now.</div>';
-        return;
-    }
-
-    SPECIAL_DEALS.forEach(deal => {
-        const card = document.createElement("div");
-        card.className = "deal-card";
-        card.dataset.id = deal.id;
-
-        const image = deal.image
-            ? `<img src="${deal.image}" alt="${escapeHtml(deal.name)}">`
-            : `<div style="width:130px;height:130px;margin:auto;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:#777;">PRODUCT</div>`;
-
-        card.innerHTML = `
-            ${image}
-            <span class="deal-name">${escapeHtml(deal.name)}</span>
-            <div class="deal-price">${escapeHtml(deal.price)}</div>
-            <button class="deal-buy" type="button">BUY</button>
-        `;
-
-        card.addEventListener("click", function(e){
-            if(e.target.classList.contains("deal-buy")){
-                e.stopPropagation();
-                selectDeal(deal.id);
-                openWarning();
-                return;
-            }
-            selectDeal(deal.id);
-        });
-
-        grid.appendChild(card);
-    });
-}
-
-function selectDeal(id){
-    selectedDeal = SPECIAL_DEALS.find(x => x.id === id) || null;
-
-    document.querySelectorAll(".deal-card").forEach(card => {
-        card.classList.toggle("selected", card.dataset.id === id);
-    });
-}
-
-function openWarning(){
-    if(!selectedDeal) return;
-    document.getElementById("termsCheckbox").checked = false;
-    document.getElementById("warningContinue").disabled = true;
-    document.getElementById("warningModal").classList.remove("hidden");
-}
-
-function closeWarning(){
-    document.getElementById("warningModal").classList.add("hidden");
-}
-
-function openCheckoutForm(){
-    if(!selectedDeal) return;
-
-    closeWarning();
-
-    document.getElementById("selectedProduct").innerHTML = `
-        <strong>${escapeHtml(selectedDeal.name)}</strong><br>
-        <span style="color:#22c55e">${escapeHtml(selectedDeal.price)}</span>
-    `;
-
-    document.getElementById("agarioUid").value = "";
-    document.getElementById("checkoutModal").classList.remove("hidden");
-}
-
-function closeCheckout(){
-    document.getElementById("checkoutModal").classList.add("hidden");
-}
-
-async function continueToXsolla(){
-
-    if(!selectedDeal){
-        return;
-    }
-
-    const uidInput = document.getElementById("agarioUid");
-    const uid = uidInput ? uidInput.value.trim() : "";
-
-    // Client-side validation before the browser is allowed to open Xsolla.
-    if(uid && !/^[A-Za-z0-9_-]{1,255}$/.test(uid)){
-        alert(
-            "Invalid Agar.io UID. Please check the UID and try again."
-        );
-        if(uidInput) uidInput.focus();
-        return;
-    }
-
-    const confirmed = uid
-        ? confirm(
-            "Confirm Agar.io UID:\n\n" +
-            uid +
-            "\n\n" +
-            "This exact UID will be sent to the checkout backend. Continue?"
-          )
-        : confirm(
-            "No Agar.io UID was entered.\n\n" +
-            "This purchase will use a guest checkout and will NOT be linked " +
-            "to an Agar.io UID.\n\nContinue?"
-          );
-
-    if(!confirmed){
-        return;
-    }
-
-    const button =
-        document.querySelector("#checkoutModal .continue-btn");
-
-    if(button){
-        button.disabled = true;
-        button.textContent = "Verifying UID...";
-    }
-
-    try{
-
-        const response = await fetch(
-            "https://YOUR-BACKEND-DOMAIN.example.com/api/create-checkout",
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    productId:selectedDeal.backendProductId,
-                    agarioUid:uid || null
-                })
-            }
-        );
-
-        const data = await response.json().catch(() => ({}));
-
-        if(!response.ok || !data.checkoutUrl){
-            throw new Error(
-                data.error || "Unable to create the Xsolla checkout."
-            );
-        }
-
-        // The backend echoes the exact UID it put into the Xsolla token.
-        const verifiedUid = data.userId || null;
-
-        if(uid && verifiedUid !== uid){
-            throw new Error(
-                "UID verification failed. The checkout was NOT opened."
-            );
-        }
-
-        const message = verifiedUid
-            ? "UID verified for this checkout:\n\n" +
-              verifiedUid +
-              "\n\nXsolla token created for this UID. Open payment now?"
-            : "No UID was supplied.\n\nA guest checkout token was created. " +
-              "Open payment now?";
-
-        if(!confirm(message)){
-            return;
-        }
-
-        // Only after the UID/token check is confirmed do we leave the site.
-        window.location.href = data.checkoutUrl;
-
-    }catch(error){
-
-        console.error("Checkout error:", error);
-
-        alert(
-            error.message ||
-            "Unable to start the purchase. Please try again."
-        );
-
-    }finally{
-
-        if(button){
-            button.disabled = false;
-            button.textContent = "Continue to Xsolla";
-        }
-    }
-}
-
-function escapeHtml(value){
-    return String(value)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-}
-
-document.getElementById("termsCheckbox").addEventListener("change", function(){
-    document.getElementById("warningContinue").disabled = !this.checked;
-});
-
-renderSpecialDeals();
-
-/* =====================================================
-   VERSION CHANGE
-===================================================== */
-
-document
-    .getElementById("version")
-    .onchange = e => {
-
-        version =
-            e.target.value;
-
-        loadSkins();
-
-    };
-
-
-/* =====================================================
    START
 ===================================================== */
 
@@ -1844,9 +1136,7 @@ versions();
 
 </script>
 
-
 <br>
-
 
 <!-- =========================
      SOCIAL BUTTONS
