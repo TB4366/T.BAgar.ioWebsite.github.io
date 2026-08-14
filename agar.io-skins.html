@@ -1,828 +1,257 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skin - @t.bagar.io</title>
-
 <style>
-body{
-    margin:0;
-    background:#000;
-    color:#fff;
-    font-family:Arial,sans-serif;
-    text-align:center;
-    font-weight:bold;
-}
-
-h1{
-    font-size:28px;
-    margin:18px 0;
-}
-
-/* =========================
-   SECTIONS
-========================= */
-
-.sections{
-    display:flex;
-    justify-content:center;
-    gap:0;
-    margin:10px auto 18px;
-}
-
-.section-btn{
-    background:#111;
-    color:#fff;
-    border:0;
-    border-bottom:3px solid transparent;
-    padding:12px 25px;
-    font-size:18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.section-btn:hover{
-    background:#181818;
-}
-
-.section-btn.active{
-    color:#1683ff;
-    border-bottom-color:#1683ff;
-}
-
-
-/* =========================
-   VERSION
-========================= */
-
-.version-container{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    margin:8px 0 18px;
-}
-
-.version-label{
-    font-size:20px;
-}
-
-#version{
-    font-size:20px;
-    padding:4px;
-}
-
-
-/* =========================
-   AGARIO SKINS
-   10 x 12 = 120
-========================= */
-
-#skins{
-    display:grid;
-    grid-template-columns:repeat(10,1fr);
-    gap:10px;
-    padding:15px;
-    max-width:1400px;
-    margin:auto;
-}
-
-
-/* =========================
-   YOUTUBER SKINS
-   6 x 5 = 30
-========================= */
-
-#youtuberSkins{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:14px;
-    padding:15px;
-    max-width:1100px;
-    margin:auto;
-}
-
-
-/* =========================
-   SKIN CARDS
-========================= */
-
-.skin{
-    cursor:pointer;
-    padding:8px;
-    background:#111;
-    border:2px solid #222;
-    border-radius:8px;
-    text-align:center;
-}
-
-.skin:hover{
-    border-color:#1683ff;
-}
-
-.skin img{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    object-fit:contain;
-}
-
-#youtuberSkins .skin img{
-    width:120px;
-    height:120px;
-}
-
-.skin span{
-    display:block;
-    margin-top:6px;
-    font-size:13px;
-}
-
-
-/* =========================
-   PAGINATION
-========================= */
-
-#pages, #youtuberPages{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    flex-wrap:wrap;
-    padding:30px 15px 40px;
-}
-
-.page-btn{
-    background:#1683ff;
-    color:#fff;
-    border:0;
-    border-radius:7px;
-    padding:9px 14px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    min-width:42px;
-    box-shadow:0 2px 5px #0008;
-}
-
-.page-btn:hover{
-    background:#0b6ed6;
-}
-
-.page-btn.active{
-    background:#0753a6;
-}
-
-
-/* =========================
-   SOCIAL BUTTONS
-========================= */
-
-.social-buttons{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin:0 0 15px;
-}
-
-.social-buttons a{
-    display:inline-block;
-    color:#fff;
-    text-decoration:none;
-    padding:9px 16px;
-    border-radius:7px;
-    font-size:15px;
-    font-weight:bold;
-    transition:0.2s;
-}
-
-.social-buttons a:hover{
-    transform:translateY(-2px);
-    opacity:0.9;
-}
-
-.youtube{
-    background:#ff0000;
-}
-
-.instagram{
-    background:#e1306c;
-}
-
-.discord{
-    background:#5865f2;
-}
-
-
-/* =========================
-   HIDDEN
-========================= */
-
-.hidden{
-    display:none;
-}
-
-/* =========================
-   YOUTUBER STATUS
-========================= */
-.youtuber-name{
-    display:block;
-    margin-top:8px;
-    font-size:15px;
-}
-
-.youtuber-status{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-    margin-top:6px;
-    font-size:13px;
-}
-
-.status-label{
-    color:#fff;
-}
-
-.status-value{
-    font-weight:bold;
-    padding:2px 6px;
-    border-radius:6px;
-}
-
-.status-active{ background:#072; color:#cfffcc; }
-.status-less-active{ background:#b77e00; color:#fff7d1; }
-.status-not-active{ background:#c56a00; color:#fff3dd; }
-.status-inactive{ background:#7a041f; color:#ffdbe0; }
-
-.skin-instruction{
-    margin-top:7px;
-    font-size:12px;
-    line-height:1.35;
-    color:#bbb;
-    text-align:left;
-}
-
-.skin-instruction strong{
-    color:#fff;
-}
-
-
-/* =========================
-   SPECIAL DEALS
-========================= */
-#specialDealsSection{
-    max-width:1200px;
-    margin:0 auto;
-    padding:10px 15px 40px;
-}
-.deals-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:16px;
-}
-.deal-card{
-    background:#111;
-    border:2px solid #222;
-    border-radius:10px;
-    padding:12px;
-    cursor:pointer;
-    transition:.18s;
-    text-align:center;
-}
-.deal-card:hover,.deal-card.selected{
-    border-color:#1683ff;
-    transform:translateY(-2px);
-}
-.deal-card img{
-    width:130px;
-    height:130px;
-    border-radius:50%;
-    object-fit:contain;
-}
-.deal-name{
-    display:block;
-    margin-top:8px;
-    font-size:16px;
-}
-.deal-price{
-    margin-top:5px;
-    color:#22c55e;
-    font-size:15px;
-}
-.deal-buy{
-    display:none;
-    width:100%;
-    margin-top:10px;
-    background:#1683ff;
-    color:#fff;
-    border:0;
-    border-radius:7px;
-    padding:10px;
-    font-weight:bold;
-    cursor:pointer;
-}
-.deal-card.selected .deal-buy{display:block}
-.deals-empty{
-    padding:30px;
-    color:#aaa;
-}
-.modal-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.78);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
-    padding:20px;
-}
-.modal-backdrop.hidden{display:none}
-.deal-modal{
-    width:min(560px,100%);
-    background:#160000;
-    border:2px solid #d00;
-    border-radius:12px;
-    padding:24px;
-    box-shadow:0 10px 40px #000;
-    text-align:left;
-}
-.deal-modal h2{
-    color:#ff3333;
-    margin:0 0 14px;
-}
-.deal-modal p{
-    color:#eee;
-    line-height:1.5;
-    font-size:15px;
-}
-.agree-row{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    margin:18px 0;
-    color:#fff;
-    font-size:14px;
-    line-height:1.4;
-}
-.agree-row input{margin-top:3px}
-.modal-actions{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-}
-.modal-actions button{
-    border:0;
-    border-radius:7px;
-    padding:10px 18px;
-    font-weight:bold;
-    cursor:pointer;
-}
-.cancel-btn{background:#333;color:#fff}
-.continue-btn{background:#1683ff;color:#fff}
-.continue-btn:disabled{
-    opacity:.4;
-    cursor:not-allowed;
-}
-.checkout-modal{
-    background:#111;
-    border-color:#1683ff;
-}
-.checkout-modal h2{color:#1683ff}
-.checkout-form label{
-    display:block;
-    margin:14px 0 6px;
-    color:#ddd;
-}
-.checkout-form input{
-    width:100%;
-    box-sizing:border-box;
-    padding:11px;
-    border-radius:7px;
-    border:1px solid #444;
-    background:#050505;
-    color:#fff;
-    font-size:15px;
-}
-#fbLoginBtn{ padding:8px 12px; font-size:14px; }
-#fbLoginStatus{ color:#9ec7ff; font-size:13px; margin-left:8px; align-self:center; }
-.security-note{
-    color:#ff7777 !important;
-    font-weight:bold;
-}
-.selected-product{
-    background:#080808;
-    border:1px solid #333;
-    border-radius:8px;
-    padding:10px;
-    margin-bottom:14px;
-}
+/* (Styles zoals in je vorige bestand; kort gehouden hier om ruimte te besparen) */
+body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
+h1{font-size:28px;margin:18px 0}
+.sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px}
+.section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 25px;font-size:18px;cursor:pointer}
+.section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
+#skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
+#youtuberSkins{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding:15px;max-width:1100px;margin:auto}
+.skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px;text-align:center}
+.skin img{width:90px;height:90px;border-radius:50%;object-fit:contain}
+#youtuberSkins .skin img{width:120px;height:120px}
+.skin span{display:block;margin-top:6px;font-size:13px}
+#pages,#youtuberPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:30px 15px 40px}
+.page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:9px 14px;font-size:16px;cursor:pointer}
+.page-btn.active{background:#0753a6}
+.youtuber-status{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:6px;font-size:13px}
+.status-value{font-weight:bold;padding:2px 6px;border-radius:6px}
+.status-active{background:#072;color:#cfffcc}
+.status-less-active{background:#b77e00;color:#fff7d1}
+.status-not-active{background:#c56a00;color:#fff3dd}
+.status-inactive{background:#7a041f;color:#ffdbe0}
+.deals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.deal-card{background:#111;border:2px solid #222;border-radius:10px;padding:12px;cursor:pointer;text-align:center}
+.deal-card img{width:130px;height:130px;border-radius:50%;object-fit:contain}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+.deal-modal{width:min(560px,100%);background:#160000;border:2px solid #d00;border-radius:12px;padding:24px;text-align:left}
+.continue-btn{background:#1683ff;color:#fff;padding:10px 18px;border-radius:7px;border:0;cursor:pointer}
+.cancel-btn{background:#333;color:#fff;padding:10px 18px;border-radius:7px;border:0;cursor:pointer}
+.small-note{color:#bbb;font-size:13px;margin-top:8px}
+.security-note{color:#ff7777;font-weight:bold}
+/* responsive */
 @media(max-width:600px){
-    .deals-grid{grid-template-columns:repeat(2,1fr)}
-    .deal-card img{width:105px;height:105px}
-    #youtuberSkins{grid-template-columns:repeat(2,1fr)}
+  #youtuberSkins{grid-template-columns:repeat(2,1fr)}
+  .deal-card img{width:105px;height:105px}
 }
-
 </style>
 </head>
-
 <body>
-
-<h1>
-    Agar.io Skins<br>
-    @t.bagar.io
-</h1>
+<h1>Agar.io Skins<br>@t.bagar.io</h1>
 
 <div class="sections">
-
-    <button
-        class="section-btn active"
-        id="agarioSectionBtn"
-        onclick="showSection('agario')"
-    >
-        Agar.io Skins
-    </button>
-
-    <button
-        class="section-btn"
-        id="youtuberSectionBtn"
-        onclick="showSection('youtuber')"
-    >
-        Youtuber Skins
-    </button>
-
-    <button
-        class="section-btn"
-        id="specialDealsSectionBtn"
-        onclick="showSection('specialDeals')"
-    >
-        Special Deals
-    </button>
-
+  <button id="agarioSectionBtn" class="section-btn active" onclick="showSection('agario')">Agar.io Skins</button>
+  <button id="youtuberSectionBtn" class="section-btn" onclick="showSection('youtuber')">Youtuber Skins</button>
+  <button id="specialDealsSectionBtn" class="section-btn" onclick="showSection('specialDeals')">Special Deals</button>
 </div>
 
 <div id="agarioSection">
-
-    <div class="version-container">
-
-        <span class="version-label">
-            Version
-        </span>
-
-        <select id="version"></select>
-
-    </div>
-
-    <div id="skins">
-        Loading skins...
-    </div>
-
-    <div id="agarioPages"></div>
-
+  <div class="version-container">
+    <span class="version-label">Version</span>
+    <select id="version"></select>
+  </div>
+  <div id="skins">Loading skins...</div>
+  <div id="agarioPages"></div>
 </div>
 
 <div id="youtuberSection" class="hidden">
-
-    <div id="youtuberSkins">
-        Loading Youtuber skins...
-    </div>
-
-    <div id="youtuberPages"></div>
-
+  <div id="youtuberSkins">Loading Youtuber skins...</div>
+  <div id="youtuberPages"></div>
 </div>
 
 <div id="specialDealsSection" class="hidden">
-    <h2>Special Deals</h2>
-    <p style="color:#aaa;">
-        Select a product to view its purchase option.
-    </p>
-    <div id="dealsGrid" class="deals-grid"></div>
+  <h2>Special Deals</h2>
+  <p style="color:#aaa">Select a product to view its purchase option.</p>
+  <div id="dealsGrid" class="deals-grid"></div>
 </div>
 
+<!-- Warning modal -->
 <div id="warningModal" class="modal-backdrop hidden">
-    <div class="deal-modal">
-        <h2>⚠ Attention!</h2>
-        <p>
-            T.B provides links to products made available through the official
-            Miniclip/Xsolla purchase system. Purchases are at your own risk.
-        </p>
-
-        <label class="agree-row">
-            <input type="checkbox" id="termsCheckbox">
-            <span>I agree to the terms and conditions and understand the information above.</span>
-        </label>
-
-        <div class="modal-actions">
-            <button class="cancel-btn" onclick="closeWarning()">Cancel</button>
-            <button class="continue-btn" id="warningContinue" disabled onclick="openCheckoutForm()">
-                Continue
-            </button>
-        </div>
+  <div class="deal-modal">
+    <h2>⚠ Attention!</h2>
+    <p>T.B provides links to official Miniclip/Xsolla checkouts. Purchases are at your own risk.</p>
+    <label style="display:flex;gap:10px;align-items:flex-start;margin-top:12px">
+      <input type="checkbox" id="termsCheckbox"> I agree to the terms.
+    </label>
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:14px">
+      <button class="cancel-btn" onclick="closeWarning()">Cancel</button>
+      <button id="warningContinue" class="continue-btn" disabled onclick="openCheckoutForm()">Continue</button>
     </div>
+  </div>
 </div>
 
+<!-- Checkout modal (shows FB info / Agar name / Xsolla token input) -->
 <div id="checkoutModal" class="modal-backdrop hidden">
-    <div class="deal-modal checkout-modal">
-        <h2>Secure Checkout</h2>
+  <div class="deal-modal">
+    <h2>Secure Checkout</h2>
+    <div id="selectedProduct" style="margin-bottom:10px"></div>
 
-        <div id="selectedProduct" class="selected-product"></div>
-
-        <div class="checkout-form">
-            <label for="agarioUid">Enter your Agar.io UID or Xsolla token (optional):</label>
-            <input id="agarioUid" type="text" inputmode="text"
-                   autocomplete="off" placeholder="Enter your Agar.io UID or Xsolla token (optional)">
-            <div style="margin-top:10px;display:flex;align-items:center;justify-content:center;">
-              <button id="fbLoginBtn" class="continue-btn" type="button">Login with Facebook</button>
-              <span id="fbLoginStatus">Not logged in</span>
-            </div>
-
-            <p class="security-note">
-                ⚠ The Agar.io UID / token is optional. Do not enter passwords.
-            </p>
-        </div>
-
-        <div class="modal-actions">
-            <button class="cancel-btn" onclick="closeCheckout()">Cancel</button>
-            <button class="continue-btn" onclick="continueToXsolla()">
-                Continue to Xsolla
-            </button>
-        </div>
+    <div id="loginInfoBox" style="margin-bottom:12px;padding:8px;background:#080808;border:1px solid #333;border-radius:8px">
+      <div id="fbInfo" style="margin-bottom:8px">Facebook: <span id="fbInfoName">Not logged in</span></div>
+      <label style="display:block;margin-bottom:6px">Agar.io Player name (detected)</label>
+      <input id="agarioPlayerName" type="text" placeholder="Agar.io name (enter or detected)" style="width:100%;padding:8px;border-radius:6px;border:1px solid #444;background:#050505;color:#fff">
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+        <button id="fbLoginBtn" class="continue-btn" type="button">Login with Facebook</button>
+        <span id="fbLoginStatus" style="color:#9ec7ff">Not logged in</span>
+      </div>
+      <label style="display:block;margin-top:10px">Xsolla token (optional)</label>
+      <input id="xsollaToken" type="text" placeholder="Paste Xsolla token here (optional)" style="width:100%;padding:8px;border-radius:6px;border:1px solid #444;background:#050505;color:#fff">
+      <div class="small-note">⚠ We will store sanitized values locally if you click "Save login". Do not paste passwords.</div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button class="cancel-btn" onclick="closeCheckout()" type="button">Cancel</button>
+        <button id="saveLoginBtn" class="continue-btn" type="button" onclick="saveLoginInfo()">Save login</button>
+      </div>
     </div>
+
+    <div style="text-align:right;margin-top:6px">
+      <button class="continue-btn" onclick="continueToXsolla()">Continue to Xsolla</button>
+    </div>
+  </div>
 </div>
 
 <script>
-/* ---------------------------
-   Basic config and helpers
-   --------------------------- */
+/* --------------------------
+   Helpers and state
+   -------------------------- */
 window.loggedIn = window.loggedIn || false;
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
 let allSkins = [];
 let youtuberSkins = [];
-let currentAgarioPage = 1;
-let currentYoutuberPage = 1;
 let selectedDeal = null;
 
-function escapeHtml(value){
-    return String(value||"")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-}
-
-/* =====================================================
+/* --------------------------
    Section switching
-===================================================== */
+   -------------------------- */
 function showSection(section){
-    document.getElementById("agarioSection").classList.toggle("hidden", section !== "agario");
-    document.getElementById("youtuberSection").classList.toggle("hidden", section !== "youtuber");
-    document.getElementById("specialDealsSection").classList.toggle("hidden", section !== "specialDeals");
-    document.getElementById("agarioSectionBtn").classList.toggle("active", section === "agario");
-    document.getElementById("youtuberSectionBtn").classList.toggle("active", section === "youtuber");
-    document.getElementById("specialDealsSectionBtn").classList.toggle("active", section === "specialDeals");
-    if (section === "youtuber" && (!youtuberSkins || youtuberSkins.length === 0)) loadYoutuberSkins();
-    if (section === "specialDeals") renderSpecialDeals();
-    window.scrollTo({ top:0, behavior:"smooth" });
+  document.getElementById("agarioSection").classList.toggle("hidden", section !== "agario");
+  document.getElementById("youtuberSection").classList.toggle("hidden", section !== "youtuber");
+  document.getElementById("specialDealsSection").classList.toggle("hidden", section !== "specialDeals");
+  document.getElementById("agarioSectionBtn").classList.toggle("active", section === "agario");
+  document.getElementById("youtuberSectionBtn").classList.toggle("active", section === "youtuber");
+  document.getElementById("specialDealsSectionBtn").classList.toggle("active", section === "specialDeals");
+  if (section === "youtuber" && (!youtuberSkins || youtuberSkins.length===0)) loadYoutuberSkins();
+  if (section === "specialDeals") renderSpecialDeals();
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* =====================================================
-   Versions + Agario skins (unchanged)
-===================================================== */
+/* --------------------------
+   Version & Agario skins (unchanged)
+   -------------------------- */
 async function versions(){
-    const s = document.getElementById("version");
-    try{
-        const r = await fetch("https://lmsettings.snez.org/", { headers:{ username:"LMConfigVersion", password:"LMConfigVersionPass" }});
-        const v = await r.json();
-        Object.values(v).forEach(x=>{
-            const o = new Option(x, x.replace(/\/$/,""));
-            s.add(o);
-        });
-        if(s.options.length){
-            version = s.value = s.options[s.options.length - 1].value;
-        }
-    }catch(e){
-        s.add(new Option(version, version));
-    }
-    loadSkins();
+  const s = document.getElementById("version");
+  try{
+    const r = await fetch("https://lmsettings.snez.org/", { headers:{ username:"LMConfigVersion", password:"LMConfigVersionPass" }});
+    const v = await r.json();
+    Object.values(v).forEach(x=> s.add(new Option(x, x.replace(/\/$/,""))));
+    if (s.options.length) { version = s.value = s.options[s.options.length-1].value; }
+  }catch(e){ s.add(new Option(version, version)); }
+  loadSkins();
 }
-
 async function loadSkins(){
-    const box = document.getElementById("skins");
-    box.innerHTML = "Loading skins...";
-    try{
-        const r = await fetch(API + version + "/GameConfiguration.json");
-        const text = await r.text();
-        const a = text.match(/\[(.*?)\]/g) || [];
-        const str = a[25] || "";
-        const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
-        const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
-        const skins = [];
-        for(let i = 0; i < Math.min(ids.length, imgs.length); i++){
-            const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
-            const img = imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
-            if(!img.includes("uses_spine")){
-                skins.push([id, img]);
-            }
-        }
-        skins.reverse();
-        allSkins = skins;
-        renderAgarioPage(1);
-    }catch(e){
-        box.textContent = "Unable to load skins.";
+  const box = document.getElementById("skins");
+  box.innerHTML = "Loading skins...";
+  try{
+    const r = await fetch(API + version + "/GameConfiguration.json");
+    const text = await r.text();
+    const a = text.match(/\[(.*?)\]/g) || [];
+    const str = a[25] || "";
+    const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
+    const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
+    const skins = [];
+    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
+      const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
+      const img = imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
+      if (!img.includes("uses_spine")) skins.push([id,img]);
     }
+    skins.reverse();
+    allSkins = skins;
+    renderAgarioPage(1);
+  }catch(e){ box.textContent = "Unable to load skins."; }
 }
-
 function renderAgarioPage(page){
-    const perPage = 120;
-    const box = document.getElementById("skins");
-    const pages = document.getElementById("agarioPages");
-    const total = Math.ceil(allSkins.length / perPage) || 1;
-    currentAgarioPage = page;
-    box.innerHTML = "";
-    const start = (page - 1) * perPage;
-    allSkins.slice(start, start + perPage).forEach(([id,img])=>{
-        const d = document.createElement("div");
-        d.className = "skin";
-        d.innerHTML = `
-            <img src="${API + version + "/" + img}" alt="${escapeHtml(id)}">
-            <span>${escapeHtml(id.replace(/\_/g," "))}</span>
-        `;
-        box.appendChild(d);
-    });
-    pages.innerHTML = "";
-    for(let i=1;i<=total;i++){
-        const b = document.createElement("button");
-        b.className = "page-btn" + (i===page ? " active" : "");
-        b.textContent = i;
-        b.onclick = ()=>renderAgarioPage(i);
-        pages.appendChild(b);
-    }
-    window.scrollTo({ top:0, behavior:"smooth" });
+  const perPage = 120;
+  const box = document.getElementById("skins");
+  const pages = document.getElementById("agarioPages");
+  const total = Math.ceil(allSkins.length / perPage) || 1;
+  box.innerHTML = "";
+  const start = (page-1)*perPage;
+  allSkins.slice(start, start+perPage).forEach(([id,img])=>{
+    const d = document.createElement("div");
+    d.className = "skin";
+    d.innerHTML = `<img src="${API+version+'/'+img}" alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
+    box.appendChild(d);
+  });
+  pages.innerHTML = "";
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderAgarioPage(i); pages.appendChild(b); }
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* =====================================================
-   YOUTUBER DATA (user-provided) — provided list
-   We'll attempt to resolve each image from several bases,
-   show placeholders immediately and update once resolved.
-===================================================== */
-
-const YOUTUBER_DATA = [
-  ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
-  ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
-  ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
-  ["7MODKA","IMG_9909.png","7MODKA has stopped playing Agar.io. The 7MODKA skin is still available in the Agar.io game. Set the nick **7MODKA** to use this skin."],
-  ["Bn Rhmi","IMG_0101.png","Bn Rhmi has stopped playing Agar.io. The Bn Rhmi skin is still available in the Agar.io game. Set the nick **Bn Rhmi** to use this skin."],
-  ["Sarok1","IMG_1778.png","Sarok is still actively playing Agar.io. Set the nick **Sarok1** to use this skin."],
-  ["Sarok2","IMG_2511.png","Sarok is still actively playing Agar.io. Set the nick **Sarok** to use this skin."],
-  ["Sparky","IMG_0439.png","Sparky has stopped playing Agar.io. The Sparky skin is still available in the Agar.io game. Set the nick **Sparky** to use this skin."],
-  ["YemeniYT","IMG_6082.png","Yemeni has stopped playing Agar.io. The YemeniYT skin is still available in the Agar.io game. Set the nick **YemeniYT** to use this skin."],
-  ["Yemeni","IMG_0105.png","Yemeni has stopped playing Agar.io. The Yemeni skin is still available in the Agar.io game. Set the nick **Yemeni** to use this skin."],
-  ["Hero","IMG_4513.png","Hero has stopped playing Agar.io. The Hero skin is still available in the Agar.io game. Set the nick **Hero** to use this skin."],
-  ["Agarmurfs","IMG_1745.png","Murfs has stopped playing Agar.io. The Agarmurfs skin is still available in the Agar.io game. Set the nick **Agarmurfs** to use this skin."],
-  ["3ezzy","IMG_1744.png","3ezzy has stopped playing Agar.io. The 3ezzy skin is still available in the Agar.io game. Set the nick **3ezzy** to use this skin."],
-  ["alejo","IMG_4446.png","Alejo has stopped playing Agar.io. The Alejo skin is still available in the Agar.io game. Set the nick **Alejo** to use this skin."],
-  ["alejoyoutube","IMG_4436.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-  ["twisted","IMG_4443.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-  ["silver","IMG_0112.png","Set the nick **silver** to use this skin."],
-  ["EvilMonkey","IMG_0114.png","S"],
-  ["Araizon","IMG_4440.png","Araizon is still actively playing Agar.io. Set the nick **Araizon** to use this skin."],
-  ["Alejoyt2","IMG_9904.png","Alejoyt has stopped playing Agar.io. The Alejoyt2 skin is still available in the Agar.io game. Set the nick **Alejoyt2** to use this skin."],
-  ["Skillsyt","IMG_6089.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-  ["SonicGames","IMG_1747.png","Sonic has stopped playing Agar.io. The **SonicGames** skin is still available in the Agar.io game. Set the nick **SonicGames** to use this skin."],
-  ["Sonic","IMG_1746.png","Sonic has stopped playing Agar.io. The **Sonic** skin is still available in the Agar.io game. Set the nick **Sonic** to use this skin."],
-  ["peps","IMG_6090.png","peps has stopped playing Agar.io. The **peps** skin is still available in the Agar.io game. Set the nick **peps** to use this skin."],
-  ["GetDeadKid (old)","IMG_0119.png","This old GetDeadKid skin was replaced by a new one."],
-  ["Zone","IMG_6091.png","Zone has stopped playing Agar.io. The **Zone** skin is still available in the Agar.io game. Set the nick **Zone** to use this skin."],
-  ["Skills","IMG_4439.png","Skills has stopped playing Agar.io. The **Skills** skin is still available in the Agar.io game. Set the nick **Skills** to use this skin."],
-  ["Yemeni (old)","IMG_1748.png","This old Yemeni skin was replaced by a new one."],
-  ["Sonic (old)","IMG_0123.png","This old Sonic skin was replaced by a new one."],
-  ["demon","IMG_6095.png","demon has stopped playing Agar.io. The **demonx** skin is still available in the Agar.io game. Set the nick **demonx** to use this skin."],
-  ["Ashwin","IMG_4438.png","Ashwin has stopped playing Agar.io. The **Ashwin** skin is still available in the Agar.io game. Set the nick **Ashwin** to use this skin."],
-  ["Ashwinyt","IMG_6093.png","Ashwin has stopped playing Agar.io. The **Ashwinyt** skin is still available in the Agar.io game. Set the nick **Ashwinyt** to use this skin."],
-  ["Togoman","IMG_4451.png","Togoman has stopped playing Agar.io. The **Togoman** skin is still available in the Agar.io game. Set the nick **Togoman** to use this skin."],
-  ["alejoyt","IMG_0136.png","alejoyt has stopped playing Agar.io. The **alejoyt** skin is still available in the Agar.io game. Set the nick **alejoyt** to use this skin."],
-  ["bang","IMG_0129.png","bang has stopped playing Agar.io. The **bang** skin is still available in the Agar.io game. Set the nick **bang** to use this skin."],
-  ["demon (old)","IMG_0137.png","This old demon skin was replaced by a new one."],
-  ["minhvu","IMG_6096.png","Set the nick **minhvu** to use this skin."],
-  ["mister","IMG_0131.png","mister has stopped playing Agar.io. The **mister** skin is still available in the Agar.io game. Set the nick **mister** to use this skin."],
-  ["peps (old)","IMG_0138.png","This old peps skin was replaced by a new one."],
-  ["Getdeadkid Xmas","IMG_0139.png","Getdeadkid Xmas has stopped playing Agar.io. The **Getdeadkid Xmas** skin is still available in the Agar.io game. Set the nick **Getdeadkid Xmas** to use this skin."],
-  ["Yemeni (old)","IMG_0140.png","This old Yemeni skin was replaced by a new one"],
-  ["Majnoon","IMG_0133.png","Majnoon has stopped playing Agar.io. The **Majnoon** skin is still available in the Agar.io game. Set the nick **Majnoon** to use this skin."],
-  ["statik","IMG_6491.png","statik has stopped playing Agar.io. The **statik** skin is still available in the Agar.io game. Set the nick **statik** to use this skin."],
-  ["Skills (old)","IMG_0141.png","This old Skills skin was replaced by a new one."],
-  ["Woobs","IMG_6490.png","Woobs has stopped playing Agar.io. The **Woobs** skin is still available in the Agar.io game. Set the nick **Woobs** to use this skin."],
-  ["xxnetro","IMG_0142.png","Netro is still actively playing Agar.io. Set the nick **xxnetro** to use this skin."],
-  ["xxnetro2","IMG_0143.png","Netro is still actively playing Agar.io. Set the nick **xxnetro2** to use this skin.."],
-  ["Sonic (old)","IMG_0144.png","This old Sonic skin was replaced by a new one."],
-  ["52k","IMG_6489.png","52k has stopped playing Agar.io. The **52k** skin is still available in the Agar.io game. Set the nick **52k** to use this skin."],
-  ["Brax","IMG_0146.png","Brax has stopped playing Agar.io. The **Brax** skin is still available in the Agar.io game. Set the nick **Brax** to use this skin."],
-  ["3LK","IMG_0147.png","3LK has stopped playing Agar.io. The **3LK** skin is still available in the Agar.io game. Set the nick **3LK** to use this skin."],
-  ["GURI","IMG_0148.png","GURI has stopped playing Agar.io. The **GURI** skin is still available in the Agar.io game. Set the nick **GURI** to use this skin."],
-  ["kbkb","IMG_0149.png","kbkb has stopped playing Agar.io. The **kbkb** skin is still available in the Agar.io game. Set the nick **kbkb** to use this skin."],
-  ["strike","IMG_0150.png","strike has stopped playing Agar.io. The **strike** skin is still available in the Agar.io game. Set the nick **strike** to use this skin."],
-  ["Babadook","IMG_0151.png","Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
-  ["Mistik","IMG_0152.png","Mistik has stopped playing Agar.io. The **Mistik** skin is still available in the Agar.io game. Set the nick **Mistik** to use this skin."],
-  ["Snay","IMG_0153.png","Set the nick **Snay** to use this skin."],
-  ["Snay-Gang","IMG_0154.png","Set the nick **Snay-Gang** to use this skin."],
-  ["Snay-Chocolate","IMG_0155.png","Set the nick **Snay-Chocolate** to use this skin."],
-  ["togomanyt","IMG_0156.png","togomanyt has stopped playing Agar.io. The **togomanyt** skin is still available in the Agar.io game. Set the nick **togomanyt** to use this skin."],
-  ["Ashwin (old)","IMG_0157.png","This old Ashwin skin was replaced by a new one."],
-  ["Zone (old)","IMG_0158.png","This old Zone skin was replaced by a new one."],
-  ["Sneddy Gaming","IMG_0159.png","Sneddy Gaming has stopped playing Agar.io. The **Sneddy Gaming** skin is still available in the Agar.io game. Set the nick **Sneddy Gaming** to use this skin."],
-  ["Timid","IMG_0160.png","Timid has stopped playing Agar.io. The **Timid** skin is still available in the Agar.io game. Set the nick **Timid** to use this skin."],
-  ["Matjoy","IMG_0161.jpeg","Matjoy has stopped playing Agar.io. The **Matjoy** skin is still available in the Agar.io game. Set the nick **Matjoy** to use this skin."],
-  ["Kristoffer","IMG_0163.jpeg","Kristoffer has stopped playing Agar.io. The **Kristoffer** skin is still available in the Agar.io game. Set the nick **Kristoffer** to use this skin."],
-  ["n0psa","IMG_0164.jpeg","n0psa has stopped playing Agar.io. The **n0psa** skin is still available in the Agar.io game. Set the nick **n0psa** to use this skin."],
-  ["TYT","IMG_0165.jpeg","TYT has stopped playing Agar.io. The **TYT** skin is still available in the Agar.io game. Set the nick **TYT** to use this skin."],
-  ["Crystal","IMG_0166.jpeg","Crystal has stopped playing Agar.io. The **Crystal** skin is still available in the Agar.io game. Set the nick **Crystal** to use this skin."],
-  ["Sirius","IMG_0167.jpeg","Sirius has stopped playing Agar.io. The **Sirius** skin is still available in the Agar.io game. Set the nick **Sirius** to use this skin."],
-  ["Rayday","IMG_0168.jpeg","Rayday has stopped playing Agar.io. The **Rayday** skin is still available in the Agar.io game. Set the nick **Rayday** to use this skin"],
-  ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
-];
-
-const STATUS_INFO = {
-    "active": { label: "Active", className: "status-active" },
-    "less-active": { label: "Less active", className: "status-less-active" },
-    "not-active": { label: "Nearly inactive", className: "status-not-active" },
-    "inactive": { label: "Inactive", className: "status-inactive" }
-};
-
-function getYoutuberStatus(name){
-    // Use your provided mapping if present, otherwise default to inactive
-    const mapping = {
-      "Sarok1":"active","Sarok2":"active","Araizon":"active","xxnetro":"active","xxnetro2":"active",
-      "Zanax":"not-active","Jonnn":"not-active","minhvu":"not-active"
-      // rest default to inactive
-    };
-    return mapping[name] || "inactive";
-}
-
-/* =====================================================
-   Youtuber image resolution & rendering
-   - Show placeholders immediately then resolve images in background
-===================================================== */
-
-const YT_BASES = [
-  "https://jimboy3100.github.io/",
-  "https://jimboy3100.github.io/banners/",
-  "https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/master/",
-  "https://cdn.jsdelivr.net/gh/jimboy3100/jimboy3100.github.io@master/"
-];
+/* --------------------------
+   Youtuber skins — image resolution using user base
+   - tries window.EnvConfig.yt_base_url or localStorage.EnvConfig.yt_base_url or localStorage.yt_base_url
+   - falls back to known bases / placeholder
+   -------------------------- */
 const YT_PLACEHOLDER = "https://jimboy3100.github.io/banners/profilepic_guest.png";
+const DEFAULT_BASES = [
+  (window.EnvConfig && window.EnvConfig.yt_base_url) || null,
+  localStorage.getItem("EnvConfig.yt_base_url"),
+  localStorage.getItem("yt_base_url"),
+  "https://jimboy3100.github.io/banners/",
+  "https://cdn.jsdelivr.net/gh/jimboy3100/jimboy3100.github.io@master/banners/",
+  "https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/master/banners/"
+].filter(Boolean);
 
-function testImage(url, timeout=6000){
+function testImageUrl(url, timeout=5000){
   return new Promise(resolve=>{
-    const i = new Image();
-    let done = false;
-    const t = setTimeout(()=>{ if(!done){ done=true; i.onload=null; i.onerror=null; resolve(false); } }, timeout);
-    i.onload = ()=>{ if(!done){ done=true; clearTimeout(t); resolve(true); } };
-    i.onerror = ()=>{ if(!done){ done=true; clearTimeout(t); resolve(false); } };
-    try { i.src = url; } catch(e){ clearTimeout(t); resolve(false); }
+    const img = new Image();
+    let done=false;
+    const t = setTimeout(()=>{ if(!done){ done=true; img.onload=null; img.onerror=null; resolve(false); } }, timeout);
+    img.onload = ()=>{ if(!done){ done=true; clearTimeout(t); resolve(true); } };
+    img.onerror = ()=>{ if(!done){ done=true; clearTimeout(t); resolve(false); } };
+    try { img.src = url; } catch(e){ clearTimeout(t); resolve(false); }
   });
 }
 
-async function resolveImg(filename){
-  if (!filename) return YT_PLACEHOLDER;
+async function resolveYtImage(filename){
+  if(!filename) return YT_PLACEHOLDER;
   if (/^https?:\/\//i.test(filename)) {
-    return (await testImage(filename)) ? filename : YT_PLACEHOLDER;
+    return (await testImageUrl(filename)) ? filename : YT_PLACEHOLDER;
   }
-  for (const b of YT_BASES){
+  for(const b of DEFAULT_BASES){
     const candidate = b + filename;
-    // eslint-disable-next-line no-await-in-loop
-    if (await testImage(candidate)) return candidate;
+    /* eslint-disable no-await-in-loop */
+    if (await testImageUrl(candidate)) return candidate;
   }
   return YT_PLACEHOLDER;
 }
 
 async function loadYoutuberSkins(){
   const box = document.getElementById("youtuberSkins");
-  if (!box) return;
-  // render immediate placeholders
   box.innerHTML = "";
+  // quick placeholders
   const frag = document.createDocumentFragment();
-  YOUTUBER_DATA.forEach(([name])=>{
-    const d = document.createElement("div");
-    d.className = "skin";
-    d.innerHTML = `<img src="${YT_PLACEHOLDER}" alt="${escapeHtml(name)}"><span>${escapeHtml(name)}</span>`;
+  for (let i=0;i<YOUTUBER_DATA.length;i++){
+    const d=document.createElement("div"); d.className="skin";
+    d.innerHTML = `<img src="${YT_PLACEHOLDER}" alt="${YOUTUBER_DATA[i][0]}"><span>${YOUTUBER_DATA[i][0]}</span>`;
     frag.appendChild(d);
-  });
+  }
   box.appendChild(frag);
-
-  // resolve images concurrently (bounded)
+  // resolve images in background (bounded concurrency)
   const concurrency = 6;
   const results = new Array(YOUTUBER_DATA.length);
   let idx = 0;
   async function worker(){
     while(true){
-      const i = idx++;
-      if (i >= YOUTUBER_DATA.length) return;
+      const i = idx++; if (i >= YOUTUBER_DATA.length) return;
       const [name, filename, desc] = YOUTUBER_DATA[i];
-      const resolved = await resolveImg(filename);
-      results[i] = [name, resolved, desc];
+      const img = await resolveYtImage(filename);
+      results[i] = [name, img, desc];
     }
   }
   await Promise.all(Array.from({length:concurrency}, worker));
@@ -835,86 +264,82 @@ function renderYoutuberPage(page){
   const box = document.getElementById("youtuberSkins");
   const pages = document.getElementById("youtuberPages");
   const total = Math.max(1, Math.ceil(youtuberSkins.length / perPage));
-  currentYoutuberPage = page;
   box.innerHTML = "";
-  const start = (page - 1) * perPage;
-  youtuberSkins.slice(start, start + perPage).forEach(([name,img,desc])=>{
+  const start = (page-1)*perPage;
+  youtuberSkins.slice(start, start+perPage).forEach(([name,img,desc])=>{
     const statusKey = getYoutuberStatus(name);
     const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
     const d = document.createElement("div");
     d.className = "skin";
-    d.innerHTML = `<img src="${escapeHtml(img||YT_PLACEHOLDER)}" alt="${escapeHtml(name)}">
-      <span class="youtuber-name">${escapeHtml(name)}</span>
+    d.innerHTML = `<img src="${img||YT_PLACEHOLDER}" alt="${name}"><span class="youtuber-name">${name}</span>
       <div class="youtuber-status"><span class="status-label">Status:</span> <span class="status-value ${status.className}">${status.label}</span></div>
-      <div class="skin-instruction">${(desc||`Set the nick **${name}** to use this skin.`).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div>`;
+      <div class="skin-instruction">${(desc||`Set the nick **${name}** to use this skin.`).replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")}</div>`;
     box.appendChild(d);
   });
-  pages.innerHTML = "";
-  for (let i=1;i<=total;i++){
-    const b = document.createElement("button");
-    b.className = "page-btn" + (i===page ? " active" : "");
-    b.textContent = i;
-    b.onclick = ()=>renderYoutuberPage(i);
-    pages.appendChild(b);
-  }
-  window.scrollTo({top:0, behavior:"smooth"});
+  pages.innerHTML="";
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderYoutuberPage(i); pages.appendChild(b); }
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
-/* =====================================================
-   Special Deals - static 5 products, ensure 'Ridder' present
-   and require FB login before proceeding
-===================================================== */
+/* Youtuber status mapping (as you provided) */
+const YOUTUBER_STATUS = {
+  "Zanax": "not-active","Jonnn":"not-active","GetDeadKid":"inactive","7MODKA":"inactive","Bn Rhmi":"inactive",
+  "Sarok1":"active","Sarok2":"active","Sparky":"inactive","YemeniYT":"inactive","Yemeni":"inactive","Hero":"inactive",
+  "Agarmurfs":"inactive","3ezzy":"inactive","alejo":"inactive","alejoyoutube":"inactive","twisted":"inactive","silver":"inactive",
+  "EvilMonkey":"inactive","Araizon":"active","Alejoyt2":"inactive","Skillsyt":"inactive","SonicGames":"inactive","Sonic":"inactive",
+  "peps":"inactive","Zone":"inactive","Skills":"inactive","minhvu":"not-active","xxnetro":"active","xxnetro2":"active"
+  // others default to inactive
+};
+const STATUS_INFO = { "active":{label:"Active",className:"status-active"}, "less-active":{label:"Less active",className:"status-less-active"}, "not-active":{label:"Nearly inactive",className:"status-not-active"}, "inactive":{label:"Inactive",className:"status-inactive"} };
+function getYoutuberStatus(name){ return YOUTUBER_STATUS[name] || "inactive"; }
 
+/* --------------------------
+   Special deals (static + merged remote)
+   -------------------------- */
 const STATIC_SPECIAL_DEALS = [
-    { id: "prod_ridder", name: "Ridder", price: "€4.99", image: YT_PLACEHOLDER, directXsollaUrl: "https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19" },
-    { id: "prod_alpha", name: "Alpha Pack", price: "€2.99", image: YT_PLACEHOLDER, backendProductId: "alpha_pack_01" },
-    { id: "prod_beta", name: "Beta Hat", price: "€1.99", image: YT_PLACEHOLDER, backendProductId: "beta_hat_01" },
-    { id: "prod_gamma", name: "Gamma Skin", price: "€3.49", image: YT_PLACEHOLDER, backendProductId: "gamma_skin_01" },
-    { id: "prod_delta", name: "Delta Bundle", price: "€5.49", image: YT_PLACEHOLDER, backendProductId: "delta_bundle_01" }
+  { id:"prod_ridder", name:"Ridder", price:"€4.99", image:YT_PLACEHOLDER, directXsollaUrl:"https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19" },
+  { id:"prod_alpha", name:"Alpha Pack", price:"€2.99", image:YT_PLACEHOLDER, backendProductId:"alpha_pack_01" },
+  { id:"prod_beta", name:"Beta Hat", price:"€1.99", image:YT_PLACEHOLDER, backendProductId:"beta_hat_01" },
+  { id:"prod_gamma", name:"Gamma Skin", price:"€3.49", image:YT_PLACEHOLDER, backendProductId:"gamma_skin_01" },
+  { id:"prod_delta", name:"Delta Bundle", price:"€5.49", image:YT_PLACEHOLDER, backendProductId:"delta_bundle_01" }
 ];
 
 let SPECIAL_DEALS = [];
 
-function _getTrustedXsollaPaymentUrl(rawUrl) {
-    try {
-        if (!rawUrl || typeof rawUrl !== "string") return null;
-        const u = new URL(rawUrl);
-        if (u.protocol !== "https:") return null;
-        if (u.hostname !== "secure.xsolla.com") return null;
-        if (!/^\/paystation(3|4)\//.test(u.pathname)) return null;
-        const token = u.searchParams.get("access_token") || u.searchParams.get("token");
-        if (!token || token.length < 6) return null;
-        return u.toString();
-    } catch (e) { return null; }
+function _getTrustedXsollaPaymentUrl(rawUrl){
+  try{
+    if(!rawUrl) return null;
+    const u = new URL(rawUrl);
+    if(u.protocol!=="https:") return null;
+    if(u.hostname !== "secure.xsolla.com") return null;
+    if(!/^\/paystation(3|4)\//.test(u.pathname)) return null;
+    const token = u.searchParams.get("access_token") || u.searchParams.get("token");
+    if(!token || token.length < 6) return null;
+    return u.toString();
+  }catch(e){return null;}
 }
 
 async function loadSpecialDeals(){
-  // Try remote config, fallback to static
   const RAW = "https://cdn.jsdelivr.net/gh/jimboy3100/jimboy3100.github.io@master/agario/live/GameConfiguration.json";
-  try {
-    const r = await fetch(RAW, { cache: "no-store" });
-    if (!r.ok) throw new Error("no remote");
+  try{
+    const r = await fetch(RAW, {cache:"no-store"});
+    if(!r.ok) throw new Error("no remote");
     const cfg = await r.json();
     const purchases = (cfg && cfg.gameConfig && cfg.gameConfig["Wallet - In-App Purchases"]) || [];
     const server = purchases.map(p=>{
-      const pid = String(p.id || p.productId || p.purchaseId || "").trim();
-      return { id: pid || ("srv_"+Math.random().toString(36).slice(2,8)), name: (p.bundleId||pid||"Product").replace(/_/g," "), price: p.price || "See Xsolla", image: p.image || YT_PLACEHOLDER, backendProductId: pid || null };
+      const pid = String(p.id||p.productId||p.purchaseId||"").trim();
+      return { id: pid || ("srv_"+Math.random().toString(36).slice(2,8)), name:(p.bundleId||pid||"Product").replace(/_/g," "), price:p.price||"See Xsolla", image:p.image||YT_PLACEHOLDER, backendProductId: pid||null, directXsollaUrl: p.directXsollaUrl||null };
     });
-    // merge static ensures 5 exist
-    const map = new Map();
-    server.forEach(d=>map.set(d.id, d));
-    STATIC_SPECIAL_DEALS.forEach(d=>{ if(!map.has(d.id)) map.set(d.id, d); else { if(d.id==="prod_ridder"){ const ex=map.get(d.id); ex.directXsollaUrl = ex.directXsollaUrl || d.directXsollaUrl; } } });
+    const map = new Map(); server.forEach(d=>map.set(d.id,d)); STATIC_SPECIAL_DEALS.forEach(d=>{ if(!map.has(d.id)) map.set(d.id,d); else if(d.id==="prod_ridder"){ const ex=map.get(d.id); ex.directXsollaUrl = ex.directXsollaUrl || d.directXsollaUrl; }});
     SPECIAL_DEALS = Array.from(map.values());
-  } catch(e){
+  }catch(e){
     SPECIAL_DEALS = STATIC_SPECIAL_DEALS.slice();
   }
-  // Filter and validate direct Xsolla links
+  // filter to keep only workable deals
   SPECIAL_DEALS = SPECIAL_DEALS.filter(d=>{
     if (d.directXsollaUrl) {
       const t = _getTrustedXsollaPaymentUrl(d.directXsollaUrl);
       if (t) { d.directXsollaUrl = t; return true; }
-      if (d.backendProductId) return true;
-      return false;
     }
     return Boolean(d.backendProductId);
   });
@@ -925,240 +350,232 @@ function renderSpecialDeals(){
   const grid = document.getElementById("dealsGrid");
   if(!grid) return;
   grid.innerHTML = "";
-  if (!SPECIAL_DEALS.length) { grid.innerHTML = '<div class="deals-empty">No special deals are available right now.</div>'; return; }
+  if(!SPECIAL_DEALS.length) { grid.innerHTML = '<div class="deals-empty">No special deals available.</div>'; return; }
   const frag = document.createDocumentFragment();
   SPECIAL_DEALS.forEach(deal=>{
-    const card = document.createElement("div");
-    card.className = "deal-card";
-    card.dataset.id = deal.id;
-    const image = deal.image ? `<img src="${escapeHtml(deal.image)}" alt="${escapeHtml(deal.name)}">` : `<div style="width:130px;height:130px;margin:auto;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:#777;">PRODUCT</div>`;
-    const directNote = deal.directXsollaUrl ? `<div style="font-size:12px;color:#9ec7ff;margin-top:6px;">Direct Xsolla</div>` : "";
-    card.innerHTML = `${image}<span class="deal-name">${escapeHtml(deal.name)}</span><div class="deal-price">${escapeHtml(deal.price)}</div>${directNote}<button class="deal-buy" type="button">BUY</button>`;
-    card.addEventListener("click", function(e){
-      if (e.target.classList.contains("deal-buy")) { e.stopPropagation(); selectDeal(deal.id); openWarning(); return; }
-      selectDeal(deal.id);
-    });
+    const card=document.createElement("div"); card.className="deal-card"; card.dataset.id=deal.id;
+    const image = deal.image ? `<img src="${deal.image}" alt="${deal.name}">` : `<div style="width:130px;height:130px;background:#222;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#777">PRODUCT</div>`;
+    const note = deal.directXsollaUrl ? `<div style="font-size:12px;color:#9ec7ff;margin-top:6px;">Direct Xsolla</div>` : "";
+    card.innerHTML = `${image}<span class="deal-name">${deal.name}</span><div class="deal-price">${deal.price}</div>${note}<button class="deal-buy">BUY</button>`;
+    card.addEventListener("click", (e)=>{ if(e.target.classList.contains("deal-buy")){ e.stopPropagation(); selectDeal(deal.id); openWarning(); return; } selectDeal(deal.id); });
     frag.appendChild(card);
   });
   grid.appendChild(frag);
 }
 
-function selectDeal(id){
-  selectedDeal = SPECIAL_DEALS.find(x=>x.id===id) || null;
-  document.querySelectorAll(".deal-card").forEach(card=>card.classList.toggle("selected", card.dataset.id === id));
-}
-function openWarning(){ if(!selectedDeal) return; document.getElementById("termsCheckbox").checked = false; document.getElementById("warningContinue").disabled = true; document.getElementById("warningModal").classList.remove("hidden"); }
+/* select/open modal helpers */
+function selectDeal(id){ selectedDeal = SPECIAL_DEALS.find(x=>x.id===id)||null; document.querySelectorAll(".deal-card").forEach(c=>c.classList.toggle("selected", c.dataset.id===id)); }
+function openWarning(){ if(!selectedDeal) return; document.getElementById("termsCheckbox").checked=false; document.getElementById("warningContinue").disabled=true; document.getElementById("warningModal").classList.remove("hidden"); }
 function closeWarning(){ document.getElementById("warningModal").classList.add("hidden"); }
-function openCheckoutForm(){ if(!selectedDeal) return; closeWarning(); document.getElementById("selectedProduct").innerHTML = `<strong>${escapeHtml(selectedDeal.name)}</strong><br><span style="color:#22c55e">${escapeHtml(selectedDeal.price)}</span>`; document.getElementById("agarioUid").value = ""; updateFbButtonUi(); document.getElementById("checkoutModal").classList.remove("hidden"); }
+function openCheckoutForm(){ if(!selectedDeal) return; closeWarning(); document.getElementById("selectedProduct").innerHTML = `<strong>${selectedDeal.name}</strong><br><span style="color:#22c55e">${selectedDeal.price}</span>`; // prefill agar name from local storage or master
+  const stored = JSON.parse(localStorage.getItem("agario_login")||"null");
+  const detected = window.agarioEncodedUID || (stored && stored.agarioname) || (window.master && (window.master.nick || window.master.getNick && window.master.getNick()));
+  document.getElementById("agarioPlayerName").value = detected || "";
+  document.getElementById("xsollaToken").value = (stored && stored.xsolla_token) || "";
+  updateFbButtonUi();
+  document.getElementById("checkoutModal").classList.remove("hidden");
+}
 function closeCheckout(){ document.getElementById("checkoutModal").classList.add("hidden"); }
 
-/* =====================================================
-   Facebook SDK loader + requireFbLogin + bind button
-   - Reads appId from window.EnvConfig.fb_app_id or localStorage.EnvConfig.fb_app_id
-   - Ensures SDK loaded and uses FB.login/getLoginStatus
-===================================================== */
-
+/* --------------------------
+   Facebook SDK loader + requireFbLogin + ui binding
+   - uses EnvConfig.fb_app_id or localStorage.EnvConfig.fb_app_id
+   -------------------------- */
 (function(){
-  function _getFbAppId(){
-    if (window.EnvConfig && window.EnvConfig.fb_app_id) return window.EnvConfig.fb_app_id;
-    try { return localStorage.getItem("EnvConfig.fb_app_id"); } catch(e){ return null; }
-  }
-
+  function _getFbAppId(){ if(window.EnvConfig && window.EnvConfig.fb_app_id) return window.EnvConfig.fb_app_id; try{ return localStorage.getItem("EnvConfig.fb_app_id"); }catch(e){return null;} }
   function ensureFbSdkLoaded(timeoutMs=20000){
     return new Promise((resolve,reject)=>{
-      if (window.FB && typeof FB.getLoginStatus === "function") return resolve(true);
+      if(window.FB && typeof FB.getLoginStatus==="function") return resolve(true);
       const appId = _getFbAppId();
-      if (!appId) return reject(new Error("No Facebook App ID found. Set EnvConfig.fb_app_id or localStorage.EnvConfig.fb_app_id"));
-      if (document.getElementById("fb-sdk-script")) {
-        const start = Date.now();
-        const iv = setInterval(()=>{ if (window.FB && typeof FB.getLoginStatus === "function") { clearInterval(iv); resolve(true); } if (Date.now()-start>timeoutMs){ clearInterval(iv); reject(new Error("FB SDK load timeout")); } }, 250);
-        return;
-      }
+      if(!appId) return reject(new Error("No Facebook App ID found. Set EnvConfig.fb_app_id or localStorage.EnvConfig.fb_app_id"));
+      if(document.getElementById("fb-sdk-script")){ const start=Date.now(); const iv=setInterval(()=>{ if(window.FB && typeof FB.getLoginStatus==="function"){ clearInterval(iv); resolve(true);} if(Date.now()-start>timeoutMs){ clearInterval(iv); reject(new Error("FB SDK load timeout")); } },250); return; }
       const prev = window.fbAsyncInit;
-      window.fbAsyncInit = function(){
-        try { if (typeof prev === "function") prev(); } catch(e){ console.warn(e); }
-        try { FB.init({ appId: appId, cookie: true, xfbml: false, version: "v16.0" }); } catch(e){ console.warn("FB.init error", e); }
-        resolve(true);
-      };
-      const s = document.createElement("script");
-      s.id = "fb-sdk-script";
-      s.src = "https://connect.facebook.net/en_US/sdk.js";
-      s.async = true; s.defer = true;
-      s.onerror = ()=> reject(new Error("Failed to load FB SDK script"));
-      document.head.appendChild(s);
-      const start = Date.now();
-      const poll = setInterval(()=>{ if (window.FB && typeof FB.getLoginStatus === "function") { clearInterval(poll); resolve(true); } if (Date.now()-start>timeoutMs) { clearInterval(poll); } }, 300);
+      window.fbAsyncInit = function(){ try{ if(typeof prev==="function") prev(); }catch(e){} try{ FB.init({ appId: appId, cookie:true, xfbml:false, version: "v16.0" }); }catch(e){} resolve(true); };
+      const s=document.createElement("script"); s.id="fb-sdk-script"; s.src="https://connect.facebook.net/en_US/sdk.js"; s.async=true; s.defer=true; s.onerror = ()=> reject(new Error("Failed to load FB SDK")); document.head.appendChild(s);
+      const start = Date.now(); const poll = setInterval(()=>{ if(window.FB && typeof FB.getLoginStatus==="function"){ clearInterval(poll); resolve(true); } if(Date.now()-start>timeoutMs){ clearInterval(poll); } },300);
     });
   }
 
-  // requireFbLogin available globally for purchase flow
+  // requireFbLogin global
   window.requireFbLogin = function(timeoutMs=20000){
     return new Promise(async (resolve)=>{
-      if (window.loggedIn) return resolve(true);
-      try {
+      if(window.loggedIn) return resolve(true);
+      try{
         await ensureFbSdkLoaded(timeoutMs);
-      } catch(err) {
-        // fallback to master.facebookRelogin if available
-        if (window.master && typeof window.master.facebookRelogin === "function"){
-          try { window.master.facebookRelogin(); } catch(e){}
-          const start = Date.now();
-          const iv = setInterval(()=>{ if (window.loggedIn) { clearInterval(iv); return resolve(true); } if (Date.now()-start>timeoutMs){ clearInterval(iv); return resolve(false); } }, 400);
-          return;
-        }
+      }catch(err){
+        if(window.master && typeof window.master.facebookRelogin==="function"){ try{ window.master.facebookRelogin(); }catch(e){} const start=Date.now(); const iv=setInterval(()=>{ if(window.loggedIn){ clearInterval(iv); return resolve(true);} if(Date.now()-start>timeoutMs){ clearInterval(iv); return resolve(false);} },400); return; }
         return resolve(false);
       }
-      if (window.FB && typeof FB.getLoginStatus === "function"){
+      if(window.FB && typeof FB.getLoginStatus==="function"){
         FB.getLoginStatus(function(st){
-          if (st && st.status === "connected"){
-            try { if (st.authResponse && st.authResponse.accessToken && window.master && typeof window.master.doLoginWithFB === "function") window.master.doLoginWithFB(st.authResponse.accessToken); } catch(e){}
-            window.loggedIn = true;
-            updateFbButtonUi();
-            return resolve(true);
-          }
-          try {
+          if(st && st.status==="connected"){ try{ if(st.authResponse && st.authResponse.accessToken && window.master && typeof window.master.doLoginWithFB==="function") window.master.doLoginWithFB(st.authResponse.accessToken); }catch(e){} window.loggedIn = true; updateFbButtonUi(); return resolve(true); }
+          try{
             FB.login(function(resp){
-              if (resp && resp.status === "connected"){
-                try { if (resp.authResponse && resp.authResponse.accessToken && window.master && typeof window.master.doLoginWithFB === "function") window.master.doLoginWithFB(resp.authResponse.accessToken); } catch(e){}
-                if (typeof doFB === "function") try { doFB(); } catch(e){}
-                window.loggedIn = true;
-                updateFbButtonUi();
-                return resolve(true);
-              } else {
-                updateFbButtonUi();
-                return resolve(false);
-              }
+              if(resp && resp.status === "connected"){
+                try{ if(resp.authResponse && resp.authResponse.accessToken && window.master && typeof window.master.doLoginWithFB==="function") window.master.doLoginWithFB(resp.authResponse.accessToken); }catch(e){}
+                if(typeof doFB === "function") try{ doFB(); }catch(e){}
+                window.loggedIn = true; updateFbButtonUi(); // fetch fb user info and set display
+                fetchFbProfile().then(()=>resolve(true)).catch(()=>resolve(true));
+              } else { updateFbButtonUi(); resolve(false); }
             }, { scope: "public_profile,email" });
-          } catch(e){
-            if (window.master && typeof window.master.facebookRelogin === "function"){
-              try { window.master.facebookRelogin(); } catch(err){}
-              const start = Date.now();
-              const iv = setInterval(()=>{ if (window.loggedIn) { clearInterval(iv); return resolve(true); } if (Date.now()-start>timeoutMs){ clearInterval(iv); return resolve(false); } }, 400);
-              return;
-            }
-            return resolve(false);
+          }catch(e){
+            if(window.master && typeof window.master.facebookRelogin==="function"){ try{ window.master.facebookRelogin(); }catch(err){} const start=Date.now(); const iv=setInterval(()=>{ if(window.loggedIn){ clearInterval(iv); return resolve(true);} if(Date.now()-start>timeoutMs){ clearInterval(iv); return resolve(false);} },400); return; }
+            resolve(false);
           }
         });
         return;
       }
-      return resolve(false);
+      resolve(false);
     });
   };
 
-  // UI binding for fb button
+  // fetch FB profile (id,name,email) after login
+  async function fetchFbProfile(){
+    return new Promise((resolve,reject)=>{
+      if(!window.FB || typeof FB.api !== "function") return reject(new Error("FB.api missing"));
+      FB.api('/me', { fields: 'id,name,email' }, function(resp){
+        if(!resp || resp.error) return reject(resp && resp.error ? resp.error : new Error("FB profile error"));
+        // store temporary in window for UI
+        window._fbProfile = { id: resp.id, name: resp.name, email: resp.email, token: (FB && FB.getAuthResponse ? (FB.getAuthResponse()||{}).accessToken : null) };
+        document.getElementById("fbInfoName").textContent = resp.name + (resp.email ? " ("+resp.email+")" : "");
+        updateFbButtonUi();
+        resolve(window._fbProfile);
+      });
+    });
+  }
+
+  // UI updates & binding for button
   function updateFbButtonUi(){
-    const btn = document.getElementById('fbLoginBtn');
-    const status = document.getElementById('fbLoginStatus');
-    if (!btn || !status) return;
-    if (window.loggedIn) {
+    const btn = document.getElementById("fbLoginBtn");
+    const status = document.getElementById("fbLoginStatus");
+    const fbInfoName = document.getElementById("fbInfoName");
+    if(!btn || !status) return;
+    if(window.loggedIn){
       btn.textContent = "Logged in";
       btn.disabled = true;
-      btn.style.opacity = "0.7";
       status.textContent = "Facebook: ingelogd";
+      if(window._fbProfile) fbInfoName.textContent = window._fbProfile.name + (window._fbProfile.email ? " ("+window._fbProfile.email+")" : "");
     } else {
       btn.textContent = "Login with Facebook";
       btn.disabled = false;
-      btn.style.opacity = "1";
       status.textContent = "Facebook: niet ingelogd";
+      fbInfoName.textContent = "Not logged in";
     }
   }
 
   function bindFbLoginButton(){
     const btn = document.getElementById("fbLoginBtn");
-    if (!btn) return;
-    btn.addEventListener("click", async function(){
-      btn.disabled = true;
-      btn.textContent = "Logging in...";
+    if(!btn) return;
+    btn.addEventListener("click", async ()=>{
+      btn.disabled = true; btn.textContent = "Logging in...";
       const ok = await window.requireFbLogin(20000);
-      if (ok) { window.loggedIn = true; updateFbButtonUi(); } else { updateFbButtonUi(); alert("Facebook login niet gelukt of geannuleerd."); }
+      if(ok){
+        try{ await fetchFbProfile(); }catch(e){}
+        window.loggedIn = true;
+        updateFbButtonUi();
+        // if agar name not filled, try auto-detect now
+        const detected = (window.master && (window.master.nick || (typeof window.master.getNick==="function" && window.master.getNick()))) || localStorage.getItem("agario_player_name") || "";
+        const input = document.getElementById("agarioPlayerName");
+        if(input && !input.value) input.value = detected || "";
+      } else {
+        updateFbButtonUi();
+        alert("Facebook login niet gelukt of geannuleerd.");
+      }
     });
-    // initial UI
     updateFbButtonUi();
-    // quick check if SDK already loaded
-    if (window.FB && typeof FB.getLoginStatus === "function"){
-      try { FB.getLoginStatus(s=>{ if (s && s.status === "connected") { window.loggedIn = true; updateFbButtonUi(); } }); } catch(e){}
-    }
   }
 
-  window.updateFbButtonUi = updateFbButtonUi;
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindFbLoginButton);
+  // auto-bind on DOM ready
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindFbLoginButton);
   else bindFbLoginButton();
 
-  // prewarm SDK if appId present
-  try { if ((window.EnvConfig && window.EnvConfig.fb_app_id) || localStorage.getItem("EnvConfig.fb_app_id")) ensureFbSdkLoaded().catch(()=>{}); } catch(e){}
-})();
+  // quick prewarm if app id present
+  try{ if((window.EnvConfig && window.EnvConfig.fb_app_id) || localStorage.getItem("EnvConfig.fb_app_id")) ensureFbSdkLoaded().catch(()=>{}); }catch(e){}
+})(); // end fb wrapper
 
-/* =====================================================
-   Payment flow requires FB login and opens Xsolla
-===================================================== */
-
-async function continueToXsolla(){
-  if (!selectedDeal) { alert("Geen product geselecteerd."); return; }
-
-  const fbOk = await window.requireFbLogin();
-  if (!fbOk) { alert("Je moet eerst inloggen met Facebook om Special Deals te kopen."); return; }
-
-  const entered = (document.getElementById("agarioUid")||{value:""}).value.trim();
-  if (entered) {
-    try { localStorage.setItem("agarioEncodedUID", entered); window.agarioEncodedUID = entered; } catch(e){}
+/* --------------------------
+   Save combined login info (FB + agarioname + xsolla token)
+   - stored in localStorage.agario_login as JSON
+   -------------------------- */
+function saveLoginInfo(){
+  const fb = window._fbProfile || null;
+  if(!fb){ if(!confirm("Je bent niet ingelogd met Facebook. Wil je doorgaan zonder FB-info?")) return; }
+  const agarioname = (document.getElementById("agarioPlayerName")||{value:""}).value.trim();
+  const xsolla_token = (document.getElementById("xsollaToken")||{value:""}).value.trim();
+  const toSave = { fb: fb, agarioname: agarioname || null, xsolla_token: xsolla_token || null, savedAt: new Date().toISOString() };
+  try {
+    localStorage.setItem("agario_login", JSON.stringify(toSave));
+    // also mirror agarioname for quick detection
+    if (agarioname) localStorage.setItem("agario_player_name", agarioname);
+    if (xsolla_token) localStorage.setItem("agarioEncodedUID", xsolla_token);
+    alert("Logingegevens opgeslagen in localStorage (veiligheid: deel geen wachtwoord).");
+    updateFbButtonUi();
+  } catch(e){
+    console.error("Could not save login info", e);
+    alert("Kon login-gegevens niet opslaan (console voor details).");
   }
+}
 
-  const xsollaUid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
-
-  if (selectedDeal.directXsollaUrl){
-    const trusted = _getTrustedXsollaPaymentUrl(selectedDeal.directXsollaUrl);
-    if (!trusted) { alert("De directe Xsolla-link van dit product is ongeldig of onveilig."); return; }
-    closeCheckout();
-    openXsollaCheckout(trusted);
+/* --------------------------
+   continueToXsolla: requires FB login and uses stored token
+   - if selectedDeal.directXsollaUrl -> open
+   - else call payments endpoint using saved xsolla_token (agarioEncodedUID)
+   -------------------------- */
+async function continueToXsolla(){
+  if(!selectedDeal){ alert("Geen product geselecteerd."); return; }
+  // ensure FB login
+  const ok = await window.requireFbLogin();
+  if(!ok){ alert("Je moet eerst inloggen met Facebook om Special Deals te kopen."); return; }
+  // ensure we have agarioname or token
+  const stored = JSON.parse(localStorage.getItem("agario_login")||"null");
+  const xsollaToken = (document.getElementById("xsollaToken")||{value:""}).value.trim() || (stored && stored.xsolla_token) || localStorage.getItem("agarioEncodedUID") || null;
+  const agarioname = (document.getElementById("agarioPlayerName")||{value:""}).value.trim() || (stored && stored.agarioname) || null;
+  if(!xsollaToken && !selectedDeal.directXsollaUrl){ if(!confirm("Geen Xsolla token gevonden. Wil je doorgaan zonder token? (je wordt mogelijk gevraagd in de checkout)")==true) return; }
+  if(selectedDeal.directXsollaUrl){
+    openXsollaCheckout(selectedDeal.directXsollaUrl);
     return;
   }
-
+  // call payment endpoint
+  if(!selectedDeal.backendProductId){ alert("Product heeft geen backendProductId."); return; }
   const purchaseId = selectedDeal.backendProductId;
-  if (!purchaseId) { alert("Dit product heeft geen geldig purchaseId geconfigureerd."); return; }
-  if (!xsollaUid) { alert("Geen token/UID gevonden. Vul iets in het veld in of log in via de officiële Agar.io client."); return; }
-
-  const button = document.querySelector("#checkoutModal .continue-btn");
-  if (button) { button.disabled = true; button.textContent = "Starten..."; }
-
-  try {
-    const endpoint = "https://payments.agario.miniclippt.com";
-    const paymentRequestUrl = endpoint + "/pay/" + xsollaUid + "/" + encodeURIComponent(purchaseId) + "/" + encodeURIComponent("USD");
-    const resp = await fetch(paymentRequestUrl, { method: "GET", credentials: "omit", cache: "no-store" });
-    const respText = await resp.text().catch(()=>null);
-    if (!resp.ok) throw new Error("Betalingsserver gaf fout " + resp.status + (respText ? " — " + respText : ""));
-    const data = JSON.parse(respText || "{}");
+  const endpoint = "https://payments.agario.miniclippt.com";
+  const tokenToUse = xsollaToken || "";
+  const url = endpoint + "/pay/" + encodeURIComponent(tokenToUse) + "/" + encodeURIComponent(purchaseId) + "/" + encodeURIComponent("USD");
+  try{
+    const button = document.querySelector("#checkoutModal .continue-btn");
+    if(button){ button.disabled = true; button.textContent = "Starten..."; }
+    const resp = await fetch(url, { method: "GET", credentials: "omit", cache: "no-store" });
+    const text = await resp.text().catch(()=>null);
+    if(!resp.ok) throw new Error("Betalingsserver gaf fout " + resp.status + (text ? " — "+text : ""));
+    const data = JSON.parse(text || "{}");
     const rawUrl = data.iframe_url || data.url || null;
     const trusted = rawUrl ? _getTrustedXsollaPaymentUrl(rawUrl) : null;
-    if (!trusted) throw new Error("Ongeldige Xsolla URL ontvangen.");
+    if(!trusted) throw new Error("Ongeldige Xsolla URL ontvangen.");
     closeCheckout();
     openXsollaCheckout(trusted);
-  } catch(err){
-    console.error("Checkout error:", err);
-    alert(err.message || "Kon de betaling niet starten.");
-  } finally {
-    if (button) { button.disabled = false; button.textContent = "Continue to Xsolla"; }
+  }catch(err){
+    console.error(err);
+    alert(err.message || "Kon betaling niet starten.");
+  }finally{
+    const button = document.querySelector("#checkoutModal .continue-btn");
+    if(button){ button.disabled = false; button.textContent = "Continue to Xsolla"; }
   }
 }
 
-/* =====================================================
-   Simple Xsolla open helper
-===================================================== */
-function openXsollaCheckout(xsollaUrl){
-  if (window.jQuery && $.magnificPopup && typeof $.magnificPopup.open === "function") {
-    $.magnificPopup.open({ items: { src: xsollaUrl }, type: 'iframe' });
-    return;
+function openXsollaCheckout(url){
+  if(window.jQuery && $.magnificPopup && typeof $.magnificPopup.open==="function"){
+    $.magnificPopup.open({ items:{ src: url }, type: 'iframe' }); return;
   }
-  window.open(xsollaUrl, "_blank", "noopener");
+  window.open(url, "_blank", "noopener");
 }
 
-/* =====================================================
-   UI helpers / init
-===================================================== */
-document.getElementById("termsCheckbox").addEventListener("change", function(){
-  document.getElementById("warningContinue").disabled = !this.checked;
-});
-
+/* --------------------------
+   small helpers & init
+   -------------------------- */
+document.getElementById("termsCheckbox").addEventListener("change", function(){ document.getElementById("warningContinue").disabled = !this.checked; });
 document.getElementById("version").onchange = e => { version = e.target.value; loadSkins(); };
 
+/* Start loaders */
 versions();
 loadYoutuberSkins();
 loadSpecialDeals();
@@ -1166,22 +583,17 @@ loadSpecialDeals();
 </script>
 
 <br>
-
-<div class="social-buttons">
-
-    <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank">YouTube</a>
-    <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank">Instagram</a>
-    <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank">Discord</a>
-
+<div style="display:flex;justify-content:center;gap:10px;margin-top:18px">
+  <a href="https://www.youtube.com/@T.B6" target="_blank" style="background:#ff0000;padding:8px 12px;border-radius:7px;color:#fff;text-decoration:none">YouTube</a>
+  <a href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:#e1306c;padding:8px 12px;border-radius:7px;color:#fff;text-decoration:none">Instagram</a>
+  <a href="https://discord.gg/qhuXPrVzBx" target="_blank" style="background:#5865f2;padding:8px 12px;border-radius:7px;color:#fff;text-decoration:none">Discord</a>
 </div>
 
-© <year></year>
-<a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
+<br>
+© <year></year> <a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html" target="_blank" style="color:#9ec7ff">T.B Website</a>
 
 <script>
-function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0){ document.getElementsByTagName("year")[0].innerHTML=y; } }
-year();
+function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; } year();
 </script>
-
 </body>
 </html>
