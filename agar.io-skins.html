@@ -66,6 +66,19 @@ h1{font-size:28px;margin:18px 0}
 .status-not-active{ color:#f97316 }
 .status-inactive{ color:#ef4444 }
 
+/* Skin instruction (lange tekst teruggezet) */
+.skin-instruction{
+    margin-top:10px;
+    font-size:13px;
+    line-height:1.5;
+    color:#bbb;
+    white-space:normal;
+    text-align:left;
+    max-height:240px;
+    overflow:auto;
+}
+.skin-instruction strong{ color:#fff }
+
 /* Modal */
 .modal-overlay{position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.75);display:flex;justify-content:center;align-items:flex-start;padding:40px 20px;z-index:9999}
 .modal{background:#0f1724;border:1px solid #223;padding:18px;max-width:1000px;width:100%;border-radius:10px;color:#fff}
@@ -482,32 +495,67 @@ function updateLogoInList(name, logoUrl){
 
 /* =====================================================
    YOUTUBER PAGINATION (image cards)
+   --- renderYoutuberPage is replaced to show full/long description text
 ===================================================== */
 function renderYoutuberPage(page){
-  const perPage = 30;
-  const box = document.getElementById("youtuberSkins");
-  const pages = document.getElementById("youtuberPages");
-  const total = Math.ceil(youtuberSkins.length / perPage);
-  currentYoutuberPage = page;
-  box.innerHTML = "";
-  const start = (page-1)*perPage;
-  youtuberSkins.slice(start,start+perPage).forEach(skin=>{
-    const name = skin[0], img = skin[1], instruction = skin[2] || `Set the nick **${name}** to use this skin.`;
-    const d = document.createElement("div"); d.className = "skin";
-    const statusKey = getYoutuberStatus(name); const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-    d.innerHTML = `
-      <img src="${img}" alt="${name}">
-      <span class="youtuber-name">${name}</span>
-      <div class="youtuber-status"><span class="status-label">Status:</span>
-        <span class="status-value ${status.className}">${status.label}</span>
-      </div>
-      <div class="skin-instruction">${instruction.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div>
-    `;
-    box.appendChild(d);
-  });
-  pages.innerHTML = "";
-  for(let i=1;i<=total;i++){ const b=document.createElement("button");b.className="page-btn"+(i===page?" active":"");b.textContent=i;b.onclick=()=>renderYoutuberPage(i);pages.appendChild(b); }
-  window.scrollTo({ top:0, behavior:"smooth" });
+    const perPage = 30;
+    const box = document.getElementById("youtuberSkins");
+    const pages = document.getElementById("youtuberPages");
+    const total = Math.ceil(youtuberSkins.length / perPage);
+    currentYoutuberPage = page;
+    box.innerHTML = "";
+    const start = (page - 1) * perPage;
+
+    youtuberSkins
+        .slice(start, start + perPage)
+        .forEach((skin) => {
+
+            const name = skin[0];
+            const img = skin[1];
+            // use the full description text (allow HTML from **bold** conversion)
+            const fullDescription = (skin[2] || `Set the nick **${name}** to use this skin.`)
+                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+            const d = document.createElement("div");
+            d.className = "skin";
+
+            const statusKey = getYoutuberStatus(name);
+            const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+
+            d.innerHTML = `
+                <img src="${img}" alt="${name}">
+                <span class="youtuber-name">${name}</span>
+
+                <div class="youtuber-status">
+                    <span class="status-label">Status:</span>
+                    <span class="status-value ${status.className}">
+                        ${status.label}
+                    </span>
+                </div>
+
+                <div class="skin-instruction">
+                    ${fullDescription}
+                </div>
+            `;
+
+            box.appendChild(d);
+
+        });
+
+    pages.innerHTML = "";
+
+    for (let i = 1; i <= total; i++) {
+        const b = document.createElement("button");
+        b.className = "page-btn" + (i === page ? " active" : "");
+        b.textContent = i;
+        b.onclick = () => renderYoutuberPage(i);
+        pages.appendChild(b);
+    }
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
 /* =====================================================
