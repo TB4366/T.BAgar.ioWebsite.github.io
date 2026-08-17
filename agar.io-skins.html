@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Agar.io Skin - @t.bagar.io</title>
 <style>
-/* Basis-styling (zelfde als eerder) */
+/* Basis-styling */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
 h1{font-size:28px;margin:18px 0}
 
@@ -25,20 +25,22 @@ h1{font-size:28px;margin:18px 0}
 /* Youtuber skins (image cards) */
 #youtuberSkins{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding:15px;max-width:1100px;margin:auto}
 
-/* Agar.io Youtubers (name + status + logo) */
+/* Agar.io Youtubers (image + name + status) */
 #youtubersList{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding:15px;max-width:1100px;margin:auto}
 
-/* Skin cards */
+/* Skin / card styling */
 .skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px}
 .skin:hover{border-color:#1683ff}
-.skin img{width:90px;height:90px;border-radius:50%;object-fit:contain}
-#youtuberSkins .skin img{width:120px;height:120px}
+.skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
+#youtuberSkins .skin img{width:120px;height:120px;border-radius:50%}
 .skin span{display:block;margin-top:6px;font-size:13px}
 
-/* Name-only cards */
+/* Specific for agario youtubers card image (slightly bigger) */
+.yt-card-img{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
+
+/* Name-only / layout helper */
 .name-only{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border-radius:8px;min-height:80px}
 .name-only .youtuber-name{font-size:16px;margin-top:0;color:#fff}
-.name-only .logo{width:48px;height:48px;border-radius:6px;object-fit:cover;background:#071022;display:inline-block}
 
 /* Pagination */
 #pages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:30px 15px 40px}
@@ -58,7 +60,7 @@ h1{font-size:28px;margin:18px 0}
 .hidden{display:none}
 
 /* Status */
-.youtuber-status{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:13px}
+.youtuber-status{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:6px;font-size:13px}
 .status-label{color:#fff}
 .status-value{font-weight:bold}
 .status-active{ color:#22c55e }
@@ -66,7 +68,7 @@ h1{font-size:28px;margin:18px 0}
 .status-not-active{ color:#f97316 }
 .status-inactive{ color:#ef4444 }
 
-/* Skin instruction (lange tekst teruggezet) */
+/* Skin instruction (lange tekst) */
 .skin-instruction{
     margin-top:10px;
     font-size:13px;
@@ -137,7 +139,7 @@ h1{font-size:28px;margin:18px 0}
   <div id="youtuberPages"></div>
 </div>
 
-<!-- AGARIO YOUTUBERS (name + status + logo) -->
+<!-- AGARIO YOUTUBERS (image + name + status) -->
 <div id="agarioYoutubersSection" class="hidden">
   <div id="youtubersList">Loading Agar.io Youtubers...</div>
   <div id="youtubersPages"></div>
@@ -172,7 +174,7 @@ h1{font-size:28px;margin:18px 0}
 
 <script>
 /* =========================
-   Config / Data (YOUTUBER_DATA exact zoals aangeleverd)
+   Data en configuratie
 ========================= */
 
 const API = "https://configs-web.agario.miniclippt.com/live/";
@@ -181,8 +183,9 @@ let allSkins = [];
 let youtuberSkins = []; // [name, img, instruction]
 let currentAgarioPage = 1, currentYoutuberPage = 1, currentYoutubersListPage = 1;
 
-// status map (zelfde als voorheen)
+/* Status map - toegevoegd T.B als active */
 const YOUTUBER_STATUS = {
+  "T.B": "active",
   "Zanax": "not-active","Jonnn": "not-active","GetDeadKid": "inactive","7MODKA": "inactive",
   "Bn Rhmi": "inactive","Sarok1": "active","Sarok2": "active","Sparky": "inactive","YemeniYT": "inactive",
   "Yemeni": "inactive","Hero": "inactive","Agarmurfs": "inactive","3ezzy": "inactive","alejo": "inactive",
@@ -209,8 +212,9 @@ const STATUS_INFO = {
 
 function getYoutuberStatus(name){ return YOUTUBER_STATUS[name] || "inactive"; }
 
-/* YOUTUBER_DATA: precies zoals jij stuurde */
+/* YOUTUBER_DATA - inclusief T.B met IMG_9766.jpeg */
 const YOUTUBER_DATA = [
+    ["T.B","IMG_9766.jpeg","T.B is actief op Agar.io. Set the nick **T.B** to use this skin."],
     ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
     ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
     ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
@@ -285,11 +289,7 @@ const YOUTUBER_DATA = [
     ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
 ];
 
-/* =====================================================
-   Cache voor voorgehaalde YouTube-data
-   Structure:
-   youtuberMeta[name] = { loaded: bool, logo: url, channelDescription: str, videoIds: [..] }
-===================================================== */
+/* Cache voor voorgehaalde YouTube-data */
 const youtuberMeta = {};
 
 /* =====================================================
@@ -398,7 +398,7 @@ function renderAgarioPage(page){
 }
 
 /* =====================================================
-   LOAD YOUTUBER SKINS (image cards) AND SETUP PRELOAD
+   LOAD YOUTUBER SKINS (image cards) AND START PRELOAD
 ===================================================== */
 async function loadYoutuberSkins(){
   const box = document.getElementById("youtuberSkins");
@@ -415,33 +415,25 @@ async function loadYoutuberSkins(){
 }
 
 /* =====================================================
-   PRELOAD: Batch processing to avoid too many concurrent fetches
+   PRELOAD (best-effort)
 ===================================================== */
 async function startPreloadAllYoutubers(){
   const statusBadge = document.getElementById("preloadStatus");
   statusBadge.style.display = "inline-block";
-  const batchSize = 6;            // aantal tegelijk
-  const delayBetweenBatches = 800; // ms
-
+  const batchSize = 6;
+  const delayBetweenBatches = 800;
   const names = youtuberSkins.map(s => s[0]);
-
-  // Initialize entries
   names.forEach(n => { youtuberMeta[n] = { loaded:false, logo:null, channelDescription:null, videoIds:[] } });
-
   for(let i=0;i<names.length;i+=batchSize){
     const batch = names.slice(i, i+batchSize);
     await Promise.all(batch.map(name => preloadYoutuber(name)));
     await sleep(delayBetweenBatches);
   }
-
   statusBadge.style.display = "none";
 }
 
-/* preload single youtuber: fetch search page, attempt to extract videos, channel avatar and about */
 async function preloadYoutuber(name){
-  // If already loaded, skip
   if(youtuberMeta[name] && youtuberMeta[name].loaded) return;
-
   try{
     const data = await fetchYouTubeData(name);
     youtuberMeta[name] = {
@@ -450,41 +442,26 @@ async function preloadYoutuber(name){
       channelDescription: data.channelDescription || data.generatedDescription || null,
       videoIds: data.videoIds || []
     };
-    // if logo found, update the UI list elements to show it
     updateLogoInList(name, youtuberMeta[name].logo);
   }catch(err){
-    // mark as loaded but empty (fallbacks)
     youtuberMeta[name] = { loaded:true, logo:null, channelDescription:null, videoIds:[] };
   }
 }
 
-/* Update logo for a given youtuber in the list (if element exists) */
 function updateLogoInList(name, logoUrl){
   const list = document.getElementById("youtubersList");
   if(!list) return;
-  const items = list.querySelectorAll(".name-only");
+  const items = list.querySelectorAll(".skin");
   items.forEach(item=>{
     const nm = item.getAttribute("data-name");
     if(nm === name){
-      const imgEl = item.querySelector(".logo");
+      const imgEl = item.querySelector("img");
       if(logoUrl){
-        imgEl.style.backgroundImage = `url('${logoUrl}')`;
-        imgEl.style.backgroundSize = "cover";
-        imgEl.textContent = "";
+        imgEl.src = logoUrl;
       } else {
-        // if no logo, try to use skin image by name lookup
         const skin = youtuberSkins.find(s => s[0]===name);
         if(skin && skin[1]){
-          imgEl.style.backgroundImage = `url('${API + version + "/" + skin[1]}')`;
-          imgEl.style.backgroundSize = "cover";
-          imgEl.textContent = "";
-        } else {
-          imgEl.textContent = "YT";
-          imgEl.style.display = "inline-block";
-          imgEl.style.color = "#9bd1ff";
-          imgEl.style.fontSize = "12px";
-          imgEl.style.lineHeight = "48px";
-          imgEl.style.textAlign = "center";
+          imgEl.src = API + version + "/" + skin[1];
         }
       }
     }
@@ -492,8 +469,7 @@ function updateLogoInList(name, logoUrl){
 }
 
 /* =====================================================
-   YOUTUBER PAGINATION (image cards)
-   --- renderYoutuberPage is replaced to show full/long description text
+   YOUTUBER PAGINATION (image cards) - long descriptions shown
 ===================================================== */
 function renderYoutuberPage(page){
     const perPage = 30;
@@ -510,7 +486,6 @@ function renderYoutuberPage(page){
 
             const name = skin[0];
             const img = skin[1];
-            // use the full description text (allow HTML from **bold** conversion)
             const fullDescription = (skin[2] || `Set the nick **${name}** to use this skin.`)
                 .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
 
@@ -521,7 +496,7 @@ function renderYoutuberPage(page){
             const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
 
             d.innerHTML = `
-                <img src="${img}" alt="${name}">
+                <img src="${API + version + "/" + img}" alt="${name}">
                 <span class="youtuber-name">${name}</span>
 
                 <div class="youtuber-status">
@@ -557,7 +532,8 @@ function renderYoutuberPage(page){
 }
 
 /* =====================================================
-   AGARIO YOUTUBERS LIST (name + status + logo), click opens modal
+   AGARIO YOUTUBERS: render as image card + name + status
+   (this is the change: show image (round), name below, status below)
 ===================================================== */
 function renderYoutubersListPage(page){
   const perPage = 30;
@@ -567,41 +543,48 @@ function renderYoutubersListPage(page){
   currentYoutubersListPage = page;
   box.innerHTML = "";
   const start = (page-1)*perPage;
+
   youtuberSkins.slice(start,start+perPage).forEach(skin=>{
     const name = skin[0], img = skin[1];
-    const d = document.createElement("div"); d.className = "skin name-only"; d.setAttribute("data-name", name);
-    const statusKey = getYoutuberStatus(name); const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-    // logo container
-    const logoHtml = `<div class="logo" style="background:#071022;"></div>`;
+    const d = document.createElement("div");
+    d.className = "skin";
+    d.setAttribute("data-name", name);
+
+    const statusKey = getYoutuberStatus(name);
+    const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+
+    // show image (round), name and status
     d.innerHTML = `
-      ${logoHtml}
-      <div style="text-align:left;width:100%">
-        <div style="font-size:12px;color:#bbb">YouTuber</div>
-        <div class="youtuber-name">${name}</div>
-        <div class="youtuber-status" style="margin-top:8px"><span class="status-label">Status:</span>
-          <span class="status-value ${status.className}">${status.label}</span>
-        </div>
+      <img class="yt-card-img" src="${API + version + "/" + img}" alt="${name}">
+      <span class="youtuber-name">${name}</span>
+      <div class="youtuber-status" style="justify-content:center;">
+        <span class="status-label">Status:</span>
+        <span class="status-value ${status.className}">${status.label}</span>
       </div>
     `;
-    // click -> modal (immediate if preloaded)
+
     d.onclick = ()=>openYoutuberModal(name, img);
     box.appendChild(d);
-    // attempt to set logo if preload already found it
+
+    // if preload has a logo, replace image
     if(youtuberMeta[name] && youtuberMeta[name].logo){
       updateLogoInList(name, youtuberMeta[name].logo);
-    } else {
-      // else, use skin image as fallback
-      updateLogoInList(name, null);
     }
   });
 
   pages.innerHTML = "";
-  for(let i=1;i<=total;i++){ const b=document.createElement("button");b.className="page-btn"+(i===page?" active":"");b.textContent=i;b.onclick=()=>renderYoutubersListPage(i);pages.appendChild(b); }
+  for(let i=1;i<=total;i++){
+    const b=document.createElement("button");
+    b.className="page-btn"+(i===page?" active":"");
+    b.textContent=i;
+    b.onclick=()=>renderYoutubersListPage(i);
+    pages.appendChild(b);
+  }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
 /* =====================================================
-   YOUTUBER MODAL (uses cached youtuberMeta)
+   Modal & fetch logic (unchanged from before)
 ===================================================== */
 function openYoutuberModal(name, img){
   const modal = document.getElementById("youtuberModal");
@@ -625,7 +608,6 @@ function openYoutuberModal(name, img){
 
   modal.classList.remove("hidden");
 
-  // If cached and loaded, use cached data immediately
   const meta = youtuberMeta[name];
   if(meta && meta.loaded){
     populateModalFromMeta(name, meta);
@@ -633,7 +615,6 @@ function openYoutuberModal(name, img){
     return;
   }
 
-  // Else, do a one-off fetch for this name (should be rare because preload runs)
   fetchYouTubeData(name).then(data=>{
     youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription, videoIds:data.videoIds||[] };
     updateLogoInList(name, youtuberMeta[name].logo);
@@ -655,7 +636,6 @@ function populateModalFromMeta(name, meta){
 
   videos.innerHTML = "";
   const ids = meta.videoIds || [];
-  // positions: [0]=newest, [1]=most popular (best-effort), [2]=other
   for(let i=0;i<3;i++){
     const vid = ids[i];
     if(vid){
@@ -685,20 +665,13 @@ function closeYoutuberModal(e){
 }
 
 /* =====================================================
-   fetchYouTubeData(name)
-   - client-side scraping via allorigins proxy then direct fallback
-   - finds /watch?v= ids, tries to find channel link and about meta, tries to find avatar image
-   - returns { videoIds:[], channelDescription, logo, generatedDescription }
-   Note: best-effort. For high reliability use YouTube Data API.
+   fetchYouTubeData (best-effort scraping + proxy fallback)
 ===================================================== */
-
 async function fetchYouTubeData(name){
   const query = encodeURIComponent(name + " Agar.io");
   const searchUrl = "https://www.youtube.com/results?search_query=" + query;
   const proxies = [ url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), url => url ];
   let html = "";
-  let lastError = null;
-
   for(const makeUrl of proxies){
     try{
       const resp = await fetch(makeUrl(searchUrl));
@@ -706,7 +679,6 @@ async function fetchYouTubeData(name){
       html = await resp.text();
       if(html && html.length > 200) break;
     }catch(err){
-      lastError = err;
       continue;
     }
   }
@@ -722,7 +694,6 @@ async function fetchYouTubeData(name){
     }
   }
 
-  // find channel link
   let channelUrl = "";
   if(html){
     const channelRe = /href="(\/channel\/[A-Za-z0-9_\-]+|\/@[^"]+|\/user\/[^"]+)"/g;
@@ -746,7 +717,6 @@ async function fetchYouTubeData(name){
         const resp = await fetch(makeUrl(aboutUrl));
         if(!resp.ok) throw new Error("Channel fetch failed: " + resp.status);
         const chHtml = await resp.text();
-        // meta description
         let meta = "";
         let m = chHtml.match(/<meta name="description" content="([^"]+)"/);
         if(m && m[1]) meta = m[1];
@@ -759,29 +729,24 @@ async function fetchYouTubeData(name){
           if(m && m[1]) meta = m[1];
         }
         if(meta) channelDescription = decodeHtmlEntities(meta);
-        // try to find avatar (og:image or thumbnails)
         m = chHtml.match(/<meta property="og:image" content="([^"]+)"/);
         if(m && m[1]) logo = m[1];
-        // also try JSON data snippet for thumbnails
         if(!logo){
           m = chHtml.match(/"avatar":\s*\[\s*\{\s*"url":"([^"]+)"/);
           if(m && m[1]) logo = m[1].replace(/\\u0026/g,"&");
         }
         break;
       }catch(err){
-        lastError = err;
         continue;
       }
     }
   }
 
-  // fallback: if no logo, try to use first video's thumbnail
   if(!logo && ids.length){
     logo = "https://i.ytimg.com/vi/" + ids[0] + "/hqdefault.jpg";
   }
 
   const generatedDescription = generateAIDescription(name, channelDescription);
-  // Reorder ids best-effort: newest (index 0 as found), most popular (we can't reliably get views without API) -> keep order as found
   return { videoIds: ids, channelDescription, logo, generatedDescription };
 }
 
@@ -798,9 +763,7 @@ function generateAIDescription(name, channelDescription){
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-/* =====================================================
-   START
-===================================================== */
+/* START */
 versions();
 </script>
 
