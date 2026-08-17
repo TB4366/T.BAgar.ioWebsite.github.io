@@ -3,60 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skin - @t.bagar.io</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-/* Basis-styling */
+/* Basis styling */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
 h1{font-size:28px;margin:18px 0}
 
 /* Sections */
-.sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px}
-.section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 25px;font-size:18px;font-weight:bold;cursor:pointer}
+.sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px;flex-wrap:wrap}
+.section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer}
 .section-btn:hover{background:#181818}
 .section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
 
 /* Version */
 .version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
-.version-label{font-size:20px}
-#version{font-size:20px;padding:4px}
+.version-label{font-size:18px}
+#version{font-size:16px;padding:4px}
 
-/* Agario skins */
+/* Grids */
 #skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
-
-/* Youtuber skins (image cards) */
 #youtuberSkins{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding:15px;max-width:1100px;margin:auto}
-
-/* Agar.io Youtubers (image + name + status) */
 #youtubersList{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;padding:15px;max-width:1100px;margin:auto}
 
-/* Skin / card styling */
+/* Cards */
 .skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px}
 .skin:hover{border-color:#1683ff}
 .skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
 #youtuberSkins .skin img{width:120px;height:120px;border-radius:50%}
+.yt-card-img{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
 .skin span{display:block;margin-top:6px;font-size:13px}
 
-/* Specific for agario youtubers card image (slightly bigger) */
-.yt-card-img{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
-
-/* Name-only / layout helper */
+/* Name-only helper (not heavily used now) */
 .name-only{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border-radius:8px;min-height:80px}
 .name-only .youtuber-name{font-size:16px;margin-top:0;color:#fff}
 
-/* Pagination */
-#pages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:30px 15px 40px}
-.page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:9px 14px;font-size:16px;font-weight:bold;cursor:pointer;min-width:42px;box-shadow:0 2px 5px #0008}
+/* Pagination & buttons */
+#pages,#youtuberPages,#youtubersPages,#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
+.page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:14px;font-weight:bold;cursor:pointer;min-width:36px;box-shadow:0 2px 5px #0008}
 .page-btn:hover{background:#0b6ed6}
 .page-btn.active{background:#0753a6}
 
 /* Social */
 .social-buttons{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 15px}
-.social-buttons a{display:inline-block;color:#fff;text-decoration:none;padding:9px 16px;border-radius:7px;font-size:15px;font-weight:bold;transition:0.2s}
+.social-buttons a{display:inline-block;color:#fff;text-decoration:none;padding:9px 14px;border-radius:7px;font-size:14px;font-weight:bold;transition:0.2s}
 .social-buttons a:hover{transform:translateY(-2px);opacity:0.9}
 .youtube{background:#ff0000}
 .instagram{background:#e1306c}
 .discord{background:#5865f2}
 
-/* Hidden */
+/* Hidden helper */
 .hidden{display:none}
 
 /* Status */
@@ -68,17 +63,8 @@ h1{font-size:28px;margin:18px 0}
 .status-not-active{ color:#f97316 }
 .status-inactive{ color:#ef4444 }
 
-/* Skin instruction (lange tekst) */
-.skin-instruction{
-    margin-top:10px;
-    font-size:13px;
-    line-height:1.5;
-    color:#bbb;
-    white-space:normal;
-    text-align:left;
-    max-height:240px;
-    overflow:auto;
-}
+/* Long description */
+.skin-instruction{margin-top:10px;font-size:13px;line-height:1.5;color:#bbb;white-space:normal;text-align:left;max-height:220px;overflow:auto}
 .skin-instruction strong{ color:#fff }
 
 /* Modal */
@@ -92,10 +78,10 @@ h1{font-size:28px;margin:18px 0}
 .modal-videos iframe{width:32%;height:220px;border-radius:8px;border:0;background:#000}
 .modal-meta{color:#cbd5e1;margin-top:8px;font-size:13px;text-align:left}
 
-/* small loader badge */
+/* Loader badge */
 .loader-badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#07223a;color:#9bd1ff;font-size:12px;margin-left:8px}
 
-/* responsive */
+/* Responsive */
 @media(max-width:900px){
   #youtuberSkins{grid-template-columns:repeat(3,1fr)}
   #youtubersList{grid-template-columns:repeat(3,1fr)}
@@ -114,7 +100,7 @@ h1{font-size:28px;margin:18px 0}
 
 <h1>Agar.io Skins<br>@t.bagar.io</h1>
 
-<!-- NAV: Agar.io Skins | Agar.io Youtubers | Youtuber Skins -->
+<!-- NAV -->
 <div class="sections">
   <button class="section-btn active" id="agarioSectionBtn" onclick="showSection('agario')">Agar.io Skins</button>
   <button class="section-btn" id="youtubersListBtn" onclick="showSection('youtubersList')">Agar.io Youtubers</button>
@@ -133,13 +119,13 @@ h1{font-size:28px;margin:18px 0}
   <div id="agarioPages"></div>
 </div>
 
-<!-- YOUTUBER SKINS (image cards) -->
+<!-- YOUTUBER SKINS -->
 <div id="youtuberSection" class="hidden">
   <div id="youtuberSkins">Loading Youtuber skins...</div>
   <div id="youtuberPages"></div>
 </div>
 
-<!-- AGARIO YOUTUBERS (image + name + status) -->
+<!-- AGARIO YOUTUBERS (ONLY T.B initially) -->
 <div id="agarioYoutubersSection" class="hidden">
   <div id="youtubersList">Loading Agar.io Youtubers...</div>
   <div id="youtubersPages"></div>
@@ -158,11 +144,8 @@ h1{font-size:28px;margin:18px 0}
             <span id="modalLoader" class="loader-badge" style="display:none">Loading videos...</span>
           </div>
         </div>
-        <div>
-          <button class="modal-close" onclick="closeYoutuberModal()">Close</button>
-        </div>
+        <div><button class="modal-close" onclick="closeYoutuberModal()">Close</button></div>
       </div>
-
       <div class="modal-body">
         <div id="modalDescription">Loading description...</div>
         <div class="modal-videos" id="modalVideos"></div>
@@ -174,16 +157,17 @@ h1{font-size:28px;margin:18px 0}
 
 <script>
 /* =========================
-   Data en configuratie
+   Configuration and data
 ========================= */
 
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
-let allSkins = [];
-let youtuberSkins = []; // [name, img, instruction]
-let currentAgarioPage = 1, currentYoutuberPage = 1, currentYoutubersListPage = 1;
 
-/* Status map - toegevoegd T.B als active */
+let allSkins = [];
+let youtuberSkins = []; // populated from YOUTUBER_DATA
+let agarioYoutubers = []; // AGARIO_YOUTUBERS (only T.B initially)
+
+/* Status map */
 const YOUTUBER_STATUS = {
   "T.B": "active",
   "Zanax": "not-active","Jonnn": "not-active","GetDeadKid": "inactive","7MODKA": "inactive",
@@ -212,9 +196,8 @@ const STATUS_INFO = {
 
 function getYoutuberStatus(name){ return YOUTUBER_STATUS[name] || "inactive"; }
 
-/* YOUTUBER_DATA - inclusief T.B met IMG_9766.jpeg */
+/* YOUTUBER_DATA: FULL list (WITHOUT T.B) */
 const YOUTUBER_DATA = [
-    ["T.B","IMG_9766.jpeg","T.B is actief op Agar.io. Set the nick **T.B** to use this skin."],
     ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
     ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
     ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
@@ -289,27 +272,61 @@ const YOUTUBER_DATA = [
     ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
 ];
 
-/* Cache voor voorgehaalde YouTube-data */
+/* AGARIO_YOUTUBERS: only T.B initially */
+const AGARIO_YOUTUBERS = [
+  ["T.B","IMG_9766.jpeg","T.B is actief op Agar.io. Set the nick **T.B** to use this skin."]
+];
+
+/* Cache for preloaded YouTube/meta data (optional) */
 const youtuberMeta = {};
 
-/* =====================================================
-   SECTION SWITCHING
-===================================================== */
+/* =========================
+   Helper: image fallback
+   Tries: API+version/filename, filename, images/filename, /images/filename, then SVG fallback
+========================= */
+function setImageWithFallback(imgEl, filename){
+  const candidates = [];
+  if(API && version) candidates.push(API + version + "/" + filename);
+  candidates.push(filename);
+  candidates.push("images/" + filename);
+  candidates.push("/images/" + filename);
+
+  let idx = 0;
+  imgEl.onerror = function(){
+    idx++;
+    if(idx < candidates.length){
+      imgEl.src = candidates[idx];
+    } else {
+      imgEl.onerror = null;
+      imgEl.src = "data:image/svg+xml;utf8," + encodeURIComponent(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>" +
+        "<rect width='100%' height='100%' fill='#071022'/>" +
+        "<text x='50%' y='50%' font-size='18' fill='#9bd1ff' dominant-baseline='middle' text-anchor='middle'>No image</text>" +
+        "</svg>"
+      );
+    }
+  };
+
+  imgEl.src = candidates[0];
+}
+
+/* =========================
+   Section switching
+========================= */
 function showSection(section){
   const agario = document.getElementById("agarioSection");
   const youtuber = document.getElementById("youtuberSection");
-  const youtubersList = document.getElementById("agarioYoutubersSection");
+  const agarioList = document.getElementById("agarioYoutubersSection");
   const agarioBtn = document.getElementById("agarioSectionBtn");
   const youtuberBtn = document.getElementById("youtuberSectionBtn");
-  const youtubersListBtn = document.getElementById("youtubersListBtn");
+  const agarioListBtn = document.getElementById("youtubersListBtn");
 
-  // hide all
   agario.classList.add("hidden");
   youtuber.classList.add("hidden");
-  youtubersList.classList.add("hidden");
+  agarioList.classList.add("hidden");
   agarioBtn.classList.remove("active");
   youtuberBtn.classList.remove("active");
-  youtubersListBtn.classList.remove("active");
+  agarioListBtn.classList.remove("active");
 
   if(section === "agario"){
     agario.classList.remove("hidden");
@@ -319,18 +336,18 @@ function showSection(section){
     youtuberBtn.classList.add("active");
     if(youtuberSkins.length === 0) loadYoutuberSkins();
   } else if(section === "youtubersList"){
-    youtubersList.classList.remove("hidden");
-    youtubersListBtn.classList.add("active");
-    if(youtuberSkins.length === 0) loadYoutuberSkins();
-    else renderYoutubersListPage(1);
+    agarioList.classList.remove("hidden");
+    agarioListBtn.classList.add("active");
+    if(agarioYoutubers.length === 0) loadAgarioYoutubers();
   }
 
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =====================================================
-   VERSIONS
-===================================================== */
+/* =========================
+   Versions + load skins
+   (keeps earlier behavior)
+========================= */
 async function versions(){
   const s = document.getElementById("version");
   try{
@@ -347,9 +364,7 @@ async function versions(){
   loadSkins();
 }
 
-/* =====================================================
-   LOAD AGARIO SKINS
-===================================================== */
+/* Load Agario skins list (from remote GameConfiguration) */
 async function loadSkins(){
   const box = document.getElementById("skins");
   box.innerHTML = "Loading skins...";
@@ -361,7 +376,7 @@ async function loadSkins(){
     const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
     const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
     const skins = [];
-    for(let i = 0; i < Math.min(ids.length, imgs.length); i++){
+    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
       const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
       const img = imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
       if(!img.includes("uses_spine")) skins.push([id,img]);
@@ -374,9 +389,7 @@ async function loadSkins(){
   }
 }
 
-/* =====================================================
-   AGARIO PAGINATION
-===================================================== */
+/* Render agario skins (grid) */
 function renderAgarioPage(page){
   const perPage = 120;
   const box = document.getElementById("skins");
@@ -387,7 +400,9 @@ function renderAgarioPage(page){
   const start = (page-1)*perPage;
   allSkins.slice(start, start+perPage).forEach(([id,img])=>{
     const d = document.createElement("div"); d.className = "skin";
-    d.innerHTML = `<img src="${API + version + "/" + img}" alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
+    d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
+    const imgEl = d.querySelector("img");
+    setImageWithFallback(imgEl, img);
     box.appendChild(d);
   });
   pages.innerHTML = "";
@@ -397,195 +412,188 @@ function renderAgarioPage(page){
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =====================================================
-   LOAD YOUTUBER SKINS (image cards) AND START PRELOAD
-===================================================== */
-async function loadYoutuberSkins(){
+/* =========================
+   Youtuber skins list (full descriptions)
+========================= */
+function loadYoutuberSkins(){
   const box = document.getElementById("youtuberSkins");
   box.innerHTML = "Loading Youtuber skins...";
-
-  // Build youtuberSkins from YOUTUBER_DATA (name, img, instruction)
+  // build local list
   youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || `Set the nick **${x[0]}** to use this skin.`]);
-
   renderYoutuberPage(1);
-  renderYoutubersListPage(1);
-
-  // start preloading YouTube data for all youtubers (batched)
-  startPreloadAllYoutubers();
 }
 
-/* =====================================================
-   PRELOAD (best-effort)
-===================================================== */
-async function startPreloadAllYoutubers(){
-  const statusBadge = document.getElementById("preloadStatus");
-  statusBadge.style.display = "inline-block";
-  const batchSize = 6;
-  const delayBetweenBatches = 800;
-  const names = youtuberSkins.map(s => s[0]);
-  names.forEach(n => { youtuberMeta[n] = { loaded:false, logo:null, channelDescription:null, videoIds:[] } });
-  for(let i=0;i<names.length;i+=batchSize){
-    const batch = names.slice(i, i+batchSize);
-    await Promise.all(batch.map(name => preloadYoutuber(name)));
-    await sleep(delayBetweenBatches);
-  }
-  statusBadge.style.display = "none";
-}
-
-async function preloadYoutuber(name){
-  if(youtuberMeta[name] && youtuberMeta[name].loaded) return;
-  try{
-    const data = await fetchYouTubeData(name);
-    youtuberMeta[name] = {
-      loaded: true,
-      logo: data.logo || null,
-      channelDescription: data.channelDescription || data.generatedDescription || null,
-      videoIds: data.videoIds || []
-    };
-    updateLogoInList(name, youtuberMeta[name].logo);
-  }catch(err){
-    youtuberMeta[name] = { loaded:true, logo:null, channelDescription:null, videoIds:[] };
-  }
-}
-
-function updateLogoInList(name, logoUrl){
-  const list = document.getElementById("youtubersList");
-  if(!list) return;
-  const items = list.querySelectorAll(".skin");
-  items.forEach(item=>{
-    const nm = item.getAttribute("data-name");
-    if(nm === name){
-      const imgEl = item.querySelector("img");
-      if(logoUrl){
-        imgEl.src = logoUrl;
-      } else {
-        const skin = youtuberSkins.find(s => s[0]===name);
-        if(skin && skin[1]){
-          imgEl.src = API + version + "/" + skin[1];
-        }
-      }
-    }
-  });
-}
-
-/* =====================================================
-   YOUTUBER PAGINATION (image cards) - long descriptions shown
-===================================================== */
+/* Render Youtuber skins (image + name + long description) */
 function renderYoutuberPage(page){
-    const perPage = 30;
-    const box = document.getElementById("youtuberSkins");
-    const pages = document.getElementById("youtuberPages");
-    const total = Math.ceil(youtuberSkins.length / perPage);
-    currentYoutuberPage = page;
-    box.innerHTML = "";
-    const start = (page - 1) * perPage;
-
-    youtuberSkins
-        .slice(start, start + perPage)
-        .forEach((skin) => {
-
-            const name = skin[0];
-            const img = skin[1];
-            const fullDescription = (skin[2] || `Set the nick **${name}** to use this skin.`)
-                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-            const d = document.createElement("div");
-            d.className = "skin";
-
-            const statusKey = getYoutuberStatus(name);
-            const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-
-            d.innerHTML = `
-                <img src="${API + version + "/" + img}" alt="${name}">
-                <span class="youtuber-name">${name}</span>
-
-                <div class="youtuber-status">
-                    <span class="status-label">Status:</span>
-                    <span class="status-value ${status.className}">
-                        ${status.label}
-                    </span>
-                </div>
-
-                <div class="skin-instruction">
-                    ${fullDescription}
-                </div>
-            `;
-
-            box.appendChild(d);
-
-        });
-
+  const perPage = 30;
+  const box = document.getElementById("youtuberSkins");
+  const pages = document.getElementById("youtuberPages");
+  if(!box) return;
+  const total = Math.max(1, Math.ceil(youtuberSkins.length / perPage));
+  box.innerHTML = "";
+  const start = (page-1)*perPage;
+  youtuberSkins.slice(start, start+perPage).forEach(skin=>{
+    const name = skin[0], img = skin[1], instruction = (skin[2] || `Set the nick **${skin[0]}** to use this skin.`).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    const d = document.createElement("div"); d.className = "skin";
+    d.innerHTML = `
+      <img alt="${name}">
+      <span class="youtuber-name">${name}</span>
+      <div class="youtuber-status"><span class="status-label">Status:</span>
+        <span class="status-value ${(STATUS_INFO[getYoutuberStatus(name)]||{}).className || 'status-inactive'}">
+          ${(STATUS_INFO[getYoutuberStatus(name)]||{}).label || 'Inactive'}
+        </span>
+      </div>
+      <div class="skin-instruction">${instruction}</div>
+    `;
+    setImageWithFallback(d.querySelector("img"), img);
+    box.appendChild(d);
+  });
+  if(pages){
     pages.innerHTML = "";
-
-    for (let i = 1; i <= total; i++) {
-        const b = document.createElement("button");
-        b.className = "page-btn" + (i === page ? " active" : "");
-        b.textContent = i;
-        b.onclick = () => renderYoutuberPage(i);
-        pages.appendChild(b);
+    for(let i=1;i<=total;i++){
+      const b = document.createElement("button");
+      b.className = "page-btn" + (i===page ? " active" : "");
+      b.textContent = i;
+      b.onclick = ()=> renderYoutuberPage(i);
+      pages.appendChild(b);
     }
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+  }
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =====================================================
-   AGARIO YOUTUBERS: render as image card + name + status
-   (this is the change: show image (round), name below, status below)
-===================================================== */
-function renderYoutubersListPage(page){
+/* =========================
+   Agario Youtubers list (ONLY AGARIO_YOUTUBERS)
+========================= */
+function loadAgarioYoutubers(){
+  agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
+  renderAgarioYoutubersPage(1);
+}
+
+function renderAgarioYoutubersPage(page){
   const perPage = 30;
   const box = document.getElementById("youtubersList");
   const pages = document.getElementById("youtubersPages");
-  const total = Math.ceil(youtuberSkins.length / perPage);
-  currentYoutubersListPage = page;
+  if(!box) return;
+  const total = Math.max(1, Math.ceil(agarioYoutubers.length / perPage));
   box.innerHTML = "";
   const start = (page-1)*perPage;
-
-  youtuberSkins.slice(start,start+perPage).forEach(skin=>{
-    const name = skin[0], img = skin[1];
-    const d = document.createElement("div");
-    d.className = "skin";
-    d.setAttribute("data-name", name);
-
-    const statusKey = getYoutuberStatus(name);
-    const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-
-    // show image (round), name and status
+  agarioYoutubers.slice(start, start+perPage).forEach(item=>{
+    const name = item[0], img = item[1];
+    const statusKey = getYoutuberStatus(name); const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+    const d = document.createElement("div"); d.className = "skin"; d.setAttribute("data-name", name);
     d.innerHTML = `
-      <img class="yt-card-img" src="${API + version + "/" + img}" alt="${name}">
+      <img class="yt-card-img" alt="${name}">
       <span class="youtuber-name">${name}</span>
       <div class="youtuber-status" style="justify-content:center;">
         <span class="status-label">Status:</span>
         <span class="status-value ${status.className}">${status.label}</span>
       </div>
     `;
-
-    d.onclick = ()=>openYoutuberModal(name, img);
+    setImageWithFallback(d.querySelector("img.yt-card-img"), img);
+    if(typeof openYoutuberModal === "function"){ d.onclick = ()=> openYoutuberModal(name, img); }
     box.appendChild(d);
-
-    // if preload has a logo, replace image
-    if(youtuberMeta[name] && youtuberMeta[name].logo){
-      updateLogoInList(name, youtuberMeta[name].logo);
-    }
   });
-
-  pages.innerHTML = "";
-  for(let i=1;i<=total;i++){
-    const b=document.createElement("button");
-    b.className="page-btn"+(i===page?" active":"");
-    b.textContent=i;
-    b.onclick=()=>renderYoutubersListPage(i);
-    pages.appendChild(b);
+  if(pages){
+    pages.innerHTML = "";
+    for(let i=1;i<=total;i++){
+      const b = document.createElement("button"); b.className = "page-btn" + (i===page ? " active" : ""); b.textContent = i; b.onclick = ()=> renderAgarioYoutubersPage(i); pages.appendChild(b);
+    }
   }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =====================================================
-   Modal & fetch logic (unchanged from before)
-===================================================== */
+/* =========================
+   Modal and YouTube scraping (best-effort)
+   - Attempts proxy fallback (allorigins) to get search/channel HTML
+   - Extracts /watch?v= IDs and channel description
+   - Used to populate modal with 3 videos + description
+========================= */
+
+async function fetchYouTubeData(name){
+  const query = encodeURIComponent(name + " Agar.io");
+  const searchUrl = "https://www.youtube.com/results?search_query=" + query;
+  const proxies = [ url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), url => url ];
+  let html = "";
+  for(const makeUrl of proxies){
+    try{
+      const resp = await fetch(makeUrl(searchUrl));
+      if(!resp.ok) throw new Error("Fetch failed: " + resp.status);
+      html = await resp.text();
+      if(html && html.length > 200) break;
+    }catch(err){
+      continue;
+    }
+  }
+
+  const ids = [];
+  if(html){
+    const re = /\/watch\?v=([A-Za-z0-9_\-]{11})/g;
+    let m;
+    while((m = re.exec(html)) !== null){
+      const id = m[1];
+      if(!ids.includes(id)) ids.push(id);
+      if(ids.length >= 12) break;
+    }
+  }
+
+  let channelUrl = "";
+  if(html){
+    const channelRe = /href="(\/channel\/[A-Za-z0-9_\-]+|\/@[^"]+|\/user\/[^"]+)"/g;
+    let m;
+    while((m = channelRe.exec(html)) !== null){
+      const link = m[1];
+      if(link && !link.includes("watch")){
+        channelUrl = "https://www.youtube.com" + link;
+        break;
+      }
+    }
+  }
+
+  let channelDescription = "";
+  let logo = null;
+  if(channelUrl){
+    const aboutUrl = channelUrl + "/about";
+    for(const makeUrl of proxies){
+      try{
+        const resp = await fetch(makeUrl(aboutUrl));
+        if(!resp.ok) throw new Error("Channel fetch failed: " + resp.status);
+        const chHtml = await resp.text();
+        let meta = "";
+        let m = chHtml.match(/<meta name="description" content="([^"]+)"/);
+        if(m && m[1]) meta = m[1];
+        else { m = chHtml.match(/<meta property="og:description" content="([^"]+)"/); if(m && m[1]) meta = m[1]; }
+        if(!meta){ m = chHtml.match(/"description":\s*"([^"]+)"/); if(m && m[1]) meta = m[1]; }
+        if(meta) channelDescription = decodeHtmlEntities(meta);
+        m = chHtml.match(/<meta property="og:image" content="([^"]+)"/);
+        if(m && m[1]) logo = m[1];
+        if(!logo){ m = chHtml.match(/"avatar":\s*\[\s*\{\s*"url":"([^"]+)"/); if(m && m[1]) logo = m[1].replace(/\\u0026/g,"&"); }
+        break;
+      }catch(err){
+        continue;
+      }
+    }
+  }
+
+  if(!logo && ids.length){
+    logo = "https://i.ytimg.com/vi/" + ids[0] + "/hqdefault.jpg";
+  }
+
+  const generatedDescription = generateAIDescription(name, channelDescription);
+  return { videoIds: ids, channelDescription, logo, generatedDescription };
+}
+
+function decodeHtmlEntities(str){
+  try{ const t = document.createElement("textarea"); t.innerHTML = str; return t.value; }catch(e){ return str; }
+}
+
+function generateAIDescription(name, channelDescription){
+  if(channelDescription && channelDescription.trim().length>30) return channelDescription;
+  const custom = YOUTUBER_DATA.find(x => x[0]===name);
+  if(custom && custom[2]) return custom[2].replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  return `${name} is a content creator associated with Agar.io. Their channel contains gameplay, tips and highlight videos. Use the nick <strong>${name}</strong> to use their skin in Agar.io.`;
+}
+
+/* Modal open/close & populate */
 function openYoutuberModal(name, img){
   const modal = document.getElementById("youtuberModal");
   const title = document.getElementById("modalTitle");
@@ -605,7 +613,6 @@ function openYoutuberModal(name, img){
   videos.innerHTML = "";
   channelDesc.textContent = "Channel info...";
   modalLoader.style.display = "inline-block";
-
   modal.classList.remove("hidden");
 
   const meta = youtuberMeta[name];
@@ -617,7 +624,6 @@ function openYoutuberModal(name, img){
 
   fetchYouTubeData(name).then(data=>{
     youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription, videoIds:data.videoIds||[] };
-    updateLogoInList(name, youtuberMeta[name].logo);
     populateModalFromMeta(name, youtuberMeta[name]);
   }).catch(err=>{
     desc.innerHTML = "Description unavailable.";
@@ -664,112 +670,59 @@ function closeYoutuberModal(e){
   modal.classList.add("hidden");
 }
 
-/* =====================================================
-   fetchYouTubeData (best-effort scraping + proxy fallback)
-===================================================== */
-async function fetchYouTubeData(name){
-  const query = encodeURIComponent(name + " Agar.io");
-  const searchUrl = "https://www.youtube.com/results?search_query=" + query;
-  const proxies = [ url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), url => url ];
-  let html = "";
-  for(const makeUrl of proxies){
-    try{
-      const resp = await fetch(makeUrl(searchUrl));
-      if(!resp.ok) throw new Error("Fetch failed: " + resp.status);
-      html = await resp.text();
-      if(html && html.length > 200) break;
-    }catch(err){
-      continue;
-    }
+/* Optional: preload metadata for all Youtubers in background (batched) */
+async function startPreloadAllYoutubers(){
+  const statusBadge = document.getElementById("preloadStatus");
+  statusBadge.style.display = "inline-block";
+  const batchSize = 6;
+  const delayBetweenBatches = 800;
+  const names = [...YOUTUBER_DATA.map(x=>x[0]), ...AGARIO_YOUTUBERS.map(x=>x[0])];
+  names.forEach(n => { youtuberMeta[n] = { loaded:false, logo:null, channelDescription:null, videoIds:[] } });
+  for(let i=0;i<names.length;i+=batchSize){
+    const batch = names.slice(i, i+batchSize);
+    await Promise.all(batch.map(name => preloadYoutuber(name)));
+    await sleep(delayBetweenBatches);
   }
-
-  const ids = [];
-  if(html){
-    const re = /\/watch\?v=([A-Za-z0-9_\-]{11})/g;
-    let m;
-    while((m = re.exec(html)) !== null){
-      const id = m[1];
-      if(!ids.includes(id)) ids.push(id);
-      if(ids.length >= 12) break;
-    }
-  }
-
-  let channelUrl = "";
-  if(html){
-    const channelRe = /href="(\/channel\/[A-Za-z0-9_\-]+|\/@[^"]+|\/user\/[^"]+)"/g;
-    let m;
-    while((m = channelRe.exec(html)) !== null){
-      const link = m[1];
-      if(link && !link.includes("watch")){
-        channelUrl = "https://www.youtube.com" + link;
-        break;
-      }
-    }
-  }
-
-  let channelDescription = "";
-  let logo = null;
-
-  if(channelUrl){
-    const aboutUrl = channelUrl + "/about";
-    for(const makeUrl of proxies){
-      try{
-        const resp = await fetch(makeUrl(aboutUrl));
-        if(!resp.ok) throw new Error("Channel fetch failed: " + resp.status);
-        const chHtml = await resp.text();
-        let meta = "";
-        let m = chHtml.match(/<meta name="description" content="([^"]+)"/);
-        if(m && m[1]) meta = m[1];
-        else {
-          m = chHtml.match(/<meta property="og:description" content="([^"]+)"/);
-          if(m && m[1]) meta = m[1];
-        }
-        if(!meta){
-          m = chHtml.match(/"description":\s*"([^"]+)"/);
-          if(m && m[1]) meta = m[1];
-        }
-        if(meta) channelDescription = decodeHtmlEntities(meta);
-        m = chHtml.match(/<meta property="og:image" content="([^"]+)"/);
-        if(m && m[1]) logo = m[1];
-        if(!logo){
-          m = chHtml.match(/"avatar":\s*\[\s*\{\s*"url":"([^"]+)"/);
-          if(m && m[1]) logo = m[1].replace(/\\u0026/g,"&");
-        }
-        break;
-      }catch(err){
-        continue;
-      }
-    }
-  }
-
-  if(!logo && ids.length){
-    logo = "https://i.ytimg.com/vi/" + ids[0] + "/hqdefault.jpg";
-  }
-
-  const generatedDescription = generateAIDescription(name, channelDescription);
-  return { videoIds: ids, channelDescription, logo, generatedDescription };
+  statusBadge.style.display = "none";
 }
 
-function decodeHtmlEntities(str){
-  try{ const txt = document.createElement("textarea"); txt.innerHTML = str; return txt.value; }catch(e){ return str; }
+async function preloadYoutuber(name){
+  if(youtuberMeta[name] && youtuberMeta[name].loaded) return;
+  try{
+    const data = await fetchYouTubeData(name);
+    youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription||null, videoIds:data.videoIds||[] };
+  }catch(e){
+    youtuberMeta[name] = { loaded:true, logo:null, channelDescription:null, videoIds:[] };
+  }
 }
 
-function generateAIDescription(name, channelDescription){
-  if(channelDescription && channelDescription.trim().length > 30) return channelDescription;
-  const custom = YOUTUBER_DATA.find(x => x[0] === name);
-  if(custom && custom[2]) return custom[2].replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  return `${name} is a content creator associated with Agar.io. Their channel contains gameplay, tips and highlight videos. Use the nick <strong>${name}</strong> to use their skin in Agar.io.`;
+function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+/* =========================
+   Init
+========================= */
+function init(){
+  // prepare lists (youtuberSkins and agarioYoutubers)
+  youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || ""]);
+  agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
+
+  renderYoutuberPage(1);
+  renderAgarioYoutubersPage(1);
+  versions();
+  // start background preload (best-effort; optional)
+  startPreloadAllYoutubers();
 }
 
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-/* START */
-versions();
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
 </script>
 
 <br>
 
-<!-- Social buttons -->
+<!-- Social -->
 <div class="social-buttons">
   <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank">YouTube</a>
   <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank">Instagram</a>
@@ -777,8 +730,7 @@ versions();
 </div>
 
 <!-- Footer -->
-© <year></year>
-<a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
+© <year></year> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
 
 <script>
 function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; }
