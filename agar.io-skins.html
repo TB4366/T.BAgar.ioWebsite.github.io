@@ -102,6 +102,19 @@ h1{
     margin:auto;
 }
 
+/* =========================
+   AGARIO YOUTUBERS (LIST)
+   6 x 5 = 30 (only name + status)
+========================= */
+
+#youtubersList{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    padding:15px;
+    max-width:1100px;
+    margin:auto;
+}
 
 /* =========================
    SKIN CARDS
@@ -137,6 +150,20 @@ h1{
     font-size:13px;
 }
 
+/* For name-only cards */
+.name-only{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:18px 8px;
+    min-height:120px;
+}
+
+.name-only .youtuber-name{
+    font-size:16px;
+    margin-top:6px;
+}
 
 /* =========================
    PAGINATION
@@ -264,10 +291,87 @@ h1{
     color:#fff;
 }
 
+/* Modal */
+.modal-overlay{
+    position:fixed;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,0.75);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:40px 20px;
+    z-index:9999;
+}
+
+.modal{
+    background:#0f1724;
+    border:1px solid #223;
+    padding:18px;
+    max-width:1000px;
+    width:100%;
+    border-radius:10px;
+    color:#fff;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.modal-title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.modal-close{
+    background:#111;
+    color:#fff;
+    border:0;
+    padding:8px 10px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.modal-body{
+    margin-top:12px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+}
+
+.modal-videos{
+    display:flex;
+    gap:10px;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+.modal-videos iframe{
+    width:32%;
+    height:220px;
+    border-radius:8px;
+    border:0;
+    background:#000;
+}
+
+/* responsive */
+@media(max-width:900px){
+    #youtuberSkins{ grid-template-columns: repeat(3, 1fr); }
+    #youtubersList{ grid-template-columns: repeat(3, 1fr); }
+    .modal-videos{ flex-direction:column; }
+    .modal-videos iframe{ width:100%; height:200px; }
+}
+
 @media(max-width:600px){
     #youtuberSkins{ grid-template-columns: repeat(2, 1fr); }
     .skin img{ width:80px; height:80px; }
     #skins{ grid-template-columns: repeat(4, 1fr); gap:8px; }
+    #youtubersList{ grid-template-columns: repeat(2, 1fr); }
 }
 
 </style>
@@ -303,6 +407,14 @@ h1{
         Youtuber Skins
     </button>
 
+    <button
+        class="section-btn"
+        id="youtubersListBtn"
+        onclick="showSection('youtubersList')"
+    >
+        Agar.io Youtubers
+    </button>
+
 </div>
 
 
@@ -332,7 +444,7 @@ h1{
 
 
 <!-- =========================
-     YOUTUBER SECTION
+     YOUTUBER SKINS
 ========================= -->
 
 <div id="youtuberSection" class="hidden">
@@ -343,6 +455,52 @@ h1{
 
     <div id="youtuberPages"></div>
 
+</div>
+
+<!-- =========================
+     AGARIO YOUTUBERS (NAME + STATUS)
+========================= -->
+
+<div id="agarioYoutubersSection" class="hidden">
+
+    <div id="youtubersList">
+        Loading Agar.io Youtubers...
+    </div>
+
+    <div id="youtubersPages"></div>
+
+</div>
+
+<!-- Modal for Youtuber details -->
+<div id="youtuberModal" class="hidden">
+    <div class="modal-overlay" onclick="closeYoutuberModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="modalTitle">Loading...</div>
+                    <div class="youtuber-status" id="modalStatus">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value" id="modalStatusValue"></span>
+                    </div>
+                </div>
+                <div>
+                    <button class="modal-close" onclick="closeYoutuberModal()">Close</button>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <div id="modalDescription">Loading description...</div>
+
+                <div class="modal-videos" id="modalVideos">
+                    <!-- three iframes will be injected here -->
+                </div>
+
+                <div id="modalChannelDescription" style="color:#cbd5e1;margin-top:8px;font-size:13px;">
+                    Channel info...
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -357,7 +515,7 @@ let youtuberSkins = [];
 
 let currentAgarioPage = 1;
 let currentYoutuberPage = 1;
-
+let currentYoutubersListPage = 1;
 
 /* =====================================================
    SECTION SWITCHING
@@ -371,31 +529,51 @@ function showSection(section){
     const youtuber =
         document.getElementById("youtuberSection");
 
+    const youtubersList =
+        document.getElementById("agarioYoutubersSection");
+
     const agarioBtn =
         document.getElementById("agarioSectionBtn");
 
     const youtuberBtn =
         document.getElementById("youtuberSectionBtn");
 
+    const youtubersListBtn =
+        document.getElementById("youtubersListBtn");
+
+
+    // hide all
+    agario.classList.add("hidden");
+    youtuber.classList.add("hidden");
+    youtubersList.classList.add("hidden");
+
+    agarioBtn.classList.remove("active");
+    youtuberBtn.classList.remove("active");
+    youtubersListBtn.classList.remove("active");
 
     if(section === "agario"){
 
         agario.classList.remove("hidden");
-        youtuber.classList.add("hidden");
-
         agarioBtn.classList.add("active");
-        youtuberBtn.classList.remove("active");
 
     }else if(section === "youtuber"){
 
-        agario.classList.add("hidden");
         youtuber.classList.remove("hidden");
-
-        agarioBtn.classList.remove("active");
         youtuberBtn.classList.add("active");
 
         if(youtuberSkins.length === 0){
             loadYoutuberSkins();
+        }
+
+    }else if(section === "youtubersList"){
+
+        youtubersList.classList.remove("hidden");
+        youtubersListBtn.classList.add("active");
+
+        if(youtuberSkins.length === 0){
+            loadYoutuberSkins();
+        }else{
+            renderYoutubersListPage(1);
         }
 
     }
@@ -679,11 +857,6 @@ function renderAgarioPage(page){
 
 
 /* =====================================================
-   YOUTUBER SKINS
-   30 PER PAGE
-===================================================== */
-
-/* =====================================================
    YOUTUBER STATUS
    Pas hier per YouTuber de status aan:
    active       = Groen / Active
@@ -868,6 +1041,7 @@ const YOUTUBER_DATA = [
 
 /* =====================================================
    LOAD YOUTUBER SKINS
+   This also populates the youtubers list content.
 ===================================================== */
 
 async function loadYoutuberSkins(){
@@ -988,6 +1162,7 @@ async function loadYoutuberSkins(){
         }
 
         renderYoutuberPage(1);
+        renderYoutubersListPage(1);
 
     }catch(e){
 
@@ -998,13 +1173,14 @@ async function loadYoutuberSkins(){
             YOUTUBER_DATA;
 
         renderYoutuberPage(1);
+        renderYoutubersListPage(1);
 
     }
 }
 
 
 /* =====================================================
-   YOUTUBER PAGINATION
+   YOUTUBER PAGINATION (image cards)
    30 PER PAGE
    6 x 5
 ===================================================== */
@@ -1127,6 +1303,346 @@ function renderYoutuberPage(page){
 }
 
 
+/* =====================================================
+   AGARIO YOUTUBERS LIST (only name + status)
+   30 PER PAGE
+===================================================== */
+
+function renderYoutubersListPage(page){
+
+    const perPage = 30;
+
+    const box =
+        document.getElementById(
+            "youtubersList"
+        );
+
+    const pages =
+        document.getElementById(
+            "youtubersPages"
+        );
+
+    const total =
+        Math.ceil(
+            youtuberSkins.length /
+            perPage
+        );
+
+    currentYoutubersListPage =
+        page;
+
+    box.innerHTML = "";
+
+    const start =
+        (page - 1) *
+        perPage;
+
+
+    youtuberSkins
+        .slice(
+            start,
+            start + perPage
+        )
+        .forEach(
+            (skin)=>{
+
+                const name = skin[0];
+                const img = skin[1]; // we may not show it here
+                const d =
+                    document.createElement(
+                        "div"
+                    );
+
+                d.className =
+                    "skin name-only";
+
+                const statusKey = getYoutuberStatus(name);
+                const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+
+                d.innerHTML = `
+                    <div style="font-size:14px;color:#bbb;">YouTuber</div>
+                    <div class="youtuber-name">${name}</div>
+
+                    <div class="youtuber-status" style="margin-top:8px;">
+                        <span class="status-label">Status:</span>
+                        <span class="status-value ${status.className}">
+                            ${status.label}
+                        </span>
+                    </div>
+                `;
+
+                d.onclick =
+                    ()=> openYoutuberModal(name, img);
+
+                box.appendChild(d);
+
+            }
+        );
+
+
+    pages.innerHTML = "";
+
+    for(
+        let i = 1;
+        i <= total;
+        i++
+    ){
+
+        const b =
+            document.createElement(
+                "button"
+            );
+
+        b.className =
+            "page-btn" +
+            (
+                i === page
+                ? " active"
+                : ""
+            );
+
+        b.textContent = i;
+
+        b.onclick =
+            ()=>renderYoutubersListPage(i);
+
+        pages.appendChild(b);
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
+
+/* =====================================================
+   YOUTUBER MODAL
+   - show description (AI-fallback)
+   - fetch 3 YouTube videos via search page (proxy fallback)
+   - try to fetch channel about description
+   Note: scraping YouTube HTML can be blocked; for production use the YouTube Data API or server-side proxy.
+===================================================== */
+
+function openYoutuberModal(name, img){
+    const modal = document.getElementById("youtuberModal");
+    const title = document.getElementById("modalTitle");
+    const statusValue = document.getElementById("modalStatusValue");
+    const desc = document.getElementById("modalDescription");
+    const videos = document.getElementById("modalVideos");
+    const channelDesc = document.getElementById("modalChannelDescription");
+
+    title.textContent = name;
+    const statusKey = getYoutuberStatus(name);
+    const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+    statusValue.textContent = status.label;
+    statusValue.className = "status-value " + status.className;
+
+    desc.innerHTML = "Loading description...";
+    videos.innerHTML = "";
+    channelDesc.textContent = "Loading channel info...";
+
+    modal.classList.remove("hidden");
+
+    // Fetch videos + channel info
+    fetchYouTubeData(name).then(data=>{
+        // description
+        desc.innerHTML = data.generatedDescription || "No description available.";
+
+        // channel description
+        channelDesc.innerHTML = data.channelDescription || "";
+
+        // videos (take up to 3)
+        videos.innerHTML = "";
+
+        const ids = data.videoIds || [];
+
+        for(let i=0;i<3;i++){
+            const vid = ids[i];
+            if(vid){
+                const ifr = document.createElement("iframe");
+                ifr.src = "https://www.youtube.com/embed/" + vid + "?rel=0";
+                ifr.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+                ifr.allowFullscreen = true;
+                videos.appendChild(ifr);
+            }else{
+                const placeholder = document.createElement("div");
+                placeholder.style.width = (i===1?"100%":"100%");
+                placeholder.style.color = "#8892a8";
+                placeholder.style.background = "#071022";
+                placeholder.style.border = "1px dashed #223";
+                placeholder.style.borderRadius = "6px";
+                placeholder.style.padding = "16px";
+                placeholder.style.fontSize = "13px";
+                placeholder.style.flex = "1";
+                placeholder.textContent = "No video found";
+                videos.appendChild(placeholder);
+            }
+        }
+
+    }).catch(e=>{
+        desc.innerHTML = "Description unavailable.";
+        channelDesc.textContent = "";
+        videos.innerHTML = "<div style='color:#f88'>Unable to fetch videos (CORS or network error).</div>";
+    });
+
+    // show modal overlay
+    document.getElementById("youtuberModal").classList.remove("hidden");
+}
+
+function closeYoutuberModal(e){
+    if(e && e.target && e.target.classList && e.target.classList.contains("modal-overlay")){
+        // click outside content: close
+    }
+    const modal = document.getElementById("youtuberModal");
+    modal.classList.add("hidden");
+}
+
+/* =====================================================
+   fetchYouTubeData(name)
+   - tries a CORS-proxied fetch of YouTube search results
+   - extracts video IDs from /watch?v= links
+   - tries to find a channel link and fetch the about description
+   - returns { videoIds:[], channelDescription, generatedDescription }
+   NOTE: This is a best-effort client-side scraping approach.
+===================================================== */
+
+async function fetchYouTubeData(name){
+    // build a search query; include "Agar.io" to bias results
+    const query = encodeURIComponent(name + " Agar.io");
+    const searchUrl = "https://www.youtube.com/results?search_query=" + query;
+
+    // Use allorigins proxy first; fallback to direct fetch.
+    const proxies = [
+        url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+        url => url
+    ];
+
+    let html = "";
+    let lastError = null;
+
+    for(const makeUrl of proxies){
+        try{
+            const resp = await fetch(makeUrl(searchUrl));
+            if(!resp.ok) throw new Error("Fetch failed: " + resp.status);
+            html = await resp.text();
+            if(html && html.length>200) break;
+        }catch(err){
+            lastError = err;
+            continue;
+        }
+    }
+
+    // extract video IDs
+    const ids = [];
+    if(html){
+        // find /watch?v=VIDEO_ID occurrences
+        const re = /\/watch\?v=([A-Za-z0-9_\-]{11})/g;
+        let m;
+        while((m = re.exec(html)) !== null){
+            const id = m[1];
+            if(!ids.includes(id)) ids.push(id);
+            if(ids.length >= 12) break;
+        }
+    }
+
+    // try to find a channel link
+    let channelDescription = "";
+    let channelUrl = "";
+
+    if(html){
+        // look for /channel/ or /@ or /user/ links in results
+        const channelRe = /href="(\/channel\/[A-Za-z0-9_\-]+|\/@[^"]+|\/user\/[^"]+)"/g;
+        let m;
+        while((m = channelRe.exec(html)) !== null){
+            const link = m[1];
+            if(link && !link.includes("watch")){
+                channelUrl = "https://www.youtube.com" + link;
+                break;
+            }
+        }
+    }
+
+    if(channelUrl){
+        // fetch channel page (about) to extract description (proxy fallback)
+        const aboutUrl = channelUrl + "/about";
+        for(const makeUrl of proxies){
+            try{
+                const resp = await fetch(makeUrl(aboutUrl));
+                if(!resp.ok) throw new Error("Channel fetch failed: " + resp.status);
+                const chHtml = await resp.text();
+
+                // try to extract meta description
+                let meta = "";
+                let m = chHtml.match(/<meta name="description" content="([^"]+)"/);
+                if(m && m[1]) meta = m[1];
+                else {
+                    // fallback to og:description
+                    m = chHtml.match(/<meta property="og:description" content="([^"]+)"/);
+                    if(m && m[1]) meta = m[1];
+                }
+
+                if(!meta){
+                    // try to find an about text block (best-effort)
+                    m = chHtml.match(/"description":\s*"([^"]+)"/);
+                    if(m && m[1]) meta = m[1];
+                }
+
+                if(meta){
+                    channelDescription = decodeHtmlEntities(meta);
+                    break;
+                }
+
+            }catch(err){
+                lastError = err;
+                continue;
+            }
+        }
+    }
+
+    const generatedDescription = generateAIDescription(name, channelDescription);
+
+    return {
+        videoIds: ids,
+        channelDescription,
+        generatedDescription
+    };
+}
+
+// small helper to decode HTML entities
+function decodeHtmlEntities(str){
+    try{
+        const txt = document.createElement("textarea");
+        txt.innerHTML = str;
+        return txt.value;
+    }catch(e){
+        return str;
+    }
+}
+
+/* =====================================================
+   generateAIDescription(name, channelDescription)
+   - If channelDescription exists, use it.
+   - Otherwise, create a short "AI-like" description using available data.
+   This is a simple client-side generator; for real AI-generated text use a server-side LLM.
+===================================================== */
+
+function generateAIDescription(name, channelDescription){
+    if(channelDescription && channelDescription.trim().length > 30){
+        return channelDescription;
+    }
+
+    // try to find extra info in YOUTUBER_DATA
+    const custom = YOUTUBER_DATA.find(x => x[0] === name);
+    if(custom && custom[2]){
+        return custom[2].replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    }
+
+    // heuristic generated text
+    const simple = `${name} is a content creator associated with Agar.io. On their channel they shared gameplay, tips and moments from Agar.io matches. Some videos include tutorials, highlight clips and community sessions. Use the nick <strong>${name}</strong> to use their skin in Agar.io.`;
+
+    return simple;
+}
 
 /* =====================================================
    START
