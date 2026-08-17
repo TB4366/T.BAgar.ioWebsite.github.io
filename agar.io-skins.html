@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Agar.io Skin - @t.bagar.io</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 /* Basis styling */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
@@ -32,6 +32,10 @@ h1{font-size:28px;margin:18px 0}
 #youtuberSkins .skin img{width:120px;height:120px;border-radius:50%}
 .yt-card-img{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
 .skin span{display:block;margin-top:6px;font-size:13px}
+
+/* Name-only helper (not heavily used now) */
+.name-only{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border-radius:8px;min-height:80px}
+.name-only .youtuber-name{font-size:16px;margin-top:0;color:#fff}
 
 /* Pagination & buttons */
 #pages,#youtuberPages,#youtubersPages,#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
@@ -73,11 +77,6 @@ h1{font-size:28px;margin:18px 0}
 .modal-videos{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
 .modal-videos iframe{width:32%;height:220px;border-radius:8px;border:0;background:#000}
 .modal-meta{color:#cbd5e1;margin-top:8px;font-size:13px;text-align:left}
-
-/* Edit form inside modal */
-.edit-controls{margin-top:10px;text-align:left;background:#071022;padding:10px;border-radius:8px;border:1px solid #223}
-.edit-controls textarea{width:100%;min-height:80px;background:#061223;color:#fff;border:1px solid #223;padding:8px;border-radius:6px}
-.edit-controls input[type="text"]{width:100%;padding:8px;border-radius:6px;border:1px solid #223;background:#061223;color:#fff;margin-top:6px}
 
 /* small loader badge */
 .loader-badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#07223a;color:#9bd1ff;font-size:12px;margin-left:8px}
@@ -126,7 +125,7 @@ h1{font-size:28px;margin:18px 0}
   <div id="youtuberPages"></div>
 </div>
 
-<!-- AGARIO YOUTUBERS (ONLY agario-only list like T.B) -->
+<!-- AGARIO YOUTUBERS (ONLY AGARIO_YOUTUBERS, initially only T.B) -->
 <div id="agarioYoutubersSection" class="hidden">
   <div id="youtubersList">Loading Agar.io Youtubers...</div>
   <div id="youtubersPages"></div>
@@ -146,33 +145,13 @@ h1{font-size:28px;margin:18px 0}
           </div>
         </div>
         <div>
-          <button id="modalEditBtn" class="modal-close" style="margin-right:8px;display:none" onclick="enterEditMode()">Edit</button>
+          <!-- No edit button for Agario-only items as requested -->
           <button class="modal-close" onclick="closeYoutuberModal()">Close</button>
         </div>
       </div>
 
       <div class="modal-body">
         <div id="modalDescription">Loading description...</div>
-
-        <div id="modalEditArea" class="edit-controls hidden">
-          <label><strong>Custom description (HTML/markdown bold **text** allowed):</strong></label>
-          <textarea id="modalCustomDescription" placeholder="Voer hier je eigen beschrijving in..."></textarea>
-
-          <label style="margin-top:8px"><strong>Video 1 (URL of video ID):</strong></label>
-          <input id="modalVideo1" type="text" placeholder="https://www.youtube.com/watch?v=VIDEOID of VIDEOID" />
-
-          <label style="margin-top:8px"><strong>Video 2 (URL or ID):</strong></label>
-          <input id="modalVideo2" type="text" placeholder="Video 2 URL of ID" />
-
-          <label style="margin-top:8px"><strong>Video 3 (URL or ID):</strong></label>
-          <input id="modalVideo3" type="text" placeholder="Video 3 URL of ID" />
-
-          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
-            <button class="page-btn" onclick="saveCustomModal()">Save</button>
-            <button class="page-btn" onclick="exitEditMode(false)">Cancel</button>
-          </div>
-        </div>
-
         <div class="modal-videos" id="modalVideos"></div>
         <div id="modalChannelDescription" class="modal-meta">Channel info...</div>
       </div>
@@ -181,16 +160,11 @@ h1{font-size:28px;margin:18px 0}
 </div>
 
 <script>
-/* =========================
-   Config & Data
-========================= */
+/* ====== Full script (versions, skins, youtubers, modal) ====== */
 
+/* Configuration */
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
-
-let allSkins = [];
-let youtuberSkins = []; // YOUTUBER_DATA => shown in Youtuber Skins page
-let agarioYoutubers = []; // AGARIO_YOUTUBERS => shown in Agar.io Youtubers page
 
 /* Status map */
 const YOUTUBER_STATUS = {
@@ -211,7 +185,6 @@ const YOUTUBER_STATUS = {
   "Kristoffer": "inactive","n0psa": "inactive","TYT": "inactive","Crystal": "inactive","Sirius": "inactive","Rayday": "inactive",
   "M4J": "inactive"
 };
-
 const STATUS_INFO = {
   "active": { label: "Active", className: "status-active" },
   "less-active": { label: "Less active", className: "status-less-active" },
@@ -220,93 +193,91 @@ const STATUS_INFO = {
 };
 function getYoutuberStatus(name){ return YOUTUBER_STATUS[name] || "inactive"; }
 
-/* Full YOUTUBER_DATA (WITHOUT T.B) */
+/* YOUTUBER_DATA (grid) - do NOT include T.B here */
 const YOUTUBER_DATA = [
-    ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
-    ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
-    ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
-    ["7MODKA","IMG_9909.png","7MODKA has stopped playing Agar.io. The 7MODKA skin is still available in the Agar.io game. Set the nick **7MODKA** to use this skin."],
-    ["Bn Rhmi","IMG_0101.png","Bn Rhmi has stopped playing Agar.io. The Bn Rhmi skin is still available in the Agar.io game. Set the nick **Bn Rhmi** to use this skin."],
-    ["Sarok1","IMG_1778.png","Sarok is still actively playing Agar.io. Set the nick **Sarok1** to use this skin."],
-    ["Sarok2","IMG_2511.png","Sarok is still actively playing Agar.io. Set the nick **Sarok** to use this skin."],
-    ["Sparky","IMG_0439.png","Sparky has stopped playing Agar.io. The Sparky skin is still available in the Agar.io game. Set the nick **Sparky** to use this skin."],
-    ["YemeniYT","IMG_6082.png","Yemeni has stopped playing Agar.io. The YemeniYT skin is still available in the Agar.io game. Set the nick **YemeniYT** to use this skin."],
-    ["Yemeni","IMG_0105.png","Yemeni has stopped playing Agar.io. The Yemeni skin is still available in the Agar.io game. Set the nick **Yemeni** to use this skin."],
-    ["Hero","IMG_4513.png","Hero has stopped playing Agar.io. The Hero skin is still available in the Agar.io game. Set the nick **Hero** to use this skin."],
-    ["Agarmurfs","IMG_1745.png","Murfs has stopped playing Agar.io. The Agarmurfs skin is still available in the Agar.io game. Set the nick **Agarmurfs** to use this skin."],
-    ["3ezzy","IMG_1744.png","3ezzy has stopped playing Agar.io. The 3ezzy skin is still available in the Agar.io game. Set the nick **3ezzy** to use this skin."],
-    ["alejo","IMG_4446.png","Alejo has stopped playing Agar.io. The Alejo skin is still available in the Agar.io game. Set the nick **Alejo** to use this skin."],
-    ["alejoyoutube","IMG_4436.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-    ["twisted","IMG_4443.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-    ["silver","IMG_0112.png","Set the nick **silver** to use this skin."],
-    ["EvilMonkey","IMG_0114.png","S"],
-    ["Araizon","IMG_4440.png","Araizon is still actively playing Agar.io. Set the nick **Araizon** to use this skin."],
-    ["Alejoyt2","IMG_9904.png","Alejoyt has stopped playing Agar.io. The Alejoyt2 skin is still available in the Agar.io game. Set the nick **Alejoyt2** to use this skin."],
-    ["Skillsyt","IMG_6089.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
-    ["SonicGames","IMG_1747.png","Sonic has stopped playing Agar.io. The **SonicGames** skin is still available in the Agar.io game. Set the nick **SonicGames** to use this skin."],
-    ["Sonic","IMG_1746.png","Sonic has stopped playing Agar.io. The **Sonic** skin is still available in the Agar.io game. Set the nick **Sonic** to use this skin."],
-    ["peps","IMG_6090.png","peps has stopped playing Agar.io. The **peps** skin is still available in the Agar.io game. Set the nick **peps** to use this skin."],
-    ["GetDeadKid (old)","IMG_0119.png","This old GetDeadKid skin was replaced by a new one."],
-    ["Zone","IMG_6091.png","Zone has stopped playing Agar.io. The **Zone** skin is still available in the Agar.io game. Set the nick **Zone** to use this skin."],
-    ["Skills","IMG_4439.png","Skills has stopped playing Agar.io. The **Skills** skin is still available in the Agar.io game. Set the nick **Skills** to use this skin."],
-    ["Yemeni (old)","IMG_1748.png","This old Yemeni skin was replaced by a new one."],
-    ["Sonic (old)","IMG_0123.png","This old Sonic skin was replaced by a new one."],
-    ["demon","IMG_6095.png","demon has stopped playing Agar.io. The **demonx** skin is still available in the Agar.io game. Set the nick **demonx** to use this skin."],
-    ["Ashwin","IMG_4438.png","Ashwin has stopped playing Agar.io. The **Ashwin** skin is still available in the Agar.io game. Set the nick **Ashwin** to use this skin."],
-    ["Ashwinyt","IMG_6093.png","Ashwin has stopped playing Agar.io. The **Ashwinyt** skin is still available in the Agar.io game. Set the nick **Ashwinyt** to use this skin."],
-    ["Togoman","IMG_4451.png","Togoman has stopped playing Agar.io. The **Togoman** skin is still available in the Agar.io game. Set the nick **Togoman** to use this skin."],
-    ["alejoyt","IMG_0136.png","alejoyt has stopped playing Agar.io. The **alejoyt** skin is still available in the Agar.io game. Set the nick **alejoyt** to use this skin."],
-    ["bang","IMG_0129.png","bang has stopped playing Agar.io. The **bang** skin is still available in the Agar.io game. Set the nick **bang** to use this skin."],
-    ["demon (old)","IMG_0137.png","This old demon skin was replaced by a new one."],
-    ["minhvu","IMG_6096.png","Set the nick **minhvu** to use this skin."],
-    ["mister","IMG_0131.png","mister has stopped playing Agar.io. The **mister** skin is still available in the Agar.io game. Set the nick **mister** to use this skin."],
-    ["peps (old)","IMG_0138.png","This old peps skin was replaced by a new one."],
-    ["Getdeadkid Xmas","IMG_0139.png","Getdeadkid Xmas has stopped playing Agar.io. The **Getdeadkid Xmas** skin is still available in the Agar.io game. Set the nick **Getdeadkid Xmas** to use this skin."],
-    ["Yemeni (old)","IMG_0140.png","This old Yemeni skin was replaced by a new one"],
-    ["Majnoon","IMG_0133.png","Majnoon has stopped playing Agar.io. The **Majnoon** skin is still available in the Agar.io game. Set the nick **Majnoon** to use this skin."],
-    ["statik","IMG_6491.png","statik has stopped playing Agar.io. The **statik** skin is still available in the Agar.io game. Set the nick **statik** to use this skin."],
-    ["Skills (old)","IMG_0141.png","This old Skills skin was replaced by a new one."],
-    ["Woobs","IMG_6490.png","Woobs has stopped playing Agar.io. The **Woobs** skin is still available in the Agar.io game. Set the nick **Woobs** to use this skin."],
-    ["xxnetro","IMG_0142.png","Netro is still actively playing Agar.io. Set the nick **xxnetro** to use this skin."],
-    ["xxnetro2","IMG_0143.png","Netro is still actively playing Agar.io. Set the nick **xxnetro2** to use this skin.."],
-    ["Sonic (old)","IMG_0144.png","This old Sonic skin was replaced by a new one."],
-    ["52k","IMG_6489.png","52k has stopped playing Agar.io. The **52k** skin is still available in the Agar.io game. Set the nick **52k** to use this skin."],
-    ["Brax","IMG_0146.png","Brax has stopped playing Agar.io. The **Brax** skin is still available in the Agar.io game. Set the nick **Brax** to use this skin."],
-    ["3LK","IMG_0147.png","3LK has stopped playing Agar.io. The **3LK** skin is still available in the Agar.io game. Set the nick **3LK** to use this skin."],
-    ["GURI","IMG_0148.png","GURI has stopped playing Agar.io. The **GURI** skin is still available in the Agar.io game. Set the nick **GURI** to use this skin."],
-    ["kbkb","IMG_0149.png","kbkb has stopped playing Agar.io. The **kbkb** skin is still available in the Agar.io game. Set the nick **kbkb** to use this skin."],
-    ["strike","IMG_0150.png","strike has stopped playing Agar.io. The **strike** skin is still available in the Agar.io game. Set the nick **strike** to use this skin."],
-    ["Babadook","IMG_0151.png","Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
-    ["Mistik","IMG_0152.png","Mistik has stopped playing Agar.io. The **Mistik** skin is still available in the Agar.io game. Set the nick **Mistik** to use this skin."],
-    ["Snay","IMG_0153.png","Set the nick **Snay** to use this skin."],
-    ["Snay-Gang","IMG_0154.png","Set the nick **Snay-Gang** to use this skin."],
-    ["Snay-Chocolate","IMG_0155.png","Set the nick **Snay-Chocolate** to use this skin."],
-    ["togomanyt","IMG_0156.png","togomanyt has stopped playing Agar.io. The **togomanyt** skin is still available in the Agar.io game. Set the nick **togomanyt** to use this skin."],
-    ["Ashwin (old)","IMG_0157.png","This old Ashwin skin was replaced by a new one."],
-    ["Zone (old)","IMG_0158.png","This old Zone skin was replaced by a new one."],
-    ["Sneddy Gaming","IMG_0159.png","Sneddy Gaming has stopped playing Agar.io. The **Sneddy Gaming** skin is still available in the Agar.io game. Set the nick **Sneddy Gaming** to use this skin."],
-    ["Timid","IMG_0160.png","Timid has stopped playing Agar.io. The **Timid** skin is still available in the Agar.io game. Set the nick **Timid** to use this skin."],
-    ["Matjoy","IMG_0161.jpeg","Matjoy has stopped playing Agar.io. The **Matjoy** skin is still available in the Agar.io game. Set the nick **Matjoy** to use this skin."],
-    ["Kristoffer","IMG_0163.jpeg","Kristoffer has stopped playing Agar.io. The **Kristoffer** skin is still available in the Agar.io game. Set the nick **Kristoffer** to use this skin."],
-    ["n0psa","IMG_0164.jpeg","n0psa has stopped playing Agar.io. The **n0psa** skin is still available in the Agar.io game. Set the nick **n0psa** to use this skin."],
-    ["TYT","IMG_0165.jpeg","TYT has stopped playing Agar.io. The **TYT** skin is still available in the Agar.io game. Set the nick **TYT** to use this skin."],
-    ["Crystal","IMG_0166.jpeg","Crystal has stopped playing Agar.io. The **Crystal** skin is still available in the Agar.io game. Set the nick **Crystal** to use this skin."],
-    ["Sirius","IMG_0167.jpeg","Sirius has stopped playing Agar.io. The **Sirius** skin is still available in the Agar.io game. Set the nick **Sirius** to use this skin."],
-    ["Rayday","IMG_0168.jpeg","Rayday has stopped playing Agar.io. The **Rayday** skin is still available in the Agar.io game. Set the nick **Rayday** to use this skin"],
-    ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
+  ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
+  ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
+  ["GetDeadKid","IMG_4450.png","GedDeadKid has stopped playing Agar.io. The GedDeadKid skin is still available in the Agar.io game. Set the nick **GedDeadKid** to use this skin."],
+  ["7MODKA","IMG_9909.png","7MODKA has stopped playing Agar.io. The 7MODKA skin is still available in the Agar.io game. Set the nick **7MODKA** to use this skin."],
+  ["Bn Rhmi","IMG_0101.png","Bn Rhmi has stopped playing Agar.io. The Bn Rhmi skin is still available in the Agar.io game. Set the nick **Bn Rhmi** to use this skin."],
+  ["Sarok1","IMG_1778.png","Sarok is still actively playing Agar.io. Set the nick **Sarok1** to use this skin."],
+  ["Sarok2","IMG_2511.png","Sarok is still actively playing Agar.io. Set the nick **Sarok** to use this skin."],
+  ["Sparky","IMG_0439.png","Sparky has stopped playing Agar.io. The Sparky skin is still available in the Agar.io game. Set the nick **Sparky** to use this skin."],
+  ["YemeniYT","IMG_6082.png","Yemeni has stopped playing Agar.io. The YemeniYT skin is still available in the Agar.io game. Set the nick **YemeniYT** to use this skin."],
+  ["Yemeni","IMG_0105.png","Yemeni has stopped playing Agar.io. The Yemeni skin is still available in the Agar.io game. Set the nick **Yemeni** to use this skin."],
+  ["Hero","IMG_4513.png","Hero has stopped playing Agar.io. The Hero skin is still available in the Agar.io game. Set the nick **Hero** to use this skin."],
+  ["Agarmurfs","IMG_1745.png","Murfs has stopped playing Agar.io. The Agarmurfs skin is still available in the Agar.io game. Set the nick **Agarmurfs** to use this skin."],
+  ["3ezzy","IMG_1744.png","3ezzy has stopped playing Agar.io. The 3ezzy skin is still available in the Agar.io game. Set the nick **3ezzy** to use this skin."],
+  ["alejo","IMG_4446.png","Alejo has stopped playing Agar.io. The Alejo skin is still available in the Agar.io game. Set the nick **Alejo** to use this skin."],
+  ["alejoyoutube","IMG_4436.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+  ["twisted","IMG_4443.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+  ["silver","IMG_0112.png","Set the nick **silver** to use this skin."],
+  ["EvilMonkey","IMG_0114.png","S"],
+  ["Araizon","IMG_4440.png","Araizon is still actively playing Agar.io. Set the nick **Araizon** to use this skin."],
+  ["Alejoyt2","IMG_9904.png","Alejoyt has stopped playing Agar.io. The Alejoyt2 skin is still available in the Agar.io game. Set the nick **Alejoyt2** to use this skin."],
+  ["Skillsyt","IMG_6089.png","Skills has stopped playing Agar.io. The Skillsyt skin is still available in the Agar.io game. Set the nick **Skillsyt** to use this skin."],
+  ["SonicGames","IMG_1747.png","Sonic has stopped playing Agar.io. The **SonicGames** skin is still available in the Agar.io game. Set the nick **SonicGames** to use this skin."],
+  ["Sonic","IMG_1746.png","Sonic has stopped playing Agar.io. The **Sonic** skin is still available in the Agar.io game. Set the nick **Sonic** to use this skin."],
+  ["peps","IMG_6090.png","peps has stopped playing Agar.io. The **peps** skin is still available in the Agar.io game. Set the nick **peps** to use this skin."],
+  ["GetDeadKid (old)","IMG_0119.png","This old GetDeadKid skin was replaced by a new one."],
+  ["Zone","IMG_6091.png","Zone has stopped playing Agar.io. The **Zone** skin is still available in the Agar.io game. Set the nick **Zone** to use this skin."],
+  ["Skills","IMG_4439.png","Skills has stopped playing Agar.io. The **Skills** skin is still available in the Agar.io game. Set the nick **Skills** to use this skin."],
+  ["Yemeni (old)","IMG_1748.png","This old Yemeni skin was replaced by a new one."],
+  ["Sonic (old)","IMG_0123.png","This old Sonic skin was replaced by a new one."],
+  ["demon","IMG_6095.png","demon has stopped playing Agar.io. The **demonx** skin is still available in the Agar.io game. Set the nick **demonx** to use this skin."],
+  ["Ashwin","IMG_4438.png","Ashwin has stopped playing Agar.io. The **Ashwin** skin is still available in the Agar.io game. Set the nick **Ashwin** to use this skin."],
+  ["Ashwinyt","IMG_6093.png","Ashwin has stopped playing Agar.io. The **Ashwinyt** skin is still available in the Agar.io game. Set the nick **Ashwinyt** to use this skin."],
+  ["Togoman","IMG_4451.png","Togoman has stopped playing Agar.io. The **Togoman** skin is still available in the Agar.io game. Set the nick **Togoman** to use this skin."],
+  ["alejoyt","IMG_0136.png","alejoyt has stopped playing Agar.io. The **alejoyt** skin is still available in the Agar.io game. Set the nick **alejoyt** to use this skin."],
+  ["bang","IMG_0129.png","bang has stopped playing Agar.io. The **bang** skin is still available in the Agar.io game. Set the nick **bang** to use this skin."],
+  ["demon (old)","IMG_0137.png","This old demon skin was replaced by a new one."],
+  ["minhvu","IMG_6096.png","Set the nick **minhvu** to use this skin."],
+  ["mister","IMG_0131.png","mister has stopped playing Agar.io. The **mister** skin is still available in the Agar.io game. Set the nick **mister** to use this skin."],
+  ["peps (old)","IMG_0138.png","This old peps skin was replaced by a new one."],
+  ["Getdeadkid Xmas","IMG_0139.png","Getdeadkid Xmas has stopped playing Agar.io. The **Getdeadkid Xmas** skin is still available in the Agar.io game. Set the nick **Getdeadkid Xmas** to use this skin."],
+  ["Yemeni (old)","IMG_0140.png","This old Yemeni skin was replaced by a new one"],
+  ["Majnoon","IMG_0133.png","Majnoon has stopped playing Agar.io. The **Majnoon** skin is still available in the Agar.io game. Set the nick **Majnoon** to use this skin."],
+  ["statik","IMG_6491.png","statik has stopped playing Agar.io. The **statik** skin is still available in the Agar.io game. Set the nick **statik** to use this skin."],
+  ["Skills (old)","IMG_0141.png","This old Skills skin was replaced by a new one."],
+  ["Woobs","IMG_6490.png","Woobs has stopped playing Agar.io. The **Woobs** skin is still available in the Agar.io game. Set the nick **Woobs** to use this skin."],
+  ["xxnetro","IMG_0142.png","Netro is still actively playing Agar.io. Set the nick **xxnetro** to use this skin."],
+  ["xxnetro2","IMG_0143.png","Netro is still actively playing Agar.io. Set the nick **xxnetro2** to use this skin.."],
+  ["Sonic (old)","IMG_0144.png","This old Sonic skin was replaced by a new one."],
+  ["52k","IMG_6489.png","52k has stopped playing Agar.io. The **52k** skin is still available in the Agar.io game. Set the nick **52k** to use this skin."],
+  ["Brax","IMG_0146.png","Brax has stopped playing Agar.io. The **Brax** skin is still available in the Agar.io game. Set the nick **Brax** to use this skin."],
+  ["3LK","IMG_0147.png","3LK has stopped playing Agar.io. The **3LK** skin is still available in the Agar.io game. Set the nick **3LK** to use this skin."],
+  ["GURI","IMG_0148.png","GURI has stopped playing Agar.io. The **GURI** skin is still available in the Agar.io game. Set the nick **GURI** to use this skin."],
+  ["kbkb","IMG_0149.png","kbkb has stopped playing Agar.io. The **kbkb** skin is still available in the Agar.io game. Set the nick **kbkb** to use this skin."],
+  ["strike","IMG_0150.png","strike has stopped playing Agar.io. The **strike** skin is still available in the Agar.io game. Set the nick **strike** to use this skin."],
+  ["Babadook","IMG_0151.png","Babadook has stopped playing Agar.io. The **Babadook** skin is still available in the Agar.io game. Set the nick **Babadook** to use this skin."],
+  ["Mistik","IMG_0152.png","Mistik has stopped playing Agar.io. The **Mistik** skin is still available in the Agar.io game. Set the nick **Mistik** to use this skin."],
+  ["Snay","IMG_0153.png","Set the nick **Snay** to use this skin."],
+  ["Snay-Gang","IMG_0154.png","Set the nick **Snay-Gang** to use this skin."],
+  ["Snay-Chocolate","IMG_0155.png","Set the nick **Snay-Chocolate** to use this skin."],
+  ["togomanyt","IMG_0156.png","togomanyt has stopped playing Agar.io. The **togomanyt** skin is still available in the Agar.io game. Set the nick **togomanyt** to use this skin."],
+  ["Ashwin (old)","IMG_0157.png","This old Ashwin skin was replaced by a new one."],
+  ["Zone (old)","IMG_0158.png","This old Zone skin was replaced by a new one."],
+  ["Sneddy Gaming","IMG_0159.png","Sneddy Gaming has stopped playing Agar.io. The **Sneddy Gaming** skin is still available in the Agar.io game. Set the nick **Sneddy Gaming** to use this skin."],
+  ["Timid","IMG_0160.png","Timid has stopped playing Agar.io. The **Timid** skin is still available in the Agar.io game. Set the nick **Timid** to use this skin."],
+  ["Matjoy","IMG_0161.jpeg","Matjoy has stopped playing Agar.io. The **Matjoy** skin is still available in the Agar.io game. Set the nick **Matjoy** to use this skin."],
+  ["Kristoffer","IMG_0163.jpeg","Kristoffer has stopped playing Agar.io. The **Kristoffer** skin is still available in the Agar.io game. Set the nick **Kristoffer** to use this skin."],
+  ["n0psa","IMG_0164.jpeg","n0psa has stopped playing Agar.io. The **n0psa** skin is still available in the Agar.io game. Set the nick **n0psa** to use this skin."],
+  ["TYT","IMG_0165.jpeg","TYT has stopped playing Agar.io. The **TYT** skin is still available in the Agar.io game. Set the nick **TYT** to use this skin."],
+  ["Crystal","IMG_0166.jpeg","Crystal has stopped playing Agar.io. The **Crystal** skin is still available in the Agar.io game. Set the nick **Crystal** to use this skin."],
+  ["Sirius","IMG_0167.jpeg","Sirius has stopped playing Agar.io. The **Sirius** skin is still available in the Agar.io game. Set the nick **Sirius** to use this skin."],
+  ["Rayday","IMG_0168.jpeg","Rayday has stopped playing Agar.io. The **Rayday** skin is still available in the Agar.io game. Set the nick **Rayday** to use this skin"],
+  ["M4J","IMG_0169.png","M4J has stopped playing Agar.io. The **M4J** skin has been removed from the Agar.io game."]
 ];
 
-/* AGARIO_YOUTUBERS: only T.B initially */
+/* AGARIO_YOUTUBERS: only T.B (fixed description & channel) */
 const AGARIO_YOUTUBERS = [
-  ["T.B","IMG_9766.jpeg","T.B is actief op Agar.io. Set the nick **T.B** to use this skin."]
+  ["T.B","IMG_9766.jpeg","T.B is super goei speler hij houd van pop split","https://www.youtube.com/@T.B6"]
 ];
 
-/* Cache for preloaded YouTube/meta data and custom data (from localStorage) */
-const youtuberMeta = {}; // will hold preloaded data + customVideoIds/description saved
+/* Basic cache for metadata */
+const youtuberMeta = {};
 
-/* =========================
-   Image fallback helper
-========================= */
+/* Helper: image fallback */
 function setImageWithFallback(imgEl, filename){
   const candidates = [];
   if(API && version) candidates.push(API + version + "/" + filename);
@@ -329,13 +300,10 @@ function setImageWithFallback(imgEl, filename){
       );
     }
   };
-
   imgEl.src = candidates[0];
 }
 
-/* =========================
-   Section switching
-========================= */
+/* Section switch */
 function showSection(section){
   const agario = document.getElementById("agarioSection");
   const youtuber = document.getElementById("youtuberSection");
@@ -351,82 +319,43 @@ function showSection(section){
   youtuberBtn.classList.remove("active");
   agarioListBtn.classList.remove("active");
 
-  if(section === "agario"){
-    agario.classList.remove("hidden");
-    agarioBtn.classList.add("active");
-  } else if(section === "youtuber"){
-    youtuber.classList.remove("hidden");
-    youtuberBtn.classList.add("active");
-    if(youtuberSkins.length === 0) loadYoutuberSkins();
-  } else if(section === "youtubersList"){
-    agarioList.classList.remove("hidden");
-    agarioListBtn.classList.add("active");
-    if(agarioYoutubers.length === 0) loadAgarioYoutubers();
-  }
+  if(section === "agario"){ agario.classList.remove("hidden"); agarioBtn.classList.add("active"); }
+  else if(section === "youtuber"){ youtuber.classList.remove("hidden"); youtuberBtn.classList.add("active"); if(youtuberSkins.length===0) loadYoutuberSkins(); }
+  else if(section === "youtubersList"){ agarioList.classList.remove("hidden"); agarioListBtn.classList.add("active"); if(agarioYoutubers.length===0) loadAgarioYoutubers(); }
 
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =========================
-   versions() - improved (replaces prior)
-   Fetches versions and wires onchange to reload skins
-========================= */
+/* versions() - loads versions select and wires onchange */
 async function versions(){
   const s = document.getElementById("version");
   if(!s) return;
-
   s.innerHTML = "";
-
   try{
-    const r = await fetch("https://lmsettings.snez.org/", {
-      headers: {
-        username: "LMConfigVersion",
-        password: "LMConfigVersionPass"
-      }
-    });
-
-    if(!r.ok) throw new Error("Versions endpoint returned " + r.status);
-
+    const r = await fetch("https://lmsettings.snez.org/", { headers: { username:"LMConfigVersion", password:"LMConfigVersionPass" }});
+    if(!r.ok) throw new Error("versions endpoint " + r.status);
     const v = await r.json();
     const vals = Object.values(v || {});
-
-    if(!vals.length) throw new Error("No versions found in response");
-
-    vals.forEach(x=>{
-      const clean = String(x).replace(/\/$/,"");
-      const opt = new Option(String(x), clean);
-      s.add(opt);
-    });
-
-    if(s.options.length){
-      s.selectedIndex = s.options.length - 1;
-      version = s.value;
-    }
-
+    if(!vals.length) throw new Error("no versions");
+    vals.forEach(x=> s.add(new Option(String(x), String(x).replace(/\/$/,""))));
+    if(s.options.length){ s.selectedIndex = s.options.length - 1; version = s.value; }
   }catch(err){
-    const fallback = ["v15/3032","v14/2900","v13/2800"];
-    fallback.forEach(x=> s.add(new Option(x, x)));
+    const fallback = ["v15/3032"];
+    fallback.forEach(x => s.add(new Option(x,x)));
     version = s.value = fallback[0];
-    console.warn("Failed to fetch versions, using fallback:", err);
+    console.warn("versions failed, fallback used", err);
   }
-
   s.onchange = function(e){
-    const val = (e.target.value || "").replace(/\/$/,"");
-    if(val){
-      version = val;
-      loadSkins();
-      renderAgarioPage(1);
-      renderYoutuberPage(1);
-      renderAgarioYoutubersPage(1);
-    }
+    version = (e.target.value||"").replace(/\/$/,"");
+    loadSkins();
+    renderAgarioPage(1);
+    renderYoutuberPage(1);
+    renderAgarioYoutubersPage(1);
   };
-
   loadSkins();
 }
 
-/* =========================
-   Load Agario skins (GameConfiguration)
-========================= */
+/* Load skins from API endpoint */
 async function loadSkins(){
   const box = document.getElementById("skins");
   box.innerHTML = "Loading skins...";
@@ -444,7 +373,7 @@ async function loadSkins(){
       if(!img.includes("uses_spine")) skins.push([id,img]);
     }
     skins.reverse();
-    allSkins = skins;
+    window.allSkins = skins;
     renderAgarioPage(1);
   }catch(e){
     box.textContent = "Unable to load skins.";
@@ -456,31 +385,24 @@ function renderAgarioPage(page){
   const perPage = 120;
   const box = document.getElementById("skins");
   const pages = document.getElementById("agarioPages");
-  const total = Math.ceil(allSkins.length / perPage);
+  const skins = window.allSkins || [];
+  const total = Math.ceil(skins.length / perPage) || 1;
   box.innerHTML = "";
   const start = (page-1)*perPage;
-  allSkins.slice(start, start+perPage).forEach(([id,img])=>{
+  skins.slice(start, start+perPage).forEach(([id,img])=>{
     const d = document.createElement("div"); d.className = "skin";
     d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
-    const imgEl = d.querySelector("img");
-    setImageWithFallback(imgEl, img);
+    setImageWithFallback(d.querySelector("img"), img);
     box.appendChild(d);
   });
   pages.innerHTML = "";
-  for(let i=1;i<=total;i++){
-    const b = document.createElement("button"); b.className = "page-btn" + (i===page?" active":""); b.textContent = i; b.onclick = ()=>renderAgarioPage(i); pages.appendChild(b);
-  }
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderAgarioPage(i); pages.appendChild(b); }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =========================
-   Youtuber Skins (grid with full descriptions)
-========================= */
-function loadYoutuberSkins(){
-  youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || `Set the nick **${x[0]}** to use this skin.`]);
-  renderYoutuberPage(1);
-}
-
+/* Youtuber Skins grid */
+let youtuberSkins = [];
+function loadYoutuberSkins(){ youtuberSkins = YOUTUBER_DATA.map(x=>[x[0],x[1],x[2]||""]); renderYoutuberPage(1); }
 function renderYoutuberPage(page){
   const perPage = 30;
   const box = document.getElementById("youtuberSkins");
@@ -490,42 +412,23 @@ function renderYoutuberPage(page){
   box.innerHTML = "";
   const start = (page-1)*perPage;
   youtuberSkins.slice(start, start+perPage).forEach(skin=>{
-    const name = skin[0], img = skin[1], instruction = (skin[2] || `Set the nick **${skin[0]}** to use this skin.`).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-    const d = document.createElement("div"); d.className = "skin";
-    d.innerHTML = `
-      <img alt="${name}">
-      <span class="youtuber-name">${name}</span>
+    const name=skin[0], img=skin[1], instruction=(skin[2]||"").replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
+    const d=document.createElement("div"); d.className="skin";
+    d.innerHTML = `<img alt="${name}"><span class="youtuber-name">${name}</span>
       <div class="youtuber-status"><span class="status-label">Status:</span>
-        <span class="status-value ${(STATUS_INFO[getYoutuberStatus(name)]||{}).className || 'status-inactive'}">
-          ${(STATUS_INFO[getYoutuberStatus(name)]||{}).label || 'Inactive'}
-        </span>
-      </div>
-      <div class="skin-instruction">${instruction}</div>
-    `;
+      <span class="status-value ${(STATUS_INFO[getYoutuberStatus(name)]||{}).className||'status-inactive'}">${(STATUS_INFO[getYoutuberStatus(name)]||{}).label||'Inactive'}</span></div>
+      <div class="skin-instruction">${instruction}</div>`;
     setImageWithFallback(d.querySelector("img"), img);
     box.appendChild(d);
   });
-  if(pages){
-    pages.innerHTML = "";
-    for(let i=1;i<=total;i++){
-      const b = document.createElement("button");
-      b.className = "page-btn" + (i===page ? " active" : "");
-      b.textContent = i;
-      b.onclick = ()=> renderYoutuberPage(i);
-      pages.appendChild(b);
-    }
-  }
+  pages.innerHTML = "";
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderYoutuberPage(i); pages.appendChild(b); }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =========================
-   Agario Youtubers (ONLY AGARIO_YOUTUBERS)
-========================= */
-function loadAgarioYoutubers(){
-  agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
-  renderAgarioYoutubersPage(1);
-}
-
+/* Agario Youtubers (only AGARIO_YOUTUBERS) */
+let agarioYoutubers = [];
+function loadAgarioYoutubers(){ agarioYoutubers = AGARIO_YOUTUBERS.map(x=>[x[0],x[1],x[2]||"",x[3]||null]); renderAgarioYoutubersPage(1); }
 function renderAgarioYoutubersPage(page){
   const perPage = 30;
   const box = document.getElementById("youtubersList");
@@ -535,122 +438,26 @@ function renderAgarioYoutubersPage(page){
   box.innerHTML = "";
   const start = (page-1)*perPage;
   agarioYoutubers.slice(start, start+perPage).forEach(item=>{
-    const name = item[0], img = item[1];
-    const statusKey = getYoutuberStatus(name); const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-    const d = document.createElement("div"); d.className = "skin"; d.setAttribute("data-name", name);
-    d.innerHTML = `
-      <img class="yt-card-img" alt="${name}">
-      <span class="youtuber-name">${name}</span>
-      <div class="youtuber-status" style="justify-content:center;">
-        <span class="status-label">Status:</span>
-        <span class="status-value ${status.className}">${status.label}</span>
-      </div>
-    `;
+    const name=item[0], img=item[1];
+    const statusKey = getYoutuberStatus(name); const status=STATUS_INFO[statusKey]||STATUS_INFO["inactive"];
+    const d=document.createElement("div"); d.className="skin"; d.setAttribute("data-name", name);
+    d.innerHTML = `<img class="yt-card-img" alt="${name}"><span class="youtuber-name">${name}</span>
+      <div class="youtuber-status" style="justify-content:center;"><span class="status-label">Status:</span>
+      <span class="status-value ${status.className}">${status.label}</span></div>`;
     setImageWithFallback(d.querySelector("img.yt-card-img"), img);
-    d.onclick = ()=> openYoutuberModal(name, img);
+    d.onclick = ()=> openYoutuberModal(name, item[3]||null);
     box.appendChild(d);
   });
-  if(pages){
-    pages.innerHTML = "";
-    for(let i=1;i<=total;i++){
-      const b = document.createElement("button"); b.className = "page-btn" + (i===page ? " active" : ""); b.textContent = i; b.onclick = ()=> renderAgarioYoutubersPage(i); pages.appendChild(b);
-    }
-  }
+  pages.innerHTML = "";
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderAgarioYoutubersPage(i); pages.appendChild(b); }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* =========================
-   Modal + custom edit support for Agario-only items
-   - Custom data saved in localStorage under key: "agario_custom_<name>"
-   - Allows entering custom description and 3 video URLs/IDs
-========================= */
-
-function isAgarioOnly(name){
-  return AGARIO_YOUTUBERS.some(x => x[0] === name);
-}
-
-function localStorageKeyFor(name){ return "agario_custom_" + name.replace(/\s+/g,"_"); }
-
-function loadCustomFor(name){
-  try{
-    const raw = localStorage.getItem(localStorageKeyFor(name));
-    if(!raw) return null;
-    return JSON.parse(raw);
-  }catch(e){ return null; }
-}
-
-function saveCustomFor(name, obj){
-  try{
-    localStorage.setItem(localStorageKeyFor(name), JSON.stringify(obj));
-    return true;
-  }catch(e){ return false; }
-}
-
-function extractVideoId(input){
-  if(!input) return null;
-  input = input.trim();
-  // If plain 11-char id
-  const idRe = /^[A-Za-z0-9_\-]{11}$/;
-  if(idRe.test(input)) return input;
-  // youtu.be short links
-  let m = input.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/);
-  if(m && m[1]) return m[1];
-  // youtube watch?v=
-  m = input.match(/[?&]v=([A-Za-z0-9_\-]{11})/);
-  if(m && m[1]) return m[1];
-  // /embed/ID
-  m = input.match(/\/embed\/([A-Za-z0-9_\-]{11})/);
-  if(m && m[1]) return m[1];
-  // last path segment of a url (fallback)
-  try{
-    const u = new URL(input);
-    const parts = u.pathname.split("/");
-    const last = parts.pop() || parts.pop();
-    if(last && idRe.test(last)) return last;
-  }catch(e){}
-  return null;
-}
-
+/* Modal: open (for agario items fixed behavior) */
+/* currentModalName stored for reference */
 let currentModalName = null;
 
-function enterEditMode(){
-  document.getElementById("modalEditArea").classList.remove("hidden");
-  document.getElementById("modalEditBtn").style.display = "none";
-}
-
-function exitEditMode(reload){
-  document.getElementById("modalEditArea").classList.add("hidden");
-  document.getElementById("modalEditBtn").style.display = isAgarioOnly(currentModalName) ? "inline-block" : "none";
-  if(reload) {
-    // re-populate modal using saved custom data
-    const meta = youtuberMeta[currentModalName];
-    if(meta) populateModalFromMeta(currentModalName, meta);
-  }
-}
-
-function saveCustomModal(){
-  const name = currentModalName;
-  if(!name) return;
-  const desc = document.getElementById("modalCustomDescription").value || "";
-  const v1 = document.getElementById("modalVideo1").value || "";
-  const v2 = document.getElementById("modalVideo2").value || "";
-  const v3 = document.getElementById("modalVideo3").value || "";
-  const ids = [extractVideoId(v1), extractVideoId(v2), extractVideoId(v3)].filter(Boolean);
-
-  const obj = { customDescription: desc, customVideoIds: ids };
-  saveCustomFor(name, obj);
-
-  // store in youtuberMeta for immediate usage
-  youtuberMeta[name] = youtuberMeta[name] || {};
-  youtuberMeta[name].customDescription = desc;
-  youtuberMeta[name].customVideoIds = ids;
-  youtuberMeta[name].loaded = true; // mark loaded so modal uses it
-
-  exitEditMode(true);
-}
-
-/* open modal: if agario-only show Edit button and load saved custom values */
-function openYoutuberModal(name, img){
+function openYoutuberModal(name, channelUrl){
   currentModalName = name;
   const modal = document.getElementById("youtuberModal");
   const title = document.getElementById("modalTitle");
@@ -659,7 +466,6 @@ function openYoutuberModal(name, img){
   const videos = document.getElementById("modalVideos");
   const channelDesc = document.getElementById("modalChannelDescription");
   const modalLoader = document.getElementById("modalLoader");
-  const editBtn = document.getElementById("modalEditBtn");
 
   title.textContent = name;
   const statusKey = getYoutuberStatus(name);
@@ -669,70 +475,56 @@ function openYoutuberModal(name, img){
 
   desc.innerHTML = "Loading description...";
   videos.innerHTML = "";
-  channelDesc.textContent = "Channel info...";
+  channelDesc.textContent = "";
   modalLoader.style.display = "inline-block";
   modal.classList.remove("hidden");
 
-  // show Edit button only for Agario-only names
-  if(isAgarioOnly(name)){
-    editBtn.style.display = "inline-block";
-    // load saved custom into edit fields
-    const saved = loadCustomFor(name);
-    document.getElementById("modalCustomDescription").value = (saved && saved.customDescription) ? saved.customDescription : "";
-    document.getElementById("modalVideo1").value = (saved && saved.customVideoIds && saved.customVideoIds[0]) ? saved.customVideoIds[0] : "";
-    document.getElementById("modalVideo2").value = (saved && saved.customVideoIds && saved.customVideoIds[1]) ? saved.customVideoIds[1] : "";
-    document.getElementById("modalVideo3").value = (saved && saved.customVideoIds && saved.customVideoIds[2]) ? saved.customVideoIds[2] : "";
-    // hide edit area by default
-    document.getElementById("modalEditArea").classList.add("hidden");
-  } else {
-    editBtn.style.display = "none";
-  }
-
-  // If cached and loaded and has custom, use it immediately
-  const meta = youtuberMeta[name];
-  if(meta && (meta.loaded || meta.customDescription || meta.customVideoIds)){
-    populateModalFromMeta(name, meta);
-    modalLoader.style.display = "none";
+  // If this is an Agario-only item (like T.B) we use the fixed description and channelUrl param
+  const agarioItem = AGARIO_YOUTUBERS.find(x => x[0] === name);
+  if(agarioItem){
+    // fixed description from AGARIO_YOUTUBERS
+    const fixedDesc = agarioItem[2] || "";
+    desc.innerHTML = fixedDesc;
+    // fetch videos from the provided channel URL
+    const channelLink = agarioItem[3] || channelUrl;
+    if(channelLink){
+      // fetch newest, popular, random
+      fetchThreeChannelVideos(channelLink).then(ids=>{
+        populateModalWithIds(name, fixedDesc, ids);
+      }).catch(err=>{
+        // fallback: try generic scraping by name
+        fetchYouTubeData(name).then(data=>{
+          const ids = data.videoIds.slice(0,3);
+          populateModalWithIds(name, fixedDesc, ids);
+        }).catch(e=>{
+          // final fallback: show placeholders
+          populateModalWithIds(name, fixedDesc, []);
+        });
+      }).finally(()=> modalLoader.style.display = "none");
+    } else {
+      modalLoader.style.display = "none";
+      populateModalWithIds(name, fixedDesc, []);
+    }
     return;
   }
 
-  // else fetch
+  // Non-Agario items: use generic fetch/scrape flow (best-effort)
   fetchYouTubeData(name).then(data=>{
-    youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription, videoIds:data.videoIds||[] };
-    // but if user has saved custom data in localStorage, prefer it for agario-only items
-    if(isAgarioOnly(name)){
-      const saved = loadCustomFor(name);
-      if(saved){
-        youtuberMeta[name].customDescription = saved.customDescription || null;
-        youtuberMeta[name].customVideoIds = saved.customVideoIds || null;
-      }
-    }
-    populateModalFromMeta(name, youtuberMeta[name]);
+    const descText = data.channelDescription || data.generatedDescription || (`${name} is a content creator associated with Agar.io.`);
+    desc.innerHTML = descText;
+    populateModalWithIds(name, descText, data.videoIds.slice(0,3));
   }).catch(err=>{
     desc.innerHTML = "Description unavailable.";
-    videos.innerHTML = "<div style='color:#f88'>Unable to fetch videos.</div>";
-    channelDesc.textContent = "";
-  }).finally(()=>{ modalLoader.style.display = "none"; });
+    populateModalWithIds(name, "No videos", []);
+  }).finally(()=> modalLoader.style.display = "none");
 }
 
-/* populate modal: respects customDescription and customVideoIds if present */
-function populateModalFromMeta(name, meta){
-  const desc = document.getElementById("modalDescription");
+function populateModalWithIds(name, description, ids){
   const videos = document.getElementById("modalVideos");
   const channelDesc = document.getElementById("modalChannelDescription");
-
-  // prefer custom description
-  const descriptionToShow = (meta && meta.customDescription) ? meta.customDescription : (meta && meta.channelDescription ? meta.channelDescription : (generateAIDescription(name, null)));
-  desc.innerHTML = descriptionToShow;
-
-  channelDesc.innerHTML = (meta && meta.channelDescription && !meta.customDescription) ? meta.channelDescription : "";
-
+  channelDesc.textContent = ""; // we don't show extra channel meta for now
   videos.innerHTML = "";
-  // if customVideoIds exist, use them; else use scraped ids
-  let ids = [];
-  if(meta && meta.customVideoIds && meta.customVideoIds.length) ids = meta.customVideoIds;
-  else ids = meta && meta.videoIds ? meta.videoIds.slice(0,3) : [];
-
+  // Expect ids array length 3 (left newest, middle popular, right random) but handle missing
   for(let i=0;i<3;i++){
     const vid = ids[i];
     if(vid){
@@ -756,9 +548,70 @@ function populateModalFromMeta(name, meta){
   }
 }
 
-/* =========================
-   YouTube scraping helper (best-effort)
-========================= */
+/* Close modal */
+function closeYoutuberModal(e){
+  const modal = document.getElementById("youtuberModal");
+  modal.classList.add("hidden");
+  currentModalName = null;
+}
+
+/* Helper: fetch channel pages to get newest/popular/random IDs
+   - channelUrl can be e.g. https://www.youtube.com/@T.B6 or https://www.youtube.com/channel/UCxxx
+   - we try:
+     newest -> channelUrl + '/videos' (default order newest)
+     popular -> channelUrl + '/videos?view=0&sort=p'
+     random -> gather list and pick random
+   - uses proxy fallback (allorigins) then direct fetch
+*/
+async function fetchThreeChannelVideos(channelUrl){
+  const proxies = [ url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url), url => url ];
+  // normalize channelUrl: ensure no trailing slash
+  channelUrl = channelUrl.replace(/\/$/,"");
+  const newestUrl = channelUrl + "/videos";
+  const popularUrl = channelUrl + "/videos?view=0&sort=p";
+  // fetch newest
+  const newestIds = await fetchVideoIdsFromPage(newestUrl, proxies);
+  // fetch popular
+  const popularIds = await fetchVideoIdsFromPage(popularUrl, proxies);
+  // for random, gather from newest page if available
+  const combined = Array.from(new Set([...newestIds, ...popularIds]));
+  // decide results: left newest (first of newestIds), middle popular (first of popularIds), right random (random from combined)
+  const left = newestIds[0] || combined[0] || null;
+  const middle = popularIds[0] || combined[1] || combined[0] || null;
+  const right = (combined.length > 2) ? combined[Math.floor(Math.random()*combined.length)] : (combined[ combined.length-1 ] || null);
+  return [left, middle, right].filter(Boolean);
+}
+
+/* Fetch video IDs from a /videos page HTML */
+async function fetchVideoIdsFromPage(url, proxies){
+  let html = "";
+  for(const makeUrl of proxies){
+    try{
+      const resp = await fetch(makeUrl(url));
+      if(!resp.ok) throw new Error("Fetch failed: " + resp.status);
+      html = await resp.text();
+      if(html && html.length > 200) break;
+    }catch(err){
+      continue;
+    }
+  }
+  const ids = [];
+  if(html){
+    // try to find initialData JSON which often contains videoRenderer entries (more robust)
+    // fallback to regex /watch?v=
+    // First try regex for watch ids in order of appearance
+    const re = /\/watch\?v=([A-Za-z0-9_\-]{11})/g;
+    let m;
+    while((m = re.exec(html)) !== null){
+      const id = m[1];
+      if(!ids.includes(id)) ids.push(id);
+      if(ids.length >= 50) break;
+    }
+  }
+  return ids;
+}
+
+/* Generic fetch for non-Agario items (search + channel about) - best effort */
 async function fetchYouTubeData(name){
   const query = encodeURIComponent(name + " Agar.io");
   const searchUrl = "https://www.youtube.com/results?search_query=" + query;
@@ -774,7 +627,6 @@ async function fetchYouTubeData(name){
       continue;
     }
   }
-
   const ids = [];
   if(html){
     const re = /\/watch\?v=([A-Za-z0-9_\-]{11})/g;
@@ -785,7 +637,7 @@ async function fetchYouTubeData(name){
       if(ids.length >= 12) break;
     }
   }
-
+  // channel about
   let channelUrl = "";
   if(html){
     const channelRe = /href="(\/channel\/[A-Za-z0-9_\-]+|\/@[^"]+|\/user\/[^"]+)"/g;
@@ -798,7 +650,6 @@ async function fetchYouTubeData(name){
       }
     }
   }
-
   let channelDescription = "";
   let logo = null;
   if(channelUrl){
@@ -823,30 +674,23 @@ async function fetchYouTubeData(name){
       }
     }
   }
-
-  if(!logo && ids.length){
-    logo = "https://i.ytimg.com/vi/" + ids[0] + "/hqdefault.jpg";
-  }
-
+  if(!logo && ids.length) logo = "https://i.ytimg.com/vi/" + ids[0] + "/hqdefault.jpg";
   const generatedDescription = generateAIDescription(name, channelDescription);
   return { videoIds: ids, channelDescription, logo, generatedDescription };
 }
 
-/* helper */
 function decodeHtmlEntities(str){
   try{ const t = document.createElement("textarea"); t.innerHTML = str; return t.value; }catch(e){ return str; }
 }
 
 function generateAIDescription(name, channelDescription){
   if(channelDescription && channelDescription.trim().length>30) return channelDescription;
-  const custom = YOUTUBER_DATA.find(x => x[0]===name);
-  if(custom && custom[2]) return custom[2].replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  const custom = YOUTUBER_DATA.find(x => x[0] === name);
+  if(custom && custom[2]) return custom[2].replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
   return `${name} is a content creator associated with Agar.io. Their channel contains gameplay, tips and highlight videos. Use the nick <strong>${name}</strong> to use their skin in Agar.io.`;
 }
 
-/* =========================
-   Preload metadata in background (optional)
-========================= */
+/* Preload optional */
 async function startPreloadAllYoutubers(){
   const statusBadge = document.getElementById("preloadStatus");
   if(statusBadge) statusBadge.style.display = "inline-block";
@@ -861,54 +705,27 @@ async function startPreloadAllYoutubers(){
   }
   if(statusBadge) statusBadge.style.display = "none";
 }
-
 async function preloadYoutuber(name){
   if(youtuberMeta[name] && youtuberMeta[name].loaded) return;
   try{
     const data = await fetchYouTubeData(name);
     youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription||null, videoIds:data.videoIds||[] };
-    // if user saved custom data, merge it
-    const saved = loadCustomFor(name);
-    if(saved){
-      youtuberMeta[name].customDescription = saved.customDescription || null;
-      youtuberMeta[name].customVideoIds = saved.customVideoIds || null;
-    }
   }catch(e){
     youtuberMeta[name] = { loaded:true, logo:null, channelDescription:null, videoIds:[] };
   }
 }
-
-/* =========================
-   Modal close
-========================= */
-function closeYoutuberModal(e){
-  const modal = document.getElementById("youtuberModal");
-  modal.classList.add("hidden");
-  currentModalName = null;
-}
-
-/* =========================
-   Utilities
-========================= */
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
-/* =========================
-   Init
-========================= */
+/* Init */
 function init(){
-  youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || ""]);
-  agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
-  renderYoutuberPage(1);
-  renderAgarioYoutubersPage(1);
+  loadSkins();
+  loadYoutuberSkins();
+  loadAgarioYoutubers();
   versions();
   startPreloadAllYoutubers();
 }
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
 
-if(document.readyState === "loading"){
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
-}
 </script>
 
 <br>
