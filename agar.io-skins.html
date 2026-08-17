@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>Agar.io Skin - @t.bagar.io</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
 /* Basis styling */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
@@ -32,10 +32,6 @@ h1{font-size:28px;margin:18px 0}
 #youtuberSkins .skin img{width:120px;height:120px;border-radius:50%}
 .yt-card-img{width:120px;height:120px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
 .skin span{display:block;margin-top:6px;font-size:13px}
-
-/* Name-only helper (not heavily used now) */
-.name-only{display:flex;flex-direction:row;align-items:center;gap:10px;padding:12px;border-radius:8px;min-height:80px}
-.name-only .youtuber-name{font-size:16px;margin-top:0;color:#fff}
 
 /* Pagination & buttons */
 #pages,#youtuberPages,#youtubersPages,#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
@@ -78,10 +74,15 @@ h1{font-size:28px;margin:18px 0}
 .modal-videos iframe{width:32%;height:220px;border-radius:8px;border:0;background:#000}
 .modal-meta{color:#cbd5e1;margin-top:8px;font-size:13px;text-align:left}
 
-/* Loader badge */
+/* Edit form inside modal */
+.edit-controls{margin-top:10px;text-align:left;background:#071022;padding:10px;border-radius:8px;border:1px solid #223}
+.edit-controls textarea{width:100%;min-height:80px;background:#061223;color:#fff;border:1px solid #223;padding:8px;border-radius:6px}
+.edit-controls input[type="text"]{width:100%;padding:8px;border-radius:6px;border:1px solid #223;background:#061223;color:#fff;margin-top:6px}
+
+/* small loader badge */
 .loader-badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#07223a;color:#9bd1ff;font-size:12px;margin-left:8px}
 
-/* Responsive */
+/* responsive */
 @media(max-width:900px){
   #youtuberSkins{grid-template-columns:repeat(3,1fr)}
   #youtubersList{grid-template-columns:repeat(3,1fr)}
@@ -125,7 +126,7 @@ h1{font-size:28px;margin:18px 0}
   <div id="youtuberPages"></div>
 </div>
 
-<!-- AGARIO YOUTUBERS (ONLY T.B initially) -->
+<!-- AGARIO YOUTUBERS (ONLY agario-only list like T.B) -->
 <div id="agarioYoutubersSection" class="hidden">
   <div id="youtubersList">Loading Agar.io Youtubers...</div>
   <div id="youtubersPages"></div>
@@ -144,10 +145,34 @@ h1{font-size:28px;margin:18px 0}
             <span id="modalLoader" class="loader-badge" style="display:none">Loading videos...</span>
           </div>
         </div>
-        <div><button class="modal-close" onclick="closeYoutuberModal()">Close</button></div>
+        <div>
+          <button id="modalEditBtn" class="modal-close" style="margin-right:8px;display:none" onclick="enterEditMode()">Edit</button>
+          <button class="modal-close" onclick="closeYoutuberModal()">Close</button>
+        </div>
       </div>
+
       <div class="modal-body">
         <div id="modalDescription">Loading description...</div>
+
+        <div id="modalEditArea" class="edit-controls hidden">
+          <label><strong>Custom description (HTML/markdown bold **text** allowed):</strong></label>
+          <textarea id="modalCustomDescription" placeholder="Voer hier je eigen beschrijving in..."></textarea>
+
+          <label style="margin-top:8px"><strong>Video 1 (URL of video ID):</strong></label>
+          <input id="modalVideo1" type="text" placeholder="https://www.youtube.com/watch?v=VIDEOID of VIDEOID" />
+
+          <label style="margin-top:8px"><strong>Video 2 (URL or ID):</strong></label>
+          <input id="modalVideo2" type="text" placeholder="Video 2 URL of ID" />
+
+          <label style="margin-top:8px"><strong>Video 3 (URL or ID):</strong></label>
+          <input id="modalVideo3" type="text" placeholder="Video 3 URL of ID" />
+
+          <div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end">
+            <button class="page-btn" onclick="saveCustomModal()">Save</button>
+            <button class="page-btn" onclick="exitEditMode(false)">Cancel</button>
+          </div>
+        </div>
+
         <div class="modal-videos" id="modalVideos"></div>
         <div id="modalChannelDescription" class="modal-meta">Channel info...</div>
       </div>
@@ -157,15 +182,15 @@ h1{font-size:28px;margin:18px 0}
 
 <script>
 /* =========================
-   Configuration and data
+   Config & Data
 ========================= */
 
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
 
 let allSkins = [];
-let youtuberSkins = []; // populated from YOUTUBER_DATA
-let agarioYoutubers = []; // AGARIO_YOUTUBERS (only T.B initially)
+let youtuberSkins = []; // YOUTUBER_DATA => shown in Youtuber Skins page
+let agarioYoutubers = []; // AGARIO_YOUTUBERS => shown in Agar.io Youtubers page
 
 /* Status map */
 const YOUTUBER_STATUS = {
@@ -193,10 +218,9 @@ const STATUS_INFO = {
   "not-active": { label: "Nearly inactive", className: "status-not-active" },
   "inactive": { label: "Inactive", className: "status-inactive" }
 };
-
 function getYoutuberStatus(name){ return YOUTUBER_STATUS[name] || "inactive"; }
 
-/* YOUTUBER_DATA: FULL list (WITHOUT T.B) */
+/* Full YOUTUBER_DATA (WITHOUT T.B) */
 const YOUTUBER_DATA = [
     ["Zanax","IMG_0171.jpeg","Zanax is **nearly inactive** on Agar.io. Set the nick **Zanax** to use this skin."],
     ["Jonnn","IMG_0170.webp","Jonnn is **nearly inactive** on Agar.io. Set the nick **Jonnn** to use this skin."],
@@ -277,12 +301,11 @@ const AGARIO_YOUTUBERS = [
   ["T.B","IMG_9766.jpeg","T.B is actief op Agar.io. Set the nick **T.B** to use this skin."]
 ];
 
-/* Cache for preloaded YouTube/meta data (optional) */
-const youtuberMeta = {};
+/* Cache for preloaded YouTube/meta data and custom data (from localStorage) */
+const youtuberMeta = {}; // will hold preloaded data + customVideoIds/description saved
 
 /* =========================
-   Helper: image fallback
-   Tries: API+version/filename, filename, images/filename, /images/filename, then SVG fallback
+   Image fallback helper
 ========================= */
 function setImageWithFallback(imgEl, filename){
   const candidates = [];
@@ -345,26 +368,65 @@ function showSection(section){
 }
 
 /* =========================
-   Versions + load skins
-   (keeps earlier behavior)
+   versions() - improved (replaces prior)
+   Fetches versions and wires onchange to reload skins
 ========================= */
 async function versions(){
   const s = document.getElementById("version");
+  if(!s) return;
+
+  s.innerHTML = "";
+
   try{
-    const r = await fetch("https://lmsettings.snez.org/", { headers:{ username:"LMConfigVersion", password:"LMConfigVersionPass" }});
-    const v = await r.json();
-    Object.values(v).forEach(x=>{
-      const o = new Option(x, x.replace(/\/$/,""));
-      s.add(o);
+    const r = await fetch("https://lmsettings.snez.org/", {
+      headers: {
+        username: "LMConfigVersion",
+        password: "LMConfigVersionPass"
+      }
     });
-    if(s.options.length) version = s.value = s.options[s.options.length - 1].value;
-  }catch(e){
-    s.add(new Option(version, version));
+
+    if(!r.ok) throw new Error("Versions endpoint returned " + r.status);
+
+    const v = await r.json();
+    const vals = Object.values(v || {});
+
+    if(!vals.length) throw new Error("No versions found in response");
+
+    vals.forEach(x=>{
+      const clean = String(x).replace(/\/$/,"");
+      const opt = new Option(String(x), clean);
+      s.add(opt);
+    });
+
+    if(s.options.length){
+      s.selectedIndex = s.options.length - 1;
+      version = s.value;
+    }
+
+  }catch(err){
+    const fallback = ["v15/3032","v14/2900","v13/2800"];
+    fallback.forEach(x=> s.add(new Option(x, x)));
+    version = s.value = fallback[0];
+    console.warn("Failed to fetch versions, using fallback:", err);
   }
+
+  s.onchange = function(e){
+    const val = (e.target.value || "").replace(/\/$/,"");
+    if(val){
+      version = val;
+      loadSkins();
+      renderAgarioPage(1);
+      renderYoutuberPage(1);
+      renderAgarioYoutubersPage(1);
+    }
+  };
+
   loadSkins();
 }
 
-/* Load Agario skins list (from remote GameConfiguration) */
+/* =========================
+   Load Agario skins (GameConfiguration)
+========================= */
 async function loadSkins(){
   const box = document.getElementById("skins");
   box.innerHTML = "Loading skins...";
@@ -389,13 +451,12 @@ async function loadSkins(){
   }
 }
 
-/* Render agario skins (grid) */
+/* Render agario skins grid */
 function renderAgarioPage(page){
   const perPage = 120;
   const box = document.getElementById("skins");
   const pages = document.getElementById("agarioPages");
   const total = Math.ceil(allSkins.length / perPage);
-  currentAgarioPage = page;
   box.innerHTML = "";
   const start = (page-1)*perPage;
   allSkins.slice(start, start+perPage).forEach(([id,img])=>{
@@ -413,17 +474,13 @@ function renderAgarioPage(page){
 }
 
 /* =========================
-   Youtuber skins list (full descriptions)
+   Youtuber Skins (grid with full descriptions)
 ========================= */
 function loadYoutuberSkins(){
-  const box = document.getElementById("youtuberSkins");
-  box.innerHTML = "Loading Youtuber skins...";
-  // build local list
   youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || `Set the nick **${x[0]}** to use this skin.`]);
   renderYoutuberPage(1);
 }
 
-/* Render Youtuber skins (image + name + long description) */
 function renderYoutuberPage(page){
   const perPage = 30;
   const box = document.getElementById("youtuberSkins");
@@ -462,7 +519,7 @@ function renderYoutuberPage(page){
 }
 
 /* =========================
-   Agario Youtubers list (ONLY AGARIO_YOUTUBERS)
+   Agario Youtubers (ONLY AGARIO_YOUTUBERS)
 ========================= */
 function loadAgarioYoutubers(){
   agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
@@ -490,7 +547,7 @@ function renderAgarioYoutubersPage(page){
       </div>
     `;
     setImageWithFallback(d.querySelector("img.yt-card-img"), img);
-    if(typeof openYoutuberModal === "function"){ d.onclick = ()=> openYoutuberModal(name, img); }
+    d.onclick = ()=> openYoutuberModal(name, img);
     box.appendChild(d);
   });
   if(pages){
@@ -503,12 +560,205 @@ function renderAgarioYoutubersPage(page){
 }
 
 /* =========================
-   Modal and YouTube scraping (best-effort)
-   - Attempts proxy fallback (allorigins) to get search/channel HTML
-   - Extracts /watch?v= IDs and channel description
-   - Used to populate modal with 3 videos + description
+   Modal + custom edit support for Agario-only items
+   - Custom data saved in localStorage under key: "agario_custom_<name>"
+   - Allows entering custom description and 3 video URLs/IDs
 ========================= */
 
+function isAgarioOnly(name){
+  return AGARIO_YOUTUBERS.some(x => x[0] === name);
+}
+
+function localStorageKeyFor(name){ return "agario_custom_" + name.replace(/\s+/g,"_"); }
+
+function loadCustomFor(name){
+  try{
+    const raw = localStorage.getItem(localStorageKeyFor(name));
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+function saveCustomFor(name, obj){
+  try{
+    localStorage.setItem(localStorageKeyFor(name), JSON.stringify(obj));
+    return true;
+  }catch(e){ return false; }
+}
+
+function extractVideoId(input){
+  if(!input) return null;
+  input = input.trim();
+  // If plain 11-char id
+  const idRe = /^[A-Za-z0-9_\-]{11}$/;
+  if(idRe.test(input)) return input;
+  // youtu.be short links
+  let m = input.match(/youtu\.be\/([A-Za-z0-9_\-]{11})/);
+  if(m && m[1]) return m[1];
+  // youtube watch?v=
+  m = input.match(/[?&]v=([A-Za-z0-9_\-]{11})/);
+  if(m && m[1]) return m[1];
+  // /embed/ID
+  m = input.match(/\/embed\/([A-Za-z0-9_\-]{11})/);
+  if(m && m[1]) return m[1];
+  // last path segment of a url (fallback)
+  try{
+    const u = new URL(input);
+    const parts = u.pathname.split("/");
+    const last = parts.pop() || parts.pop();
+    if(last && idRe.test(last)) return last;
+  }catch(e){}
+  return null;
+}
+
+let currentModalName = null;
+
+function enterEditMode(){
+  document.getElementById("modalEditArea").classList.remove("hidden");
+  document.getElementById("modalEditBtn").style.display = "none";
+}
+
+function exitEditMode(reload){
+  document.getElementById("modalEditArea").classList.add("hidden");
+  document.getElementById("modalEditBtn").style.display = isAgarioOnly(currentModalName) ? "inline-block" : "none";
+  if(reload) {
+    // re-populate modal using saved custom data
+    const meta = youtuberMeta[currentModalName];
+    if(meta) populateModalFromMeta(currentModalName, meta);
+  }
+}
+
+function saveCustomModal(){
+  const name = currentModalName;
+  if(!name) return;
+  const desc = document.getElementById("modalCustomDescription").value || "";
+  const v1 = document.getElementById("modalVideo1").value || "";
+  const v2 = document.getElementById("modalVideo2").value || "";
+  const v3 = document.getElementById("modalVideo3").value || "";
+  const ids = [extractVideoId(v1), extractVideoId(v2), extractVideoId(v3)].filter(Boolean);
+
+  const obj = { customDescription: desc, customVideoIds: ids };
+  saveCustomFor(name, obj);
+
+  // store in youtuberMeta for immediate usage
+  youtuberMeta[name] = youtuberMeta[name] || {};
+  youtuberMeta[name].customDescription = desc;
+  youtuberMeta[name].customVideoIds = ids;
+  youtuberMeta[name].loaded = true; // mark loaded so modal uses it
+
+  exitEditMode(true);
+}
+
+/* open modal: if agario-only show Edit button and load saved custom values */
+function openYoutuberModal(name, img){
+  currentModalName = name;
+  const modal = document.getElementById("youtuberModal");
+  const title = document.getElementById("modalTitle");
+  const statusValue = document.getElementById("modalStatusValue");
+  const desc = document.getElementById("modalDescription");
+  const videos = document.getElementById("modalVideos");
+  const channelDesc = document.getElementById("modalChannelDescription");
+  const modalLoader = document.getElementById("modalLoader");
+  const editBtn = document.getElementById("modalEditBtn");
+
+  title.textContent = name;
+  const statusKey = getYoutuberStatus(name);
+  const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
+  statusValue.textContent = status.label;
+  statusValue.className = "status-value " + status.className;
+
+  desc.innerHTML = "Loading description...";
+  videos.innerHTML = "";
+  channelDesc.textContent = "Channel info...";
+  modalLoader.style.display = "inline-block";
+  modal.classList.remove("hidden");
+
+  // show Edit button only for Agario-only names
+  if(isAgarioOnly(name)){
+    editBtn.style.display = "inline-block";
+    // load saved custom into edit fields
+    const saved = loadCustomFor(name);
+    document.getElementById("modalCustomDescription").value = (saved && saved.customDescription) ? saved.customDescription : "";
+    document.getElementById("modalVideo1").value = (saved && saved.customVideoIds && saved.customVideoIds[0]) ? saved.customVideoIds[0] : "";
+    document.getElementById("modalVideo2").value = (saved && saved.customVideoIds && saved.customVideoIds[1]) ? saved.customVideoIds[1] : "";
+    document.getElementById("modalVideo3").value = (saved && saved.customVideoIds && saved.customVideoIds[2]) ? saved.customVideoIds[2] : "";
+    // hide edit area by default
+    document.getElementById("modalEditArea").classList.add("hidden");
+  } else {
+    editBtn.style.display = "none";
+  }
+
+  // If cached and loaded and has custom, use it immediately
+  const meta = youtuberMeta[name];
+  if(meta && (meta.loaded || meta.customDescription || meta.customVideoIds)){
+    populateModalFromMeta(name, meta);
+    modalLoader.style.display = "none";
+    return;
+  }
+
+  // else fetch
+  fetchYouTubeData(name).then(data=>{
+    youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription, videoIds:data.videoIds||[] };
+    // but if user has saved custom data in localStorage, prefer it for agario-only items
+    if(isAgarioOnly(name)){
+      const saved = loadCustomFor(name);
+      if(saved){
+        youtuberMeta[name].customDescription = saved.customDescription || null;
+        youtuberMeta[name].customVideoIds = saved.customVideoIds || null;
+      }
+    }
+    populateModalFromMeta(name, youtuberMeta[name]);
+  }).catch(err=>{
+    desc.innerHTML = "Description unavailable.";
+    videos.innerHTML = "<div style='color:#f88'>Unable to fetch videos.</div>";
+    channelDesc.textContent = "";
+  }).finally(()=>{ modalLoader.style.display = "none"; });
+}
+
+/* populate modal: respects customDescription and customVideoIds if present */
+function populateModalFromMeta(name, meta){
+  const desc = document.getElementById("modalDescription");
+  const videos = document.getElementById("modalVideos");
+  const channelDesc = document.getElementById("modalChannelDescription");
+
+  // prefer custom description
+  const descriptionToShow = (meta && meta.customDescription) ? meta.customDescription : (meta && meta.channelDescription ? meta.channelDescription : (generateAIDescription(name, null)));
+  desc.innerHTML = descriptionToShow;
+
+  channelDesc.innerHTML = (meta && meta.channelDescription && !meta.customDescription) ? meta.channelDescription : "";
+
+  videos.innerHTML = "";
+  // if customVideoIds exist, use them; else use scraped ids
+  let ids = [];
+  if(meta && meta.customVideoIds && meta.customVideoIds.length) ids = meta.customVideoIds;
+  else ids = meta && meta.videoIds ? meta.videoIds.slice(0,3) : [];
+
+  for(let i=0;i<3;i++){
+    const vid = ids[i];
+    if(vid){
+      const ifr = document.createElement("iframe");
+      ifr.src = "https://www.youtube.com/embed/" + vid + "?rel=0";
+      ifr.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+      ifr.allowFullscreen = true;
+      videos.appendChild(ifr);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.style.flex = "1";
+      placeholder.style.color = "#8892a8";
+      placeholder.style.background = "#071022";
+      placeholder.style.border = "1px dashed #223";
+      placeholder.style.borderRadius = "6px";
+      placeholder.style.padding = "16px";
+      placeholder.style.fontSize = "13px";
+      placeholder.textContent = "No video found";
+      videos.appendChild(placeholder);
+    }
+  }
+}
+
+/* =========================
+   YouTube scraping helper (best-effort)
+========================= */
 async function fetchYouTubeData(name){
   const query = encodeURIComponent(name + " Agar.io");
   const searchUrl = "https://www.youtube.com/results?search_query=" + query;
@@ -582,6 +832,7 @@ async function fetchYouTubeData(name){
   return { videoIds: ids, channelDescription, logo, generatedDescription };
 }
 
+/* helper */
 function decodeHtmlEntities(str){
   try{ const t = document.createElement("textarea"); t.innerHTML = str; return t.value; }catch(e){ return str; }
 }
@@ -593,87 +844,12 @@ function generateAIDescription(name, channelDescription){
   return `${name} is a content creator associated with Agar.io. Their channel contains gameplay, tips and highlight videos. Use the nick <strong>${name}</strong> to use their skin in Agar.io.`;
 }
 
-/* Modal open/close & populate */
-function openYoutuberModal(name, img){
-  const modal = document.getElementById("youtuberModal");
-  const title = document.getElementById("modalTitle");
-  const statusValue = document.getElementById("modalStatusValue");
-  const desc = document.getElementById("modalDescription");
-  const videos = document.getElementById("modalVideos");
-  const channelDesc = document.getElementById("modalChannelDescription");
-  const modalLoader = document.getElementById("modalLoader");
-
-  title.textContent = name;
-  const statusKey = getYoutuberStatus(name);
-  const status = STATUS_INFO[statusKey] || STATUS_INFO["inactive"];
-  statusValue.textContent = status.label;
-  statusValue.className = "status-value " + status.className;
-
-  desc.innerHTML = "Loading description...";
-  videos.innerHTML = "";
-  channelDesc.textContent = "Channel info...";
-  modalLoader.style.display = "inline-block";
-  modal.classList.remove("hidden");
-
-  const meta = youtuberMeta[name];
-  if(meta && meta.loaded){
-    populateModalFromMeta(name, meta);
-    modalLoader.style.display = "none";
-    return;
-  }
-
-  fetchYouTubeData(name).then(data=>{
-    youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription, videoIds:data.videoIds||[] };
-    populateModalFromMeta(name, youtuberMeta[name]);
-  }).catch(err=>{
-    desc.innerHTML = "Description unavailable.";
-    videos.innerHTML = "<div style='color:#f88'>Unable to fetch videos.</div>";
-    channelDesc.textContent = "";
-  }).finally(()=>{ modalLoader.style.display = "none"; });
-}
-
-function populateModalFromMeta(name, meta){
-  const desc = document.getElementById("modalDescription");
-  const videos = document.getElementById("modalVideos");
-  const channelDesc = document.getElementById("modalChannelDescription");
-
-  desc.innerHTML = meta.channelDescription ? meta.channelDescription : (`${name} is a content creator associated with Agar.io. Use the nick <strong>${name}</strong> to use their skin.`);
-  channelDesc.innerHTML = meta.channelDescription ? meta.channelDescription : "";
-
-  videos.innerHTML = "";
-  const ids = meta.videoIds || [];
-  for(let i=0;i<3;i++){
-    const vid = ids[i];
-    if(vid){
-      const ifr = document.createElement("iframe");
-      ifr.src = "https://www.youtube.com/embed/" + vid + "?rel=0";
-      ifr.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
-      ifr.allowFullscreen = true;
-      videos.appendChild(ifr);
-    } else {
-      const placeholder = document.createElement("div");
-      placeholder.style.flex = "1";
-      placeholder.style.color = "#8892a8";
-      placeholder.style.background = "#071022";
-      placeholder.style.border = "1px dashed #223";
-      placeholder.style.borderRadius = "6px";
-      placeholder.style.padding = "16px";
-      placeholder.style.fontSize = "13px";
-      placeholder.textContent = "No video found";
-      videos.appendChild(placeholder);
-    }
-  }
-}
-
-function closeYoutuberModal(e){
-  const modal = document.getElementById("youtuberModal");
-  modal.classList.add("hidden");
-}
-
-/* Optional: preload metadata for all Youtubers in background (batched) */
+/* =========================
+   Preload metadata in background (optional)
+========================= */
 async function startPreloadAllYoutubers(){
   const statusBadge = document.getElementById("preloadStatus");
-  statusBadge.style.display = "inline-block";
+  if(statusBadge) statusBadge.style.display = "inline-block";
   const batchSize = 6;
   const delayBetweenBatches = 800;
   const names = [...YOUTUBER_DATA.map(x=>x[0]), ...AGARIO_YOUTUBERS.map(x=>x[0])];
@@ -683,7 +859,7 @@ async function startPreloadAllYoutubers(){
     await Promise.all(batch.map(name => preloadYoutuber(name)));
     await sleep(delayBetweenBatches);
   }
-  statusBadge.style.display = "none";
+  if(statusBadge) statusBadge.style.display = "none";
 }
 
 async function preloadYoutuber(name){
@@ -691,25 +867,40 @@ async function preloadYoutuber(name){
   try{
     const data = await fetchYouTubeData(name);
     youtuberMeta[name] = { loaded:true, logo:data.logo||null, channelDescription:data.channelDescription||data.generatedDescription||null, videoIds:data.videoIds||[] };
+    // if user saved custom data, merge it
+    const saved = loadCustomFor(name);
+    if(saved){
+      youtuberMeta[name].customDescription = saved.customDescription || null;
+      youtuberMeta[name].customVideoIds = saved.customVideoIds || null;
+    }
   }catch(e){
     youtuberMeta[name] = { loaded:true, logo:null, channelDescription:null, videoIds:[] };
   }
 }
 
+/* =========================
+   Modal close
+========================= */
+function closeYoutuberModal(e){
+  const modal = document.getElementById("youtuberModal");
+  modal.classList.add("hidden");
+  currentModalName = null;
+}
+
+/* =========================
+   Utilities
+========================= */
 function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
 
 /* =========================
    Init
 ========================= */
 function init(){
-  // prepare lists (youtuberSkins and agarioYoutubers)
   youtuberSkins = YOUTUBER_DATA.map(x => [x[0], x[1], x[2] || ""]);
   agarioYoutubers = AGARIO_YOUTUBERS.map(x => [x[0], x[1], x[2] || ""]);
-
   renderYoutuberPage(1);
   renderAgarioYoutubersPage(1);
   versions();
-  // start background preload (best-effort; optional)
   startPreloadAllYoutubers();
 }
 
