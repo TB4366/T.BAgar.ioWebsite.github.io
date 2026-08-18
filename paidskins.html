@@ -1,23 +1,23 @@
-
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>T.B Agar.io Skin Shop (Xsolla)</title>
+<meta charset="utf-8" />
+<title>T.B Agar.io Skin Shop — Single File Xsolla Flow</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{background:#f5f5f5;font-family:Arial;}
-.skin{text-align:center;position:relative;}
-.circle{width:90px;height:90px;border-radius:100%;object-fit:cover;}
-.imageRow{display:flex;justify-content:center;gap:6px;margin:auto;flex-wrap:wrap;}
-.badge{position:absolute;top:6px;left:6px;background:red;color:white;font-size:11px;padding:4px 8px;border-radius:5px;}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;}
-.hidden{display:none;}
-#eventBar{position:fixed;bottom:0;left:0;width:100%;background:#e53935;color:white;padding:10px;display:flex;justify-content:space-between;font-weight:bold;cursor:pointer;}
-#eventSkins{display:flex;gap:10px;overflow-x:auto;}
-.eventCard{min-width:150px;background:white;border-radius:10px;padding:10px;text-align:center;}
-.xsolla-frame {width:900px;height:640px;border:0;border-radius:8px;}
-@media (max-width:1024px){ .xsolla-frame { width:92vw; height:70vh; } }
+  body{background:#f5f5f5;font-family:Arial,Helvetica,sans-serif}
+  .skin{text-align:center;position:relative}
+  .circle{width:90px;height:90px;border-radius:100%;object-fit:cover}
+  .imageRow{display:flex;justify-content:center;gap:6px;margin:auto;flex-wrap:wrap}
+  .badge{position:absolute;top:6px;left:6px;background:red;color:white;font-size:11px;padding:4px 8px;border-radius:5px}
+  .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center}
+  .hidden{display:none}
+  #eventBar{position:fixed;bottom:0;left:0;width:100%;background:#e53935;color:white;padding:10px;display:flex;justify-content:space-between;font-weight:bold;cursor:pointer}
+  #eventSkins{display:flex;gap:10px;overflow-x:auto}
+  .eventCard{min-width:150px;background:white;border-radius:10px;padding:10px;text-align:center}
+  .xsolla-frame{width:900px;height:640px;border:0;border-radius:8px}
+  @media (max-width:1024px){ .xsolla-frame { width:92vw; height:70vh; } }
 </style>
 </head>
 <body>
@@ -27,10 +27,11 @@ body{background:#f5f5f5;font-family:Arial;}
   <button onclick="openCart()" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
 </header>
 
-<!-- SKINS GRID -->
-<div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6"></div>
+<main>
+  <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6"></div>
+</main>
 
-<!-- CART MODAL -->
+<!-- CART -->
 <div id="cartModal" class="modal hidden">
   <div class="bg-white p-6 rounded w-96">
     <h2 class="font-bold text-xl mb-3">Cart</h2>
@@ -41,13 +42,17 @@ body{background:#f5f5f5;font-family:Arial;}
   </div>
 </div>
 
-<!-- UID + Pay Modal -->
+<!-- UID modal -->
 <div id="xsollaUidModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-80 text-center">
+  <div class="bg-white p-6 rounded w-96 text-center">
     <h2 class="font-bold text-lg">Pay with Xsolla</h2>
-    <p class="text-sm mt-2">Enter your Agar.io payment UID (or leave blank to use saved)</p>
-    <input id="xsollaUidInput" class="border p-2 w-full mt-2 rounded" placeholder="UID or leave blank" />
-    <div class="text-xs text-gray-500 mt-2">If you're logged into the official client, the UID may be filled automatically from window.agarioEncodedUID / localStorage.</div>
+    <p class="text-sm mt-2">Enter your Agar.io payment UID (or leave blank to use stored)</p>
+    <input id="xsollaUidInput" class="border p-2 w-full mt-2 rounded" placeholder="Your Agar.io payment UID" />
+    <div class="text-xs text-gray-500 mt-2">If you use the official client, window.agarioEncodedUID or localStorage.agarioEncodedUID may prefill this.</div>
+    <div class="mt-3 text-sm text-yellow-700">Note: automatic granting requires a server webhook. This demo opens checkout only.</div>
+    <div class="mt-3 text-sm">
+      <label><input type="checkbox" id="paySeparate" /> Pay each item separately (use if multiple items)</label>
+    </div>
     <button onclick="payWithXsolla()" class="w-full mt-4 bg-black text-white py-2 rounded">Pay</button>
     <button onclick="closeXsollaUidModal()" class="w-full mt-2 bg-gray-300 py-2 rounded">Cancel</button>
   </div>
@@ -61,7 +66,7 @@ body{background:#f5f5f5;font-family:Arial;}
       <button onclick="closeXsollaFrame()" class="bg-gray-200 px-3 py-1 rounded">Close</button>
     </div>
     <iframe id="xsollaIframe" class="xsolla-frame" src="about:blank" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
-    <p class="text-sm text-gray-600 mt-2">If checkout does not load, the payment endpoint might be blocked by CORS. Use the server proxy provided with the project.</p>
+    <p class="text-sm text-gray-600 mt-2">If the checkout doesn't load, your browser blocked the call (CORS). The page also opens a fallback tab so you can continue.</p>
   </div>
 </div>
 
@@ -73,51 +78,37 @@ body{background:#f5f5f5;font-family:Arial;}
   </div>
 </div>
 
-<!-- Event modal placeholder -->
-<div id="eventFrame" class="modal hidden">
-  <div class="bg-white p-6 rounded w-[650px]">
-    <h2 class="font-bold text-xl mb-4">🔥 Featured Deals</h2>
-    <div id="eventSkins"></div>
-    <button onclick="closeEvent()" class="w-full mt-4 bg-gray-300 py-2 rounded">Close</button>
-  </div>
-</div>
-
 <div id="eventBar"><span>🔥 Featured Deals</span><span>OPEN</span></div>
 
 <script>
-// ===== SKINS =====
-// Each item has a productId field — replace productId values with the exact Agar.io product IDs.
+/* ========== PRODUCTS ==========
+ Replace productId values with the exact Agar.io product IDs (VERY IMPORTANT).
+ Example: productId: "scarz" */
 const skins = [
- { id:1, name:"Scar", productId:"scarz", price:2.89, image1:"IMG_7141.webp", discount:25 },
- { id:2, name:"Scar + Seer", productId:"scar_seer", price:12.99, image1:"IMG_7141.webp", image2:"IMG_7142.webp", discount:0 },
- { id:3, name:"Bull King", productId:"bull_king", price:4.29, image1:"IMG_7147.webp", discount:15 },
- { id:4, name:"Birthday + Bull King", productId:"birthday_bull", price:13.49, image1:"IMG_3797.webp", image2:"IMG_7147.webp", discount:20 },
- { id:5, name:"Tiny Jack + Jade", productId:"tinyjack_jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_4913.webp", discount:0 },
- { id:6, name:"Evil Master", productId:"evil_master", price:11.49, image1:"IMG_5443.webp", discount:10 },
- { id:7, name:"Space Warden + Evil Master", productId:"spacewarden_evil", price:21.99, image1:"IMG_7150.webp", image2:"IMG_5443.webp", discount:0 },
- { id:8, name:"Space Warden", productId:"space_warden", price:6.59, image1:"IMG_7150.webp", discount:5 },
- { id:9, name:"Thunder Eye", productId:"thunder_eye", price:5.49, image1:"IMG_6185.webp", discount:0 },
- { id:10, name:"Night Phantom", productId:"night_phantom", price:7.99, image1:"IMG_6186.webp", image2:"IMG_6187.webp", discount:10 },
- // ... add remaining items similarly
-]
+  { id:1, name:"Scar", productId:"scarz", price:2.89, image1:"IMG_7141.webp", discount:25 },
+  { id:2, name:"Scar + Seer", productId:"scar_seer", price:12.99, image1:"IMG_7141.webp", image2:"IMG_7142.webp", discount:0 },
+  { id:3, name:"Bull King", productId:"bull_king", price:4.29, image1:"IMG_7147.webp", discount:15 },
+  { id:4, name:"Birthday + Bull King", productId:"birthday_bull", price:13.49, image1:"IMG_3797.webp", image2:"IMG_7147.webp", discount:20 },
+  { id:5, name:"Tiny Jack + Jade", productId:"tinyjack_jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_4913.webp", discount:0 },
+  // add the rest...
+];
 
-// ===== CART =====
-let cart = []
+let cart = [];
 
 function renderImages(s){
-  let html = `<div class="imageRow">`
-  if(s.image1) html += `<img src="${s.image1}" class="circle">`
-  if(s.image2) html += `<img src="${s.image2}" class="circle">`
-  if(s.image3) html += `<img src="${s.image3}" class="circle">`
-  html += `</div>`
-  return html
+  let html = `<div class="imageRow">`;
+  if(s.image1) html += `<img src="${s.image1}" class="circle">`;
+  if(s.image2) html += `<img src="${s.image2}" class="circle">`;
+  if(s.image3) html += `<img src="${s.image3}" class="circle">`;
+  html += `</div>`;
+  return html;
 }
 
 function render(){
-  const grid = document.getElementById("grid")
-  grid.innerHTML = ""
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
   skins.forEach((s,i)=>{
-    const newPrice = (s.price*(100-(s.discount||0))/100).toFixed(2)
+    const newPrice = (s.price*(100-(s.discount||0))/100).toFixed(2);
     grid.innerHTML += `
       <div class="bg-white p-4 rounded shadow skin">
         ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
@@ -125,130 +116,173 @@ function render(){
         <h3 class="font-bold mt-2">${s.name}</h3>
         ${s.discount>0 ? `<p class="text-gray-400 line-through">€${s.price}</p><p class="text-green-600 font-bold">€${newPrice}</p>` : `<p>€${s.price}</p>`}
         <button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 mt-2 rounded">Add</button>
-      </div>`
-  })
+      </div>`;
+  });
 }
-render()
+render();
 
-// ===== CART UI =====
-function openCart(){ document.getElementById("cartModal").classList.remove("hidden"); updateCart() }
-function closeCart(){ document.getElementById("cartModal").classList.add("hidden") }
-function add(i){ cart.push(i); document.getElementById("cartCount").innerText = cart.length; showPopup("Added to cart ✔"); updateCart() }
-function remove(i){ cart.splice(i,1); document.getElementById("cartCount").innerText = cart.length; updateCart() }
+/* ========== Cart UI ========== */
+function openCart(){ document.getElementById("cartModal").classList.remove("hidden"); updateCart(); }
+function closeCart(){ document.getElementById("cartModal").classList.add("hidden"); }
+function add(i){ cart.push(i); document.getElementById("cartCount").innerText = cart.length; showPopup("Added to cart ✔"); updateCart(); }
+function remove(i){ cart.splice(i,1); document.getElementById("cartCount").innerText = cart.length; updateCart(); }
 
 function updateCart(){
-  const box = document.getElementById("cartItems")
-  box.innerHTML = ""
-  let total = 0
+  const box = document.getElementById("cartItems");
+  box.innerHTML = "";
+  let total = 0;
   cart.forEach((i,idx)=>{
-    const s = skins[i]
-    const price = s.price * (100 - (s.discount||0)) / 100
-    total += price
+    const s = skins[i];
+    const price = s.price * (100 - (s.discount||0)) / 100;
+    total += price;
     box.innerHTML += `
       <div class="flex justify-between items-center mb-2">
         <div>
           <div class="font-bold">${s.name}</div>
           ${s.discount>0?`<div class="text-xs text-gray-500 line-through">€${s.price}</div>`:''}
+          <div class="text-xs text-gray-500">productId: ${s.productId}</div>
         </div>
         <div class="flex items-center gap-2">
           <div class="text-green-600">€${price.toFixed(2)}</div>
           <button onclick="remove(${idx})" class="text-red-500">❌</button>
         </div>
-      </div>`
-  })
-  document.getElementById("cartTotal").innerText = total.toFixed(2)
+      </div>`;
+  });
+  document.getElementById("cartTotal").innerText = total.toFixed(2);
 }
 
-// ===== POPUP =====
-function showPopup(t){ document.getElementById("popupText").innerText = t; document.getElementById("popup").classList.remove("hidden") }
-function closePopup(){ document.getElementById("popup").classList.add("hidden") }
+/* ========== Popup ========== */
+function showPopup(text){ document.getElementById("popupText").innerText = text; document.getElementById("popup").classList.remove("hidden"); }
+function closePopup(){ document.getElementById("popup").classList.add("hidden"); }
 
-// ===== Xsolla / UID flow =====
+/* ========== Xsolla helpers ========== */
 function openXsollaUidModal(){
-  const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || ""
-  document.getElementById("xsollaUidInput").value = pre
-  document.getElementById("xsollaUidModal").classList.remove("hidden")
+  const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
+  document.getElementById("xsollaUidInput").value = pre;
+  document.getElementById("xsollaUidModal").classList.remove("hidden");
 }
-function closeXsollaUidModal(){ document.getElementById("xsollaUidModal").classList.add("hidden") }
-function openXsollaFrame(url){ document.getElementById("xsollaIframe").src = url; document.getElementById("xsollaFrameModal").classList.remove("hidden") }
-function closeXsollaFrame(){ document.getElementById("xsollaIframe").src = "about:blank"; document.getElementById("xsollaFrameModal").classList.add("hidden") }
+function closeXsollaUidModal(){ document.getElementById("xsollaUidModal").classList.add("hidden"); }
+function openXsollaFrame(url){ document.getElementById("xsollaIframe").src = url; document.getElementById("xsollaFrameModal").classList.remove("hidden"); }
+function closeXsollaFrame(){ document.getElementById("xsollaIframe").src = "about:blank"; document.getElementById("xsollaFrameModal").classList.add("hidden"); }
 
 function isValidXsollaUrl(u){
   try{
-    const url = new URL(u)
-    if(url.protocol !== "https:") return false
-    if(url.hostname !== "secure.xsolla.com") return false
-    if(!(url.pathname.includes("/paystation3/") || url.pathname.includes("/paystation4/"))) return false
-    const params = url.searchParams
-    const token = params.get("access_token") || params.get("token") || ""
-    if(!token || token.length < 16) return false
-    return true
-  }catch(e){ return false }
+    const url = new URL(u);
+    if(url.protocol !== "https:") return false;
+    if(url.hostname !== "secure.xsolla.com") return false;
+    if(!(url.pathname.includes("/paystation3/") || url.pathname.includes("/paystation4/"))) return false;
+    const params = url.searchParams;
+    const token = params.get("access_token") || params.get("token") || "";
+    if(!token || token.length < 16) return false;
+    return true;
+  }catch(e){ return false; }
 }
 
-// POST to server /create_payment which proxies to payments.agario.miniclippt.com
-async function payWithXsolla(){
-  if(cart.length === 0){ showPopup("Your cart is empty"); return }
-  const uid = document.getElementById("xsollaUidInput").value.trim()
-  if(!uid){ showPopup("Enter your UID to pay"); return }
+/* ========== Payment functions ========== */
+/* Attempt payment for one productId. If fetch returns JSON with iframe_url -> open iframe.
+   Otherwise open constructed payment URL in new tab (fallback). */
+async function attemptPaymentForProduct(uid, productId){
+  const endpoint = "https://payments.agario.miniclippt.com/pay";
+  const paymentRequestUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(productId)}/EUR`;
+  console.log("Attempting payment for product:", productId, " url:", paymentRequestUrl);
 
-  // Build list of productIds for the cart
-  const productIds = cart.map(i => skins[i].productId || `skin_${skins[i].id}`)
-  // Build items to send (for logging / server verification)
-  const items = cart.map(i => {
-    const s = skins[i]
-    return { productId: s.productId || `skin_${s.id}`, name: s.name, price: (s.price*(100-(s.discount||0))/100).toFixed(2) }
-  })
-
-  // Send to server. Adjust /create_payment base if your server is remote.
-  showPopup("Contacting payment server...")
-  try{
-    const res = await fetch('/create_payment', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ uid, productIds, items })
-    })
-    closePopup()
-    if(!res.ok){
-      const text = await res.text().catch(()=>res.statusText)
-      showPopup("Payment server returned error: " + res.status + " " + text)
-      return
+  try {
+    // Try to fetch JSON (may be blocked by CORS)
+    const resp = await fetch(paymentRequestUrl, { method: 'GET', credentials: 'omit' });
+    console.log("Fetch response status:", resp.status);
+    if(resp.ok){
+      // Try parse JSON
+      let data = null;
+      try { data = await resp.json(); } catch(e){ data = null; }
+      if(data){
+        const iframeUrl = data.iframe_url || data.iframeUrl || data.url || data.pay_url;
+        if(iframeUrl && isValidXsollaUrl(iframeUrl)){
+          console.log("Opening iframe_url for product", productId, iframeUrl);
+          openXsollaFrame(iframeUrl);
+          return { success: true, mode: 'iframe' };
+        } else {
+          console.warn("No valid iframe_url returned or invalid for product", productId, data);
+          // fallback to opening the constructed URL in new tab
+          window.open(paymentRequestUrl, '_blank');
+          return { success: true, mode: 'tab' };
+        }
+      } else {
+        console.warn("No JSON returned for product", productId, "opening fallback tab");
+        window.open(paymentRequestUrl, '_blank');
+        return { success: true, mode: 'tab' };
+      }
+    } else {
+      console.warn("Non-OK response, opening fallback tab");
+      window.open(paymentRequestUrl, '_blank');
+      return { success: false, mode: 'tab', status: resp.status };
     }
-    const data = await res.json()
-    const iframeUrl = data.iframe_url || data.iframeUrl || data.url || data.pay_url
-    if(!iframeUrl){ showPopup("Payment server did not return a Xsolla URL"); return }
-    if(!isValidXsollaUrl(iframeUrl)){ showPopup("Returned Xsolla URL is invalid"); console.warn("Invalid xsolla url:", iframeUrl, data); return }
-    openXsollaFrame(iframeUrl)
-    // Keep cart until webhook confirmation grants the items
-  }catch(err){
-    closePopup()
-    console.error("Error contacting payment server:", err)
-    showPopup("Could not contact payment server (CORS or network). Use server proxy.")
-  } finally {
-    closeXsollaUidModal()
+  } catch (err) {
+    console.error("Fetch error (likely CORS) for product", productId, err);
+    // fallback: open paymentRequestUrl in new tab so browser can follow redirects
+    window.open(paymentRequestUrl, '_blank');
+    return { success: false, mode: 'tab', error: err.message || String(err) };
   }
 }
 
-// ===== Event list =====
-const eventSkinsIndex=[0,1,2,3,5,7,10,11,15,20,22,25,29]
-document.getElementById("eventBar").onclick = ()=>{
-  document.getElementById("eventFrame").classList.remove("hidden")
-  let box = document.getElementById("eventSkins")
-  box.innerHTML = ""
-  eventSkinsIndex.forEach(i=>{
-    let s = skins[i]; let newPrice=(s.price*(100-(s.discount||0))/100).toFixed(2)
-    box.innerHTML += `
-    <div class="eventCard">
-      ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
-      ${renderImages(s)}
-      <p>${s.name}</p>
-      ${s.discount>0 ? `<p class="text-gray-400 line-through">€${s.price}</p><p class="text-green-600 font-bold">€${newPrice}</p>` : `<p>€${s.price}</p>`}
-      <button onclick="add(${i})" class="bg-green-600 text-white px-2 py-1 mt-2 rounded">Add</button>
-    </div>`
-  })
-}
-function closeEvent(){ document.getElementById("eventFrame").classList.add("hidden") }
-</script>
+/* Main pay function */
+async function payWithXsolla(){
+  if(cart.length === 0){ showPopup("Your cart is empty"); return; }
+  const uid = document.getElementById("xsollaUidInput").value.trim();
+  if(!uid){ showPopup("Enter your Agar.io payment UID"); return; }
 
+  // Build list of productIds for the cart
+  const productIds = cart.map(i => skins[i].productId || `skin_${skins[i].id}`);
+  const paySeparate = document.getElementById("paySeparate").checked;
+
+  // If there's only one product, attempt single payment (preferred).
+  if(productIds.length === 1){
+    showPopup("Contacting payment server for product: " + productIds[0]);
+    closeXsollaUidModal();
+    const res = await attemptPaymentForProduct(uid, productIds[0]);
+    if(res.mode === 'iframe') showPopup("Checkout opened in iframe. Complete payment there.");
+    else showPopup("Fallback opened in a new tab. Complete payment there.");
+    return;
+  }
+
+  // Multiple products:
+  if(!paySeparate){
+    // Try combined purchaseId (comma-separated) as Agar.io flow sometimes supports it.
+    const combined = productIds.join(',');
+    showPopup("Trying combined purchase id for all items: " + combined);
+    closeXsollaUidModal();
+    const res = await attemptPaymentForProduct(uid, combined);
+    if(res.mode === 'iframe'){
+      showPopup("Combined checkout opened in iframe. Complete payment there.");
+      return;
+    } else {
+      // If combined failed or fallback opened, ask user whether to pay separately
+      const again = confirm("Combined purchase attempt opened fallback. Do you want to pay items separately (one tab per item)? Choose Cancel to stop.");
+      if(!again){
+        showPopup("Payment cancelled.");
+        return;
+      }
+    }
+  } else {
+    closeXsollaUidModal();
+  }
+
+  // Pay separately: open each product in its own tab (sequentially).
+  showPopup("Opening payment pages for each item in new tabs. Complete each payment.");
+  for(let pid of productIds){
+    // small delay so browser doesn't block multiple window.open
+    await new Promise(r => setTimeout(r, 300));
+    window.open(`https://payments.agario.miniclippt.com/pay/${encodeURIComponent(uid)}/${encodeURIComponent(pid)}/EUR`, '_blank');
+  }
+  // keep cart until server webhook confirms purchases (cannot do here)
+}
+
+/* small event for eventBar */
+document.getElementById("eventBar").onclick = ()=>{
+  showPopup("Featured deals are shown in the shop.");
+};
+
+/* init count */
+document.getElementById("cartCount").innerText = cart.length;
+</script>
 </body>
 </html>
