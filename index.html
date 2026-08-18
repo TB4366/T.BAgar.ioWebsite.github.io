@@ -6,7 +6,7 @@
 <title>T.B AGAR.IO</title>
 
 <style>
-/* jouw originele CSS (ongewijzigd), plus extra styles voor Xsolla overlay */
+/* basis styles - donker thema (light-mode en toggle verwijderd) */
 *{
   margin:0;
   padding:0;
@@ -47,11 +47,6 @@ body{
   overflow-x:hidden;
 }
 
-.light-mode{
-  background:#ffffff;
-  color:#111827;
-}
-
 header{
   display:flex;
   justify-content:space-between;
@@ -90,8 +85,7 @@ header{
   color:#38bdf8;
 }
 
-.menu-btn,
-.theme-btn{
+.menu-btn{
   background:none;
   border:none;
   font-size:24px;
@@ -307,8 +301,62 @@ iframe{
   cursor:pointer;
   font-weight:bold;
 }
+
+/* Xsolla products inline area */
+.xsolla-products{
+  max-width:1000px;
+  margin:28px auto;
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+.xsolla-thumb{
+  width:360px;
+  border-radius:12px;
+  overflow:hidden;
+  border:2px solid #0ea5e9;
+  box-shadow:0 6px 24px rgba(14,165,233,0.12);
+  background:#050616;
+}
+.xsolla-thumb iframe{
+  height:200px;
+  border-radius:0;
+}
+.product-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  max-width:540px;
+}
+.product{
+  background:linear-gradient(180deg,#071037,#021026);
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #183b6a;
+  text-align:left;
+}
+.product img{
+  width:100%;
+  border-radius:8px;
+  display:block;
+  margin-bottom:8px;
+}
+.product h3{ color:#a5f3fc; font-size:16px; margin-bottom:6px; }
+.product p{ color:#cbd5e1; font-size:13px; margin-bottom:8px; }
+.product button{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
 @media (max-width:720px){
-  .xsolla-container{ width:100%; height:calc(100vh - 40px); border-radius:6px; }
+  .xsolla-products{ flex-direction:column; padding:0 12px; }
+  .xsolla-thumb{ width:100%; }
+  .product-list{ width:100%; }
   iframe{ height:220px; }
 }
 </style>
@@ -337,7 +385,6 @@ iframe{
 
   <div>
     <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
   </div>
 
   <div class="menu" id="menu">
@@ -391,6 +438,43 @@ iframe{
 
   <hr>
 
+  <!-- Nieuwe sectie: Xsolla Products (inline, + product cards) -->
+  <h2>Xsolla Products</h2>
+  <div class="xsolla-products">
+    <!-- thumbnail / preview iframe -->
+    <div class="xsolla-thumb" aria-hidden="false">
+      <!-- kleine preview iframe (geen sandbox zodat preview kan tonen), sandbox can be added if needed -->
+      <iframe src="https://preview.xsollasitebuilder.com/t-b" title="Xsolla preview" loading="lazy"></iframe>
+    </div>
+
+    <!-- eenvoudige productlijst met voorbeeld-items -->
+    <div class="product-list" aria-label="Producten">
+      <!-- Deze product entries zijn voorbeeldkaarten. Pas afbeeldingen, titels en slugs aan naar jouw Xsolla-producten -->
+      <div class="product">
+        <img src="https://via.placeholder.com/400x200.png?text=Product+1" alt="Product 1">
+        <h3>Product 1 — VIP Skin</h3>
+        <p>Een premium skin voor Agar.io. Direct kopen via onze Xsolla-winkel.</p>
+        <button onclick="openXsolla('product-1')">Bekijk / Koop</button>
+      </div>
+
+      <div class="product">
+        <img src="https://via.placeholder.com/400x200.png?text=Product+2" alt="Product 2">
+        <h3>Product 2 — Bundle</h3>
+        <p>Bundle met meerdere exclusieve skins en items.</p>
+        <button onclick="openXsolla('product-2')">Bekijk / Koop</button>
+      </div>
+
+      <div class="product">
+        <img src="https://via.placeholder.com/400x200.png?text=Product+3" alt="Product 3">
+        <h3>Product 3 — Key</h3>
+        <p>Sleutel voor toegang tot private server of speciale content.</p>
+        <button onclick="openXsolla('product-3')">Bekijk / Koop</button>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
   <h2>Custom Skins</h2>
 
   <div class="skins">
@@ -435,7 +519,6 @@ iframe{
     <div class="option" onclick="location.href='paidskins.html'">Paid Skins</div>
     <div class="option" onclick="location.href='buy-account.html'">Buy Account</div>
     <div class="option" onclick="location.href='agar.io-skins.html'">Agar.io Skins</div>
-    <!-- optie direct naar Xsolla -->
     <div class="option" onclick="openXsolla()">Xsolla Store</div>
   </div>
 
@@ -458,14 +541,14 @@ iframe{
   </div>
 </div>
 
-<!-- Xsolla overlay -->
+<!-- Xsolla overlay (iframe lazy-loaded) -->
 <div class="xsolla-overlay" id="xsollaOverlay" aria-hidden="true">
   <div class="xsolla-container" role="dialog" aria-modal="true" aria-label="Xsolla">
     <button class="xsolla-close" onclick="closeXsolla()">Sluiten ✕</button>
+    <!-- src blijft leeg tot openXsolla wordt aangeroepen om lazy-loading te realiseren -->
     <iframe id="xsollaFrame" class="xsolla-iframe"
-      src="https://preview.xsollasitebuilder.com/t-b"
+      src=""
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-      sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
       title="Xsolla Store"></iframe>
   </div>
 </div>
@@ -480,14 +563,6 @@ setTimeout(()=>{
 function toggleMenu(){
   let menu = document.getElementById("menu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-/* theme toggles */
-function toggleTheme(){
-  let body=document.body;
-  let btn=document.getElementById("themeBtn");
-  body.classList.toggle("light-mode");
-  btn.textContent = body.classList.contains("light-mode") ? "🌙" : "☀️";
 }
 
 /* slider logic */
@@ -523,7 +598,7 @@ setInterval(()=>{
   }
 },2000);
 
-document.querySelectorAll("iframe").forEach(video=>{
+document.querySelectorAll(".slides iframe").forEach(video=>{
   video.addEventListener("mouseenter",()=>{
     lastTouch=Date.now()+100000;
   });
@@ -543,17 +618,25 @@ function closePopup(){
   document.getElementById("popup").style.display="none";
 }
 
-/* --- Xsolla integration: open/close overlay --- */
+/* --- Xsolla integration: open/close overlay (lazy load) --- */
 const xsollaOverlay = document.getElementById('xsollaOverlay');
 const xsollaFrame = document.getElementById('xsollaFrame');
+const XSOLLA_BASE = 'https://preview.xsollasitebuilder.com/t-b';
 
-function openXsolla(){
-  // toon overlay en laad iframe (src al ingesteld), zet aria-hidden
+function openXsolla(productSlug){
+  // zet src met optionele anchor/slug zodat specifieke product kan openen als jouw Xsolla-site dat ondersteunt
+  let src = XSOLLA_BASE;
+  if(productSlug && typeof productSlug === 'string' && productSlug.length){
+    // we gebruiken een hash zodat de preview krijgt wat het nodig heeft; pas aan als jouw Xsolla-site specifieke query params gebruikt
+    src = XSOLLA_BASE + '#' + encodeURIComponent(productSlug);
+  }
+  // alleen (her)laden als src anders is
+  if(xsollaFrame.src !== src){
+    xsollaFrame.src = src;
+  }
   xsollaOverlay.style.display = 'flex';
   xsollaOverlay.setAttribute('aria-hidden','false');
-  // verberg menu als open
   document.getElementById('menu').style.display = 'none';
-  // voorkom scrolling van de body
   document.body.style.overflow = 'hidden';
 }
 
@@ -561,7 +644,8 @@ function closeXsolla(){
   xsollaOverlay.style.display = 'none';
   xsollaOverlay.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
-  // als je wilt: xsollaFrame.src = 'about:blank'; // unload de site
+  // optioneel de iframe src leegmaken om resources vrij te geven:
+  // xsollaFrame.src = '';
 }
 
 /* sluit overlay bij klikken buiten container */
