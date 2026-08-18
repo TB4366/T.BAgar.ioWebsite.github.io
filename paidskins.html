@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8" />
-<title>T.B Agar.io Skin Shop — Single File Xsolla Flow</title>
+<title>T.B Agar.io Skin Shop — Direct Buy</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
@@ -14,8 +14,6 @@
   .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center}
   .hidden{display:none}
   #eventBar{position:fixed;bottom:0;left:0;width:100%;background:#e53935;color:white;padding:10px;display:flex;justify-content:space-between;font-weight:bold;cursor:pointer}
-  #eventSkins{display:flex;gap:10px;overflow-x:auto}
-  .eventCard{min-width:150px;background:white;border-radius:10px;padding:10px;text-align:center}
   .xsolla-frame{width:900px;height:640px;border:0;border-radius:8px}
   @media (max-width:1024px){ .xsolla-frame { width:92vw; height:70vh; } }
 </style>
@@ -42,31 +40,16 @@
   </div>
 </div>
 
-<!-- UID modal -->
+<!-- UID modal (voor cart checkout) -->
 <div id="xsollaUidModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-96 text-center">
+  <div class="bg-white p-6 rounded w-80 text-center">
     <h2 class="font-bold text-lg">Pay with Xsolla</h2>
     <p class="text-sm mt-2">Enter your Agar.io payment UID (or leave blank to use stored)</p>
     <input id="xsollaUidInput" class="border p-2 w-full mt-2 rounded" placeholder="Your Agar.io payment UID" />
-    <div class="text-xs text-gray-500 mt-2">If you use the official client, window.agarioEncodedUID or localStorage.agarioEncodedUID may prefill this.</div>
-    <div class="mt-3 text-sm text-yellow-700">Note: automatic granting requires a server webhook. This demo opens checkout only.</div>
-    <div class="mt-3 text-sm">
-      <label><input type="checkbox" id="paySeparate" /> Pay each item separately (use if multiple items)</label>
-    </div>
-    <button onclick="payWithXsolla()" class="w-full mt-4 bg-black text-white py-2 rounded">Pay</button>
+    <div class="text-xs text-gray-500 mt-2">If you're logged into the official client, window.agarioEncodedUID or localStorage.agarioEncodedUID may prefill this.</div>
+    <div class="mt-3 text-sm text-yellow-700">Note: automatic granting of skins after payment requires a server webhook. This demo opens the checkout only.</div>
+    <button onclick="payCartWithXsolla()" class="w-full mt-4 bg-black text-white py-2 rounded">Pay Cart</button>
     <button onclick="closeXsollaUidModal()" class="w-full mt-2 bg-gray-300 py-2 rounded">Cancel</button>
-  </div>
-</div>
-
-<!-- Xsolla iframe modal -->
-<div id="xsollaFrameModal" class="modal hidden">
-  <div class="bg-white p-4 rounded" style="max-width:95%;max-height:95%;overflow:auto;">
-    <div class="flex justify-between items-center mb-2">
-      <h2 class="font-bold">Xsolla Checkout</h2>
-      <button onclick="closeXsollaFrame()" class="bg-gray-200 px-3 py-1 rounded">Close</button>
-    </div>
-    <iframe id="xsollaIframe" class="xsolla-frame" src="about:blank" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
-    <p class="text-sm text-gray-600 mt-2">If the checkout doesn't load, your browser blocked the call (CORS). The page also opens a fallback tab so you can continue.</p>
   </div>
 </div>
 
@@ -81,16 +64,15 @@
 <div id="eventBar"><span>🔥 Featured Deals</span><span>OPEN</span></div>
 
 <script>
-/* ========== PRODUCTS ==========
- Replace productId values with the exact Agar.io product IDs (VERY IMPORTANT).
- Example: productId: "scarz" */
+/* ========== Skins (use exact productId values) ==========
+ Replace productId with exact Agar.io product IDs if you have them.
+ For Scar I use "scarz" as example. */
 const skins = [
-  { id:1, name:"Scar", productId:"https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolhK86vv2qkGNjrKcwqt0DWC8HxloL_lc_en&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19", price:2.89, image1:"IMG_7141.webp", discount:25 },
+  { id:1, name:"Scar", productId:"scarz", price:2.89, image1:"IMG_7141.webp", discount:25 },
   { id:2, name:"Scar + Seer", productId:"scar_seer", price:12.99, image1:"IMG_7141.webp", image2:"IMG_7142.webp", discount:0 },
   { id:3, name:"Bull King", productId:"bull_king", price:4.29, image1:"IMG_7147.webp", discount:15 },
   { id:4, name:"Birthday + Bull King", productId:"birthday_bull", price:13.49, image1:"IMG_3797.webp", image2:"IMG_7147.webp", discount:20 },
   { id:5, name:"Tiny Jack + Jade", productId:"tinyjack_jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_4913.webp", discount:0 },
-  // add the rest...
 ];
 
 let cart = [];
@@ -109,13 +91,17 @@ function render(){
   grid.innerHTML = "";
   skins.forEach((s,i)=>{
     const newPrice = (s.price*(100-(s.discount||0))/100).toFixed(2);
+    // Two buttons: Add (cart) and Buy (direct buy)
     grid.innerHTML += `
       <div class="bg-white p-4 rounded shadow skin">
         ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
         ${renderImages(s)}
         <h3 class="font-bold mt-2">${s.name}</h3>
         ${s.discount>0 ? `<p class="text-gray-400 line-through">€${s.price}</p><p class="text-green-600 font-bold">€${newPrice}</p>` : `<p>€${s.price}</p>`}
-        <button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 mt-2 rounded">Add</button>
+        <div class="mt-2 flex gap-2 justify-center">
+          <button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 rounded">Add</button>
+          <button onclick="buyNow('${s.productId}','${s.name}')" class="bg-blue-600 text-white px-3 py-1 rounded">Buy</button>
+        </div>
       </div>`;
   });
 }
@@ -153,136 +139,73 @@ function updateCart(){
 
 /* ========== Popup ========== */
 function showPopup(text){ document.getElementById("popupText").innerText = text; document.getElementById("popup").classList.remove("hidden"); }
-function closePopup(){ document.getElementById("popup").classList.add("hidden"); }
+function closePopup(){ document.getElementById("popupText").innerText=''; document.getElementById("popup").classList.add("hidden"); }
 
-/* ========== Xsolla helpers ========== */
+/* ========== Direct Buy function ==========
+ Opens the official payments URL with the provided UID and productId.
+*/
+function buyNow(productId, productName){
+  // Try to auto-detect UID
+  let uid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
+  uid = (uid && uid.trim()) ? uid.trim() : "";
+
+  if(!uid){
+    uid = prompt("Vul je Agar.io payment UID in om te betalen (paste hier):", "");
+    if(!uid || !uid.trim()){
+      alert("UID is required to start the payment.");
+      return;
+    }
+    uid = uid.trim();
+  } else {
+    const ok = confirm("Detected UID: " + uid + "\nUse this UID for payment?");
+    if(!ok){
+      const alt = prompt("Paste a different Agar.io payment UID (or cancel):", uid);
+      if(!alt || !alt.trim()){
+        alert("Payment cancelled"); return;
+      }
+      uid = alt.trim();
+    }
+  }
+
+  const endpoint = "https://payments.agario.miniclippt.com/pay";
+  const paymentUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(productId)}/EUR`;
+  console.log("Opening payment URL:", paymentUrl);
+
+  // Open in new tab — Agar.io server will normally redirect to Xsolla
+  window.open(paymentUrl, "_blank");
+
+  alert("Payment page opened in a new tab for: " + productName + "\nComplete the checkout there.");
+}
+
+/* ========== Cart checkout (attempt combined) ==========
+ For cart checkout we open the combined purchaseId (comma-separated).
+*/
 function openXsollaUidModal(){
   const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
   document.getElementById("xsollaUidInput").value = pre;
   document.getElementById("xsollaUidModal").classList.remove("hidden");
 }
 function closeXsollaUidModal(){ document.getElementById("xsollaUidModal").classList.add("hidden"); }
-function openXsollaFrame(url){ document.getElementById("xsollaIframe").src = url; document.getElementById("xsollaFrameModal").classList.remove("hidden"); }
-function closeXsollaFrame(){ document.getElementById("xsollaIframe").src = "about:blank"; document.getElementById("xsollaFrameModal").classList.add("hidden"); }
 
-function isValidXsollaUrl(u){
-  try{
-    const url = new URL(u);
-    if(url.protocol !== "https:") return false;
-    if(url.hostname !== "secure.xsolla.com") return false;
-    if(!(url.pathname.includes("/paystation3/") || url.pathname.includes("/paystation4/"))) return false;
-    const params = url.searchParams;
-    const token = params.get("access_token") || params.get("token") || "";
-    if(!token || token.length < 16) return false;
-    return true;
-  }catch(e){ return false; }
-}
+function payCartWithXsolla(){
+  if(cart.length === 0){ showPopup("Cart is empty"); return; }
+  let uid = document.getElementById("xsollaUidInput").value.trim();
+  if(!uid){ uid = prompt("Enter your Agar.io payment UID:", "") || ""; if(!uid) { alert("Payment cancelled"); return; } }
 
-/* ========== Payment functions ========== */
-/* Attempt payment for one productId. If fetch returns JSON with iframe_url -> open iframe.
-   Otherwise open constructed payment URL in new tab (fallback). */
-async function attemptPaymentForProduct(uid, productId){
-  const endpoint = "https://payments.agario.miniclippt.com/pay";
-  const paymentRequestUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(productId)}/EUR`;
-  console.log("Attempting payment for product:", productId, " url:", paymentRequestUrl);
-
-  try {
-    // Try to fetch JSON (may be blocked by CORS)
-    const resp = await fetch(paymentRequestUrl, { method: 'GET', credentials: 'omit' });
-    console.log("Fetch response status:", resp.status);
-    if(resp.ok){
-      // Try parse JSON
-      let data = null;
-      try { data = await resp.json(); } catch(e){ data = null; }
-      if(data){
-        const iframeUrl = data.iframe_url || data.iframeUrl || data.url || data.pay_url;
-        if(iframeUrl && isValidXsollaUrl(iframeUrl)){
-          console.log("Opening iframe_url for product", productId, iframeUrl);
-          openXsollaFrame(iframeUrl);
-          return { success: true, mode: 'iframe' };
-        } else {
-          console.warn("No valid iframe_url returned or invalid for product", productId, data);
-          // fallback to opening the constructed URL in new tab
-          window.open(paymentRequestUrl, '_blank');
-          return { success: true, mode: 'tab' };
-        }
-      } else {
-        console.warn("No JSON returned for product", productId, "opening fallback tab");
-        window.open(paymentRequestUrl, '_blank');
-        return { success: true, mode: 'tab' };
-      }
-    } else {
-      console.warn("Non-OK response, opening fallback tab");
-      window.open(paymentRequestUrl, '_blank');
-      return { success: false, mode: 'tab', status: resp.status };
-    }
-  } catch (err) {
-    console.error("Fetch error (likely CORS) for product", productId, err);
-    // fallback: open paymentRequestUrl in new tab so browser can follow redirects
-    window.open(paymentRequestUrl, '_blank');
-    return { success: false, mode: 'tab', error: err.message || String(err) };
-  }
-}
-
-/* Main pay function */
-async function payWithXsolla(){
-  if(cart.length === 0){ showPopup("Your cart is empty"); return; }
-  const uid = document.getElementById("xsollaUidInput").value.trim();
-  if(!uid){ showPopup("Enter your Agar.io payment UID"); return; }
-
-  // Build list of productIds for the cart
   const productIds = cart.map(i => skins[i].productId || `skin_${skins[i].id}`);
-  const paySeparate = document.getElementById("paySeparate").checked;
+  const combined = productIds.join(',');
+  const endpoint = "https://payments.agario.miniclippt.com/pay";
+  const paymentUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(combined)}/EUR`;
 
-  // If there's only one product, attempt single payment (preferred).
-  if(productIds.length === 1){
-    showPopup("Contacting payment server for product: " + productIds[0]);
-    closeXsollaUidModal();
-    const res = await attemptPaymentForProduct(uid, productIds[0]);
-    if(res.mode === 'iframe') showPopup("Checkout opened in iframe. Complete payment there.");
-    else showPopup("Fallback opened in a new tab. Complete payment there.");
-    return;
-  }
-
-  // Multiple products:
-  if(!paySeparate){
-    // Try combined purchaseId (comma-separated) as Agar.io flow sometimes supports it.
-    const combined = productIds.join(',');
-    showPopup("Trying combined purchase id for all items: " + combined);
-    closeXsollaUidModal();
-    const res = await attemptPaymentForProduct(uid, combined);
-    if(res.mode === 'iframe'){
-      showPopup("Combined checkout opened in iframe. Complete payment there.");
-      return;
-    } else {
-      // If combined failed or fallback opened, ask user whether to pay separately
-      const again = confirm("Combined purchase attempt opened fallback. Do you want to pay items separately (one tab per item)? Choose Cancel to stop.");
-      if(!again){
-        showPopup("Payment cancelled.");
-        return;
-      }
-    }
-  } else {
-    closeXsollaUidModal();
-  }
-
-  // Pay separately: open each product in its own tab (sequentially).
-  showPopup("Opening payment pages for each item in new tabs. Complete each payment.");
-  for(let pid of productIds){
-    // small delay so browser doesn't block multiple window.open
-    await new Promise(r => setTimeout(r, 300));
-    window.open(`https://payments.agario.miniclippt.com/pay/${encodeURIComponent(uid)}/${encodeURIComponent(pid)}/EUR`, '_blank');
-  }
-  // keep cart until server webhook confirms purchases (cannot do here)
+  // Try opening combined purchase; if that doesn't work you can pay items separately
+  window.open(paymentUrl, "_blank");
+  alert("Payment page opened in a new tab for combined cart. Complete the checkout there.");
+  closeXsollaUidModal();
 }
 
-/* small event for eventBar */
-document.getElementById("eventBar").onclick = ()=>{
-  showPopup("Featured deals are shown in the shop.");
-};
-
-/* init count */
+/* ========== Small misc ========= */
 document.getElementById("cartCount").innerText = cart.length;
+document.getElementById("eventBar").onclick = ()=> showPopup("Featured deals are shown in the shop.");
 </script>
 </body>
 </html>
