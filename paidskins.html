@@ -2,478 +2,386 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8" />
-<title>T.B Agar.io Skin Shop — Direct Buy</title>
+<title>T.B Shop — Config-driven Skins</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <style>
-  body{background:#f5f5f5;font-family:Arial,Helvetica,sans-serif}
-  .skin{text-align:center;position:relative}
-  .circle{width:90px;height:90px;border-radius:100%;object-fit:cover}
-  .imageRow{display:flex;justify-content:center;gap:6px;margin:auto;flex-wrap:wrap}
-  .badge{position:absolute;top:6px;left:6px;background:red;color:white;font-size:11px;padding:4px 8px;border-radius:5px}
-  .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center}
-  .hidden{display:none}
-  #eventBar{position:fixed;bottom:0;left:0;width:100%;background:#e53935;color:white;padding:10px;display:flex;justify-content:space-between;font-weight:bold;cursor:pointer}
-  .xsolla-frame{width:900px;height:640px;border:0;border-radius:8px}
-  @media (max-width:1024px){ .xsolla-frame { width:92vw; height:70vh; } }
-  .section-title{font-weight:bold;margin:12px 0}
-  .uid-box{background:#fff;padding:8px;border-radius:6px;display:flex;gap:8px;align-items:center}
+  body { background:#f3f4f6; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+  .card { background:white; border-radius:10px; box-shadow:0 6px 20px rgba(2,6,23,0.08); }
+  .badge { background:#0ea5a3;color:white;padding:4px 8px;border-radius:999px;font-weight:700;font-size:12px; }
+  .muted { color:#6b7280; font-size:13px; }
+  #shopGrid { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+  .skin-img { width:100%; height:160px; object-fit:cover; border-radius:8px; background:#e5e7eb; }
+  #toast { position: fixed; right: 18px; bottom: 18px; z-index: 60; }
 </style>
 </head>
-<body>
+<body class="p-6">
 
-<header class="bg-black text-white p-4 flex justify-between items-center">
-  <h1 class="font-bold">T.B Agar.io Skin Shop</h1>
-  <div class="flex gap-3 items-center">
-    <button onclick="openCart()" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
-    <button onclick="openUidConnect()" class="bg-indigo-600 px-4 py-2 rounded">Koppel UID</button>
-    <button onclick="fbTriggerLogin()" id="fbBtn" class="bg-blue-700 px-4 py-2 rounded">Login met Facebook</button>
-  </div>
-</header>
-
-<main class="p-6">
-  <div id="uidStatus" class="mb-4"></div>
-
-  <div class="section-title">🔥 Special Deals (Xsolla)</div>
-  <div id="specialDeals" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
-
-  <div class="section-title">Andere skins (UID of Facebook vereist)</div>
-  <div id="otherSkins" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
-
-  <div class="section-title">Toegewezen skins voor huidige UID / Facebook</div>
-  <div id="grantedList" class="mb-6"></div>
-</main>
-
-<!-- CART -->
-<div id="cartModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-96">
-    <h2 class="font-bold text-xl mb-3">Cart</h2>
-    <div id="cartItems"></div>
-    <div class="mt-3 font-bold">Total: €<span id="cartTotal">0</span></div>
-    <button onclick="openXsollaUidModal()" class="w-full mt-4 bg-green-600 text-white py-2 rounded">Pay (combined)</button>
-    <button onclick="closeCart()" class="w-full mt-2 bg-gray-300 py-2 rounded">Close</button>
-  </div>
-</div>
-
-<!-- UID connect modal -->
-<div id="uidModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-80 text-center">
-    <h2 class="font-bold text-lg">Koppel Agar.io payment UID</h2>
-    <p class="text-sm mt-2">Vul je Agar.io payment UID (xsollaToken / encoded UID)</p>
-    <input id="uidInput" class="border p-2 w-full mt-2 rounded" placeholder="Your Agar.io payment UID" />
-    <div class="mt-3 text-sm text-gray-600">Deze UID wordt opgeslagen in window.agarioEncodedUID en localStorage.agarioEncodedUID</div>
-    <div class="flex gap-2 mt-4">
-      <button onclick="saveUid()" class="bg-black text-white px-4 py-2 rounded">Opslaan</button>
-      <button onclick="closeUidModal()" class="bg-gray-300 px-4 py-2 rounded">Annuleren</button>
+<div class="max-w-6xl mx-auto">
+  <header class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">T.B — Shop (config-driven)</h1>
+      <div class="text-sm muted">Alleen items in GameConfiguration.json die te koop zijn (Xsolla of coins)</div>
     </div>
-  </div>
+    <div class="flex items-center gap-3">
+      <div id="loginStatus" class="text-sm muted">Niet ingelogd</div>
+      <button id="fbBtn" class="px-3 py-2 bg-blue-600 text-white rounded">Login met Facebook</button>
+      <button id="reloadBtn" class="px-3 py-2 bg-gray-200 rounded">Herlaad config</button>
+    </div>
+  </header>
+
+  <section class="mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <div class="text-sm muted">Beschikbare skins</div>
+      <div class="text-sm muted">Saldo: <span id="coinBalance">—</span> coins</div>
+    </div>
+
+    <div id="shopGrid"></div>
+  </section>
+
+  <footer class="text-sm muted mt-8">
+    <div>Let op: Xsolla aankopen openen de officiële Agar.io betalingspagina. Na betaling is server‑side validatie nodig voor echte toekenning.</div>
+    <div class="mt-2">Config source: <code id="configUrlText"></code></div>
+  </footer>
 </div>
 
-<!-- UID modal for cart checkout -->
-<div id="xsollaUidModal" class="modal hidden">
-  <div class="bg-white p-6 rounded w-80 text-center">
-    <h2 class="font-bold text-lg">Confirm UID for payment</h2>
-    <p class="text-sm mt-2">Enter your Agar.io payment UID (or leave blank to use stored)</p>
-    <input id="xsollaUidInput" class="border p-2 w-full mt-2 rounded" placeholder="Your Agar.io payment UID" />
-    <div class="mt-3 text-sm text-yellow-700">Note: automatische server‑toekenning vereist webhook; dit is een client‑simulatie.</div>
-    <button onclick="payCartWithXsolla()" class="w-full mt-4 bg-black text-white py-2 rounded">Pay Cart</button>
-    <button onclick="closeXsollaUidModal()" class="w-full mt-2 bg-gray-300 py-2 rounded">Cancel</button>
-  </div>
-</div>
+<div id="toast" class="hidden"></div>
 
-<!-- Popup -->
-<div id="popup" class="modal hidden">
-  <div class="bg-white p-6 rounded text-center w-72">
-    <p id="popupText"></p>
-    <button onclick="closePopup()" class="mt-3 bg-green-600 text-white px-4 py-2 rounded">OK</button>
-  </div>
-</div>
-
-<div id="eventBar"><span>🔥 Featured Deals</span><span>OPEN</span></div>
-
-<!-- Facebook SDK - VERVANG FB_APP_ID door je FB App ID -->
+<!-- Facebook SDK (will load if FB_APP_ID provided) -->
 <script>
-  // Basic FB init placeholder — vervang FB_APP_ID hieronder
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : 'FB_APP_ID', // <-- VERVANG HIER
-      cookie     : true,
-      xfbml      : false,
-      version    : 'v16.0'
-    });
-    // Check status on load
-    FB.getLoginStatus(function(response) {
-      handleFbStatus(response);
-    });
-  };
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
+  // VERVANG HIER MET JE EIGEN FB APP ID OF LEEG LATEN ALS PAGINA AL FB SDK HEEFT
+  const FB_APP_ID = 'FB_APP_ID';
+</script>
+<script>
+  (function loadFb() {
+    if (!FB_APP_ID || FB_APP_ID === 'FB_APP_ID') return;
+    window.fbAsyncInit = function() {
+      FB.init({ appId: FB_APP_ID, cookie: true, xfbml: false, version: 'v16.0' });
+    };
+    var d = document, s = 'script', id = 'facebook-jssdk';
+    if (!document.getElementById(id)) {
+      var js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      d.head.appendChild(js);
+    }
+  })();
 </script>
 
-<!-- Include the xsolla capture helper (placed in ogario/ogario.xsolla_capture.js) -->
-<script src="ogario/ogario.xsolla_capture.js"></script>
-
 <script>
-/* ========== Skins ==========
- productId is used in /pay/{UID}/{productId}/EUR
- xsollaProjectId/xsollaSku moet in de array gezet zijn (geen upload)
+/*
+  CONFIG:
+  - Pas CONFIG_URL aan naar de raw GitHub URL van jouw GameConfiguration.json (raw.githubusercontent.com/.../GameConfiguration.json)
+  - De code probeert flexibel producten te vinden in bekende velden.
 */
-const skins = [
-  { id:1, name:"Scar", productId:"scarz", price:2.89, image1:"IMG_7141.webp", discount:25, xsollaProjectId:933379, xsollaSku:"xs_scarz" },
-  { id:2, name:"Scar + Seer", productId:"scar_seer", price:12.99, image1:"IMG_7141.webp", image2:"IMG_7142.webp", discount:0, xsollaProjectId:null, xsollaSku:null },
-  { id:3, name:"Bull King", productId:"bull_king", price:4.29, image1:"IMG_7147.webp", discount:15, xsollaProjectId:933379, xsollaSku:"xs_bull_king" },
-  { id:4, name:"Birthday + Bull King", productId:"birthday_bull", price:13.49, image1:"IMG_3797.webp", image2:"IMG_7147.webp", discount:20, xsollaProjectId:null, xsollaSku:null },
-  { id:5, name:"Tiny Jack + Jade", productId:"tinyjack_jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_4913.webp", discount:0, xsollaProjectId:null, xsollaSku:null },
+const CONFIG_URL = 'https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/316c6283f78642ca84aec8f56b4862f1b9e0b481/agario/live/GameConfiguration.json'; // voorbeeld — pas aan indien nodig
 
-  // Shocked Void voorbeeld
-  { id: 999, name: "Shocked Void", productId: "emoji_shocked_void", price: 3.49, image1: "IMG_shocked_void.webp", discount: 0, xsollaProjectId: 933379, xsollaSku: "emoji_shocked_void" }
-];
+document.getElementById('configUrlText').innerText = CONFIG_URL;
 
-let cart = [];
+/* Local state */
+let configData = null;
+let fbConnected = false;
+let fbId = null;
+let agarioUid = localStorage.getItem('agarioEncodedUID') || '';
+let coinBalance = Number(localStorage.getItem('tb_coins') || 100); // default demo coins
+updateCoinDisplay();
 
-/* Utils */
-function renderImages(s){
-  let html = `<div class="imageRow">`;
-  if(s.image1) html += `<img src="${s.image1}" class="circle">`;
-  if(s.image2) html += `<img src="${s.image2}" class="circle">`;
-  if(s.image3) html += `<img src="${s.image3}" class="circle">`;
-  html += `</div>`;
-  return html;
+/* Helpers */
+function toast(msg, time=3000) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<div class="px-4 py-2 card">${msg}</div>`;
+  t.classList.remove('hidden');
+  setTimeout(()=> t.classList.add('hidden'), time);
 }
 
-/* Render lists: Xsolla vs others */
-function render(){
-  const special = document.getElementById("specialDeals");
-  const other = document.getElementById("otherSkins");
-  special.innerHTML = ""; other.innerHTML = "";
-
-  skins.forEach((s,i)=>{
-    const newPrice = (s.price*(100-(s.discount||0))/100).toFixed(2);
-    const xsInfo = (s.xsollaSku || s.xsollaProjectId) ? `<div class="text-xs text-gray-500 mt-1">xsollaSku: ${s.xsollaSku || '-'} ${s.xsollaProjectId?('(project:'+s.xsollaProjectId+')'):''}</div>` : '';
-    const card = `
-      <div class="bg-white p-4 rounded shadow skin">
-        ${s.discount>0?`<div class="badge">-${s.discount}%</div>`:''}
-        ${renderImages(s)}
-        <h3 class="font-bold mt-2">${s.name}</h3>
-        ${s.discount>0 ? `<p class="text-gray-400 line-through">€${s.price}</p><p class="text-green-600 font-bold">€${newPrice}</p>` : `<p>€${s.price}</p>`}
-        ${xsInfo}
-        <div class="mt-2 flex gap-2 justify-center">
-          <button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 rounded">Add</button>
-          ${s.xsollaSku ? `<button onclick="buyXsolla(${i})" class="bg-blue-600 text-white px-3 py-1 rounded">Buy (Xsolla)</button>` : `<button onclick="buyRequireUidOrFb(${i})" class="bg-orange-600 text-white px-3 py-1 rounded">Buy (UID / Facebook)</button>`}
-        </div>
-      </div>`;
-    if(s.xsollaSku) special.innerHTML += card; else other.innerHTML += card;
-  });
-
-  updateUidStatus();
-  updateGrantedList();
-}
-render();
-
-/* ========== Cart UI ========== */
-function openCart(){ document.getElementById("cartModal").classList.remove("hidden"); updateCart(); }
-function closeCart(){ document.getElementById("cartModal").classList.add("hidden"); }
-function add(i){ cart.push(i); document.getElementById("cartCount").innerText = cart.length; showPopup("Added to cart ✔"); updateCart(); }
-function remove(i){ cart.splice(i,1); document.getElementById("cartCount").innerText = cart.length; updateCart(); }
-
-function updateCart(){
-  const box = document.getElementById("cartItems");
-  box.innerHTML = "";
-  let total = 0;
-  cart.forEach((i,idx)=>{
-    const s = skins[i];
-    const price = s.price * (100 - (s.discount||0)) / 100;
-    total += price;
-    const xsInfo = (s.xsollaSku||s.xsollaProjectId) ? `<div class="text-xs text-gray-500">xsollaSku: ${s.xsollaSku || '-'} ${s.xsollaProjectId?('(project:'+s.xsollaProjectId+')'):''}</div>` : '';
-    box.innerHTML += `
-      <div class="flex justify-between items-center mb-2">
-        <div>
-          <div class="font-bold">${s.name}</div>
-          ${s.discount>0?`<div class="text-xs text-gray-500 line-through">€${s.price}</div>`:''}
-          <div class="text-xs text-gray-500">productId: ${s.productId}</div>
-          ${xsInfo}
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="text-green-600">€${price.toFixed(2)}</div>
-          <button onclick="remove(${idx})" class="text-red-500">❌</button>
-        </div>
-      </div>`;
-  });
-  document.getElementById("cartTotal").innerText = total.toFixed(2);
-}
-
-/* ========== Popup ========== */
-function showPopup(text){ document.getElementById("popupText").innerText = text; document.getElementById("popup").classList.remove("hidden"); }
-function closePopup(){ document.getElementById("popupText").innerText=''; document.getElementById("popup").classList.add("hidden"); }
-
-/* ========== UID connect UI ========== */
-function openUidConnect(){
-  const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  document.getElementById("uidInput").value = pre;
-  document.getElementById("uidModal").classList.remove("hidden");
-}
-function closeUidModal(){ document.getElementById("uidModal").classList.add("hidden"); }
-function saveUid(){
-  const uid = document.getElementById("uidInput").value.trim();
-  if(!uid){ showPopup("UID mag niet leeg zijn"); return; }
-  window.agarioEncodedUID = uid;
-  localStorage.setItem("agarioEncodedUID", uid);
-  closeUidModal();
-  updateUidStatus();
-  showPopup("UID gekoppeld");
-}
-function updateUidStatus(){
-  const cur = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  const fbId = localStorage.getItem("agarioFbId") || "";
-  const box = document.getElementById("uidStatus");
-  if(!cur && !fbId){
-    box.innerHTML = `<div class="uid-box">Geen gekoppelde UID of Facebook login — <button onclick="openUidConnect()" class="ml-2 bg-indigo-500 text-white px-2 py-1 rounded">Koppel UID</button> of <button onclick="fbTriggerLogin()" class="ml-2 bg-blue-700 text-white px-2 py-1 rounded">Login met Facebook</button></div>`;
-  } else {
-    let parts = [];
-    if(cur) parts.push(`UID: <strong>${cur}</strong>`);
-    if(fbId) parts.push(`Facebook ID: <strong>${fbId}</strong>`);
-    box.innerHTML = `<div class="uid-box">${parts.join(' • ')} <button onclick="clearUid()" class="ml-4 bg-gray-200 px-2 py-1 rounded">Ontkoppel UID</button></div>`;
-  }
-}
-function clearUid(){
-  window.agarioEncodedUID = null;
-  localStorage.removeItem("agarioEncodedUID");
-  updateUidStatus();
-}
-
-/* ========== Facebook login handling ==========
- fbTriggerLogin() opent FB login; handleFbStatus() verwerkt status.
-*/
-function fbTriggerLogin(){
-  if(typeof FB === 'undefined'){ showPopup("Facebook SDK niet geladen. Controleer FB_APP_ID en internetconnectie."); return; }
-  FB.login(function(response){
-    handleFbStatus(response);
-  }, {scope: 'public_profile,email'});
-}
-function handleFbStatus(response){
-  if(!response) return;
-  if(response.status === 'connected'){
-    const auth = response.authResponse;
-    localStorage.setItem("agarioFbId", auth.userID);
-    localStorage.setItem("agarioFbToken", auth.accessToken);
-    window.agarioFbId = auth.userID;
-    window.agarioFbToken = auth.accessToken;
-    document.getElementById("fbBtn").innerText = "Uitloggen Facebook";
-    document.getElementById("fbBtn").onclick = fbLogout;
-    updateUidStatus();
-    updateGrantedList();
-  } else {
-    // not connected
-    localStorage.removeItem("agarioFbId");
-    localStorage.removeItem("agarioFbToken");
-    window.agarioFbId = null;
-    window.agarioFbToken = null;
-    document.getElementById("fbBtn").innerText = "Login met Facebook";
-    document.getElementById("fbBtn").onclick = fbTriggerLogin;
-    updateUidStatus();
-  }
-}
-function fbLogout(){
-  if(typeof FB !== 'undefined'){
-    FB.logout(function(){ handleFbStatus({status: 'not_authorized'}); });
-  } else {
-    localStorage.removeItem("agarioFbId");
-    localStorage.removeItem("agarioFbToken");
-    handleFbStatus({status:'not_authorized'});
-  }
-}
-
-/* ========== Granting (local simulation) ==========
-Store mapping in:
- - localStorage.lm_grants: { "<uid>": ["productId1", ...], ... }
- - localStorage.lm_fb_grants: { "<fbId>": ["productId1", ...], ... }
-*/
-function grantToUid(uid, productId){
-  if(!uid) return;
-  let grants = JSON.parse(localStorage.getItem("lm_grants") || "{}");
-  if(!Array.isArray(grants[uid])) grants[uid] = [];
-  if(!grants[uid].includes(productId)) grants[uid].push(productId);
-  localStorage.setItem("lm_grants", JSON.stringify(grants));
-  updateGrantedList();
-}
-function grantToFb(fbId, productId){
-  if(!fbId) return;
-  let grants = JSON.parse(localStorage.getItem("lm_fb_grants") || "{}");
-  if(!Array.isArray(grants[fbId])) grants[fbId] = [];
-  if(!grants[fbId].includes(productId)) grants[fbId].push(productId);
-  localStorage.setItem("lm_fb_grants", JSON.stringify(grants));
-  updateGrantedList();
-}
-
-/* Show granted skins for current UID/Facebook */
-function updateGrantedList(){
-  const cur = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  const fb = localStorage.getItem("agarioFbId") || "";
-  const el = document.getElementById("grantedList");
-  el.innerHTML = "";
-  const lines = [];
-  if(cur){
-    const grants = JSON.parse(localStorage.getItem("lm_grants") || "{}");
-    (grants[cur] || []).forEach(pid=>{
-      const s = skins.find(x => x.productId === pid || x.xsollaSku === pid || String(x.id) === String(pid));
-      lines.push(`<div class="bg-white p-2 rounded mb-2"><strong>${s ? s.name : pid}</strong> <div class="text-xs text-gray-500">(UID: ${cur})</div></div>`);
-    });
-  }
-  if(fb){
-    const grantsFb = JSON.parse(localStorage.getItem("lm_fb_grants") || "{}");
-    (grantsFb[fb] || []).forEach(pid=>{
-      const s = skins.find(x => x.productId === pid || x.xsollaSku === pid || String(x.id) === String(pid));
-      lines.push(`<div class="bg-white p-2 rounded mb-2"><strong>${s ? s.name : pid}</strong> <div class="text-xs text-gray-500">(Facebook ID: ${fb})</div></div>`);
-    });
-  }
-  if(lines.length === 0){
-    el.innerHTML = `<div class="text-sm text-gray-600">Geen toegewezen skins voor de huidige UID/Facebook.</div>`;
-  } else {
-    el.innerHTML = lines.join("");
-  }
-}
-
-/* ========== Direct buy - Xsolla-enabled ==========
-Opent de officiële payments endpoint die normaal terugstuurt naar Xsolla.
-We prefer een UID, maar openen ook zonder; gebruikers krijgen echte Xsolla checkout.
-*/
-function buyXsolla(index){
-  const s = skins[index];
-  const effective = s.xsollaSku || s.productId;
-  let uid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  if(!uid){
-    const ok = confirm("Geen gekoppelde UID gevonden. Je kunt nu je UID invullen (aanbevolen) of verdergaan zonder. Wil je je UID invullen?");
-    if(ok){
-      const newUid = prompt("Vul je Agar.io payment UID (paste hier):", "") || "";
-      if(newUid && newUid.trim()){
-        uid = newUid.trim();
-        window.agarioEncodedUID = uid;
-        localStorage.setItem("agarioEncodedUID", uid);
+function safeGetProducts(cfg) {
+  // attempt to find array of product objects in config
+  const candidates = [];
+  function walk(o) {
+    if (!o || typeof o !== 'object') return;
+    if (Array.isArray(o)) {
+      // heuristics: array of products often have objects with productId/name fields
+      if (o.length && typeof o[0] === 'object' && (o[0].productId || o[0].id || o[0].name || o[0].xsollaSku)) {
+        candidates.push(o);
+      } else {
+        // check sub-objects
+        o.forEach(walk);
       }
-    }
-  }
-  // Open official payments endpoint; Agar.io server zal doorgaans redirecten naar Xsolla
-  const endpoint = "https://payments.agario.miniclippt.com/pay";
-  const paymentUrl = `${endpoint}/${encodeURIComponent(uid || "")}/${encodeURIComponent(effective)}/EUR`;
-  window.open(paymentUrl, "_blank");
-  showPopup("Betaalpagina geopend in nieuw tabblad voor: " + s.name + ". Voltooi de checkout daar.");
-
-  // Vraag gebruiker of hij wil markeren (lokale simulatie)
-  if(uid){
-    const mark = confirm("Wil je deze aankoop direct lokaal toewijzen aan UID " + uid + " (simulatie)?");
-    if(mark){ grantToUid(uid, effective); showPopup("Skin lokaal toegewezen aan UID " + uid); }
-  } else {
-    // geen UID — vraag of gekoppeld moet worden aan FB als ingelogd
-    const fb = localStorage.getItem("agarioFbId") || "";
-    if(fb){
-      const markFb = confirm("Wil je deze aankoop lokaal toewijzen aan je Facebook‑account (simulatie)?");
-      if(markFb){ grantToFb(fb, effective); showPopup("Skin lokaal toegewezen aan Facebook account"); }
-    }
-  }
-}
-
-/* ========== Direct buy - items zonder xsollaSku: vereis UID of Facebook ==========
-Als gebruiker Facebook heeft ingelogd, koppelen we na openen van de betaalpagina de skin automatisch aan dat FB account (lokale simulatie).
-*/
-function buyRequireUidOrFb(index){
-  const s = skins[index];
-  let uid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  const fb = localStorage.getItem("agarioFbId") || "";
-  if(!uid && !fb){
-    const doFb = confirm("Deze skin vereist een UID of Facebook login. Wil je nu inloggen met Facebook?");
-    if(doFb){
-      fbTriggerLogin();
-      // na succesvolle login zal user mogelijk moeten klikken op buy opnieuw; we inform user
-      showPopup("Na Facebook login, klik nogmaals op Koop om de aankoop te voltooien.");
       return;
-    } else {
-      uid = prompt("Vul je Agar.io payment UID in om te betalen (paste hier):", "") || "";
-      if(!uid || !uid.trim()){ alert("UID is required to start the payment."); return; }
-      uid = uid.trim();
-      window.agarioEncodedUID = uid;
-      localStorage.setItem("agarioEncodedUID", uid);
+    }
+    // object
+    for (const k of Object.keys(o)) {
+      const v = o[k];
+      if (Array.isArray(v)) walk(v);
+      else if (v && typeof v === 'object') walk(v);
     }
   }
+  walk(cfg);
+  // choose the largest candidate array as product list
+  if (candidates.length === 0) return [];
+  candidates.sort((a,b)=> b.length - a.length);
+  return candidates[0];
+}
 
-  // Build payment URL using productId
-  const endpoint = "https://payments.agario.miniclippt.com/pay";
-  const paymentUrl = `${endpoint}/${encodeURIComponent(uid || "")}/${encodeURIComponent(s.productId)}/EUR`;
-  window.open(paymentUrl, "_blank");
-  showPopup("Betaalpagina geopend in nieuw tabblad voor: " + s.name + ". Voltooi de checkout daar.");
+function buildImageUrl(product) {
+  // Try config fields for an image; fallback to placeholder
+  if (product.image) return product.image;
+  if (product.imageUrl) return product.imageUrl;
+  if (product.visual && product.visual.image) return product.visual.image;
+  if (product.visual && product.visual.url) return product.visual.url;
+  // nothing found
+  return 'https://via.placeholder.com/420x240?text=Skin';
+}
 
-  // Local assignment simulation: prefer UID, anders FB
-  if(uid){
-    grantToUid(uid, s.productId);
-    showPopup("Skin lokaal toegewezen aan UID " + uid + " (simulatie)");
-  } else if(fb){
-    grantToFb(fb, s.productId);
-    showPopup("Skin lokaal toegewezen aan Facebook account (simulatie)");
+function isPurchasable(product) {
+  // heuristics: xsollaSku or xsollaProjectId present -> Xsolla buy
+  const hasXsolla = !!(product.xsollaSku || product.xsollaProjectId || (product.purchase && product.purchase.xsolla));
+  // heuristic for coin purchase: priceCoins, price_in_coins, costCoins, or price with currency 'COINS'
+  const hasCoins = !!(product.priceCoins || product.price_in_coins || (product.price && product.price.currency === 'COINS') || (product.purchase && product.purchase.coins));
+  return hasXsolla || hasCoins;
+}
+
+/* Render */
+async function loadAndRender() {
+  document.getElementById('shopGrid').innerHTML = '<div class="muted">Config laden…</div>';
+  try {
+    const res = await fetch(CONFIG_URL);
+    if (!res.ok) throw new Error('Config ophalen faalde: ' + res.status);
+    const cfg = await res.json();
+    configData = cfg;
+    const products = safeGetProducts(cfg);
+    const purchasable = products.filter(isPurchasable);
+    // Remove duplicates by productId
+    const unique = [];
+    const seen = new Set();
+    for (const p of purchasable) {
+      const pid = p.productId || p.id || p.sku || p.name;
+      if (!pid) continue;
+      if (seen.has(pid)) continue;
+      seen.add(pid);
+      unique.push(p);
+    }
+    if (unique.length === 0) {
+      document.getElementById('shopGrid').innerHTML = '<div class="muted">Geen te koop staande skins gevonden in de config.</div>';
+      return;
+    }
+    renderProducts(unique);
+  } catch (err) {
+    console.error(err);
+    document.getElementById('shopGrid').innerHTML = `<div class="muted">Kon config niet laden: ${err.message}</div>`;
   }
 }
 
-/* ========== Cart checkout (combined) ==========
-Gebruik xsollaSku waar beschikbaar; items zonder xsollaSku vereisen UID of FB — we vragen nu UID of FB.
-Na openen payment: we local-assign non-xsolla items to UID/FB.
-*/
-function openXsollaUidModal(){
-  const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
-  document.getElementById("xsollaUidInput").value = pre;
-  document.getElementById("xsollaUidModal").classList.remove("hidden");
-}
-function closeXsollaUidModal(){ document.getElementById("xsollaUidModal").classList.add("hidden"); }
-
-function payCartWithXsolla(){
-  if(cart.length === 0){ showPopup("Cart is empty"); return; }
-  let uid = document.getElementById("xsollaUidInput").value.trim();
-  if(!uid){
-    const fb = localStorage.getItem("agarioFbId") || "";
-    if(!fb){
-      uid = prompt("Enter your Agar.io payment UID (leave blank to attempt Facebook assignment):", "") || "";
-    } else {
-      // if fb present, allow leaving uid blank
-      uid = "";
+function renderProducts(products) {
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = '';
+  products.forEach(product => {
+    const pid = product.productId || product.id || product.sku || product.name;
+    const name = product.name || product.displayName || pid;
+    // determine price type/amount
+    let priceText = '';
+    let isXsolla = false;
+    let isCoins = false;
+    let coinsCost = 0;
+    if (product.xsollaSku || product.xsollaProjectId || (product.purchase && product.purchase.xsolla)) {
+      isXsolla = true;
+      // try to display price if available in config
+      if (product.price && product.price.amount) priceText = `€${Number(product.price.amount).toFixed(2)}`;
+      else priceText = 'Betaling via Xsolla';
     }
-  }
-  if(uid){
-    window.agarioEncodedUID = uid;
-    localStorage.setItem("agarioEncodedUID", uid);
-  }
+    if (product.priceCoins || product.price_in_coins || (product.price && product.price.currency === 'COINS') || (product.purchase && product.purchase.coins)) {
+      isCoins = true;
+      coinsCost = product.priceCoins || product.price_in_coins || (product.price && product.price.amount) || (product.purchase && product.purchase.coins) || 0;
+      priceText = `${coinsCost} coins`;
+    }
+    // If both present, show both options
+    const imgUrl = buildImageUrl(product);
 
-  const productIds = cart.map(i => {
-    const s = skins[i];
-    return s.xsollaSku || s.productId || `skin_${s.id}`;
+    const card = document.createElement('div');
+    card.className = 'card p-4';
+    card.innerHTML = `
+      <img class="skin-img mb-3" src="${imgUrl}" alt="${escapeHtml(name)}" onerror="this.style.opacity=0.4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="font-semibold">${escapeHtml(name)}</div>
+        <div>${priceText ? `<span class="badge">${escapeHtml(priceText)}</span>` : ''}</div>
+      </div>
+      <div class="text-sm muted mb-3">${escapeHtml(product.description || product.summary || '')}</div>
+      <div class="flex gap-2">
+        ${isXsolla ? `<button class="xs-buy bg-blue-600 text-white px-3 py-2 rounded" data-pid="${escapeHtml(pid)}">Buy (Xsolla)</button>` : ''}
+        ${isCoins ? `<button class="coin-buy bg-green-600 text-white px-3 py-2 rounded" data-cost="${coinsCost}" data-pid="${escapeHtml(pid)}">Buy (${coinsCost} coins)</button>` : ''}
+      </div>
+    `;
+    grid.appendChild(card);
   });
-  const combined = productIds.join(',');
-  const endpoint = "https://payments.agario.miniclippt.com/pay";
-  // Use provided uid (may be empty) — Agar.io server may still accept and redirect to Xsolla
-  const paymentUrl = `${endpoint}/${encodeURIComponent(uid || "")}/${encodeURIComponent(combined)}/EUR`;
 
-  window.open(paymentUrl, "_blank");
-  showPopup("Payment page geopend in een nieuw tabblad voor combined cart. Voltooi de checkout daar.");
-
-  // Locally assign items that had no xsollaSku to UID or FB
-  const fb = localStorage.getItem("agarioFbId") || "";
-  cart.forEach(i=>{
-    const s = skins[i];
-    if(!s.xsollaSku){
-      if(uid) grantToUid(uid, s.productId);
-      else if(fb) grantToFb(fb, s.productId);
-    }
+  // Attach listeners
+  Array.from(document.querySelectorAll('.xs-buy')).forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      const pid = e.target.getAttribute('data-pid');
+      xsollaBuyFlow(pid);
+    });
   });
-
-  closeXsollaUidModal();
+  Array.from(document.querySelectorAll('.coin-buy')).forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      const pid = e.target.getAttribute('data-pid');
+      const cost = Number(e.target.getAttribute('data-cost') || 0);
+      coinBuyFlow(pid, cost);
+    });
+  });
 }
 
-/* ========== Small misc ========= */
-document.getElementById("cartCount").innerText = cart.length;
-document.getElementById("eventBar").onclick = ()=> showPopup("Featured deals are shown in the shop.");
-updateUidStatus();
-updateGrantedList();
+/* Purchase flows */
+async function ensureFbLogged() {
+  // If page already has FB SDK and user logged in, try to pick that up
+  if (window.FB && typeof FB.getLoginStatus === 'function') {
+    return new Promise(resolve => {
+      FB.getLoginStatus(function(resp) {
+        if (resp && resp.status === 'connected') {
+          fbConnected = true;
+          fbId = resp.authResponse.userID;
+          localStorage.setItem('agarioFbId', fbId);
+          localStorage.setItem('agarioFbToken', resp.authResponse.accessToken);
+          updateLoginUI();
+          resolve(true);
+        } else {
+          // open FB login
+          FB.login(function(loginRes) {
+            if (loginRes && loginRes.authResponse) {
+              fbConnected = true;
+              fbId = loginRes.authResponse.userID;
+              localStorage.setItem('agarioFbId', fbId);
+              localStorage.setItem('agarioFbToken', loginRes.authResponse.accessToken);
+              updateLoginUI();
+              resolve(true);
+            } else resolve(false);
+          }, {scope:'public_profile,email'});
+        }
+      });
+    });
+  } else if (FB_APP_ID && FB_APP_ID !== 'FB_APP_ID') {
+    // load SDK and then call ensureFbLogged again
+    await new Promise(res => { setTimeout(res, 800); });
+    if (window.FB) return ensureFbLogged();
+    alert('Facebook SDK niet beschikbaar — zorg dat FB_APP_ID juist is of dat de hostpagina FB laadt.');
+    return false;
+  } else {
+    // fallback: ask user to paste FB id (not ideal)
+    const manual = prompt('Geen Facebook SDK beschikbaar. Plak je Facebook ID (of klik Annuleren):', '') || '';
+    if (manual.trim()) {
+      fbConnected = true;
+      fbId = manual.trim();
+      localStorage.setItem('agarioFbId', fbId);
+      updateLoginUI();
+      return true;
+    }
+    return false;
+  }
+}
+
+async function xsollaBuyFlow(productId) {
+  // require FB login first
+  const ok = await ensureFbLogged();
+  if (!ok) { toast('Facebook login vereist om te kopen.'); return; }
+
+  // try to use agarioEncodedUID if present (official client)
+  let uid = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || '';
+  if (!uid) {
+    const want = confirm('Geen Agar.io payment UID gevonden. Wil je je UID nu plakken (aanbevolen) of doorgaan zonder?');
+    if (want) {
+      const pasted = prompt('Plak je Agar.io payment UID (xsollaToken):', '') || '';
+      if (pasted.trim()) { uid = pasted.trim(); localStorage.setItem('agarioEncodedUID', uid); }
+    }
+  }
+
+  // Build payment URL and open in new tab
+  const endpoint = 'https://payments.agario.miniclippt.com/pay';
+  const paymentUrl = `${endpoint}/${encodeURIComponent(uid || '')}/${encodeURIComponent(productId)}/EUR`;
+  window.open(paymentUrl, '_blank');
+  toast('Betalingspagina geopend — voltooi de checkout in het nieuwe tabblad.');
+
+  // optional: ask to locally assign (simulation) after opening
+  setTimeout(() => {
+    if (confirm('Wil je deze skin lokaal toewijzen aan je Facebook-account (simulatie)?')) {
+      grantToFb(fbId, productId);
+      toast('Skin lokaal toegewezen (simulatie).');
+    }
+  }, 800);
+}
+
+async function coinBuyFlow(productId, cost) {
+  const ok = await ensureFbLogged();
+  if (!ok) { toast('Facebook login vereist om te kopen.'); return; }
+
+  if (coinBalance < cost) { toast('Onvoldoende coins.'); return; }
+
+  if (!confirm(`Bevestig aankoop van ${productId} voor ${cost} coins?`)) return;
+
+  coinBalance -= cost;
+  localStorage.setItem('tb_coins', coinBalance);
+  updateCoinDisplay();
+
+  // grant locally
+  grantToFb(fbId, productId);
+  toast('Aankoop geslaagd en lokaal toegewezen (simulatie).');
+}
+
+/* local grant helper */
+function grantToFb(fbIdArg, pid) {
+  if (!fbIdArg) { console.warn('Geen fbId voor toekenning.'); return; }
+  const key = 'lm_fb_grants';
+  const grants = JSON.parse(localStorage.getItem(key) || '{}');
+  if (!Array.isArray(grants[fbIdArg])) grants[fbIdArg] = [];
+  if (!grants[fbIdArg].includes(pid)) grants[fbIdArg].push(pid);
+  localStorage.setItem(key, JSON.stringify(grants));
+}
+
+/* UI events */
+document.getElementById('fbBtn').addEventListener('click', async () => {
+  const ok = await ensureFbLogged();
+  if (ok) toast('Facebook: ingelogd als ' + fbId);
+  else toast('Facebook login niet voltooid');
+});
+
+document.getElementById('reloadBtn').addEventListener('click', () => loadAndRender());
+
+function updateCoinDisplay() {
+  document.getElementById('coinBalance').innerText = Number(coinBalance).toFixed(0);
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* Init */
+loadAndRender();
+updateLoginUI();
+
+/* Update login UI display from stored state */
+function updateLoginUI() {
+  const st = document.getElementById('loginStatus');
+  const fb = localStorage.getItem('agarioFbId') || null;
+  if (fb) {
+    st.innerText = 'Ingelogd: FB ' + fb;
+    document.getElementById('fbBtn').innerText = 'Logout FB';
+    document.getElementById('fbBtn').onclick = () => {
+      // simple logout: remove stored fb items
+      localStorage.removeItem('agarioFbId');
+      localStorage.removeItem('agarioFbToken');
+      fbConnected = false; fbId = null;
+      updateLoginUI();
+      toast('Facebook: uitgelogd (lokale sessie).');
+      // call FB.logout if SDK present
+      if (window.FB && typeof FB.logout === 'function') FB.logout(() => {});
+    };
+  } else {
+    st.innerText = 'Niet ingelogd';
+    document.getElementById('fbBtn').innerText = 'Login met Facebook';
+    document.getElementById('fbBtn').onclick = async () => {
+      const ok = await ensureFbLogged();
+      if (ok) toast('Facebook ingelogd: ' + fbId);
+      else toast('Facebook login mislukte of geannuleerd.');
+    };
+  }
+}
 </script>
 </body>
 </html>
