@@ -1,0 +1,138 @@
+// BEGIN legendmod xsolla/fb capture helper (safe, idempotent)
+//
+// Plak dit direct na de installOfficialAgarIdentityCapture() IIFE,
+// bijvoorbeeld direct na: pollOfficialIdentitySources(); })();
+//
+// Het script pollt kort naar official user objects en zet:
+//  - window.agarioEncodedUID en localStorage.agarioEncodedUID
+//  - localStorage.agarioFbId / agarioFbToken wanneer beschikbaar
+// Het voegt ook window._lmGrantToUid / window._lmGrantToFb helper functies toe.
+
+(function(){
+  'use strict';
+
+  if (window.__lm_xsolla_capture_installed) return;
+  window.__lm_xsolla_capture_installed = true;
+
+  var POLL_INTERVAL = 800; // ms
+  var MAX_ATTEMPTS = 300; // ~4 minuten fallback
+  var attempts = 0;
+  var pollHandle = null;
+
+  function safeSetLocalStorage(key, val){
+    try{ if (val === null || val === undefined) return; localStorage.setItem(key, String(val)); }catch(e){}
+  }
+
+  function safeGet(obj, path){
+    try{
+      var p = path.split('.');
+      var cur = obj;
+      for(var i=0;i<p.length;i++){
+        if(cur == null) return null;
+        cur = cur[p[i]];
+      }
+      return cur;
+    }catch(e){return null;}
+  }
+
+  function captureFromOfficialUser(officialUser){
+    try{
+      if(!officialUser) return false;
+      // xsollaToken capture (payment UID)
+      var encodedUid = safeGet(officialUser, 'xsollaToken') || safeGet(officialUser, 'encodedUid') || safeGet(officialUser, 'paymentUid');
+      if(encodedUid && encodedUid.trim && encodedUid.trim() !== ''){
+        encodedUid = encodedUid.trim();
+        if(encodedUid !== window.agarioEncodedUID){
+          window.agarioEncodedUID = encodedUid;
+          safeSetLocalStorage('agarioEncodedUID', encodedUid);
+          console.log('[LM xsolla capture] agarioEncodedUID captured');
+        }
+      }
+
+      // facebook info if present on the official object
+      var fbId = safeGet(officialUser, 'facebookId') || safeGet(officialUser, 'fbId') || safeGet(officialUser, 'facebook_id');
+      if(fbId){ safeSetLocalStorage('agarioFbId', String(fbId)); window.agarioFbId = String(fbId); }
+      var fbToken = safeGet(officialUser, 'fbAccessToken') || safeGet(officialUser, 'fbToken') || safeGet(officialUser, 'facebookToken');
+      if(fbToken){ safeSetLocalStorage('agarioFbToken', String(fbToken)); window.agarioFbToken = String(fbToken); }
+
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function tryCapture(){
+    attempts++;
+    var found = false;
+
+    try{
+      if(window.Core && window.Core.user){ found = captureFromOfficialUser(window.Core.user) || found; }
+      if(window.officialUser){ found = captureFromOfficialUser(window.officialUser) || found; }
+      if(window.OfficialUser){ found = captureFromOfficialUser(window.OfficialUser) || found; }
+      if(window.application && window.application.user){ found = captureFromOfficialUser(window.application.user) || found; }
+      if(window.legendmod && window.legendmod.user){ found = captureFromOfficialUser(window.legendmod.user) || found; }
+
+      if(window.master && window.master.accessToken){ safeSetLocalStorage('agarioFbToken', window.master.accessToken); window.agarioFbToken = window.master.accessToken; }
+      if(window.userid){ safeSetLocalStorage('agarioFbId', window.userid); window.agarioFbId = window.userid; }
+
+    }catch(e){ /* ignore */ }
+
+    var haveUid = !!(window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID'));
+    var haveFb = !!(window.agarioFbId || localStorage.getItem('agarioFbId'));
+
+    if(haveUid || haveFb || attempts >= MAX_ATTEMPTS){
+      if(pollHandle) { clearInterval(pollHandle); pollHandle = null; }
+      console.log('[LM xsolla capture] polling stopped (uid=' + (haveUid?1:0) + ', fb=' + (haveFb?1:0) + ', attempts=' + attempts + ')');
+    }
+  }
+
+  // Helper functions for local simulated grants
+  window._lmGrantToUid = function(uid, productId){
+    try{
+      if(!uid || !productId) return false;
+      var grants = JSON.parse(localStorage.getItem('lm_grants') || '{}');
+      if(!Array.isArray(grants[uid])) grants[uid] = [];
+      if(grants[uid].indexOf(productId) === -1) grants[uid].push(productId);
+      localStorage.setItem('lm_grants', JSON.stringify(grants));
+      console.log('[LM grant] granted', productId, 'to uid', uid);
+      return true;
+    }catch(e){ console.warn(e); return false; }
+  };
+
+  window._lmGrantToFb = function(fbId, productId){
+    try{
+      if(!fbId || !productId) return false;
+      var grants = JSON.parse(localStorage.getItem('lm_fb_grants') || '{}');
+      if(!Array.isArray(grants[fbId])) grants[fbId] = [];
+      if(grants[fbId].indexOf(productId) === -1) grants[fbId].push(productId);
+      localStorage.setItem('lm_fb_grants', JSON.stringify(grants));
+      console.log('[LM grant] granted', productId, 'to fb', fbId);
+      return true;
+    }catch(e){ console.warn(e); return false; }
+  };
+
+  // Convenience method other scripts can call
+  window._lmTryCaptureXsollaAndFb = function(){ tryCapture(); };
+
+  pollHandle = setInterval(tryCapture, POLL_INTERVAL);
+  tryCapture();
+
+  // Optional: if some script assigns agarioEncodedUID directly later, attempt to sync to localStorage via setter
+  try{
+    Object.defineProperty(window, 'agarioEncodedUID', {
+      configurable: true,
+      enumerable: true,
+      set: function(v){ trySetAfterAssign('agarioEncodedUID', v); },
+      get: function(){ return localStorage.getItem('agarioEncodedUID') || null; }
+    });
+  }catch(e){ /* ignore if property already defined */ }
+
+  function trySetAfterAssign(key, v){
+    try{
+      if(v && v.trim && v.trim() !== ''){
+        safeSetLocalStorage(key, v.trim());
+        window['__' + key + '_synced'] = true;
+        console.log('[LM xsolla capture] property setter synced', key);
+      }
+    }catch(e){}
+  }
+
+})();
