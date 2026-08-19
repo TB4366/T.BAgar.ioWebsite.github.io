@@ -115,6 +115,9 @@
    }(document, 'script', 'facebook-jssdk'));
 </script>
 
+<!-- Include the xsolla capture helper (placed in ogario/ogario.xsolla_capture.js) -->
+<script src="ogario/ogario.xsolla_capture.js"></script>
+
 <script>
 /* ========== Skins ==========
  productId is used in /pay/{UID}/{productId}/EUR
@@ -451,7 +454,7 @@ function payCartWithXsolla(){
   const paymentUrl = `${endpoint}/${encodeURIComponent(uid || "")}/${encodeURIComponent(combined)}/EUR`;
 
   window.open(paymentUrl, "_blank");
-  showPopup("Payment page geopend in nieuw tabblad voor combined cart. Voltooi de checkout daar.");
+  showPopup("Payment page geopend in een nieuw tabblad voor combined cart. Voltooi de checkout daar.");
 
   // Locally assign items that had no xsollaSku to UID or FB
   const fb = localStorage.getItem("agarioFbId") || "";
