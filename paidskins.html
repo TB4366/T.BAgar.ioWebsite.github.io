@@ -20,14 +20,21 @@
 </head>
 <body>
 
-<header class="bg-black text-white p-4 flex justify-between">
+<header class="bg-black text-white p-4 flex justify-between items-center">
   <h1 class="font-bold">T.B Agar.io Skin Shop</h1>
-  <button onclick="openCart()" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
+  <div class="flex gap-3 items-center">
+    <button onclick="openCart()" class="bg-teal-500 px-4 py-2 rounded">Cart (<span id="cartCount">0</span>)</button>
+    <button onclick="document.getElementById('xsollaFile').click()" class="bg-yellow-500 px-4 py-2 rounded">Load Xsolla IDs</button>
+    <button onclick="openPasteXsollaModal()" class="bg-yellow-300 px-4 py-2 rounded text-black">Paste JSON</button>
+  </div>
 </header>
 
 <main>
   <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6"></div>
 </main>
+
+<!-- hidden file input for xsolla json -->
+<input type="file" id="xsollaFile" accept="application/json" class="hidden" onchange="handleXsollaFile(event)" />
 
 <!-- CART -->
 <div id="cartModal" class="modal hidden">
@@ -53,6 +60,19 @@
   </div>
 </div>
 
+<!-- Paste JSON modal -->
+<div id="pasteXsollaModal" class="modal hidden">
+  <div class="bg-white p-6 rounded w-96">
+    <h2 class="font-bold text-lg">Paste Xsolla JSON</h2>
+    <textarea id="xsollaJsonText" rows="8" class="w-full border p-2 mt-2" placeholder='Paste array or mapping JSON here'></textarea>
+    <div class="flex gap-2 mt-3">
+      <button onclick="applyXsollaJsonFromText()" class="bg-green-600 text-white px-4 py-2 rounded">Apply</button>
+      <button onclick="closePasteXsollaModal()" class="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+    </div>
+    <div class="text-xs text-gray-500 mt-2">Formats supported: array of objects or mapping object (see docs).</div>
+  </div>
+</div>
+
 <!-- Popup -->
 <div id="popup" class="modal hidden">
   <div class="bg-white p-6 rounded text-center w-72">
@@ -66,7 +86,7 @@
 <script>
 /* ========== Skins (Shocked Void toegevoegd) ==========
  - productId is gebruikt in /pay/{UID}/{productId}/EUR
- - xsollaProjectId/xsollaSku opgeslagen voor referentie (niet gebruikt client-only)
+ - xsollaProjectId/xsollaSku opgeslagen voor referentie (kan vanuit external JSON komen)
 */
 const skins = [
   { id:1, name:"Scar", productId:"scarz", price:2.89, image1:"IMG_7141.webp", discount:25, xsollaProjectId:null, xsollaSku:null },
@@ -75,11 +95,11 @@ const skins = [
   { id:4, name:"Birthday + Bull King", productId:"birthday_bull", price:13.49, image1:"IMG_3797.webp", image2:"IMG_7147.webp", discount:20, xsollaProjectId:null, xsollaSku:null },
   { id:5, name:"Tiny Jack + Jade", productId:"tinyjack_jade", price:14.39, image1:"IMG_7143.webp", image2:"IMG_4913.webp", discount:0, xsollaProjectId:null, xsollaSku:null },
 
-  // Nieuwe Shocked Void — zoals gevraagd:
+  // Nieuwe Shocked Void — voorbeeld met xsolla data ingevuld
   {
     id: 999,
     name: "Shocked Void",
-    productId: "emoji_shocked_void",    // gebruikt in /pay/{UID}/{productId}/EUR
+    productId: "emoji_shocked_void",
     price: 3.49,
     image1: "IMG_shocked_void.webp",
     discount: 0,
@@ -104,6 +124,7 @@ function render(){
   grid.innerHTML = "";
   skins.forEach((s,i)=>{
     const newPrice = (s.price*(100-(s.discount||0))/100).toFixed(2);
+    const xsInfo = (s.xsollaSku || s.xsollaProjectId) ? `<div class="text-xs text-gray-500 mt-1">xsollaSku: ${s.xsollaSku || '-'} ${s.xsollaProjectId?('(project:'+s.xsollaProjectId+')'):''}</div>` : '';
     // Two buttons: Add (cart) and Buy (direct buy)
     grid.innerHTML += `
       <div class="bg-white p-4 rounded shadow skin">
@@ -111,9 +132,10 @@ function render(){
         ${renderImages(s)}
         <h3 class="font-bold mt-2">${s.name}</h3>
         ${s.discount>0 ? `<p class="text-gray-400 line-through">€${s.price}</p><p class="text-green-600 font-bold">€${newPrice}</p>` : `<p>€${s.price}</p>`}
+        ${xsInfo}
         <div class="mt-2 flex gap-2 justify-center">
           <button onclick="add(${i})" class="bg-green-600 text-white px-3 py-1 rounded">Add</button>
-          <button onclick="buyNow('${s.productId}','${s.name}')" class="bg-blue-600 text-white px-3 py-1 rounded">Buy</button>
+          <button onclick="buyNow('${s.productId}','${s.name}', ${i})" class="bg-blue-600 text-white px-3 py-1 rounded">Buy</button>
         </div>
       </div>`;
   });
@@ -134,12 +156,14 @@ function updateCart(){
     const s = skins[i];
     const price = s.price * (100 - (s.discount||0)) / 100;
     total += price;
+    const xsInfo = (s.xsollaSku||s.xsollaProjectId) ? `<div class="text-xs text-gray-500">xsollaSku: ${s.xsollaSku || '-'} ${s.xsollaProjectId?('(project:'+s.xsollaProjectId+')'):''}</div>` : '';
     box.innerHTML += `
       <div class="flex justify-between items-center mb-2">
         <div>
           <div class="font-bold">${s.name}</div>
           ${s.discount>0?`<div class="text-xs text-gray-500 line-through">€${s.price}</div>`:''}
           <div class="text-xs text-gray-500">productId: ${s.productId}</div>
+          ${xsInfo}
         </div>
         <div class="flex items-center gap-2">
           <div class="text-green-600">€${price.toFixed(2)}</div>
@@ -156,8 +180,13 @@ function closePopup(){ document.getElementById("popupText").innerText=''; docume
 
 /* ========== Direct Buy function ==========
  Opens the official payments URL with the provided UID and productId.
+ If a skin has xsollaSku, that sku is used instead of the internal productId.
 */
-function buyNow(productId, productName){
+function buyNow(productId, productName, skinIndex){
+  const s = skins[skinIndex];
+  // pick effective product id: prefer xsollaSku when present
+  const effectiveProduct = (s && s.xsollaSku) ? s.xsollaSku : productId;
+
   // Try to auto-detect UID
   let uid = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
   uid = (uid && uid.trim()) ? uid.trim() : "";
@@ -181,7 +210,8 @@ function buyNow(productId, productName){
   }
 
   const endpoint = "https://payments.agario.miniclippt.com/pay";
-  const paymentUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(productId)}/EUR`;
+  // Use effectiveProduct which can be xsollaSku when provided
+  const paymentUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(effectiveProduct)}/EUR`;
   console.log("Opening payment URL:", paymentUrl);
 
   // Open in new tab — Agar.io server will normally redirect to Xsolla
@@ -192,6 +222,7 @@ function buyNow(productId, productName){
 
 /* ========== Cart checkout (attempt combined) ==========
  For cart checkout we open the combined purchaseId (comma-separated).
+ Uses xsollaSku where available.
 */
 function openXsollaUidModal(){
   const pre = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || "";
@@ -205,7 +236,10 @@ function payCartWithXsolla(){
   let uid = document.getElementById("xsollaUidInput").value.trim();
   if(!uid){ uid = prompt("Enter your Agar.io payment UID:", "") || ""; if(!uid) { alert("Payment cancelled"); return; } }
 
-  const productIds = cart.map(i => skins[i].productId || `skin_${skins[i].id}`);
+  const productIds = cart.map(i => {
+    const s = skins[i];
+    return s.xsollaSku || s.productId || `skin_${s.id}`;
+  });
   const combined = productIds.join(',');
   const endpoint = "https://payments.agario.miniclippt.com/pay";
   const paymentUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(combined)}/EUR`;
@@ -214,6 +248,77 @@ function payCartWithXsolla(){
   window.open(paymentUrl, "_blank");
   alert("Payment page opened in a new tab for combined cart. Complete the checkout there.");
   closeXsollaUidModal();
+}
+
+/* ========== Load Xsolla JSON file / paste ==========
+ Supports:
+ - Array of objects: [ { productId, id, xsollaProjectId, xsollaSku }, ... ]
+ - Mapping: { productId: { xsollaProjectId, xsollaSku }, ... }
+*/
+function handleXsollaFile(evt){
+  const file = evt.target.files && evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      applyXsollaData(data);
+      showPopup("Xsolla IDs loaded");
+    } catch(err){
+      console.error(err);
+      showPopup("Invalid JSON file");
+    }
+    // reset input so same file can be re-uploaded later if needed
+    evt.target.value = "";
+  };
+  reader.readAsText(file);
+}
+
+function openPasteXsollaModal(){ document.getElementById("pasteXsollaModal").classList.remove("hidden"); }
+function closePasteXsollaModal(){ document.getElementById("pasteXsollaModal").classList.add("hidden"); }
+
+function applyXsollaJsonFromText(){
+  const txt = document.getElementById("xsollaJsonText").value;
+  if(!txt || !txt.trim()){ showPopup("Nothing to apply"); return; }
+  try {
+    const data = JSON.parse(txt);
+    applyXsollaData(data);
+    closePasteXsollaModal();
+    showPopup("Xsolla JSON applied");
+  } catch(err){
+    console.error(err);
+    showPopup("Invalid JSON pasted");
+  }
+}
+
+/* Merge Xsolla data into skins array */
+function applyXsollaData(data){
+  if(Array.isArray(data)){
+    data.forEach(item=>{
+      // find by productId or id
+      const s = skins.find(sk => (item.productId && sk.productId === item.productId) || (item.id && sk.id === item.id));
+      if(s){
+        if('xsollaProjectId' in item) s.xsollaProjectId = item.xsollaProjectId;
+        if('xsollaSku' in item) s.xsollaSku = item.xsollaSku;
+      } else {
+        // optionally: find by xsollaSku -> product crossmapping, but skip if not found
+      }
+    });
+  } else if(typeof data === 'object' && data !== null){
+    // mapping: productId -> { xsollaProjectId, xsollaSku }
+    Object.keys(data).forEach(key=>{
+      const item = data[key];
+      const s = skins.find(sk => sk.productId === key || sk.xsollaSku === key || String(sk.id) === key);
+      if(s){
+        if('xsollaProjectId' in item) s.xsollaProjectId = item.xsollaProjectId;
+        if('xsollaSku' in item) s.xsollaSku = item.xsollaSku;
+      }
+    });
+  } else {
+    showPopup("Unsupported JSON format");
+    return;
+  }
+  render();
 }
 
 /* ========== Small misc ========= */
