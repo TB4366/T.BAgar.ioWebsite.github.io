@@ -1,81 +1,146 @@
-require('dotenv').config();
+// server.js - Node/Express proxy for the chat bot
+// - Protects API key server-side
+// - Enforces rules (NO code/scripts), returns single mod link or calls OpenAI for general queries
+// Usage: set OPENAI_API_KEY and SITE_BASE in env, then `node server.js`
+
 const express = require('express');
-const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // npm i node-fetch@2
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.use(bodyParser.json());
-app.use(express.static('public'));
+// Simple in-memory sessions with TTL (20 min)
+const sessions = new Map();
+const INACTIVITY_MS = 20 * 60 * 1000;
 
-let catalog = { skins: [], emoji: [] };
-
-// Laden van officiële Agar.io config
-async function loadAgarConfig() {
-    try {
-        const res = await fetch('https://configs-web.agario.miniclippt.com/live/v15/10850/GameConfiguration.json');
-        const data = await res.json();
-        
-        const skinsSet = new Set();
-        const emojisSet = new Set();
-
-        if(data && data.shopItems) {
-            data.shopItems.forEach(item => {
-                if(item.productId){
-                    if(item.productId.startsWith('skin_')) skinsSet.add(item.productId);
-                    if(item.productId.startsWith('emoji_')) emojisSet.add(item.productId);
-                }
-            });
-        }
-
-        catalog.skins = Array.from(skinsSet);
-        catalog.emoji = Array.from(emojisSet);
-
-        console.log(`Loaded ${catalog.skins.length} skins and ${catalog.emoji.length} emoji from Agar.io config`);
-    } catch(err) {
-        console.error('Fout bij het laden van Agar.io config:', err);
-    }
+function touchSession(id){
+  const entry = sessions.get(id) || { messages: [], last: Date.now() };
+  entry.last = Date.now();
+  sessions.set(id, entry);
+  // schedule cleanup
+  setTimeout(() => {
+    const e = sessions.get(id);
+    if (e && (Date.now() - e.last) > INACTIVITY_MS) sessions.delete(id);
+  }, INACTIVITY_MS + 60 * 1000);
 }
 
-// Initial load
-loadAgarConfig();
+// DISALLOWED patterns (immediate refusal)
+const DISALLOWED = ['<script','<html','javascript','js file','paste code','source code','give me code','how to script','css code','php code','eval('];
 
-// Endpoint voor frontend catalogus
-app.get('/catalog', (req, res) => res.json(catalog));
+function containsDisallowed(text){
+  if(!text) return false;
+  const lc = text.toLowerCase();
+  return DISALLOWED.some(p => lc.includes(p));
+}
 
-// Payment endpoint
-app.post('/create-payment', async (req, res) => {
-    const { uid, item } = req.body;
-    if(!uid || (!catalog.skins.includes(item) && !catalog.emoji.includes(item))) {
-        return res.status(400).json({ error: 'Ongeldig UID of item' });
+// Known mod links (keyword -> url)
+const modMap = {
+  'bitey': 'https://biteyt.com/bots',
+  'bite': 'https://biteyt.com/bots',
+  'biteyt': 'https://biteyt.com/bots',
+  'kahraba': 'https://kahraba.in'
+  // add more if you have direct links
+};
+
+// SITE_BASE should be set to your hosted base URL (include trailing slash), e.g.:
+// SITE_BASE=https://tb4366.github.io/T.BAgar.ioWebsite.github.io/
+const SITE_BASE = process.env.SITE_BASE || 'https://tb4366.github.io/T.BAgar.ioWebsite.github.io/';
+
+// System prompt enforcer for the LLM
+const SYSTEM_PROMPT = `
+You are "T.B Chat Bot". Be helpful, polite and respond in the user's language.
+IMPORTANT:
+- NEVER provide code, HTML, CSS, JavaScript, scripts, or step-by-step scripting instructions. If the user requests code/scripts, reply with a refusal in the user's language and instruct: "Neem contact op met T.B via Instagram: @t.bagar.io".
+- Only share links from the allowed set (the Mod Menu page or known modMap links). If user asks for mods generally, direct them to the canonical Mod Menu page.
+- Do not reveal internal site HTML or how to access site code.
+- Keep answers concise, friendly, and safe.
+`;
+
+// OpenAI call helper (v1/chat/completions)
+async function callOpenAI(messages){
+  const key = process.env.OPENAI_API_KEY;
+  if(!key) throw new Error('OPENAI_API_KEY not configured');
+  const model = process.env.OPENAI_MODEL || 'gpt-4o-mini'; // change if not available
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.2,
+      max_tokens: 800
+    })
+  });
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  return data.choices?.[0]?.message?.content || '';
+}
+
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { sessionId, message } = req.body;
+    if (!sessionId || !message) return res.status(400).json({ error: 'sessionId and message required' });
+
+    // immediate refusal for disallowed content
+    if (containsDisallowed(message)) {
+      return res.json({ reply: `Ik kan geen code of scripts delen. Vraag T.B via Instagram: @t.bagar.io`, links: [{ title: 'Instagram', url: 'https://www.instagram.com/t.bagar.io/' }] });
     }
 
-    try {
-        const response = await fetch(`https://api.xsolla.com/merchant/v2/merchants/${process.env.MERCHANT_ID}/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${Buffer.from(process.env.XSOLLA_API_KEY + ':').toString('base64')}`
-            },
-            body: JSON.stringify({
-                user: { id: uid },
-                settings: { currency: "USD", locale: "en" },
-                purchase: { virtual_items: [{ sku: "agar_special_pack", amount: 1 }] },
-                redirect: { success: "https://jouwsite.nl/success", cancel: "https://jouwsite.nl/cancel" }
-            })
-        });
+    const lc = message.toLowerCase();
 
-        const data = await response.json();
-        if(data && data.token){
-            res.json({ paymentUrl: `https://secure.xsolla.com/paystation3/?access_token=${data.token}` });
-        } else {
-            res.status(500).json({ error: 'Kon token niet aanmaken', details: data });
-        }
-    } catch(err){
-        console.error(err);
-        res.status(500).json({ error: 'Server error' });
+    // check direct mod matches
+    for (const key of Object.keys(modMap)) {
+      if (lc.includes(key)) {
+        touchSession(sessionId);
+        // store user message
+        const s = sessions.get(sessionId) || { messages: [] };
+        s.messages = s.messages || [];
+        s.messages.push({ role: 'user', content: message });
+        sessions.set(sessionId, s);
+        return res.json({ reply: `Hier is de link die je vroeg: ${modMap[key]}`, links: [{ title: key, url: modMap[key] }] });
+      }
     }
+
+    // general mods question -> canonical mod menu link only
+    if (lc.includes('mod') || lc.includes('mods') || lc.includes('agario') || lc.includes('agario mod')) {
+      touchSession(sessionId);
+      const url = SITE_BASE + 'mod-menu.html';
+      return res.json({ reply: `Voor mods kijk op de Mod Menu pagina: ${url}`, links: [{ title: 'Mod Menu', url }] });
+    }
+
+    // Otherwise forward to OpenAI with system prompt + limited history
+    touchSession(sessionId);
+    const sess = sessions.get(sessionId);
+    sess.messages = sess.messages || [];
+    // limit history
+    const recent = sess.messages.slice(-6);
+    const messages = [{ role: 'system', content: SYSTEM_PROMPT }, ...recent, { role: 'user', content: message }];
+
+    const reply = await callOpenAI(messages);
+
+    // safety: if model provided disallowed content, override
+    if (containsDisallowed(reply)) {
+      return res.json({ reply: `Ik kan geen code of scripts delen. Vraag T.B via Instagram: @t.bagar.io`, links: [{ title: 'Instagram', url: 'https://www.instagram.com/t.bagar.io/' }] });
+    }
+
+    // store in session
+    sess.messages.push({ role: 'user', content: message });
+    sess.messages.push({ role: 'assistant', content: reply });
+    sessions.set(sessionId, sess);
+
+    return res.json({ reply });
+  } catch (err) {
+    console.error('Chat error', err);
+    return res.status(500).json({ error: 'server_error', message: err.message || String(err) });
+  }
 });
 
-app.listen(PORT, () => console.log(`Server draait op http://localhost:${PORT}`));
+// health
+app.get('/ping', (_,res)=> res.json({ ok: true }));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=> console.log('Chat server listening on', PORT));
