@@ -1,296 +1,411 @@
-<!doctype html>
-<html lang="nl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>T.B AGAR.IO</title>
+<!-- T.B Chat Bot widget (plaats vlak voor </body>) -->
+<style>
+/* Chat widget styles */
+#tb-chat-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(180deg,#0ea5e9,#1e3a8a);
+  border: 3px solid #0ea5e9;
+  box-shadow: 0 6px 22px rgba(14,165,233,0.28);
+  cursor: pointer;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#tb-chat-toggle img { width: 48px; height: 48px; border-radius: 50%; display:block; }
+#tb-chat-panel {
+  position: fixed;
+  right: 90px;
+  bottom: 24px;
+  width: 360px;
+  max-width: calc(100% - 120px);
+  height: 520px;
+  background: #071033;
+  color: #e6f6fb;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 12000;
+  border: 2px solid #0ea5e9;
+  font-family: Arial, sans-serif;
+}
+#tb-chat-header {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  background: linear-gradient(180deg,#071037,#021026);
+}
+#tb-chat-header img { width:44px;height:44px;border-radius:50%;display:block; margin-left:6px; }
+#tb-chat-header .tb-title { flex:1; text-align:left; color:#a5f3fc; font-weight:bold; font-size:15px; }
+#tb-chat-header .tb-sub { display:block; font-size:12px; color:#cfeff6; margin-top:3px; }
+#tb-chat-header .tb-close { background:none;border:none;color:#9fe9ff; cursor:pointer; font-size:18px; margin-right:6px; }
+#tb-chat-divider { height:1px; background:#0ea5e9; opacity:0.25; }
+#tb-chat-body {
+  flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px;
+  scroll-behavior: smooth;
+}
+.tb-msg { max-width:78%; padding:10px 12px; border-radius:12px; font-size:14px; line-height:1.3; word-wrap:break-word; }
+.tb-msg.user { background: linear-gradient(180deg,#0b2540,#05203a); color:#bfe7ff; margin-left:auto; border:1px solid rgba(255,255,255,0.03); }
+.tb-msg.bot { background: linear-gradient(180deg,#04354a,#00313e); color:#e6f6fb; margin-right:auto; border:1px solid rgba(255,255,255,0.03); }
+.tb-meta { font-size:11px; color:#9fe9ff; opacity:0.8; margin-top:4px; }
+#tb-chat-input-wrap { display:flex; gap:8px; padding:10px; border-top:1px solid rgba(255,255,255,0.03); background:linear-gradient(180deg,#071026,#031624); }
+#tb-chat-input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:#021324; color:#e6f6fb; outline:none; font-size:14px; }
+#tb-chat-send { background:#0ea5e9; border:none; color:#021026; padding:9px 12px; border-radius:10px; cursor:pointer; font-weight:bold; }
 
-  <style>
-  /* donker thema (geen light-mode of toggle) */
-  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-  #loader{position:fixed;inset:0;background:#020617;display:flex;justify-content:center;align-items:center;gap:15px;z-index:9999;font-size:28px;color:white}
-  .spinner{width:35px;height:35px;border:5px solid #1e40af;border-top:5px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite}
-  @keyframes spin{100%{transform:rotate(360deg)}}
-  body{background:#020617;color:white;min-height:100vh;overflow-x:hidden}
-  header{display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(0,0,0,.5);backdrop-filter:blur(15px);border-bottom:1px solid #2563eb;position:relative;z-index:20}
-  .left{display:flex;align-items:center;gap:12px}
-  .logo{width:45px;height:45px;border-radius:50%;overflow:hidden;box-shadow:0 0 20px #38bdf8}
-  .logo img{width:100%;height:100%;object-fit:cover}
-  .site-name{font-size:22px;font-weight:bold;color:#38bdf8}
-  .menu-btn{background:none;border:none;font-size:24px;cursor:pointer;color:white}
-  .menu{display:none;position:absolute;right:30px;top:70px;background:#020617;border-radius:12px;overflow:hidden;z-index:1000;min-width:160px;border:1px solid #2563eb}
-  .menu a{display:block;padding:14px 20px;color:white;text-decoration:none}
-  .menu a:hover{background:#2563eb}
-  main{text-align:center;padding:40px 20px}
-  h1,h2{color:#38bdf8;text-shadow:0 0 20px #2563eb}
-  hr{width:80%;margin:35px auto;border:1px solid #2563eb}
-  .slider{max-width:500px;margin:auto;overflow:hidden;border-radius:20px}
-  .slides{display:flex;transition:.5s}
-  .video{min-width:100%}
-  iframe{width:100%;height:280px;border:none;border-radius:20px}
-  .slider-buttons{margin-top:15px}
-  .slider-buttons button{background:#2563eb;color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer}
-  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;max-width:1000px;margin:auto}
-  .option{padding:35px;border-radius:20px;background:linear-gradient(135deg,#1e3a8a,#0ea5e9);cursor:pointer;font-weight:bold}
-  .social-buttons{display:flex;justify-content:center;gap:20px;margin:40px;flex-wrap:wrap}
-  .social-buttons a{padding:15px 30px;border-radius:12px;color:white;text-decoration:none}
-  .youtube{background:red}.instagram{background:#e1306c}.discord{background:#5865F2}
+/* small screen placement tweak */
+@media (max-width:520px){
+  #tb-chat-panel { right: 12px; left: 12px; width: auto; height: 72vh; bottom: 12px; }
+  #tb-chat-toggle { right: 12px; bottom: 12px; }
+}
+</style>
 
-  /* Mod cards layout */
-  .section-title{color:#a5f3fc;font-weight:bold;margin:20px 0;font-size:18px}
-  .grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;max-width:1100px;margin:18px auto}
-  .card{width:320px;background:linear-gradient(180deg,#071037,#021026);border-radius:12px;padding:12px;border:1px solid #183b6a;position:relative;color:#cbd5e1;overflow:hidden}
-  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px}
-  .download{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer}
-  .external-icon{width:18px;height:18px;fill:currentColor}
-  .info{font-size:13px;margin-top:6px;color:#cbd5e1}
-  .overlay{position:absolute;inset:0;border-radius:12px;pointer-events:none}
-  @media (max-width:720px){iframe{height:220px}.card{width:100%;max-width:420px}}
-  </style>
+<!-- Toggle (round button) -->
+<button id="tb-chat-toggle" aria-label="Open T.B Chat Bot" title="T.B Chat Bot">
+  <!-- replace src with your small icon if desired -->
+  <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="T.B">
+</button>
 
-  <!-- Preconnect for third-party embeds to slightly improve performance -->
-  <link rel="preconnect" href="https://www.youtube.com" crossorigin>
-</head>
-
-<body>
-  <div id="loader" role="status" aria-live="polite">
-    Loading...
-    <div class="spinner" aria-hidden="true"></div>
-  </div>
-
-  <header>
-    <div class="left">
-      <div class="logo">
-        <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="Logo van T.B">
-      </div>
-      <div class="site-name">T.B AGAR.IO</div>
-    </div>
-
+<!-- Panel -->
+<div id="tb-chat-panel" role="dialog" aria-modal="true" aria-label="T.B Chat Bot">
+  <div id="tb-chat-header">
+    <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="icon">
     <div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Hoofdmenu">☰</button>
+      <div class="tb-title">T.B Chat Bot</div>
+      <div class="tb-sub">24/7 Support</div>
     </div>
+    <button class="tb-close" id="tb-chat-close" aria-label="Close chat">✕</button>
+  </div>
+  <div id="tb-chat-divider" aria-hidden="true"></div>
 
-    <nav class="menu" id="menu" aria-hidden="true">
-      <a href="index.html">Home</a>
-      <a href="custom-skins.html">Custom Skins</a>
-      <a href="key-access.html">Keys</a>
-      <a href="mod-menu.html">Mod Menu</a>
-      <a href="paidskins.html">Paid Skins</a>
-      <a href="buy-account.html">Buy Account</a>
-      <a href="agar.io-skins.html">Agar.io Skins</a>
-      <!-- Xsolla link removed as requested -->
-    </nav>
-  </header>
+  <div id="tb-chat-body" aria-live="polite" aria-atomic="false"></div>
 
-  <main>
-    <h1>WELCOME!</h1>
-    <hr>
+  <div id="tb-chat-input-wrap">
+    <input id="tb-chat-input" placeholder="Typ hier je bericht..." aria-label="Type message" />
+    <button id="tb-chat-send" aria-label="Send message">Stuur</button>
+  </div>
+</div>
 
-    <h2>T.B CHANNEL</h2>
+<script>
+/*
+T.B Chat Bot - client-side private widget
 
-    <div class="slider">
-      <div class="slides" id="slides">
-        <!-- Lazy-load YouTube iframes -->
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/02x2YFHWh2o" loading="lazy" title="Video 1"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/d8DluzJAd2w" loading="lazy" title="Video 2"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/c234keB_q3c" loading="lazy" title="Video 3"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/MVl6S3JvxC0" loading="lazy" title="Video 4"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/Zg3-FACfyHE" loading="lazy" title="Video 5"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/TdoL76Jt22A" loading="lazy" title="Video 6"></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/0Tk29twxcJ8" loading="lazy" title="Video 7"></iframe></div>
-      </div>
-    </div>
+Behavior summary (as requested):
+- Private to this browser (localStorage), persists across refresh.
+- Auto-delete after 20 minutes of inactivity (reset on any send/receive).
+- Refuses to provide code/html/scripts; redirects to Instagram (@t.bagar.io) when asked for scripts.
+- Only provides internal site links (allowedLinks), YouTube channel and social links below.
+- If cannot answer, advises: "sorry ik kan je helaas niet hier bij helpen ... Instagram @t.bagar.io"
+- Starts with greeting on open: "Hello, how can I help you?" (or localized).
+- Basic intent mapping for mods / social contact / youtube.
+*/
 
-    <div class="slider-buttons">
-      <button id="prevBtn" aria-label="Vorige video">⬅</button>
-      <button id="nextBtn" aria-label="Volgende video">➡</button>
-    </div>
+// --- Configuration: change these to match your site if needed ---
+const BOT_NAME = "T.B Chat Bot";
+const INSTA_HANDLE = "@t.bagar.io";
+const INSTA_LINK = "https://www.instagram.com/t.bagar.io/";
+const DISCORD_LINK = "https://discord.gg/qhuXPrVzBx";
+const YT_CHANNEL = "https://www.youtube.com/@T.B6"; // T.B channel
+const SITE_BASE = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/"); // best-effort base
 
-    <hr>
+// Allowed internal pages (relative or absolute). Only these links will be shared by the bot.
+const allowedLinks = {
+  "custom-skins": "custom-skins.html",
+  "mod-menu": "mod-menu.html",
+  "paidskins": "paidskins.html",
+  "agar-skins": "agar.io-skins.html",
+  "key-access": "key-access.html",
+  "home": "index.html"
+};
 
-    <!-- AGAR.IO MOD MENU LINKS (door jou aangeleverd) -->
-    <div class="section-title">AGAR.IO MOD MENU LINKS</div>
+// localStorage key (per-site)
+const STORAGE_KEY = 'tb_chat_' + (location.hostname || 'site');
 
-    <div class="grid">
-      <!-- Mod 1 -->
-      <div class="card" data-status="active">
-        <img src="IMG_0321.jpeg" alt="Bite Bots Panel">
-        <a href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
-          <button class="download">
-            Bite Bots Panel
-            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-              <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-            </svg>
-          </button>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 19-08-2026</div>
-        <div class="info">Bite Bots Panel</div>
-        <div class="overlay"></div>
-      </div>
+// inactivity timeout (20 minutes)
+const INACTIVITY_MS = 20 * 60 * 1000;
 
-      <!-- Mod 2 -->
-      <div class="card" data-status="active">
-        <img src="IMG_0322.jpeg" alt="Kahraba Website">
-        <a href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
-          <button class="download">
-            Kahraba Website
-            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-              <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-            </svg>
-          </button>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 21-08-2026</div>
-        <div class="info">Kahraba Website</div>
-        <div class="overlay"></div>
-      </div>
-    </div>
-    <!-- Einde mod links -->
+// --- utilities ---
+function escapeText(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function nowISO(){ return new Date().toISOString(); }
 
-    <hr>
+// --- DOM refs ---
+const toggleBtn = document.getElementById('tb-chat-toggle');
+const panel = document.getElementById('tb-chat-panel');
+const closeBtn = document.getElementById('tb-chat-close');
+const bodyDiv = document.getElementById('tb-chat-body');
+const input = document.getElementById('tb-chat-input');
+const sendBtn = document.getElementById('tb-chat-send');
 
-    <!-- Choose your option (onveranderd) -->
-    <h2>Choose Your Option!</h2>
-    
-    <div class="options" id="options">
-      <div class="option" data-href="custom-skins.html" tabindex="0">Custom Skins</div>
-      <div class="option" data-href="key-access.html" tabindex="0">Keys</div>
-      <div class="option" data-href="mod-menu.html" tabindex="0">Mod Menu</div>
-      <div class="option" data-href="paidskins.html" tabindex="0">Paid Skins</div>
-      <div class="option" data-href="buy-account.html" tabindex="0">Buy Account</div>
-      <div class="option" data-href="agar.io-skins.html" tabindex="0">Agar.io Skins</div>
-    </div>
+// --- state & storage ---
+let state = {
+  messages: [], // {role: 'user'|'bot', text, t}
+  lastActivity: Date.now()
+};
 
-    <hr>
-
-    <div class="social-buttons">
-      <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube</a>
-      <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">Instagram</a>
-      <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener noreferrer">Discord</a>
-    </div>
-  </main>
-
-  <!-- Footer (exact script die je stuurde, staat helemaal onderaan) -->
-  <footer style="text-align:center;padding:18px;color:#9ca3af">
-    © <year></year> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html" rel="noopener noreferrer">T.B Website</a> - T.B Licence -
-  </footer>
-
-  <script>
-  function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; }
-  year();
-  </script>
-
-  <script>
-  // ===== Loader: hide on load or after max timeout =====
-  (function(){
-    const loader = document.getElementById('loader');
-    let hidden = false;
-    function hide() {
-      if (hidden) return;
-      loader.style.display = 'none';
-      hidden = true;
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    // only accept when structure matches
+    if (parsed && Array.isArray(parsed.messages)) {
+      state = parsed;
+      // ensure numeric lastActivity
+      if (!state.lastActivity) state.lastActivity = Date.now();
     }
-    window.addEventListener('load', hide);
-    setTimeout(hide, 8000);
-  })();
+  } catch(e){}
+}
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e){}
+}
+function clearState(){
+  state = { messages: [], lastActivity: Date.now() };
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  renderMessages();
+}
 
-  // ===== Accessible menu toggle & outside click handling =====
-  (function(){
-    const menuBtn = document.getElementById('menuBtn');
-    const menu = document.getElementById('menu');
+// --- inactivity / cleanup ---
+let inactivityTimer = null;
+function resetInactivityTimer(){
+  state.lastActivity = Date.now();
+  saveState();
+  if (inactivityTimer) {
+    clearTimeout(inactivityTimer);
+  }
+  inactivityTimer = setTimeout(() => {
+    // clear conversation after timeout
+    clearState();
+    // optional gentle bot notice (but we clear, so show an ephemeral message first)
+    addBotMessage(localize("Je chat is verwijderd wegens inactiviteit. Je kunt opnieuw beginnen."), { transient:true });
+  }, INACTIVITY_MS);
+}
 
-    function setMenu(open){
-      menu.style.display = open ? 'block' : 'none';
-      menuBtn.setAttribute('aria-expanded', String(open));
-      menu.setAttribute('aria-hidden', String(!open));
+// --- rendering ---
+function renderMessages(){
+  bodyDiv.innerHTML = '';
+  for (const m of state.messages){
+    const div = document.createElement('div');
+    div.className = 'tb-msg ' + (m.role === 'user' ? 'user' : 'bot');
+    // ensure plain-text only
+    div.innerText = m.text;
+    bodyDiv.appendChild(div);
+  }
+  // scroll to bottom
+  bodyDiv.scrollTop = bodyDiv.scrollHeight;
+}
+
+// add user message
+function addUserMessage(text){
+  text = text.trim();
+  if (!text) return;
+  state.messages.push({ role: 'user', text: text, t: nowISO() });
+  saveState();
+  renderMessages();
+  resetInactivityTimer();
+}
+
+// add bot message; options.transient won't persist in storage (display-only)
+function addBotMessage(text, options = {}){
+  // block code-ish characters in any bot message (ensures no code is shown)
+  text = String(text).replace(/[<>]/g, '');
+  if (!options.transient) {
+    state.messages.push({ role: 'bot', text: text, t: nowISO() });
+    saveState();
+  } else {
+    // transient: show but don't persist
+    const div = document.createElement('div');
+    div.className = 'tb-msg bot';
+    div.innerText = text;
+    bodyDiv.appendChild(div);
+    setTimeout(()=>{ if(div && div.parentNode) div.parentNode.removeChild(div); }, 6000);
+  }
+  renderMessages();
+  resetInactivityTimer();
+}
+
+// --- simple localization ---
+
+const lang = (navigator.language || navigator.userLanguage || 'en').split('-')[0];
+
+function localize(key){
+  // minimal strings in NL and EN (extendable)
+  const strings = {
+    en: {
+      greeting: "Hello, how can I help you?",
+      morning: "Good morning, how can I help?",
+      unknown_help: "Sorry, I can't help with that here. Please contact T.B via Instagram " + INSTA_HANDLE,
+      ask_contact: "You can contact T.B on Instagram: " + INSTA_LINK,
+      ask_discord: "Discord invite: " + DISCORD_LINK,
+      youtube: "YouTube channel: " + YT_CHANNEL,
+      mods_links_intro: "Here are links on this site related to Agar.io mods:",
+      removed_code: "I cannot share code or scripts. Please ask T.B via Instagram: " + INSTA_HANDLE,
+      deleted_inactive: "Your chat was deleted due to inactivity.",
+    },
+    nl: {
+      greeting: "Hallo, kan ik je ergens mee helpen?",
+      morning: "Goedemorgen, hoe kan ik je helpen?",
+      unknown_help: "Sorry, ik kan je hier niet mee helpen. Neem contact op met T.B via Instagram " + INSTA_HANDLE,
+      ask_contact: "Je kunt T.B bereiken op Instagram: " + INSTA_LINK,
+      ask_discord: "Discord invite: " + DISCORD_LINK,
+      youtube: "YouTube kanaal: " + YT_CHANNEL,
+      mods_links_intro: "Hieronder links op deze site met betrekking tot Agar.io mods:",
+      removed_code: "Ik kan geen code of scripts delen. Vraag T.B via Instagram: " + INSTA_HANDLE,
+      deleted_inactive: "Je chat is verwijderd wegens inactiviteit.",
     }
+  };
+  return (strings[lang] && strings[lang][key]) || strings['en'][key] || key;
+}
 
-    menuBtn.addEventListener('click', (e) => {
-      const isOpen = menu.style.display === 'block';
-      setMenu(!isOpen);
-    });
+// choose greeting based on local time
+function getGreeting(){
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return localize('morning');
+  return localize('greeting');
+}
 
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!menu.contains(e.target) && e.target !== menuBtn) {
-        setMenu(false);
-      }
-    });
+// --- intent detection & bot logic (rule-based) ---
+function containsAny(s, arr){ s = s.toLowerCase(); return arr.some(w => s.includes(w)); }
 
-    // close with Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setMenu(false);
-    });
-  })();
+function handleUserMessage(text){
+  const lc = text.toLowerCase();
 
-  // ===== Slider controls (simple) =====
-  (function(){
-    let index = 0;
-    const slides = document.getElementById('slides');
-    const total = slides ? slides.children.length : 0;
-    let lastTouch = Date.now();
+  // always reject code/html requests
+  if (containsAny(lc, ['script', 'code', '<html', '<script', 'css', 'javascript', 'js file', 'paste code', 'how to make script', 'how do i script', 'give me code', 'source code'])) {
+    addBotMessage(localize('removed_code'));
+    return;
+  }
 
-    function showVideo(){
-      slides.style.transform = "translateX(-"+(index*100)+"%)";
+  // contact requests
+  if (containsAny(lc, ['contact', 'instagram', 'insta', 'how to contact', 'how can i contact', 'reach', 'mail'])) {
+    addBotMessage(localize('ask_contact'));
+    return;
+  }
+
+  // discord request
+  if (containsAny(lc, ['discord'])) {
+    addBotMessage(localize('ask_discord'));
+    return;
+  }
+
+  // youtube request
+  if (containsAny(lc, ['youtube', 'video', 'channel'])) {
+    addBotMessage(localize('youtube'));
+    return;
+  }
+
+  // mods-related requests
+  if (containsAny(lc, ['mod', 'mods', 'shrk', 'agar.io mod', 'agario mod', 'agar.io mods', 'agar mods'])) {
+    // list available internal links (only site pages)
+    let lines = [ localize('mods_links_intro') ];
+    for (const k in allowedLinks){
+      const rel = allowedLinks[k];
+      // build site-link relative
+      const url = rel.startsWith('http') ? rel : (location.origin + (rel.startsWith('/') ? rel : '/' + rel));
+      lines.push('- ' + k + ': ' + url);
     }
-    document.getElementById('nextBtn').addEventListener('click', () => { index = (index+1)%total; showVideo(); lastTouch=Date.now(); });
-    document.getElementById('prevBtn').addEventListener('click', () => { index = (index-1+total)%total; showVideo(); lastTouch=Date.now(); });
+    addBotMessage(lines.join('\n'));
+    return;
+  }
 
-    // auto-advance if not interacted recently
-    setInterval(() => {
-      if (Date.now() - lastTouch > 2000) {
-        index = (index+1)%total;
-        showVideo();
-      }
-    }, 2000);
+  // greetings
+  if (containsAny(lc, ['hello','hallo','hi','hey','goedemorgen','goedenavond','goedemiddag'])) {
+    addBotMessage(getGreeting());
+    return;
+  }
 
-    // Pause auto-advance while mouse over the slider
-    slides.addEventListener('mouseenter', ()=> lastTouch = Date.now()+100000);
-    slides.addEventListener('mouseleave', ()=> lastTouch = Date.now());
-  })();
+  // small talk / assistance prompts
+  if (containsAny(lc, ['help', 'how can', 'how do i', 'can you', 'what can you do','waarmee'])) {
+    addBotMessage(getGreeting());
+    return;
+  }
 
-  // ===== Lazy-load YouTube iframes using IntersectionObserver =====
-  (function(){
-    const lazyIframes = [].slice.call(document.querySelectorAll('iframe.lazy-youtube'));
-    if ('IntersectionObserver' in window && lazyIframes.length) {
-      const obs = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const iframe = entry.target;
-            const src = iframe.getAttribute('data-src');
-            if (src && !iframe.src) {
-              iframe.src = src;
-            }
-            iframe.classList.remove('lazy-youtube');
-            observer.unobserve(iframe);
-          }
-        });
-      }, {rootMargin: '300px'});
-      lazyIframes.forEach(f => obs.observe(f));
+  // link requests (generic)
+  if (containsAny(lc, ['link', 'links', 'url', 'where can i find', 'where is'])) {
+    // prefer instagram if asking for a link to contact
+    if (containsAny(lc, ['contact', 'support', 'help'])) {
+      addBotMessage(localize('ask_contact'));
     } else {
-      // fallback: load all
-      lazyIframes.forEach(f => { const s = f.getAttribute('data-src'); if (s) f.src = s; });
+      addBotMessage("Links on this site: " + Object.values(allowedLinks).map(p => (location.origin + (p.startsWith('/')? p : '/' + p))).join(' | '));
     }
-  })();
+    return;
+  }
 
-  // ===== Delegated option navigation (keyboard + click) =====
-  (function(){
-    document.getElementById('options').addEventListener('click', (e) => {
-      const opt = e.target.closest('.option');
-      if (!opt) return;
-      if (opt.dataset.href) location.href = opt.dataset.href;
-    });
-    document.getElementById('options').addEventListener('keydown', (e) => {
-      const el = e.target.closest('.option');
-      if (el && (e.key === 'Enter' || e.key === ' ')) {
-        e.preventDefault();
-        if (el.dataset.href) location.href = el.dataset.href;
-      }
-    });
-  })();
-  </script>
-</body>
-</html>
+  // fallback: can't answer -> direct to Instagram
+  addBotMessage(localize('unknown_help'));
+}
+
+// --- persistence & UI hooks ---
+function openPanel(){
+  panel.style.display = 'flex';
+  // on open show greeting from bot if no messages yet or if last message > short threshold
+  if (state.messages.length === 0){
+    addBotMessage(getGreeting());
+  } else {
+    // if last activity was long ago, optionally greet
+    const last = state.messages[state.messages.length-1];
+    const age = Date.now() - new Date(last.t || Date.now()).getTime();
+    if (age > 60*60*1000) addBotMessage(getGreeting());
+  }
+  resetInactivityTimer();
+  input.focus();
+}
+function closePanel(){
+  panel.style.display = 'none';
+}
+
+// send flow
+function sendCurrent(){
+  const text = input.value.trim();
+  if (!text) return;
+  addUserMessage(text);
+  // Bot reply (simulate thinking)
+  setTimeout(()=> {
+    try {
+      handleUserMessage(text);
+    } catch(e){
+      addBotMessage(localize('unknown_help'));
+    }
+  }, 350 + Math.random()*400);
+  input.value = '';
+  input.focus();
+}
+
+// init
+loadState();
+renderMessages();
+resetInactivityTimer();
+
+// wire events
+toggleBtn.addEventListener('click', ()=> {
+  if (panel.style.display === 'flex') { closePanel(); }
+  else { openPanel(); }
+});
+closeBtn.addEventListener('click', ()=> closePanel());
+sendBtn.addEventListener('click', sendCurrent);
+input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') sendCurrent(); });
+
+// make sure widget doesn't leak html: sanitize any attempt to insert HTML into bot messages (we already used innerText)
+// and ensure stored messages are plain text only (we used text values)
+
+// initial auto-greeting only when user opens widget (above)
+
+// clear storage also when tab closed after long idle (best effort)
+window.addEventListener('beforeunload', ()=> {
+  // if inactivity exceeded, clear now
+  if (Date.now() - state.lastActivity > INACTIVITY_MS) {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  } else {
+    // keep it for persistence across refresh
+    saveState();
+  }
+});
+</script>
