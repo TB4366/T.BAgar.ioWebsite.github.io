@@ -79,7 +79,7 @@
       <a href="paidskins.html">Paid Skins</a>
       <a href="buy-account.html">Buy Account</a>
       <a href="agar.io-skins.html">Agar.io Skins</a>
-      <!-- externe mod links (direct bereikbaar) -->
+      <!-- externe mod links -->
       <a href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">Bite Bots Panel</a>
       <a href="https://kahraba.in" target="_blank" rel="noopener noreferrer">Kahraba Website</a>
     </nav>
@@ -113,7 +113,6 @@
     <div class="section-title">AGAR.IO MOD MENU LINKS</div>
 
     <div class="grid">
-      <!-- Mod 1 -->
       <div class="card" data-href="https://biteyt.com/bots">
         <a class="card-link" href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
           <img src="IMG_0321.jpeg" alt="Bite Bots Panel">
@@ -130,7 +129,6 @@
         <div class="overlay"></div>
       </div>
 
-      <!-- Mod 2 -->
       <div class="card" data-href="https://kahraba.in">
         <a class="card-link" href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
           <img src="IMG_0322.jpeg" alt="Kahraba Website">
@@ -169,7 +167,7 @@
     </div>
   </main>
 
-  <!-- Chat widget -->
+  <!-- Chat widget (calls server /api/chat) -->
   <style>
   #tb-chat-toggle { position: fixed; right: 24px; bottom: 24px; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(180deg,#0ea5e9,#1e3a8a); border: 3px solid #0ea5e9; box-shadow: 0 6px 22px rgba(14,165,233,0.28); cursor: pointer; z-index: 12000; display: flex; align-items: center; justify-content: center; }
   #tb-chat-toggle img { width: 48px; height: 48px; border-radius: 50%; display:block; }
@@ -220,300 +218,155 @@
   </footer>
 
   <script>
-  // Footer year
-  function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; }
-  year();
-  </script>
+  // footer year
+  function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; } year();
 
-  <script>
-  /* Page behavior (loader, menu, slider, lazy iframes, card clicks, options) */
+  // basic page behaviour (loader/menu/slider/lazy-iframe/options)
   (function(){
-    const loader = document.getElementById("loader");
-    function hide(){ if(loader) loader.style.display = "none"; }
-    window.addEventListener('load', hide);
-    setTimeout(hide, 8000);
+    const loader = document.getElementById("loader"); function hide(){ if(loader) loader.style.display="none"; }
+    window.addEventListener('load', hide); setTimeout(hide, 8000);
 
-    const menuBtn = document.getElementById('menuBtn');
-    const menu = document.getElementById('menu');
+    const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu');
     function setMenu(open){ menu.style.display = open ? 'block' : 'none'; menuBtn.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-hidden', String(!open)); }
     menuBtn.addEventListener('click', ()=> setMenu(menu.style.display !== 'block'));
     document.addEventListener('click', (e)=> { if(!menu.contains(e.target) && e.target !== menuBtn) setMenu(false); });
     document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') setMenu(false); });
 
-    // Slider
+    // slider
     (function(){
-      let index=0;
-      const slides=document.getElementById('slides');
-      const total = slides ? slides.children.length : 0;
-      let lastTouch = Date.now();
+      let index=0; const slides=document.getElementById('slides'); const total = slides ? slides.children.length : 0; let lastTouch = Date.now();
       function showVideo(){ if(slides) slides.style.transform = "translateX(-"+(index*100)+"%)"; }
-      document.getElementById('nextBtn').addEventListener('click', ()=>{ index = (index+1)%total; showVideo(); lastTouch=Date.now(); });
-      document.getElementById('prevBtn').addEventListener('click', ()=>{ index = (index-1+total)%total; showVideo(); lastTouch=Date.now(); });
+      document.getElementById('nextBtn').addEventListener('click', ()=>{ index=(index+1)%total; showVideo(); lastTouch=Date.now(); });
+      document.getElementById('prevBtn').addEventListener('click', ()=>{ index=(index-1+total)%total; showVideo(); lastTouch=Date.now(); });
       setInterval(()=>{ if(Date.now()-lastTouch>2000){ index=(index+1)%total; showVideo(); } },2000);
-      if (slides) { slides.addEventListener('mouseenter', ()=> lastTouch = Date.now()+100000); slides.addEventListener('mouseleave', ()=> lastTouch = Date.now()); }
+      if (slides){ slides.addEventListener('mouseenter', ()=> lastTouch = Date.now()+100000); slides.addEventListener('mouseleave', ()=> lastTouch = Date.now()); }
     })();
 
-    // Lazy load YouTube iframes
+    // lazy YouTube
     (function(){
       const lazyIframes = [].slice.call(document.querySelectorAll('iframe.lazy-youtube'));
       if ('IntersectionObserver' in window && lazyIframes.length) {
         const obs = new IntersectionObserver((entries, observer) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              const iframe = entry.target;
-              const src = iframe.getAttribute('data-src');
+              const iframe = entry.target, src = iframe.getAttribute('data-src');
               if (src && !iframe.src) iframe.src = src;
-              iframe.classList.remove('lazy-youtube');
-              observer.unobserve(iframe);
+              iframe.classList.remove('lazy-youtube'); observer.unobserve(iframe);
             }
           });
-        }, {rootMargin: '300px'});
+        }, {rootMargin:'300px'});
         lazyIframes.forEach(f => obs.observe(f));
-      } else {
-        lazyIframes.forEach(f => { const s = f.getAttribute('data-src'); if (s) f.src = s; });
-      }
+      } else { lazyIframes.forEach(f => { const s = f.getAttribute('data-src'); if (s) f.src = s; }); }
     })();
 
-    // Card clicks open external links
+    // make cards clickable
     document.querySelectorAll('.card').forEach(c => {
       const href = c.getAttribute('data-href');
-      if (href) {
-        c.addEventListener('click', (e) => {
-          if (e.target.closest('a')) return;
-          try { window.open(href, '_blank', 'noopener'); } catch(e){ location.href = href; }
-        });
-      }
+      if (href) c.addEventListener('click', (e)=> { if(e.target.closest('a')) return; try { window.open(href, '_blank','noopener'); } catch(e){ location.href = href; } });
     });
 
-    // Options navigation
+    // options navigation
     const options = document.getElementById('options');
-    if (options) {
-      options.addEventListener('click', (e) => {
-        const opt = e.target.closest('.option');
-        if (!opt) return;
-        if (opt.dataset.href) location.href = opt.dataset.href;
-      });
-      options.addEventListener('keydown', (e) => {
-        const el = e.target.closest('.option');
-        if (el && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
-          if (el.dataset.href) location.href = el.dataset.href;
-        }
-      });
+    if(options){
+      options.addEventListener('click', (e)=> { const opt = e.target.closest('.option'); if(!opt) return; if(opt.dataset.href) location.href = opt.dataset.href; });
+      options.addEventListener('keydown', (e)=> { const el = e.target.closest('.option'); if(el && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); if(el.dataset.href) location.href=el.dataset.href; }});
     }
   })();
-  </script>
 
-  <script>
-  /* Chat bot: single-link responses for mods, known direct mod links map, refuse code/scripts */
-  const INSTA_HANDLE = "@t.bagar.io";
-  const INSTA_LINK = "https://www.instagram.com/t.bagar.io/";
-  const DISCORD_LINK = "https://discord.gg/qhuXPrVzBx";
-  const YT_CHANNEL = "https://www.youtube.com/@T.B6";
-  const STORAGE_KEY = 'tb_chat_' + (location.hostname || 'site');
-  const INACTIVITY_MS = 20 * 60 * 1000;
+  // Chat client: communicates with server /api/chat
+  (function(){
+    const toggleBtn = document.getElementById('tb-chat-toggle'), panel = document.getElementById('tb-chat-panel');
+    const closeBtn = document.getElementById('tb-chat-close'), bodyDiv = document.getElementById('tb-chat-body');
+    const input = document.getElementById('tb-chat-input'), sendBtn = document.getElementById('tb-chat-send');
+    const STORAGE_KEY = 'tb_chat_client';
+    const SESSION_KEY = 'tb_session';
 
-  // base for internal pages (works on GitHub Pages with subpath)
-  const siteBase = location.origin + location.pathname.replace(/\/[^\/]*$/, '/');
+    function nowISO(){ return new Date().toISOString(); }
+    function getSessionId(){ let sid = localStorage.getItem(SESSION_KEY); if(!sid){ sid = 'sess_'+Math.random().toString(36).slice(2,12); localStorage.setItem(SESSION_KEY, sid); } return sid; }
 
-  // central mod menu page (single canonical link for "mods")
-  const MOD_MENU_PAGE = siteBase + 'mod-menu.html';
+    let state = { messages: [], lastActivity: Date.now() };
+    function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ state = JSON.parse(raw); if(!state.lastActivity) state.lastActivity=Date.now(); } }catch(e){} }
+    function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+    function clearState(){ state = { messages: [], lastActivity: Date.now() }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}; renderMessages(); }
 
-  // known external mod links mapping (mod name keywords -> direct URL)
-  const modMap = {
-    'bitey': 'https://biteyt.com/bots',
-    'bite': 'https://biteyt.com/bots',
-    'biteyt': 'https://biteyt.com/bots',
-    'bite bots': 'https://biteyt.com/bots',
-    'kahraba': 'https://kahraba.in',
-    'kahraba.in': 'https://kahraba.in'
-    // add more known mod names here if you have direct links
-  };
+    let inactivityTimer = null;
+    function resetInactivityTimer(){ state.lastActivity = Date.now(); saveState(); if(inactivityTimer) clearTimeout(inactivityTimer); inactivityTimer = setTimeout(()=>{ clearState(); addBotMessage('Je chat is verwijderd wegens inactiviteit.', { transient:true }); }, 20*60*1000 ); }
 
-  // allowed internal links that the bot may share (title: url)
-  const allowedInternal = {
-    'Home': siteBase + 'index.html',
-    'Custom Skins': siteBase + 'custom-skins.html',
-    'Keys': siteBase + 'key-access.html',
-    'Mod Menu': MOD_MENU_PAGE,
-    'Paid Skins': siteBase + 'paidskins.html',
-    'Buy Account': siteBase + 'buy-account.html',
-    'Agar.io Skins': siteBase + 'agar.io-skins.html'
-  };
+    function renderMessages(){
+      bodyDiv.innerHTML = '';
+      for(const m of state.messages){
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tb-msg ' + (m.role === 'user' ? 'user' : 'bot');
+        wrapper.innerText = m.text || '';
+        bodyDiv.appendChild(wrapper);
+        if(m.links && Array.isArray(m.links) && m.links.length){
+          const linksWrap = document.createElement('div'); linksWrap.className='tb-links';
+          m.links.forEach(link => {
+            const a = document.createElement('a'); a.href = link.url; a.target = '_blank'; a.rel='noopener noreferrer'; a.innerText = link.title + ' — ' + link.url;
+            linksWrap.appendChild(a);
+          });
+          bodyDiv.appendChild(linksWrap);
+        }
+      }
+      bodyDiv.scrollTop = bodyDiv.scrollHeight;
+    }
 
-  // chat UI refs
-  const toggleBtn = document.getElementById('tb-chat-toggle');
-  const panel = document.getElementById('tb-chat-panel');
-  const closeBtn = document.getElementById('tb-chat-close');
-  const bodyDiv = document.getElementById('tb-chat-body');
-  const input = document.getElementById('tb-chat-input');
-  const sendBtn = document.getElementById('tb-chat-send');
+    function addUserMessage(text){
+      text = text.trim(); if(!text) return;
+      state.messages.push({ role:'user', text, t: nowISO() });
+      saveState(); renderMessages(); resetInactivityTimer();
+    }
 
-  let state = { messages: [], lastActivity: Date.now() };
-  function nowISO(){ return new Date().toISOString(); }
+    function addBotMessage(text, options = {}){
+      text = String(text).replace(/[<>]/g,'');
+      if(!options.transient){
+        const msg = { role:'bot', text, t: nowISO() };
+        if(options.links) msg.links = options.links;
+        state.messages.push(msg); saveState();
+      } else {
+        const div = document.createElement('div'); div.className='tb-msg bot'; div.innerText=text; bodyDiv.appendChild(div);
+        setTimeout(()=>{ if(div && div.parentNode) div.parentNode.removeChild(div); }, 6000);
+      }
+      renderMessages(); resetInactivityTimer();
+    }
 
-  function loadState(){ try { const r = localStorage.getItem(STORAGE_KEY); if(r){ const p = JSON.parse(r); if(p && Array.isArray(p.messages)) state = p; if(!state.lastActivity) state.lastActivity = Date.now(); } } catch(e){} }
-  function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
-  function clearState(){ state = { messages: [], lastActivity: Date.now() }; try{ localStorage.removeItem(STORAGE_KEY); } catch(e){}; renderMessages(); }
-
-  let inactivityTimer = null;
-  function resetInactivityTimer(){ state.lastActivity = Date.now(); saveState(); if(inactivityTimer) clearTimeout(inactivityTimer); inactivityTimer = setTimeout(()=>{ clearState(); addBotMessage('Je chat is verwijderd wegens inactiviteit.', { transient:true }); }, INACTIVITY_MS); }
-
-  function renderMessages(){
-    bodyDiv.innerHTML = '';
-    for (const m of state.messages){
-      const wrapper = document.createElement('div');
-      wrapper.className = 'tb-msg ' + (m.role === 'user' ? 'user' : 'bot');
-      wrapper.innerText = m.text || '';
-      bodyDiv.appendChild(wrapper);
-      if (m.links && Array.isArray(m.links) && m.links.length){
-        const linksWrap = document.createElement('div');
-        linksWrap.className = 'tb-links';
-        m.links.forEach(link => {
-          const a = document.createElement('a');
-          a.href = link.url;
-          a.target = '_blank';
-          a.rel = 'noopener noreferrer';
-          a.innerText = link.title + ' — ' + link.url;
-          linksWrap.appendChild(a);
-        });
-        bodyDiv.appendChild(linksWrap);
+    async function sendToServer(message){
+      const sessionId = getSessionId();
+      try{
+        const r = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sessionId, message }) });
+        return await r.json();
+      } catch(e){
+        return { error: true, reply: 'Er is een fout opgetreden bij de server.' };
       }
     }
-    bodyDiv.scrollTop = bodyDiv.scrollHeight;
-  }
 
-  function addUserMessage(text){
-    text = text.trim(); if(!text) return;
-    state.messages.push({ role: 'user', text: text, t: nowISO() });
-    saveState(); renderMessages(); resetInactivityTimer();
-  }
-
-  function addBotMessage(text, options = {}){
-    text = String(text).replace(/[<>]/g,'');
-    if (!options.transient) {
-      const msg = { role: 'bot', text: text, t: nowISO() };
-      if (options.links) msg.links = options.links;
-      state.messages.push(msg);
-      saveState();
-    } else {
-      const div = document.createElement('div'); div.className = 'tb-msg bot'; div.innerText = text; bodyDiv.appendChild(div);
-      setTimeout(()=>{ if(div && div.parentNode) div.parentNode.removeChild(div); }, 6000);
-    }
-    renderMessages(); resetInactivityTimer();
-  }
-
-  const lang = (navigator.language || 'en').split('-')[0];
-  function localize(key){
-    const s = {
-      en:{ greeting:"Hello, how can I help you?", morning:"Good morning, how can I help?", unknown_help:"Sorry, I can't help with that here. Please contact T.B via Instagram " + INSTA_HANDLE, ask_contact:"You can contact T.B on Instagram: " + INSTA_LINK, ask_discord:"Discord invite: " + DISCORD_LINK, youtube:"YouTube channel: " + YT_CHANNEL, removed_code:"I cannot share code or scripts. Please ask T.B via Instagram: " + INSTA_HANDLE },
-      nl:{ greeting:"Hallo, kan ik je ergens mee helpen?", morning:"Goedemorgen, hoe kan ik je helpen?", unknown_help:"Sorry, ik kan je hier niet mee helpen. Neem contact op met T.B via Instagram " + INSTA_HANDLE, ask_contact:"Je kunt T.B bereiken op Instagram: " + INSTA_LINK, ask_discord:"Discord invite: " + DISCORD_LINK, youtube:"YouTube kanaal: " + YT_CHANNEL, removed_code:"Ik kan geen code of scripts delen. Vraag T.B via Instagram: " + INSTA_HANDLE }
-    };
-    return (s[lang] && s[lang][key]) || s['en'][key] || key;
-  }
-
-  function getGreeting(){ const h = new Date().getHours(); return (h>=5 && h<12) ? localize('morning') : localize('greeting'); }
-
-  function containsAny(s, arr){ s = s.toLowerCase(); return arr.some(w => s.includes(w)); }
-
-  // find a known mod by scanning words in message (first match)
-  function findKnownMod(text){
-    const lc = text.toLowerCase();
-    for (const k in modMap){
-      if (lc.includes(k)) return { key:k, url: modMap[k] };
-    }
-    return null;
-  }
-
-  function handleUserMessage(text){
-    const lc = text.toLowerCase();
-
-    // refuse code/script requests
-    if (containsAny(lc, ['script','code','<html','<script','css','javascript','js file','paste code','give me code','source code'])) {
-      addBotMessage(localize('removed_code'));
-      return;
+    async function sendCurrent(){
+      const text = input.value.trim(); if(!text) return;
+      addUserMessage(text); input.value='';
+      // show typing placeholder
+      addBotMessage('Even denken...', { transient:true });
+      const res = await sendToServer(text);
+      // remove transient typing by reloading persisted state (server responses are appended below)
+      // If server returned structured reply:
+      if(res){
+        if(res.error) {
+          addBotMessage(res.reply || 'Er is een fout opgetreden.');
+        } else {
+          // remove last transient if any by re-render from state (we show persistent messages next)
+          // display server reply
+          if(res.reply) addBotMessage(res.reply, { links: res.links });
+        }
+      } else addBotMessage('Geen antwoord ontvangen.');
     }
 
-    // contact requests
-    if (containsAny(lc, ['contact','instagram','insta','how to contact','how can i contact','reach','mail'])) {
-      addBotMessage(localize('ask_contact'));
-      return;
-    }
+    loadState(); renderMessages(); resetInactivityTimer();
+    toggleBtn.addEventListener('click', ()=> { panel.style.display === 'flex' ? panel.style.display='none' : (panel.style.display='flex', input.focus()); });
+    closeBtn.addEventListener('click', ()=> panel.style.display='none');
+    sendBtn.addEventListener('click', sendCurrent);
+    input.addEventListener('keydown', (e)=> { if(e.key === 'Enter') sendCurrent(); });
 
-    // discord
-    if (containsAny(lc, ['discord'])) {
-      addBotMessage(localize('ask_discord'));
-      return;
-    }
-
-    // youtube
-    if (containsAny(lc, ['youtube','video','channel'])) {
-      addBotMessage(localize('youtube'));
-      return;
-    }
-
-    // specific mod requested?
-    const known = findKnownMod(text);
-    if (known) {
-      // return single direct link for that mod
-      addBotMessage('Hier is de link die je vroeg:', { links: [ { title: known.key, url: known.url } ] });
-      return;
-    }
-
-    // general mods-related question -> return single canonical Mod Menu page link
-    if (containsAny(lc, ['mod','mods','agar.io mod','agario mod','agar.io mods','agar mods','ik wil een mod','ik wil mod','i want a mod','i want mod'])) {
-      addBotMessage('Open de Mod Menu-pagina voor opties:', { links: [ { title: 'Mod Menu', url: MOD_MENU_PAGE } ] });
-      return;
-    }
-
-    // greetings
-    if (containsAny(lc, ['hello','hallo','hi','hey','goedemorgen','goedenavond','goedemiddag'])) {
-      addBotMessage(getGreeting());
-      return;
-    }
-
-    // yes/no short answers: if starts with typical yes/no words or ends with '?', give Ja/Nee primitive
-    if (/^(kan|mag|is|zijn|ben|do|does|are|will|wil|kunnen|moet|should|can)\b/i.test(text) || text.trim().endsWith('?')) {
-      // if contains negation -> Nee
-      if (containsAny(lc, ['niet','no','don\'t','dont','never','geen'])) addBotMessage('Nee');
-      else addBotMessage('Ja');
-      return;
-    }
-
-    // fallback
-    addBotMessage(localize('unknown_help'));
-  }
-
-  function openPanel(){
-    panel.style.display = 'flex';
-    if (state.messages.length === 0) addBotMessage(getGreeting());
-    else {
-      const last = state.messages[state.messages.length-1];
-      const age = Date.now() - new Date(last.t || Date.now()).getTime();
-      if (age > 60*60*1000) addBotMessage(getGreeting());
-    }
-    resetInactivityTimer();
-    input.focus();
-  }
-  function closePanel(){ panel.style.display = 'none'; }
-
-  function sendCurrent(){
-    const text = input.value.trim(); if(!text) return;
-    addUserMessage(text);
-    setTimeout(()=> { try{ handleUserMessage(text); } catch(e){ addBotMessage(localize('unknown_help')); } }, 300 + Math.random()*400);
-    input.value = ''; input.focus();
-  }
-
-  loadState(); renderMessages(); resetInactivityTimer();
-
-  toggleBtn.addEventListener('click', ()=> { panel.style.display === 'flex' ? closePanel() : openPanel(); });
-  closeBtn.addEventListener('click', ()=> closePanel());
-  sendBtn.addEventListener('click', sendCurrent);
-  input.addEventListener('keydown', (e)=> { if (e.key === 'Enter') sendCurrent(); });
-
-  window.addEventListener('beforeunload', ()=> {
-    if (Date.now() - state.lastActivity > INACTIVITY_MS) try{ localStorage.removeItem(STORAGE_KEY); } catch(e){} else saveState();
-  });
+    window.addEventListener('beforeunload', ()=> { if(Date.now() - state.lastActivity > 20*60*1000) { try{ localStorage.removeItem(STORAGE_KEY); } catch(e){} } else saveState(); });
+  })();
   </script>
 </body>
 </html>
