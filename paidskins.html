@@ -19,6 +19,18 @@
   .card .meta { color:#94a3b8; font-size:12px; margin-top:6px; }
   #toast { position:fixed; right:18px; bottom:18px; z-index:60; }
   a.link { color:#7dd3fc; text-decoration:underline; }
+
+  /* modal */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:80; }
+  .modal { background:#07203a; border-radius:12px; width:520px; max-width:94%; color:#e6eef8; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,0.7); border:2px solid #d43a3a; }
+  .modal h3 { margin:0 0 8px 0; font-size:18px; }
+  .modal .warning { background:#142b40; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); color:#cfe6ff; margin-bottom:12px; }
+  .modal .btn-row { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+  .modal .input, .modal input[type="text"] { width:100%; padding:8px; border-radius:6px; border:1px solid #234; background:#061226; color:#e6eef8; }
+  .modal label { display:flex; gap:8px; align-items:center; color:#bfe6ff; font-size:14px; }
+  .modal .agree { background:#d43a3a; border:0; color:white; padding:10px 14px; border-radius:8px; cursor:pointer; }
+  .modal .cancel { background:#0a3045; border:1px solid #2b5b73; color:#bfe6ff; padding:10px 14px; border-radius:8px; cursor:pointer; }
+  .muted-sm { color:#9fb6d9; font-size:12px; }
 </style>
 </head>
 <body>
@@ -55,6 +67,39 @@
 
 <div id="toast" class="hidden"></div>
 
+<!-- Purchase confirmation modal (injected hidden) -->
+<div id="xsollaModal" style="display:none">
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">BETA REAL-MONEY PURCHASE</h3>
+      <div class="warning">
+        <strong id="modalProductTitle">Product</strong>
+        <div class="muted-sm" id="modalPurchaseId"></div>
+        <p style="margin-top:8px">This purchase route is experimental. You may be charged but not receive the displayed deal, skin, coins, or other items. Proceed only at your own responsibility.</p>
+      </div>
+
+      <div style="display:grid;gap:8px">
+        <label>
+          UID (verplicht)
+          <input id="modalUidInput" class="input" type="text" placeholder="Plak je Agar.io UID / payment token hier">
+        </label>
+
+        <label style="margin-top:6px">
+          <input id="modalAgreeCheckbox" type="checkbox" />
+          Ik begrijp het BETA-risico en accepteer volledige verantwoordelijkheid voor deze aankoop.
+        </label>
+
+        <div class="muted-sm">De betaling opent in een nieuw tabblad. Kopieer je UID alleen naar vertrouwde bronnen.</div>
+
+        <div class="btn-row">
+          <button id="modalCancel" class="cancel">Disagree — Cancel</button>
+          <button id="modalOpenXsolla" class="agree" disabled>I Agree — Open Xsolla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- replace with your FB APP ID if you want SDK auto load -->
 <script>const FB_APP_ID = 'FB_APP_ID';</script>
 
@@ -65,6 +110,14 @@ document.getElementById('configUrlText').innerText = CONFIG_URL;
 
 /* Welke velden tellen als Xsolla-id (voeg extra veld-namen toe indien jouw config andere namen heeft) */
 const xsollaFieldCandidates = ['xsollaSku','xsolla_project_id','xsollaProjectId','xsollaId','xsolla_sku','purchaseXsolla','purchase.xsolla','purchase.xsollaSku'];
+
+/* OVERRIDES: productId/name/sku -> directe Xsolla URL (plak hier de door jou opgegeven URL voor ada) */
+const xsollaOverrides = {
+  // bekende purchase id uit screenshot / voorbeeld
+  'com.miniclip.agar.io.promotionpack135': 'https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolC9uFTYwlC92mSrgx58xzAZXg3XS3_lc_en&additional=eyJwaWQiOjMxNzV9&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXSxbInBheW1lbnQiLHRydWUseyJwaWQiOjMxNzV9XV19',
+  // kortere aliasen / product name
+  'ada': 'https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolC9uFTYwlC92mSrgx58xzAZXg3XS3_lc_en&additional=eyJwaWQiOjMxNzV9&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXSxbInBheW1lbnQiLHRydWUseyJwaWQiOjMxNzV9XV19'
+};
 
 /* Utility & state */
 let configData = null;
@@ -97,8 +150,8 @@ async function loadConfigAndRender(){
       return;
     }
 
-    // Filter only those that have any xsolla field
-    const xsollaProducts = products.filter(p => detectXsollaId(p));
+    // Filter only those that have any xsolla field OR match override keys
+    const xsollaProducts = products.filter(p => detectXsollaId(p) || productMatchesOverride(p));
     if (xsollaProducts.length === 0) {
       grid.innerHTML = '<div class="muted">Geen Xsolla-geassocieerde skins gevonden in config.</div>';
       return;
@@ -111,6 +164,12 @@ async function loadConfigAndRender(){
     console.error(err);
     grid.innerHTML = `<div class="muted">Fout bij laden: ${escapeHtml(err.message)}</div>`;
   }
+}
+
+function productMatchesOverride(product){
+  const pid = product.productId || product.id || product.sku || (product.name && product.name.toLowerCase());
+  if (!pid) return false;
+  return Object.keys(xsollaOverrides).some(k => k.toLowerCase() === String(pid).toLowerCase());
 }
 
 /* heuristics to find the products array in the config: scan for arrays of objects with keys like productId/name/sku */
@@ -144,7 +203,6 @@ function hasAnyKey(obj, keys){
     if (k.indexOf('.') === -1) {
       if (k in obj) return true;
     } else {
-      // support nested e.g. 'purchase.xsolla'
       const parts = k.split('.');
       let cur = obj;
       let ok = true;
@@ -163,7 +221,6 @@ function detectXsollaId(product){
     if (cand.indexOf('.') === -1) {
       if (product[cand]) return product[cand];
     } else {
-      // nested field
       const parts = cand.split('.');
       let cur = product;
       let found = true;
@@ -173,7 +230,6 @@ function detectXsollaId(product){
       if (found && cur) return cur;
     }
   }
-  // also try common names inside purchase object
   if (product.purchase) {
     if (product.purchase.xsollaSku) return product.purchase.xsollaSku;
     if (product.purchase.xsollaProjectId) return product.purchase.xsollaProjectId;
@@ -187,7 +243,6 @@ function getImageUrl(product){
   if (product.image) return product.image;
   if (product.visual && product.visual.image) return product.visual.image;
   if (product.visual && product.visual.url) return product.visual.url;
-  // fallback placeholder
   return 'https://via.placeholder.com/640x360?text=' + encodeURIComponent(product.name || product.productId || 'skin');
 }
 
@@ -195,7 +250,7 @@ function getImageUrl(product){
 function renderProductCard(product){
   const pid = product.productId || product.id || product.sku || product.name;
   const name = product.name || product.displayName || pid;
-  const xsId = detectXsollaId(product);
+  const xsId = detectXsollaId(product) || '';
   const priceText = product.price && product.price.amount ? (`€${Number(product.price.amount).toFixed(2)}`) : 'Via Xsolla';
   const img = getImageUrl(product);
 
@@ -218,14 +273,13 @@ function renderProductCard(product){
   div.querySelector('.xs-buy').addEventListener('click', async (e)=>{
     const xs = e.currentTarget.getAttribute('data-xs');
     const id = e.currentTarget.getAttribute('data-pid');
-    await purchaseXsolla(id, xs);
+    await purchaseXsolla(id, xs, product);
   });
   return div;
 }
 
-/* Purchase flow (requires FB login) */
+/* Purchase flow with override modal for Xsolla override URLs */
 async function ensureFbLogged(){
-  // if FB SDK present try getLoginStatus, else fallback to local stored FB id or prompt manual paste
   if (window.FB && typeof FB.getLoginStatus === 'function') {
     return new Promise(resolve=>{
       FB.getLoginStatus(function(resp){
@@ -237,20 +291,40 @@ async function ensureFbLogged(){
       });
     });
   } else {
-    // SDK not loaded — check stored fb id
     if (fbId) { fbLogged = true; updateLoginUI(); return true; }
-    // fallback: ask user to paste FB id
     const manual = prompt('Facebook niet beschikbaar. Plak je Facebook ID om door te gaan (of Annuleren):', '') || '';
     if (manual.trim()) { fbLogged = true; fbId = manual.trim(); localStorage.setItem('agarioFbId', fbId); updateLoginUI(); return true; }
     return false;
   }
 }
 
-async function purchaseXsolla(productId, xsollaId){
+/* Main purchase function — shows modal for overridden Xsolla links; otherwise old behavior */
+async function purchaseXsolla(productId, xsollaId, productObj){
   const ok = await ensureFbLogged();
   if (!ok) { toast('Facebook-login vereist'); return; }
 
-  // ask for agarioEncodedUID (preferred) or continue without
+  // Determine direct override URL
+  const lookupKeys = [String(productId||'').toLowerCase(), String(xsollaId||'').toLowerCase(), (productObj && (productObj.productId || productObj.id || productObj.sku) || '').toString().toLowerCase()];
+  let overrideUrl = null;
+  for (const k of lookupKeys) {
+    if (!k) continue;
+    for (const ovKey of Object.keys(xsollaOverrides)) {
+      if (ovKey.toLowerCase() === k) { overrideUrl = xsollaOverrides[ovKey]; break; }
+    }
+    if (overrideUrl) break;
+  }
+
+  if (overrideUrl) {
+    // show modal which requires UID and checkbox
+    return showXsollaModal({
+      productTitle: productObj && (productObj.name || productId) || productId,
+      purchaseId: productObj && (productObj.productId || productObj.id || xsollaId) || xsollaId,
+      xsollaUrl: overrideUrl,
+      productId
+    });
+  }
+
+  // fallback: old payments endpoint (use productId or xsollaId)
   let uid = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || '';
   if (!uid) {
     if (confirm('Geen Agar.io payment UID gevonden. Wil je je UID plakken (aanbevolen) of doorgaan zonder?')) {
@@ -259,18 +333,15 @@ async function purchaseXsolla(productId, xsollaId){
     }
   }
 
-  // build payment URL and open
   const endpoint = 'https://payments.agario.miniclippt.com/pay';
-  // productId or xsollaId? The official flow uses purchaseId (productId) — many configs use productId. Use productId if present else xsollaId.
   const purchaseIdentifier = productId || xsollaId || productId;
   const paymentUrl = `${endpoint}/${encodeURIComponent(uid || '')}/${encodeURIComponent(purchaseIdentifier)}/EUR`;
   window.open(paymentUrl, '_blank');
-  toast('Betalingspagina geopend. Voltooi betaling in nieuw tabblad.'); 
+  toast('Betalingspagina geopend. Voltooi betaling in nieuw tabblad.');
 
-  // ask if user wants local assign simulation
+  // local assign simulation after a short delay
   setTimeout(() => {
     if (confirm('Wil je deze skin lokaal toewijzen aan je Facebook-account (simulatie)?')) {
-      // store in local grants
       const grantsKey = 'lm_fb_grants';
       const grants = JSON.parse(localStorage.getItem(grantsKey) || '{}');
       const idKey = fbId || 'unknown';
@@ -280,6 +351,85 @@ async function purchaseXsolla(productId, xsollaId){
       toast('Skin lokaal toegewezen (simulatie).');
     }
   }, 800);
+}
+
+/* Modal handling */
+function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
+  // Insert modal into DOM if not present
+  let holder = document.getElementById('xsollaModal');
+  if (!holder) {
+    console.error('Modal holder niet gevonden');
+    return;
+  }
+  holder.style.display = 'block';
+  const backdrop = document.getElementById('modalBackdrop');
+  const titleEl = document.getElementById('modalProductTitle');
+  const pidEl = document.getElementById('modalPurchaseId');
+  const uidInput = document.getElementById('modalUidInput');
+  const agreeCb = document.getElementById('modalAgreeCheckbox');
+  const openBtn = document.getElementById('modalOpenXsolla');
+  const cancelBtn = document.getElementById('modalCancel');
+
+  titleEl.innerText = productTitle || 'Product';
+  pidEl.innerText = 'Purchase ID: ' + (purchaseId || '');
+
+  uidInput.value = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || '';
+
+  function updateState(){
+    openBtn.disabled = !(agreeCb.checked && uidInput.value.trim());
+  }
+  uidInput.addEventListener('input', updateState);
+  agreeCb.addEventListener('change', updateState);
+
+  function cleanup(){
+    openBtn.disabled = true;
+    agreeCb.checked = false;
+    uidInput.value = '';
+    holder.style.display = 'none';
+    // remove listeners to avoid duplication
+    uidInput.removeEventListener('input', updateState);
+    agreeCb.removeEventListener('change', updateState);
+    cancelBtn.removeEventListener('click', onCancel);
+    openBtn.removeEventListener('click', onOpen);
+  }
+
+  function onCancel(){
+    cleanup();
+    toast('Aankoop geannuleerd');
+  }
+
+  function onOpen(){
+    const uid = uidInput.value.trim();
+    if (!uid) { alert('Vul eerst je UID in'); return; }
+    // store locally for future
+    localStorage.setItem('agarioEncodedUID', uid);
+
+    // Append UID as query param to override URL (so we know who started it). We don't change the original host part.
+    const urlObj = new URL(xsollaUrl);
+    // add uid and a marker for source
+    urlObj.searchParams.set('agario_uid', uid);
+    urlObj.searchParams.set('source', 'tb-config-shop');
+
+    // open in new tab
+    window.open(urlObj.toString(), '_blank');
+
+    // optional: store that this user attempted to buy this product (local simulation)
+    const grantsKey = 'lm_fb_attempts';
+    const attempts = JSON.parse(localStorage.getItem(grantsKey) || '{}');
+    const idKey = fbId || 'unknown';
+    attempts[idKey] = attempts[idKey] || [];
+    attempts[idKey].push({productId, purchaseId, ts: (new Date()).toISOString()});
+    localStorage.setItem(grantsKey, JSON.stringify(attempts));
+
+    cleanup();
+    toast('Betalingspagina geopend in nieuw tabblad. Voltooi betaling op Xsolla.');
+  }
+
+  cancelBtn.addEventListener('click', onCancel);
+  openBtn.addEventListener('click', onOpen);
+
+  // initial state
+  updateState();
 }
 
 /* FB quick helpers: load SDK if FB_APP_ID set */
@@ -305,7 +455,6 @@ function updateLoginUI(){
     st.innerText = 'FB: ' + fbId;
     document.getElementById('fbBtn').innerText = 'Logout FB';
     document.getElementById('fbBtn').onclick = ()=>{
-      // clear local
       localStorage.removeItem('agarioFbId');
       localStorage.removeItem('agarioFbToken');
       fbId = null; fbLogged = false;
