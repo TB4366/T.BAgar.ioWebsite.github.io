@@ -80,8 +80,8 @@
 
       <div style="display:grid;gap:8px">
         <label>
-          UID (verplicht)
-          <input id="modalUidInput" class="input" type="text" placeholder="Plak je Agar.io UID / payment token hier">
+          UID (aanbevolen)
+          <input id="modalUidInput" class="input" type="text" placeholder="Plak je Agar.io UID / payment token hier (verplicht om door te gaan)" />
         </label>
 
         <label style="margin-top:6px">
@@ -113,9 +113,7 @@ const xsollaFieldCandidates = ['xsollaSku','xsolla_project_id','xsollaProjectId'
 
 /* OVERRIDES: productId/name/sku -> directe Xsolla URL (plak hier de door jou opgegeven URL voor ada) */
 const xsollaOverrides = {
-  // bekende purchase id uit screenshot / voorbeeld
   'com.miniclip.agar.io.promotionpack135': 'https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolC9uFTYwlC92mSrgx58xzAZXg3XS3_lc_en&additional=eyJwaWQiOjMxNzV9&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXSxbInBheW1lbnQiLHRydWUseyJwaWQiOjMxNzV9XV19',
-  // kortere aliasen / product name
   'ada': 'https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolC9uFTYwlC92mSrgx58xzAZXg3XS3_lc_en&additional=eyJwaWQiOjMxNzV9&preferences=eyJjb3VudHJ5IjoiTkwiLCJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXSxbInBheW1lbnQiLHRydWUseyJwaWQiOjMxNzV9XV19'
 };
 
@@ -179,12 +177,10 @@ function findProductArray(obj){
     if (!o || typeof o !== 'object') return;
     if (Array.isArray(o)) {
       if (o.length && typeof o[0] === 'object') {
-        // heuristic: object has productId or name or xsolla
         const sample = o[0];
         if ('productId' in sample || 'id' in sample || 'name' in sample || hasAnyKey(sample, xsollaFieldCandidates)) {
           candidates.push(o);
         } else {
-          // maybe nested arrays
           o.forEach(walk);
         }
       }
@@ -193,7 +189,6 @@ function findProductArray(obj){
     }
   }
   walk(obj);
-  // pick largest candidate
   candidates.sort((a,b) => b.length - a.length);
   return candidates[0] || [];
 }
@@ -278,7 +273,8 @@ function renderProductCard(product){
   return div;
 }
 
-/* Purchase flow with override modal for Xsolla override URLs */
+/* Purchase flow: FACEBOOK OPTIONAL (niet verplicht) */
+/* ensureFbLogged is kept for optional FB button but NOT required for purchases */
 async function ensureFbLogged(){
   if (window.FB && typeof FB.getLoginStatus === 'function') {
     return new Promise(resolve=>{
@@ -292,17 +288,15 @@ async function ensureFbLogged(){
     });
   } else {
     if (fbId) { fbLogged = true; updateLoginUI(); return true; }
-    const manual = prompt('Facebook niet beschikbaar. Plak je Facebook ID om door te gaan (of Annuleren):', '') || '';
+    const manual = prompt('Facebook niet beschikbaar. Plak je Facebook ID om door te gaan (optioneel):', '') || '';
     if (manual.trim()) { fbLogged = true; fbId = manual.trim(); localStorage.setItem('agarioFbId', fbId); updateLoginUI(); return true; }
     return false;
   }
 }
 
-/* Main purchase function — shows modal for overridden Xsolla links; otherwise old behavior */
+/* Main purchase function — no FB requirement */
 async function purchaseXsolla(productId, xsollaId, productObj){
-  const ok = await ensureFbLogged();
-  if (!ok) { toast('Facebook-login vereist'); return; }
-
+  // NOTE: we intentionally DO NOT require FB login anymore.
   // Determine direct override URL
   const lookupKeys = [String(productId||'').toLowerCase(), String(xsollaId||'').toLowerCase(), (productObj && (productObj.productId || productObj.id || productObj.sku) || '').toString().toLowerCase()];
   let overrideUrl = null;
@@ -315,7 +309,7 @@ async function purchaseXsolla(productId, xsollaId, productObj){
   }
 
   if (overrideUrl) {
-    // show modal which requires UID and checkbox
+    // show modal which requires UID and checkbox (but not FB)
     return showXsollaModal({
       productTitle: productObj && (productObj.name || productId) || productId,
       purchaseId: productObj && (productObj.productId || productObj.id || xsollaId) || xsollaId,
@@ -339,7 +333,7 @@ async function purchaseXsolla(productId, xsollaId, productObj){
   window.open(paymentUrl, '_blank');
   toast('Betalingspagina geopend. Voltooi betaling in nieuw tabblad.');
 
-  // local assign simulation after a short delay
+  // local assign simulation after a short delay (optional)
   setTimeout(() => {
     if (confirm('Wil je deze skin lokaal toewijzen aan je Facebook-account (simulatie)?')) {
       const grantsKey = 'lm_fb_grants';
@@ -353,9 +347,8 @@ async function purchaseXsolla(productId, xsollaId, productObj){
   }, 800);
 }
 
-/* Modal handling */
+/* Modal handling (UID required to enable Open button) */
 function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
-  // Insert modal into DOM if not present
   let holder = document.getElementById('xsollaModal');
   if (!holder) {
     console.error('Modal holder niet gevonden');
@@ -376,6 +369,7 @@ function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
   uidInput.value = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || '';
 
   function updateState(){
+    // require both checkbox and non-empty UID to enable open
     openBtn.disabled = !(agreeCb.checked && uidInput.value.trim());
   }
   uidInput.addEventListener('input', updateState);
@@ -386,7 +380,6 @@ function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
     agreeCb.checked = false;
     uidInput.value = '';
     holder.style.display = 'none';
-    // remove listeners to avoid duplication
     uidInput.removeEventListener('input', updateState);
     agreeCb.removeEventListener('change', updateState);
     cancelBtn.removeEventListener('click', onCancel);
@@ -401,25 +394,22 @@ function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
   function onOpen(){
     const uid = uidInput.value.trim();
     if (!uid) { alert('Vul eerst je UID in'); return; }
-    // store locally for future
     localStorage.setItem('agarioEncodedUID', uid);
 
-    // Append UID as query param to override URL (so we know who started it). We don't change the original host part.
+    // Append UID as query param to override URL for traceability
     const urlObj = new URL(xsollaUrl);
-    // add uid and a marker for source
     urlObj.searchParams.set('agario_uid', uid);
     urlObj.searchParams.set('source', 'tb-config-shop');
 
-    // open in new tab
     window.open(urlObj.toString(), '_blank');
 
-    // optional: store that this user attempted to buy this product (local simulation)
-    const grantsKey = 'lm_fb_attempts';
-    const attempts = JSON.parse(localStorage.getItem(grantsKey) || '{}');
+    // record attempt locally
+    const attemptsKey = 'lm_fb_attempts';
+    const attempts = JSON.parse(localStorage.getItem(attemptsKey) || '{}');
     const idKey = fbId || 'unknown';
     attempts[idKey] = attempts[idKey] || [];
     attempts[idKey].push({productId, purchaseId, ts: (new Date()).toISOString()});
-    localStorage.setItem(grantsKey, JSON.stringify(attempts));
+    localStorage.setItem(attemptsKey, JSON.stringify(attempts));
 
     cleanup();
     toast('Betalingspagina geopend in nieuw tabblad. Voltooi betaling op Xsolla.');
@@ -428,7 +418,6 @@ function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
   cancelBtn.addEventListener('click', onCancel);
   openBtn.addEventListener('click', onOpen);
 
-  // initial state
   updateState();
 }
 
@@ -445,7 +434,7 @@ function showXsollaModal({productTitle, purchaseId, xsollaUrl, productId}){
 document.getElementById('fbBtn').addEventListener('click', async ()=>{
   const success = await ensureFbLogged();
   if (success) toast('Ingelogd als FB: ' + fbId);
-  else toast('FB login niet voltooid');
+  else toast('FB login niet voltooid (optioneel)');
 });
 document.getElementById('reloadBtn').addEventListener('click', loadConfigAndRender);
 
@@ -463,7 +452,7 @@ function updateLoginUI(){
       if (window.FB && typeof FB.logout === 'function') FB.logout(()=>{});
     };
   } else {
-    st.innerText = 'Niet ingelogd';
+    st.innerText = 'Niet ingelogd (FB optioneel)';
     document.getElementById('fbBtn').innerText = 'Login met Facebook';
     document.getElementById('fbBtn').onclick = async ()=>{
       const ok = await ensureFbLogged();
