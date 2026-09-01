@@ -2,14 +2,13 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8" />
-<title>T.B Shop — Xsolla-linked Products</title>
+<title>T.B Shop — Xsolla-linked Products (debuggable)</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <style>
   body { background:#071b2a; color:#e6eef8; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding:18px; }
   .card { background:#0b2a3a; border-radius:10px; padding:12px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03); }
   .shop-row { display:flex; gap:12px; align-items:center; padding:12px; border-radius:8px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
-  .shop-row + .shop-row { margin-top:10px; }
   .thumb { width:64px; height:64px; border-radius:999px; background:#072635; display:flex; align-items:center; justify-content:center; font-weight:700; color:#7ee7ff; }
   .title { font-weight:700; font-size:15px; }
   .meta { color:#9fb6d9; font-size:13px; margin-top:4px; }
@@ -36,6 +35,7 @@
   /* top UI */
   .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
   .logo { font-weight:800; font-size:18px; color:#7ee7ff; }
+  pre.cfg { background:#031826; padding:10px; border-radius:8px; color:#bfe6ff; max-height:240px; overflow:auto; border:1px solid rgba(255,255,255,0.03); }
 </style>
 </head>
 <body>
@@ -62,15 +62,32 @@
 
     <div id="advanced" style="margin-top:12px">
       <details>
-        <summary style="cursor:pointer" class="muted">⚙ Advanced — UID & Config</summary>
+        <summary style="cursor:pointer" class="muted">⚙ Advanced — UID, Overrides & Debug</summary>
         <div style="margin-top:8px; display:grid;gap:8px">
           <label class="muted-sm">Agar.io UID (payment token) — plak hier</label>
           <input id="uidInput" class="input" placeholder="Plak je agarioEncodedUID / payment UID hier">
           <div style="display:flex; gap:8px">
             <button id="saveUid" class="btn">Opslaan UID</button>
             <button id="testGrant" class="btn secondary">Bekijk lokale grants</button>
+            <button id="forceOverrides" class="btn secondary">Forceer overrides weergeven</button>
           </div>
-          <div class="muted-sm">Na opslaan worden Buy-knoppen actief. UID wordt opgeslagen in je browser (localStorage).</div>
+
+          <div style="margin-top:6px; display:flex; gap:8px; align-items:center">
+            <button id="logConfig" class="btn secondary">Log config naar console</button>
+            <button id="showRaw" class="btn secondary">Toon ruwe config</button>
+          </div>
+
+          <div id="rawContainer" style="display:none;margin-top:8px">
+            <pre id="rawConfig" class="cfg"></pre>
+          </div>
+
+          <div style="margin-top:8px">
+            <label class="muted-sm">Override mapping (productId => Xsolla URL)</label>
+            <pre class="cfg" id="overridesView"></pre>
+            <div class="muted-sm">Wil je een nieuwe productId zichtbaar maken? Voeg 'm toe aan de override mapping hieronder (of geef me de exacte productId en ik voeg 'm toe).</div>
+          </div>
+
+          <div class="muted-sm">Na opslaan worden Buy-knoppen actief (UID in localStorage). Als je geen producten uit config ziet: klik "Forceer overrides weergeven".</div>
         </div>
       </details>
     </div>
@@ -130,9 +147,8 @@
 const CONFIG_URL = 'https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/316c6283f78642ca84aec8f56b4862f1b9e0b481/agario/live/GameConfiguration.json';
 document.getElementById('configUrlText').innerText = CONFIG_URL;
 
-/* XSOLLA override mapping — koppel hier productId -> jouw Xsolla link */
+/* XSOLLA override mapping — pas hier productId => jouw Xsolla link aan */
 const xsollaOverrides = {
-  // pas keys aan naar de exacte purchase IDs uit je config
   'com.miniclip.agar.io.promotionpack1': 'https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19',
   'ada': 'https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19'
 };
@@ -142,8 +158,8 @@ let configData = null;
 let storedUID = localStorage.getItem('agarioEncodedUID') || '';
 
 const uidText = document.getElementById('uidText');
-const uidStatus = document.getElementById('uidStatus');
 const shopGrid = document.getElementById('shopGrid');
+document.getElementById('overridesView').innerText = JSON.stringify(xsollaOverrides, null, 2);
 
 /* Toast helper */
 function toast(msg, ms=3000){
@@ -156,17 +172,15 @@ function toast(msg, ms=3000){
 /* Utilities */
 function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-/* Update UI for UID state */
+/* Update UID UI */
 function updateUidUi(){
   storedUID = localStorage.getItem('agarioEncodedUID') || '';
   uidText.innerText = storedUID ? storedUID : 'niet ingesteld';
-  // enable/disable buy buttons
-  document.querySelectorAll('.buy-btn').forEach(btn => {
-    btn.disabled = !storedUID;
-  });
+  document.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = !storedUID);
 }
 
-/* Load config and find product array (heuristic) */
+/* Load config and render (with fallback) */
+let forcedOverrides = false;
 async function loadConfigAndRender(){
   shopGrid.innerHTML = '<div class="muted">Config laden…</div>';
   try {
@@ -176,26 +190,50 @@ async function loadConfigAndRender(){
     configData = cfg;
     const products = findProductArray(cfg);
     if (!products || products.length === 0) {
+      // fallback to overrides
+      if (forcedOverrides) {
+        renderProductsFromOverrides();
+        return;
+      }
       shopGrid.innerHTML = '<div class="muted">Geen producten gevonden in config.</div>';
       return;
     }
-    // filter products that either have xsolla fields or are in overrides
     const filtered = products.filter(p => detectXsollaId(p) || matchesOverride(p));
     if (filtered.length === 0) {
+      if (forcedOverrides) { renderProductsFromOverrides(); return; }
       shopGrid.innerHTML = '<div class="muted">Geen Xsolla-geassocieerde skins gevonden in config.</div>';
       return;
     }
-    // render list
     shopGrid.innerHTML = '';
     filtered.forEach(p => shopGrid.appendChild(renderRow(p)));
     updateUidUi();
   } catch(err){
-    console.error(err);
+    console.error('Config load error', err);
+    // Show overrides as fallback
+    if (forcedOverrides) {
+      renderProductsFromOverrides();
+      return;
+    }
     shopGrid.innerHTML = `<div class="muted">Fout bij laden: ${escapeHtml(err.message)}</div>`;
   }
 }
 
-/* Heuristics */
+/* Fallback render from xsollaOverrides */
+function renderProductsFromOverrides(){
+  shopGrid.innerHTML = '';
+  const keys = Object.keys(xsollaOverrides);
+  if (!keys.length) {
+    shopGrid.innerHTML = '<div class="muted">Geen override-items ingesteld.</div>';
+    return;
+  }
+  keys.forEach(k => {
+    const product = { productId: k, name: k, description: 'Override product (handmatig toegevoegd)', imageUrl: '' };
+    shopGrid.appendChild(renderRow(product));
+  });
+  updateUidUi();
+}
+
+/* Heuristics to find product array */
 const xsollaFieldCandidates = ['xsollaSku','xsolla_project_id','xsollaProjectId','xsollaId','xsolla_sku','purchaseXsolla','purchase.xsolla','purchase.xsollaSku'];
 function findProductArray(obj){
   const candidates = [];
@@ -220,7 +258,7 @@ function hasAnyKey(obj, keys){ for (const k of keys) { if (k.indexOf('.') === -1
 function detectXsollaId(product){ for (const cand of xsollaFieldCandidates) { if (cand.indexOf('.') === -1) { if (product[cand]) return product[cand]; } else { const parts = cand.split('.'); let cur = product; let found = true; for (const p of parts) { if (cur && (p in cur)) cur = cur[p]; else { found=false; break; } } if (found && cur) return cur; } } if (product.purchase) { if (product.purchase.xsollaSku) return product.purchase.xsollaSku; if (product.purchase.xsollaProjectId) return product.purchase.xsollaProjectId; } return null; }
 function matchesOverride(product){ const pid = String(product.productId || product.id || product.sku || (product.name && product.name.toLowerCase()) || '').toLowerCase(); return Object.keys(xsollaOverrides).some(k => k.toLowerCase() === pid); }
 
-/* Render one product row */
+/* Render product row */
 function renderRow(product){
   const pid = product.productId || product.id || product.sku || (product.name || 'unknown');
   const name = product.name || product.displayName || pid;
@@ -245,7 +283,6 @@ function renderRow(product){
     </div>
   `;
   const btn = row.querySelector('.buy-btn');
-  // disable if UID not present
   btn.disabled = !storedUID;
   btn.addEventListener('click', (e) => {
     if (!localStorage.getItem('agarioEncodedUID')) {
@@ -276,7 +313,6 @@ function openConfirmModal({ product, productId }) {
   modalAgreeCb.checked = false;
   modalOpenBtn.disabled = true;
   modalHolder.style.display = 'block';
-  // attach handlers
   modalAgreeCb.onchange = updateModalState;
   modalOpenBtn.onclick = onModalOpen;
   modalCancelBtn.onclick = onModalCancel;
@@ -302,27 +338,22 @@ function onModalOpen(){
     if (k.toLowerCase() === pidKey) { xsollaUrl = xsollaOverrides[k]; break; }
   }
   if (!xsollaUrl) {
-    // fallback to generic pay endpoint (old flow)
     const endpoint = 'https://payments.agario.miniclippt.com/pay';
     xsollaUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(currentModalCtx.productId)}/EUR`;
   } else {
-    // append agario_uid and product ref and developer return url
     try {
       const urlObj = new URL(xsollaUrl);
       urlObj.searchParams.set('agario_uid', uid);
       urlObj.searchParams.set('tb_ref_product', currentModalCtx.productId);
-      // developer_return_url - replace with your public endpoint that handles return
       urlObj.searchParams.set('developer_return_url', 'https://your-server.example/xsolla/return');
       xsollaUrl = urlObj.toString();
     } catch(e) {
-      // if xsollaUrl is not a full URL, just append naive query
       xsollaUrl = xsollaUrl + (xsollaUrl.indexOf('?') === -1 ? '?' : '&') + 'agario_uid=' + encodeURIComponent(uid) + '&tb_ref_product=' + encodeURIComponent(currentModalCtx.productId);
     }
   }
 
-  // open payment in new tab
   window.open(xsollaUrl, '_blank');
-  // store attempt locally for debugging
+
   const attemptsKey = 'tb_xsolla_attempts';
   const attempts = JSON.parse(localStorage.getItem(attemptsKey) || '{}');
   const idKey = uid || 'unknown';
@@ -334,7 +365,7 @@ function onModalOpen(){
   toast('Betalingspagina geopend in nieuw tabblad. Voltooi betaling op Xsolla.');
 }
 
-/* UID controls */
+/* UID controls and debug buttons */
 document.getElementById('saveUid').addEventListener('click', ()=>{
   const val = document.getElementById('uidInput').value.trim();
   if (!val) { toast('Voer een geldige UID in'); return; }
@@ -350,6 +381,22 @@ document.getElementById('clearUid').addEventListener('click', ()=>{
 document.getElementById('testGrant').addEventListener('click', ()=>{
   const g = JSON.parse(localStorage.getItem('lm_fb_grants') || '{}');
   alert('Lokale grants:\n' + JSON.stringify(g, null, 2));
+});
+document.getElementById('forceOverrides').addEventListener('click', ()=>{
+  forcedOverrides = true;
+  renderProductsFromOverrides();
+  toast('Overrides geforceerd weergegeven');
+});
+document.getElementById('logConfig').addEventListener('click', ()=>{
+  console.log('Loaded config:', configData);
+  toast('Config gelogd naar console');
+});
+document.getElementById('showRaw').addEventListener('click', ()=>{
+  const rawEl = document.getElementById('rawContainer');
+  const pre = document.getElementById('rawConfig');
+  if (!configData) { toast('Config nog niet geladen of fout bij ophalen'); return; }
+  pre.innerText = JSON.stringify(configData, null, 2);
+  rawEl.style.display = rawEl.style.display === 'none' ? 'block' : 'none';
 });
 
 /* Init */
