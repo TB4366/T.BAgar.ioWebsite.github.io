@@ -1,408 +1,258 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8" />
-<title>T.B Shop — Xsolla-linked Products (debuggable)</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Agar.io Skin - @t.bagar.io</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  body { background:#071b2a; color:#e6eef8; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding:18px; }
-  .card { background:#0b2a3a; border-radius:10px; padding:12px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03); }
-  .shop-row { display:flex; gap:12px; align-items:center; padding:12px; border-radius:8px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
-  .thumb { width:64px; height:64px; border-radius:999px; background:#072635; display:flex; align-items:center; justify-content:center; font-weight:700; color:#7ee7ff; }
-  .title { font-weight:700; font-size:15px; }
-  .meta { color:#9fb6d9; font-size:13px; margin-top:4px; }
-  .price { color:#6ee7b7; font-weight:800; font-size:18px; }
-  .muted { color:#9fb6d9; font-size:13px; }
-  .btn { background:#1f9bb0; color:#012226; padding:8px 12px; border-radius:8px; font-weight:700; border:0; cursor:pointer; }
-  .btn:disabled { opacity:0.45; cursor:not-allowed; }
-  .btn.secondary { background:#0ea5a3; color:#022; }
-  #shopGrid { margin-top:14px; }
-  #advanced { margin-top:12px; }
-  .link { color:#7dd3fc; text-decoration:underline; cursor:pointer; }
+/* Basis styling */
+body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
+h1{font-size:28px;margin:18px 0}
 
-  /* modal */
-  .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:120; }
-  .modal { background:#07203a; width:560px; max-width:96%; border-radius:10px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,0.7); border:3px solid #8b1f1f; }
-  .modal-header { background:#b72b2b; color:white; padding:14px 18px; font-weight:800; display:flex; align-items:center; gap:10px; }
-  .modal-body { padding:18px; color:#dbeefe; }
-  .modal-warning { background:#0f3b52; border-radius:8px; padding:12px; margin:10px 0; color:#cfe6ff; border:1px solid rgba(255,255,255,0.04); }
-  .modal-footer { display:flex; gap:10px; justify-content:flex-end; padding:12px 18px 18px; background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent); }
-  .input { width:100%; padding:8px; border-radius:6px; border:1px solid #234; background:#061226; color:#e6eef8; }
-  label.inline { display:flex; gap:10px; align-items:center; color:#cfe6ff; }
-  .muted-sm { color:#9fb6d9; font-size:12px; margin-top:6px; }
+/* Sections */
+.sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px;flex-wrap:wrap}
+.section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer}
+.section-btn:hover{background:#181818}
+.section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
 
-  /* top UI */
-  .topbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
-  .logo { font-weight:800; font-size:18px; color:#7ee7ff; }
-  pre.cfg { background:#031826; padding:10px; border-radius:8px; color:#bfe6ff; max-height:240px; overflow:auto; border:1px solid rgba(255,255,255,0.03); }
+/* Version */
+.version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
+.version-label{font-size:18px}
+#version{font-size:16px;padding:4px}
+
+/* Grids */
+#skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
+
+/* Cards */
+.skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px}
+.skin:hover{border-color:#1683ff}
+.skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
+.skin span{display:block;margin-top:6px;font-size:13px;text-align:center}
+
+/* Buy button */
+.buy-btn{display:inline-block;margin-top:8px;background:#16a34a;color:#fff;border:0;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.buy-btn:hover{background:#13803d}
+
+/* Pagination & buttons */
+#pages,#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
+.page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:14px;font-weight:bold;cursor:pointer;min-width:36px;box-shadow:0 2px 5px #0008}
+.page-btn:hover{background:#0b6ed6}
+.page-btn.active{background:#0753a6}
+
+/* Social */
+.social-buttons{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 15px}
+.social-buttons a{display:inline-block;color:#fff;text-decoration:none;padding:9px 14px;border-radius:7px;font-size:14px;font-weight:bold;transition:0.2s}
+.social-buttons a:hover{transform:translateY(-2px);opacity:0.9}
+.youtube{background:#ff0000}
+.instagram{background:#e1306c}
+.discord{background:#5865f2}
+
+/* Hidden helper */
+.hidden{display:none}
+
+/* small loader badge */
+.loader-badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#07223a;color:#9bd1ff;font-size:12px;margin-left:8px}
+
+/* responsive */
+@media(max-width:900px){
+  #skins{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+  .skin img{width:80px;height:80px}
+  #skins{grid-template-columns:repeat(4,1fr);gap:8px}
+}
 </style>
 </head>
 <body>
 
-<div class="max-w-4xl mx-auto">
-  <div class="topbar">
-    <div>
-      <div class="logo">T.B — Special & Daily Deals</div>
-      <div class="muted">Xsolla-linked producten — vul je UID in om aankopen te kunnen doen</div>
-    </div>
-    <div style="text-align:right">
-      <div id="uidStatus" class="muted">UID: <span id="uidText">niet ingesteld</span></div>
-      <div style="margin-top:6px"><button id="clearUid" class="btn secondary" style="padding:6px 10px">Verwijder UID</button></div>
-    </div>
-  </div>
+<h1>Agar.io Skins<br>@t.bagar.io</h1>
 
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-weight:800">Special & Daily Deals</div>
-      <div class="muted">Source: <code id="configUrlText"></code></div>
-    </div>
-
-    <div id="shopGrid"></div>
-
-    <div id="advanced" style="margin-top:12px">
-      <details>
-        <summary style="cursor:pointer" class="muted">⚙ Advanced — UID, Overrides & Debug</summary>
-        <div style="margin-top:8px; display:grid;gap:8px">
-          <label class="muted-sm">Agar.io UID (payment token) — plak hier</label>
-          <input id="uidInput" class="input" placeholder="Plak je agarioEncodedUID / payment UID hier">
-          <div style="display:flex; gap:8px">
-            <button id="saveUid" class="btn">Opslaan UID</button>
-            <button id="testGrant" class="btn secondary">Bekijk lokale grants</button>
-            <button id="forceOverrides" class="btn secondary">Forceer overrides weergeven</button>
-          </div>
-
-          <div style="margin-top:6px; display:flex; gap:8px; align-items:center">
-            <button id="logConfig" class="btn secondary">Log config naar console</button>
-            <button id="showRaw" class="btn secondary">Toon ruwe config</button>
-          </div>
-
-          <div id="rawContainer" style="display:none;margin-top:8px">
-            <pre id="rawConfig" class="cfg"></pre>
-          </div>
-
-          <div style="margin-top:8px">
-            <label class="muted-sm">Override mapping (productId => Xsolla URL)</label>
-            <pre class="cfg" id="overridesView"></pre>
-            <div class="muted-sm">Wil je een nieuwe productId zichtbaar maken? Voeg 'm toe aan de override mapping hieronder (of geef me de exacte productId en ik voeg 'm toe).</div>
-          </div>
-
-          <div class="muted-sm">Na opslaan worden Buy-knoppen actief (UID in localStorage). Als je geen producten uit config ziet: klik "Forceer overrides weergeven".</div>
-        </div>
-      </details>
-    </div>
-  </div>
-
-  <div style="margin-top:10px" class="muted-sm">
-    Let op: de daadwerkelijke koppeling aan het agario-account na betaling vereist een server-side webhook van Xsolla. Client stuurt uid mee zodat je server het kan matchen.
-  </div>
+<!-- NAV (enkel Agar.io Skins) -->
+<div class="sections">
+  <button class="section-btn active" id="agarioSectionBtn">Agar.io Skins</button>
 </div>
 
-<!-- Modal (initially hidden) -->
-<div id="xsollaModalHolder" style="display:none">
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <span>⚠️</span>
-        <div>BETA REAL-MONEY PURCHASE</div>
-      </div>
-      <div class="modal-body">
-        <div style="font-weight:800; font-size:18px" id="modalProductTitle">Product</div>
-        <div class="muted-sm" id="modalPurchaseId">Purchase ID: —</div>
-
-        <div class="modal-warning" id="modalWarningBox">
-          <div><strong>This purchase route is experimental.</strong></div>
-          <div style="margin-top:8px">You may be charged but not receive the displayed deal, skin, coins, or other items. Proceed only at your own responsibility.</div>
-        </div>
-
-        <div style="display:grid;gap:8px">
-          <label class="inline">
-            <input type="checkbox" id="modalAgreeCheckbox">
-            <span style="font-weight:700">I understand the BETA risk and accept full responsibility for continuing.</span>
-          </label>
-
-          <div style="display:flex;gap:8px;align-items:center">
-            <div style="flex:1">
-              <label class="muted-sm">UID die gebruikt zal worden (read-only)</label>
-              <input id="modalUidRead" class="input" readonly>
-            </div>
-          </div>
-
-          <div class="muted-sm">Klik "I Agree — Open Xsolla" om de Xsolla payment flow te openen in een nieuw tabblad.</div>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button id="modalCancel" class="btn secondary">Disagree — Cancel</button>
-        <button id="modalOpenXsolla" class="btn" disabled style="background:#8b1f1f;color:white">I Agree — Open Xsolla</button>
-      </div>
-    </div>
+<!-- AGARIO SECTION -->
+<div id="agarioSection">
+  <div class="version-container">
+    <span class="version-label">Version</span>
+    <select id="version"></select>
+    <span id="preloadStatus" class="loader-badge" style="display:none">Preloading...</span>
   </div>
-</div>
 
-<div id="toast" style="position:fixed; right:18px; bottom:18px; z-index:200; display:none"></div>
+  <div id="skins">Loading skins...</div>
+  <div id="agarioPages"></div>
+</div>
 
 <script>
-/* CONFIG */
-const CONFIG_URL = 'https://raw.githubusercontent.com/jimboy3100/jimboy3100.github.io/316c6283f78642ca84aec8f56b4862f1b9e0b481/agario/live/GameConfiguration.json';
-document.getElementById('configUrlText').innerText = CONFIG_URL;
+/* ====== Aangepaste pagina: alleen Agario skins + buy-knop functionaliteit ====== */
 
-/* XSOLLA override mapping — pas hier productId => jouw Xsolla link aan */
-const xsollaOverrides = {
-  'com.miniclip.agar.io.promotionpack1': 'https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19',
-  'ada': 'https://secure.xsolla.com/paystation3/desktop/list/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en&preferences=eyJpdGVtUHJvbW90aW9ucyI6IltdIn0-&sessional=eyJoaXN0b3J5IjpbWyJzYXZlZG1ldGhvZCIsdHJ1ZV0sWyJsaXN0Iix0cnVlXV19'
-};
+/* Configuration */
+const API = "https://configs-web.agario.miniclippt.com/live/";
+let version = "v15/3032";
 
-/* State */
-let configData = null;
-let storedUID = localStorage.getItem('agarioEncodedUID') || '';
-
-const uidText = document.getElementById('uidText');
-const shopGrid = document.getElementById('shopGrid');
-document.getElementById('overridesView').innerText = JSON.stringify(xsollaOverrides, null, 2);
-
-/* Toast helper */
-function toast(msg, ms=3000){
-  const t = document.getElementById('toast');
-  t.innerHTML = `<div class="card">${msg}</div>`;
-  t.style.display = 'block';
-  setTimeout(()=> t.style.display = 'none', ms);
-}
-
-/* Utilities */
-function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* Update UID UI */
-function updateUidUi(){
-  storedUID = localStorage.getItem('agarioEncodedUID') || '';
-  uidText.innerText = storedUID ? storedUID : 'niet ingesteld';
-  document.querySelectorAll('.buy-btn').forEach(btn => btn.disabled = !storedUID);
-}
-
-/* Load config and render (with fallback) */
-let forcedOverrides = false;
-async function loadConfigAndRender(){
-  shopGrid.innerHTML = '<div class="muted">Config laden…</div>';
-  try {
-    const r = await fetch(CONFIG_URL);
-    if (!r.ok) throw new Error('Kon config niet ophalen: ' + r.status);
-    const cfg = await r.json();
-    configData = cfg;
-    const products = findProductArray(cfg);
-    if (!products || products.length === 0) {
-      // fallback to overrides
-      if (forcedOverrides) {
-        renderProductsFromOverrides();
-        return;
-      }
-      shopGrid.innerHTML = '<div class="muted">Geen producten gevonden in config.</div>';
-      return;
-    }
-    const filtered = products.filter(p => detectXsollaId(p) || matchesOverride(p));
-    if (filtered.length === 0) {
-      if (forcedOverrides) { renderProductsFromOverrides(); return; }
-      shopGrid.innerHTML = '<div class="muted">Geen Xsolla-geassocieerde skins gevonden in config.</div>';
-      return;
-    }
-    shopGrid.innerHTML = '';
-    filtered.forEach(p => shopGrid.appendChild(renderRow(p)));
-    updateUidUi();
-  } catch(err){
-    console.error('Config load error', err);
-    // Show overrides as fallback
-    if (forcedOverrides) {
-      renderProductsFromOverrides();
-      return;
-    }
-    shopGrid.innerHTML = `<div class="muted">Fout bij laden: ${escapeHtml(err.message)}</div>`;
-  }
-}
-
-/* Fallback render from xsollaOverrides */
-function renderProductsFromOverrides(){
-  shopGrid.innerHTML = '';
-  const keys = Object.keys(xsollaOverrides);
-  if (!keys.length) {
-    shopGrid.innerHTML = '<div class="muted">Geen override-items ingesteld.</div>';
-    return;
-  }
-  keys.forEach(k => {
-    const product = { productId: k, name: k, description: 'Override product (handmatig toegevoegd)', imageUrl: '' };
-    shopGrid.appendChild(renderRow(product));
-  });
-  updateUidUi();
-}
-
-/* Heuristics to find product array */
-const xsollaFieldCandidates = ['xsollaSku','xsolla_project_id','xsollaProjectId','xsollaId','xsolla_sku','purchaseXsolla','purchase.xsolla','purchase.xsollaSku'];
-function findProductArray(obj){
+/* Helper: image fallback */
+function setImageWithFallback(imgEl, filename){
   const candidates = [];
-  function walk(o){
-    if (!o || typeof o !== 'object') return;
-    if (Array.isArray(o)) {
-      if (o.length && typeof o[0] === 'object') {
-        const sample = o[0];
-        if ('productId' in sample || 'id' in sample || 'name' in sample || hasAnyKey(sample, xsollaFieldCandidates)) {
-          candidates.push(o);
-        } else o.forEach(walk);
-      }
+  if(API && version) candidates.push(API + version + "/" + filename);
+  candidates.push(filename);
+  candidates.push("images/" + filename);
+  candidates.push("/images/" + filename);
+
+  let idx = 0;
+  imgEl.onerror = function(){
+    idx++;
+    if(idx < candidates.length){
+      imgEl.src = candidates[idx];
     } else {
-      for (const k in o) walk(o[k]);
+      imgEl.onerror = null;
+      imgEl.src = "data:image/svg+xml;utf8," + encodeURIComponent(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>" +
+        "<rect width='100%' height='100%' fill='#071022'/>" +
+        "<text x='50%' y='50%' font-size='18' fill='#9bd1ff' dominant-baseline='middle' text-anchor='middle'>No image</text>" +
+        "</svg>"
+      );
     }
-  }
-  walk(obj);
-  candidates.sort((a,b) => b.length - a.length);
-  return candidates[0] || [];
+  };
+  imgEl.src = candidates[0];
 }
-function hasAnyKey(obj, keys){ for (const k of keys) { if (k.indexOf('.') === -1) { if (k in obj) return true; } else { const parts = k.split('.'); let cur = obj; let ok = true; for (const p of parts) { if (cur && (p in cur)) cur = cur[p]; else { ok=false; break; } } if (ok) return true; } } return false; }
-function detectXsollaId(product){ for (const cand of xsollaFieldCandidates) { if (cand.indexOf('.') === -1) { if (product[cand]) return product[cand]; } else { const parts = cand.split('.'); let cur = product; let found = true; for (const p of parts) { if (cur && (p in cur)) cur = cur[p]; else { found=false; break; } } if (found && cur) return cur; } } if (product.purchase) { if (product.purchase.xsollaSku) return product.purchase.xsollaSku; if (product.purchase.xsollaProjectId) return product.purchase.xsollaProjectId; } return null; }
-function matchesOverride(product){ const pid = String(product.productId || product.id || product.sku || (product.name && product.name.toLowerCase()) || '').toLowerCase(); return Object.keys(xsollaOverrides).some(k => k.toLowerCase() === pid); }
 
-/* Render product row */
-function renderRow(product){
-  const pid = product.productId || product.id || product.sku || (product.name || 'unknown');
-  const name = product.name || product.displayName || pid;
-  const priceText = (product.price && product.price.amount) ? `€${Number(product.price.amount).toFixed(2)}` : 'Via Xsolla';
-  const img = (product.imageUrl || product.image || (product.visual && (product.visual.image || product.visual.url))) || ('https://via.placeholder.com/128x128?text=' + encodeURIComponent(name));
+/* versions() - loads versions select and wires onchange */
+async function versions(){
+  const s = document.getElementById("version");
+  if(!s) return;
+  s.innerHTML = "";
+  try{
+    const r = await fetch("https://lmsettings.snez.org/", { headers: { username:"LMConfigVersion", password:"LMConfigVersionPass" }});
+    if(!r.ok) throw new Error("versions endpoint " + r.status);
+    const v = await r.json();
+    const vals = Object.values(v || {});
+    if(!vals.length) throw new Error("no versions");
+    vals.forEach(x=> s.add(new Option(String(x), String(x).replace(/\/$/,""))));
+    if(s.options.length){ s.selectedIndex = s.options.length - 1; version = s.value; }
+  }catch(err){
+    const fallback = ["v15/3032"];
+    fallback.forEach(x => s.add(new Option(x,x)));
+    version = s.value = fallback[0];
+    console.warn("versions failed, fallback used", err);
+  }
+  s.onchange = function(e){
+    version = (e.target.value||"").replace(/\/$/,"");
+    loadSkins();
+    renderAgarioPage(1);
+  };
+  loadSkins();
+}
 
-  const row = document.createElement('div');
-  row.className = 'shop-row';
-  row.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;flex:1">
-      <div class="thumb"><img src="${escapeHtml(img)}" alt="" style="width:56px;height:56px;border-radius:999px;object-fit:cover"></div>
-      <div style="flex:1">
-        <div class="title">${escapeHtml(name)}</div>
-        <div class="meta">${escapeHtml(product.description || product.summary || '')}</div>
-      </div>
-    </div>
-    <div style="text-align:right">
-      <div class="price">${escapeHtml(priceText)}</div>
-      <div style="margin-top:8px">
-        <button class="buy-btn btn" data-pid="${escapeHtml(pid)}">Buy</button>
-      </div>
-    </div>
-  `;
-  const btn = row.querySelector('.buy-btn');
-  btn.disabled = !storedUID;
-  btn.addEventListener('click', (e) => {
-    if (!localStorage.getItem('agarioEncodedUID')) {
-      toast('Vul eerst je UID in via Advanced — UID & Config', 3500);
-      return;
+/* Load skins from API endpoint */
+async function loadSkins(){
+  const box = document.getElementById("skins");
+  box.innerHTML = "Loading skins...";
+  try{
+    const r = await fetch(API + version + "/GameConfiguration.json");
+    const text = await r.text();
+    const a = text.match(/\[(.*?)\]/g) || [];
+    const str = a[25] || "";
+    const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
+    const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
+    const skins = [];
+    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
+      const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
+      const img = imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
+      if(!img.includes("uses_spine")) skins.push([id,img]);
     }
-    openConfirmModal({ product, productId: pid });
+    skins.reverse();
+    window.allSkins = skins;
+    renderAgarioPage(1);
+  }catch(e){
+    box.textContent = "Unable to load skins.";
+    window.allSkins = [];
+  }
+}
+
+/* Selection state for buy button */
+window.selectedSkinDiv = null;
+window.selectedSkinId = null;
+
+/* Render agario skins grid */
+function renderAgarioPage(page){
+  // clear selection when changing pages
+  window.selectedSkinDiv = null;
+  window.selectedSkinId = null;
+
+  const perPage = 120;
+  const box = document.getElementById("skins");
+  const pages = document.getElementById("agarioPages");
+  const skins = window.allSkins || [];
+  const total = Math.ceil(skins.length / perPage) || 1;
+  box.innerHTML = "";
+  const start = (page-1)*perPage;
+  skins.slice(start, start+perPage).forEach(([id,img])=>{
+    const d = document.createElement("div"); d.className = "skin";
+    d.setAttribute("data-id", id);
+    d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
+    setImageWithFallback(d.querySelector("img"), img);
+    d.onclick = () => selectSkin(d, id);
+    box.appendChild(d);
   });
-  return row;
+  pages.innerHTML = "";
+  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderAgarioPage(i); pages.appendChild(b); }
+  window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* Modal logic */
-const modalHolder = document.getElementById('xsollaModalHolder');
-const modalTitle = document.getElementById('modalProductTitle');
-const modalPid = document.getElementById('modalPurchaseId');
-const modalUidRead = document.getElementById('modalUidRead');
-const modalAgreeCb = document.getElementById('modalAgreeCheckbox');
-const modalOpenBtn = document.getElementById('modalOpenXsolla');
-const modalCancelBtn = document.getElementById('modalCancel');
+/* Select a skin: show buy button under that skin and remove from previous */
+function selectSkin(div, id){
+  // If already selected the same, do nothing (or we could toggle off)
+  if(window.selectedSkinDiv === div) return;
 
-let currentModalCtx = null;
-
-function openConfirmModal({ product, productId }) {
-  currentModalCtx = { product, productId };
-  modalTitle.innerText = product.name || productId;
-  modalPid.innerText = 'Purchase ID: ' + (product.productId || product.id || product.sku || '');
-  modalUidRead.value = localStorage.getItem('agarioEncodedUID') || '';
-  modalAgreeCb.checked = false;
-  modalOpenBtn.disabled = true;
-  modalHolder.style.display = 'block';
-  modalAgreeCb.onchange = updateModalState;
-  modalOpenBtn.onclick = onModalOpen;
-  modalCancelBtn.onclick = onModalCancel;
-}
-function updateModalState(){ modalOpenBtn.disabled = !(modalAgreeCb.checked && modalUidRead.value.trim()); }
-function onModalCancel(){ cleanupModal(); toast('Aankoop geannuleerd'); }
-function cleanupModal(){
-  modalHolder.style.display = 'none';
-  modalAgreeCb.onchange = null;
-  modalOpenBtn.onclick = null;
-  modalCancelBtn.onclick = null;
-  currentModalCtx = null;
-}
-
-function onModalOpen(){
-  if (!currentModalCtx) return;
-  const uid = modalUidRead.value.trim();
-  if (!uid) { alert('UID ontbreekt'); return; }
-  // determine Xsolla URL (override or fallback)
-  const pidKey = String((currentModalCtx.product.productId || currentModalCtx.product.id || currentModalCtx.product.sku || currentModalCtx.product.name) || currentModalCtx.productId).toLowerCase();
-  let xsollaUrl = null;
-  for (const k of Object.keys(xsollaOverrides)) {
-    if (k.toLowerCase() === pidKey) { xsollaUrl = xsollaOverrides[k]; break; }
-  }
-  if (!xsollaUrl) {
-    const endpoint = 'https://payments.agario.miniclippt.com/pay';
-    xsollaUrl = `${endpoint}/${encodeURIComponent(uid)}/${encodeURIComponent(currentModalCtx.productId)}/EUR`;
-  } else {
-    try {
-      const urlObj = new URL(xsollaUrl);
-      urlObj.searchParams.set('agario_uid', uid);
-      urlObj.searchParams.set('tb_ref_product', currentModalCtx.productId);
-      urlObj.searchParams.set('developer_return_url', 'https://your-server.example/xsolla/return');
-      xsollaUrl = urlObj.toString();
-    } catch(e) {
-      xsollaUrl = xsollaUrl + (xsollaUrl.indexOf('?') === -1 ? '?' : '&') + 'agario_uid=' + encodeURIComponent(uid) + '&tb_ref_product=' + encodeURIComponent(currentModalCtx.productId);
-    }
+  // Remove buy button from previous selection
+  if(window.selectedSkinDiv){
+    const prevBtn = window.selectedSkinDiv.querySelector(".buy-btn");
+    if(prevBtn) prevBtn.remove();
   }
 
-  window.open(xsollaUrl, '_blank');
+  // Add buy button to current
+  const buy = document.createElement("button");
+  buy.className = "buy-btn";
+  buy.textContent = "Buy";
+  buy.onclick = function(e){
+    e.stopPropagation();
+    // Simple action - replace with real purchase flow as needed
+    window.alert("Buying skin: " + id.replace(/\_/g," "));
+  };
 
-  const attemptsKey = 'tb_xsolla_attempts';
-  const attempts = JSON.parse(localStorage.getItem(attemptsKey) || '{}');
-  const idKey = uid || 'unknown';
-  attempts[idKey] = attempts[idKey] || [];
-  attempts[idKey].push({ productId: currentModalCtx.productId, ts: new Date().toISOString(), url: xsollaUrl });
-  localStorage.setItem(attemptsKey, JSON.stringify(attempts));
+  // Append the buy button (after the name span)
+  div.appendChild(buy);
 
-  cleanupModal();
-  toast('Betalingspagina geopend in nieuw tabblad. Voltooi betaling op Xsolla.');
+  // Save selection
+  window.selectedSkinDiv = div;
+  window.selectedSkinId = id;
 }
-
-/* UID controls and debug buttons */
-document.getElementById('saveUid').addEventListener('click', ()=>{
-  const val = document.getElementById('uidInput').value.trim();
-  if (!val) { toast('Voer een geldige UID in'); return; }
-  localStorage.setItem('agarioEncodedUID', val);
-  updateUidUi();
-  toast('UID opgeslagen');
-});
-document.getElementById('clearUid').addEventListener('click', ()=>{
-  localStorage.removeItem('agarioEncodedUID');
-  updateUidUi();
-  toast('UID verwijderd');
-});
-document.getElementById('testGrant').addEventListener('click', ()=>{
-  const g = JSON.parse(localStorage.getItem('lm_fb_grants') || '{}');
-  alert('Lokale grants:\n' + JSON.stringify(g, null, 2));
-});
-document.getElementById('forceOverrides').addEventListener('click', ()=>{
-  forcedOverrides = true;
-  renderProductsFromOverrides();
-  toast('Overrides geforceerd weergegeven');
-});
-document.getElementById('logConfig').addEventListener('click', ()=>{
-  console.log('Loaded config:', configData);
-  toast('Config gelogd naar console');
-});
-document.getElementById('showRaw').addEventListener('click', ()=>{
-  const rawEl = document.getElementById('rawContainer');
-  const pre = document.getElementById('rawConfig');
-  if (!configData) { toast('Config nog niet geladen of fout bij ophalen'); return; }
-  pre.innerText = JSON.stringify(configData, null, 2);
-  rawEl.style.display = rawEl.style.display === 'none' ? 'block' : 'none';
-});
 
 /* Init */
-loadConfigAndRender();
-updateUidUi();
-
+function init(){
+  loadSkins();
+  versions();
+}
+if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
 </script>
+
+<br>
+
+<!-- Social -->
+<div class="social-buttons">
+  <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank">YouTube</a>
+  <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank">Instagram</a>
+  <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank">Discord</a>
+</div>
+
+<!-- Footer -->
+© <year></year> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
+
+<script>
+function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; }
+year();
+</script>
+
 </body>
 </html>
