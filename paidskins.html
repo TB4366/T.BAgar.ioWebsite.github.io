@@ -2,86 +2,45 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<title>Agar.io Skin - @t.bagar.io</title>
+<title>Agar.io Skins - Buy flow</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-/* Basis styling */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
 h1{font-size:28px;margin:18px 0}
-
-/* Sections */
 .sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px;flex-wrap:wrap}
 .section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer}
-.section-btn:hover{background:#181818}
 .section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
-
-/* Version */
 .version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
 .version-label{font-size:18px}
 #version{font-size:16px;padding:4px}
-
-/* Grids */
 #skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
-
-/* Cards */
-.skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px}
+.skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .skin:hover{border-color:#1683ff}
-.skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin:0 auto}
-.skin span{display:block;margin-top:6px;font-size:13px;text-align:center}
-
-/* Buy button */
+.skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin-top:8px}
+.skin span{display:block;margin-top:8px;font-size:13px;text-align:center}
 .buy-btn{display:inline-block;margin-top:8px;background:#16a34a;color:#fff;border:0;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
 .buy-btn:hover{background:#13803d}
-.buy-btn.disabled{background:#6b7280;cursor:not-allowed}
-
-/* Unavailable notice (red) */
-.unavailable-note{margin-top:8px;color:#ff4d4d;font-weight:bold;font-size:13px}
-
-/* Pagination & buttons */
-#pages,#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
+.not-available{margin-top:8px;color:#ff4d4d;font-weight:bold;font-size:13px}
+#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
 .page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:14px;font-weight:bold;cursor:pointer;min-width:36px;box-shadow:0 2px 5px #0008}
-.page-btn:hover{background:#0b6ed6}
 .page-btn.active{background:#0753a6}
-
-/* Social */
-.social-buttons{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 15px}
-.social-buttons a{display:inline-block;color:#fff;text-decoration:none;padding:9px 14px;border-radius:7px;font-size:14px;font-weight:bold;transition:0.2s}
-.social-buttons a:hover{transform:translateY(-2px);opacity:0.9}
-.youtube{background:#ff0000}
-.instagram{background:#e1306c}
-.discord{background:#5865f2}
-
-/* Hidden helper */
 .hidden{display:none}
-
-/* small loader badge */
-.loader-badge{display:inline-block;padding:4px 8px;border-radius:12px;background:#07223a;color:#9bd1ff;font-size:12px;margin-left:8px}
-
-/* responsive */
-@media(max-width:900px){
-  #skins{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:600px){
-  .skin img{width:80px;height:80px}
-  #skins{grid-template-columns:repeat(4,1fr);gap:8px}
-}
+@media(max-width:900px){ #skins{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:600px){ .skin img{width:80px;height:80px} #skins{grid-template-columns:repeat(4,1fr);gap:8px} }
 </style>
 </head>
 <body>
 
 <h1>Agar.io Skins<br>@t.bagar.io</h1>
 
-<!-- NAV (enkel Agar.io Skins) -->
 <div class="sections">
   <button class="section-btn active" id="agarioSectionBtn">Agar.io Skins</button>
 </div>
 
-<!-- AGARIO SECTION -->
 <div id="agarioSection">
   <div class="version-container">
     <span class="version-label">Version</span>
     <select id="version"></select>
-    <span id="preloadStatus" class="loader-badge" style="display:none">Preloading...</span>
   </div>
 
   <div id="skins">Loading skins...</div>
@@ -89,53 +48,40 @@ h1{font-size:28px;margin:18px 0}
 </div>
 
 <script>
-/* ====== Aangepaste pagina: alleen Agario skins + xsolla koppeling ====== */
-
-/* Configuration */
+/* Config */
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
 
-/* ===== Xsolla product mapping =====
-   Vul hier de mapping in: skinId (zoals uit GameConfiguration) -> purchaseId (Xsolla / Agar.io product id).
+/* --- Vul hier de echte mapping in: skinId -> xsolla product id --- 
    Voorbeeld:
-     "mass_boost_2x_1h": "mass_boost_2x_1h",
-     "skin_legend_tb": "legend_tb_skin_purchase_id"
-   Vervang de voorbeeldwaarden door jouw echte Xsolla/purchase IDs.
+   "mass_boost_2x_1h": "mass_boost_2x_1h",
+   "skin_legend_tb": "xsolla_prod_12345"
 */
 const xsollaProductMap = {
-  // voorbeeld entries (vervang met echte IDs)
-  "mass_boost_2x_1h": "mass_boost_2x_1h",
-  "skin_example_legend": "legend_skin_001"
-  // voeg hier meer toe...
+  /* vervang of voeg toe: "skinId_from_gameconfig": "xsollaProductId" */
+  "mass_boost_2x_1h": "mass_boost_2x_1h"
 };
 
-/* Helper: image fallback */
+/* Helpers */
 function setImageWithFallback(imgEl, filename){
   const candidates = [];
   if(API && version) candidates.push(API + version + "/" + filename);
-  candidates.push(filename);
-  candidates.push("images/" + filename);
-  candidates.push("/images/" + filename);
-
+  candidates.push(filename, "images/" + filename, "/images/" + filename);
   let idx = 0;
   imgEl.onerror = function(){
     idx++;
-    if(idx < candidates.length){
-      imgEl.src = candidates[idx];
-    } else {
+    if(idx < candidates.length) imgEl.src = candidates[idx];
+    else {
       imgEl.onerror = null;
       imgEl.src = "data:image/svg+xml;utf8," + encodeURIComponent(
-        "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'>" +
-        "<rect width='100%' height='100%' fill='#071022'/>" +
-        "<text x='50%' y='50%' font-size='18' fill='#9bd1ff' dominant-baseline='middle' text-anchor='middle'>No image</text>" +
-        "</svg>"
+        "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#071022'/><text x='50%' y='50%' font-size='18' fill='#9bd1ff' dominant-baseline='middle' text-anchor='middle'>No image</text></svg>"
       );
     }
   };
   imgEl.src = candidates[0];
 }
 
-/* versions() - loads versions select and wires onchange */
+/* Versions select */
 async function versions(){
   const s = document.getElementById("version");
   if(!s) return;
@@ -145,7 +91,6 @@ async function versions(){
     if(!r.ok) throw new Error("versions endpoint " + r.status);
     const v = await r.json();
     const vals = Object.values(v || {});
-    if(!vals.length) throw new Error("no versions");
     vals.forEach(x=> s.add(new Option(String(x), String(x).replace(/\/$/,""))));
     if(s.options.length){ s.selectedIndex = s.options.length - 1; version = s.value; }
   }catch(err){
@@ -162,7 +107,7 @@ async function versions(){
   loadSkins();
 }
 
-/* Load skins from API endpoint */
+/* Load skins */
 async function loadSkins(){
   const box = document.getElementById("skins");
   box.innerHTML = "Loading skins...";
@@ -175,8 +120,8 @@ async function loadSkins(){
     const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
     const skins = [];
     for(let i=0;i<Math.min(ids.length, imgs.length); i++){
-      const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").replace(" ","");
-      const img = imgs[i].replace(/"/g,"").replace(/image:/,"").replace(" ","");
+      const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").trim();
+      const img = imgs[i].replace(/"/g,"").replace(/image:/,"").trim();
       if(!img.includes("uses_spine")) skins.push([id,img]);
     }
     skins.reverse();
@@ -188,21 +133,19 @@ async function loadSkins(){
   }
 }
 
-/* Selection state for buy button */
+/* Selection state */
 window.selectedSkinDiv = null;
 window.selectedSkinId = null;
 
-/* Render agario skins grid */
+/* Render page */
 function renderAgarioPage(page){
-  // clear selection when changing pages
   window.selectedSkinDiv = null;
   window.selectedSkinId = null;
-
   const perPage = 120;
   const box = document.getElementById("skins");
   const pages = document.getElementById("agarioPages");
   const skins = window.allSkins || [];
-  const total = Math.ceil(skins.length / perPage) || 1;
+  const total = Math.max(1, Math.ceil(skins.length / perPage));
   box.innerHTML = "";
   const start = (page-1)*perPage;
   skins.slice(start, start+perPage).forEach(([id,img])=>{
@@ -214,55 +157,54 @@ function renderAgarioPage(page){
     box.appendChild(d);
   });
   pages.innerHTML = "";
-  for(let i=1;i<=total;i++){ const b=document.createElement("button"); b.className="page-btn"+(i===page?" active":""); b.textContent=i; b.onclick=()=>renderAgarioPage(i); pages.appendChild(b); }
+  for(let i=1;i<=total;i++){
+    const b=document.createElement("button");
+    b.className="page-btn"+(i===page?" active":"");
+    b.textContent=i;
+    b.onclick=()=>renderAgarioPage(i);
+    pages.appendChild(b);
+  }
   window.scrollTo({ top:0, behavior:"smooth" });
 }
 
-/* Validate returned xsolla URL (mirror van je opsomming) */
+/* Validate returned xsolla URL */
 function validateXsollaUrl(rawUrl){
   try{
     const u = new URL(rawUrl);
     if(u.protocol !== "https:") return false;
-    const hostname = u.hostname.toLowerCase();
-    if(hostname !== "secure.xsolla.com") return false;
+    const h = u.hostname.toLowerCase();
+    if(h !== "secure.xsolla.com") return false;
     if(!(u.pathname.startsWith("/paystation3/") || u.pathname.startsWith("/paystation4/"))) return false;
-    // token parameter name could be access_token or token
     const token = u.searchParams.get("access_token") || u.searchParams.get("token") || "";
     if(!token || token.length < 16) return false;
     return true;
-  }catch(e){
-    return false;
-  }
+  }catch(e){ return false; }
 }
 
-/* Select a skin: show buy button under that skin and remove from previous */
+/* Select skin: show Buy or Not available */
 function selectSkin(div, id){
-  // If already selected the same, do nothing
   if(window.selectedSkinDiv === div) return;
 
-  // Remove buy button / notes from previous selection
+  // remove previous
   if(window.selectedSkinDiv){
     const prevBtn = window.selectedSkinDiv.querySelector(".buy-btn");
     if(prevBtn) prevBtn.remove();
-    const prevNote = window.selectedSkinDiv.querySelector(".unavailable-note");
+    const prevNote = window.selectedSkinDiv.querySelector(".not-available");
     if(prevNote) prevNote.remove();
   }
 
-  // Decide if product exists for this skin
-  const purchaseId = xsollaProductMap[id]; // undefined if not present
+  const purchaseId = xsollaProductMap[id];
 
   if(!purchaseId){
-    // Show unavailable note in red
     const note = document.createElement("div");
-    note.className = "unavailable-note";
-    note.textContent = "Deze skin is niet beschikbaar";
+    note.className = "not-available";
+    note.textContent = "Not available";
     div.appendChild(note);
     window.selectedSkinDiv = div;
     window.selectedSkinId = id;
     return;
   }
 
-  // Create buy button (enabled)
   const buy = document.createElement("button");
   buy.className = "buy-btn";
   buy.textContent = "Buy";
@@ -272,25 +214,19 @@ function selectSkin(div, id){
     startBuyFlow(purchaseId);
   };
 
-  // Append the buy button
   div.appendChild(buy);
-
-  // Save selection
   window.selectedSkinDiv = div;
   window.selectedSkinId = id;
 }
 
-/* Start buy flow: calls Agar payment endpoint which returns JSON { iframe_url: "..." } */
+/* Start buy flow */
 async function startBuyFlow(purchaseId){
-  // Ensure we have xsolla token from Agar.io client (ogario.v4.js should set window.agarioEncodedUID)
   const token = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
   if(!token){
-    alert("Je moet ingelogd zijn en Agar.io moet een betalingstoken hebben (agarioEncodedUID).");
+    alert("Je moet ingelogd zijn en Agar.io moet een betalingstoken hebben.");
     return;
   }
 
-  // Optional: show beta modal / consent here — currently omitted for brevity.
-  // Build payment request URL (fallback format used door skinsAndDeals.js)
   const endpoint = "https://payments.agario.miniclippt.com";
   const currency = "USD";
   const paymentRequestUrl = `${endpoint}/pay/${encodeURIComponent(token)}/${encodeURIComponent(purchaseId)}/${encodeURIComponent(currency)}`;
@@ -302,7 +238,7 @@ async function startBuyFlow(purchaseId){
     const iframeUrl = data.iframe_url || data.iframeUrl || data.iframe || null;
     if(!iframeUrl) throw new Error("No iframe_url in response");
     if(!validateXsollaUrl(iframeUrl)) throw new Error("Returned URL failed validation");
-    // Open validated xsolla URL in new tab (alternatively implement modal iframe)
+    // open validated xsolla paystation in new tab
     window.open(iframeUrl, "_blank", "noopener");
   }catch(err){
     console.error("Buy flow failed:", err);
@@ -319,21 +255,14 @@ if(document.readyState === "loading"){ document.addEventListener("DOMContentLoad
 </script>
 
 <br>
-
-<!-- Social -->
 <div class="social-buttons">
-  <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank">YouTube</a>
-  <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank">Instagram</a>
-  <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank">Discord</a>
+  <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank" style="background:#ff0000;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">YouTube</a>
+  <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:#e1306c;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">Instagram</a>
+  <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank" style="background:#5865f2;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">Discord</a>
 </div>
 
-<!-- Footer -->
-© <year></year> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
-
-<script>
-function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; }
-year();
-</script>
+© <span id="year"></span> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
+<script>document.getElementById('year').textContent=(new Date()).getFullYear();</script>
 
 </body>
 </html>
