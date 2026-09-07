@@ -1,0 +1,356 @@
+/**
+ * single-file demo server: serves shop UI + Xsolla webhook + return page
+ *
+ * Usage:
+ * 1) npm init -y
+ * 2) npm i express node-fetch
+ * 3) node server.js
+ *
+ * Env:
+ * - PORT (default 3000)
+ * - XSOLLA_SECRET (optional) - for HMAC verification of webhook (hex)
+ * - GAME_BACKEND_URL (optional) - POST grant payload { uid, productId, transactionId }
+ * - GAME_BACKEND_KEY (optional) - Bearer token for game backend
+ *
+ * Test flow with ngrok:
+ * - ngrok http 3000
+ * - set Xsolla merchant webhook URL to https://<ngrok-id>.ngrok.io/webhook/xsolla
+ * - set developer_return_url in client mapping to https://<ngrok-id>.ngrok.io/xsolla/return
+ */
+
+const express = require('express');
+const fetch = require('node-fetch');
+const crypto = require('crypto');
+
+const PORT = process.env.PORT || 3000;
+const XSOLLA_SECRET = process.env.XSOLLA_SECRET || ''; // example: 'abcd1234...'
+const GAME_BACKEND_URL = process.env.GAME_BACKEND_URL || ''; // e.g. https://game.example/api/grant
+const GAME_BACKEND_KEY = process.env.GAME_BACKEND_KEY || '';
+
+const app = express();
+
+// Keep processed transaction ids in memory for idempotency (for demo only).
+const processedTx = new Set();
+
+// Serve the shop page (single-file HTML + client script)
+app.get('/', (req, res) => {
+  // Edit xsollaOverrides to include your product -> Xsolla URLs
+  const xsollaOverrides = {
+    // example entries (replace / add real product ids & links)
+    "com.miniclip.agar.io.promotionpack1": "https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en",
+    "ada": "https://secure.xsolla.com/paystation3/desktop/payment/?access_token=ryolh1I5I9AtepM9Zijznzlv5Av2lnos_lc_en"
+  };
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<!doctype html>
+<html lang="nl">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>T.B Shop — integrated</title>
+<style>
+  body{background:#071b2a;color:#e6eef8;font-family:Inter,system-ui,Arial;padding:18px}
+  .card{background:#0b2a3a;padding:12px;border-radius:10px}
+  .btn{background:#1f9bb0;padding:8px 12px;border-radius:8px;border:0;color:#012226;cursor:pointer}
+  .btn.secondary{background:#0ea5a3}
+  .muted{color:#9fb6d9;font-size:13px}
+  .shop-row{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:8px;margin-top:10px;background:rgba(255,255,255,0.01)}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:120}
+  .modal{background:#07203a;padding:18px;border-radius:10px;border:3px solid #8b1f1f;width:560px;max-width:96%}
+  input.input{width:100%;padding:8px;border-radius:6px;border:1px solid #234;background:#061226;color:#e6eef8}
+</style>
+</head>
+<body>
+  <div style="max-width:900px;margin:0 auto">
+    <h2>T.B — Shop (integrated)</h2>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between">
+        <div>
+          <div style="font-weight:800">Special & Daily Deals</div>
+          <div class="muted">Vul UID in om aankopen te doen</div>
+        </div>
+        <div style="text-align:right">
+          <div class="muted">UID: <span id="uidText">niet ingesteld</span></div>
+          <div style="margin-top:6px"><button id="clearUid" class="btn secondary">Verwijder UID</button></div>
+        </div>
+      </div>
+
+      <div id="shopGrid"></div>
+
+      <details style="margin-top:12px">
+        <summary class="muted">⚙ Advanced</summary>
+        <div style="margin-top:8px">
+          <label class="muted">Agar.io UID (payment token)</label>
+          <input id="uidInput" class="input" placeholder="Plak je agarioEncodedUID hier">
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="saveUid" class="btn">Opslaan UID</button>
+            <button id="forceOverrides" class="btn secondary">Forceer overrides weergeven</button>
+            <button id="showAttempts" class="btn secondary">Laat lokale attempts zien</button>
+          </div>
+          <div style="margin-top:8px" class="muted">Developer return URL: <code id="returnUrl">/xsolla/return</code></div>
+        </div>
+      </details>
+    </div>
+
+    <div style="margin-top:10px" class="muted">Server webhook endpoint: POST /webhook/xsolla (zie server logs). For production: set XSOLLA_SECRET, GAME_BACKEND_URL and GAME_BACKEND_KEY as env vars.</div>
+  </div>
+
+  <!-- modal -->
+  <div id="modalHolder" style="display:none">
+    <div class="modal-backdrop">
+      <div class="modal" role="dialog">
+        <h3 id="modalTitle">BETA REAL-MONEY PURCHASE</h3>
+        <div id="modalPurchaseId" class="muted" style="margin-bottom:8px">Purchase ID: —</div>
+        <div style="background:#0f3b52;padding:10px;border-radius:6px;margin-bottom:10px;color:#cfe6ff">
+          <strong>This purchase route is experimental.</strong>
+          <div style="margin-top:6px">You may be charged but not receive the displayed deal. Proceed only at your own responsibility.</div>
+        </div>
+
+        <label style="display:flex;gap:8px;align-items:center">
+          <input type="checkbox" id="modalAgree">
+          <span style="font-weight:700">I understand the BETA risk and accept responsibility.</span>
+        </label>
+
+        <div style="margin-top:10px">
+          <label class="muted">UID used (readonly)</label>
+          <input id="modalUid" class="input" readonly>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+          <button id="modalCancel" class="btn secondary">Disagree — Cancel</button>
+          <button id="modalOpen" class="btn" disabled style="background:#8b1f1f;color:white">I Agree — Open Xsolla</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // client-side script
+  const xsollaOverrides = ${JSON.stringify(xsollaOverrides)};
+
+  let storedUID = localStorage.getItem('agarioEncodedUID') || '';
+  const uidText = document.getElementById('uidText');
+  const shopGrid = document.getElementById('shopGrid');
+  const modalHolder = document.getElementById('modalHolder');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalPurchaseId = document.getElementById('modalPurchaseId');
+  const modalUid = document.getElementById('modalUid');
+  const modalAgree = document.getElementById('modalAgree');
+  const modalOpen = document.getElementById('modalOpen');
+  const modalCancel = document.getElementById('modalCancel');
+
+  function updateUidUi(){
+    storedUID = localStorage.getItem('agarioEncodedUID') || '';
+    uidText.innerText = storedUID || 'niet ingesteld';
+    document.querySelectorAll('.buy-btn').forEach(b => b.disabled = !storedUID);
+  }
+
+  // show products from override mapping (demo)
+  function renderProductsFromOverrides(){
+    shopGrid.innerHTML = '';
+    const keys = Object.keys(xsollaOverrides);
+    if (!keys.length) shopGrid.innerHTML = '<div class="muted">Geen override-items ingesteld.</div>';
+    keys.forEach(k => {
+      const el = document.createElement('div');
+      el.className = 'shop-row';
+      el.innerHTML = '<div><strong>' + k + '</strong><div class="muted">Override product (handmatig)</div></div><div><button class="buy-btn btn" data-pid="' + k + '">Buy</button></div>';
+      shopGrid.appendChild(el);
+    });
+    updateUidUi();
+    // attach listeners
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+      btn.addEventListener('click', (e)=>{
+        const pid = e.currentTarget.getAttribute('data-pid');
+        if (!localStorage.getItem('agarioEncodedUID')) { alert('Opslaan UID eerst.'); return; }
+        openConfirmModal(pid);
+      });
+    });
+  }
+
+  function openConfirmModal(productId){
+    modalTitle.innerText = productId;
+    modalPurchaseId.innerText = 'Purchase ID: ' + productId;
+    modalUid.value = localStorage.getItem('agarioEncodedUID') || '';
+    modalAgree.checked = false;
+    modalOpen.disabled = true;
+    modalHolder.style.display = 'block';
+    modalAgree.onchange = ()=> modalOpen.disabled = !(modalAgree.checked && modalUid.value.trim());
+    modalOpen.onclick = ()=> {
+      // build xsolla url with additional base64 JSON
+      const base = xsollaOverrides[productId] || '';
+      const uid = modalUid.value.trim();
+      // additional JSON
+      const additionalObj = { agario_uid: uid, tb_ref_product: productId };
+      const additionalB64 = btoa(JSON.stringify(additionalObj));
+      let url = base;
+      // attach params for tracing & return url to server
+      const devReturn = location.origin + '/xsolla/return';
+      try {
+        const u = new URL(url);
+        u.searchParams.set('additional', additionalB64);
+        u.searchParams.set('agario_uid', uid); // still add for convenience
+        u.searchParams.set('tb_ref_product', productId);
+        u.searchParams.set('developer_return_url', devReturn);
+        url = u.toString();
+      } catch(err){
+        // fallback naive append
+        url = url + (url.includes('?') ? '&' : '?') + 'additional=' + encodeURIComponent(additionalB64) + '&agario_uid=' + encodeURIComponent(uid) + '&tb_ref_product=' + encodeURIComponent(productId) + '&developer_return_url=' + encodeURIComponent(devReturn);
+      }
+
+      // record attempt locally
+      const attempts = JSON.parse(localStorage.getItem('tb_xsolla_attempts') || '{}');
+      attempts[uid] = attempts[uid] || [];
+      attempts[uid].push({productId, ts: new Date().toISOString(), url});
+      localStorage.setItem('tb_xsolla_attempts', JSON.stringify(attempts));
+
+      // open xsol la
+      window.open(url, '_blank');
+      modalHolder.style.display = 'none';
+      alert('Betalingspagina geopend. Voltooi betaling op Xsolla.');
+    };
+    modalCancel.onclick = ()=> { modalHolder.style.display = 'none'; };
+  }
+
+  document.getElementById('saveUid').addEventListener('click', ()=>{
+    const v = document.getElementById('uidInput').value.trim();
+    if (!v) return alert('Voer UID in');
+    localStorage.setItem('agarioEncodedUID', v);
+    updateUidUi();
+    alert('UID opgeslagen');
+  });
+  document.getElementById('clearUid').addEventListener('click', ()=>{
+    localStorage.removeItem('agarioEncodedUID'); updateUidUi(); alert('UID verwijderd');
+  });
+  document.getElementById('forceOverrides').addEventListener('click', ()=> renderProductsFromOverrides());
+  document.getElementById('showAttempts').addEventListener('click', ()=>{
+    const a = JSON.parse(localStorage.getItem('tb_xsolla_attempts') || '{}');
+    alert(JSON.stringify(a, null, 2));
+  });
+
+  // initial render
+  renderProductsFromOverrides();
+  updateUidUi();
+</script>
+</body>
+</html>`);
+});
+
+// Simple return page Xsolla can redirect to after payment
+app.get('/xsolla/return', (req, res) => {
+  // Xsolla may redirect with some params; show them for debugging
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`<h2>Return from Xsolla</h2>
+    <div>Query parameters: <pre>${escapeHtml(JSON.stringify(req.query,null,2))}</pre></div>
+    <div>If webhook is configured you should see server log entries and the game-backend grant.</div>`);
+});
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Webhook endpoint:
+// We'll accept raw body so we can optionally verify HMAC signature.
+app.post('/webhook/xsolla', express.raw({type: '*/*', limit:'1mb'}), async (req, res) => {
+  try {
+    const raw = req.body; // Buffer
+    let body = {};
+    try { body = JSON.parse(raw.toString('utf8')); } catch(e){ body = {}; }
+
+    // Optional signature verification if XSOLLA_SECRET set
+    if (XSOLLA_SECRET) {
+      const sig = req.get('X-Signature') || req.get('x-xsolla-signature') || req.get('x-signature');
+      if (!sig) {
+        console.warn('No signature header present');
+        // continue but in prod you may want to reject
+      } else {
+        const computed = crypto.createHmac('sha256', XSOLLA_SECRET).update(raw).digest('hex');
+        if (computed !== sig) {
+          console.warn('Invalid signature: computed', computed, 'received', sig);
+          return res.status(400).send('invalid signature');
+        }
+      }
+    }
+
+    // Try to find agario_uid in common places (custom parameters / additional base64 / query)
+    let agarioUid = body.agario_uid || null;
+    if (!agarioUid && body.custom_parameters && body.custom_parameters.agario_uid) agarioUid = body.custom_parameters.agario_uid;
+    if (!agarioUid && body.additional) {
+      try {
+        const decoded = Buffer.from(String(body.additional), 'base64').toString('utf8');
+        const parsed = JSON.parse(decoded);
+        if (parsed && parsed.agario_uid) agarioUid = parsed.agario_uid;
+      } catch(e){}
+    }
+    // transaction id / status - adapt depending on Xsolla payload
+    const txId = (body.transaction && (body.transaction.id || body.transaction.txn_id)) || body.id || body.transaction_id || null;
+    const status = (body.status || (body.transaction && body.transaction.status) || '').toString().toLowerCase();
+
+    console.log('Webhook received: txId=', txId, 'status=', status, 'agario_uid=', agarioUid);
+
+    const finalStates = ['charged','completed','succeeded','captured'];
+    if (!finalStates.includes(status)) {
+      console.log('Non-final status, ignoring for now');
+      return res.status(200).send('ignored');
+    }
+    if (!agarioUid) {
+      console.warn('agario_uid missing in webhook. Save payload for manual reconciliation and respond 400');
+      return res.status(400).send('missing agario_uid');
+    }
+    if (!txId) {
+      console.warn('txId missing');
+    }
+
+    // idempotency
+    if (txId && processedTx.has(txId)) {
+      console.log('Transaction already processed', txId);
+      return res.status(200).send('already_processed');
+    }
+
+    // Determine productId (try several fields)
+    let productId = (body.purchase && body.purchase.sku) || (body.item && body.item.sku) || (body.custom_parameters && body.custom_parameters.tb_ref_product) || null;
+    if (!productId && body.additional) {
+      try {
+        const parsed = JSON.parse(Buffer.from(String(body.additional),'base64').toString('utf8'));
+        if (parsed && parsed.tb_ref_product) productId = parsed.tb_ref_product;
+      } catch(e){}
+    }
+
+    // Call game backend to grant the skin (if configured)
+    if (GAME_BACKEND_URL) {
+      const payload = { uid: agarioUid, productId, transactionId: txId, source: 'xsolla' };
+      try {
+        const resp = await fetch(GAME_BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(GAME_BACKEND_KEY ? { 'Authorization': 'Bearer ' + GAME_BACKEND_KEY } : {}) },
+          body: JSON.stringify(payload),
+          timeout: 10000
+        });
+        if (!resp.ok) {
+          const text = await resp.text();
+          console.error('Grant call failed', resp.status, text);
+          return res.status(500).send('grant_failed');
+        }
+      } catch(err) {
+        console.error('Grant call error', err);
+        return res.status(500).send('grant_error');
+      }
+    } else {
+      console.log('GAME_BACKEND_URL not set - skipping grant. Payload would be:', { uid: agarioUid, productId, transactionId: txId});
+    }
+
+    // mark processed
+    if (txId) processedTx.add(txId);
+
+    return res.status(200).send('ok');
+  } catch(err) {
+    console.error('Webhook processing failed', err);
+    return res.status(500).send('error');
+  }
+});
+
+// simple endpoint to view attempts recorded in localStorage? (client-side only).
+app.get('/attempts', (req, res) => {
+  res.json({ processedTxCount: processedTx.size });
+});
+
+app.listen(PORT, ()=> {
+  console.log('Server started on port', PORT);
+  console.log('Shop: http://localhost:' + PORT + '/');
+  console.log('Webhook endpoint: POST http://localhost:' + PORT + '/webhook/xsolla');
+});
