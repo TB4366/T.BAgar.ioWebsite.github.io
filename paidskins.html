@@ -142,6 +142,16 @@ async function loadSkins(){
       if(!img.includes("uses_spine")) skins.push([id,img]);
     }
     skins.reverse();
+
+    // Auto-link missing xsollaProductMap entries: assume productId for skins is "skin_{id}"
+    // This will attach a purchaseId for most equippable skins without requiring manual mapping.
+    for (let si = 0; si < skins.length; si++) {
+      const skinId = skins[si][0];
+      if (!xsollaProductMap.hasOwnProperty(skinId)) {
+        xsollaProductMap[skinId] = 'skin_' + skinId;
+      }
+    }
+
     window.allSkins = skins;
     renderAgarioPage(1);
   }catch(e){
@@ -224,7 +234,7 @@ function selectSkin(div, id){
 
   const buy = document.createElement("button");
   buy.className = "buy-btn";
-  buy.textContent = "Buy";
+  buy.textContent = "Koop";
   buy.setAttribute("data-purchase-id", purchaseId);
   buy.onclick = function(e){
     e.stopPropagation();
