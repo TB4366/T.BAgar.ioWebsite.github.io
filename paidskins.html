@@ -62,6 +62,23 @@ const xsollaProductMap = {
   "mass_boost_2x_1h": "mass_boost_2x_1h"
 };
 
+// Try to load an external mapping file /xsolla-products.json to override/add mappings.
+// This makes it easy to supply the complete xsolla -> skin mapping without editing this file.
+(async function loadXsollaProducts(){
+  try{
+    const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
+    if(!resp.ok) return;
+    const data = await resp.json();
+    if(data && typeof data === 'object'){
+      Object.assign(xsollaProductMap, data);
+      console.log('[paidskins] xsollaProductMap loaded from /xsolla-products.json');
+    }
+  }catch(e){
+    // No external mapping found — continue using the embedded map
+    console.warn('[paidskins] no /xsolla-products.json or parse error', e);
+  }
+})();
+
 /* Helpers */
 function setImageWithFallback(imgEl, filename){
   const candidates = [];
@@ -198,7 +215,7 @@ function selectSkin(div, id){
   if(!purchaseId){
     const note = document.createElement("div");
     note.className = "not-available";
-    note.textContent = "Not available";
+    note.textContent = "Deze skin is niet beschikbaar"; // Dutch message
     div.appendChild(note);
     window.selectedSkinDiv = div;
     window.selectedSkinId = id;
