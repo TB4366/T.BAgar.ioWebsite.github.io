@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skins - Buy flow</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
+/* (stijl identiek aan jouw huidige styling — bewaar zoals voorheen) */
 body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
 h1{font-size:28px;margin:18px 0}
 .sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px;flex-wrap:wrap}
@@ -12,7 +13,6 @@ h1{font-size:28px;margin:18px 0}
 .section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
 .version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
 .version-label{font-size:18px}
-#version{font-size:16px;padding:4px}
 #uidBar{max-width:900px;margin:8px auto 14px;display:flex;gap:8px;align-items:center;justify-content:center}
 #uidBar input{padding:8px;border-radius:6px;border:1px solid #2b3946;background:#07131a;color:#9fd7ff;min-width:340px}
 #uidBar button{padding:8px 12px;border-radius:6px;border:0;background:#1683ff;color:#fff;cursor:pointer}
@@ -38,10 +38,6 @@ h1{font-size:28px;margin:18px 0}
 
 <h1>Agar.io Skins<br>@t.bagar.io</h1>
 
-<div class="sections">
-  <button class="section-btn active" id="agarioSectionBtn">Agar.io Skins</button>
-</div>
-
 <!-- UID input bar: user must paste their Agar.io encoded payment UID here to enable purchases -->
 <div id="uidBar">
   <input id="agario_uid_input" placeholder="Paste your encoded Agar.io payment UID (xsolla token) here" aria-label="Encoded UID">
@@ -64,26 +60,26 @@ h1{font-size:28px;margin:18px 0}
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
 
-/* --- Explicit mapping: skinId -> xsolla product id ---
-   Fill this with the real Xsolla product ids. If an entry is missing,
-   that skin will be marked "Not available" and cannot be bought.
+/* Explicit mapping: skinId -> xsolla product id
+   Keep this empty or add permanent mappings here.
 */
-const xsollaProductMap = {
-  // example: "mass_boost_2x_1h": "mass_boost_2x_1h"
-};
+const xsollaProductMap = {};
 
-// Load external mapping file if present (overrides embedded map)
+/* Load external mapping file if present (overrides embedded map) */
 (async function loadXsollaProducts(){
   try{
     const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
-    if(!resp.ok) return;
+    if(!resp.ok) {
+      console.log('[paidskins] no /xsolla-products.json (status)', resp.status);
+      return;
+    }
     const data = await resp.json();
     if(data && typeof data === 'object'){
       Object.assign(xsollaProductMap, data);
       console.log('[paidskins] xsollaProductMap loaded from /xsolla-products.json');
     }
   }catch(e){
-    console.warn('[paidskins] no /xsolla-products.json or parse error', e);
+    console.warn('[paidskins] failed to fetch /xsolla-products.json', e);
   }
 })();
 
@@ -126,7 +122,6 @@ function updateUidStatus(){
     status.style.color = '#9bd1ff';
     input.value = '';
   }
-  // Refresh skins UI so buttons reflect login state
   if(window.allSkins) renderAgarioPage(1);
 }
 
@@ -194,11 +189,7 @@ async function loadSkins(){
   }
 }
 
-/* Selection state */
-window.selectedSkinDiv = null;
-window.selectedSkinId = null;
-
-/* Render page: show Buy button only when mapping exists AND user has saved UID */
+/* Render page */
 function renderAgarioPage(page){
   window.selectedSkinDiv = null;
   window.selectedSkinId = null;
@@ -209,7 +200,7 @@ function renderAgarioPage(page){
   const total = Math.max(1, Math.ceil(skins.length / perPage));
   box.innerHTML = "";
   const start = (page-1)*perPage;
-  for(const [id,img] of skins.slice(start, start+perPage)){
+  skins.slice(start, start+perPage).forEach(([id,img])=>{
     const d = document.createElement("div"); d.className = "skin";
     d.setAttribute("data-id", id);
     d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
@@ -238,10 +229,9 @@ function renderAgarioPage(page){
       d.appendChild(note);
     }
 
-    // allow selecting for details (keeps behavior but purchase UI already on card)
     d.onclick = ()=> selectSkin(d, id);
     box.appendChild(d);
-  }
+  });
 
   pages.innerHTML = "";
   for(let i=1;i<=total;i++){
@@ -252,15 +242,6 @@ function renderAgarioPage(page){
     pages.appendChild(b);
   }
   window.scrollTo({ top:0, behavior:"smooth" });
-}
-
-/* Select skin: highlight card — purchasing controlled by card buttons */
-function selectSkin(div, id){
-  if(window.selectedSkinDiv === div) return;
-  if(window.selectedSkinDiv) window.selectedSkinDiv.style.outline = '';
-  div.style.outline = '3px solid rgba(22,131,255,0.25)';
-  window.selectedSkinDiv = div;
-  window.selectedSkinId = id;
 }
 
 /* Validate returned xsolla URL */
@@ -296,7 +277,6 @@ async function startBuyFlow(purchaseId){
     const iframeUrl = data.iframe_url || data.iframeUrl || data.iframe || null;
     if(!iframeUrl) throw new Error("No iframe_url in response");
     if(!validateXsollaUrl(iframeUrl)) throw new Error("Returned URL failed validation");
-    // open validated xsolla paystation in new tab
     window.open(iframeUrl, "_blank", "noopener");
   }catch(err){
     console.error("Buy flow failed:", err);
@@ -305,9 +285,28 @@ async function startBuyFlow(purchaseId){
 }
 
 /* Init */
-function init(){
-  // pick up any UID already on the page
-  try{ if(window.agarioEncodedUID && !localStorage.getItem('agarioEncodedUID')){ localStorage.setItem('agarioEncodedUID', window.agarioEncodedUID); } }catch(e){}
+async function init(){
+  // attempt to merge external overrides (may have been fetched earlier)
+  try{
+    const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
+    if(resp.ok){
+      const data = await resp.json();
+      Object.assign(xsollaProductMap, data);
+      console.log('[paidskins] xsolla-products.json loaded (overrides merged)');
+    } else {
+      console.log('[paidskins] xsolla-products.json not found, status=', resp.status);
+    }
+  }catch(e){
+    console.warn('[paidskins] failed to fetch /xsolla-products.json', e);
+  }
+
+  // Ensure test mappings exist at runtime so you can verify Buy buttons quickly.
+  // These are runtime-only (do not persist to the file) and can be removed later.
+  window.xsollaProductMap = xsollaProductMap;
+  if(!window.xsollaProductMap['jumper']) window.xsollaProductMap['jumper'] = 'skin_jumper';
+  if(!window.xsollaProductMap['blue_swirl']) window.xsollaProductMap['blue_swirl'] = 'skin_blue_swirl';
+  console.log('[paidskins] runtime xsollaProductMap prepared', { jumper: window.xsollaProductMap['jumper'], blue_swirl: window.xsollaProductMap['blue_swirl'] });
+
   updateUidStatus();
   loadSkins();
   versions();
