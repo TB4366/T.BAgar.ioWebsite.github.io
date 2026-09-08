@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Agar.io Skins - Buy flow</title>
@@ -13,14 +13,19 @@ h1{font-size:28px;margin:18px 0}
 .version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
 .version-label{font-size:18px}
 #version{font-size:16px;padding:4px}
+#uidBar{max-width:900px;margin:8px auto 14px;display:flex;gap:8px;align-items:center;justify-content:center}
+#uidBar input{padding:8px;border-radius:6px;border:1px solid #2b3946;background:#07131a;color:#9fd7ff;min-width:340px}
+#uidBar button{padding:8px 12px;border-radius:6px;border:0;background:#1683ff;color:#fff;cursor:pointer}
 #skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
 .skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .skin:hover{border-color:#1683ff}
 .skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin-top:8px}
 .skin span{display:block;margin-top:8px;font-size:13px;text-align:center}
 .buy-btn{display:inline-block;margin-top:8px;background:#16a34a;color:#fff;border:0;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+.buy-btn.disabled{background:#666;cursor:not-allowed}
 .buy-btn:hover{background:#13803d}
 .not-available{margin-top:8px;color:#ff4d4d;font-weight:bold;font-size:13px}
+.status{font-size:13px;color:#9bd1ff;margin-left:6px}
 #agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
 .page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:14px;font-weight:bold;cursor:pointer;min-width:36px;box-shadow:0 2px 5px #0008}
 .page-btn.active{background:#0753a6}
@@ -35,6 +40,13 @@ h1{font-size:28px;margin:18px 0}
 
 <div class="sections">
   <button class="section-btn active" id="agarioSectionBtn">Agar.io Skins</button>
+</div>
+
+<!-- UID input bar: user must paste their Agar.io encoded payment UID here to enable purchases -->
+<div id="uidBar">
+  <input id="agario_uid_input" placeholder="Paste your encoded Agar.io payment UID (xsolla token) here" aria-label="Encoded UID">
+  <button id="saveUidBtn">Save UID</button>
+  <span id="uidStatus" class="status"></span>
 </div>
 
 <div id="agarioSection">
@@ -52,18 +64,15 @@ h1{font-size:28px;margin:18px 0}
 const API = "https://configs-web.agario.miniclippt.com/live/";
 let version = "v15/3032";
 
-/* --- Vul hier de echte mapping in: skinId -> xsolla product id --- 
-   Voorbeeld:
-   "mass_boost_2x_1h": "mass_boost_2x_1h",
-   "skin_legend_tb": "xsolla_prod_12345"
+/* --- Explicit mapping: skinId -> xsolla product id ---
+   Fill this with the real Xsolla product ids. If an entry is missing,
+   that skin will be marked "Not available" and cannot be bought.
 */
 const xsollaProductMap = {
-  /* vervang of voeg toe: "skinId_from_gameconfig": "xsollaProductId" */
-  "mass_boost_2x_1h": "mass_boost_2x_1h"
+  // example: "mass_boost_2x_1h": "mass_boost_2x_1h"
 };
 
-// Try to load an external mapping file /xsolla-products.json to override/add mappings.
-// This makes it easy to supply the complete xsolla -> skin mapping without editing this file.
+// Load external mapping file if present (overrides embedded map)
 (async function loadXsollaProducts(){
   try{
     const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
@@ -74,7 +83,6 @@ const xsollaProductMap = {
       console.log('[paidskins] xsollaProductMap loaded from /xsolla-products.json');
     }
   }catch(e){
-    // No external mapping found — continue using the embedded map
     console.warn('[paidskins] no /xsolla-products.json or parse error', e);
   }
 })();
@@ -97,6 +105,42 @@ function setImageWithFallback(imgEl, filename){
   };
   imgEl.src = candidates[0];
 }
+
+/* UID handling */
+function updateUidStatus(){
+  const input = document.getElementById('agario_uid_input');
+  const status = document.getElementById('uidStatus');
+  const stored = localStorage.getItem('agarioEncodedUID') || '';
+  if(stored && stored.length > 10){
+    window.agarioEncodedUID = stored;
+    input.value = stored;
+    status.textContent = 'Logged in (UID saved)';
+    status.style.color = '#7ee787';
+  } else if(window.agarioEncodedUID && window.agarioEncodedUID.length>10){
+    status.textContent = 'Logged in (UID from page)';
+    status.style.color = '#7ee787';
+    input.value = window.agarioEncodedUID;
+  } else {
+    window.agarioEncodedUID = null;
+    status.textContent = 'Not logged in — paste your encoded UID and click Save';
+    status.style.color = '#9bd1ff';
+    input.value = '';
+  }
+  // Refresh skins UI so buttons reflect login state
+  if(window.allSkins) renderAgarioPage(1);
+}
+
+document.getElementById('saveUidBtn').addEventListener('click', function(){
+  const val = document.getElementById('agario_uid_input').value.trim();
+  if(!val || val.length < 20){
+    alert('Please paste your full encoded payment UID (xsolla token) before saving.');
+    return;
+  }
+  localStorage.setItem('agarioEncodedUID', val);
+  window.agarioEncodedUID = val;
+  updateUidStatus();
+  alert('UID saved locally. You can now buy skins that have a linked Xsolla product ID.');
+});
 
 /* Versions select */
 async function versions(){
@@ -142,16 +186,6 @@ async function loadSkins(){
       if(!img.includes("uses_spine")) skins.push([id,img]);
     }
     skins.reverse();
-
-    // Auto-link missing xsollaProductMap entries: assume productId for skins is "skin_{id}"
-    // This will attach a purchaseId for most equippable skins without requiring manual mapping.
-    for (let si = 0; si < skins.length; si++) {
-      const skinId = skins[si][0];
-      if (!xsollaProductMap.hasOwnProperty(skinId)) {
-        xsollaProductMap[skinId] = 'skin_' + skinId;
-      }
-    }
-
     window.allSkins = skins;
     renderAgarioPage(1);
   }catch(e){
@@ -164,7 +198,7 @@ async function loadSkins(){
 window.selectedSkinDiv = null;
 window.selectedSkinId = null;
 
-/* Render page */
+/* Render page: show Buy button only when mapping exists AND user has saved UID */
 function renderAgarioPage(page){
   window.selectedSkinDiv = null;
   window.selectedSkinId = null;
@@ -175,14 +209,40 @@ function renderAgarioPage(page){
   const total = Math.max(1, Math.ceil(skins.length / perPage));
   box.innerHTML = "";
   const start = (page-1)*perPage;
-  skins.slice(start, start+perPage).forEach(([id,img])=>{
+  for(const [id,img] of skins.slice(start, start+perPage)){
     const d = document.createElement("div"); d.className = "skin";
     d.setAttribute("data-id", id);
     d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
     setImageWithFallback(d.querySelector("img"), img);
-    d.onclick = () => selectSkin(d, id);
+
+    // Determine if this skin has an explicit Xsolla mapping
+    const purchaseId = xsollaProductMap[id];
+
+    if(purchaseId){
+      // If user has UID saved, enable buy; otherwise show disabled buy with tooltip
+      const buy = document.createElement('button');
+      buy.className = 'buy-btn';
+      buy.textContent = 'Buy';
+      buy.setAttribute('data-purchase-id', purchaseId);
+      if(window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID')){
+        buy.onclick = (e)=>{ e.stopPropagation(); startBuyFlow(purchaseId); };
+      } else {
+        buy.classList.add('disabled');
+        buy.onclick = (e)=>{ e.stopPropagation(); alert('You must paste and save your encoded Agar.io payment UID first before buying.'); };
+      }
+      d.appendChild(buy);
+    } else {
+      const note = document.createElement('div');
+      note.className = 'not-available';
+      note.textContent = 'Not available';
+      d.appendChild(note);
+    }
+
+    // allow selecting for details (keeps behavior but purchase UI already on card)
+    d.onclick = ()=> selectSkin(d, id);
     box.appendChild(d);
-  });
+  }
+
   pages.innerHTML = "";
   for(let i=1;i<=total;i++){
     const b=document.createElement("button");
@@ -192,6 +252,15 @@ function renderAgarioPage(page){
     pages.appendChild(b);
   }
   window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+/* Select skin: highlight card — purchasing controlled by card buttons */
+function selectSkin(div, id){
+  if(window.selectedSkinDiv === div) return;
+  if(window.selectedSkinDiv) window.selectedSkinDiv.style.outline = '';
+  div.style.outline = '3px solid rgba(22,131,255,0.25)';
+  window.selectedSkinDiv = div;
+  window.selectedSkinId = id;
 }
 
 /* Validate returned xsolla URL */
@@ -208,49 +277,11 @@ function validateXsollaUrl(rawUrl){
   }catch(e){ return false; }
 }
 
-/* Select skin: show Buy or Not available */
-function selectSkin(div, id){
-  if(window.selectedSkinDiv === div) return;
-
-  // remove previous
-  if(window.selectedSkinDiv){
-    const prevBtn = window.selectedSkinDiv.querySelector(".buy-btn");
-    if(prevBtn) prevBtn.remove();
-    const prevNote = window.selectedSkinDiv.querySelector(".not-available");
-    if(prevNote) prevNote.remove();
-  }
-
-  const purchaseId = xsollaProductMap[id];
-
-  if(!purchaseId){
-    const note = document.createElement("div");
-    note.className = "not-available";
-    note.textContent = "Deze skin is niet beschikbaar"; // Dutch message
-    div.appendChild(note);
-    window.selectedSkinDiv = div;
-    window.selectedSkinId = id;
-    return;
-  }
-
-  const buy = document.createElement("button");
-  buy.className = "buy-btn";
-  buy.textContent = "Koop";
-  buy.setAttribute("data-purchase-id", purchaseId);
-  buy.onclick = function(e){
-    e.stopPropagation();
-    startBuyFlow(purchaseId);
-  };
-
-  div.appendChild(buy);
-  window.selectedSkinDiv = div;
-  window.selectedSkinId = id;
-}
-
 /* Start buy flow */
 async function startBuyFlow(purchaseId){
   const token = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
   if(!token){
-    alert("Je moet ingelogd zijn en Agar.io moet een betalingstoken hebben.");
+    alert('You must paste and save your encoded Agar.io payment UID before buying.');
     return;
   }
 
@@ -269,12 +300,15 @@ async function startBuyFlow(purchaseId){
     window.open(iframeUrl, "_blank", "noopener");
   }catch(err){
     console.error("Buy flow failed:", err);
-    alert("Betaalverzoek mislukt: " + (err && err.message ? err.message : "onbekende fout"));
+    alert("Payment request failed: " + (err && err.message ? err.message : "unknown error"));
   }
 }
 
 /* Init */
 function init(){
+  // pick up any UID already on the page
+  try{ if(window.agarioEncodedUID && !localStorage.getItem('agarioEncodedUID')){ localStorage.setItem('agarioEncodedUID', window.agarioEncodedUID); } }catch(e){}
+  updateUidStatus();
   loadSkins();
   versions();
 }
