@@ -1,328 +1,314 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>Agar.io Skins - Buy flow</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agar.io Skins — Xsolla buy flow (test)</title>
 <style>
-/* (stijl identiek aan jouw huidige styling — bewaar zoals voorheen) */
-body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;text-align:center;font-weight:bold}
-h1{font-size:28px;margin:18px 0}
-.sections{display:flex;justify-content:center;gap:0;margin:10px auto 18px;flex-wrap:wrap}
-.section-btn{background:#111;color:#fff;border:0;border-bottom:3px solid transparent;padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer}
-.section-btn.active{color:#1683ff;border-bottom-color:#1683ff}
-.version-container{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0 18px}
-.version-label{font-size:18px}
-#uidBar{max-width:900px;margin:8px auto 14px;display:flex;gap:8px;align-items:center;justify-content:center}
-#uidBar input{padding:8px;border-radius:6px;border:1px solid #2b3946;background:#07131a;color:#9fd7ff;min-width:340px}
-#uidBar button{padding:8px 12px;border-radius:6px;border:0;background:#1683ff;color:#fff;cursor:pointer}
-#skins{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;padding:15px;max-width:1400px;margin:auto}
-.skin{cursor:pointer;padding:8px;background:#111;border:2px solid #222;border-radius:8px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-.skin:hover{border-color:#1683ff}
-.skin img{width:90px;height:90px;border-radius:50%;object-fit:cover;display:block;margin-top:8px}
-.skin span{display:block;margin-top:8px;font-size:13px;text-align:center}
-.buy-btn{display:inline-block;margin-top:8px;background:#16a34a;color:#fff;border:0;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
-.buy-btn.disabled{background:#666;cursor:not-allowed}
-.buy-btn:hover{background:#13803d}
-.not-available{margin-top:8px;color:#ff4d4d;font-weight:bold;font-size:13px}
-.status{font-size:13px;color:#9bd1ff;margin-left:6px}
-#agarioPages{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:20px 15px 40px}
-.page-btn{background:#1683ff;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:14px;font-weight:bold;cursor:pointer;min-width:36px;box-shadow:0 2px 5px #0008}
-.page-btn.active{background:#0753a6}
-.hidden{display:none}
-@media(max-width:900px){ #skins{grid-template-columns:repeat(3,1fr)} }
-@media(max-width:600px){ .skin img{width:80px;height:80px} #skins{grid-template-columns:repeat(4,1fr);gap:8px} }
+  :root{--bg:#000;--card:#0e0e10;--accent:#1683ff;--ok:#16a34a;--muted:#9bd1ff}
+  body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:1200px;margin:18px auto;padding:12px}
+  h1{font-size:20px;margin:6px 0 14px;text-align:center}
+  #uidBar{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px}
+  #uidBar input{min-width:340px;padding:8px;border-radius:6px;border:1px solid #21303a;background:#07131a;color:var(--muted)}
+  #uidBar button{padding:8px 12px;border-radius:6px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+  #uidStatus{font-size:13px;margin-left:8px;color:var(--muted)}
+  #skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+  .card{background:var(--card);border-radius:8px;padding:8px;text-align:center;border:1px solid #222;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+  .card img{width:88px;height:88px;border-radius:50%;object-fit:cover;margin-top:6px}
+  .card .name{margin-top:8px;font-size:13px}
+  .note{color:#ff6b6b;font-weight:700;margin-top:8px}
+  .buy{margin-top:8px;padding:8px 12px;border-radius:8px;border:0;background:var(--ok);color:#000;font-weight:700;cursor:pointer}
+  .buy.disabled{background:#666;color:#fff;cursor:not-allowed}
+  .pages{display:flex;gap:8px;justify-content:center;margin:16px 0}
+  .page-btn{background:var(--accent);color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer}
+  .socials{display:flex;gap:8px;justify-content:center;margin-top:6px}
+  .hint{font-size:13px;color:var(--muted);text-align:center;margin-top:8px}
+  pre{background:#071217;color:#9bd1ff;padding:8px;border-radius:6px;overflow:auto}
 </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>Agar.io Skins — Xsolla buy flow (test)</h1>
 
-<h1>Agar.io Skins<br>@t.bagar.io</h1>
+    <!-- UID input -->
+    <div id="uidBar">
+      <input id="agario_uid_input" placeholder="Paste your encoded Agar.io payment UID (xsolla token) here" aria-label="Encoded UID">
+      <button id="saveUidBtn">Save UID</button>
+      <span id="uidStatus">Not logged in</span>
+    </div>
 
-<!-- UID input bar: user must paste their Agar.io encoded payment UID here to enable purchases -->
-<div id="uidBar">
-  <input id="agario_uid_input" placeholder="Paste your encoded Agar.io payment UID (xsolla token) here" aria-label="Encoded UID">
-  <button id="saveUidBtn">Save UID</button>
-  <span id="uidStatus" class="status"></span>
-</div>
+    <!-- Optional quick admin: set mapping for test (runtime only) -->
+    <div style="text-align:center;margin-bottom:12px">
+      <button id="openAdmin">Open Quick Mapping (runtime)</button>
+    </div>
 
-<div id="agarioSection">
-  <div class="version-container">
-    <span class="version-label">Version</span>
-    <select id="version"></select>
+    <!-- skins grid -->
+    <div id="skins">Loading skins...</div>
+    <div class="pages" id="pages" role="navigation" aria-label="Pagination"></div>
+
+    <div class="hint">
+      Testmodus: de client ondersteunt directe secure.xsolla.com paystation URLs (snelle test) of een backend endpoint /xshop/checkout (aanbevolen). Zie instructies onderaan.
+    </div>
+
+    <div class="socials">
+      <a href="https://www.youtube.com" target="_blank" style="color:#fff;text-decoration:none;background:#ff0000;padding:8px 12px;border-radius:6px">YouTube</a>
+      <a href="https://instagram.com" target="_blank" style="color:#fff;text-decoration:none;background:#e1306c;padding:8px 12px;border-radius:6px">Instagram</a>
+      <a href="https://discord.gg" target="_blank" style="color:#fff;text-decoration:none;background:#5865f2;padding:8px 12px;border-radius:6px">Discord</a>
+    </div>
+
+    <hr style="border:0;height:1px;background:#111;margin:18px 0">
+
+    <h3 style="margin:6px 0">Dev / Debug console (safe to share)</h3>
+    <pre id="devlog" aria-live="polite">Console logs will appear here.</pre>
+
+    <div style="margin-top:12px;font-size:13px;color:#999">
+      <strong>Opmerking:</strong> voor productie gebruik altijd de backend flow (server bewaart merchant secret). Directe paystation URLs bevatten gevoelige tokens.
+    </div>
   </div>
 
-  <div id="skins">Loading skins...</div>
-  <div id="agarioPages"></div>
-</div>
-
 <script>
-/* Config */
-const API = "https://configs-web.agario.miniclippt.com/live/";
-let version = "v15/3032";
-
-/* Explicit mapping: skinId -> xsolla product id
-   Keep this empty or add permanent mappings here.
+/*
+  paidskins_xsolla.html
+  - Client-only HTML to show skins, allow saving UID and opening Xsolla paystation.
+  - Two modes:
+    1) If mapping value is a full https://secure.xsolla.com/... URL → open it directly.
+    2) Otherwise POST to /xshop/checkout { uid, product, currency } and expect { iframe_url } in response.
+  - No merchant secrets are included here. For production you must run a backend that implements /xshop/checkout.
 */
-const xsollaProductMap = {};
 
-/* Load external mapping file if present (overrides embedded map) */
-(async function loadXsollaProducts(){
-  try{
-    const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
-    if(!resp.ok) {
-      console.log('[paidskins] no /xsolla-products.json (status)', resp.status);
-      return;
-    }
-    const data = await resp.json();
-    if(data && typeof data === 'object'){
-      Object.assign(xsollaProductMap, data);
-      console.log('[paidskins] xsollaProductMap loaded from /xsolla-products.json');
-    }
-  }catch(e){
-    console.warn('[paidskins] failed to fetch /xsolla-products.json', e);
-  }
-})();
+/* CONFIG */
+const API = "https://configs-web.agario.miniclippt.com/live/";
+let version = "v15/3032";            // default; version dropdown not present in this minimal file
+const perPage = 120;
 
-/* Helpers */
-function setImageWithFallback(imgEl, filename){
-  const candidates = [];
-  if(API && version) candidates.push(API + version + "/" + filename);
-  candidates.push(filename, "images/" + filename, "/images/" + filename);
-  let idx = 0;
-  imgEl.onerror = function(){
-    idx++;
-    if(idx < candidates.length) imgEl.src = candidates[idx];
-    else {
-      imgEl.onerror = null;
-      imgEl.src = "data:image/svg+xml;utf8," + encodeURIComponent(
-        "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#071022'/><text x='50%' y='50%' font-size='18' fill='#9bd1ff' dominant-baseline='middle' text-anchor='middle'>No image</text></svg>"
-      );
-    }
-  };
-  imgEl.src = candidates[0];
+/* Embedded fallback mapping (runtime) — you can expand or override with /xsolla-products.json on the same host */
+let xsollaProductMap = {
+  // For quick testing you can set:
+  // "jumper": "https://secure.xsolla.com/paystation3/desktop/payment/?access_token=<redacted>"
+  // or product id: "jumper": "XSOLLA_ITEM_ID_12345"
+};
+
+/* Dev log helper (safe to share) */
+function devLog(...args){
+  console.log(...args);
+  const el = document.getElementById('devlog');
+  el.textContent += "\\n" + args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+  el.scrollTop = el.scrollHeight;
 }
 
-/* UID handling */
+/* UID handling UI */
+const uidInput = document.getElementById('agario_uid_input');
+const uidStatus = document.getElementById('uidStatus');
+document.getElementById('saveUidBtn').addEventListener('click', ()=>{
+  const v = uidInput.value.trim();
+  if(!v || v.length < 20){ alert('Please paste the full encoded payment UID (token) before saving.'); return; }
+  localStorage.setItem('agarioEncodedUID', v);
+  window.agarioEncodedUID = v;
+  updateUidStatus();
+  alert('UID saved locally. You can now buy skins that have a mapping.');
+});
 function updateUidStatus(){
-  const input = document.getElementById('agario_uid_input');
-  const status = document.getElementById('uidStatus');
   const stored = localStorage.getItem('agarioEncodedUID') || '';
   if(stored && stored.length > 10){
     window.agarioEncodedUID = stored;
-    input.value = stored;
-    status.textContent = 'Logged in (UID saved)';
-    status.style.color = '#7ee787';
-  } else if(window.agarioEncodedUID && window.agarioEncodedUID.length>10){
-    status.textContent = 'Logged in (UID from page)';
-    status.style.color = '#7ee787';
-    input.value = window.agarioEncodedUID;
+    uidInput.value = stored;
+    uidStatus.textContent = 'Logged in (UID saved)';
+    uidStatus.style.color = '#7ee787';
   } else {
     window.agarioEncodedUID = null;
-    status.textContent = 'Not logged in — paste your encoded UID and click Save';
-    status.style.color = '#9bd1ff';
-    input.value = '';
-  }
-  if(window.allSkins) renderAgarioPage(1);
-}
-
-document.getElementById('saveUidBtn').addEventListener('click', function(){
-  const val = document.getElementById('agario_uid_input').value.trim();
-  if(!val || val.length < 20){
-    alert('Please paste your full encoded payment UID (xsolla token) before saving.');
-    return;
-  }
-  localStorage.setItem('agarioEncodedUID', val);
-  window.agarioEncodedUID = val;
-  updateUidStatus();
-  alert('UID saved locally. You can now buy skins that have a linked Xsolla product ID.');
-});
-
-/* Versions select */
-async function versions(){
-  const s = document.getElementById("version");
-  if(!s) return;
-  s.innerHTML = "";
-  try{
-    const r = await fetch("https://lmsettings.snez.org/", { headers: { username:"LMConfigVersion", password:"LMConfigVersionPass" }});
-    if(!r.ok) throw new Error("versions endpoint " + r.status);
-    const v = await r.json();
-    const vals = Object.values(v || {});
-    vals.forEach(x=> s.add(new Option(String(x), String(x).replace(/\/$/,""))));
-    if(s.options.length){ s.selectedIndex = s.options.length - 1; version = s.value; }
-  }catch(err){
-    const fallback = ["v15/3032"];
-    fallback.forEach(x => s.add(new Option(x,x)));
-    version = s.value = fallback[0];
-    console.warn("versions failed, fallback used", err);
-  }
-  s.onchange = function(e){
-    version = (e.target.value||"").replace(/\/$/,"");
-    loadSkins();
-    renderAgarioPage(1);
-  };
-  loadSkins();
-}
-
-/* Load skins */
-async function loadSkins(){
-  const box = document.getElementById("skins");
-  box.innerHTML = "Loading skins...";
-  try{
-    const r = await fetch(API + version + "/GameConfiguration.json");
-    const text = await r.text();
-    const a = text.match(/\[(.*?)\]/g) || [];
-    const str = a[25] || "";
-    const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
-    const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
-    const skins = [];
-    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
-      const id = ids[i].replace(/"/g,"").replace(/productId:/,"").replace(/skin_/,"").replace(/id:/,"").trim();
-      const img = imgs[i].replace(/"/g,"").replace(/image:/,"").trim();
-      if(!img.includes("uses_spine")) skins.push([id,img]);
-    }
-    skins.reverse();
-    window.allSkins = skins;
-    renderAgarioPage(1);
-  }catch(e){
-    box.textContent = "Unable to load skins.";
-    window.allSkins = [];
+    uidStatus.textContent = 'Not logged in — paste UID and Save';
+    uidStatus.style.color = '#9bd1ff';
   }
 }
 
-/* Render page */
-function renderAgarioPage(page){
-  window.selectedSkinDiv = null;
-  window.selectedSkinId = null;
-  const perPage = 120;
-  const box = document.getElementById("skins");
-  const pages = document.getElementById("agarioPages");
-  const skins = window.allSkins || [];
-  const total = Math.max(1, Math.ceil(skins.length / perPage));
-  box.innerHTML = "";
-  const start = (page-1)*perPage;
-  skins.slice(start, start+perPage).forEach(([id,img])=>{
-    const d = document.createElement("div"); d.className = "skin";
-    d.setAttribute("data-id", id);
-    d.innerHTML = `<img alt="${id}"><span>${id.replace(/\_/g," ")}</span>`;
-    setImageWithFallback(d.querySelector("img"), img);
-
-    // Determine if this skin has an explicit Xsolla mapping
-    const purchaseId = xsollaProductMap[id];
-
-    if(purchaseId){
-      // If user has UID saved, enable buy; otherwise show disabled buy with tooltip
-      const buy = document.createElement('button');
-      buy.className = 'buy-btn';
-      buy.textContent = 'Buy';
-      buy.setAttribute('data-purchase-id', purchaseId);
-      if(window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID')){
-        buy.onclick = (e)=>{ e.stopPropagation(); startBuyFlow(purchaseId); };
-      } else {
-        buy.classList.add('disabled');
-        buy.onclick = (e)=>{ e.stopPropagation(); alert('You must paste and save your encoded Agar.io payment UID first before buying.'); };
-      }
-      d.appendChild(buy);
-    } else {
-      const note = document.createElement('div');
-      note.className = 'not-available';
-      note.textContent = 'Not available';
-      d.appendChild(note);
-    }
-
-    d.onclick = ()=> selectSkin(d, id);
-    box.appendChild(d);
-  });
-
-  pages.innerHTML = "";
-  for(let i=1;i<=total;i++){
-    const b=document.createElement("button");
-    b.className="page-btn"+(i===page?" active":"");
-    b.textContent=i;
-    b.onclick=()=>renderAgarioPage(i);
-    pages.appendChild(b);
-  }
-  window.scrollTo({ top:0, behavior:"smooth" });
-}
-
-/* Validate returned xsolla URL */
-function validateXsollaUrl(rawUrl){
-  try{
-    const u = new URL(rawUrl);
-    if(u.protocol !== "https:") return false;
-    const h = u.hostname.toLowerCase();
-    if(h !== "secure.xsolla.com") return false;
-    if(!(u.pathname.startsWith("/paystation3/") || u.pathname.startsWith("/paystation4/"))) return false;
-    const token = u.searchParams.get("access_token") || u.searchParams.get("token") || "";
-    if(!token || token.length < 16) return false;
-    return true;
-  }catch(e){ return false; }
-}
-
-/* Start buy flow */
-async function startBuyFlow(purchaseId){
-  const token = window.agarioEncodedUID || localStorage.getItem("agarioEncodedUID") || null;
-  if(!token){
-    alert('You must paste and save your encoded Agar.io payment UID before buying.');
-    return;
-  }
-
-  const endpoint = "https://payments.agario.miniclippt.com";
-  const currency = "USD";
-  const paymentRequestUrl = `${endpoint}/pay/${encodeURIComponent(token)}/${encodeURIComponent(purchaseId)}/${encodeURIComponent(currency)}`;
-
-  try{
-    const resp = await fetch(paymentRequestUrl, { method: "GET", credentials: "omit" });
-    if(!resp.ok) throw new Error("Payment endpoint returned " + resp.status);
-    const data = await resp.json();
-    const iframeUrl = data.iframe_url || data.iframeUrl || data.iframe || null;
-    if(!iframeUrl) throw new Error("No iframe_url in response");
-    if(!validateXsollaUrl(iframeUrl)) throw new Error("Returned URL failed validation");
-    window.open(iframeUrl, "_blank", "noopener");
-  }catch(err){
-    console.error("Buy flow failed:", err);
-    alert("Payment request failed: " + (err && err.message ? err.message : "unknown error"));
-  }
-}
-
-/* Init */
-async function init(){
-  // attempt to merge external overrides (may have been fetched earlier)
+/* Try to load /xsolla-products.json from the site root to merge overrides (optional) */
+(async function loadXsollaProducts(){
   try{
     const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
     if(resp.ok){
       const data = await resp.json();
       Object.assign(xsollaProductMap, data);
-      console.log('[paidskins] xsolla-products.json loaded (overrides merged)');
+      devLog('[paidskins] xsolla-products.json loaded; merged into runtime map. Keys:', Object.keys(xsollaProductMap).length);
     } else {
-      console.log('[paidskins] xsolla-products.json not found, status=', resp.status);
+      devLog('[paidskins] no xsolla-products.json found (status ' + resp.status + ') — using runtime map only');
     }
+  }catch(err){
+    devLog('[paidskins] fetch xsolla-products.json failed:', err.message || err);
+  }
+})();
+
+/* Small admin modal for runtime mapping edits (non-persistent) */
+document.getElementById('openAdmin').addEventListener('click', ()=>{
+  const skin = prompt('Skin id to set mapping for (e.g. jumper or blue_swirl):');
+  if(!skin) return;
+  const val = prompt('Mapping value — either a full secure.xsolla.com URL or a product id (e.g. XSOLLA_ITEM_123):');
+  if(val === null) return;
+  xsollaProductMap[skin] = val.trim();
+  devLog('[admin] set mapping', skin, '->', xsollaProductMap[skin]);
+  renderAgarioPage(currentPage);
+});
+
+/* Images and skins: we will parse GameConfiguration.json like the original client did */
+let allSkins = [];
+async function loadSkins(){
+  const box = document.getElementById('skins');
+  box.innerHTML = 'Loading skins...';
+  try{
+    const r = await fetch(API + version + '/GameConfiguration.json');
+    const text = await r.text();
+    // original client used a crude regex to extract one of the arrays — we keep that behavior
+    const a = text.match(/\[(.*?)\]/g) || [];
+    const str = a[25] || a.find(x => x.includes('productId')) || '';
+    const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
+    const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
+    const skins = [];
+    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
+      const id = ids[i].replace(/"/g,'').replace(/productId:/,'').replace(/skin_/,'').replace(/id:/,'').trim();
+      const img = imgs[i].replace(/"/g,'').replace(/image:/,'').trim();
+      if(!img.includes('uses_spine')) skins.push([id, img]);
+    }
+    skins.reverse();
+    allSkins = skins;
+    devLog('[paidskins] loaded skins:', skins.length);
+    renderAgarioPage(1);
   }catch(e){
-    console.warn('[paidskins] failed to fetch /xsolla-products.json', e);
+    devLog('[paidskins] Unable to load skins:', e.message || e);
+    allSkins = [];
+    document.getElementById('skins').textContent = 'Unable to load skins.';
+  }
+}
+
+/* Render pagination + grid */
+let currentPage = 1;
+function renderAgarioPage(page){
+  currentPage = page || 1;
+  const box = document.getElementById('skins');
+  box.innerHTML = '';
+  const start = (page-1)*perPage;
+  const slice = allSkins.slice(start, start + perPage);
+  for(const [id,img] of slice){
+    const card = document.createElement('div'); card.className = 'card';
+    card.setAttribute('data-id', id);
+    const i = document.createElement('img'); i.alt = id;
+    // build image candidates
+    i.src = img || '';
+    card.appendChild(i);
+    const nm = document.createElement('div'); nm.className = 'name'; nm.textContent = id.replace(/_/g,' ');
+    card.appendChild(nm);
+
+    // determine purchase mapping (mapping key uses clean id)
+    const purchaseMapping = xsollaProductMap[id] || xsollaProductMap['skin_'+id] || xsollaProductMap[id.toLowerCase()];
+    if(purchaseMapping){
+      const btn = document.createElement('button'); btn.className = 'buy';
+      btn.textContent = 'Buy';
+      btn.onclick = (e)=> { e.stopPropagation(); startBuyFlow(id); };
+      // If UID is missing, disable button (but still shows)
+      if(!window.agarioEncodedUID && !(localStorage.getItem('agarioEncodedUID'))){
+        btn.classList.add('disabled');
+        btn.onclick = ()=> alert('Je moet eerst je encoded UID plakken en opslaan.');
+      }
+      card.appendChild(btn);
+    } else {
+      const note = document.createElement('div'); note.className = 'note'; note.textContent = 'Not available';
+      card.appendChild(note);
+    }
+    box.appendChild(card);
   }
 
-  // Ensure test mappings exist at runtime so you can verify Buy buttons quickly.
-  // These are runtime-only (do not persist to the file) and can be removed later.
-  window.xsollaProductMap = xsollaProductMap;
-  if(!window.xsollaProductMap['jumper']) window.xsollaProductMap['jumper'] = 'skin_jumper';
-  if(!window.xsollaProductMap['blue_swirl']) window.xsollaProductMap['blue_swirl'] = 'skin_blue_swirl';
-  console.log('[paidskins] runtime xsollaProductMap prepared', { jumper: window.xsollaProductMap['jumper'], blue_swirl: window.xsollaProductMap['blue_swirl'] });
-
-  updateUidStatus();
-  loadSkins();
-  versions();
+  // pages
+  const pages = document.getElementById('pages');
+  pages.innerHTML = '';
+  const total = Math.max(1, Math.ceil(allSkins.length / perPage));
+  for(let p=1;p<=Math.min(total,15);p++){
+    const b = document.createElement('button'); b.className = 'page-btn'; b.textContent = p;
+    if(p === page) b.style.opacity = '0.7';
+    b.onclick = ()=> renderAgarioPage(p);
+    pages.appendChild(b);
+  }
 }
-if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
+
+/* Validate Xsolla URL (basic) */
+function validateXsollaUrl(rawUrl){
+  try{
+    const u = new URL(rawUrl);
+    if(u.protocol !== 'https:') return false;
+    if(u.hostname.toLowerCase() !== 'secure.xsolla.com') return false;
+    return true;
+  }catch(e){ return false; }
+}
+
+/* START BUY FLOW
+   - If xsollaProductMap[id] is a full URL -> open directly (quick test).
+   - Else POST to /xshop/checkout with { uid, product, currency } and expect { iframe_url }.
+   - NOTE: backend must exist for /xshop/checkout (recommended for production).
+*/
+async function startBuyFlow(skinId){
+  const token = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || null;
+  if(!token){
+    alert('Je moet eerst je encoded UID plakken en opslaan.');
+    return;
+  }
+
+  // Resolve mapping value. Try multiple keys.
+  const mappingValue = xsollaProductMap[skinId] || xsollaProductMap['skin_'+skinId] || xsollaProductMap[skinId.toLowerCase()] || skinId;
+  devLog('[buy] skin', skinId, 'mappingValue=', mappingValue);
+
+  // If mapping is a URL, open it directly
+  if(typeof mappingValue === 'string' && /^https?:\\/\\//i.test(mappingValue)){
+    if(!validateXsollaUrl(mappingValue)){
+      alert('Returned mapping is not a valid secure.xsolla.com URL.');
+      devLog('[buy] invalid xsolla url mapping', mappingValue);
+      return;
+    }
+    window.open(mappingValue, '_blank', 'noopener');
+    devLog('[buy] opened direct xsolla url');
+    return;
+  }
+
+  // Otherwise call backend to create checkout
+  try{
+    const resp = await fetch('/xshop/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid: token, product: mappingValue, currency: 'USD' })
+    });
+    devLog('[buy] POST /xshop/checkout status', resp.status);
+    if(!resp.ok){
+      const txt = await resp.text();
+      devLog('[buy] server returned non-OK:', resp.status, txt.slice(0,1000));
+      alert('Betaalverzoek mislukt: server returned ' + resp.status);
+      return;
+    }
+    const data = await resp.json();
+    devLog('[buy] server response', data);
+    const iframeUrl = data.iframe_url || data.checkout_url || data.url || data.iframeUrl || null;
+    if(!iframeUrl){
+      devLog('[buy] no iframe_url in server response', data);
+      alert('Betaalverzoek mislukt: geen checkout URL ontvangen van server.');
+      return;
+    }
+    if(!validateXsollaUrl(iframeUrl)){
+      devLog('[buy] invalid iframe url from server', iframeUrl);
+      alert('Betaalverzoek mislukt: ongeldige checkout URL ontvangen (niet secure.xsolla.com).');
+      return;
+    }
+    window.open(iframeUrl, '_blank', 'noopener');
+    devLog('[buy] opened checkout iframe_url');
+  }catch(err){
+    devLog('[buy] exception', err.message || err);
+    alert('Betaalverzoek mislukt: ' + (err && err.message ? err.message : 'onbekende fout'));
+  }
+}
+
+/* INIT */
+updateUidStatus();
+loadSkins();
+
+/* Expose for manual testing in console */
+window.devLog = devLog;
+window.xsollaProductMap = xsollaProductMap;
+window.startBuyFlow = startBuyFlow;
 </script>
-
-<br>
-<div class="social-buttons">
-  <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank" style="background:#ff0000;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">YouTube</a>
-  <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" style="background:#e1306c;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">Instagram</a>
-  <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank" style="background:#5865f2;color:white;padding:9px 14px;border-radius:7px;text-decoration:none">Discord</a>
-</div>
-
-© <span id="year"></span> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Website</a> - T.B Licence -
-<script>document.getElementById('year').textContent=(new Date()).getFullYear();</script>
-
 </body>
 </html>
