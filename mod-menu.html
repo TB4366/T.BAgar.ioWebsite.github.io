@@ -1,3 +1,4 @@
+```
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <title>Mod Menu — T.B Agar.io Website</title>
+
 
 <style>
 
@@ -32,6 +34,7 @@ padding:0;
 box-sizing:border-box;
 font-family:Arial,sans-serif;
 }
+
 
 /* mooie verificatie box */
 .verify-box{
@@ -94,297 +97,404 @@ animation:spin 1s linear infinite;
 
 }
 
+
 @keyframes spin{
+
 100%{
 transform:rotate(360deg);
 }
+
 }
+
+
+
 
 /* THEME */
 
 body{
+
 background:#020617;
 color:white;
 min-height:100vh;
 overflow-x:hidden;
+
 }
+
+
+.light-mode{
+
+background:#ffffff;
+color:#111827;
+
+}
+
+
+
 
 /* BLUE GLOW */
 
 body::before{
+
 content:"";
 position:fixed;
 width:600px;
 height:600px;
+
 background:radial-gradient(circle,#0ea5e9,transparent 70%);
+
 top:-250px;
 right:-200px;
+
 opacity:.25;
 z-index:-1;
+
 }
+
+
 
 /* HEADER */
 
 header{
+
 display:flex;
 justify-content:space-between;
 align-items:center;
+
 padding:14px 30px;
+
 background:rgba(0,0,0,.5);
+
 backdrop-filter:blur(15px);
+
 border-bottom:1px solid #2563eb;
-position:relative;
+
 }
 
+
+
 .left-header{
+
 display:flex;
 align-items:center;
 gap:12px;
+
 }
+
+
 
 .logo{
+
 width:45px;
 height:45px;
+
 border-radius:50%;
+
 overflow:hidden;
+
 box-shadow:0 0 20px #38bdf8;
+
 }
 
+
+
 .logo img{
+
 width:100%;
 height:100%;
 object-fit:cover;
+
 }
+
+
 
 .site-title{
+
 font-size:22px;
 font-weight:bold;
+
 color:#38bdf8;
+
 }
+
+
+
 
 .header-buttons{
+
 display:flex;
 gap:10px;
+
 }
 
-.menu-btn{
+
+
+.menu-btn,
+.theme-btn{
+
 background:none;
+
 border:none;
+
 font-size:25px;
+
 cursor:pointer;
+
 color:white;
+
 }
+
+
 
 /* HAMBURGER MENU */
 
+
 .menu{
-position:fixed;
-right:30px;
-top:75px;
-background:#020617;
-border-radius:12px;
-overflow:hidden;
-z-index:1000;
-box-shadow:0 0 25px black;
-min-width:220px;
-border:1px solid #2563eb;
-max-height:90vh;
-overflow-y:auto;
+
 display:none;
+
+position:absolute;
+
+right:30px;
+
+top:75px;
+
+background:#020617;
+
+border-radius:12px;
+
+overflow:hidden;
+
+z-index:1000;
+
+box-shadow:0 0 25px black;
+
 }
 
-.menu.active{
-display:block;
-}
+
 
 .menu a{
+
 display:block;
+
 padding:14px 20px;
+
 color:white;
+
 text-decoration:none;
+
 border-bottom:1px solid #1e3a8a;
-transition: background 0.3s;
-white-space:nowrap;
+
 }
 
-.menu a:last-child{
-border-bottom:none;
-}
+
 
 .menu a:hover{
+
 background:#2563eb;
+
 }
+
+
+
+
 
 /* HEADER TITLE */
 
 header h1{
+
 text-align:center;
-flex:1;
+
 }
+
+
+
+
 
 /* GRID */
 
 .grid{
+
 display:grid;
+
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
 gap:20px;
+
 padding:20px;
+
 }
+
+
 
 /* CARD */
 
 .card{
+
 background:#0f172a;
+
 border-radius:15px;
+
 border:1px solid #1e40af;
+
 padding:12px;
+
 display:flex;
+
 flex-direction:column;
+
 gap:10px;
+
 position:relative;
+
 box-shadow:0 0 20px rgba(0,140,255,.3);
+
 }
+
+
+
+.light-mode .card{
+
+background:#ffffff;
+
+}
+
+
+
+
 
 .card img{
+
 width:100%;
+
 aspect-ratio:16/9;
+
 object-fit:cover;
+
 border-radius:10px;
+
 }
 
-/* STATUS LABEL - UPDATE/NEW */
+
+
+/* STATUS */
 
 .status-label{
+
 position:absolute;
+
 top:12px;
+
 left:12px;
-padding:8px 12px;
-border-radius:6px;
-font-weight:bold;
-display:none;
-font-size:12px;
-background:#ef4444;
-color:white;
-min-width:60px;
-text-align:center;
-z-index:10;
-}
 
-.status-label.timer{
-font-size:11px;
 padding:6px 10px;
-}
 
-.status-label.update-label{
-background:#ef4444;
-color:white;
-}
+border-radius:6px;
 
-.status-label.new-label{
-background:#22c55e;
-color:white;
-}
-
-/* BUTTONS CONTAINER */
-
-.button-container{
-display:flex;
-gap:8px;
-align-items:center;
-flex-wrap:wrap;
-}
-
-.download{
-flex:1;
-min-width:100px;
-padding:10px;
-background:#2563eb;
-border:none;
-border-radius:10px;
-color:white;
 font-weight:bold;
+
+display:none;
+
+}
+
+
+
+.update{
+
+background:#ef4444;
+
+}
+
+
+.soon{
+
+background:#2563eb;
+
+}
+
+
+.not{
+
+background:#7c3aed;
+
+}
+
+
+
+
+
+/* BUTTONS */
+
+
+.download,
+.Site,
+.Install{
+
+padding:10px;
+
+background:#2563eb;
+
+border:none;
+
+border-radius:10px;
+
+color:white;
+
+font-weight:bold;
+
 cursor:pointer;
+
+/* align text and icon */
 display:inline-flex;
 align-items:center;
 gap:8px;
-justify-content:center;
-transition:transform 0.2s;
 }
 
-.download:hover{
+
+
+.download:hover,
+.Site:hover,
+.Install:hover{
+
 transform:scale(1.05);
+
 }
 
-/* STATUS INDICATOR */
 
-.status-indicator{
-padding:10px 12px;
-border-radius:10px;
-border:none;
-color:white;
-font-weight:bold;
-display:flex;
-align-items:center;
-gap:6px;
-min-width:140px;
-justify-content:center;
-cursor:default;
-font-size:0.85rem;
-animation: statusGlow 2s ease-in-out infinite;
-white-space:nowrap;
-}
 
-.status-indicator.available{
-background:#22c55e;
-box-shadow:0 0 15px rgba(34,197,94,0.6);
-}
 
-.status-indicator.available:hover{
-box-shadow:0 0 25px rgba(34,197,94,0.9);
-}
-
-.status-indicator.processing{
-background:#f97316;
-box-shadow:0 0 15px rgba(249,115,22,0.6);
-}
-
-.status-indicator.processing:hover{
-box-shadow:0 0 25px rgba(249,115,22,0.9);
-}
-
-.status-indicator.unavailable{
-background:#ef4444;
-box-shadow:0 0 15px rgba(239,68,68,0.6);
-}
-
-.status-indicator.unavailable:hover{
-box-shadow:0 0 25px rgba(239,68,68,0.9);
-}
-
-@keyframes statusGlow{
-0%, 100%{
-  box-shadow:0 0 15px rgba(255,255,255,0.3);
-}
-50%{
-  box-shadow:0 0 25px rgba(255,255,255,0.6);
-}
-}
 
 .info{
+
 color:#94a3b8;
+
 font-size:.9rem;
+
 }
 
+
+
+
+
 .overlay{
+
 position:absolute;
+
 inset:0;
+
 display:none;
+
 justify-content:center;
+
 align-items:center;
+
 background:rgba(0,0,0,.6);
+
 border-radius:15px;
+
 font-weight:bold;
+
 }
+
 
 /* external icon styling */
 .external-icon{
@@ -394,515 +504,790 @@ font-weight:bold;
   vertical-align:middle;
   fill:white;
 }
+.light-mode .external-icon{ fill:#111827; }
+
 
 hr.section-line{
+
 border:none;
+
 height:3px;
+
 background:#2563eb;
+
 margin:30px 0;
+
 border-radius:5px;
+
 }
+
+
 
 .section-title{
+
 text-align:center;
+
 font-size:22px;
+
 color:#38bdf8;
+
 }
+
 
 .help-section{
+
 text-align:center;
+
 padding:30px;
+
 }
 
+
+
 .help-button{
+
 background:#2563eb;
+
 padding:12px 25px;
+
 border-radius:10px;
+
 color:white;
+
 text-decoration:none;
+
 font-weight:bold;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
+  
+
 <div id="loader">
+
 Loading Agar.io Mods...
+
 <div class="spinner"></div>
+
 </div>
 
+
+
+
+
 <header>
+
 
 <div class="left-header">
 
+
 <div class="logo">
+
 <img src="IMG_2718.png">
+
 </div>
+
 
 <div class="site-title">
+
 T.B AGAR.IO
-</div>
 
 </div>
+
+
+</div>
+
+
+
 
 <div class="header-buttons">
 
-<button class="menu-btn" onclick="toggleMenu()">
-☰
+
+<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
+
+☀️
+
 </button>
 
+
+<button class="menu-btn" onclick="toggleMenu()">
+
+☰
+
+</button>
+
+
 </div>
+
+
+
 
 <div class="menu" id="menu">
+
+
 <a href="index.html">🏠 Home</a>
+
 <a href="custom-skins.html">🎨 Custom Skins</a>
+
 <a href="mod-menu.html">🛠 Mod Menu</a>
+
 <a href="key-access.html">🔑 Keys</a>
+
 <a href="buy-account.html">💰 Buy Account</a>
+
+
 </div>
 
+
+
 </header>
+
+
 
 <header>
+
 <h1>Mod Menu</h1>
+
 </header>
+<!-- 16 HOOFDMODS -->
 
-<!-- MOD CARDS -->
+<div class="grid">
 
-<div class="grid" id="modsGrid">
+
+<div class="card" data-status="active">
+
+<img src="IMG_9406.jpeg">
+
+<a href="https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file">
+<button class="download">Download</button>
+</a>
+
+<div class="info">Version: 26.6.0</div>
+<div class="info">Date: 05-09-2026</div>
+<div class="info">Update Shark Mod</div>
+
+<div class="overlay"></div>
+
 </div>
+
+
+
+
+<div class="card" data-status="not">
+
+<div class="status-label update">
+UPDATE
+</div>
+
+<img src="4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg">
+
+
+<a href="#">
+<button class="download">
+Download
+</button>
+</a>
+
+
+<div class="info">Version: 26.3.5</div>
+<div class="info">NEW Date: 15-01-2026</div>
+<div class="info">T.B Mod (Kabrah) Unlock Skin</div>
+
+<div class="overlay"></div>
+
+</div>
+
+
+
+
+<div class="card" data-status="active">
+
+
+<div class="status-label update">
+UPDATE
+</div>
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 05-07-2026</div>
+
+<div class="info">Bite Skin Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 05-07-2026</div>
+
+<div class="info">Kahraba Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_9406.jpeg">
+
+
+<a href="https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk">
+
+<button class="download">
+Download
+</button>
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 05-07-2026</div>
+
+<div class="info">Shark Mod NEW Android</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+
+
+<button class="download">
+Download
+</button>
+
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 05-07-2026</div>
+
+<div class="info">Kahraba + Shark Mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_6587.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
+
+
+<button class="download">
+Download
+</button>
+
+
+</a>
+
+
+<div class="info">Version: 26.6.0</div>
+
+<div class="info">Date: 05-07-2026</div>
+
+<div class="info">Myu mod</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+<div class="card" data-status="active">
+
+
+<img src="IMG_4318.png">
+
+
+<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+
+
+<button class="download">
+Download
+</button>
+
+
+</a>
+
+
+<div class="info">Version: 9.0.66</div>
+
+<div class="info">Date: 03-08-2025</div>
+
+<div class="info">
+Spotify Premium Mod
+</div>
+
+
+<div class="overlay"></div>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
 
 <hr class="section-line">
 
 <div class="section-title">
-AGAR.IO MOD MENU LINKS
+    AGAR.IO MOD MENU LINKS
 </div>
 
 <div class="grid">
 
-<div class="card" data-status="available">
-<img src="IMG_0321.jpeg">
-<div class="button-container">
-<a href="https://biteyt.com/bots">
-<button class="download">
-Download
-<svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-<path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-<path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-</svg>
-</button>
-</a>
-<button class="status-indicator available">
-🟢 Available
-</button>
-</div>
-<div class="info">Version: 26.6.0</div>
-<div class="info">Date: 19-08-2026</div>
-<div class="info">Bite Bots Panel</div>
-<div class="overlay"></div>
-</div>
+    <!-- Mod 1 -->
+    <div class="card" data-status="active">
+        <img src="IMG_0321.jpeg">
+        <a href="https://biteyt.com/bots">
+            <button class="download">
+              Bite Bots Panel
+              <!-- external link icon: square with up-right arrow -->
+              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+                <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
+              </svg>
+            </button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 19-08-2026</div>
+        <div class="info">Bite Bots Panel</div>
+        <div class="overlay"></div>
+    </div>
 
-<div class="card" data-status="available">
-<img src="IMG_0322.jpeg">
-<div class="button-container">
-<a href="https://kahraba.in">
-<button class="download">
-Download
-<svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-<path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-<path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-</svg>
-</button>
-</a>
-<button class="status-indicator available">
-🟢 Available
-</button>
-</div>
-<div class="info">Version: 26.6.0</div>
-<div class="info">Date: 21-08-2026</div>
-<div class="info">Kahraba Website</div>
-<div class="overlay"></div>
-</div>
+    <!-- Mod 2 -->
+    <div class="card" data-status="active">
+        <img src="IMG_0322.jpeg">
+        <a href="https://kahraba.in">
+            <button class="download">
+              Kahraba Website
+              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+                <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
+              </svg>
+            </button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 21-08-2026</div>
+        <div class="info">Kahraba Website</div>
+        <div class="overlay"></div>
+    </div>
+
+    <!-- Removed DNS Mod 3 and DNS Mod 4 as requested -->
 
 </div>
+
+
 
 <hr class="section-line">
 
+
+
+
 <div class="help-section">
+
+
 <p><strong>How do I get the mod?</strong></p>
+
+
 <br>
+
+
 <a class="help-button" href="mods-help.html">
+
 Help Mods
+
 </a>
+
+
 </div>
+
+
+
+
+
 
 <script>
 
-// ============================================
-// MOD CONFIGURATION - EDIT HERE
-// ============================================
 
-const MODS_CONFIG = [
-  {
-    img: "IMG_9406.jpeg",
-    link: "https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file",
-    version: "26.6.0",
-    date: "05-09-2026",
-    name: "Update Shark Mod",
-    status: "available", // available, processing, unavailable
-    badge: null, // null, "UPDATE", or "NEW"
-    updateTimer: null, // null or { minutes: 5, seconds: 30 }
-  },
-  {
-    img: "4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg",
-    link: "#",
-    version: "26.3.5",
-    date: "15-01-2026",
-    name: "T.B Mod (Kabrah) Unlock Skin",
-    status: "unavailable",
-    badge: null,
-    updateTimer: null,
-  },
-  {
-    img: "IMG_6587.png",
-    link: "https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa",
-    version: "26.6.0",
-    date: "05-07-2026",
-    name: "Bite Skin Mod",
-    status: "available",
-    badge: "UPDATE", // Voeg UPDATE badge toe
-    updateTimer: { minutes: 2, seconds: 15 },
-  },
-  {
-    img: "IMG_6587.png",
-    link: "https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa",
-    version: "26.6.0",
-    date: "05-07-2026",
-    name: "Kahraba Mod",
-    status: "processing",
-    badge: "UPDATE", // Voeg UPDATE badge toe
-    updateTimer: { hours: 1, minutes: 30, seconds: 0 },
-  },
-  {
-    img: "IMG_9406.jpeg",
-    link: "https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk",
-    version: "26.6.0",
-    date: "05-07-2026",
-    name: "Shark Mod NEW Android",
-    status: "available",
-    badge: "NEW", // Voeg NEW badge toe
-    updateTimer: null,
-  },
-  {
-    img: "IMG_6587.png",
-    link: "https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa",
-    version: "26.6.0",
-    date: "05-07-2026",
-    name: "Kahraba + Shark Mod",
-    status: "available",
-    badge: null,
-    updateTimer: null,
-  },
-  {
-    img: "IMG_6587.png",
-    link: "https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa",
-    version: "26.6.0",
-    date: "05-07-2026",
-    name: "Myu mod",
-    status: "available",
-    badge: null,
-    updateTimer: null,
-  },
-  {
-    img: "IMG_4318.png",
-    link: "https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa",
-    version: "9.0.66",
-    date: "03-08-2025",
-    name: "Spotify Premium Mod",
-    status: "available",
-    badge: null,
-    updateTimer: null,
-  },
-];
 
-// ============================================
-// INITIALIZE
-// ============================================
+/* LOADING */
 
-setTimeout(() => {
-  document.getElementById("loader").style.display = "none";
-}, 2000 + Math.random() * 2000);
+setTimeout(()=>{
 
-// Render mods
-const modsGrid = document.getElementById("modsGrid");
-MODS_CONFIG.forEach((mod, index) => {
-  modsGrid.appendChild(createModCard(mod, index));
+
+document.getElementById("loader").style.display="none";
+
+
+},2000 + Math.random()*2000);
+
+
+
+
+
+
+
+/* MENU */
+
+
+function toggleMenu(){
+
+
+let menu=document.getElementById("menu");
+
+
+menu.style.display =
+
+menu.style.display==="block"
+
+?"none"
+
+:"block";
+
+
+}
+
+
+
+
+
+
+
+
+/* DARK LIGHT */
+
+
+function toggleTheme(){
+
+
+let body=document.body;
+
+let btn=document.getElementById("themeBtn");
+
+
+
+body.classList.toggle("light-mode");
+
+
+
+if(body.classList.contains("light-mode")){
+
+
+btn.textContent="🌙";
+
+
+}else{
+
+
+btn.textContent="☀️";
+
+
+}
+
+
+}
+
+
+
+
+
+
+/* STATUS SYSTEM */
+
+
+document.querySelectorAll(".card").forEach(card=>{
+
+
+let status=card.dataset.status;
+
+let btn=card.querySelector("button");
+
+let label=card.querySelector(".status-label");
+
+let overlay=card.querySelector(".overlay");
+
+
+
+if(label){
+
+label.style.display="none";
+
+}
+
+
+
+if(status==="not"){
+
+
+
+if(label){
+
+label.style.display="block";
+
+}
+
+
+
+btn.classList.add("locked");
+
+btn.textContent="Unavailable";
+
+
+btn.onclick=(e)=>{
+
+
+e.preventDefault();
+
+
+alert("This mod is not available");
+
+
+};
+
+
+
+card.style.opacity="0.45";
+
+
+
+if(overlay){
+
+
+overlay.style.display="flex";
+
+overlay.textContent="Not Available";
+
+
+}
+
+
+
+}
+
+
+
 });
 
-// ============================================
-// CREATE MOD CARD
-// ============================================
 
-function createModCard(mod, index) {
-  const card = document.createElement("div");
-  card.className = "card";
-  card.dataset.status = mod.status;
-  card.dataset.modIndex = index;
 
-  let badgeHTML = "";
-  if (mod.badge) {
-    const badgeClass = mod.badge === "UPDATE" ? "update-label" : "new-label";
-    const badgeText = mod.badge === "UPDATE" ? "UPDATE" : "NEW";
-    badgeHTML = `
-      <div class="status-label ${badgeClass}" id="badge-${index}">
-        ${badgeText}
-      </div>
-    `;
-  }
+</script>
 
-  const statusTexts = {
-    available: "🟢 Available",
-    processing: "🟠 Processing",
-    unavailable: "🔴 Unavailable",
-  };
+  <script>
+document.querySelectorAll(".card").forEach(card => {
 
-  const statusClasses = {
-    available: "available",
-    processing: "processing",
-    unavailable: "unavailable",
-  };
-
-  const downloadBtn = mod.status === "unavailable" 
-    ? `<button class="download" onclick="notAvailable(event)">Download</button>`
-    : `<a href="${mod.link}"><button class="download">Download</button></a>`;
-
-  const html = `
-    ${badgeHTML}
-    <img src="${mod.img}">
-    <div class="button-container">
-      ${downloadBtn}
-      <button class="status-indicator ${statusClasses[mod.status]}">
-        ${statusTexts[mod.status]}
-      </button>
-    </div>
-    <div class="info">Version: ${mod.version}</div>
-    <div class="info">Date: ${mod.date}</div>
-    <div class="info">${mod.name}</div>
-    <div class="overlay"></div>
-  `;
-
-  card.innerHTML = html;
-
-  // Initialize timer if exists
-  if (mod.updateTimer) {
-    initializeTimer(index, mod.updateTimer, mod.badge);
-  }
-
-  return card;
-}
-
-// ============================================
-// TIMER SYSTEM
-// ============================================
-
-const timers = {};
-
-function initializeTimer(modIndex, timerConfig, badge) {
-  let totalSeconds = (timerConfig.hours || 0) * 3600 + 
-                     (timerConfig.minutes || 0) * 60 + 
-                     (timerConfig.seconds || 0);
-  
-  const badge_element = document.getElementById(`badge-${modIndex}`);
-  
-  function updateTimerDisplay() {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    
-    let timeStr = "";
-    if (hours > 0) {
-      timeStr = `${hours}h ${minutes}m ${seconds}s`;
-    } else {
-      timeStr = `${minutes}m ${seconds}s`;
-    }
-    
-    badge_element.textContent = timeStr;
-  }
-  
-  updateTimerDisplay();
-  
-  timers[modIndex] = setInterval(() => {
-    totalSeconds--;
-    
-    if (totalSeconds <= 0) {
-      clearInterval(timers[modIndex]);
-      badge_element.textContent = "NEW UPDATE!";
-      badge_element.classList.remove("update-label", "new-label");
-      badge_element.classList.add("update-label");
-      return;
-    }
-    
-    updateTimerDisplay();
-  }, 1000);
-}
-
-// ============================================
-// MENU
-// ============================================
-
-function toggleMenu() {
-  const menu = document.getElementById("menu");
-  menu.classList.toggle("active");
-}
-
-// Close menu when clicking outside
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("menu");
-  const menuBtn = document.querySelector(".menu-btn");
-  
-  if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
-    menu.classList.remove("active");
-  }
-});
-
-// Close menu when clicking a link
-document.querySelectorAll(".menu a").forEach(link => {
-  link.addEventListener("click", () => {
-    document.getElementById("menu").classList.remove("active");
-  });
-});
-
-// ============================================
-// UNAVAILABLE MOD
-// ============================================
-
-function notAvailable(e) {
-  e.preventDefault();
-  alert("This mod is not available");
-}
-
-// ============================================
-// DOWNLOAD WITH VERIFICATION (OPTIONAL)
-// ============================================
-
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("download") && e.target.tagName !== "BUTTON") return;
-  if (!e.target.classList.contains("download")) return;
-  
-  const card = e.target.closest(".card");
-  if (!card) return;
-  
-  const modIndex = card.dataset.modIndex;
-  if (modIndex === undefined) return; // Links don't have modIndex
-  
-  const mod = MODS_CONFIG[modIndex];
-  if (!mod || mod.status === "unavailable") return;
-  
-  e.preventDefault();
-  
+  const btn = card.querySelector(".download");
   const overlay = card.querySelector(".overlay");
-  overlay.style.display = "flex";
-  overlay.innerHTML = `
-    <div>
-      Downloading ${mod.name}...
-      <div class="spinner"></div>
-    </div>
-  `;
-
-  setTimeout(() => showVerify(card, mod), random(3000, 6000));
-});
-
-function showVerify(card, mod) {
-  const overlay = card.querySelector(".overlay");
+  const link = card.querySelector("a") ? card.querySelector("a").href : "#";
 
   let ytDone = false;
   let igDone = false;
 
-  overlay.innerHTML = `
-    <div class="verify-box">
-      <div class="verify-title">Verification</div>
-      <hr style="margin:10px 0;">
-      <button id="ytBtn">Subscribe on YouTube</button>
-      <div class="status" id="ytStatus">⏳</div>
-      <br>
-      <button id="igBtn">Follow on Instagram</button>
-      <div class="status" id="igStatus">⏳</div>
-      <br>
-      <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;cursor:pointer;">
-        🔒 Locked
-      </button>
-    </div>
-  `;
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
 
-  document.getElementById("ytBtn").onclick = () => {
-    window.open("https://www.youtube.com/@T.B6", "_blank");
-    setTimeout(() => {
-      ytDone = true;
-      document.getElementById("ytStatus").innerHTML = "✔";
-      checkUnlock();
-    }, random(5000, 12000));
-  };
+    overlay.style.display = "flex";
 
-  document.getElementById("igBtn").onclick = () => {
-    window.open("https://www.instagram.com/t.bagar.io/", "_blank");
-    setTimeout(() => {
-      igDone = true;
-      document.getElementById("igStatus").innerHTML = "✔";
-      checkUnlock();
-    }, random(5000, 12000));
-  };
-
-  const unlockBtn = document.getElementById("unlockBtn");
-
-  function checkUnlock() {
-    if (ytDone && igDone) {
-      unlockBtn.style.background = "#22c55e";
-      unlockBtn.innerHTML = "🔓 Unlock";
-      unlockBtn.onclick = () => startDownload(card, mod);
-    }
-  }
-}
-
-function startDownload(card, mod) {
-  const overlay = card.querySelector(".overlay");
-  let texts = ["Downloading...", "Please wait...", "Preparing file..."];
-  let i = 0;
-
-  overlay.innerHTML = `
-    <div>
-      <div id="dlText">${texts[0]}</div>
-      <div class="spinner"></div>
-    </div>
-  `;
-
-  let interval = setInterval(() => {
-    i = (i + 1) % texts.length;
-    document.getElementById("dlText").innerText = texts[i];
-  }, 2000);
-
-  setTimeout(() => {
-    clearInterval(interval);
     overlay.innerHTML = `
-      <div style="text-align:center;">
-        ✔ Download complete
+      <div>
+        Download ${getModName(card)}...
+        <div class="spinner"></div>
       </div>
     `;
 
+    setTimeout(showVerify, random(3000,6000));
+  });
+
+  function showVerify(){
+
+    overlay.innerHTML = `
+      <div class="verify-box">
+
+        <div class="verify-title">Verification</div>
+        <hr style="margin:10px 0;">
+
+        <button id="ytBtn">Subscribe on YouTube</button>
+        <div class="status" id="ytStatus">⏳</div>
+
+        <br>
+
+        <button id="igBtn">Follow on Instagram</button>
+        <div class="status" id="igStatus">⏳</div>
+
+        <br>
+
+        <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;">
+          🔒 Locked
+        </button>
+
+      </div>
+    `;
+
+    document.getElementById("ytBtn").onclick = () => {
+      window.open("https://www.youtube.com/@T.B6","_blank");
+
+      setTimeout(() => {
+        ytDone = true;
+        document.getElementById("ytStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
+
+    document.getElementById("igBtn").onclick = () => {
+      window.open("https://www.instagram.com/t.bagar.io/","_blank");
+
+      setTimeout(() => {
+        igDone = true;
+        document.getElementById("igStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
+    };
+
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    unlockBtn.onclick = () => {
+      alert("Complete YouTube and Instagram verification first.");
+    };
+
+    function checkUnlock(){
+      if(ytDone && igDone){
+        unlockBtn.style.background = "#22c55e";
+        unlockBtn.innerHTML = "🔓 Unlock";
+        unlockBtn.onclick = startDownload;
+      }
+    }
+
+  }
+
+  function startDownload(){
+
+    let texts = [
+      "Downloading...",
+      "Please wait...",
+      "Preparing file..."
+    ];
+
+    let i = 0;
+
+    overlay.innerHTML = `
+      <div>
+        <div id="dlText">${texts[0]}</div>
+        <div class="spinner"></div>
+      </div>
+    `;
+
+    let interval = setInterval(() => {
+      i = (i + 1) % texts.length;
+      document.getElementById("dlText").innerText = texts[i];
+    }, 2000);
+
     setTimeout(() => {
-      window.location.href = mod.link;
-    }, 1500);
-  }, random(10000, 20000));
+      clearInterval(interval);
+
+      overlay.innerHTML = `
+        <div style="text-align:center;">
+          ✔ Download complete
+        </div>
+      `;
+
+      setTimeout(() => {
+        window.location.href = link;
+      }, 1500);
+
+    }, random(10000,20000));
+
+  }
+
+});
+
+function getModName(card){
+  let infos = card.querySelectorAll(".info");
+  return infos.length ? infos[2].innerText : "Mod";
 }
 
-function random(min, max) {
-  return Math.random() * (max - min) + min;
+function random(min,max){
+  return Math.random()*(max-min)+min;
 }
-
+  
 </script>
-
+  
 </body>
 
 </html>
