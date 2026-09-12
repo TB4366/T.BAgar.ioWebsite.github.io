@@ -133,6 +133,7 @@ padding:14px 30px;
 background:rgba(0,0,0,.5);
 backdrop-filter:blur(15px);
 border-bottom:1px solid #2563eb;
+position:relative;
 }
 
 .left-header{
@@ -177,7 +178,7 @@ color:white;
 /* HAMBURGER MENU */
 
 .menu{
-position:absolute;
+position:fixed;
 right:30px;
 top:75px;
 background:#020617;
@@ -185,8 +186,15 @@ border-radius:12px;
 overflow:hidden;
 z-index:1000;
 box-shadow:0 0 25px black;
-min-width:200px;
+min-width:220px;
 border:1px solid #2563eb;
+max-height:90vh;
+overflow-y:auto;
+display:none;
+}
+
+.menu.active{
+display:block;
 }
 
 .menu a{
@@ -196,6 +204,7 @@ color:white;
 text-decoration:none;
 border-bottom:1px solid #1e3a8a;
 transition: background 0.3s;
+white-space:nowrap;
 }
 
 .menu a:last-child{
@@ -210,6 +219,7 @@ background:#2563eb;
 
 header h1{
 text-align:center;
+flex:1;
 }
 
 /* GRID */
@@ -271,10 +281,12 @@ padding:6px 10px;
 display:flex;
 gap:8px;
 align-items:center;
+flex-wrap:wrap;
 }
 
 .download{
 flex:1;
+min-width:100px;
 padding:10px;
 background:#2563eb;
 border:none;
@@ -304,11 +316,12 @@ font-weight:bold;
 display:flex;
 align-items:center;
 gap:6px;
-min-width:150px;
+min-width:140px;
 justify-content:center;
 cursor:default;
-font-size:0.9rem;
+font-size:0.85rem;
 animation: statusGlow 2s ease-in-out infinite;
+white-space:nowrap;
 }
 
 .status-indicator.available{
@@ -726,7 +739,7 @@ function initializeTimer(modIndex, timerConfig) {
 
 function toggleMenu() {
   const menu = document.getElementById("menu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+  menu.classList.toggle("active");
 }
 
 // Close menu when clicking outside
@@ -735,8 +748,15 @@ document.addEventListener("click", (e) => {
   const menuBtn = document.querySelector(".menu-btn");
   
   if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
-    menu.style.display = "none";
+    menu.classList.remove("active");
   }
+});
+
+// Close menu when clicking a link
+document.querySelectorAll(".menu a").forEach(link => {
+  link.addEventListener("click", () => {
+    document.getElementById("menu").classList.remove("active");
+  });
 });
 
 // ============================================
