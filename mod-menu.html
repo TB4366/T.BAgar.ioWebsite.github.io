@@ -252,7 +252,7 @@ object-fit:cover;
 border-radius:10px;
 }
 
-/* STATUS LABEL - UPDATE */
+/* STATUS LABEL - UPDATE/NEW */
 
 .status-label{
 position:absolute;
@@ -273,6 +273,16 @@ z-index:10;
 .status-label.timer{
 font-size:11px;
 padding:6px 10px;
+}
+
+.status-label.update-label{
+background:#ef4444;
+color:white;
+}
+
+.status-label.new-label{
+background:#22c55e;
+color:white;
 }
 
 /* BUTTONS CONTAINER */
@@ -543,7 +553,8 @@ const MODS_CONFIG = [
     date: "05-09-2026",
     name: "Update Shark Mod",
     status: "available", // available, processing, unavailable
-    updateTimer: null, // null or { minutes: 5, seconds: 30, showLabel: "UPDATE" }
+    badge: null, // null, "UPDATE", or "NEW"
+    updateTimer: null, // null or { minutes: 5, seconds: 30 }
   },
   {
     img: "4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg",
@@ -552,6 +563,7 @@ const MODS_CONFIG = [
     date: "15-01-2026",
     name: "T.B Mod (Kabrah) Unlock Skin",
     status: "unavailable",
+    badge: null,
     updateTimer: null,
   },
   {
@@ -561,7 +573,8 @@ const MODS_CONFIG = [
     date: "05-07-2026",
     name: "Bite Skin Mod",
     status: "available",
-    updateTimer: { minutes: 2, seconds: 15, showLabel: "UPDATE" }, // Example: 2min 15sec until UPDATE
+    badge: "UPDATE", // Voeg UPDATE badge toe
+    updateTimer: { minutes: 2, seconds: 15 },
   },
   {
     img: "IMG_6587.png",
@@ -570,7 +583,8 @@ const MODS_CONFIG = [
     date: "05-07-2026",
     name: "Kahraba Mod",
     status: "processing",
-    updateTimer: { hours: 1, minutes: 30, seconds: 0, showLabel: "NEW UPDATE" },
+    badge: "UPDATE", // Voeg UPDATE badge toe
+    updateTimer: { hours: 1, minutes: 30, seconds: 0 },
   },
   {
     img: "IMG_9406.jpeg",
@@ -579,6 +593,7 @@ const MODS_CONFIG = [
     date: "05-07-2026",
     name: "Shark Mod NEW Android",
     status: "available",
+    badge: "NEW", // Voeg NEW badge toe
     updateTimer: null,
   },
   {
@@ -588,6 +603,7 @@ const MODS_CONFIG = [
     date: "05-07-2026",
     name: "Kahraba + Shark Mod",
     status: "available",
+    badge: null,
     updateTimer: null,
   },
   {
@@ -597,6 +613,7 @@ const MODS_CONFIG = [
     date: "05-07-2026",
     name: "Myu mod",
     status: "available",
+    badge: null,
     updateTimer: null,
   },
   {
@@ -606,6 +623,7 @@ const MODS_CONFIG = [
     date: "03-08-2025",
     name: "Spotify Premium Mod",
     status: "available",
+    badge: null,
     updateTimer: null,
   },
 ];
@@ -634,11 +652,13 @@ function createModCard(mod, index) {
   card.dataset.status = mod.status;
   card.dataset.modIndex = index;
 
-  let statusLabelHTML = "";
-  if (mod.updateTimer) {
-    statusLabelHTML = `
-      <div class="status-label timer" id="timer-${index}">
-        ${mod.updateTimer.showLabel}
+  let badgeHTML = "";
+  if (mod.badge) {
+    const badgeClass = mod.badge === "UPDATE" ? "update-label" : "new-label";
+    const badgeText = mod.badge === "UPDATE" ? "UPDATE" : "NEW";
+    badgeHTML = `
+      <div class="status-label ${badgeClass}" id="badge-${index}">
+        ${badgeText}
       </div>
     `;
   }
@@ -660,7 +680,7 @@ function createModCard(mod, index) {
     : `<a href="${mod.link}"><button class="download">Download</button></a>`;
 
   const html = `
-    ${statusLabelHTML}
+    ${badgeHTML}
     <img src="${mod.img}">
     <div class="button-container">
       ${downloadBtn}
@@ -678,7 +698,7 @@ function createModCard(mod, index) {
 
   // Initialize timer if exists
   if (mod.updateTimer) {
-    initializeTimer(index, mod.updateTimer);
+    initializeTimer(index, mod.updateTimer, mod.badge);
   }
 
   return card;
@@ -690,12 +710,12 @@ function createModCard(mod, index) {
 
 const timers = {};
 
-function initializeTimer(modIndex, timerConfig) {
+function initializeTimer(modIndex, timerConfig, badge) {
   let totalSeconds = (timerConfig.hours || 0) * 3600 + 
                      (timerConfig.minutes || 0) * 60 + 
                      (timerConfig.seconds || 0);
   
-  const timerLabel = document.getElementById(`timer-${modIndex}`);
+  const badge_element = document.getElementById(`badge-${modIndex}`);
   
   function updateTimerDisplay() {
     const hours = Math.floor(totalSeconds / 3600);
@@ -709,7 +729,7 @@ function initializeTimer(modIndex, timerConfig) {
       timeStr = `${minutes}m ${seconds}s`;
     }
     
-    timerLabel.textContent = timeStr;
+    badge_element.textContent = timeStr;
   }
   
   updateTimerDisplay();
@@ -719,13 +739,9 @@ function initializeTimer(modIndex, timerConfig) {
     
     if (totalSeconds <= 0) {
       clearInterval(timers[modIndex]);
-      timerLabel.textContent = timerConfig.showLabel === "UPDATE" 
-        ? "NEW UPDATE!" 
-        : "NEW UPDATE!";
-      timerLabel.style.animation = "none";
-      setTimeout(() => {
-        timerLabel.style.animation = "";
-      }, 10);
+      badge_element.textContent = "NEW UPDATE!";
+      badge_element.classList.remove("update-label", "new-label");
+      badge_element.classList.add("update-label");
       return;
     }
     
