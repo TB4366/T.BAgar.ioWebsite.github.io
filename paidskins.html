@@ -1,314 +1,2783 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Agar.io Skins — Xsolla buy flow (test)</title>
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
+<title>T.B Agar.io — Shop</title>
+
+<link
+  rel="icon"
+  type="image/jpeg"
+  href="/IMG_0561.jpeg"
+>
+
+<link
+  rel="apple-touch-icon"
+  href="/IMG_0561.jpeg"
+>
+
 <style>
-  :root{--bg:#000;--card:#0e0e10;--accent:#1683ff;--ok:#16a34a;--muted:#9bd1ff}
-  body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:1200px;margin:18px auto;padding:12px}
-  h1{font-size:20px;margin:6px 0 14px;text-align:center}
-  #uidBar{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px}
-  #uidBar input{min-width:340px;padding:8px;border-radius:6px;border:1px solid #21303a;background:#07131a;color:var(--muted)}
-  #uidBar button{padding:8px 12px;border-radius:6px;border:0;background:var(--accent);color:#fff;cursor:pointer}
-  #uidStatus{font-size:13px;margin-left:8px;color:var(--muted)}
-  #skins{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
-  .card{background:var(--card);border-radius:8px;padding:8px;text-align:center;border:1px solid #222;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-  .card img{width:88px;height:88px;border-radius:50%;object-fit:cover;margin-top:6px}
-  .card .name{margin-top:8px;font-size:13px}
-  .note{color:#ff6b6b;font-weight:700;margin-top:8px}
-  .buy{margin-top:8px;padding:8px 12px;border-radius:8px;border:0;background:var(--ok);color:#000;font-weight:700;cursor:pointer}
-  .buy.disabled{background:#666;color:#fff;cursor:not-allowed}
-  .pages{display:flex;gap:8px;justify-content:center;margin:16px 0}
-  .page-btn{background:var(--accent);color:#fff;border:0;padding:6px 10px;border-radius:6px;cursor:pointer}
-  .socials{display:flex;gap:8px;justify-content:center;margin-top:6px}
-  .hint{font-size:13px;color:var(--muted);text-align:center;margin-top:8px}
-  pre{background:#071217;color:#9bd1ff;padding:8px;border-radius:6px;overflow:auto}
+
+/* =========================
+   RESET
+========================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#020617;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
+}
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
+body::before{
+  content:"";
+
+  position:fixed;
+
+  width:600px;
+  height:600px;
+
+  background:
+    radial-gradient(
+      circle,
+      #0ea5e9,
+      transparent 70%
+    );
+
+  top:-250px;
+  right:-200px;
+
+  opacity:.18;
+
+  z-index:-1;
+
+  pointer-events:none;
+}
+
+
+/* =========================
+   LOADER
+========================= */
+
+#loader{
+
+  position:fixed;
+
+  inset:0;
+
+  background:#020617;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:14px;
+
+  font-size:20px;
+
+  z-index:99999;
+
+  text-align:center;
+
+}
+
+.spinner{
+
+  width:40px;
+  height:40px;
+
+  border:5px solid
+    rgba(255,255,255,.15);
+
+  border-top:5px solid
+    #38bdf8;
+
+  border-radius:50%;
+
+  animation:spin 1s linear infinite;
+
+}
+
+@keyframes spin{
+
+  to{
+    transform:rotate(360deg);
+  }
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+
+  position:sticky;
+
+  top:0;
+
+  z-index:3000;
+
+  width:100%;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    18px
+    10px
+    18px;
+
+  background:
+    rgba(2,6,23,.94);
+
+  backdrop-filter:blur(15px);
+
+  -webkit-backdrop-filter:blur(15px);
+
+  border-bottom:
+    1px solid
+    rgba(14,165,233,.25);
+
+}
+
+.left-header{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  min-width:0;
+
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-link{
+
+  display:flex;
+
+  align-items:center;
+
+  text-decoration:none;
+
+}
+
+.logo{
+
+  width:48px;
+  height:48px;
+
+  border-radius:12px;
+
+  overflow:hidden;
+
+  flex-shrink:0;
+
+  box-shadow:
+    0 5px 25px
+    rgba(14,165,233,.2);
+
+  transition:
+    transform .2s ease;
+
+}
+
+.logo-link:hover .logo{
+
+  transform:scale(1.05);
+
+}
+
+.logo img{
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+}
+
+.site-title{
+
+  font-size:20px;
+
+  font-weight:800;
+
+  color:#fff;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+}
+
+
+/* =========================
+   MENU BUTTON
+========================= */
+
+.menu-btn{
+
+  width:46px;
+  height:46px;
+
+  border:
+    1px solid
+    rgba(14,165,233,.25);
+
+  background:#071226;
+
+  border-radius:12px;
+
+  color:#fff;
+
+  font-size:24px;
+
+  cursor:pointer;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  transition:.2s ease;
+
+}
+
+.menu-btn:hover{
+
+  background:#0b203d;
+
+  border-color:
+    rgba(14,165,233,.5);
+
+}
+
+.menu-btn:active{
+
+  transform:scale(.96);
+
+}
+
+
+/* =========================
+   SIDE MENU
+========================= */
+
+.menu{
+
+  position:fixed;
+
+  top:0;
+
+  right:-330px;
+
+  width:310px;
+
+  max-width:88vw;
+
+  height:100vh;
+
+  background:
+    linear-gradient(
+      180deg,
+      #050d1c 0%,
+      #020617 100%
+    );
+
+  z-index:5000;
+
+  padding:
+    calc(25px + env(safe-area-inset-top))
+    20px
+    calc(25px + env(safe-area-inset-bottom));
+
+  border-left:
+    1px solid
+    rgba(14,165,233,.22);
+
+  overflow-y:auto;
+
+  transition:right .3s ease;
+
+  box-shadow:
+    -20px 0 50px
+    rgba(0,0,0,.35);
+
+}
+
+.menu.open{
+
+  right:0;
+
+}
+
+
+/* =========================
+   MENU CLOSE
+========================= */
+
+.menu-close{
+
+  width:100%;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  margin-bottom:22px;
+
+}
+
+.menu-brand{
+
+  font-size:17px;
+
+  font-weight:800;
+
+  letter-spacing:.5px;
+
+}
+
+.menu-brand span{
+
+  color:#38bdf8;
+
+}
+
+.menu-close button{
+
+  width:40px;
+  height:40px;
+
+  border:
+    1px solid
+    rgba(14,165,233,.18);
+
+  background:#08152a;
+
+  color:#fff;
+
+  border-radius:10px;
+
+  font-size:25px;
+
+  cursor:pointer;
+
+}
+
+
+/* =========================
+   MENU LABEL
+========================= */
+
+.menu-label{
+
+  margin:22px 4px 9px;
+
+  color:#64748b;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:1.5px;
+
+  text-transform:uppercase;
+
+}
+
+
+/* =========================
+   MENU LINKS
+========================= */
+
+.menu a{
+
+  display:flex;
+
+  align-items:center;
+
+  width:100%;
+
+  padding:14px;
+
+  margin:7px 0;
+
+  border-radius:12px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  background:#08152a;
+
+  border:
+    1px solid
+    rgba(14,165,233,.12);
+
+  font-weight:700;
+
+  transition:.2s ease;
+
+}
+
+.menu a:hover{
+
+  background:#0b203d;
+
+  border-color:
+    rgba(14,165,233,.4);
+
+  transform:translateX(2px);
+
+}
+
+
+/* =========================
+   SOCIALS
+========================= */
+
+.menu-social-title{
+
+  margin:25px 4px 10px;
+
+  color:#64748b;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:1.5px;
+
+  text-transform:uppercase;
+
+}
+
+.menu-socials{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:8px;
+
+}
+
+.menu-social{
+
+  min-height:58px;
+
+  display:flex !important;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+
+  border-radius:12px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  background:#08152a;
+
+  border:
+    1px solid
+    rgba(14,165,233,.15);
+
+  font-size:13px;
+
+  font-weight:800;
+
+  transition:.2s ease;
+
+}
+
+.menu-social:hover{
+
+  background:#0b203d;
+
+  border-color:
+    rgba(14,165,233,.4);
+
+  transform:translateY(-2px);
+
+}
+
+
+/* =========================
+   MENU FOOTER
+========================= */
+
+.menu-footer{
+
+  margin-top:22px;
+
+  padding-top:18px;
+
+  border-top:
+    1px solid
+    rgba(14,165,233,.1);
+
+  color:#64748b;
+
+  font-size:12px;
+
+  text-align:center;
+
+}
+
+
+/* =========================
+   MENU OVERLAY
+========================= */
+
+.menu-overlay{
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(0,0,0,.62);
+
+  backdrop-filter:blur(2px);
+
+  z-index:4500;
+
+  display:none;
+
+}
+
+.menu-overlay.show{
+
+  display:block;
+
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+
+  width:100%;
+
+  max-width:1200px;
+
+  margin:0 auto;
+
+  padding:
+    45px 18px
+    calc(55px + env(safe-area-inset-bottom));
+
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+
+  position:relative;
+
+  text-align:center;
+
+  margin-bottom:45px;
+
+  padding:40px 20px;
+
+  border:
+    1px solid
+    rgba(14,165,233,.12);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14,165,233,.07),
+      rgba(7,18,38,.75)
+    );
+
+  overflow:hidden;
+
+}
+
+.hero::before{
+
+  content:"";
+
+  position:absolute;
+
+  width:240px;
+  height:240px;
+
+  background:
+    rgba(14,165,233,.12);
+
+  filter:blur(80px);
+
+  border-radius:50%;
+
+  top:-120px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+}
+
+.hero-content{
+
+  position:relative;
+
+  z-index:1;
+
+}
+
+.hero h1{
+
+  font-size:
+    clamp(38px,7vw,58px);
+
+  font-weight:900;
+
+  letter-spacing:1px;
+
+  margin-bottom:12px;
+
+}
+
+.hero h1 span{
+
+  color:#38bdf8;
+
+}
+
+.hero p{
+
+  color:#94a3b8;
+
+  font-size:16px;
+
+  line-height:1.6;
+
+  max-width:650px;
+
+  margin:auto;
+
+}
+
+
+/* =========================
+   SHOP TITLE
+========================= */
+
+.section-header{
+
+  text-align:center;
+
+  margin-bottom:25px;
+
+}
+
+.section-header h2{
+
+  font-size:28px;
+
+  font-weight:900;
+
+  margin-bottom:8px;
+
+}
+
+.section-header h2 span{
+
+  color:#38bdf8;
+
+}
+
+.section-header p{
+
+  color:#64748b;
+
+  font-size:14px;
+
+}
+
+
+/* =========================
+   PRODUCT GRID
+========================= */
+
+#products{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px,1fr)
+    );
+
+  gap:20px;
+
+}
+
+
+/* =========================
+   PRODUCT CARD
+========================= */
+
+.product-card{
+
+  position:relative;
+
+  background:
+    linear-gradient(
+      145deg,
+      #08152a,
+      #071226
+    );
+
+  border:
+    1px solid
+    rgba(14,165,233,.18);
+
+  border-radius:18px;
+
+  padding:14px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:11px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.22);
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+
+}
+
+.product-card:hover{
+
+  transform:translateY(-4px);
+
+  border-color:
+    rgba(14,165,233,.4);
+
+  box-shadow:
+    0 15px 40px
+    rgba(0,0,0,.32);
+
+}
+
+
+/* =========================
+   PRODUCT IMAGE
+========================= */
+
+.product-image{
+
+  width:100%;
+
+  aspect-ratio:1/1;
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #0b203d,
+      #020617
+    );
+
+  border:
+    1px solid
+    rgba(14,165,233,.12);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  overflow:hidden;
+
+}
+
+.product-image img{
+
+  width:100%;
+
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+}
+
+.image-placeholder{
+
+  color:#64748b;
+
+  font-size:13px;
+
+  font-weight:bold;
+
+}
+
+
+/* =========================
+   PRODUCT INFO
+========================= */
+
+.product-name{
+
+  font-size:18px;
+
+  font-weight:900;
+
+  color:#fff;
+
+}
+
+.product-description{
+
+  color:#94a3b8;
+
+  font-size:13px;
+
+  line-height:1.5;
+
+  min-height:38px;
+
+}
+
+
+/* =========================
+   PRICE
+========================= */
+
+.product-price{
+
+  display:flex;
+
+  align-items:baseline;
+
+  gap:5px;
+
+  margin-top:2px;
+
+}
+
+.price-currency{
+
+  color:#38bdf8;
+
+  font-size:15px;
+
+  font-weight:800;
+
+}
+
+.price-value{
+
+  font-size:25px;
+
+  font-weight:900;
+
+  color:#fff;
+
+}
+
+
+/* =========================
+   BUY BUTTON
+========================= */
+
+.buy-button{
+
+  width:100%;
+
+  padding:12px 15px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:#2563eb;
+
+  color:#fff;
+
+  font-weight:900;
+
+  font-size:14px;
+
+  cursor:pointer;
+
+  transition:
+    background .2s ease,
+    transform .2s ease;
+
+}
+
+.buy-button:hover{
+
+  background:#1d4ed8;
+
+  transform:translateY(-1px);
+
+}
+
+.buy-button:active{
+
+  transform:scale(.98);
+
+}
+
+.buy-button.disabled{
+
+  background:#475569;
+
+  cursor:not-allowed;
+
+  transform:none;
+
+}
+
+
+/* =========================
+   AVAILABLE BADGE
+========================= */
+
+.product-badge{
+
+  position:absolute;
+
+  top:24px;
+
+  left:24px;
+
+  padding:6px 9px;
+
+  border-radius:7px;
+
+  background:#16a34a;
+
+  color:#fff;
+
+  font-size:11px;
+
+  font-weight:900;
+
+}
+
+.product-badge.unavailable{
+
+  background:#475569;
+
+}
+
+
+/* =========================
+   POPUP
+========================= */
+
+#buyPopup{
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+    rgba(0,0,0,.78);
+
+  backdrop-filter:blur(4px);
+
+  z-index:9999;
+
+  display:none;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:20px;
+
+}
+
+.popup-box{
+
+  width:
+    min(440px,100%);
+
+  background:
+    linear-gradient(
+      145deg,
+      #0b172b,
+      #020617
+    );
+
+  border:
+    1px solid
+    rgba(14,165,233,.35);
+
+  border-radius:20px;
+
+  padding:25px;
+
+  box-shadow:
+    0 20px 70px
+    rgba(0,0,0,.6);
+
+  text-align:center;
+
+}
+
+.popup-box h2{
+
+  font-size:24px;
+
+  margin-bottom:8px;
+
+}
+
+.popup-box p{
+
+  color:#94a3b8;
+
+  font-size:14px;
+
+  line-height:1.5;
+
+  margin-bottom:18px;
+
+}
+
+.popup-price{
+
+  color:#38bdf8;
+
+  font-size:28px;
+
+  font-weight:900;
+
+  margin-bottom:20px;
+
+}
+
+.popup-buttons{
+
+  display:flex;
+
+  gap:10px;
+
+}
+
+.popup-buttons button{
+
+  flex:1;
+
+  padding:12px;
+
+  border:none;
+
+  border-radius:10px;
+
+  font-weight:bold;
+
+  cursor:pointer;
+
+}
+
+.confirm-button{
+
+  background:#2563eb;
+
+  color:#fff;
+
+}
+
+.close-button{
+
+  background:#334155;
+
+  color:#fff;
+
+}
+
+
+/* =========================
+   UID BOX
+========================= */
+
+.uid-section{
+
+  max-width:700px;
+
+  margin:0 auto 35px;
+
+  padding:20px;
+
+  background:#071226;
+
+  border:
+    1px solid
+    rgba(14,165,233,.15);
+
+  border-radius:16px;
+
+}
+
+.uid-title{
+
+  font-size:16px;
+
+  font-weight:800;
+
+  margin-bottom:8px;
+
+}
+
+.uid-description{
+
+  color:#64748b;
+
+  font-size:13px;
+
+  line-height:1.5;
+
+  margin-bottom:14px;
+
+}
+
+.uid-row{
+
+  display:flex;
+
+  gap:8px;
+
+}
+
+.uid-row input{
+
+  flex:1;
+
+  min-width:0;
+
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(14,165,233,.2);
+
+  border-radius:10px;
+
+  background:#020617;
+
+  color:#fff;
+
+  outline:none;
+
+}
+
+.uid-row input:focus{
+
+  border-color:#38bdf8;
+
+}
+
+.uid-row button{
+
+  padding:12px 16px;
+
+  border:none;
+
+  border-radius:10px;
+
+  background:#2563eb;
+
+  color:#fff;
+
+  font-weight:bold;
+
+  cursor:pointer;
+
+}
+
+#uidStatus{
+
+  margin-top:9px;
+
+  color:#64748b;
+
+  font-size:12px;
+
+}
+
+
+/* =========================
+   DIVIDER
+========================= */
+
+.section-line{
+
+  border:none;
+
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #2563eb,
+      transparent
+    );
+
+  margin:45px 0;
+
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+
+  text-align:center;
+
+  padding:
+    30px 18px
+    calc(30px + env(safe-area-inset-bottom));
+
+  color:#64748b;
+
+  border-top:
+    1px solid
+    rgba(14,165,233,.1);
+
+}
+
+footer p{
+
+  margin:5px 0;
+
+}
+
+footer a{
+
+  color:#38bdf8;
+
+  text-decoration:none;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  main{
+
+    padding-top:28px;
+
+  }
+
+  #products{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .hero{
+
+    padding:30px 18px;
+
+  }
+
+  .hero h1{
+
+    font-size:36px;
+
+  }
+
+  .uid-row{
+
+    flex-direction:column;
+
+  }
+
+  .uid-row button{
+
+    width:100%;
+
+  }
+
+}
+
+@media(max-width:430px){
+
+  header{
+
+    padding-left:14px;
+
+    padding-right:14px;
+
+  }
+
+  .logo{
+
+    width:44px;
+
+    height:44px;
+
+  }
+
+  .site-title{
+
+    font-size:17px;
+
+  }
+
+  .menu{
+
+    width:290px;
+
+  }
+
+  .menu-socials{
+
+    grid-template-columns:1fr;
+
+  }
+
+}
+
+
+/* =========================
+   DESKTOP
+========================= */
+
+@media(min-width:701px){
+
+  #products{
+
+    grid-template-columns:
+      repeat(4,minmax(0,1fr));
+
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
-  <div class="wrap">
-    <h1>Agar.io Skins — Xsolla buy flow (test)</h1>
 
-    <!-- UID input -->
-    <div id="uidBar">
-      <input id="agario_uid_input" placeholder="Paste your encoded Agar.io payment UID (xsolla token) here" aria-label="Encoded UID">
-      <button id="saveUidBtn">Save UID</button>
-      <span id="uidStatus">Not logged in</span>
+
+<!-- =========================
+     LOADER
+========================= -->
+
+<div id="loader">
+
+  Loading T.B Shop...
+
+  <div class="spinner"></div>
+
+</div>
+
+
+<!-- =========================
+     MENU OVERLAY
+========================= -->
+
+<div
+  class="menu-overlay"
+  id="menu-overlay"
+  onclick="closeMenu()">
+</div>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+  <div class="left-header">
+
+    <a
+      class="logo-link"
+      href="https://www.youtube.com/@T.B6"
+      target="_blank"
+      rel="noopener"
+      aria-label="Open T.B Agar.io YouTube channel">
+
+      <div class="logo">
+
+        <img
+          src="/IMG_0561.jpeg"
+          alt="T.B Agar.io">
+
+      </div>
+
+    </a>
+
+    <div class="site-title">
+
+      T.B Agar.io
+
     </div>
 
-    <!-- Optional quick admin: set mapping for test (runtime only) -->
-    <div style="text-align:center;margin-bottom:12px">
-      <button id="openAdmin">Open Quick Mapping (runtime)</button>
-    </div>
-
-    <!-- skins grid -->
-    <div id="skins">Loading skins...</div>
-    <div class="pages" id="pages" role="navigation" aria-label="Pagination"></div>
-
-    <div class="hint">
-      Testmodus: de client ondersteunt directe secure.xsolla.com paystation URLs (snelle test) of een backend endpoint /xshop/checkout (aanbevolen). Zie instructies onderaan.
-    </div>
-
-    <div class="socials">
-      <a href="https://www.youtube.com" target="_blank" style="color:#fff;text-decoration:none;background:#ff0000;padding:8px 12px;border-radius:6px">YouTube</a>
-      <a href="https://instagram.com" target="_blank" style="color:#fff;text-decoration:none;background:#e1306c;padding:8px 12px;border-radius:6px">Instagram</a>
-      <a href="https://discord.gg" target="_blank" style="color:#fff;text-decoration:none;background:#5865f2;padding:8px 12px;border-radius:6px">Discord</a>
-    </div>
-
-    <hr style="border:0;height:1px;background:#111;margin:18px 0">
-
-    <h3 style="margin:6px 0">Dev / Debug console (safe to share)</h3>
-    <pre id="devlog" aria-live="polite">Console logs will appear here.</pre>
-
-    <div style="margin-top:12px;font-size:13px;color:#999">
-      <strong>Opmerking:</strong> voor productie gebruik altijd de backend flow (server bewaart merchant secret). Directe paystation URLs bevatten gevoelige tokens.
-    </div>
   </div>
 
+
+  <button
+    class="menu-btn"
+    onclick="toggleMenu()"
+    aria-label="Open menu">
+
+    ☰
+
+  </button>
+
+</header>
+
+
+<!-- =========================
+     SIDE MENU
+========================= -->
+
+<div
+  class="menu"
+  id="menu">
+
+
+  <div class="menu-close">
+
+    <div class="menu-brand">
+
+      T.B <span>AGAR.IO</span>
+
+    </div>
+
+    <button
+      onclick="closeMenu()"
+      aria-label="Close menu">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <div class="menu-label">
+
+    Navigation
+
+  </div>
+
+
+  <a href="/index.html">
+
+    Home
+
+  </a>
+
+
+  <a href="/custom-skins.html">
+
+    Custom Skins
+
+  </a>
+
+
+  <a href="/key-access.html">
+
+    Key Access
+
+  </a>
+
+
+  <a href="/mod-menu.html">
+
+    Mod Menu
+
+  </a>
+
+
+  <a href="/paidskins.html">
+
+    Paid Skins
+
+  </a>
+
+
+  <a href="/buy-account.html">
+
+    Buy Account
+
+  </a>
+
+
+  <a href="/agar.io-skins.html">
+
+    Agar.io Skins
+
+  </a>
+
+
+  <div class="menu-label">
+
+    External
+
+  </div>
+
+
+  <a
+    href="https://biteyt.com/bots"
+    target="_blank"
+    rel="noopener">
+
+    Bite Bots Panel
+
+  </a>
+
+
+  <a
+    href="https://kahraba.in"
+    target="_blank"
+    rel="noopener">
+
+    Kahraba Website
+
+  </a>
+
+
+  <div class="menu-social-title">
+
+    Follow T.B Agar.io
+
+  </div>
+
+
+  <div class="menu-socials">
+
+
+    <a
+      class="menu-social"
+      href="https://discord.gg/qhuXPrVzBx"
+      target="_blank"
+      rel="noopener">
+
+      Discord
+
+    </a>
+
+
+    <a
+      class="menu-social"
+      href="https://www.youtube.com/@T.B6"
+      target="_blank"
+      rel="noopener">
+
+      YouTube
+
+    </a>
+
+
+    <a
+      class="menu-social"
+      href="https://www.instagram.com/t.bagar.io/"
+      target="_blank"
+      rel="noopener">
+
+      Instagram
+
+    </a>
+
+
+  </div>
+
+
+  <div class="menu-footer">
+
+    T.B Agar.io © 2026
+
+  </div>
+
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main>
+
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <h1>
+
+        T.B <span>SHOP</span>
+
+      </h1>
+
+      <p>
+
+        Discover exclusive Agar.io skins
+        and digital products from T.B Agar.io.
+
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- UID -->
+
+  <section class="uid-section">
+
+    <div class="uid-title">
+
+      Agar.io Account
+
+    </div>
+
+    <div class="uid-description">
+
+      Enter your encoded Agar.io payment UID
+      before purchasing a product.
+
+    </div>
+
+
+    <div class="uid-row">
+
+      <input
+        id="agario_uid_input"
+        type="text"
+        placeholder="Paste your encoded UID here"
+        autocomplete="off"
+      >
+
+      <button
+        id="saveUidBtn">
+
+        Save UID
+
+      </button>
+
+    </div>
+
+
+    <div id="uidStatus">
+
+      Not logged in
+
+    </div>
+
+  </section>
+
+
+  <hr class="section-line">
+
+
+  <!-- PRODUCTS -->
+
+  <section>
+
+    <div class="section-header">
+
+      <h2>
+
+        SHOP <span>PRODUCTS</span>
+
+      </h2>
+
+      <p>
+
+        Choose a product and continue to checkout.
+
+      </p>
+
+    </div>
+
+
+    <div id="products">
+
+      Loading products...
+
+    </div>
+
+  </section>
+
+
+</main>
+
+
+<!-- =========================
+     BUY POPUP
+========================= -->
+
+<div id="buyPopup">
+
+
+  <div class="popup-box">
+
+
+    <h2 id="popupProductName">
+
+      Product
+
+    </h2>
+
+
+    <p id="popupDescription">
+
+      Product description
+
+    </p>
+
+
+    <div
+      class="popup-price"
+      id="popupPrice">
+
+      $0.00
+
+    </div>
+
+
+    <div class="popup-buttons">
+
+
+      <button
+        class="confirm-button"
+        id="confirmBuy">
+
+        Continue to Checkout
+
+      </button>
+
+
+      <button
+        class="close-button"
+        onclick="closeBuyPopup()">
+
+        Cancel
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+  <p>
+
+    © 2026 T.B Agar.io
+
+  </p>
+
+
+  <p>
+
+    <a href="/index.html">
+
+      T.B Agar.io
+
+    </a>
+
+  </p>
+
+</footer>
+
+
 <script>
-/*
-  paidskins_xsolla.html
-  - Client-only HTML to show skins, allow saving UID and opening Xsolla paystation.
-  - Two modes:
-    1) If mapping value is a full https://secure.xsolla.com/... URL → open it directly.
-    2) Otherwise POST to /xshop/checkout { uid, product, currency } and expect { iframe_url } in response.
-  - No merchant secrets are included here. For production you must run a backend that implements /xshop/checkout.
-*/
 
-/* CONFIG */
-const API = "https://configs-web.agario.miniclippt.com/live/";
-let version = "v15/3032";            // default; version dropdown not present in this minimal file
-const perPage = 120;
 
-/* Embedded fallback mapping (runtime) — you can expand or override with /xsolla-products.json on the same host */
-let xsollaProductMap = {
-  // For quick testing you can set:
-  // "jumper": "https://secure.xsolla.com/paystation3/desktop/payment/?access_token=<redacted>"
-  // or product id: "jumper": "XSOLLA_ITEM_ID_12345"
-};
+/* =====================================================
+   PRODUCTS
+   =====================================================
 
-/* Dev log helper (safe to share) */
-function devLog(...args){
-  console.log(...args);
-  const el = document.getElementById('devlog');
-  el.textContent += "\\n" + args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-  el.scrollTop = el.scrollHeight;
-}
+   HIER KUN JE ELK PRODUCT AFZONDERLIJK AANPASSEN.
 
-/* UID handling UI */
-const uidInput = document.getElementById('agario_uid_input');
-const uidStatus = document.getElementById('uidStatus');
-document.getElementById('saveUidBtn').addEventListener('click', ()=>{
-  const v = uidInput.value.trim();
-  if(!v || v.length < 20){ alert('Please paste the full encoded payment UID (token) before saving.'); return; }
-  localStorage.setItem('agarioEncodedUID', v);
-  window.agarioEncodedUID = v;
-  updateUidStatus();
-  alert('UID saved locally. You can now buy skins that have a mapping.');
-});
+   image:
+   Voeg later bijvoorbeeld toe:
+   "IMG_1234.jpeg"
+
+   price:
+   Prijs van het product.
+
+   currency:
+   USD / EUR etc.
+
+   productId:
+   Jouw eigen Xsolla product/item ID.
+
+   description:
+   Beschrijving van het product.
+
+   available:
+   true = beschikbaar
+   false = niet beschikbaar
+
+   checkoutUrl:
+   Alleen gebruiken als je al een geldige
+   checkout URL/backend hebt.
+
+===================================================== */
+
+
+const products = [
+
+
+  {
+    id:"skin-001",
+
+    name:"T.B Blue Skin",
+
+    price:"2.99",
+
+    currency:"USD",
+
+    image:"",
+
+    description:
+      "Exclusive T.B Agar.io custom skin.",
+
+    productId:
+      "XSOLLA_PRODUCT_001",
+
+    available:true,
+
+    checkoutUrl:""
+
+  },
+
+
+  {
+    id:"skin-002",
+
+    name:"T.B Red Skin",
+
+    price:"3.99",
+
+    currency:"USD",
+
+    image:"",
+
+    description:
+      "A premium red T.B Agar.io skin.",
+
+    productId:
+      "XSOLLA_PRODUCT_002",
+
+    available:true,
+
+    checkoutUrl:""
+
+  },
+
+
+  {
+    id:"skin-003",
+
+    name:"T.B Gold Skin",
+
+    price:"4.99",
+
+    currency:"USD",
+
+    image:"",
+
+    description:
+      "Exclusive gold edition Agar.io skin.",
+
+    productId:
+      "XSOLLA_PRODUCT_003",
+
+    available:true,
+
+    checkoutUrl:""
+
+  },
+
+
+  {
+    id:"skin-004",
+
+    name:"Special T.B Skin",
+
+    price:"5.99",
+
+    currency:"USD",
+
+    image:"",
+
+    description:
+      "Special edition T.B Agar.io skin.",
+
+    productId:
+      "XSOLLA_PRODUCT_004",
+
+    available:true,
+
+    checkoutUrl:""
+
+  }
+
+
+];
+
+
+/* =====================================================
+   UID SYSTEM
+===================================================== */
+
+const uidInput =
+  document.getElementById(
+    "agario_uid_input"
+  );
+
+const uidStatus =
+  document.getElementById(
+    "uidStatus"
+  );
+
+
 function updateUidStatus(){
-  const stored = localStorage.getItem('agarioEncodedUID') || '';
-  if(stored && stored.length > 10){
-    window.agarioEncodedUID = stored;
-    uidInput.value = stored;
-    uidStatus.textContent = 'Logged in (UID saved)';
-    uidStatus.style.color = '#7ee787';
-  } else {
-    window.agarioEncodedUID = null;
-    uidStatus.textContent = 'Not logged in — paste UID and Save';
-    uidStatus.style.color = '#9bd1ff';
+
+  const stored =
+    localStorage.getItem(
+      "agarioEncodedUID"
+    ) || "";
+
+
+  if(
+    stored &&
+    stored.length > 10
+  ){
+
+    window.agarioEncodedUID =
+      stored;
+
+    uidInput.value =
+      stored;
+
+    uidStatus.textContent =
+      "UID saved";
+
+    uidStatus.style.color =
+      "#4ade80";
+
+  }else{
+
+    window.agarioEncodedUID =
+      null;
+
+    uidStatus.textContent =
+      "Not logged in";
+
+    uidStatus.style.color =
+      "#64748b";
+
   }
+
 }
 
-/* Try to load /xsolla-products.json from the site root to merge overrides (optional) */
-(async function loadXsollaProducts(){
-  try{
-    const resp = await fetch('/xsolla-products.json', { cache: 'no-cache' });
-    if(resp.ok){
-      const data = await resp.json();
-      Object.assign(xsollaProductMap, data);
-      devLog('[paidskins] xsolla-products.json loaded; merged into runtime map. Keys:', Object.keys(xsollaProductMap).length);
-    } else {
-      devLog('[paidskins] no xsolla-products.json found (status ' + resp.status + ') — using runtime map only');
-    }
-  }catch(err){
-    devLog('[paidskins] fetch xsolla-products.json failed:', err.message || err);
-  }
-})();
 
-/* Small admin modal for runtime mapping edits (non-persistent) */
-document.getElementById('openAdmin').addEventListener('click', ()=>{
-  const skin = prompt('Skin id to set mapping for (e.g. jumper or blue_swirl):');
-  if(!skin) return;
-  const val = prompt('Mapping value — either a full secure.xsolla.com URL or a product id (e.g. XSOLLA_ITEM_123):');
-  if(val === null) return;
-  xsollaProductMap[skin] = val.trim();
-  devLog('[admin] set mapping', skin, '->', xsollaProductMap[skin]);
-  renderAgarioPage(currentPage);
-});
+document
+  .getElementById("saveUidBtn")
+  .addEventListener(
+    "click",
+    function(){
 
-/* Images and skins: we will parse GameConfiguration.json like the original client did */
-let allSkins = [];
-async function loadSkins(){
-  const box = document.getElementById('skins');
-  box.innerHTML = 'Loading skins...';
-  try{
-    const r = await fetch(API + version + '/GameConfiguration.json');
-    const text = await r.text();
-    // original client used a crude regex to extract one of the arrays — we keep that behavior
-    const a = text.match(/\[(.*?)\]/g) || [];
-    const str = a[25] || a.find(x => x.includes('productId')) || '';
-    const ids = str.match(/productId":"(.*?)"/g) || str.match(/productId": "(.*?)"/g) || [];
-    const imgs = str.match(/image":"(.*?)"/g) || str.match(/image": "(.*?)"/g) || [];
-    const skins = [];
-    for(let i=0;i<Math.min(ids.length, imgs.length); i++){
-      const id = ids[i].replace(/"/g,'').replace(/productId:/,'').replace(/skin_/,'').replace(/id:/,'').trim();
-      const img = imgs[i].replace(/"/g,'').replace(/image:/,'').trim();
-      if(!img.includes('uses_spine')) skins.push([id, img]);
-    }
-    skins.reverse();
-    allSkins = skins;
-    devLog('[paidskins] loaded skins:', skins.length);
-    renderAgarioPage(1);
-  }catch(e){
-    devLog('[paidskins] Unable to load skins:', e.message || e);
-    allSkins = [];
-    document.getElementById('skins').textContent = 'Unable to load skins.';
-  }
-}
+      const value =
+        uidInput.value.trim();
 
-/* Render pagination + grid */
-let currentPage = 1;
-function renderAgarioPage(page){
-  currentPage = page || 1;
-  const box = document.getElementById('skins');
-  box.innerHTML = '';
-  const start = (page-1)*perPage;
-  const slice = allSkins.slice(start, start + perPage);
-  for(const [id,img] of slice){
-    const card = document.createElement('div'); card.className = 'card';
-    card.setAttribute('data-id', id);
-    const i = document.createElement('img'); i.alt = id;
-    // build image candidates
-    i.src = img || '';
-    card.appendChild(i);
-    const nm = document.createElement('div'); nm.className = 'name'; nm.textContent = id.replace(/_/g,' ');
-    card.appendChild(nm);
 
-    // determine purchase mapping (mapping key uses clean id)
-    const purchaseMapping = xsollaProductMap[id] || xsollaProductMap['skin_'+id] || xsollaProductMap[id.toLowerCase()];
-    if(purchaseMapping){
-      const btn = document.createElement('button'); btn.className = 'buy';
-      btn.textContent = 'Buy';
-      btn.onclick = (e)=> { e.stopPropagation(); startBuyFlow(id); };
-      // If UID is missing, disable button (but still shows)
-      if(!window.agarioEncodedUID && !(localStorage.getItem('agarioEncodedUID'))){
-        btn.classList.add('disabled');
-        btn.onclick = ()=> alert('Je moet eerst je encoded UID plakken en opslaan.');
+      if(
+        !value ||
+        value.length < 20
+      ){
+
+        alert(
+          "Please enter your full encoded Agar.io UID."
+        );
+
+        return;
+
       }
-      card.appendChild(btn);
-    } else {
-      const note = document.createElement('div'); note.className = 'note'; note.textContent = 'Not available';
-      card.appendChild(note);
+
+
+      localStorage.setItem(
+        "agarioEncodedUID",
+        value
+      );
+
+
+      window.agarioEncodedUID =
+        value;
+
+
+      updateUidStatus();
+
+
+      alert(
+        "UID saved successfully."
+      );
+
     }
-    box.appendChild(card);
-  }
+  );
 
-  // pages
-  const pages = document.getElementById('pages');
-  pages.innerHTML = '';
-  const total = Math.max(1, Math.ceil(allSkins.length / perPage));
-  for(let p=1;p<=Math.min(total,15);p++){
-    const b = document.createElement('button'); b.className = 'page-btn'; b.textContent = p;
-    if(p === page) b.style.opacity = '0.7';
-    b.onclick = ()=> renderAgarioPage(p);
-    pages.appendChild(b);
-  }
+
+/* =====================================================
+   RENDER PRODUCTS
+===================================================== */
+
+const productsContainer =
+  document.getElementById(
+    "products"
+  );
+
+
+function renderProducts(){
+
+  productsContainer.innerHTML="";
+
+
+  products.forEach(
+    product => {
+
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "product-card";
+
+
+      /* BADGE */
+
+      const badge =
+        document.createElement(
+          "div"
+        );
+
+
+      badge.className =
+        "product-badge";
+
+
+      if(product.available){
+
+        badge.textContent =
+          "AVAILABLE";
+
+      }else{
+
+        badge.textContent =
+          "UNAVAILABLE";
+
+        badge.classList.add(
+          "unavailable"
+        );
+
+      }
+
+
+      card.appendChild(
+        badge
+      );
+
+
+      /* IMAGE */
+
+      const imageBox =
+        document.createElement(
+          "div"
+        );
+
+
+      imageBox.className =
+        "product-image";
+
+
+      if(product.image){
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+
+        img.src =
+          product.image;
+
+
+        img.alt =
+          product.name;
+
+
+        imageBox.appendChild(
+          img
+        );
+
+      }else{
+
+        const placeholder =
+          document.createElement(
+            "div"
+          );
+
+
+        placeholder.className =
+          "image-placeholder";
+
+
+        placeholder.textContent =
+          "Product image";
+
+
+        imageBox.appendChild(
+          placeholder
+        );
+
+      }
+
+
+      card.appendChild(
+        imageBox
+      );
+
+
+      /* NAME */
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+
+      name.className =
+        "product-name";
+
+
+      name.textContent =
+        product.name;
+
+
+      card.appendChild(
+        name
+      );
+
+
+      /* DESCRIPTION */
+
+      const description =
+        document.createElement(
+          "div"
+        );
+
+
+      description.className =
+        "product-description";
+
+
+      description.textContent =
+        product.description;
+
+
+      card.appendChild(
+        description
+      );
+
+
+      /* PRICE */
+
+      const price =
+        document.createElement(
+          "div"
+        );
+
+
+      price.className =
+        "product-price";
+
+
+      price.innerHTML = `
+
+        <span class="price-currency">
+          ${product.currency}
+        </span>
+
+        <span class="price-value">
+          ${product.price}
+        </span>
+
+      `;
+
+
+      card.appendChild(
+        price
+      );
+
+
+      /* BUY BUTTON */
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.className =
+        "buy-button";
+
+
+      if(product.available){
+
+        button.textContent =
+          "Buy Now";
+
+
+        button.onclick =
+          function(){
+
+            openBuyPopup(
+              product
+            );
+
+          };
+
+      }else{
+
+        button.textContent =
+          "Unavailable";
+
+        button.classList.add(
+          "disabled"
+        );
+
+        button.disabled =
+          true;
+
+      }
+
+
+      card.appendChild(
+        button
+      );
+
+
+      productsContainer.appendChild(
+        card
+      );
+
+    }
+  );
+
 }
 
-/* Validate Xsolla URL (basic) */
-function validateXsollaUrl(rawUrl){
-  try{
-    const u = new URL(rawUrl);
-    if(u.protocol !== 'https:') return false;
-    if(u.hostname.toLowerCase() !== 'secure.xsolla.com') return false;
-    return true;
-  }catch(e){ return false; }
-}
 
-/* START BUY FLOW
-   - If xsollaProductMap[id] is a full URL -> open directly (quick test).
-   - Else POST to /xshop/checkout with { uid, product, currency } and expect { iframe_url }.
-   - NOTE: backend must exist for /xshop/checkout (recommended for production).
-*/
-async function startBuyFlow(skinId){
-  const token = window.agarioEncodedUID || localStorage.getItem('agarioEncodedUID') || null;
-  if(!token){
-    alert('Je moet eerst je encoded UID plakken en opslaan.');
+/* =====================================================
+   BUY POPUP
+===================================================== */
+
+let selectedProduct =
+  null;
+
+
+function openBuyPopup(product){
+
+  const uid =
+    window.agarioEncodedUID ||
+    localStorage.getItem(
+      "agarioEncodedUID"
+    );
+
+
+  if(
+    !uid ||
+    uid.length < 20
+  ){
+
+    alert(
+      "Please save your Agar.io UID before purchasing."
+    );
+
     return;
+
   }
 
-  // Resolve mapping value. Try multiple keys.
-  const mappingValue = xsollaProductMap[skinId] || xsollaProductMap['skin_'+skinId] || xsollaProductMap[skinId.toLowerCase()] || skinId;
-  devLog('[buy] skin', skinId, 'mappingValue=', mappingValue);
 
-  // If mapping is a URL, open it directly
-  if(typeof mappingValue === 'string' && /^https?:\\/\\//i.test(mappingValue)){
-    if(!validateXsollaUrl(mappingValue)){
-      alert('Returned mapping is not a valid secure.xsolla.com URL.');
-      devLog('[buy] invalid xsolla url mapping', mappingValue);
-      return;
-    }
-    window.open(mappingValue, '_blank', 'noopener');
-    devLog('[buy] opened direct xsolla url');
-    return;
-  }
+  selectedProduct =
+    product;
 
-  // Otherwise call backend to create checkout
-  try{
-    const resp = await fetch('/xshop/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uid: token, product: mappingValue, currency: 'USD' })
-    });
-    devLog('[buy] POST /xshop/checkout status', resp.status);
-    if(!resp.ok){
-      const txt = await resp.text();
-      devLog('[buy] server returned non-OK:', resp.status, txt.slice(0,1000));
-      alert('Betaalverzoek mislukt: server returned ' + resp.status);
-      return;
-    }
-    const data = await resp.json();
-    devLog('[buy] server response', data);
-    const iframeUrl = data.iframe_url || data.checkout_url || data.url || data.iframeUrl || null;
-    if(!iframeUrl){
-      devLog('[buy] no iframe_url in server response', data);
-      alert('Betaalverzoek mislukt: geen checkout URL ontvangen van server.');
-      return;
-    }
-    if(!validateXsollaUrl(iframeUrl)){
-      devLog('[buy] invalid iframe url from server', iframeUrl);
-      alert('Betaalverzoek mislukt: ongeldige checkout URL ontvangen (niet secure.xsolla.com).');
-      return;
-    }
-    window.open(iframeUrl, '_blank', 'noopener');
-    devLog('[buy] opened checkout iframe_url');
-  }catch(err){
-    devLog('[buy] exception', err.message || err);
-    alert('Betaalverzoek mislukt: ' + (err && err.message ? err.message : 'onbekende fout'));
-  }
+
+  document
+    .getElementById(
+      "popupProductName"
+    )
+    .textContent =
+      product.name;
+
+
+  document
+    .getElementById(
+      "popupDescription"
+    )
+    .textContent =
+      product.description;
+
+
+  document
+    .getElementById(
+      "popupPrice"
+    )
+    .textContent =
+      product.currency +
+      " " +
+      product.price;
+
+
+  document
+    .getElementById(
+      "buyPopup"
+    )
+    .style.display =
+      "flex";
+
 }
 
-/* INIT */
+
+function closeBuyPopup(){
+
+  document
+    .getElementById(
+      "buyPopup"
+    )
+    .style.display =
+      "none";
+
+
+  selectedProduct =
+    null;
+
+}
+
+
+/* =====================================================
+   CHECKOUT
+===================================================== */
+
+document
+  .getElementById(
+    "confirmBuy"
+  )
+  .addEventListener(
+    "click",
+    async function(){
+
+      if(!selectedProduct){
+
+        return;
+
+      }
+
+
+      const token =
+        window.agarioEncodedUID ||
+        localStorage.getItem(
+          "agarioEncodedUID"
+        );
+
+
+      if(
+        !token ||
+        token.length < 20
+      ){
+
+        alert(
+          "Please save your Agar.io UID first."
+        );
+
+        return;
+
+      }
+
+
+      const product =
+        selectedProduct;
+
+
+      /*
+        OPTION 1:
+
+        If you already have a checkout URL,
+        it can be opened here.
+
+        This should point to your own
+        secure checkout/backend.
+      */
+
+      if(product.checkoutUrl){
+
+        window.open(
+          product.checkoutUrl,
+          "_blank",
+          "noopener"
+        );
+
+        closeBuyPopup();
+
+        return;
+
+      }
+
+
+      /*
+        OPTION 2:
+
+        Recommended production flow.
+
+        Your server should create the
+        Xsolla checkout and return:
+
+        {
+          "checkout_url":
+          "https://secure.xsolla.com/..."
+        }
+
+        Merchant secrets must NEVER be placed
+        in this HTML file.
+      */
+
+      try{
+
+        const response =
+          await fetch(
+            "/xshop/checkout",
+            {
+              method:"POST",
+
+              headers:{
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:JSON.stringify({
+
+                uid:token,
+
+                product:
+                  product.productId,
+
+                currency:
+                  product.currency
+
+              })
+
+            }
+          );
+
+
+        if(!response.ok){
+
+          throw new Error(
+            "Checkout server returned " +
+            response.status
+          );
+
+        }
+
+
+        const data =
+          await response.json();
+
+
+        const checkoutUrl =
+          data.checkout_url ||
+          data.iframe_url ||
+          data.url;
+
+
+        if(!checkoutUrl){
+
+          throw new Error(
+            "No checkout URL returned."
+          );
+
+        }
+
+
+        window.open(
+          checkoutUrl,
+          "_blank",
+          "noopener"
+        );
+
+
+        closeBuyPopup();
+
+
+      }catch(error){
+
+        console.error(
+          "Checkout error:",
+          error
+        );
+
+
+        alert(
+          "Checkout could not be started. Please try again later."
+        );
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function toggleMenu(){
+
+  const menu =
+    document.getElementById(
+      "menu"
+    );
+
+  const overlay =
+    document.getElementById(
+      "menu-overlay"
+    );
+
+
+  if(
+    menu.classList.contains(
+      "open"
+    )
+  ){
+
+    closeMenu();
+
+  }else{
+
+    menu.classList.add(
+      "open"
+    );
+
+    overlay.classList.add(
+      "show"
+    );
+
+  }
+
+}
+
+
+function closeMenu(){
+
+  const menu =
+    document.getElementById(
+      "menu"
+    );
+
+  const overlay =
+    document.getElementById(
+      "menu-overlay"
+    );
+
+
+  menu.classList.remove(
+    "open"
+  );
+
+  overlay.classList.remove(
+    "show"
+  );
+
+}
+
+
+/* ESC */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key ===
+      "Escape"
+    ){
+
+      closeMenu();
+
+      closeBuyPopup();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   CLOSE POPUP OUTSIDE
+===================================================== */
+
+document
+  .getElementById(
+    "buyPopup"
+  )
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target === this
+      ){
+
+        closeBuyPopup();
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
 updateUidStatus();
-loadSkins();
 
-/* Expose for manual testing in console */
-window.devLog = devLog;
-window.xsollaProductMap = xsollaProductMap;
-window.startBuyFlow = startBuyFlow;
+renderProducts();
+
+
+/* LOADER */
+
+setTimeout(
+  function(){
+
+    const loader =
+      document.getElementById(
+        "loader"
+      );
+
+
+    if(loader){
+
+      loader.style.display =
+        "none";
+
+    }
+
+  },
+  1800 +
+  Math.random()*1200
+);
+
+
 </script>
+
 </body>
 </html>
