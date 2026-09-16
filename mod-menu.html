@@ -4,34 +4,16 @@
 
 <meta charset="utf-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <title>Mod Menu — T.B Agar.io</title>
 
-<meta
-  name="theme-color"
-  content="#020617"
->
+<meta name="theme-color" content="#020617">
 
-<link
-  rel="icon"
-  type="image/jpeg"
-  href="/IMG_0561.jpeg"
->
-
-<link
-  rel="apple-touch-icon"
-  href="/IMG_0561.jpeg"
->
+<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
 
 <style>
-
-/* =========================
-   RESET
-========================= */
 
 *{
   margin:0;
@@ -59,30 +41,24 @@ a{
 
 
 /* =========================
-   BLUE BACKGROUND GLOW
+   BACKGROUND
 ========================= */
 
 body::before{
   content:"";
   position:fixed;
-
   width:600px;
   height:600px;
-
   background:
     radial-gradient(
       circle,
       #0ea5e9,
       transparent 70%
     );
-
   top:-250px;
   right:-200px;
-
   opacity:.18;
-
   z-index:-1;
-
   pointer-events:none;
 }
 
@@ -94,42 +70,30 @@ body::before{
 #loader{
   position:fixed;
   inset:0;
-
   background:#020617;
-
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-
   gap:14px;
-
   font-size:20px;
-
   z-index:99999;
-
   text-align:center;
 }
 
 .spinner{
   width:40px;
   height:40px;
-
   border:5px solid rgba(255,255,255,.15);
-
   border-top:5px solid #38bdf8;
-
   border-radius:50%;
-
   animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-
   to{
     transform:rotate(360deg);
   }
-
 }
 
 
@@ -140,9 +104,7 @@ body::before{
 header{
   position:sticky;
   top:0;
-
   z-index:3000;
-
   width:100%;
 
   display:flex;
@@ -168,59 +130,54 @@ header{
 .left-header{
   display:flex;
   align-items:center;
-
   gap:12px;
-
   min-width:0;
+}
+
+.logo-link{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
 }
 
 .logo{
   width:48px;
   height:48px;
-
   border-radius:12px;
-
   overflow:hidden;
-
   flex-shrink:0;
 
   box-shadow:
     0 5px 25px
     rgba(14,165,233,.2);
+
+  transition:transform .2s ease;
+}
+
+.logo-link:hover .logo{
+  transform:scale(1.05);
 }
 
 .logo img{
   width:100%;
   height:100%;
-
   object-fit:cover;
-
   display:block;
 }
 
 .site-title{
   font-size:20px;
-
   font-weight:800;
-
   color:#fff;
-
   white-space:nowrap;
-
   overflow:hidden;
-
   text-overflow:ellipsis;
 }
 
 
 /* =========================
-   HEADER MENU BUTTON
+   MENU BUTTON
 ========================= */
-
-.header-buttons{
-  display:flex;
-  align-items:center;
-}
 
 .menu-btn{
   width:46px;
@@ -242,6 +199,13 @@ header{
   display:flex;
   align-items:center;
   justify-content:center;
+
+  transition:.2s ease;
+}
+
+.menu-btn:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.5);
 }
 
 .menu-btn:active{
@@ -257,14 +221,19 @@ header{
   position:fixed;
 
   top:0;
-  right:-320px;
+  right:-330px;
 
-  width:300px;
-  max-width:85vw;
+  width:310px;
+  max-width:88vw;
 
   height:100vh;
 
-  background:#050d1c;
+  background:
+    linear-gradient(
+      180deg,
+      #050d1c 0%,
+      #020617 100%
+    );
 
   z-index:5000;
 
@@ -275,14 +244,14 @@ header{
 
   border-left:
     1px solid
-    rgba(14,165,233,.2);
+    rgba(14,165,233,.22);
 
   overflow-y:auto;
 
   transition:right .3s ease;
 
   box-shadow:
-    -10px 0 40px
+    -20px 0 50px
     rgba(0,0,0,.35);
 }
 
@@ -292,36 +261,61 @@ header{
 
 .menu-close{
   width:100%;
-
   display:flex;
-  justify-content:flex-end;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
 
-  margin-bottom:18px;
+.menu-brand{
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+
+.menu-brand span{
+  color:#38bdf8;
 }
 
 .menu-close button{
-  width:44px;
-  height:44px;
+  width:40px;
+  height:40px;
 
-  border:0;
+  border:1px solid
+    rgba(14,165,233,.18);
 
-  background:#071226;
+  background:#08152a;
 
   color:#fff;
 
-  border-radius:12px;
+  border-radius:10px;
 
-  font-size:28px;
+  font-size:25px;
 
   cursor:pointer;
 }
 
+.menu-label{
+  margin:22px 4px 9px;
+
+  color:#64748b;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:1.5px;
+
+  text-transform:uppercase;
+}
+
 .menu a{
-  display:block;
+  display:flex;
+  align-items:center;
 
   width:100%;
 
-  padding:15px 14px;
+  padding:14px;
 
   margin:7px 0;
 
@@ -339,16 +333,98 @@ header{
 
   font-weight:700;
 
-  transition:
-    background .2s ease,
-    border-color .2s ease;
+  transition:.2s ease;
 }
 
 .menu a:hover{
   background:#0b203d;
 
   border-color:
-    rgba(14,165,233,.35);
+    rgba(14,165,233,.4);
+
+  transform:translateX(2px);
+}
+
+
+/* =========================
+   SOCIAL MENU
+========================= */
+
+.menu-social-title{
+  margin:25px 4px 10px;
+
+  color:#64748b;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:1.5px;
+
+  text-transform:uppercase;
+}
+
+.menu-socials{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:8px;
+}
+
+.menu-social{
+  min-height:58px;
+
+  display:flex !important;
+
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  border-radius:12px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  background:#08152a;
+
+  border:
+    1px solid
+    rgba(14,165,233,.15);
+
+  font-size:13px;
+
+  font-weight:800;
+
+  transition:.2s ease;
+}
+
+.menu-social:hover{
+  background:#0b203d;
+
+  border-color:
+    rgba(14,165,233,.4);
+
+  transform:translateY(-2px);
+}
+
+.menu-footer{
+  margin-top:22px;
+
+  padding-top:18px;
+
+  border-top:
+    1px solid
+    rgba(14,165,233,.1);
+
+  color:#64748b;
+
+  font-size:12px;
+
+  text-align:center;
 }
 
 
@@ -360,7 +436,9 @@ header{
   position:fixed;
   inset:0;
 
-  background:rgba(0,0,0,.58);
+  background:rgba(0,0,0,.62);
+
+  backdrop-filter:blur(2px);
 
   z-index:4500;
 
@@ -384,30 +462,80 @@ main{
   margin:0 auto;
 
   padding:
-    38px 18px
-    calc(45px + env(safe-area-inset-bottom));
+    45px 18px
+    calc(55px + env(safe-area-inset-bottom));
 }
 
 
 /* =========================
-   PAGE TITLE
+   PAGE HERO
 ========================= */
 
 .page-title{
+  position:relative;
+
   text-align:center;
 
-  padding:15px 0 28px;
+  margin-bottom:42px;
+
+  padding:
+    35px 20px;
+
+  border:
+    1px solid
+    rgba(14,165,233,.12);
+
+  border-radius:24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14,165,233,.07),
+      rgba(7,18,38,.75)
+    );
+
+  overflow:hidden;
+}
+
+.page-title::before{
+  content:"";
+
+  position:absolute;
+
+  width:220px;
+  height:220px;
+
+  background:
+    rgba(14,165,233,.12);
+
+  filter:blur(80px);
+
+  border-radius:50%;
+
+  top:-120px;
+  left:50%;
+
+  transform:translateX(-50%);
+}
+
+.page-title-content{
+  position:relative;
+  z-index:1;
 }
 
 .page-title h1{
   font-size:
-    clamp(32px,6vw,48px);
+    clamp(38px,7vw,58px);
 
-  margin-bottom:10px;
+  margin-bottom:12px;
 
   font-weight:900;
 
-  letter-spacing:.5px;
+  letter-spacing:1px;
+}
+
+.page-title h1 span{
+  color:#38bdf8;
 }
 
 .page-title p{
@@ -415,7 +543,44 @@ main{
 
   font-size:16px;
 
-  line-height:1.5;
+  line-height:1.6;
+
+  max-width:650px;
+
+  margin:0 auto;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
+.section{
+  margin-bottom:55px;
+}
+
+.section-header{
+  text-align:center;
+
+  margin-bottom:24px;
+}
+
+.section-header h2{
+  margin-bottom:7px;
+
+  font-size:28px;
+
+  font-weight:900;
+}
+
+.section-header h2 span{
+  color:#38bdf8;
+}
+
+.section-header p{
+  color:#64748b;
+
+  font-size:14px;
 }
 
 
@@ -443,7 +608,12 @@ main{
 ========================= */
 
 .card{
-  background:#071226;
+  background:
+    linear-gradient(
+      145deg,
+      #08152a,
+      #071226
+    );
 
   border-radius:18px;
 
@@ -466,6 +636,22 @@ main{
     rgba(0,0,0,.22);
 
   overflow:hidden;
+
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    box-shadow .2s ease;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+
+  border-color:
+    rgba(14,165,233,.4);
+
+  box-shadow:
+    0 15px 40px
+    rgba(0,0,0,.32);
 }
 
 .card img{
@@ -482,7 +668,7 @@ main{
 
 
 /* =========================
-   STATUS LABEL
+   STATUS
 ========================= */
 
 .status-label{
@@ -566,6 +752,12 @@ main{
   transform:scale(.98);
 }
 
+.locked{
+  background:#475569 !important;
+
+  cursor:not-allowed !important;
+}
+
 
 /* =========================
    INFO
@@ -581,7 +773,7 @@ main{
 
 
 /* =========================
-   OVERLAY
+   CARD OVERLAY
 ========================= */
 
 .overlay{
@@ -620,7 +812,9 @@ main{
 
   border-radius:15px;
 
-  border:1px solid #2563eb;
+  border:
+    1px solid
+    #2563eb;
 
   box-shadow:
     0 0 20px
@@ -671,32 +865,19 @@ main{
 hr.section-line{
   border:none;
 
-  height:2px;
+  height:1px;
 
-  background:#2563eb;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #2563eb,
+      transparent
+    );
 
-  margin:35px 0;
-
-  border-radius:5px;
+  margin:45px 0;
 
   opacity:.8;
-}
-
-
-/* =========================
-   SECTION TITLE
-========================= */
-
-.section-title{
-  text-align:center;
-
-  font-size:24px;
-
-  color:#38bdf8;
-
-  font-weight:800;
-
-  margin-bottom:22px;
 }
 
 
@@ -708,16 +889,29 @@ hr.section-line{
   text-align:center;
 
   padding:
-    10px 10px
+    5px 10px
     calc(30px + env(safe-area-inset-bottom));
 }
 
+.help-section h2{
+  font-size:24px;
+
+  margin-bottom:8px;
+}
+
 .help-section p{
+  color:#64748b;
+
   margin-bottom:20px;
+
+  line-height:1.5;
 }
 
 .help-button{
-  display:inline-block;
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
 
   background:#2563eb;
 
@@ -761,6 +955,10 @@ footer{
     rgba(14,165,233,.1);
 }
 
+footer p{
+  margin:5px 0;
+}
+
 footer a{
   color:#38bdf8;
 
@@ -782,8 +980,12 @@ footer a{
     grid-template-columns:1fr;
   }
 
+  .page-title{
+    padding:30px 18px;
+  }
+
   .page-title h1{
-    font-size:34px;
+    font-size:36px;
   }
 
 }
@@ -815,6 +1017,10 @@ footer a{
 
   .menu{
     width:290px;
+  }
+
+  .menu-socials{
+    grid-template-columns:1fr;
   }
 
 }
@@ -859,14 +1065,23 @@ footer a{
 
   <div class="left-header">
 
-    <div class="logo">
+    <a
+      class="logo-link"
+      href="https://www.youtube.com/@T.B6"
+      target="_blank"
+      rel="noopener"
+      aria-label="Open T.B Agar.io YouTube channel">
 
-      <img
-        src="/IMG_0561.jpeg"
-        alt="T.B Agar.io"
-      >
+      <div class="logo">
 
-    </div>
+        <img
+          src="/IMG_0561.jpeg"
+          alt="T.B Agar.io">
+
+      </div>
+
+    </a>
+
 
     <div class="site-title">
       T.B Agar.io
@@ -875,18 +1090,14 @@ footer a{
   </div>
 
 
-  <div class="header-buttons">
+  <button
+    class="menu-btn"
+    onclick="toggleMenu()"
+    aria-label="Open menu">
 
-    <button
-      class="menu-btn"
-      onclick="toggleMenu()"
-      aria-label="Open menu">
+    ☰
 
-      ☰
-
-    </button>
-
-  </div>
+  </button>
 
 </header>
 
@@ -899,7 +1110,12 @@ footer a{
   class="menu"
   id="menu">
 
+
   <div class="menu-close">
+
+    <div class="menu-brand">
+      T.B <span>AGAR.IO</span>
+    </div>
 
     <button
       onclick="closeMenu()"
@@ -912,6 +1128,11 @@ footer a{
   </div>
 
 
+  <div class="menu-label">
+    Navigation
+  </div>
+
+
   <a href="/index.html">
     Home
   </a>
@@ -920,12 +1141,12 @@ footer a{
     Custom Skins
   </a>
 
-  <a href="/mod-menu.html">
-    Mod Menu
+  <a href="/key-access.html">
+    Key Access
   </a>
 
-  <a href="/key-access.html">
-    Keys
+  <a href="/mod-menu.html">
+    Mod Menu
   </a>
 
   <a href="/paidskins.html">
@@ -940,6 +1161,12 @@ footer a{
     Agar.io Skins
   </a>
 
+
+  <div class="menu-label">
+    External
+  </div>
+
+
   <a
     href="https://biteyt.com/bots"
     target="_blank"
@@ -949,6 +1176,7 @@ footer a{
 
   </a>
 
+
   <a
     href="https://kahraba.in"
     target="_blank"
@@ -957,6 +1185,53 @@ footer a{
     Kahraba Website
 
   </a>
+
+
+  <div class="menu-social-title">
+    Follow T.B Agar.io
+  </div>
+
+
+  <div class="menu-socials">
+
+    <a
+      class="menu-social"
+      href="https://discord.gg/qhuXPrVzBx"
+      target="_blank"
+      rel="noopener">
+
+      Discord
+
+    </a>
+
+
+    <a
+      class="menu-social"
+      href="https://www.youtube.com/@T.B6"
+      target="_blank"
+      rel="noopener">
+
+      YouTube
+
+    </a>
+
+
+    <a
+      class="menu-social"
+      href="https://www.instagram.com/t.bagar.io/"
+      target="_blank"
+      rel="noopener">
+
+      Instagram
+
+    </a>
+
+  </div>
+
+
+  <div class="menu-footer">
+    T.B Agar.io © 2026
+  </div>
 
 </div>
 
@@ -968,360 +1243,384 @@ footer a{
 <main>
 
 
-<!-- PAGE TITLE -->
+<!-- =========================
+     PAGE TITLE
+========================= -->
 
 <div class="page-title">
 
-  <h1>
-    Mod Menu
-  </h1>
+  <div class="page-title-content">
 
-  <p>
-    Download and explore available Agar.io mods.
-  </p>
+    <h1>
+      T.B <span>MOD MENU</span>
+    </h1>
+
+    <p>
+      Download and explore available Agar.io mods,
+      tools and useful resources.
+    </p>
+
+  </div>
 
 </div>
 
 
 <!-- =========================
-     16 MAIN MODS
+     MAIN MODS
 ========================= -->
 
-<div class="grid">
+<section class="section">
 
+  <div class="section-header">
 
-<!-- SHARK MOD -->
+    <h2>
+      AVAILABLE <span>MODS</span>
+    </h2>
 
-<div
-  class="card"
-  data-status="active">
+    <p>
+      Available Agar.io modifications and tools.
+    </p>
 
-  <img
-    src="/IMG_9406.jpeg"
-    alt="Shark Mod">
-
-  <a
-    href="https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
   </div>
 
-  <div class="info">
-    Date: 05-09-2026
+
+  <div class="grid">
+
+
+    <!-- SHARK MOD -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_9406.jpeg"
+        alt="Shark Mod">
+
+      <a
+        href="https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-09-2026
+      </div>
+
+      <div class="info">
+        Update Shark Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- T.B MOD -->
+
+    <div
+      class="card"
+      data-status="not">
+
+      <div class="status-label update">
+        UPDATE
+      </div>
+
+      <img
+        src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg"
+        alt="T.B Mod">
+
+      <a href="#">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.3.5
+      </div>
+
+      <div class="info">
+        NEW Date: 15-01-2026
+      </div>
+
+      <div class="info">
+        T.B Mod (Kabrah) Unlock Skin
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- BITE MOD -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <div class="status-label update">
+        UPDATE
+      </div>
+
+      <img
+        src="/IMG_6587.png"
+        alt="Bite Skin Mod">
+
+      <a
+        href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-07-2026
+      </div>
+
+      <div class="info">
+        Bite Skin Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- KAHRABA -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_6587.png"
+        alt="Kahraba Mod">
+
+      <a
+        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-07-2026
+      </div>
+
+      <div class="info">
+        Kahraba Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- SHARK ANDROID -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_9406.jpeg"
+        alt="Shark Mod Android">
+
+      <a
+        href="https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-07-2026
+      </div>
+
+      <div class="info">
+        Shark Mod NEW Android
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- KAHRABA + SHARK -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_6587.png"
+        alt="Kahraba Shark Mod">
+
+      <a
+        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-07-2026
+      </div>
+
+      <div class="info">
+        Kahraba + Shark Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- MYU -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_6587.png"
+        alt="Myu Mod">
+
+      <a
+        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 05-07-2026
+      </div>
+
+      <div class="info">
+        Myu Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- SPOTIFY -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_4318.png"
+        alt="Spotify Premium Mod">
+
+      <a
+        href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 9.0.66
+      </div>
+
+      <div class="info">
+        Date: 03-08-2025
+      </div>
+
+      <div class="info">
+        Spotify Premium Mod
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- DNS -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_2462.jpeg"
+        alt="DNS Profile">
+
+      <a
+        href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
+
+        <button class="download">
+          Download
+        </button>
+
+      </a>
+
+      <div class="info">
+        Available for iPhone (iOS)
+      </div>
+
+      <div class="info">
+        Date: 14-09-2026
+      </div>
+
+      <div class="info">
+        DNS Profile
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
   </div>
 
-  <div class="info">
-    Update Shark Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- T.B MOD -->
-
-<div
-  class="card"
-  data-status="not">
-
-  <div class="status-label update">
-    UPDATE
-  </div>
-
-  <img
-    src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg"
-    alt="T.B Mod">
-
-  <a href="#">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.3.5
-  </div>
-
-  <div class="info">
-    NEW Date: 15-01-2026
-  </div>
-
-  <div class="info">
-    T.B Mod (Kabrah) Unlock Skin
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- BITE MOD -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <div class="status-label update">
-    UPDATE
-  </div>
-
-  <img
-    src="/IMG_6587.png"
-    alt="Bite Skin Mod">
-
-  <a
-    href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 05-07-2026
-  </div>
-
-  <div class="info">
-    Bite Skin Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- KAHRABA -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_6587.png"
-    alt="Kahraba Mod">
-
-  <a
-    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 05-07-2026
-  </div>
-
-  <div class="info">
-    Kahraba Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- SHARK ANDROID -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_9406.jpeg"
-    alt="Shark Mod Android">
-
-  <a
-    href="https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 05-07-2026
-  </div>
-
-  <div class="info">
-    Shark Mod NEW Android
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- KAHRABA + SHARK -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_6587.png"
-    alt="Kahraba Shark Mod">
-
-  <a
-    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 05-07-2026
-  </div>
-
-  <div class="info">
-    Kahraba + Shark Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- MYU -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_6587.png"
-    alt="Myu Mod">
-
-  <a
-    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 05-07-2026
-  </div>
-
-  <div class="info">
-    Myu Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- SPOTIFY -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_4318.png"
-    alt="Spotify Premium Mod">
-
-  <a
-    href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 9.0.66
-  </div>
-
-  <div class="info">
-    Date: 03-08-2025
-  </div>
-
-  <div class="info">
-    Spotify Premium Mod
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- DNS -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_2462.jpeg"
-    alt="DNS Profile">
-
-  <a
-    href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
-
-    <button class="download">
-      Download
-    </button>
-
-  </a>
-
-  <div class="info">
-    Available for iPhone (iOS)
-  </div>
-
-  <div class="info">
-    Date: 14-09-2026
-  </div>
-
-  <div class="info">
-    DNS Profile
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-</div>
+</section>
 
 
 <!-- =========================
@@ -1331,124 +1630,133 @@ footer a{
 <hr class="section-line">
 
 
-<div class="section-title">
-  AGAR.IO MOD MENU LINKS
-</div>
+<section class="section">
 
+  <div class="section-header">
 
-<br>
+    <h2>
+      AGAR.IO <span>TOOLS</span>
+    </h2>
 
+    <p>
+      Useful Agar.io websites and tools.
+    </p>
 
-<div class="grid">
-
-
-<!-- BITE BOTS -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_0321.jpeg"
-    alt="Bite Bots Panel">
-
-  <a
-    href="https://biteyt.com/bots"
-    target="_blank"
-    rel="noopener">
-
-    <button class="download">
-
-      Bite Bots Panel
-
-      <svg
-        class="external-icon"
-        viewBox="0 0 24 24"
-        aria-hidden="true">
-
-        <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
-        </path>
-
-        <path d="M5 5h5v2H7v10h10v-3h2v5H5z">
-        </path>
-
-      </svg>
-
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
   </div>
 
-  <div class="info">
-    Date: 19-08-2026
+
+  <div class="grid">
+
+
+    <!-- BITE BOTS -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_0321.jpeg"
+        alt="Bite Bots Panel">
+
+      <a
+        href="https://biteyt.com/bots"
+        target="_blank"
+        rel="noopener">
+
+        <button class="download">
+
+          Bite Bots Panel
+
+          <svg
+            class="external-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true">
+
+            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
+            </path>
+
+            <path d="M5 5h5v10h10v-3h2v5H5z">
+            </path>
+
+          </svg>
+
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 19-08-2026
+      </div>
+
+      <div class="info">
+        Bite Bots Panel
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
+    <!-- KAHRABA -->
+
+    <div
+      class="card"
+      data-status="active">
+
+      <img
+        src="/IMG_0322.jpeg"
+        alt="Kahraba Website">
+
+      <a
+        href="https://kahraba.in"
+        target="_blank"
+        rel="noopener">
+
+        <button class="download">
+
+          Kahraba Website
+
+          <svg
+            class="external-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true">
+
+            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
+            </path>
+
+            <path d="M5 5h5v10h10v-3h2v5H5z">
+            </path>
+
+          </svg>
+
+        </button>
+
+      </a>
+
+      <div class="info">
+        Version: 26.6.0
+      </div>
+
+      <div class="info">
+        Date: 21-08-2026
+      </div>
+
+      <div class="info">
+        Kahraba Website
+      </div>
+
+      <div class="overlay"></div>
+
+    </div>
+
+
   </div>
 
-  <div class="info">
-    Bite Bots Panel
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-<!-- KAHRABA WEBSITE -->
-
-<div
-  class="card"
-  data-status="active">
-
-  <img
-    src="/IMG_0322.jpeg"
-    alt="Kahraba Website">
-
-  <a
-    href="https://kahraba.in"
-    target="_blank"
-    rel="noopener">
-
-    <button class="download">
-
-      Kahraba Website
-
-      <svg
-        class="external-icon"
-        viewBox="0 0 24 24"
-        aria-hidden="true">
-
-        <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
-        </path>
-
-        <path d="M5 5h5v10h10v-3h2v5H5z">
-        </path>
-
-      </svg>
-
-    </button>
-
-  </a>
-
-  <div class="info">
-    Version: 26.6.0
-  </div>
-
-  <div class="info">
-    Date: 21-08-2026
-  </div>
-
-  <div class="info">
-    Kahraba Website
-  </div>
-
-  <div class="overlay"></div>
-
-</div>
-
-
-</div>
+</section>
 
 
 <!-- =========================
@@ -1460,10 +1768,12 @@ footer a{
 
 <div class="help-section">
 
+  <h2>
+    Need Help?
+  </h2>
+
   <p>
-    <strong>
-      How do I get the mod?
-    </strong>
+    Learn how to install and use the available mods.
   </p>
 
   <a
@@ -1491,9 +1801,11 @@ footer a{
   </p>
 
   <p>
+
     <a href="/index.html">
       T.B Agar.io
     </a>
+
   </p>
 
 </footer>
@@ -1535,6 +1847,7 @@ function toggleMenu(){
   const overlay =
     document.getElementById("menu-overlay");
 
+
   if(menu.classList.contains("open")){
 
     closeMenu();
@@ -1558,6 +1871,7 @@ function closeMenu(){
   const overlay =
     document.getElementById("menu-overlay");
 
+
   menu.classList.remove("open");
 
   overlay.classList.remove("show");
@@ -1574,7 +1888,9 @@ document.addEventListener(
   function(event){
 
     if(event.key === "Escape"){
+
       closeMenu();
+
     }
 
   }
@@ -1605,14 +1921,20 @@ document
 
 
     if(label){
-      label.style.display = "none";
+
+      label.style.display =
+        "none";
+
     }
 
 
     if(status === "not"){
 
       if(label){
-        label.style.display = "block";
+
+        label.style.display =
+          "block";
+
       }
 
 
@@ -1639,7 +1961,8 @@ document
       }
 
 
-      card.style.opacity = "0.45";
+      card.style.opacity =
+        "0.45";
 
 
       if(overlay){
@@ -1685,7 +2008,9 @@ document
 
 
     if(!btn || !overlay){
+
       return;
+
     }
 
 
@@ -1704,7 +2029,9 @@ document
         if(
           card.dataset.status === "not"
         ){
+
           return;
+
         }
 
 
@@ -1720,7 +2047,8 @@ document
             ${getModName(card)}
             ...
 
-            <div class="spinner"
+            <div
+              class="spinner"
               style="margin:12px auto;">
             </div>
 
@@ -1838,11 +2166,14 @@ document
 
               ytDone = true;
 
+
               document
                 .getElementById(
                   "ytStatus"
                 )
-                .innerHTML = "✔";
+                .innerHTML =
+                  "✔";
+
 
               checkUnlock();
 
@@ -1868,11 +2199,14 @@ document
 
               igDone = true;
 
+
               document
                 .getElementById(
                   "igStatus"
                 )
-                .innerHTML = "✔";
+                .innerHTML =
+                  "✔";
+
 
               checkUnlock();
 
@@ -1908,6 +2242,7 @@ document
 
           unlockBtn.innerHTML =
             "🔓 Unlock";
+
 
           unlockBtn.onclick =
             startDownload;
