@@ -1,31 +1,26 @@
 <!doctype html>
+
 <html lang="en">
 <head>
 
 <meta charset="UTF-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1, viewport-fit=cover"
->
+<meta name="viewport"
+content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <title>T.B AGAR.IO</title>
 
 <meta name="theme-color" content="#020617">
 
-<meta
-  name="description"
-  content="T.B Agar.io - Skins, mods, accounts and more."
->
+<meta name="description"
+content="T.B Agar.io — Custom skins, Agar.io tools, videos and more.">
 
 <link rel="manifest" href="/manifest.json">
 
-<!-- iPhone / iPad Web App -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="T.B Agar.io">
 
-<!-- SAME IMAGE AS WEBSITE LOGO -->
 <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
 <link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
 
@@ -43,13 +38,15 @@ html{
 body{
   margin:0;
   padding:0;
-  background:#020617;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(14,165,233,.10),transparent 35%),
+    #020617;
   color:#fff;
   font-family:Arial,Helvetica,sans-serif;
   overflow-x:hidden;
 }
 
-body::selection{
+::selection{
   background:#0ea5e9;
   color:#fff;
 }
@@ -71,16 +68,14 @@ body::selection{
 .loader-spinner{
   width:50px;
   height:50px;
-  border:5px solid rgba(255,255,255,.15);
+  border:5px solid rgba(255,255,255,.12);
   border-top:5px solid #0ea5e9;
   border-radius:50%;
   animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
+  to{transform:rotate(360deg);}
 }
 
 /* =========================
@@ -106,8 +101,7 @@ body::selection{
   border:1px solid rgba(14,165,233,.35);
   border-radius:24px;
   padding:35px 25px;
-  box-shadow:
-    0 0 40px rgba(14,165,233,.12);
+  box-shadow:0 0 40px rgba(14,165,233,.12);
 }
 
 .install-icon{
@@ -164,11 +158,11 @@ header{
 
   width:100%;
 
-  background:rgba(2,6,23,.94);
-  backdrop-filter:blur(15px);
-  -webkit-backdrop-filter:blur(15px);
+  background:rgba(2,6,23,.88);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
 
-  border-bottom:1px solid rgba(14,165,233,.2);
+  border-bottom:1px solid rgba(14,165,233,.18);
 
   padding:
     calc(10px + env(safe-area-inset-top))
@@ -188,12 +182,25 @@ header{
   min-width:0;
 }
 
+/* LOGO IS NOW CLICKABLE */
+
+.logo-link{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
+
 .header-logo{
   width:48px;
   height:48px;
   border-radius:12px;
   object-fit:cover;
   flex-shrink:0;
+  transition:transform .2s ease;
+}
+
+.logo-link:hover .header-logo{
+  transform:scale(1.05);
 }
 
 .header-title{
@@ -216,22 +223,29 @@ header{
   display:flex;
   align-items:center;
   justify-content:center;
+  transition:.2s ease;
+}
+
+.menu-button:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.5);
 }
 
 /* =========================
-   MENU
+   SIDE MENU
 ========================= */
 
 #side-menu{
   position:fixed;
   top:0;
-  right:-320px;
+  right:-330px;
 
-  width:300px;
-  max-width:85vw;
+  width:310px;
+  max-width:88vw;
   height:100%;
 
-  background:#050d1c;
+  background:
+    linear-gradient(180deg,#050d1c 0%,#020617 100%);
 
   z-index:5000;
 
@@ -240,11 +254,13 @@ header{
     20px
     calc(25px + env(safe-area-inset-bottom));
 
-  border-left:1px solid rgba(14,165,233,.2);
+  border-left:1px solid rgba(14,165,233,.22);
 
   transition:right .3s ease;
 
   overflow-y:auto;
+
+  box-shadow:-20px 0 50px rgba(0,0,0,.35);
 }
 
 #side-menu.open{
@@ -252,23 +268,47 @@ header{
 }
 
 .menu-close{
-  width:100%;
-  text-align:right;
-  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+
+.menu-brand{
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+
+.menu-brand span{
+  color:#38bdf8;
 }
 
 .menu-close button{
-  background:none;
-  border:0;
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.18);
   color:#fff;
-  font-size:28px;
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  font-size:25px;
   cursor:pointer;
 }
 
+.menu-label{
+  margin:22px 4px 9px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
 .menu-link{
-  display:block;
+  display:flex;
+  align-items:center;
   width:100%;
-  padding:15px 14px;
+  padding:14px;
   margin:7px 0;
 
   border-radius:12px;
@@ -280,16 +320,80 @@ header{
   border:1px solid rgba(14,165,233,.12);
 
   font-weight:700;
+
+  transition:.2s ease;
 }
 
 .menu-link:hover{
   background:#0b203d;
+  border-color:rgba(14,165,233,.4);
+  transform:translateX(2px);
 }
+
+/* =========================
+   MENU SOCIALS
+========================= */
+
+.menu-social-title{
+  margin:25px 4px 10px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
+.menu-socials{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.menu-social{
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+
+  border-radius:12px;
+
+  color:#fff;
+  text-decoration:none;
+
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.15);
+
+  font-size:13px;
+  font-weight:800;
+
+  transition:.2s ease;
+}
+
+.menu-social:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.4);
+  transform:translateY(-2px);
+}
+
+.menu-footer{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid rgba(14,165,233,.1);
+  color:#64748b;
+  font-size:12px;
+  text-align:center;
+}
+
+/* =========================
+   OVERLAY
+========================= */
 
 .menu-overlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,.62);
+  backdrop-filter:blur(2px);
   z-index:4999;
   display:none;
 }
@@ -307,54 +411,101 @@ main{
   max-width:1200px;
   margin:auto;
   padding:
-    45px 18px
-    calc(45px + env(safe-area-inset-bottom));
+    55px 18px
+    calc(55px + env(safe-area-inset-bottom));
 }
 
+/* =========================
+   HERO
+========================= */
+
 .hero{
+  position:relative;
   text-align:center;
-  margin-bottom:45px;
+  margin-bottom:60px;
+  padding:35px 20px;
+  border:1px solid rgba(14,165,233,.12);
+  border-radius:24px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(14,165,233,.07),
+      rgba(7,18,38,.75)
+    );
+  overflow:hidden;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  background:rgba(14,165,233,.12);
+  filter:blur(80px);
+  border-radius:50%;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.hero-content{
+  position:relative;
+  z-index:1;
 }
 
 .hero h1{
-  font-size:clamp(35px,7vw,65px);
-  margin:0;
+  font-size:clamp(38px,7vw,68px);
+  margin:0 0 10px;
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:3px;
+}
+
+.hero h1 span{
+  color:#38bdf8;
 }
 
 .hero p{
   color:#94a3b8;
   font-size:17px;
+  line-height:1.6;
+  margin:0 auto;
+  max-width:650px;
+}
+
+.hero-subtitle{
+  margin-top:10px !important;
+  color:#cbd5e1 !important;
+  font-size:15px !important;
 }
 
 /* =========================
-   SECTION
+   SECTIONS
 ========================= */
+
+section{
+  margin-bottom:65px;
+}
 
 .section-title{
   text-align:center;
-  margin:45px 0 22px;
+  margin:0 0 25px;
 }
 
 .section-title h2{
-  margin:0;
+  margin:0 0 8px;
   font-size:28px;
+  letter-spacing:.3px;
 }
 
 .section-title p{
-  color:#94a3b8;
+  color:#64748b;
+  margin:0;
+  font-size:14px;
 }
 
 /* =========================
    YOUTUBE
 ========================= */
-
-.video-wrapper{
-  position:relative;
-  width:100%;
-  overflow:hidden;
-}
 
 .video-slider{
   display:flex;
@@ -381,8 +532,14 @@ main{
 
   overflow:hidden;
 
-  box-shadow:
-    0 10px 35px rgba(0,0,0,.25);
+  box-shadow:0 10px 35px rgba(0,0,0,.25);
+
+  transition:transform .2s ease,border-color .2s ease;
+}
+
+.video-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(14,165,233,.4);
 }
 
 .video-card iframe{
@@ -393,7 +550,7 @@ main{
 }
 
 /* =========================
-   MOD MENU CARDS
+   MOD CARDS
 ========================= */
 
 .mod-grid{
@@ -407,6 +564,12 @@ main{
   border:1px solid rgba(14,165,233,.18);
   border-radius:18px;
   overflow:hidden;
+  transition:.2s ease;
+}
+
+.mod-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(14,165,233,.4);
 }
 
 .mod-card img{
@@ -428,6 +591,7 @@ main{
 .mod-content p{
   color:#94a3b8;
   margin:6px 0;
+  font-size:14px;
 }
 
 /* =========================
@@ -443,7 +607,8 @@ main{
 .option{
   min-height:130px;
 
-  background:#071226;
+  background:
+    linear-gradient(145deg,#08152a,#071226);
 
   border:1px solid rgba(14,165,233,.18);
 
@@ -460,7 +625,7 @@ main{
   color:#fff;
   text-decoration:none;
 
-  font-size:19px;
+  font-size:18px;
   font-weight:800;
 
   transition:
@@ -470,13 +635,13 @@ main{
 }
 
 .option:hover{
-  transform:translateY(-3px);
+  transform:translateY(-4px);
   background:#0a1b35;
   border-color:rgba(14,165,233,.45);
 }
 
 /* =========================
-   SOCIAL
+   SOCIAL SECTION
 ========================= */
 
 .social{
@@ -484,10 +649,11 @@ main{
   justify-content:center;
   flex-wrap:wrap;
   gap:12px;
-  margin-top:35px;
+  margin-top:25px;
 }
 
 .social a{
+  min-width:120px;
   padding:13px 18px;
   background:#071226;
   border:1px solid rgba(14,165,233,.2);
@@ -495,33 +661,32 @@ main{
   color:#fff;
   text-decoration:none;
   font-weight:700;
+  text-align:center;
+  transition:.2s ease;
+}
+
+.social a:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.45);
+  transform:translateY(-2px);
 }
 
 /* =========================
-   CHAT BOT
+   CHAT
 ========================= */
 
 #chat-button{
   position:fixed;
-
   right:18px;
-  bottom:
-    calc(18px + env(safe-area-inset-bottom));
-
+  bottom:calc(18px + env(safe-area-inset-bottom));
   width:58px;
   height:58px;
-
   border:0;
   border-radius:50%;
-
   background:#0ea5e9;
-
   cursor:pointer;
-
   z-index:3000;
-
-  box-shadow:
-    0 8px 30px rgba(0,0,0,.4);
+  box-shadow:0 8px 30px rgba(0,0,0,.4);
 }
 
 #chat-button img{
@@ -533,27 +698,16 @@ main{
 
 #chat-box{
   position:fixed;
-
   right:18px;
-  bottom:
-    calc(88px + env(safe-area-inset-bottom));
-
+  bottom:calc(88px + env(safe-area-inset-bottom));
   width:min(360px,calc(100vw - 36px));
-
   background:#071226;
-
   border:1px solid rgba(14,165,233,.25);
-
   border-radius:18px;
-
   z-index:3001;
-
   display:none;
-
   overflow:hidden;
-
-  box-shadow:
-    0 15px 50px rgba(0,0,0,.5);
+  box-shadow:0 15px 50px rgba(0,0,0,.5);
 }
 
 #chat-box.open{
@@ -671,6 +825,10 @@ footer a{
     height:85px;
   }
 
+  .menu-socials{
+    grid-template-columns:1fr;
+  }
+
 }
 
 </style>
@@ -680,74 +838,88 @@ footer a{
 <body>
 
 <!-- LOADER -->
+
 <div id="loader">
   <div class="loader-spinner"></div>
 </div>
 
+<!-- INSTALL SCREEN -->
 
-<!-- INSTALL INSTRUCTION -->
 <div id="install-screen">
 
   <div class="install-box">
 
-    <img
-      class="install-icon"
-      src="/IMG_0561.jpeg"
-      alt="T.B Agar.io"
-    >
+```
+<img
+  class="install-icon"
+  src="/IMG_0561.jpeg"
+  alt="T.B Agar.io">
 
-    <h1>T.B AGAR.IO</h1>
+<h1>T.B AGAR.IO</h1>
 
-    <p>
-      Add T.B Agar.io to your Home Screen
-      for the full app experience.
-    </p>
+<p>
+  Add T.B Agar.io to your Home Screen
+  for the full app experience.
+</p>
 
-    <div class="install-step">
-      <strong>1.</strong>
-      Tap the <strong>Share</strong> button in Safari.
-    </div>
+<div class="install-step">
+  <strong>1.</strong>
+  Tap the <strong>Share</strong> button in Safari.
+</div>
 
-    <div class="install-arrow">↓</div>
+<div class="install-arrow">↓</div>
 
-    <div class="install-step">
-      <strong>2.</strong>
-      Select <strong>Add to Home Screen</strong>.
-    </div>
+<div class="install-step">
+  <strong>2.</strong>
+  Select <strong>Add to Home Screen</strong>.
+</div>
 
-    <div class="install-arrow">↓</div>
+<div class="install-arrow">↓</div>
 
-    <div class="install-step">
-      <strong>3.</strong>
-      Tap <strong>Add</strong> to confirm.
-    </div>
+<div class="install-step">
+  <strong>3.</strong>
+  Tap <strong>Add</strong> to confirm.
+</div>
 
-    <div class="install-arrow">↓</div>
+<div class="install-arrow">↓</div>
 
-    <div class="install-step">
-      <strong>4.</strong>
-      Open <strong>T.B Agar.io</strong>
-      from your Home Screen.
-    </div>
+<div class="install-step">
+  <strong>4.</strong>
+  Open <strong>T.B Agar.io</strong>
+  from your Home Screen.
+</div>
+```
 
   </div>
 
 </div>
 
-
 <!-- MENU OVERLAY -->
+
 <div
   class="menu-overlay"
   id="menu-overlay"
   onclick="closeMenu()">
 </div>
 
-
 <!-- SIDE MENU -->
+
 <div id="side-menu">
 
   <div class="menu-close">
-    <button onclick="closeMenu()">×</button>
+
+```
+<div class="menu-brand">
+  T.B <span>AGAR.IO</span>
+</div>
+
+<button onclick="closeMenu()">×</button>
+```
+
+  </div>
+
+  <div class="menu-label">
+    Navigation
   </div>
 
   <a class="menu-link" href="/index.html">
@@ -778,326 +950,390 @@ footer a{
     Agar.io Skins
   </a>
 
-  <a
-    class="menu-link"
-    href="https://biteyt.com/bots"
-    target="_blank"
-    rel="noopener">
-    Bite Bots Panel
-  </a>
+  <div class="menu-label">
+    External
+  </div>
 
-  <a
-    class="menu-link"
-    href="https://kahraba.in"
-    target="_blank"
-    rel="noopener">
-    Kahraba Website
-  </a>
+<a
+ class="menu-link"
+ href="https://biteyt.com/bots"
+ target="_blank"
+ rel="noopener">
+Bite Bots Panel </a>
+
+<a
+ class="menu-link"
+ href="https://kahraba.in"
+ target="_blank"
+ rel="noopener">
+Kahraba Website </a>
+
+  <!-- SOCIALS AT BOTTOM -->
+
+  <div class="menu-social-title">
+    Follow T.B Agar.io
+  </div>
+
+  <div class="menu-socials">
+
+```
+<a
+  class="menu-social"
+  href="https://discord.gg/qhuXPrVzBx"
+  target="_blank"
+  rel="noopener">
+  Discord
+</a>
+
+<a
+  class="menu-social"
+  href="https://www.youtube.com/@T.B6"
+  target="_blank"
+  rel="noopener">
+  YouTube
+</a>
+
+<a
+  class="menu-social"
+  href="https://www.instagram.com/t.bagar.io/"
+  target="_blank"
+  rel="noopener">
+  Instagram
+</a>
+```
+
+  </div>
+
+  <div class="menu-footer">
+    T.B Agar.io © 2026
+  </div>
 
 </div>
 
-
 <!-- HEADER -->
+
 <header>
 
   <div class="header-left">
 
-    <img
-      class="header-logo"
-      src="/IMG_0561.jpeg"
-      alt="T.B Agar.io"
-    >
+```
+<!-- CLICKABLE LOGO -->
 
-    <div class="header-title">
-      T.B Agar.io
+<a
+  class="logo-link"
+  href="https://www.youtube.com/@T.B6"
+  target="_blank"
+  rel="noopener"
+  aria-label="Open T.B Agar.io YouTube channel">
+
+  <img
+    class="header-logo"
+    src="/IMG_0561.jpeg"
+    alt="T.B Agar.io">
+
+</a>
+
+<div class="header-title">
+  T.B Agar.io
+</div>
+```
+
+  </div>
+
+<button
+ class="menu-button"
+ onclick="openMenu()"
+ aria-label="Open menu">
+☰ </button>
+
+</header>
+
+<!-- MAIN -->
+
+<main>
+
+  <!-- WELCOME -->
+
+  <section class="hero">
+
+```
+<div class="hero-content">
+
+  <h1>
+    WELCOME TO <span>T.B AGAR.IO</span>
+  </h1>
+
+  <p>
+    Your place for Agar.io skins, tools, videos and more.
+  </p>
+
+  <p class="hero-subtitle">
+    Explore the T.B Agar.io website and discover everything
+    in one place.
+  </p>
+
+</div>
+```
+
+  </section>
+
+  <!-- CHANNEL -->
+
+  <section>
+
+```
+<div class="section-title">
+
+  <h2>T.B CHANNEL</h2>
+
+  <p>
+    Watch the latest videos from T.B Agar.io.
+  </p>
+
+</div>
+
+
+<div class="video-slider">
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/02x2YFHWh2o"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/d8DluzJAd2w"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/c234keB_q3c"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/MVl6S3JvxC0"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/Zg3-FACfyHE"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/TdoL76Jt22A"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="video-card">
+    <iframe
+      src="https://www.youtube.com/embed/0Tk29twxcJ8"
+      title="T.B Agar.io video"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</div>
+```
+
+  </section>
+
+  <!-- MOD MENU -->
+
+  <section>
+
+```
+<div class="section-title">
+
+  <h2>AGAR.IO TOOLS</h2>
+
+  <p>
+    Useful Agar.io tools and websites.
+  </p>
+
+</div>
+
+
+<div class="mod-grid">
+
+  <div class="mod-card">
+
+    <img
+      src="/IMG_0321.jpeg"
+      alt="Bite Bots Panel">
+
+    <div class="mod-content">
+
+      <h3>Bite Bots Panel</h3>
+
+      <p>Version: 26.6.0</p>
+      <p>Date: 19-08-2026</p>
+
     </div>
 
   </div>
 
-  <button
-    class="menu-button"
-    onclick="openMenu()"
-    aria-label="Open menu">
-    ☰
-  </button>
 
-</header>
+  <div class="mod-card">
 
+    <img
+      src="/IMG_0322.jpeg"
+      alt="Kahraba Website">
 
-<!-- MAIN -->
-<main>
+    <div class="mod-content">
 
-  <!-- WELCOME -->
-  <section class="hero">
+      <h3>Kahraba Website</h3>
 
-    <h1>WELCOME!</h1>
+      <p>Version: 26.6.0</p>
+      <p>Date: 21-08-2026</p>
 
-    <p>
-      Welcome to T.B Agar.io
-    </p>
+    </div>
+
+  </div>
+
+</div>
+```
 
   </section>
-
-
-  <!-- CHANNEL -->
-  <section>
-
-    <div class="section-title">
-
-      <h2>T.B CHANNEL</h2>
-
-      <p>
-        Watch the latest T.B Agar.io videos.
-      </p>
-
-    </div>
-
-
-    <div class="video-wrapper">
-
-      <div class="video-slider">
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/02x2YFHWh2o"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/d8DluzJAd2w"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/c234keB_q3c"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/MVl6S3JvxC0"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/Zg3-FACfyHE"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/TdoL76Jt22A"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-        <div class="video-card">
-          <iframe
-            src="https://www.youtube.com/embed/0Tk29twxcJ8"
-            title="T.B Agar.io video"
-            allowfullscreen>
-          </iframe>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- MOD MENU -->
-  <section>
-
-    <div class="section-title">
-
-      <h2>AGAR.IO MOD MENU LINKS</h2>
-
-      <p>
-        Useful Agar.io tools and websites.
-      </p>
-
-    </div>
-
-
-    <div class="mod-grid">
-
-      <div class="mod-card">
-
-        <img
-          src="/IMG_0321.jpeg"
-          alt="Bite Bots Panel"
-        >
-
-        <div class="mod-content">
-
-          <h3>Bite Bots Panel</h3>
-
-          <p>
-            Version: 26.6.0
-          </p>
-
-          <p>
-            Date: 19-08-2026
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div class="mod-card">
-
-        <img
-          src="/IMG_0322.jpeg"
-          alt="Kahraba Website"
-        >
-
-        <div class="mod-content">
-
-          <h3>Kahraba Website</h3>
-
-          <p>
-            Version: 26.6.0
-          </p>
-
-          <p>
-            Date: 21-08-2026
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
 
   <!-- OPTIONS -->
+
   <section>
 
-    <div class="section-title">
+```
+<div class="section-title">
 
-      <h2>Choose Your Option!</h2>
+  <h2>EXPLORE T.B AGAR.IO</h2>
 
-      <p>
-        Explore T.B Agar.io.
-      </p>
+  <p>
+    Choose a section and explore the website.
+  </p>
 
-    </div>
+</div>
 
 
-    <div class="options-grid">
+<div class="options-grid">
 
-      <a
-        class="option"
-        href="/custom-skins.html">
-        Custom Skins
-      </a>
+  <a
+    class="option"
+    href="/custom-skins.html">
+    Custom Skins
+  </a>
 
-      <a
-        class="option"
-        href="/key-access.html">
-        Key Access
-      </a>
+  <a
+    class="option"
+    href="/key-access.html">
+    Key Access
+  </a>
 
-      <a
-        class="option"
-        href="/mod-menu.html">
-        Mod Menu
-      </a>
+  <a
+    class="option"
+    href="/mod-menu.html">
+    Mod Menu
+  </a>
 
-      <a
-        class="option"
-        href="/paidskins.html">
-        Paid Skins
-      </a>
+  <a
+    class="option"
+    href="/paidskins.html">
+    Paid Skins
+  </a>
 
-      <a
-        class="option"
-        href="/buy-account.html">
-        Buy Account
-      </a>
+  <a
+    class="option"
+    href="/buy-account.html">
+    Buy Account
+  </a>
 
-      <a
-        class="option"
-        href="/agar.io-skins.html">
-        Agar.io Skins
-      </a>
+  <a
+    class="option"
+    href="/agar.io-skins.html">
+    Agar.io Skins
+  </a>
 
-    </div>
+</div>
+```
 
   </section>
 
-
   <!-- SOCIAL -->
+
   <section>
 
-    <div class="section-title">
+```
+<div class="section-title">
 
-      <h2>FOLLOW T.B AGAR.IO</h2>
+  <h2>CONNECT WITH T.B AGAR.IO</h2>
 
-    </div>
+  <p>
+    Follow the latest T.B Agar.io updates.
+  </p>
 
-    <div class="social">
+</div>
 
-      <a
-        href="https://www.youtube.com/@T.B6"
-        target="_blank"
-        rel="noopener">
-        YouTube
-      </a>
 
-      <a
-        href="https://www.instagram.com/t.bagar.io/"
-        target="_blank"
-        rel="noopener">
-        Instagram
-      </a>
+<div class="social">
 
-      <a
-        href="https://discord.gg/qhuXPrVzBx"
-        target="_blank"
-        rel="noopener">
-        Discord
-      </a>
+  <a
+    href="https://www.youtube.com/@T.B6"
+    target="_blank"
+    rel="noopener">
+    YouTube
+  </a>
 
-    </div>
+  <a
+    href="https://www.instagram.com/t.bagar.io/"
+    target="_blank"
+    rel="noopener">
+    Instagram
+  </a>
+
+  <a
+    href="https://discord.gg/qhuXPrVzBx"
+    target="_blank"
+    rel="noopener">
+    Discord
+  </a>
+
+</div>
+```
 
   </section>
 
 </main>
 
-
 <!-- CHAT BUTTON -->
-<button
-  id="chat-button"
-  onclick="toggleChat()"
-  aria-label="Open chat">
 
-  <img
-    src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
-    alt="Chat">
+<button
+id="chat-button"
+onclick="toggleChat()"
+aria-label="Open chat">
+
+<img
+ src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
+ alt="Chat">
 
 </button>
 
-
 <!-- CHAT -->
+
 <div id="chat-box">
 
   <div class="chat-header">
@@ -1106,31 +1342,34 @@ footer a{
 
   <div id="chat-messages">
 
-    <div class="chat-message">
-      Welcome to T.B Agar.io Support!
-    </div>
+```
+<div class="chat-message">
+  Welcome to T.B Agar.io Support!
+</div>
+```
 
   </div>
 
   <div class="chat-input">
 
-    <input
-      id="chat-input"
-      type="text"
-      placeholder="Type your message..."
-      autocomplete="off"
-    >
+```
+<input
+  id="chat-input"
+  type="text"
+  placeholder="Type your message..."
+  autocomplete="off">
 
-    <button onclick="sendMessage()">
-      Send
-    </button>
+<button onclick="sendMessage()">
+  Send
+</button>
+```
 
   </div>
 
 </div>
 
-
 <!-- FOOTER -->
+
 <footer>
 
   <p>
@@ -1138,13 +1377,13 @@ footer a{
   </p>
 
   <p>
-    <a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">
+    <a
+      href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">
       T.B Agar.io Website
     </a>
   </p>
 
 </footer>
-
 
 <script>
 
