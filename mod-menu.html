@@ -2,560 +2,820 @@
 <html lang="en">
 <head>
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
 
-<title>Mod Menu — T.B Agar.io Website</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
 
+<title>Mod Menu — T.B Agar.io</title>
+
+<meta
+  name="theme-color"
+  content="#020617"
+>
+
+<link
+  rel="icon"
+  type="image/jpeg"
+  href="/IMG_0561.jpeg"
+>
+
+<link
+  rel="apple-touch-icon"
+  href="/IMG_0561.jpeg"
+>
 
 <style>
 
-.overlay-content{
-text-align:center;
-display:flex;
-flex-direction:column;
-gap:10px;
-align-items:center;
-}
-
-.small-spinner{
-width:25px;
-height:25px;
-border:4px solid #1e40af;
-border-top:4px solid #38bdf8;
-border-radius:50%;
-animation:spin 1s linear infinite;
-}
+/* =========================
+   RESET
+========================= */
 
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#020617;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+button,
+a{
+  -webkit-tap-highlight-color:transparent;
 }
 
 
-/* mooie verificatie box */
-.verify-box{
-  background:#0f172a;
-  padding:20px;
-  border-radius:15px;
-  border:1px solid #2563eb;
-  box-shadow:0 0 20px rgba(0,140,255,.3);
+/* =========================
+   BLUE BACKGROUND GLOW
+========================= */
+
+body::before{
+  content:"";
+  position:fixed;
+
+  width:600px;
+  height:600px;
+
+  background:
+    radial-gradient(
+      circle,
+      #0ea5e9,
+      transparent 70%
+    );
+
+  top:-250px;
+  right:-200px;
+
+  opacity:.18;
+
+  z-index:-1;
+
+  pointer-events:none;
+}
+
+
+/* =========================
+   LOADER
+========================= */
+
+#loader{
+  position:fixed;
+  inset:0;
+
+  background:#020617;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  gap:14px;
+
+  font-size:20px;
+
+  z-index:99999;
+
   text-align:center;
-  min-width:260px;
 }
 
-.verify-title{
-  font-size:18px;
-  margin-bottom:10px;
-  color:#38bdf8;
-}
-
-.status{
-  font-size:18px;
-}
 .spinner{
   width:40px;
   height:40px;
-  border:4px solid rgba(255,255,255,0.2);
-  border-top:4px solid #38bdf8;
+
+  border:5px solid rgba(255,255,255,.15);
+
+  border-top:5px solid #38bdf8;
+
   border-radius:50%;
-  animation:spin 0.9s linear infinite;
-  margin:10px auto;
+
+  animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-  100%{ transform:rotate(360deg); }
-}
 
-/* LOADING */
-
-#loader{
-position:fixed;
-inset:0;
-background:#020617;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-gap:12px;
-font-size:20px;
-z-index:9999;
-text-align:center;
-}
-
-.spinner{
-
-width:38px;
-height:38px;
-border:5px solid #1e40af;
-border-top:5px solid #38bdf8;
-border-radius:50%;
-animation:spin 1s linear infinite;
+  to{
+    transform:rotate(360deg);
+  }
 
 }
 
 
-@keyframes spin{
-
-100%{
-transform:rotate(360deg);
-}
-
-}
-
-
-
-
-/* THEME */
-
-body{
-
-background:#020617;
-color:white;
-min-height:100vh;
-overflow-x:hidden;
-
-}
-
-
-.light-mode{
-
-background:#ffffff;
-color:#111827;
-
-}
-
-
-
-
-/* BLUE GLOW */
-
-body::before{
-
-content:"";
-position:fixed;
-width:600px;
-height:600px;
-
-background:radial-gradient(circle,#0ea5e9,transparent 70%);
-
-top:-250px;
-right:-200px;
-
-opacity:.25;
-z-index:-1;
-
-}
-
-
-
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 header{
+  position:sticky;
+  top:0;
 
-display:flex;
-justify-content:space-between;
-align-items:center;
+  z-index:3000;
 
-padding:14px 30px;
+  width:100%;
 
-background:rgba(0,0,0,.5);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 
-backdrop-filter:blur(15px);
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    18px
+    10px
+    18px;
 
-border-bottom:1px solid #2563eb;
+  background:rgba(2,6,23,.94);
 
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+
+  border-bottom:
+    1px solid
+    rgba(14,165,233,.25);
 }
-
-
 
 .left-header{
+  display:flex;
+  align-items:center;
 
-display:flex;
-align-items:center;
-gap:12px;
+  gap:12px;
 
+  min-width:0;
 }
-
-
 
 .logo{
+  width:48px;
+  height:48px;
 
-width:45px;
-height:45px;
+  border-radius:12px;
 
-border-radius:50%;
+  overflow:hidden;
 
-overflow:hidden;
+  flex-shrink:0;
 
-box-shadow:0 0 20px #38bdf8;
-
+  box-shadow:
+    0 5px 25px
+    rgba(14,165,233,.2);
 }
-
-
 
 .logo img{
+  width:100%;
+  height:100%;
 
-width:100%;
-height:100%;
-object-fit:cover;
+  object-fit:cover;
 
+  display:block;
 }
-
-
 
 .site-title{
+  font-size:20px;
 
-font-size:22px;
-font-weight:bold;
+  font-weight:800;
 
-color:#38bdf8;
+  color:#fff;
 
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
 }
 
 
-
+/* =========================
+   HEADER MENU BUTTON
+========================= */
 
 .header-buttons{
+  display:flex;
+  align-items:center;
+}
 
-display:flex;
-gap:10px;
+.menu-btn{
+  width:46px;
+  height:46px;
 
+  border:1px solid
+    rgba(14,165,233,.25);
+
+  background:#071226;
+
+  border-radius:12px;
+
+  color:#fff;
+
+  font-size:24px;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.menu-btn:active{
+  transform:scale(.96);
 }
 
 
-
-.menu-btn,
-.theme-btn{
-
-background:none;
-
-border:none;
-
-font-size:25px;
-
-cursor:pointer;
-
-color:white;
-
-}
-
-
-
-/* HAMBURGER MENU */
-
+/* =========================
+   SIDE MENU
+========================= */
 
 .menu{
+  position:fixed;
 
-display:none;
+  top:0;
+  right:-320px;
 
-position:absolute;
+  width:300px;
+  max-width:85vw;
 
-right:30px;
+  height:100vh;
 
-top:75px;
+  background:#050d1c;
 
-background:#020617;
+  z-index:5000;
 
-border-radius:12px;
+  padding:
+    calc(25px + env(safe-area-inset-top))
+    20px
+    calc(25px + env(safe-area-inset-bottom));
 
-overflow:hidden;
+  border-left:
+    1px solid
+    rgba(14,165,233,.2);
 
-z-index:1000;
+  overflow-y:auto;
 
-box-shadow:0 0 25px black;
+  transition:right .3s ease;
 
+  box-shadow:
+    -10px 0 40px
+    rgba(0,0,0,.35);
 }
 
+.menu.open{
+  right:0;
+}
 
+.menu-close{
+  width:100%;
+
+  display:flex;
+  justify-content:flex-end;
+
+  margin-bottom:18px;
+}
+
+.menu-close button{
+  width:44px;
+  height:44px;
+
+  border:0;
+
+  background:#071226;
+
+  color:#fff;
+
+  border-radius:12px;
+
+  font-size:28px;
+
+  cursor:pointer;
+}
 
 .menu a{
+  display:block;
 
-display:block;
+  width:100%;
 
-padding:14px 20px;
+  padding:15px 14px;
 
-color:white;
+  margin:7px 0;
 
-text-decoration:none;
+  border-radius:12px;
 
-border-bottom:1px solid #1e3a8a;
+  color:#fff;
 
+  text-decoration:none;
+
+  background:#08152a;
+
+  border:
+    1px solid
+    rgba(14,165,233,.12);
+
+  font-weight:700;
+
+  transition:
+    background .2s ease,
+    border-color .2s ease;
 }
-
-
 
 .menu a:hover{
+  background:#0b203d;
 
-background:#2563eb;
-
+  border-color:
+    rgba(14,165,233,.35);
 }
 
 
+/* =========================
+   MENU OVERLAY
+========================= */
 
+.menu-overlay{
+  position:fixed;
+  inset:0;
 
+  background:rgba(0,0,0,.58);
 
-/* HEADER TITLE */
+  z-index:4500;
 
-header h1{
+  display:none;
+}
 
-text-align:center;
-
+.menu-overlay.show{
+  display:block;
 }
 
 
+/* =========================
+   MAIN
+========================= */
+
+main{
+  width:100%;
+
+  max-width:1200px;
+
+  margin:0 auto;
+
+  padding:
+    38px 18px
+    calc(45px + env(safe-area-inset-bottom));
+}
 
 
+/* =========================
+   PAGE TITLE
+========================= */
 
-/* GRID */
+.page-title{
+  text-align:center;
+
+  padding:15px 0 28px;
+}
+
+.page-title h1{
+  font-size:
+    clamp(32px,6vw,48px);
+
+  margin-bottom:10px;
+
+  font-weight:900;
+
+  letter-spacing:.5px;
+}
+
+.page-title p{
+  color:#94a3b8;
+
+  font-size:16px;
+
+  line-height:1.5;
+}
+
+
+/* =========================
+   GRID
+========================= */
 
 .grid{
+  display:grid;
 
-display:grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px,1fr)
+    );
 
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
 
-gap:20px;
-
-padding:20px;
-
+  width:100%;
 }
 
 
-
-/* CARD */
+/* =========================
+   CARD
+========================= */
 
 .card{
+  background:#071226;
 
-background:#0f172a;
+  border-radius:18px;
 
-border-radius:15px;
+  border:
+    1px solid
+    rgba(14,165,233,.18);
 
-border:1px solid #1e40af;
+  padding:12px;
 
-padding:12px;
+  display:flex;
 
-display:flex;
+  flex-direction:column;
 
-flex-direction:column;
+  gap:10px;
 
-gap:10px;
+  position:relative;
 
-position:relative;
+  box-shadow:
+    0 10px 35px
+    rgba(0,0,0,.22);
 
-box-shadow:0 0 20px rgba(0,140,255,.3);
-
+  overflow:hidden;
 }
-
-
-
-.light-mode .card{
-
-background:#ffffff;
-
-}
-
-
-
-
 
 .card img{
+  width:100%;
 
-width:100%;
+  aspect-ratio:16/9;
 
-aspect-ratio:16/9;
+  object-fit:cover;
 
-object-fit:cover;
+  border-radius:12px;
 
-border-radius:10px;
-
+  display:block;
 }
 
 
-
-/* STATUS */
+/* =========================
+   STATUS LABEL
+========================= */
 
 .status-label{
+  position:absolute;
 
-position:absolute;
+  top:20px;
+  left:20px;
 
-top:12px;
+  padding:6px 10px;
 
-left:12px;
+  border-radius:7px;
 
-padding:6px 10px;
+  font-weight:bold;
 
-border-radius:6px;
+  display:none;
 
-font-weight:bold;
-
-display:none;
-
+  z-index:2;
 }
-
-
 
 .update{
-
-background:#ef4444;
-
+  background:#ef4444;
 }
-
 
 .soon{
-
-background:#2563eb;
-
+  background:#2563eb;
 }
-
 
 .not{
-
-background:#7c3aed;
-
+  background:#7c3aed;
 }
 
 
-
-
-
-/* BUTTONS */
-
+/* =========================
+   BUTTONS
+========================= */
 
 .download,
 .Site,
 .Install{
 
-padding:10px;
+  padding:11px 14px;
 
-background:#2563eb;
+  background:#2563eb;
 
-border:none;
+  border:none;
 
-border-radius:10px;
+  border-radius:10px;
 
-color:white;
+  color:#fff;
 
-font-weight:bold;
+  font-weight:bold;
 
-cursor:pointer;
+  cursor:pointer;
 
-/* align text and icon */
-display:inline-flex;
-align-items:center;
-gap:8px;
+  display:inline-flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:8px;
+
+  width:100%;
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
 }
-
-
 
 .download:hover,
 .Site:hover,
 .Install:hover{
+  background:#1d4ed8;
 
-transform:scale(1.05);
+  transform:translateY(-1px);
+}
 
+.download:active,
+.Site:active,
+.Install:active{
+  transform:scale(.98);
 }
 
 
-
-
+/* =========================
+   INFO
+========================= */
 
 .info{
+  color:#94a3b8;
 
-color:#94a3b8;
+  font-size:.9rem;
 
-font-size:.9rem;
-
+  line-height:1.4;
 }
 
 
-
-
+/* =========================
+   OVERLAY
+========================= */
 
 .overlay{
+  position:absolute;
 
-position:absolute;
+  inset:0;
 
-inset:0;
+  display:none;
 
-display:none;
+  justify-content:center;
 
-justify-content:center;
+  align-items:center;
 
-align-items:center;
+  background:rgba(0,0,0,.72);
 
-background:rgba(0,0,0,.6);
+  border-radius:18px;
 
-border-radius:15px;
+  font-weight:bold;
 
-font-weight:bold;
+  z-index:10;
 
+  padding:20px;
+
+  text-align:center;
 }
 
 
-/* external icon styling */
+/* =========================
+   VERIFY BOX
+========================= */
+
+.verify-box{
+  background:#0f172a;
+
+  padding:20px;
+
+  border-radius:15px;
+
+  border:1px solid #2563eb;
+
+  box-shadow:
+    0 0 20px
+    rgba(0,140,255,.3);
+
+  text-align:center;
+
+  width:min(300px,90%);
+
+  min-width:260px;
+}
+
+.verify-title{
+  font-size:18px;
+
+  margin-bottom:10px;
+
+  color:#38bdf8;
+
+  font-weight:bold;
+}
+
+.status{
+  font-size:18px;
+
+  margin-top:6px;
+}
+
+
+/* =========================
+   EXTERNAL ICON
+========================= */
+
 .external-icon{
   width:14px;
   height:14px;
+
   display:inline-block;
-  vertical-align:middle;
+
   fill:white;
 }
-.light-mode .external-icon{ fill:#111827; }
 
+
+/* =========================
+   SECTION LINE
+========================= */
 
 hr.section-line{
+  border:none;
 
-border:none;
+  height:2px;
 
-height:3px;
+  background:#2563eb;
 
-background:#2563eb;
+  margin:35px 0;
 
-margin:30px 0;
+  border-radius:5px;
 
-border-radius:5px;
-
+  opacity:.8;
 }
 
 
+/* =========================
+   SECTION TITLE
+========================= */
 
 .section-title{
+  text-align:center;
 
-text-align:center;
+  font-size:24px;
 
-font-size:22px;
+  color:#38bdf8;
 
-color:#38bdf8;
+  font-weight:800;
 
+  margin-bottom:22px;
 }
 
+
+/* =========================
+   HELP
+========================= */
 
 .help-section{
+  text-align:center;
 
-text-align:center;
+  padding:
+    10px 10px
+    calc(30px + env(safe-area-inset-bottom));
+}
 
-padding:30px;
+.help-section p{
+  margin-bottom:20px;
+}
 
+.help-button{
+  display:inline-block;
+
+  background:#2563eb;
+
+  padding:12px 25px;
+
+  border-radius:10px;
+
+  color:#fff;
+
+  text-decoration:none;
+
+  font-weight:bold;
+
+  transition:
+    transform .2s ease,
+    background .2s ease;
+}
+
+.help-button:hover{
+  background:#1d4ed8;
+
+  transform:translateY(-2px);
 }
 
 
+/* =========================
+   FOOTER
+========================= */
 
-.help-button{
+footer{
+  text-align:center;
 
-background:#2563eb;
+  padding:
+    30px 18px
+    calc(30px + env(safe-area-inset-bottom));
 
-padding:12px 25px;
+  color:#64748b;
 
-border-radius:10px;
+  border-top:
+    1px solid
+    rgba(14,165,233,.1);
+}
 
-color:white;
+footer a{
+  color:#38bdf8;
 
-text-decoration:none;
+  text-decoration:none;
+}
 
-font-weight:bold;
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  main{
+    padding-top:28px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .page-title h1{
+    font-size:34px;
+  }
+
+}
+
+@media(min-width:701px){
+
+  .grid{
+    grid-template-columns:
+      repeat(3,minmax(0,1fr));
+  }
+
+}
+
+@media(max-width:430px){
+
+  header{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  .logo{
+    width:44px;
+    height:44px;
+  }
+
+  .site-title{
+    font-size:17px;
+  }
+
+  .menu{
+    width:290px;
+  }
 
 }
 
@@ -566,757 +826,1227 @@ font-weight:bold;
 
 <body>
 
-  
+
+<!-- =========================
+     LOADER
+========================= -->
 
 <div id="loader">
 
-Loading Agar.io Mods...
+  Loading Agar.io Mods...
 
-<div class="spinner"></div>
+  <div class="spinner"></div>
 
 </div>
 
 
+<!-- =========================
+     MENU OVERLAY
+========================= -->
+
+<div
+  class="menu-overlay"
+  id="menu-overlay"
+  onclick="closeMenu()">
+</div>
 
 
+<!-- =========================
+     HEADER
+========================= -->
 
 <header>
 
+  <div class="left-header">
 
-<div class="left-header">
+    <div class="logo">
 
+      <img
+        src="/IMG_0561.jpeg"
+        alt="T.B Agar.io"
+      >
 
-<div class="logo">
+    </div>
 
-<img src="IMG_2718.png">
+    <div class="site-title">
+      T.B Agar.io
+    </div>
 
-</div>
-
-
-<div class="site-title">
-
-T.B AGAR.IO
-
-</div>
-
-
-</div>
+  </div>
 
 
+  <div class="header-buttons">
 
+    <button
+      class="menu-btn"
+      onclick="toggleMenu()"
+      aria-label="Open menu">
 
-<div class="header-buttons">
+      ☰
 
+    </button>
 
-<button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
-
-☀️
-
-</button>
-
-
-<button class="menu-btn" onclick="toggleMenu()">
-
-☰
-
-</button>
-
-
-</div>
-
-
-
-
-<div class="menu" id="menu">
-
-
-<a href="index.html">🏠 Home</a>
-
-<a href="custom-skins.html">🎨 Custom Skins</a>
-
-<a href="mod-menu.html">🛠 Mod Menu</a>
-
-<a href="key-access.html">🔑 Keys</a>
-
-<a href="buy-account.html">💰 Buy Account</a>
-
-
-</div>
-
-
+  </div>
 
 </header>
 
 
+<!-- =========================
+     SIDE MENU
+========================= -->
 
-<header>
+<div
+  class="menu"
+  id="menu">
 
-<h1>Mod Menu</h1>
+  <div class="menu-close">
 
-</header>
-<!-- 16 HOOFDMODS -->
+    <button
+      onclick="closeMenu()"
+      aria-label="Close menu">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <a href="/index.html">
+    Home
+  </a>
+
+  <a href="/custom-skins.html">
+    Custom Skins
+  </a>
+
+  <a href="/mod-menu.html">
+    Mod Menu
+  </a>
+
+  <a href="/key-access.html">
+    Keys
+  </a>
+
+  <a href="/paidskins.html">
+    Paid Skins
+  </a>
+
+  <a href="/buy-account.html">
+    Buy Account
+  </a>
+
+  <a href="/agar.io-skins.html">
+    Agar.io Skins
+  </a>
+
+  <a
+    href="https://biteyt.com/bots"
+    target="_blank"
+    rel="noopener">
+
+    Bite Bots Panel
+
+  </a>
+
+  <a
+    href="https://kahraba.in"
+    target="_blank"
+    rel="noopener">
+
+    Kahraba Website
+
+  </a>
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main>
+
+
+<!-- PAGE TITLE -->
+
+<div class="page-title">
+
+  <h1>
+    Mod Menu
+  </h1>
+
+  <p>
+    Download and explore available Agar.io mods.
+  </p>
+
+</div>
+
+
+<!-- =========================
+     16 MAIN MODS
+========================= -->
 
 <div class="grid">
 
 
-<div class="card" data-status="active">
+<!-- SHARK MOD -->
 
-<img src="IMG_9406.jpeg">
+<div
+  class="card"
+  data-status="active">
 
-<a href="https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file">
-<button class="download">Download</button>
-</a>
+  <img
+    src="/IMG_9406.jpeg"
+    alt="Shark Mod">
 
-<div class="info">Version: 26.6.0</div>
-<div class="info">Date: 05-09-2026</div>
-<div class="info">Update Shark Mod</div>
+  <a
+    href="https://www.mediafire.com/file/f9n7di7rz2wlbre/SharkMod_1.8.7.1.ipa/file">
 
-<div class="overlay"></div>
+    <button class="download">
+      Download
+    </button>
 
-</div>
+  </a>
 
+  <div class="info">
+    Version: 26.6.0
+  </div>
 
+  <div class="info">
+    Date: 05-09-2026
+  </div>
 
+  <div class="info">
+    Update Shark Mod
+  </div>
 
-<div class="card" data-status="not">
-
-<div class="status-label update">
-UPDATE
-</div>
-
-<img src="4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg">
-
-
-<a href="#">
-<button class="download">
-Download
-</button>
-</a>
-
-
-<div class="info">Version: 26.3.5</div>
-<div class="info">NEW Date: 15-01-2026</div>
-<div class="info">T.B Mod (Kabrah) Unlock Skin</div>
-
-<div class="overlay"></div>
+  <div class="overlay"></div>
 
 </div>
 
 
+<!-- T.B MOD -->
 
+<div
+  class="card"
+  data-status="not">
 
-<div class="card" data-status="active">
+  <div class="status-label update">
+    UPDATE
+  </div>
 
+  <img
+    src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg"
+    alt="T.B Mod">
 
-<div class="status-label update">
-UPDATE
-</div>
+  <a href="#">
 
+    <button class="download">
+      Download
+    </button>
 
-<img src="IMG_6587.png">
+  </a>
 
+  <div class="info">
+    Version: 26.3.5
+  </div>
 
-<a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+  <div class="info">
+    NEW Date: 15-01-2026
+  </div>
 
-<button class="download">
-Download
-</button>
+  <div class="info">
+    T.B Mod (Kabrah) Unlock Skin
+  </div>
 
-</a>
-
-
-<div class="info">Version: 26.6.0</div>
-
-<div class="info">Date: 05-07-2026</div>
-
-<div class="info">Bite Skin Mod</div>
-
-
-<div class="overlay"></div>
-
-
-</div>
-
-
-
-
-
-<div class="card" data-status="active">
-
-
-<img src="IMG_6587.png">
-
-
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
-
-<button class="download">
-Download
-</button>
-
-</a>
-
-
-<div class="info">Version: 26.6.0</div>
-
-<div class="info">Date: 05-07-2026</div>
-
-<div class="info">Kahraba Mod</div>
-
-
-<div class="overlay"></div>
-
+  <div class="overlay"></div>
 
 </div>
 
 
+<!-- BITE MOD -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <div class="status-label update">
+    UPDATE
+  </div>
+
+  <img
+    src="/IMG_6587.png"
+    alt="Bite Skin Mod">
+
+  <a
+    href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 05-07-2026
+  </div>
+
+  <div class="info">
+    Bite Skin Mod
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
+<!-- KAHRABA -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_6587.png"
+    alt="Kahraba Mod">
+
+  <a
+    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 05-07-2026
+  </div>
+
+  <div class="info">
+    Kahraba Mod
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
-<div class="card" data-status="active">
+<!-- SHARK ANDROID -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_9406.jpeg"
+    alt="Shark Mod Android">
+
+  <a
+    href="https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 05-07-2026
+  </div>
+
+  <div class="info">
+    Shark Mod NEW Android
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
-<img src="IMG_9406.jpeg">
+<!-- KAHRABA + SHARK -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_6587.png"
+    alt="Kahraba Shark Mod">
+
+  <a
+    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 05-07-2026
+  </div>
+
+  <div class="info">
+    Kahraba + Shark Mod
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
-<a href="https://github.com/ytbshark/ytbshark.github.io/releases/download/jailed-1.8.6/SharkMod_1.8.6.apk">
+<!-- MYU -->
 
-<button class="download">
-Download
-</button>
+<div
+  class="card"
+  data-status="active">
 
-</a>
+  <img
+    src="/IMG_6587.png"
+    alt="Myu Mod">
+
+  <a
+    href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 05-07-2026
+  </div>
+
+  <div class="info">
+    Myu Mod
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
-<div class="info">Version: 26.6.0</div>
+<!-- SPOTIFY -->
 
-<div class="info">Date: 05-07-2026</div>
+<div
+  class="card"
+  data-status="active">
 
-<div class="info">Shark Mod NEW Android</div>
+  <img
+    src="/IMG_4318.png"
+    alt="Spotify Premium Mod">
+
+  <a
+    href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 9.0.66
+  </div>
+
+  <div class="info">
+    Date: 03-08-2025
+  </div>
+
+  <div class="info">
+    Spotify Premium Mod
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
-<div class="overlay"></div>
+<!-- DNS -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_2462.jpeg"
+    alt="DNS Profile">
+
+  <a
+    href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
+
+    <button class="download">
+      Download
+    </button>
+
+  </a>
+
+  <div class="info">
+    Available for iPhone (iOS)
+  </div>
+
+  <div class="info">
+    Date: 14-09-2026
+  </div>
+
+  <div class="info">
+    DNS Profile
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
 </div>
 
 
-
-
-
-<div class="card" data-status="active">
-
-
-<img src="IMG_6587.png">
-
-
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
-
-
-<button class="download">
-Download
-</button>
-
-
-</a>
-
-
-<div class="info">Version: 26.6.0</div>
-
-<div class="info">Date: 05-07-2026</div>
-
-<div class="info">Kahraba + Shark Mod</div>
-
-
-<div class="overlay"></div>
-
-
-</div>
-
-
-<div class="card" data-status="active">
-
-
-<img src="IMG_6587.png">
-
-
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
-
-
-<button class="download">
-Download
-</button>
-
-
-</a>
-
-
-<div class="info">Version: 26.6.0</div>
-
-<div class="info">Date: 05-07-2026</div>
-
-<div class="info">Myu mod</div>
-
-
-<div class="overlay"></div>
-
-
-</div>
-
-
-<div class="card" data-status="active">
-
-
-<img src="IMG_4318.png">
-
-
-<a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
-
-
-<button class="download">
-Download
-</button>
-
-
-</a>
-
-
-<div class="info">Version: 9.0.66</div>
-
-<div class="info">Date: 03-08-2025</div>
-
-<div class="info">
-Spotify Premium Mod
-</div>
-
-
-<div class="overlay"></div>
-
-
-</div>
-
-<div class="card" data-status="active">
-
-
-<img src="IMG_2462.jpeg">
-
-
-<a href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
-
-
-<button class="download">
-Download
-</button>
-
-
-</a>
-
-
-<div class="info">Available for iPhone (iOs)</div>
-
-<div class="info">Date: 14-09-2026</div>
-
-<div class="info">
-DNS Profile
-</div>
-
-
-<div class="overlay"></div>
-
-
-</div>
-
-
-
-
-</div>
-
-
-
-
+<!-- =========================
+     AGAR.IO LINKS
+========================= -->
 
 <hr class="section-line">
+
 
 <div class="section-title">
-    AGAR.IO MOD MENU LINKS
+  AGAR.IO MOD MENU LINKS
 </div>
-
-<div class="grid">
-
-    <!-- Mod 1 -->
-    <div class="card" data-status="active">
-        <img src="IMG_0321.jpeg">
-        <a href="https://biteyt.com/bots">
-            <button class="download">
-              Bite Bots Panel
-              <!-- external link icon: square with up-right arrow -->
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-                <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-              </svg>
-            </button>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 19-08-2026</div>
-        <div class="info">Bite Bots Panel</div>
-        <div class="overlay"></div>
-    </div>
-
-    <!-- Mod 2 -->
-    <div class="card" data-status="active">
-        <img src="IMG_0322.jpeg">
-        <a href="https://kahraba.in">
-            <button class="download">
-              Kahraba Website
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-                <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-              </svg>
-            </button>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 21-08-2026</div>
-        <div class="info">Kahraba Website</div>
-        <div class="overlay"></div>
-    </div>
-
-    <!-- Removed DNS Mod 3 and DNS Mod 4 as requested -->
-
-</div>
-
-
-
-<hr class="section-line">
-
-
-
-
-<div class="help-section">
-
-
-<p><strong>How do I get the mod?</strong></p>
 
 
 <br>
 
 
-<a class="help-button" href="mods-help.html">
+<div class="grid">
 
-Help Mods
 
-</a>
+<!-- BITE BOTS -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_0321.jpeg"
+    alt="Bite Bots Panel">
+
+  <a
+    href="https://biteyt.com/bots"
+    target="_blank"
+    rel="noopener">
+
+    <button class="download">
+
+      Bite Bots Panel
+
+      <svg
+        class="external-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true">
+
+        <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
+        </path>
+
+        <path d="M5 5h5v2H7v10h10v-3h2v5H5z">
+        </path>
+
+      </svg>
+
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 19-08-2026
+  </div>
+
+  <div class="info">
+    Bite Bots Panel
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
+
+
+<!-- KAHRABA WEBSITE -->
+
+<div
+  class="card"
+  data-status="active">
+
+  <img
+    src="/IMG_0322.jpeg"
+    alt="Kahraba Website">
+
+  <a
+    href="https://kahraba.in"
+    target="_blank"
+    rel="noopener">
+
+    <button class="download">
+
+      Kahraba Website
+
+      <svg
+        class="external-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true">
+
+        <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
+        </path>
+
+        <path d="M5 5h5v10h10v-3h2v5H5z">
+        </path>
+
+      </svg>
+
+    </button>
+
+  </a>
+
+  <div class="info">
+    Version: 26.6.0
+  </div>
+
+  <div class="info">
+    Date: 21-08-2026
+  </div>
+
+  <div class="info">
+    Kahraba Website
+  </div>
+
+  <div class="overlay"></div>
+
+</div>
 
 
 </div>
 
 
+<!-- =========================
+     HELP
+========================= -->
+
+<hr class="section-line">
 
 
+<div class="help-section">
+
+  <p>
+    <strong>
+      How do I get the mod?
+    </strong>
+  </p>
+
+  <a
+    class="help-button"
+    href="/mods-help.html">
+
+    Help Mods
+
+  </a>
+
+</div>
+
+
+</main>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+  <p>
+    © 2026 T.B Agar.io
+  </p>
+
+  <p>
+    <a href="/index.html">
+      T.B Agar.io
+    </a>
+  </p>
+
+</footer>
 
 
 <script>
 
+/* =========================
+   LOADER
+========================= */
+
+setTimeout(
+
+  () => {
+
+    const loader =
+      document.getElementById("loader");
+
+    if(loader){
+      loader.style.display = "none";
+    }
+
+  },
+
+  2000 + Math.random() * 2000
+
+);
 
 
-/* LOADING */
-
-setTimeout(()=>{
-
-
-document.getElementById("loader").style.display="none";
-
-
-},2000 + Math.random()*2000);
-
-
-
-
-
-
-
-/* MENU */
-
+/* =========================
+   MENU
+========================= */
 
 function toggleMenu(){
 
+  const menu =
+    document.getElementById("menu");
 
-let menu=document.getElementById("menu");
+  const overlay =
+    document.getElementById("menu-overlay");
 
+  if(menu.classList.contains("open")){
 
-menu.style.display =
+    closeMenu();
 
-menu.style.display==="block"
+  }else{
 
-?"none"
+    menu.classList.add("open");
 
-:"block";
+    overlay.classList.add("show");
 
-
-}
-
-
-
-
-
-
-
-
-/* DARK LIGHT */
-
-
-function toggleTheme(){
-
-
-let body=document.body;
-
-let btn=document.getElementById("themeBtn");
-
-
-
-body.classList.toggle("light-mode");
-
-
-
-if(body.classList.contains("light-mode")){
-
-
-btn.textContent="🌙";
-
-
-}else{
-
-
-btn.textContent="☀️";
-
+  }
 
 }
 
 
-}
+function closeMenu(){
 
+  const menu =
+    document.getElementById("menu");
 
+  const overlay =
+    document.getElementById("menu-overlay");
 
+  menu.classList.remove("open");
 
-
-
-/* STATUS SYSTEM */
-
-
-document.querySelectorAll(".card").forEach(card=>{
-
-
-let status=card.dataset.status;
-
-let btn=card.querySelector("button");
-
-let label=card.querySelector(".status-label");
-
-let overlay=card.querySelector(".overlay");
-
-
-
-if(label){
-
-label.style.display="none";
+  overlay.classList.remove("show");
 
 }
 
 
+/* =========================
+   ESC CLOSE MENU
+========================= */
 
-if(status==="not"){
+document.addEventListener(
+  "keydown",
+  function(event){
 
-
-
-if(label){
-
-label.style.display="block";
-
-}
-
-
-
-btn.classList.add("locked");
-
-btn.textContent="Unavailable";
-
-
-btn.onclick=(e)=>{
-
-
-e.preventDefault();
-
-
-alert("This mod is not available");
-
-
-};
-
-
-
-card.style.opacity="0.45";
-
-
-
-if(overlay){
-
-
-overlay.style.display="flex";
-
-overlay.textContent="Not Available";
-
-
-}
-
-
-
-}
-
-
-
-});
-
-
-
-</script>
-
-  <script>
-document.querySelectorAll(".card").forEach(card => {
-
-  const btn = card.querySelector(".download");
-  const overlay = card.querySelector(".overlay");
-  const link = card.querySelector("a") ? card.querySelector("a").href : "#";
-
-  let ytDone = false;
-  let igDone = false;
-
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    overlay.style.display = "flex";
-
-    overlay.innerHTML = `
-      <div>
-        Download ${getModName(card)}...
-        <div class="spinner"></div>
-      </div>
-    `;
-
-    setTimeout(showVerify, random(3000,6000));
-  });
-
-  function showVerify(){
-
-    overlay.innerHTML = `
-      <div class="verify-box">
-
-        <div class="verify-title">Verification</div>
-        <hr style="margin:10px 0;">
-
-        <button id="ytBtn">Subscribe on YouTube</button>
-        <div class="status" id="ytStatus">⏳</div>
-
-        <br>
-
-        <button id="igBtn">Follow on Instagram</button>
-        <div class="status" id="igStatus">⏳</div>
-
-        <br>
-
-        <button id="unlockBtn" style="background:gray;padding:10px;border-radius:10px;border:none;color:white;">
-          🔒 Locked
-        </button>
-
-      </div>
-    `;
-
-    document.getElementById("ytBtn").onclick = () => {
-      window.open("https://www.youtube.com/@T.B6","_blank");
-
-      setTimeout(() => {
-        ytDone = true;
-        document.getElementById("ytStatus").innerHTML = "✔";
-        checkUnlock();
-      }, random(5000,12000));
-    };
-
-    document.getElementById("igBtn").onclick = () => {
-      window.open("https://www.instagram.com/t.bagar.io/","_blank");
-
-      setTimeout(() => {
-        igDone = true;
-        document.getElementById("igStatus").innerHTML = "✔";
-        checkUnlock();
-      }, random(5000,12000));
-    };
-
-    const unlockBtn = document.getElementById("unlockBtn");
-
-    unlockBtn.onclick = () => {
-      alert("Complete YouTube and Instagram verification first.");
-    };
-
-    function checkUnlock(){
-      if(ytDone && igDone){
-        unlockBtn.style.background = "#22c55e";
-        unlockBtn.innerHTML = "🔓 Unlock";
-        unlockBtn.onclick = startDownload;
-      }
+    if(event.key === "Escape"){
+      closeMenu();
     }
 
   }
+);
 
-  function startDownload(){
 
-    let texts = [
-      "Downloading...",
-      "Please wait...",
-      "Preparing file..."
-    ];
+/* =========================
+   STATUS SYSTEM
+========================= */
 
-    let i = 0;
+document
+  .querySelectorAll(".card")
+  .forEach(card => {
 
-    overlay.innerHTML = `
-      <div>
-        <div id="dlText">${texts[0]}</div>
-        <div class="spinner"></div>
-      </div>
-    `;
+    const status =
+      card.dataset.status;
 
-    let interval = setInterval(() => {
-      i = (i + 1) % texts.length;
-      document.getElementById("dlText").innerText = texts[i];
-    }, 2000);
+    const btn =
+      card.querySelector("button");
 
-    setTimeout(() => {
-      clearInterval(interval);
+    const label =
+      card.querySelector(
+        ".status-label"
+      );
+
+    const overlay =
+      card.querySelector(".overlay");
+
+
+    if(label){
+      label.style.display = "none";
+    }
+
+
+    if(status === "not"){
+
+      if(label){
+        label.style.display = "block";
+      }
+
+
+      if(btn){
+
+        btn.textContent =
+          "Unavailable";
+
+        btn.classList.add(
+          "locked"
+        );
+
+        btn.onclick =
+          function(event){
+
+            event.preventDefault();
+
+            alert(
+              "This mod is not available."
+            );
+
+          };
+
+      }
+
+
+      card.style.opacity = "0.45";
+
+
+      if(overlay){
+
+        overlay.style.display =
+          "flex";
+
+        overlay.textContent =
+          "Not Available";
+
+      }
+
+    }
+
+  });
+
+
+/* =========================
+   DOWNLOAD VERIFICATION
+========================= */
+
+document
+  .querySelectorAll(".card")
+  .forEach(card => {
+
+    const btn =
+      card.querySelector(
+        ".download"
+      );
+
+    const overlay =
+      card.querySelector(
+        ".overlay"
+      );
+
+    const linkElement =
+      card.querySelector("a");
+
+    const link =
+      linkElement
+        ? linkElement.href
+        : "#";
+
+
+    if(!btn || !overlay){
+      return;
+    }
+
+
+    let ytDone = false;
+
+    let igDone = false;
+
+
+    btn.addEventListener(
+      "click",
+      function(event){
+
+        event.preventDefault();
+
+
+        if(
+          card.dataset.status === "not"
+        ){
+          return;
+        }
+
+
+        overlay.style.display =
+          "flex";
+
+
+        overlay.innerHTML = `
+
+          <div style="text-align:center;">
+
+            Download
+            ${getModName(card)}
+            ...
+
+            <div class="spinner"
+              style="margin:12px auto;">
+            </div>
+
+          </div>
+
+        `;
+
+
+        setTimeout(
+          showVerify,
+          random(3000,6000)
+        );
+
+      }
+    );
+
+
+    function showVerify(){
 
       overlay.innerHTML = `
-        <div style="text-align:center;">
-          ✔ Download complete
+
+        <div class="verify-box">
+
+          <div class="verify-title">
+            Verification
+          </div>
+
+          <hr
+            style="
+              margin:10px 0;
+              border:0;
+              border-top:
+                1px solid
+                rgba(255,255,255,.15);
+            "
+          >
+
+
+          <button
+            id="ytBtn"
+            class="download">
+
+            Subscribe on YouTube
+
+          </button>
+
+
+          <div
+            class="status"
+            id="ytStatus">
+
+            ⏳
+
+          </div>
+
+
+          <br>
+
+
+          <button
+            id="igBtn"
+            class="download">
+
+            Follow on Instagram
+
+          </button>
+
+
+          <div
+            class="status"
+            id="igStatus">
+
+            ⏳
+
+          </div>
+
+
+          <br>
+
+
+          <button
+            id="unlockBtn"
+            style="
+              background:gray;
+              padding:10px;
+              width:100%;
+              border-radius:10px;
+              border:none;
+              color:white;
+              font-weight:bold;
+              cursor:pointer;
+            ">
+
+            🔒 Locked
+
+          </button>
+
         </div>
+
       `;
 
-      setTimeout(() => {
-        window.location.href = link;
-      }, 1500);
 
-    }, random(10000,20000));
+      document
+        .getElementById("ytBtn")
+        .onclick = function(){
 
-  }
+          window.open(
+            "https://www.youtube.com/@T.B6",
+            "_blank"
+          );
 
-});
 
-function getModName(card){
-  let infos = card.querySelectorAll(".info");
-  return infos.length ? infos[2].innerText : "Mod";
-}
+          setTimeout(
+            function(){
 
-function random(min,max){
-  return Math.random()*(max-min)+min;
-}
-  
+              ytDone = true;
+
+              document
+                .getElementById(
+                  "ytStatus"
+                )
+                .innerHTML = "✔";
+
+              checkUnlock();
+
+            },
+            random(5000,12000)
+          );
+
+        };
+
+
+      document
+        .getElementById("igBtn")
+        .onclick = function(){
+
+          window.open(
+            "https://www.instagram.com/t.bagar.io/",
+            "_blank"
+          );
+
+
+          setTimeout(
+            function(){
+
+              igDone = true;
+
+              document
+                .getElementById(
+                  "igStatus"
+                )
+                .innerHTML = "✔";
+
+              checkUnlock();
+
+            },
+            random(5000,12000)
+          );
+
+        };
+
+
+      const unlockBtn =
+        document.getElementById(
+          "unlockBtn"
+        );
+
+
+      unlockBtn.onclick =
+        function(){
+
+          alert(
+            "Complete YouTube and Instagram verification first."
+          );
+
+        };
+
+
+      function checkUnlock(){
+
+        if(ytDone && igDone){
+
+          unlockBtn.style.background =
+            "#22c55e";
+
+          unlockBtn.innerHTML =
+            "🔓 Unlock";
+
+          unlockBtn.onclick =
+            startDownload;
+
+        }
+
+      }
+
+
+      function startDownload(){
+
+        const texts = [
+
+          "Downloading...",
+          "Please wait...",
+          "Preparing file..."
+
+        ];
+
+
+        let i = 0;
+
+
+        overlay.innerHTML = `
+
+          <div style="text-align:center;">
+
+            <div id="dlText">
+              ${texts[0]}
+            </div>
+
+            <div
+              class="spinner"
+              style="margin:12px auto;">
+            </div>
+
+          </div>
+
+        `;
+
+
+        const interval =
+          setInterval(
+            function(){
+
+              i =
+                (i + 1) %
+                texts.length;
+
+
+              const dlText =
+                document.getElementById(
+                  "dlText"
+                );
+
+
+              if(dlText){
+
+                dlText.innerText =
+                  texts[i];
+
+              }
+
+            },
+            2000
+          );
+
+
+        setTimeout(
+          function(){
+
+            clearInterval(interval);
+
+
+            overlay.innerHTML = `
+
+              <div
+                style="
+                  text-align:center;
+                  color:#4ade80;
+                  font-weight:bold;
+                ">
+
+                ✔ Download complete
+
+              </div>
+
+            `;
+
+
+            setTimeout(
+              function(){
+
+                window.location.href =
+                  link;
+
+              },
+              1500
+            );
+
+
+          },
+          random(10000,20000)
+        );
+
+      }
+
+    }
+
+
+    function getModName(card){
+
+      const infos =
+        card.querySelectorAll(
+          ".info"
+        );
+
+
+      return infos.length
+        ? infos[
+            infos.length - 1
+          ].innerText
+        : "Mod";
+
+    }
+
+
+    function random(min,max){
+
+      return Math.random() *
+        (max - min) +
+        min;
+
+    }
+
+  });
+
 </script>
-  
-</body>
 
+
+</body>
 </html>
