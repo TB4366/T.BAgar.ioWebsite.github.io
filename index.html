@@ -1,372 +1,1995 @@
 <!doctype html>
+
 <html lang="nl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<meta name="viewport"
+     content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+
   <title>T.B AGAR.IO</title>
 
-  <style>
-  /* donker thema */
-  *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-  #loader{position:fixed;inset:0;background:#020617;display:flex;justify-content:center;align-items:center;gap:15px;z-index:9999;font-size:28px;color:white}
-  .spinner{width:35px;height:35px;border:5px solid #1e40af;border-top:5px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite}
-  @keyframes spin{100%{transform:rotate(360deg)}}
-  body{background:#020617;color:white;min-height:100vh;overflow-x:hidden}
-  header{display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(0,0,0,.5);backdrop-filter:blur(15px);border-bottom:1px solid #2563eb;position:relative;z-index:20}
-  .left{display:flex;align-items:center;gap:12px}
-  .logo{width:45px;height:45px;border-radius:50%;overflow:hidden;box-shadow:0 0 20px #38bdf8}
-  .logo img{width:100%;height:100%;object-fit:cover}
-  .site-name{font-size:22px;font-weight:bold;color:#38bdf8}
-  .menu-btn{background:none;border:none;font-size:24px;cursor:pointer;color:white}
-  .menu{display:none;position:absolute;right:30px;top:70px;background:#020617;border-radius:12px;overflow:hidden;z-index:1000;min-width:220px;border:1px solid #2563eb}
-  .menu a{display:block;padding:12px 18px;color:white;text-decoration:none}
-  .menu a:hover{background:#2563eb}
-  main{text-align:center;padding:40px 20px}
-  h1,h2{color:#38bdf8;text-shadow:0 0 20px #2563eb}
-  hr{width:80%;margin:35px auto;border:1px solid #2563eb}
-  .slider{max-width:500px;margin:auto;overflow:hidden;border-radius:20px}
-  .slides{display:flex;transition:.5s}
-  .video{min-width:100%}
-  iframe{width:100%;height:280px;border:none;border-radius:20px}
-  .slider-buttons{margin-top:15px}
-  .slider-buttons button{background:#2563eb;color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer}
-  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px;max-width:1000px;margin:20px auto 0;}
-  .option{padding:35px;border-radius:20px;background:linear-gradient(135deg,#1e3a8a,#0ea5e9);cursor:pointer;font-weight:bold}
-  .social-buttons{display:flex;justify-content:center;gap:20px;margin:40px;flex-wrap:wrap}
-  .social-buttons a{padding:15px 30px;border-radius:12px;color:white;text-decoration:none}
-  .youtube{background:red}.instagram{background:#e1306c}.discord{background:#5865F2}
+  <!-- PWA -->
 
-  /* Mod cards layout */
-  .section-title{color:#a5f3fc;font-weight:bold;margin:20px 0;font-size:18px}
-  .grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;max-width:1100px;margin:18px auto}
-  .card{width:320px;background:linear-gradient(180deg,#071037,#021026);border-radius:12px;padding:12px;border:1px solid #183b6a;position:relative;color:#cbd5e1;overflow:hidden;cursor:pointer}
-  .card a.card-link{color:inherit;text-decoration:none;display:block}
-  .card img{width:100%;height:160px;object-fit:cover;border-radius:8px;display:block;margin-bottom:8px}
-  .download{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer}
-  .external-icon{width:18px;height:18px;fill:currentColor}
-  .info{font-size:13px;margin-top:6px;color:#cbd5e1}
-  .overlay{position:absolute;inset:0;border-radius:12px;pointer-events:none}
-  @media (max-width:720px){iframe{height:220px}.card{width:100%;max-width:420px}}
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- iOS / iPadOS Web App -->
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="T.B Agar.io">
+
+  <!-- App icon -->
+
+  <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+
+  <meta name="theme-color" content="#020617">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial,sans-serif;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html{
+      background:#020617;
+      min-height:100%;
+    }
+
+    body{
+      background:#020617;
+      color:white;
+      min-height:100vh;
+      overflow-x:hidden;
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+
+    button,
+    a,
+    .option,
+    .card{
+      touch-action:manipulation;
+    }
+
+    /* INSTALL SCREEN */
+    #install-screen{
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at top,#0e3a67 0%,#020617 55%);
+      z-index:30000;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:30px;
+    }
+
+    .install-box{
+      width:min(440px,100%);
+      background:rgba(7,16,55,.88);
+      border:1px solid #0ea5e9;
+      border-radius:28px;
+      padding:32px 24px;
+      box-shadow:0 25px 80px rgba(0,0,0,.55);
+      backdrop-filter:blur(20px);
+    }
+
+    .install-icon{
+      width:90px;
+      height:90px;
+      border-radius:22px;
+      object-fit:cover;
+      box-shadow:0 0 35px rgba(56,189,248,.5);
+      margin-bottom:20px;
+    }
+
+    .install-box h1{
+      color:#38bdf8;
+      font-size:28px;
+      margin-bottom:10px;
+    }
+
+    .install-box p{
+      color:#cbd5e1;
+      line-height:1.5;
+      margin-bottom:22px;
+    }
+
+    .install-step{
+      background:#071a31;
+      border:1px solid #164e7a;
+      border-radius:16px;
+      padding:14px;
+      margin:10px 0;
+      color:#e0f2fe;
+      text-align:left;
+    }
+
+    .install-step strong{
+      color:#38bdf8;
+    }
+
+    .install-arrow{
+      font-size:26px;
+      margin:5px 0;
+      color:#38bdf8;
+    }
+
+    /* LOADER */
+    #loader{
+      position:fixed;
+      inset:0;
+      background:#020617;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:15px;
+      z-index:9999;
+      font-size:28px;
+      color:white;
+    }
+
+    .spinner{
+      width:35px;
+      height:35px;
+      border:5px solid #1e40af;
+      border-top:5px solid #38bdf8;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+    }
+
+    @keyframes spin{
+      100%{transform:rotate(360deg)}
+    }
+
+    /* HEADER */
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:
+        calc(14px + env(safe-area-inset-top))
+        20px
+        14px
+        20px;
+      background:rgba(0,0,0,.5);
+      backdrop-filter:blur(15px);
+      border-bottom:1px solid #2563eb;
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+
+    .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo{
+      width:45px;
+      height:45px;
+      border-radius:50%;
+      overflow:hidden;
+      box-shadow:0 0 20px #38bdf8;
+      flex-shrink:0;
+    }
+
+    .logo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .site-name{
+      font-size:22px;
+      font-weight:bold;
+      color:#38bdf8;
+    }
+
+    .menu-btn{
+      background:none;
+      border:none;
+      font-size:28px;
+      cursor:pointer;
+      color:white;
+      padding:8px;
+    }
+
+    .menu{
+      display:none;
+      position:absolute;
+      right:15px;
+      top:calc(76px + env(safe-area-inset-top));
+      background:#020617;
+      border-radius:16px;
+      overflow:hidden;
+      z-index:1000;
+      min-width:240px;
+      border:1px solid #2563eb;
+      box-shadow:0 20px 50px rgba(0,0,0,.55);
+    }
+
+    .menu a{
+      display:block;
+      padding:15px 18px;
+      color:white;
+      text-decoration:none;
+    }
+
+    .menu a:active{
+      background:#2563eb;
+    }
+
+    /* MAIN */
+    main{
+      text-align:center;
+      padding:40px 20px 80px;
+      max-width:1200px;
+      margin:auto;
+    }
+
+    h1,h2{
+      color:#38bdf8;
+      text-shadow:0 0 20px #2563eb;
+    }
+
+    h1{
+      font-size:38px;
+    }
+
+    h2{
+      font-size:26px;
+    }
+
+    hr{
+      width:80%;
+      margin:35px auto;
+      border:0;
+      border-top:1px solid #2563eb;
+    }
+
+    /* VIDEOS */
+    .slider{
+      max-width:500px;
+      margin:auto;
+      overflow:hidden;
+      border-radius:20px;
+    }
+
+    .slides{
+      display:flex;
+      transition:.5s;
+    }
+
+    .video{
+      min-width:100%;
+    }
+
+    iframe{
+      width:100%;
+      height:280px;
+      border:none;
+      border-radius:20px;
+      background:#071033;
+    }
+
+    .slider-buttons{
+      margin-top:15px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+    }
+
+    .slider-buttons button{
+      background:#2563eb;
+      color:white;
+      border:none;
+      padding:12px 22px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:18px;
+    }
+
+    /* CARDS */
+    .section-title{
+      color:#a5f3fc;
+      font-weight:bold;
+      margin:20px 0;
+      font-size:18px;
+    }
+
+    .grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:18px;
+      justify-content:center;
+      max-width:1100px;
+      margin:18px auto;
+    }
+
+    .card{
+      width:320px;
+      background:linear-gradient(180deg,#071037,#021026);
+      border-radius:18px;
+      padding:12px;
+      border:1px solid #183b6a;
+      position:relative;
+      color:#cbd5e1;
+      overflow:hidden;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .card:active{
+      transform:scale(.98);
+    }
+
+    .card a.card-link{
+      color:inherit;
+      text-decoration:none;
+      display:block;
+    }
+
+    .card img{
+      width:100%;
+      height:160px;
+      object-fit:cover;
+      border-radius:10px;
+      display:block;
+      margin-bottom:8px;
+    }
+
+    .download{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:9px;
+      border:none;
+      background:#2563eb;
+      color:white;
+      cursor:pointer;
+    }
+
+    .external-icon{
+      width:18px;
+      height:18px;
+      fill:currentColor;
+    }
+
+    .info{
+      font-size:13px;
+      margin-top:6px;
+      color:#cbd5e1;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      border-radius:18px;
+      pointer-events:none;
+    }
+
+    /* OPTIONS */
+    .options{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:20px;
+      max-width:1000px;
+      margin:20px auto 0;
+    }
+
+    .option{
+      padding:35px 20px;
+      border-radius:20px;
+      background:linear-gradient(135deg,#1e3a8a,#0ea5e9);
+      cursor:pointer;
+      font-weight:bold;
+      box-shadow:0 10px 30px rgba(14,165,233,.15);
+      transition:.2s;
+    }
+
+    .option:active{
+      transform:scale(.97);
+    }
+
+    /* SOCIAL */
+    .social-buttons{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin:40px 0;
+      flex-wrap:wrap;
+    }
+
+    .social-buttons a{
+      padding:15px 30px;
+      border-radius:12px;
+      color:white;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    .youtube{background:red}
+    .instagram{background:#e1306c}
+    .discord{background:#5865F2}
+
+    /* CHAT */
+    #tb-chat-toggle{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      background:linear-gradient(180deg,#0ea5e9,#1e3a8a);
+      border:3px solid #0ea5e9;
+      box-shadow:0 6px 22px rgba(14,165,233,.28);
+      cursor:pointer;
+      z-index:12000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    #tb-chat-toggle img{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      display:block;
+    }
+
+    #tb-chat-panel{
+      position:fixed;
+      right:90px;
+      bottom:24px;
+      width:360px;
+      max-width:calc(100% - 120px);
+      height:520px;
+      background:#071033;
+      color:#e6f6fb;
+      border-radius:16px;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+      display:none;
+      flex-direction:column;
+      overflow:hidden;
+      z-index:12000;
+      border:2px solid #0ea5e9;
+    }
+
+    #tb-chat-header{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px;
+      background:linear-gradient(180deg,#071037,#021026);
+    }
+
+    #tb-chat-header img{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      display:block;
+      margin-left:6px;
+    }
+
+    #tb-chat-header .tb-title{
+      flex:1;
+      text-align:left;
+      color:#a5f3fc;
+      font-weight:bold;
+      font-size:15px;
+    }
+
+    #tb-chat-header .tb-sub{
+      display:block;
+      font-size:12px;
+      color:#cfeff6;
+      margin-top:3px;
+    }
+
+    #tb-chat-header .tb-close{
+      background:none;
+      border:none;
+      color:#9fe9ff;
+      cursor:pointer;
+      font-size:18px;
+      margin-right:6px;
+    }
+
+    #tb-chat-divider{
+      height:1px;
+      background:#0ea5e9;
+      opacity:.25;
+    }
+
+    #tb-chat-body{
+      flex:1;
+      padding:12px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      scroll-behavior:smooth;
+    }
+
+    .tb-msg{
+      max-width:78%;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+      line-height:1.3;
+      word-wrap:break-word;
+    }
+
+    .tb-msg.user{
+      background:linear-gradient(180deg,#0b2540,#05203a);
+      color:#bfe7ff;
+      margin-left:auto;
+    }
+
+    .tb-msg.bot{
+      background:linear-gradient(180deg,#04354a,#00313e);
+      color:#e6f6fb;
+      margin-right:auto;
+    }
+
+    .tb-links{
+      margin-top:6px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .tb-links a{
+      color:#9fe9ff;
+      text-decoration:underline;
+      font-size:13px;
+      word-break:break-all;
+    }
+
+    #tb-chat-input-wrap{
+      display:flex;
+      gap:8px;
+      padding:10px;
+      border-top:1px solid rgba(255,255,255,.03);
+      background:linear-gradient(180deg,#071026,#031624);
+    }
+
+    #tb-chat-input{
+      flex:1;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.04);
+      background:#021324;
+      color:#e6f6fb;
+      outline:none;
+      font-size:14px;
+    }
+
+    #tb-chat-send{
+      background:#0ea5e9;
+      border:none;
+      color:#021026;
+      padding:9px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    /* FOOTER */
+    footer{
+      text-align:center;
+      padding:18px;
+      color:#9ca3af;
+      margin-top:28px;
+      padding-bottom:calc(25px + env(safe-area-inset-bottom));
+    }
+
+    footer a{
+      color:#38bdf8;
+    }
+
+    /* iPad / mobile */
+    @media (max-width:720px){
+      main{
+        padding-left:15px;
+        padding-right:15px;
+      }
+
+      iframe{
+        height:220px;
+      }
+
+      .card{
+        width:100%;
+        max-width:420px;
+      }
+
+      .site-name{
+        font-size:18px;
+      }
+    }
+
+    @media (max-width:520px){
+      #tb-chat-panel{
+        right:12px;
+        left:12px;
+        width:auto;
+        height:72vh;
+        bottom:12px;
+      }
+
+      #tb-chat-toggle{
+        right:12px;
+        bottom:12px;
+      }
+    }
+
+    /* PWA mode */
+    @media (display-mode:standalone){
+      #install-screen{
+        display:none !important;
+      }
+
+      body{
+        padding-top:0;
+      }
+    }
   </style>
 
   <link rel="preconnect" href="https://www.youtube.com" crossorigin>
 </head>
 
 <body>
+
+  <!-- INSTALL INSTRUCTION -->
+
+  <div id="install-screen">
+    <div class="install-box">
+      <img class="install-icon" src="/IMG_0561.jpeg" alt="T.B Agar.io">
+
+```
+  <h1>T.B AGAR.IO</h1>
+
+  <p>
+    Voeg T.B Agar.io toe aan je beginscherm
+    voor de volledige app-ervaring.
+  </p>
+
+  <div class="install-step">
+    <strong>1.</strong> Tik op de knop <strong>Delen</strong> in Safari.
+  </div>
+
+  <div class="install-arrow">↓</div>
+
+  <div class="install-step">
+    <strong>2.</strong> Kies <strong>Zet op beginscherm</strong>.
+  </div>
+
+  <div class="install-arrow">↓</div>
+
+  <div class="install-step">
+    <strong>3.</strong> Open daarna <strong>T.B Agar.io</strong>
+    vanaf je beginscherm.
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- LOADER -->
+
   <div id="loader" role="status" aria-live="polite">
     Loading...
     <div class="spinner" aria-hidden="true"></div>
   </div>
 
+  <!-- HEADER -->
+
   <header>
     <div class="left">
       <div class="logo">
-        <img src="IMG_0561.jpeg" alt="Logo van T.B">
+        <img src="/IMG_0561.jpeg" alt="Logo van T.B">
       </div>
       <div class="site-name">T.B AGAR.IO</div>
     </div>
 
-    <div>
-      <button id="menuBtn" class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Hoofdmenu">☰</button>
-    </div>
+```
+<button id="menuBtn"
+        class="menu-btn"
+        aria-expanded="false"
+        aria-controls="menu"
+        aria-label="Hoofdmenu">
+  ☰
+</button>
 
-    <nav class="menu" id="menu" aria-hidden="true">
-      <!-- interne sitepagina's -->
-      <a href="index.html">Home</a>
-      <a href="custom-skins.html">Custom Skins</a>
-      <a href="key-access.html">Keys</a>
-      <a href="mod-menu.html">Mod Menu</a>
-      <a href="paidskins.html">Paid Skins</a>
-      <a href="buy-account.html">Buy Account</a>
-      <a href="agar.io-skins.html">Agar.io Skins</a>
-      <!-- externe mod links -->
-      <a href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">Bite Bots Panel</a>
-      <a href="https://kahraba.in" target="_blank" rel="noopener noreferrer">Kahraba Website</a>
-    </nav>
+<nav class="menu" id="menu" aria-hidden="true">
+  <a href="/index.html">Home</a>
+  <a href="/custom-skins.html">Custom Skins</a>
+  <a href="/key-access.html">Keys</a>
+  <a href="/mod-menu.html">Mod Menu</a>
+  <a href="/paidskins.html">Paid Skins</a>
+  <a href="/buy-account.html">Buy Account</a>
+  <a href="/agar.io-skins.html">Agar.io Skins</a>
+
+  <a href="https://biteyt.com/bots"
+     target="_blank"
+     rel="noopener noreferrer">
+    Bite Bots Panel
+  </a>
+
+  <a href="https://kahraba.in"
+     target="_blank"
+     rel="noopener noreferrer">
+    Kahraba Website
+  </a>
+</nav>
+```
+
   </header>
 
   <main>
-    <h1>WELCOME!</h1>
-    <hr>
 
-    <h2>T.B CHANNEL</h2>
+```
+<h1>WELCOME!</h1>
 
-    <div class="slider">
-      <div class="slides" id="slides">
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/02x2YFHWh2o" loading="lazy" title="Video 1" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/d8DluzJAd2w" loading="lazy" title="Video 2" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/c234keB_q3c" loading="lazy" title="Video 3" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/MVl6S3JvxC0" loading="lazy" title="Video 4" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/Zg3-FACfyHE" loading="lazy" title="Video 5" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/TdoL76Jt22A" loading="lazy" title="Video 6" allowfullscreen></iframe></div>
-        <div class="video"><iframe class="lazy-youtube" data-src="https://www.youtube.com/embed/0Tk29twxcJ8" loading="lazy" title="Video 7" allowfullscreen></iframe></div>
+<hr>
+
+<h2>T.B CHANNEL</h2>
+
+<div class="slider">
+  <div class="slides" id="slides">
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/02x2YFHWh2o"
+              loading="lazy"
+              title="Video 1"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/d8DluzJAd2w"
+              loading="lazy"
+              title="Video 2"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/c234keB_q3c"
+              loading="lazy"
+              title="Video 3"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/MVl6S3JvxC0"
+              loading="lazy"
+              title="Video 4"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/Zg3-FACfyHE"
+              loading="lazy"
+              title="Video 5"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/TdoL76Jt22A"
+              loading="lazy"
+              title="Video 6"
+              allowfullscreen></iframe>
+    </div>
+
+    <div class="video">
+      <iframe class="lazy-youtube"
+              data-src="https://www.youtube.com/embed/0Tk29twxcJ8"
+              loading="lazy"
+              title="Video 7"
+              allowfullscreen></iframe>
+    </div>
+
+  </div>
+</div>
+
+<div class="slider-buttons">
+  <button id="prevBtn" aria-label="Vorige video">⬅</button>
+  <button id="nextBtn" aria-label="Volgende video">➡</button>
+</div>
+
+<hr>
+
+<div class="section-title">
+  AGAR.IO MOD MENU LINKS
+</div>
+
+<div class="grid">
+
+  <div class="card" data-href="https://biteyt.com/bots">
+
+    <a class="card-link"
+       href="https://biteyt.com/bots"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <img src="/IMG_0321.jpeg"
+           alt="Bite Bots Panel">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-weight:bold;color:#a5f3fc">
+          Bite Bots Panel
+        </div>
+
+        <button class="download"
+                type="button"
+                aria-label="Open Bite Bots Panel">
+          Open
+
+          <svg class="external-icon"
+               viewBox="0 0 24 24"
+               aria-hidden="true">
+            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+            <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
+          </svg>
+        </button>
       </div>
-    </div>
 
-    <div class="slider-buttons">
-      <button id="prevBtn" aria-label="Vorige video">⬅</button>
-      <button id="nextBtn" aria-label="Volgende video">➡</button>
-    </div>
+    </a>
 
-    <hr>
+    <div class="info">Version: 26.6.0</div>
+    <div class="info">Date: 19-08-2026</div>
+    <div class="info">Bite Bots Panel</div>
 
-    <div class="section-title">AGAR.IO MOD MENU LINKS</div>
+    <div class="overlay"></div>
+  </div>
 
-    <div class="grid">
-      <div class="card" data-href="https://biteyt.com/bots">
-        <a class="card-link" href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
-          <img src="IMG_0321.jpeg" alt="Bite Bots Panel">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-weight:bold;color:#a5f3fc">Bite Bots Panel</div>
-            <button class="download" type="button" aria-label="Open Bite Bots Panel">Open
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path></svg>
-            </button>
-          </div>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 19-08-2026</div>
-        <div class="info">Bite Bots Panel</div>
-        <div class="overlay"></div>
+
+  <div class="card" data-href="https://kahraba.in">
+
+    <a class="card-link"
+       href="https://kahraba.in"
+       target="_blank"
+       rel="noopener noreferrer">
+
+      <img src="/IMG_0322.jpeg"
+           alt="Kahraba Website">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-weight:bold;color:#a5f3fc">
+          Kahraba Website
+        </div>
+
+        <button class="download"
+                type="button"
+                aria-label="Open Kahraba Website">
+          Open
+
+          <svg class="external-icon"
+               viewBox="0 0 24 24"
+               aria-hidden="true">
+            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+            <path d="M5 5h5v10h10v-3h2v5H5z"></path>
+          </svg>
+        </button>
       </div>
 
-      <div class="card" data-href="https://kahraba.in">
-        <a class="card-link" href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
-          <img src="IMG_0322.jpeg" alt="Kahraba Website">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-weight:bold;color:#a5f3fc">Kahraba Website</div>
-            <button class="download" type="button" aria-label="Open Kahraba Website">Open
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path></svg>
-            </button>
-          </div>
-        </a>
-        <div class="info">Version: 26.6.0</div>
-        <div class="info">Date: 21-08-2026</div>
-        <div class="info">Kahraba Website</div>
-        <div class="overlay"></div>
-      </div>
-    </div>
+    </a>
 
-    <hr>
+    <div class="info">Version: 26.6.0</div>
+    <div class="info">Date: 21-08-2026</div>
+    <div class="info">Kahraba Website</div>
 
-    <h2>Choose Your Option!</h2>
-    <div class="options" id="options">
-      <div class="option" data-href="custom-skins.html" tabindex="0">Custom Skins</div>
-      <div class="option" data-href="key-access.html" tabindex="0">Keys</div>
-      <div class="option" data-href="mod-menu.html" tabindex="0">Mod Menu</div>
-      <div class="option" data-href="paidskins.html" tabindex="0">Paid Skins</div>
-      <div class="option" data-href="buy-account.html" tabindex="0">Buy Account</div>
-      <div class="option" data-href="agar.io-skins.html" tabindex="0">Agar.io Skins</div>
-    </div>
+    <div class="overlay"></div>
+  </div>
 
-    <hr>
+</div>
 
-    <div class="social-buttons">
-      <a class="youtube" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube</a>
-      <a class="instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">Instagram</a>
-      <a class="discord" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener noreferrer">Discord</a>
-    </div>
+<hr>
+
+<h2>Choose Your Option!</h2>
+
+<div class="options" id="options">
+
+  <div class="option"
+       data-href="/custom-skins.html"
+       tabindex="0">
+    Custom Skins
+  </div>
+
+  <div class="option"
+       data-href="/key-access.html"
+       tabindex="0">
+    Keys
+  </div>
+
+  <div class="option"
+       data-href="/mod-menu.html"
+       tabindex="0">
+    Mod Menu
+  </div>
+
+  <div class="option"
+       data-href="/paidskins.html"
+       tabindex="0">
+    Paid Skins
+  </div>
+
+  <div class="option"
+       data-href="/buy-account.html"
+       tabindex="0">
+    Buy Account
+  </div>
+
+  <div class="option"
+       data-href="/agar.io-skins.html"
+       tabindex="0">
+    Agar.io Skins
+  </div>
+
+</div>
+
+<hr>
+
+<div class="social-buttons">
+
+  <a class="youtube"
+     href="https://www.youtube.com/@T.B6"
+     target="_blank"
+     rel="noopener noreferrer">
+    YouTube
+  </a>
+
+  <a class="instagram"
+     href="https://www.instagram.com/t.bagar.io/"
+     target="_blank"
+     rel="noopener noreferrer">
+    Instagram
+  </a>
+
+  <a class="discord"
+     href="https://discord.gg/qhuXPrVzBx"
+     target="_blank"
+     rel="noopener noreferrer">
+    Discord
+  </a>
+
+</div>
+```
+
   </main>
 
-  <!-- Chat widget (calls server /api/chat) -->
-  <style>
-  #tb-chat-toggle { position: fixed; right: 24px; bottom: 24px; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(180deg,#0ea5e9,#1e3a8a); border: 3px solid #0ea5e9; box-shadow: 0 6px 22px rgba(14,165,233,0.28); cursor: pointer; z-index: 12000; display: flex; align-items: center; justify-content: center; }
-  #tb-chat-toggle img { width: 48px; height: 48px; border-radius: 50%; display:block; }
-  #tb-chat-panel { position: fixed; right: 90px; bottom: 24px; width: 360px; max-width: calc(100% - 120px); height: 520px; background: #071033; color: #e6f6fb; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); display: none; flex-direction: column; overflow: hidden; z-index: 12000; border: 2px solid #0ea5e9; font-family: Arial, sans-serif; }
-  #tb-chat-header { display:flex; align-items:center; gap:10px; padding:12px; background: linear-gradient(180deg,#071037,#021026); }
-  #tb-chat-header img { width:44px;height:44px;border-radius:50%;display:block; margin-left:6px; }
-  #tb-chat-header .tb-title { flex:1; text-align:left; color:#a5f3fc; font-weight:bold; font-size:15px; }
-  #tb-chat-header .tb-sub { display:block; font-size:12px; color:#cfeff6; margin-top:3px; }
-  #tb-chat-header .tb-close { background:none;border:none;color:#9fe9ff; cursor:pointer; font-size:18px; margin-right:6px; }
-  #tb-chat-divider { height:1px; background:#0ea5e9; opacity:0.25; }
-  #tb-chat-body { flex:1; padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px; scroll-behavior: smooth; }
-  .tb-msg { max-width:78%; padding:10px 12px; border-radius:12px; font-size:14px; line-height:1.3; word-wrap:break-word; }
-  .tb-msg.user { background: linear-gradient(180deg,#0b2540,#05203a); color:#bfe7ff; margin-left:auto; border:1px solid rgba(255,255,255,0.03); }
-  .tb-msg.bot { background: linear-gradient(180deg,#04354a,#00313e); color:#e6f6fb; margin-right:auto; border:1px solid rgba(255,255,255,0.03); }
-  .tb-links { margin-top:6px; display:flex; flex-direction:column; gap:6px; }
-  .tb-links a { color:#9fe9ff; text-decoration:underline; font-size:13px; word-break:break-all; }
-  #tb-chat-input-wrap { display:flex; gap:8px; padding:10px; border-top:1px solid rgba(255,255,255,0.03); background:linear-gradient(180deg,#071026,#031624); }
-  #tb-chat-input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:#021324; color:#e6f6fb; outline:none; font-size:14px; }
-  #tb-chat-send { background:#0ea5e9; border:none; color:#021026; padding:9px 12px; border-radius:10px; cursor:pointer; font-weight:bold; }
-  @media (max-width:520px){ #tb-chat-panel { right: 12px; left: 12px; width: auto; height: 72vh; bottom: 12px; } #tb-chat-toggle { right: 12px; bottom: 12px; } }
-  </style>
+  <!-- CHAT BUTTON -->
 
-  <button id="tb-chat-toggle" aria-label="Open T.B Chat Bot" title="T.B Chat Bot">
-    <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="T.B">
+<button id="tb-chat-toggle"
+       aria-label="Open T.B Chat Bot"
+       title="T.B Chat Bot">
+
+```
+<img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
+     alt="T.B">
+```
+
   </button>
 
-  <div id="tb-chat-panel" role="dialog" aria-modal="true" aria-label="T.B Chat Bot">
-    <div id="tb-chat-header">
-      <img src="74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="icon">
-      <div>
-        <div class="tb-title">T.B Chat Bot</div>
-        <div class="tb-sub">24/7 Support</div>
-      </div>
-      <button class="tb-close" id="tb-chat-close" aria-label="Close chat">✕</button>
+  <!-- CHAT -->
+
+  <div id="tb-chat-panel"
+       role="dialog"
+       aria-modal="true"
+       aria-label="T.B Chat Bot">
+
+```
+<div id="tb-chat-header">
+
+  <img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
+       alt="icon">
+
+  <div>
+    <div class="tb-title">
+      T.B Chat Bot
     </div>
-    <div id="tb-chat-divider" aria-hidden="true"></div>
 
-    <div id="tb-chat-body" aria-live="polite" aria-atomic="false"></div>
-
-    <div id="tb-chat-input-wrap">
-      <input id="tb-chat-input" placeholder="Typ hier je bericht..." aria-label="Type message" />
-      <button id="tb-chat-send" aria-label="Send message">Stuur</button>
+    <div class="tb-sub">
+      24/7 Support
     </div>
   </div>
 
-  <footer style="text-align:center;padding:18px;color:#9ca3af; margin-top:28px;">
-    © <year></year> <a target="_blank" href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html" rel="noopener noreferrer">T.B Website</a> - T.B Licence -
+  <button class="tb-close"
+          id="tb-chat-close"
+          aria-label="Close chat">
+    ✕
+  </button>
+
+</div>
+
+<div id="tb-chat-divider"></div>
+
+<div id="tb-chat-body"
+     aria-live="polite"
+     aria-atomic="false">
+</div>
+
+<div id="tb-chat-input-wrap">
+
+  <input id="tb-chat-input"
+         placeholder="Typ hier je bericht..."
+         aria-label="Type message">
+
+  <button id="tb-chat-send"
+          aria-label="Send message">
+    Stuur
+  </button>
+
+</div>
+```
+
+  </div>
+
+  <footer>
+    © <span id="footer-year"></span>
+    <a target="_blank"
+       href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html"
+       rel="noopener noreferrer">
+      T.B Website
+    </a>
+    - T.B Licence -
   </footer>
 
-  <script>
-  // footer year
-  function year(){ var d=new Date(); var y=d.getFullYear(); if(document.getElementsByTagName("year").length>0) document.getElementsByTagName("year")[0].innerHTML=y; } year();
+<script>
 
-  // basic page behaviour (loader/menu/slider/lazy-iframe/options)
+  /* YEAR */
+  document.getElementById("footer-year").textContent =
+    new Date().getFullYear();
+
+
+  /* PWA SERVICE WORKER */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function(){
+      navigator.serviceWorker.register("/sw.js")
+        .then(function(registration){
+          console.log("T.B Service Worker actief:", registration.scope);
+        })
+        .catch(function(error){
+          console.log("Service Worker fout:", error);
+        });
+    });
+  }
+
+
+  /* APP / BROWSER DETECTION */
+  function isStandalone(){
+
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    );
+
+  }
+
+
+  /*
+   * Alleen in Safari tonen we de installatie-instructie.
+   * Als de website als Home Screen-app draait,
+   * wordt de instructie verborgen.
+   */
+  function checkInstallScreen(){
+
+    const installScreen =
+      document.getElementById("install-screen");
+
+    if(!installScreen) return;
+
+    if(isStandalone()){
+
+      installScreen.style.display = "none";
+
+    }else{
+
+      /*
+       * We tonen de instructie niet automatisch iedere keer.
+       * Alleen wanneer de gebruiker Safari gebruikt.
+       */
+
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" &&
+         navigator.maxTouchPoints > 1);
+
+      if(isIOS){
+        installScreen.style.display = "flex";
+      }
+
+    }
+
+  }
+
+  checkInstallScreen();
+
+
+  /* LOADER */
   (function(){
-    const loader = document.getElementById("loader"); function hide(){ if(loader) loader.style.display="none"; }
-    window.addEventListener('load', hide); setTimeout(hide, 8000);
 
-    const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu');
-    function setMenu(open){ menu.style.display = open ? 'block' : 'none'; menuBtn.setAttribute('aria-expanded', String(open)); menu.setAttribute('aria-hidden', String(!open)); }
-    menuBtn.addEventListener('click', ()=> setMenu(menu.style.display !== 'block'));
-    document.addEventListener('click', (e)=> { if(!menu.contains(e.target) && e.target !== menuBtn) setMenu(false); });
-    document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') setMenu(false); });
+    const loader =
+      document.getElementById("loader");
 
-    // slider
-    (function(){
-      let index=0; const slides=document.getElementById('slides'); const total = slides ? slides.children.length : 0; let lastTouch = Date.now();
-      function showVideo(){ if(slides) slides.style.transform = "translateX(-"+(index*100)+"%)"; }
-      document.getElementById('nextBtn').addEventListener('click', ()=>{ index=(index+1)%total; showVideo(); lastTouch=Date.now(); });
-      document.getElementById('prevBtn').addEventListener('click', ()=>{ index=(index-1+total)%total; showVideo(); lastTouch=Date.now(); });
-      setInterval(()=>{ if(Date.now()-lastTouch>2000){ index=(index+1)%total; showVideo(); } },2000);
-      if (slides){ slides.addEventListener('mouseenter', ()=> lastTouch = Date.now()+100000); slides.addEventListener('mouseleave', ()=> lastTouch = Date.now()); }
-    })();
+    function hideLoader(){
 
-    // lazy YouTube
-    (function(){
-      const lazyIframes = [].slice.call(document.querySelectorAll('iframe.lazy-youtube'));
-      if ('IntersectionObserver' in window && lazyIframes.length) {
-        const obs = new IntersectionObserver((entries, observer) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const iframe = entry.target, src = iframe.getAttribute('data-src');
-              if (src && !iframe.src) iframe.src = src;
-              iframe.classList.remove('lazy-youtube'); observer.unobserve(iframe);
-            }
-          });
-        }, {rootMargin:'300px'});
-        lazyIframes.forEach(f => obs.observe(f));
-      } else { lazyIframes.forEach(f => { const s = f.getAttribute('data-src'); if (s) f.src = s; }); }
-    })();
+      if(loader){
+        loader.style.display = "none";
+      }
 
-    // make cards clickable
-    document.querySelectorAll('.card').forEach(c => {
-      const href = c.getAttribute('data-href');
-      if (href) c.addEventListener('click', (e)=> { if(e.target.closest('a')) return; try { window.open(href, '_blank','noopener'); } catch(e){ location.href = href; } });
+    }
+
+    window.addEventListener("load", hideLoader);
+
+    setTimeout(hideLoader, 8000);
+
+  })();
+
+
+  /* MENU */
+  (function(){
+
+    const menuBtn =
+      document.getElementById("menuBtn");
+
+    const menu =
+      document.getElementById("menu");
+
+    function setMenu(open){
+
+      menu.style.display =
+        open ? "block" : "none";
+
+      menuBtn.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+
+      menu.setAttribute(
+        "aria-hidden",
+        String(!open)
+      );
+
+    }
+
+    menuBtn.addEventListener(
+      "click",
+      function(e){
+
+        e.stopPropagation();
+
+        setMenu(
+          menu.style.display !== "block"
+        );
+
+      }
+    );
+
+    document.addEventListener(
+      "click",
+      function(e){
+
+        if(
+          !menu.contains(e.target) &&
+          e.target !== menuBtn
+        ){
+          setMenu(false);
+        }
+
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      function(e){
+
+        if(e.key === "Escape"){
+          setMenu(false);
+        }
+
+      }
+    );
+
+  })();
+
+
+  /* VIDEO SLIDER */
+  (function(){
+
+    let index = 0;
+
+    const slides =
+      document.getElementById("slides");
+
+    const nextBtn =
+      document.getElementById("nextBtn");
+
+    const prevBtn =
+      document.getElementById("prevBtn");
+
+    if(!slides) return;
+
+    const total =
+      slides.children.length;
+
+    let lastTouch = Date.now();
+
+    function showVideo(){
+
+      slides.style.transform =
+        "translateX(-" +
+        (index * 100) +
+        "%)";
+
+    }
+
+    nextBtn.addEventListener(
+      "click",
+      function(){
+
+        index =
+          (index + 1) % total;
+
+        showVideo();
+
+        lastTouch = Date.now();
+
+      }
+    );
+
+    prevBtn.addEventListener(
+      "click",
+      function(){
+
+        index =
+          (index - 1 + total) % total;
+
+        showVideo();
+
+        lastTouch = Date.now();
+
+      }
+    );
+
+    setInterval(
+      function(){
+
+        if(Date.now() - lastTouch > 4000){
+
+          index =
+            (index + 1) % total;
+
+          showVideo();
+
+        }
+
+      },
+      4000
+    );
+
+  })();
+
+
+  /* LAZY YOUTUBE */
+  (function(){
+
+    const lazyIframes =
+      Array.from(
+        document.querySelectorAll(
+          "iframe.lazy-youtube"
+        )
+      );
+
+    if(
+      "IntersectionObserver" in window &&
+      lazyIframes.length
+    ){
+
+      const observer =
+        new IntersectionObserver(
+          function(entries, observer){
+
+            entries.forEach(
+              function(entry){
+
+                if(entry.isIntersecting){
+
+                  const iframe =
+                    entry.target;
+
+                  const src =
+                    iframe.getAttribute(
+                      "data-src"
+                    );
+
+                  if(src && !iframe.src){
+
+                    iframe.src = src;
+
+                  }
+
+                  iframe.classList.remove(
+                    "lazy-youtube"
+                  );
+
+                  observer.unobserve(
+                    iframe
+                  );
+
+                }
+
+              }
+            );
+
+          },
+          {
+            rootMargin:"300px"
+          }
+        );
+
+      lazyIframes.forEach(
+        function(iframe){
+          observer.observe(iframe);
+        }
+      );
+
+    }else{
+
+      lazyIframes.forEach(
+        function(iframe){
+
+          const src =
+            iframe.getAttribute("data-src");
+
+          if(src){
+            iframe.src = src;
+          }
+
+        }
+      );
+
+    }
+
+  })();
+
+
+  /* CARDS */
+  document
+    .querySelectorAll(".card")
+    .forEach(function(card){
+
+      const href =
+        card.getAttribute("data-href");
+
+      if(!href) return;
+
+      card.addEventListener(
+        "click",
+        function(e){
+
+          if(e.target.closest("a")) return;
+
+          window.open(
+            href,
+            "_blank",
+            "noopener"
+          );
+
+        }
+      );
+
     });
 
-    // options navigation
-    const options = document.getElementById('options');
-    if(options){
-      options.addEventListener('click', (e)=> { const opt = e.target.closest('.option'); if(!opt) return; if(opt.dataset.href) location.href = opt.dataset.href; });
-      options.addEventListener('keydown', (e)=> { const el = e.target.closest('.option'); if(el && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); if(el.dataset.href) location.href=el.dataset.href; }});
-    }
+
+  /* OPTIONS */
+  (function(){
+
+    const options =
+      document.getElementById("options");
+
+    if(!options) return;
+
+    options.addEventListener(
+      "click",
+      function(e){
+
+        const option =
+          e.target.closest(".option");
+
+        if(!option) return;
+
+        const href =
+          option.dataset.href;
+
+        if(href){
+          location.href = href;
+        }
+
+      }
+    );
+
+    options.addEventListener(
+      "keydown",
+      function(e){
+
+        const option =
+          e.target.closest(".option");
+
+        if(
+          option &&
+          (e.key === "Enter" ||
+           e.key === " ")
+        ){
+
+          e.preventDefault();
+
+          const href =
+            option.dataset.href;
+
+          if(href){
+            location.href = href;
+          }
+
+        }
+
+      }
+    );
+
   })();
 
-  // Chat client: communicates with server /api/chat
+
+  /* CHAT */
   (function(){
-    const toggleBtn = document.getElementById('tb-chat-toggle'), panel = document.getElementById('tb-chat-panel');
-    const closeBtn = document.getElementById('tb-chat-close'), bodyDiv = document.getElementById('tb-chat-body');
-    const input = document.getElementById('tb-chat-input'), sendBtn = document.getElementById('tb-chat-send');
-    const STORAGE_KEY = 'tb_chat_client';
-    const SESSION_KEY = 'tb_session';
 
-    function nowISO(){ return new Date().toISOString(); }
-    function getSessionId(){ let sid = localStorage.getItem(SESSION_KEY); if(!sid){ sid = 'sess_'+Math.random().toString(36).slice(2,12); localStorage.setItem(SESSION_KEY, sid); } return sid; }
+    const toggleBtn =
+      document.getElementById(
+        "tb-chat-toggle"
+      );
 
-    let state = { messages: [], lastActivity: Date.now() };
-    function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ state = JSON.parse(raw); if(!state.lastActivity) state.lastActivity=Date.now(); } }catch(e){} }
-    function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
-    function clearState(){ state = { messages: [], lastActivity: Date.now() }; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}; renderMessages(); }
+    const panel =
+      document.getElementById(
+        "tb-chat-panel"
+      );
+
+    const closeBtn =
+      document.getElementById(
+        "tb-chat-close"
+      );
+
+    const bodyDiv =
+      document.getElementById(
+        "tb-chat-body"
+      );
+
+    const input =
+      document.getElementById(
+        "tb-chat-input"
+      );
+
+    const sendBtn =
+      document.getElementById(
+        "tb-chat-send"
+      );
+
+    const STORAGE_KEY =
+      "tb_chat_client";
+
+    const SESSION_KEY =
+      "tb_session";
+
+
+    function nowISO(){
+
+      return new Date().toISOString();
+
+    }
+
+
+    function getSessionId(){
+
+      let sid =
+        localStorage.getItem(
+          SESSION_KEY
+        );
+
+      if(!sid){
+
+        sid =
+          "sess_" +
+          Math.random()
+            .toString(36)
+            .slice(2,12);
+
+        localStorage.setItem(
+          SESSION_KEY,
+          sid
+        );
+
+      }
+
+      return sid;
+
+    }
+
+
+    let state = {
+      messages:[],
+      lastActivity:Date.now()
+    };
+
+
+    function loadState(){
+
+      try{
+
+        const raw =
+          localStorage.getItem(
+            STORAGE_KEY
+          );
+
+        if(raw){
+
+          state =
+            JSON.parse(raw);
+
+          if(!state.lastActivity){
+
+            state.lastActivity =
+              Date.now();
+
+          }
+
+        }
+
+      }catch(e){}
+
+    }
+
+
+    function saveState(){
+
+      try{
+
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(state)
+        );
+
+      }catch(e){}
+
+    }
+
+
+    function clearState(){
+
+      state = {
+        messages:[],
+        lastActivity:Date.now()
+      };
+
+      try{
+
+        localStorage.removeItem(
+          STORAGE_KEY
+        );
+
+      }catch(e){}
+
+      renderMessages();
+
+    }
+
 
     let inactivityTimer = null;
-    function resetInactivityTimer(){ state.lastActivity = Date.now(); saveState(); if(inactivityTimer) clearTimeout(inactivityTimer); inactivityTimer = setTimeout(()=>{ clearState(); addBotMessage('Je chat is verwijderd wegens inactiviteit.', { transient:true }); }, 20*60*1000 ); }
+
+
+    function resetInactivityTimer(){
+
+      state.lastActivity =
+        Date.now();
+
+      saveState();
+
+      if(inactivityTimer){
+
+        clearTimeout(
+          inactivityTimer
+        );
+
+      }
+
+      inactivityTimer =
+        setTimeout(
+          function(){
+
+            clearState();
+
+            addBotMessage(
+              "Je chat is verwijderd wegens inactiviteit.",
+              {transient:true}
+            );
+
+          },
+          20 * 60 * 1000
+        );
+
+    }
+
 
     function renderMessages(){
-      bodyDiv.innerHTML = '';
-      for(const m of state.messages){
-        const wrapper = document.createElement('div');
-        wrapper.className = 'tb-msg ' + (m.role === 'user' ? 'user' : 'bot');
-        wrapper.innerText = m.text || '';
-        bodyDiv.appendChild(wrapper);
-        if(m.links && Array.isArray(m.links) && m.links.length){
-          const linksWrap = document.createElement('div'); linksWrap.className='tb-links';
-          m.links.forEach(link => {
-            const a = document.createElement('a'); a.href = link.url; a.target = '_blank'; a.rel='noopener noreferrer'; a.innerText = link.title + ' — ' + link.url;
-            linksWrap.appendChild(a);
-          });
-          bodyDiv.appendChild(linksWrap);
+
+      bodyDiv.innerHTML = "";
+
+      for(
+        const message
+        of state.messages
+      ){
+
+        const wrapper =
+          document.createElement("div");
+
+        wrapper.className =
+          "tb-msg " +
+          (
+            message.role === "user"
+            ? "user"
+            : "bot"
+          );
+
+        wrapper.innerText =
+          message.text || "";
+
+        bodyDiv.appendChild(
+          wrapper
+        );
+
+
+        if(
+          message.links &&
+          Array.isArray(message.links) &&
+          message.links.length
+        ){
+
+          const linksWrap =
+            document.createElement("div");
+
+          linksWrap.className =
+            "tb-links";
+
+
+          message.links.forEach(
+            function(link){
+
+              const a =
+                document.createElement("a");
+
+              a.href =
+                link.url;
+
+              a.target =
+                "_blank";
+
+              a.rel =
+                "noopener noreferrer";
+
+              a.innerText =
+                link.title +
+                " — " +
+                link.url;
+
+              linksWrap.appendChild(a);
+
+            }
+          );
+
+          bodyDiv.appendChild(
+            linksWrap
+          );
+
         }
+
       }
-      bodyDiv.scrollTop = bodyDiv.scrollHeight;
+
+      bodyDiv.scrollTop =
+        bodyDiv.scrollHeight;
+
     }
+
 
     function addUserMessage(text){
-      text = text.trim(); if(!text) return;
-      state.messages.push({ role:'user', text, t: nowISO() });
-      saveState(); renderMessages(); resetInactivityTimer();
+
+      text =
+        text.trim();
+
+      if(!text) return;
+
+      state.messages.push({
+        role:"user",
+        text:text,
+        t:nowISO()
+      });
+
+      saveState();
+
+      renderMessages();
+
+      resetInactivityTimer();
+
     }
 
-    function addBotMessage(text, options = {}){
-      text = String(text).replace(/[<>]/g,'');
+
+    function addBotMessage(
+      text,
+      options={}
+    ){
+
+      text =
+        String(text)
+          .replace(/[<>]/g,"");
+
       if(!options.transient){
-        const msg = { role:'bot', text, t: nowISO() };
-        if(options.links) msg.links = options.links;
-        state.messages.push(msg); saveState();
-      } else {
-        const div = document.createElement('div'); div.className='tb-msg bot'; div.innerText=text; bodyDiv.appendChild(div);
-        setTimeout(()=>{ if(div && div.parentNode) div.parentNode.removeChild(div); }, 6000);
+
+        const message = {
+          role:"bot",
+          text:text,
+          t:nowISO()
+        };
+
+        if(options.links){
+
+          message.links =
+            options.links;
+
+        }
+
+        state.messages.push(
+          message
+        );
+
+        saveState();
+
+      }else{
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "tb-msg bot";
+
+        div.innerText =
+          text;
+
+        bodyDiv.appendChild(
+          div
+        );
+
+        setTimeout(
+          function(){
+
+            if(
+              div &&
+              div.parentNode
+            ){
+
+              div.parentNode.removeChild(
+                div
+              );
+
+            }
+
+          },
+          6000
+        );
+
       }
-      renderMessages(); resetInactivityTimer();
+
+      renderMessages();
+
+      resetInactivityTimer();
+
     }
+
 
     async function sendToServer(message){
-      const sessionId = getSessionId();
+
+      const sessionId =
+        getSessionId();
+
       try{
-        const r = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ sessionId, message }) });
-        return await r.json();
-      } catch(e){
-        return { error: true, reply: 'Er is een fout opgetreden bij de server.' };
+
+        const response =
+          await fetch(
+            "/api/chat",
+            {
+              method:"POST",
+              headers:{
+                "Content-Type":
+                  "application/json"
+              },
+              body:
+                JSON.stringify({
+                  sessionId,
+                  message
+                })
+            }
+          );
+
+        return await response.json();
+
+      }catch(e){
+
+        return {
+          error:true,
+          reply:
+            "Er is een fout opgetreden bij de server."
+        };
+
       }
+
     }
+
 
     async function sendCurrent(){
-      const text = input.value.trim(); if(!text) return;
-      addUserMessage(text); input.value='';
-      // show typing placeholder
-      addBotMessage('Even denken...', { transient:true });
-      const res = await sendToServer(text);
-      // remove transient typing by reloading persisted state (server responses are appended below)
-      // If server returned structured reply:
-      if(res){
-        if(res.error) {
-          addBotMessage(res.reply || 'Er is een fout opgetreden.');
-        } else {
-          // remove last transient if any by re-render from state (we show persistent messages next)
-          // display server reply
-          if(res.reply) addBotMessage(res.reply, { links: res.links });
+
+      const text =
+        input.value.trim();
+
+      if(!text) return;
+
+      addUserMessage(text);
+
+      input.value = "";
+
+      addBotMessage(
+        "Even denken...",
+        {transient:true}
+      );
+
+      const response =
+        await sendToServer(text);
+
+      if(response){
+
+        if(response.error){
+
+          addBotMessage(
+            response.reply ||
+            "Er is een fout opgetreden."
+          );
+
+        }else{
+
+          if(response.reply){
+
+            addBotMessage(
+              response.reply,
+              {
+                links:
+                  response.links
+              }
+            );
+
+          }
+
         }
-      } else addBotMessage('Geen antwoord ontvangen.');
+
+      }else{
+
+        addBotMessage(
+          "Geen antwoord ontvangen."
+        );
+
+      }
+
     }
 
-    loadState(); renderMessages(); resetInactivityTimer();
-    toggleBtn.addEventListener('click', ()=> { panel.style.display === 'flex' ? panel.style.display='none' : (panel.style.display='flex', input.focus()); });
-    closeBtn.addEventListener('click', ()=> panel.style.display='none');
-    sendBtn.addEventListener('click', sendCurrent);
-    input.addEventListener('keydown', (e)=> { if(e.key === 'Enter') sendCurrent(); });
 
-    window.addEventListener('beforeunload', ()=> { if(Date.now() - state.lastActivity > 20*60*1000) { try{ localStorage.removeItem(STORAGE_KEY); } catch(e){} } else saveState(); });
+    loadState();
+
+    renderMessages();
+
+    resetInactivityTimer();
+
+
+    toggleBtn.addEventListener(
+      "click",
+      function(){
+
+        if(
+          panel.style.display === "flex"
+        ){
+
+          panel.style.display =
+            "none";
+
+        }else{
+
+          panel.style.display =
+            "flex";
+
+          input.focus();
+
+        }
+
+      }
+    );
+
+
+    closeBtn.addEventListener(
+      "click",
+      function(){
+
+        panel.style.display =
+          "none";
+
+      }
+    );
+
+
+    sendBtn.addEventListener(
+      "click",
+      sendCurrent
+    );
+
+
+    input.addEventListener(
+      "keydown",
+      function(e){
+
+        if(e.key === "Enter"){
+
+          sendCurrent();
+
+        }
+
+      }
+    );
+
+
+    window.addEventListener(
+      "beforeunload",
+      function(){
+
+        if(
+          Date.now() -
+          state.lastActivity >
+          20 * 60 * 1000
+        ){
+
+          try{
+
+            localStorage.removeItem(
+              STORAGE_KEY
+            );
+
+          }catch(e){}
+
+        }else{
+
+          saveState();
+
+        }
+
+      }
+    );
+
   })();
-  </script>
+
+</script>
+
 </body>
 </html>
