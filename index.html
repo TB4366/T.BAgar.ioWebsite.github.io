@@ -1,1993 +1,1452 @@
 <!doctype html>
-
-<html lang="nl">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-
-<meta name="viewport"
-     content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-
-  <title>T.B AGAR.IO</title>
-
-  <!-- PWA -->
-
-  <link rel="manifest" href="/manifest.json">
-
-  <!-- iOS / iPadOS Web App -->
-
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="T.B Agar.io">
-
-  <!-- App icon -->
-
-  <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
-
-  <meta name="theme-color" content="#020617">
-
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:Arial,sans-serif;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html{
-      background:#020617;
-      min-height:100%;
-    }
-
-    body{
-      background:#020617;
-      color:white;
-      min-height:100vh;
-      overflow-x:hidden;
-      padding-bottom:env(safe-area-inset-bottom);
-    }
-
-    button,
-    a,
-    .option,
-    .card{
-      touch-action:manipulation;
-    }
-
-    /* INSTALL SCREEN */
-    #install-screen{
-      position:fixed;
-      inset:0;
-      background:
-        radial-gradient(circle at top,#0e3a67 0%,#020617 55%);
-      z-index:30000;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:30px;
-    }
-
-    .install-box{
-      width:min(440px,100%);
-      background:rgba(7,16,55,.88);
-      border:1px solid #0ea5e9;
-      border-radius:28px;
-      padding:32px 24px;
-      box-shadow:0 25px 80px rgba(0,0,0,.55);
-      backdrop-filter:blur(20px);
-    }
-
-    .install-icon{
-      width:90px;
-      height:90px;
-      border-radius:22px;
-      object-fit:cover;
-      box-shadow:0 0 35px rgba(56,189,248,.5);
-      margin-bottom:20px;
-    }
-
-    .install-box h1{
-      color:#38bdf8;
-      font-size:28px;
-      margin-bottom:10px;
-    }
-
-    .install-box p{
-      color:#cbd5e1;
-      line-height:1.5;
-      margin-bottom:22px;
-    }
-
-    .install-step{
-      background:#071a31;
-      border:1px solid #164e7a;
-      border-radius:16px;
-      padding:14px;
-      margin:10px 0;
-      color:#e0f2fe;
-      text-align:left;
-    }
-
-    .install-step strong{
-      color:#38bdf8;
-    }
-
-    .install-arrow{
-      font-size:26px;
-      margin:5px 0;
-      color:#38bdf8;
-    }
-
-    /* LOADER */
-    #loader{
-      position:fixed;
-      inset:0;
-      background:#020617;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:15px;
-      z-index:9999;
-      font-size:28px;
-      color:white;
-    }
-
-    .spinner{
-      width:35px;
-      height:35px;
-      border:5px solid #1e40af;
-      border-top:5px solid #38bdf8;
-      border-radius:50%;
-      animation:spin 1s linear infinite;
-    }
-
-    @keyframes spin{
-      100%{transform:rotate(360deg)}
-    }
-
-    /* HEADER */
-    header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:
-        calc(14px + env(safe-area-inset-top))
-        20px
-        14px
-        20px;
-      background:rgba(0,0,0,.5);
-      backdrop-filter:blur(15px);
-      border-bottom:1px solid #2563eb;
-      position:sticky;
-      top:0;
-      z-index:20;
-    }
-
-    .left{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
-    .logo{
-      width:45px;
-      height:45px;
-      border-radius:50%;
-      overflow:hidden;
-      box-shadow:0 0 20px #38bdf8;
-      flex-shrink:0;
-    }
-
-    .logo img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-
-    .site-name{
-      font-size:22px;
-      font-weight:bold;
-      color:#38bdf8;
-    }
-
-    .menu-btn{
-      background:none;
-      border:none;
-      font-size:28px;
-      cursor:pointer;
-      color:white;
-      padding:8px;
-    }
-
-    .menu{
-      display:none;
-      position:absolute;
-      right:15px;
-      top:calc(76px + env(safe-area-inset-top));
-      background:#020617;
-      border-radius:16px;
-      overflow:hidden;
-      z-index:1000;
-      min-width:240px;
-      border:1px solid #2563eb;
-      box-shadow:0 20px 50px rgba(0,0,0,.55);
-    }
-
-    .menu a{
-      display:block;
-      padding:15px 18px;
-      color:white;
-      text-decoration:none;
-    }
-
-    .menu a:active{
-      background:#2563eb;
-    }
-
-    /* MAIN */
-    main{
-      text-align:center;
-      padding:40px 20px 80px;
-      max-width:1200px;
-      margin:auto;
-    }
-
-    h1,h2{
-      color:#38bdf8;
-      text-shadow:0 0 20px #2563eb;
-    }
-
-    h1{
-      font-size:38px;
-    }
-
-    h2{
-      font-size:26px;
-    }
-
-    hr{
-      width:80%;
-      margin:35px auto;
-      border:0;
-      border-top:1px solid #2563eb;
-    }
-
-    /* VIDEOS */
-    .slider{
-      max-width:500px;
-      margin:auto;
-      overflow:hidden;
-      border-radius:20px;
-    }
-
-    .slides{
-      display:flex;
-      transition:.5s;
-    }
-
-    .video{
-      min-width:100%;
-    }
-
-    iframe{
-      width:100%;
-      height:280px;
-      border:none;
-      border-radius:20px;
-      background:#071033;
-    }
-
-    .slider-buttons{
-      margin-top:15px;
-      display:flex;
-      justify-content:center;
-      gap:10px;
-    }
-
-    .slider-buttons button{
-      background:#2563eb;
-      color:white;
-      border:none;
-      padding:12px 22px;
-      border-radius:12px;
-      cursor:pointer;
-      font-size:18px;
-    }
-
-    /* CARDS */
-    .section-title{
-      color:#a5f3fc;
-      font-weight:bold;
-      margin:20px 0;
-      font-size:18px;
-    }
-
-    .grid{
-      display:flex;
-      flex-wrap:wrap;
-      gap:18px;
-      justify-content:center;
-      max-width:1100px;
-      margin:18px auto;
-    }
-
-    .card{
-      width:320px;
-      background:linear-gradient(180deg,#071037,#021026);
-      border-radius:18px;
-      padding:12px;
-      border:1px solid #183b6a;
-      position:relative;
-      color:#cbd5e1;
-      overflow:hidden;
-      cursor:pointer;
-      transition:.2s;
-    }
-
-    .card:active{
-      transform:scale(.98);
-    }
-
-    .card a.card-link{
-      color:inherit;
-      text-decoration:none;
-      display:block;
-    }
-
-    .card img{
-      width:100%;
-      height:160px;
-      object-fit:cover;
-      border-radius:10px;
-      display:block;
-      margin-bottom:8px;
-    }
-
-    .download{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:9px;
-      border:none;
-      background:#2563eb;
-      color:white;
-      cursor:pointer;
-    }
-
-    .external-icon{
-      width:18px;
-      height:18px;
-      fill:currentColor;
-    }
-
-    .info{
-      font-size:13px;
-      margin-top:6px;
-      color:#cbd5e1;
-    }
-
-    .overlay{
-      position:absolute;
-      inset:0;
-      border-radius:18px;
-      pointer-events:none;
-    }
-
-    /* OPTIONS */
-    .options{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:20px;
-      max-width:1000px;
-      margin:20px auto 0;
-    }
-
-    .option{
-      padding:35px 20px;
-      border-radius:20px;
-      background:linear-gradient(135deg,#1e3a8a,#0ea5e9);
-      cursor:pointer;
-      font-weight:bold;
-      box-shadow:0 10px 30px rgba(14,165,233,.15);
-      transition:.2s;
-    }
-
-    .option:active{
-      transform:scale(.97);
-    }
-
-    /* SOCIAL */
-    .social-buttons{
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      margin:40px 0;
-      flex-wrap:wrap;
-    }
-
-    .social-buttons a{
-      padding:15px 30px;
-      border-radius:12px;
-      color:white;
-      text-decoration:none;
-      font-weight:bold;
-    }
-
-    .youtube{background:red}
-    .instagram{background:#e1306c}
-    .discord{background:#5865F2}
-
-    /* CHAT */
-    #tb-chat-toggle{
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      width:64px;
-      height:64px;
-      border-radius:50%;
-      background:linear-gradient(180deg,#0ea5e9,#1e3a8a);
-      border:3px solid #0ea5e9;
-      box-shadow:0 6px 22px rgba(14,165,233,.28);
-      cursor:pointer;
-      z-index:12000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    #tb-chat-toggle img{
-      width:48px;
-      height:48px;
-      border-radius:50%;
-      display:block;
-    }
-
-    #tb-chat-panel{
-      position:fixed;
-      right:90px;
-      bottom:24px;
-      width:360px;
-      max-width:calc(100% - 120px);
-      height:520px;
-      background:#071033;
-      color:#e6f6fb;
-      border-radius:16px;
-      box-shadow:0 20px 60px rgba(0,0,0,.6);
-      display:none;
-      flex-direction:column;
-      overflow:hidden;
-      z-index:12000;
-      border:2px solid #0ea5e9;
-    }
-
-    #tb-chat-header{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:12px;
-      background:linear-gradient(180deg,#071037,#021026);
-    }
-
-    #tb-chat-header img{
-      width:44px;
-      height:44px;
-      border-radius:50%;
-      display:block;
-      margin-left:6px;
-    }
-
-    #tb-chat-header .tb-title{
-      flex:1;
-      text-align:left;
-      color:#a5f3fc;
-      font-weight:bold;
-      font-size:15px;
-    }
-
-    #tb-chat-header .tb-sub{
-      display:block;
-      font-size:12px;
-      color:#cfeff6;
-      margin-top:3px;
-    }
-
-    #tb-chat-header .tb-close{
-      background:none;
-      border:none;
-      color:#9fe9ff;
-      cursor:pointer;
-      font-size:18px;
-      margin-right:6px;
-    }
-
-    #tb-chat-divider{
-      height:1px;
-      background:#0ea5e9;
-      opacity:.25;
-    }
-
-    #tb-chat-body{
-      flex:1;
-      padding:12px;
-      overflow:auto;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      scroll-behavior:smooth;
-    }
-
-    .tb-msg{
-      max-width:78%;
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:14px;
-      line-height:1.3;
-      word-wrap:break-word;
-    }
-
-    .tb-msg.user{
-      background:linear-gradient(180deg,#0b2540,#05203a);
-      color:#bfe7ff;
-      margin-left:auto;
-    }
-
-    .tb-msg.bot{
-      background:linear-gradient(180deg,#04354a,#00313e);
-      color:#e6f6fb;
-      margin-right:auto;
-    }
-
-    .tb-links{
-      margin-top:6px;
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-
-    .tb-links a{
-      color:#9fe9ff;
-      text-decoration:underline;
-      font-size:13px;
-      word-break:break-all;
-    }
-
-    #tb-chat-input-wrap{
-      display:flex;
-      gap:8px;
-      padding:10px;
-      border-top:1px solid rgba(255,255,255,.03);
-      background:linear-gradient(180deg,#071026,#031624);
-    }
-
-    #tb-chat-input{
-      flex:1;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.04);
-      background:#021324;
-      color:#e6f6fb;
-      outline:none;
-      font-size:14px;
-    }
-
-    #tb-chat-send{
-      background:#0ea5e9;
-      border:none;
-      color:#021026;
-      padding:9px 12px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:bold;
-    }
-
-    /* FOOTER */
-    footer{
-      text-align:center;
-      padding:18px;
-      color:#9ca3af;
-      margin-top:28px;
-      padding-bottom:calc(25px + env(safe-area-inset-bottom));
-    }
-
-    footer a{
-      color:#38bdf8;
-    }
-
-    /* iPad / mobile */
-    @media (max-width:720px){
-      main{
-        padding-left:15px;
-        padding-right:15px;
-      }
-
-      iframe{
-        height:220px;
-      }
-
-      .card{
-        width:100%;
-        max-width:420px;
-      }
-
-      .site-name{
-        font-size:18px;
-      }
-    }
-
-    @media (max-width:520px){
-      #tb-chat-panel{
-        right:12px;
-        left:12px;
-        width:auto;
-        height:72vh;
-        bottom:12px;
-      }
-
-      #tb-chat-toggle{
-        right:12px;
-        bottom:12px;
-      }
-    }
-
-    /* PWA mode */
-    @media (display-mode:standalone){
-      #install-screen{
-        display:none !important;
-      }
-
-      body{
-        padding-top:0;
-      }
-    }
-  </style>
-
-  <link rel="preconnect" href="https://www.youtube.com" crossorigin>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, viewport-fit=cover"
+>
+
+<title>T.B AGAR.IO</title>
+
+<meta name="theme-color" content="#020617">
+
+<meta
+  name="description"
+  content="T.B Agar.io - Skins, mods, accounts and more."
+>
+
+<link rel="manifest" href="/manifest.json">
+
+<!-- iPhone / iPad Web App -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="T.B Agar.io">
+
+<!-- SAME IMAGE AS WEBSITE LOGO -->
+<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+
+<style>
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  padding:0;
+  background:#020617;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+}
+
+body::selection{
+  background:#0ea5e9;
+  color:#fff;
+}
+
+/* =========================
+   LOADER
+========================= */
+
+#loader{
+  position:fixed;
+  inset:0;
+  background:#020617;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+
+.loader-spinner{
+  width:50px;
+  height:50px;
+  border:5px solid rgba(255,255,255,.15);
+  border-top:5px solid #0ea5e9;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+/* =========================
+   INSTALL SCREEN
+========================= */
+
+#install-screen{
+  position:fixed;
+  inset:0;
+  z-index:99998;
+  background:#020617;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:25px;
+  text-align:center;
+}
+
+.install-box{
+  width:100%;
+  max-width:520px;
+  background:#071226;
+  border:1px solid rgba(14,165,233,.35);
+  border-radius:24px;
+  padding:35px 25px;
+  box-shadow:
+    0 0 40px rgba(14,165,233,.12);
+}
+
+.install-icon{
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius:22px;
+  display:block;
+  margin:0 auto 22px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+
+.install-box h1{
+  margin:0 0 12px;
+  font-size:30px;
+  letter-spacing:1px;
+}
+
+.install-box p{
+  color:#cbd5e1;
+  line-height:1.6;
+  margin:0 0 25px;
+}
+
+.install-step{
+  background:#0b1930;
+  border:1px solid rgba(14,165,233,.2);
+  border-radius:14px;
+  padding:15px;
+  text-align:left;
+  margin:8px 0;
+  color:#e2e8f0;
+  line-height:1.5;
+}
+
+.install-step strong{
+  color:#38bdf8;
+}
+
+.install-arrow{
+  color:#38bdf8;
+  font-size:22px;
+  margin:2px 0;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+
+  width:100%;
+
+  background:rgba(2,6,23,.94);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+
+  border-bottom:1px solid rgba(14,165,233,.2);
+
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    18px
+    10px
+    18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.header-logo{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  object-fit:cover;
+  flex-shrink:0;
+}
+
+.header-title{
+  font-size:20px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.menu-button{
+  width:46px;
+  height:46px;
+  border:1px solid rgba(14,165,233,.25);
+  background:#071226;
+  color:#fff;
+  border-radius:12px;
+  font-size:24px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* =========================
+   MENU
+========================= */
+
+#side-menu{
+  position:fixed;
+  top:0;
+  right:-320px;
+
+  width:300px;
+  max-width:85vw;
+  height:100%;
+
+  background:#050d1c;
+
+  z-index:5000;
+
+  padding:
+    calc(25px + env(safe-area-inset-top))
+    20px
+    calc(25px + env(safe-area-inset-bottom));
+
+  border-left:1px solid rgba(14,165,233,.2);
+
+  transition:right .3s ease;
+
+  overflow-y:auto;
+}
+
+#side-menu.open{
+  right:0;
+}
+
+.menu-close{
+  width:100%;
+  text-align:right;
+  margin-bottom:20px;
+}
+
+.menu-close button{
+  background:none;
+  border:0;
+  color:#fff;
+  font-size:28px;
+  cursor:pointer;
+}
+
+.menu-link{
+  display:block;
+  width:100%;
+  padding:15px 14px;
+  margin:7px 0;
+
+  border-radius:12px;
+
+  text-decoration:none;
+  color:#fff;
+
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.12);
+
+  font-weight:700;
+}
+
+.menu-link:hover{
+  background:#0b203d;
+}
+
+.menu-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:4999;
+  display:none;
+}
+
+.menu-overlay.show{
+  display:block;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+  padding:
+    45px 18px
+    calc(45px + env(safe-area-inset-bottom));
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:45px;
+}
+
+.hero h1{
+  font-size:clamp(35px,7vw,65px);
+  margin:0;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.hero p{
+  color:#94a3b8;
+  font-size:17px;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.section-title{
+  text-align:center;
+  margin:45px 0 22px;
+}
+
+.section-title h2{
+  margin:0;
+  font-size:28px;
+}
+
+.section-title p{
+  color:#94a3b8;
+}
+
+/* =========================
+   YOUTUBE
+========================= */
+
+.video-wrapper{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+}
+
+.video-slider{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  padding:5px 2px 15px;
+}
+
+.video-slider::-webkit-scrollbar{
+  display:none;
+}
+
+.video-card{
+  flex:0 0 min(88vw,520px);
+  scroll-snap-align:center;
+
+  background:#071226;
+
+  border:1px solid rgba(14,165,233,.18);
+
+  border-radius:18px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,.25);
+}
+
+.video-card iframe{
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  display:block;
+}
+
+/* =========================
+   MOD MENU CARDS
+========================= */
+
+.mod-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px;
+}
+
+.mod-card{
+  background:#071226;
+  border:1px solid rgba(14,165,233,.18);
+  border-radius:18px;
+  overflow:hidden;
+}
+
+.mod-card img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  display:block;
+}
+
+.mod-content{
+  padding:18px;
+}
+
+.mod-content h3{
+  margin:0 0 10px;
+  font-size:20px;
+}
+
+.mod-content p{
+  color:#94a3b8;
+  margin:6px 0;
+}
+
+/* =========================
+   OPTIONS
+========================= */
+
+.options-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+}
+
+.option{
+  min-height:130px;
+
+  background:#071226;
+
+  border:1px solid rgba(14,165,233,.18);
+
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  padding:20px;
+
+  color:#fff;
+  text-decoration:none;
+
+  font-size:19px;
+  font-weight:800;
+
+  transition:
+    transform .2s ease,
+    background .2s ease,
+    border-color .2s ease;
+}
+
+.option:hover{
+  transform:translateY(-3px);
+  background:#0a1b35;
+  border-color:rgba(14,165,233,.45);
+}
+
+/* =========================
+   SOCIAL
+========================= */
+
+.social{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:35px;
+}
+
+.social a{
+  padding:13px 18px;
+  background:#071226;
+  border:1px solid rgba(14,165,233,.2);
+  border-radius:12px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+}
+
+/* =========================
+   CHAT BOT
+========================= */
+
+#chat-button{
+  position:fixed;
+
+  right:18px;
+  bottom:
+    calc(18px + env(safe-area-inset-bottom));
+
+  width:58px;
+  height:58px;
+
+  border:0;
+  border-radius:50%;
+
+  background:#0ea5e9;
+
+  cursor:pointer;
+
+  z-index:3000;
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,.4);
+}
+
+#chat-button img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+
+#chat-box{
+  position:fixed;
+
+  right:18px;
+  bottom:
+    calc(88px + env(safe-area-inset-bottom));
+
+  width:min(360px,calc(100vw - 36px));
+
+  background:#071226;
+
+  border:1px solid rgba(14,165,233,.25);
+
+  border-radius:18px;
+
+  z-index:3001;
+
+  display:none;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 15px 50px rgba(0,0,0,.5);
+}
+
+#chat-box.open{
+  display:block;
+}
+
+.chat-header{
+  padding:15px;
+  background:#0a1930;
+  font-weight:800;
+}
+
+#chat-messages{
+  height:280px;
+  overflow-y:auto;
+  padding:15px;
+}
+
+.chat-message{
+  padding:10px 12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  background:#0c1d36;
+  line-height:1.4;
+}
+
+.chat-input{
+  display:flex;
+  border-top:1px solid rgba(14,165,233,.15);
+}
+
+.chat-input input{
+  flex:1;
+  min-width:0;
+  padding:14px;
+  border:0;
+  outline:0;
+  background:#050d1c;
+  color:#fff;
+}
+
+.chat-input button{
+  padding:0 16px;
+  border:0;
+  background:#0ea5e9;
+  color:#fff;
+  font-weight:800;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  text-align:center;
+  padding:
+    30px 18px
+    calc(30px + env(safe-area-inset-bottom));
+
+  color:#64748b;
+  border-top:1px solid rgba(14,165,233,.1);
+}
+
+footer a{
+  color:#38bdf8;
+  text-decoration:none;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+  main{
+    padding-top:35px;
+  }
+
+  .mod-grid{
+    grid-template-columns:1fr;
+  }
+
+  .options-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .option{
+    min-height:110px;
+    font-size:16px;
+  }
+
+  .header-title{
+    font-size:17px;
+  }
+
+  .header-logo{
+    width:44px;
+    height:44px;
+  }
+
+}
+
+@media(max-width:430px){
+
+  .options-grid{
+    grid-template-columns:1fr;
+  }
+
+  .install-box{
+    padding:28px 18px;
+  }
+
+  .install-icon{
+    width:85px;
+    height:85px;
+  }
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-  <!-- INSTALL INSTRUCTION -->
-
-  <div id="install-screen">
-    <div class="install-box">
-      <img class="install-icon" src="/IMG_0561.jpeg" alt="T.B Agar.io">
-
-
-  <h1>T.B AGAR.IO</h1>
-
-  <p>
-    Voeg T.B Agar.io toe aan je beginscherm
-    voor de volledige app-ervaring.
-  </p>
-
-  <div class="install-step">
-    <strong>1.</strong> Tik op de knop <strong>Delen</strong> in Safari.
-  </div>
-
-  <div class="install-arrow">↓</div>
-
-  <div class="install-step">
-    <strong>2.</strong> Kies <strong>Zet op beginscherm</strong>.
-  </div>
-
-  <div class="install-arrow">↓</div>
-
-  <div class="install-step">
-    <strong>3.</strong> Open daarna <strong>T.B Agar.io</strong>
-    vanaf je beginscherm.
-  </div>
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-spinner"></div>
 </div>
 
 
-  </div>
+<!-- INSTALL INSTRUCTION -->
+<div id="install-screen">
 
-  <!-- LOADER -->
+  <div class="install-box">
 
-  <div id="loader" role="status" aria-live="polite">
-    Loading...
-    <div class="spinner" aria-hidden="true"></div>
-  </div>
+    <img
+      class="install-icon"
+      src="/IMG_0561.jpeg"
+      alt="T.B Agar.io"
+    >
 
-  <!-- HEADER -->
+    <h1>T.B AGAR.IO</h1>
 
-  <header>
-    <div class="left">
-      <div class="logo">
-        <img src="/IMG_0561.jpeg" alt="Logo van T.B">
-      </div>
-      <div class="site-name">T.B AGAR.IO</div>
+    <p>
+      Add T.B Agar.io to your Home Screen
+      for the full app experience.
+    </p>
+
+    <div class="install-step">
+      <strong>1.</strong>
+      Tap the <strong>Share</strong> button in Safari.
     </div>
 
+    <div class="install-arrow">↓</div>
 
-<button id="menuBtn"
-        class="menu-btn"
-        aria-expanded="false"
-        aria-controls="menu"
-        aria-label="Hoofdmenu">
-  ☰
-</button>
+    <div class="install-step">
+      <strong>2.</strong>
+      Select <strong>Add to Home Screen</strong>.
+    </div>
 
-<nav class="menu" id="menu" aria-hidden="true">
-  <a href="/index.html">Home</a>
-  <a href="/custom-skins.html">Custom Skins</a>
-  <a href="/key-access.html">Keys</a>
-  <a href="/mod-menu.html">Mod Menu</a>
-  <a href="/paidskins.html">Paid Skins</a>
-  <a href="/buy-account.html">Buy Account</a>
-  <a href="/agar.io-skins.html">Agar.io Skins</a>
+    <div class="install-arrow">↓</div>
 
-  <a href="https://biteyt.com/bots"
-     target="_blank"
-     rel="noopener noreferrer">
+    <div class="install-step">
+      <strong>3.</strong>
+      Tap <strong>Add</strong> to confirm.
+    </div>
+
+    <div class="install-arrow">↓</div>
+
+    <div class="install-step">
+      <strong>4.</strong>
+      Open <strong>T.B Agar.io</strong>
+      from your Home Screen.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- MENU OVERLAY -->
+<div
+  class="menu-overlay"
+  id="menu-overlay"
+  onclick="closeMenu()">
+</div>
+
+
+<!-- SIDE MENU -->
+<div id="side-menu">
+
+  <div class="menu-close">
+    <button onclick="closeMenu()">×</button>
+  </div>
+
+  <a class="menu-link" href="/index.html">
+    Home
+  </a>
+
+  <a class="menu-link" href="/custom-skins.html">
+    Custom Skins
+  </a>
+
+  <a class="menu-link" href="/key-access.html">
+    Key Access
+  </a>
+
+  <a class="menu-link" href="/mod-menu.html">
+    Mod Menu
+  </a>
+
+  <a class="menu-link" href="/paidskins.html">
+    Paid Skins
+  </a>
+
+  <a class="menu-link" href="/buy-account.html">
+    Buy Account
+  </a>
+
+  <a class="menu-link" href="/agar.io-skins.html">
+    Agar.io Skins
+  </a>
+
+  <a
+    class="menu-link"
+    href="https://biteyt.com/bots"
+    target="_blank"
+    rel="noopener">
     Bite Bots Panel
   </a>
 
-  <a href="https://kahraba.in"
-     target="_blank"
-     rel="noopener noreferrer">
+  <a
+    class="menu-link"
+    href="https://kahraba.in"
+    target="_blank"
+    rel="noopener">
     Kahraba Website
   </a>
-</nav>
+
+</div>
 
 
-  </header>
+<!-- HEADER -->
+<header>
 
-  <main>
+  <div class="header-left">
 
-```
-<h1>WELCOME!</h1>
+    <img
+      class="header-logo"
+      src="/IMG_0561.jpeg"
+      alt="T.B Agar.io"
+    >
 
-<hr>
-
-<h2>T.B CHANNEL</h2>
-
-<div class="slider">
-  <div class="slides" id="slides">
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/02x2YFHWh2o"
-              loading="lazy"
-              title="Video 1"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/d8DluzJAd2w"
-              loading="lazy"
-              title="Video 2"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/c234keB_q3c"
-              loading="lazy"
-              title="Video 3"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/MVl6S3JvxC0"
-              loading="lazy"
-              title="Video 4"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/Zg3-FACfyHE"
-              loading="lazy"
-              title="Video 5"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/TdoL76Jt22A"
-              loading="lazy"
-              title="Video 6"
-              allowfullscreen></iframe>
-    </div>
-
-    <div class="video">
-      <iframe class="lazy-youtube"
-              data-src="https://www.youtube.com/embed/0Tk29twxcJ8"
-              loading="lazy"
-              title="Video 7"
-              allowfullscreen></iframe>
+    <div class="header-title">
+      T.B Agar.io
     </div>
 
   </div>
-</div>
 
-<div class="slider-buttons">
-  <button id="prevBtn" aria-label="Vorige video">⬅</button>
-  <button id="nextBtn" aria-label="Volgende video">➡</button>
-</div>
+  <button
+    class="menu-button"
+    onclick="openMenu()"
+    aria-label="Open menu">
+    ☰
+  </button>
 
-<hr>
+</header>
 
-<div class="section-title">
-  AGAR.IO MOD MENU LINKS
-</div>
 
-<div class="grid">
+<!-- MAIN -->
+<main>
 
-  <div class="card" data-href="https://biteyt.com/bots">
+  <!-- WELCOME -->
+  <section class="hero">
 
-    <a class="card-link"
-       href="https://biteyt.com/bots"
-       target="_blank"
-       rel="noopener noreferrer">
+    <h1>WELCOME!</h1>
 
-      <img src="/IMG_0321.jpeg"
-           alt="Bite Bots Panel">
+    <p>
+      Welcome to T.B Agar.io
+    </p>
 
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-weight:bold;color:#a5f3fc">
-          Bite Bots Panel
+  </section>
+
+
+  <!-- CHANNEL -->
+  <section>
+
+    <div class="section-title">
+
+      <h2>T.B CHANNEL</h2>
+
+      <p>
+        Watch the latest T.B Agar.io videos.
+      </p>
+
+    </div>
+
+
+    <div class="video-wrapper">
+
+      <div class="video-slider">
+
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/02x2YFHWh2o"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
         </div>
 
-        <button class="download"
-                type="button"
-                aria-label="Open Bite Bots Panel">
-          Open
-
-          <svg class="external-icon"
-               viewBox="0 0 24 24"
-               aria-hidden="true">
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-            <path d="M5 5h5v2H7v10h10v-3h2v5H5z"></path>
-          </svg>
-        </button>
-      </div>
-
-    </a>
-
-    <div class="info">Version: 26.6.0</div>
-    <div class="info">Date: 19-08-2026</div>
-    <div class="info">Bite Bots Panel</div>
-
-    <div class="overlay"></div>
-  </div>
-
-
-  <div class="card" data-href="https://kahraba.in">
-
-    <a class="card-link"
-       href="https://kahraba.in"
-       target="_blank"
-       rel="noopener noreferrer">
-
-      <img src="/IMG_0322.jpeg"
-           alt="Kahraba Website">
-
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-weight:bold;color:#a5f3fc">
-          Kahraba Website
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/d8DluzJAd2w"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
         </div>
 
-        <button class="download"
-                type="button"
-                aria-label="Open Kahraba Website">
-          Open
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/c234keB_q3c"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
+        </div>
 
-          <svg class="external-icon"
-               viewBox="0 0 24 24"
-               aria-hidden="true">
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-            <path d="M5 5h5v10h10v-3h2v5H5z"></path>
-          </svg>
-        </button>
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/MVl6S3JvxC0"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/Zg3-FACfyHE"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/TdoL76Jt22A"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/0Tk29twxcJ8"
+            title="T.B Agar.io video"
+            allowfullscreen>
+          </iframe>
+        </div>
+
       </div>
 
-    </a>
-
-    <div class="info">Version: 26.6.0</div>
-    <div class="info">Date: 21-08-2026</div>
-    <div class="info">Kahraba Website</div>
-
-    <div class="overlay"></div>
-  </div>
-
-</div>
-
-<hr>
-
-<h2>Choose Your Option!</h2>
-
-<div class="options" id="options">
-
-  <div class="option"
-       data-href="/custom-skins.html"
-       tabindex="0">
-    Custom Skins
-  </div>
-
-  <div class="option"
-       data-href="/key-access.html"
-       tabindex="0">
-    Keys
-  </div>
-
-  <div class="option"
-       data-href="/mod-menu.html"
-       tabindex="0">
-    Mod Menu
-  </div>
-
-  <div class="option"
-       data-href="/paidskins.html"
-       tabindex="0">
-    Paid Skins
-  </div>
-
-  <div class="option"
-       data-href="/buy-account.html"
-       tabindex="0">
-    Buy Account
-  </div>
-
-  <div class="option"
-       data-href="/agar.io-skins.html"
-       tabindex="0">
-    Agar.io Skins
-  </div>
-
-</div>
-
-<hr>
-
-<div class="social-buttons">
-
-  <a class="youtube"
-     href="https://www.youtube.com/@T.B6"
-     target="_blank"
-     rel="noopener noreferrer">
-    YouTube
-  </a>
-
-  <a class="instagram"
-     href="https://www.instagram.com/t.bagar.io/"
-     target="_blank"
-     rel="noopener noreferrer">
-    Instagram
-  </a>
-
-  <a class="discord"
-     href="https://discord.gg/qhuXPrVzBx"
-     target="_blank"
-     rel="noopener noreferrer">
-    Discord
-  </a>
-
-</div>
-```
-
-  </main>
-
-  <!-- CHAT BUTTON -->
-
-<button id="tb-chat-toggle"
-       aria-label="Open T.B Chat Bot"
-       title="T.B Chat Bot">
-
-```
-<img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
-     alt="T.B">
-```
-
-  </button>
-
-  <!-- CHAT -->
-
-  <div id="tb-chat-panel"
-       role="dialog"
-       aria-modal="true"
-       aria-label="T.B Chat Bot">
-
-```
-<div id="tb-chat-header">
-
-  <img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
-       alt="icon">
-
-  <div>
-    <div class="tb-title">
-      T.B Chat Bot
     </div>
 
-    <div class="tb-sub">
-      24/7 Support
+  </section>
+
+
+  <!-- MOD MENU -->
+  <section>
+
+    <div class="section-title">
+
+      <h2>AGAR.IO MOD MENU LINKS</h2>
+
+      <p>
+        Useful Agar.io tools and websites.
+      </p>
+
     </div>
+
+
+    <div class="mod-grid">
+
+      <div class="mod-card">
+
+        <img
+          src="/IMG_0321.jpeg"
+          alt="Bite Bots Panel"
+        >
+
+        <div class="mod-content">
+
+          <h3>Bite Bots Panel</h3>
+
+          <p>
+            Version: 26.6.0
+          </p>
+
+          <p>
+            Date: 19-08-2026
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="mod-card">
+
+        <img
+          src="/IMG_0322.jpeg"
+          alt="Kahraba Website"
+        >
+
+        <div class="mod-content">
+
+          <h3>Kahraba Website</h3>
+
+          <p>
+            Version: 26.6.0
+          </p>
+
+          <p>
+            Date: 21-08-2026
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- OPTIONS -->
+  <section>
+
+    <div class="section-title">
+
+      <h2>Choose Your Option!</h2>
+
+      <p>
+        Explore T.B Agar.io.
+      </p>
+
+    </div>
+
+
+    <div class="options-grid">
+
+      <a
+        class="option"
+        href="/custom-skins.html">
+        Custom Skins
+      </a>
+
+      <a
+        class="option"
+        href="/key-access.html">
+        Key Access
+      </a>
+
+      <a
+        class="option"
+        href="/mod-menu.html">
+        Mod Menu
+      </a>
+
+      <a
+        class="option"
+        href="/paidskins.html">
+        Paid Skins
+      </a>
+
+      <a
+        class="option"
+        href="/buy-account.html">
+        Buy Account
+      </a>
+
+      <a
+        class="option"
+        href="/agar.io-skins.html">
+        Agar.io Skins
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- SOCIAL -->
+  <section>
+
+    <div class="section-title">
+
+      <h2>FOLLOW T.B AGAR.IO</h2>
+
+    </div>
+
+    <div class="social">
+
+      <a
+        href="https://www.youtube.com/@T.B6"
+        target="_blank"
+        rel="noopener">
+        YouTube
+      </a>
+
+      <a
+        href="https://www.instagram.com/t.bagar.io/"
+        target="_blank"
+        rel="noopener">
+        Instagram
+      </a>
+
+      <a
+        href="https://discord.gg/qhuXPrVzBx"
+        target="_blank"
+        rel="noopener">
+        Discord
+      </a>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- CHAT BUTTON -->
+<button
+  id="chat-button"
+  onclick="toggleChat()"
+  aria-label="Open chat">
+
+  <img
+    src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg"
+    alt="Chat">
+
+</button>
+
+
+<!-- CHAT -->
+<div id="chat-box">
+
+  <div class="chat-header">
+    T.B Agar.io Support
   </div>
 
-  <button class="tb-close"
-          id="tb-chat-close"
-          aria-label="Close chat">
-    ✕
-  </button>
+  <div id="chat-messages">
 
-</div>
-
-<div id="tb-chat-divider"></div>
-
-<div id="tb-chat-body"
-     aria-live="polite"
-     aria-atomic="false">
-</div>
-
-<div id="tb-chat-input-wrap">
-
-  <input id="tb-chat-input"
-         placeholder="Typ hier je bericht..."
-         aria-label="Type message">
-
-  <button id="tb-chat-send"
-          aria-label="Send message">
-    Stuur
-  </button>
-
-</div>
-```
+    <div class="chat-message">
+      Welcome to T.B Agar.io Support!
+    </div>
 
   </div>
 
-  <footer>
-    © <span id="footer-year"></span>
-    <a target="_blank"
-       href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html"
-       rel="noopener noreferrer">
-      T.B Website
+  <div class="chat-input">
+
+    <input
+      id="chat-input"
+      type="text"
+      placeholder="Type your message..."
+      autocomplete="off"
+    >
+
+    <button onclick="sendMessage()">
+      Send
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+
+  <p>
+    © 2026 T.B Agar.io
+  </p>
+
+  <p>
+    <a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">
+      T.B Agar.io Website
     </a>
-    - T.B Licence -
-  </footer>
+  </p>
+
+</footer>
+
 
 <script>
 
-  /* YEAR */
-  document.getElementById("footer-year").textContent =
-    new Date().getFullYear();
+/* =========================
+   MENU
+========================= */
+
+function openMenu(){
+
+  document
+    .getElementById("side-menu")
+    .classList.add("open");
+
+  document
+    .getElementById("menu-overlay")
+    .classList.add("show");
+
+}
+
+function closeMenu(){
+
+  document
+    .getElementById("side-menu")
+    .classList.remove("open");
+
+  document
+    .getElementById("menu-overlay")
+    .classList.remove("show");
+
+}
 
 
-  /* PWA SERVICE WORKER */
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function(){
-      navigator.serviceWorker.register("/sw.js")
-        .then(function(registration){
-          console.log("T.B Service Worker actief:", registration.scope);
-        })
-        .catch(function(error){
-          console.log("Service Worker fout:", error);
-        });
-    });
-  }
+/* =========================
+   STANDALONE DETECTION
+========================= */
+
+function isStandalone(){
+
+  return (
+    window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches ||
+
+    window.navigator.standalone === true
+  );
+
+}
 
 
-  /* APP / BROWSER DETECTION */
-  function isStandalone(){
+/* =========================
+   INSTALL SCREEN
+========================= */
 
-    return (
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true
-    );
+function checkInstallScreen(){
 
-  }
+  const installScreen =
+    document.getElementById("install-screen");
+
+  if(!installScreen) return;
 
 
-  /*
-   * Alleen in Safari tonen we de installatie-instructie.
-   * Als de website als Home Screen-app draait,
-   * wordt de instructie verborgen.
-   */
-  function checkInstallScreen(){
+  if(isStandalone()){
 
-    const installScreen =
-      document.getElementById("install-screen");
+    installScreen.style.display = "none";
 
-    if(!installScreen) return;
+    document.body.style.overflow = "";
 
-    if(isStandalone()){
+  }else{
+
+    const isIOS =
+      /iPad|iPhone|iPod/.test(
+        navigator.userAgent
+      ) ||
+
+      (
+        navigator.platform === "MacIntel" &&
+        navigator.maxTouchPoints > 1
+      );
+
+
+    if(isIOS){
+
+      installScreen.style.display = "flex";
+
+      document.body.style.overflow = "hidden";
+
+    }else{
 
       installScreen.style.display = "none";
 
-    }else{
-
-      /*
-       * We tonen de instructie niet automatisch iedere keer.
-       * Alleen wanneer de gebruiker Safari gebruikt.
-       */
-
-      const isIOS =
-        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" &&
-         navigator.maxTouchPoints > 1);
-
-      if(isIOS){
-        installScreen.style.display = "flex";
-      }
-
     }
 
   }
 
-  checkInstallScreen();
+}
 
 
-  /* LOADER */
-  (function(){
+/* =========================
+   CHAT
+========================= */
 
-    const loader =
-      document.getElementById("loader");
+function toggleChat(){
 
-    function hideLoader(){
+  document
+    .getElementById("chat-box")
+    .classList.toggle("open");
 
-      if(loader){
-        loader.style.display = "none";
-      }
-
-    }
-
-    window.addEventListener("load", hideLoader);
-
-    setTimeout(hideLoader, 8000);
-
-  })();
+}
 
 
-  /* MENU */
-  (function(){
+async function sendMessage(){
 
-    const menuBtn =
-      document.getElementById("menuBtn");
+  const input =
+    document.getElementById("chat-input");
 
-    const menu =
-      document.getElementById("menu");
+  const messages =
+    document.getElementById("chat-messages");
 
-    function setMenu(open){
+  const text =
+    input.value.trim();
 
-      menu.style.display =
-        open ? "block" : "none";
+  if(!text) return;
 
-      menuBtn.setAttribute(
-        "aria-expanded",
-        String(open)
+
+  const userMessage =
+    document.createElement("div");
+
+  userMessage.className =
+    "chat-message";
+
+  userMessage.textContent =
+    text;
+
+  messages.appendChild(
+    userMessage
+  );
+
+  input.value = "";
+
+  messages.scrollTop =
+    messages.scrollHeight;
+
+
+  try{
+
+    const response =
+      await fetch("/api/chat",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+          message:text
+        })
+
+      });
+
+
+    if(!response.ok){
+      throw new Error(
+        "Chat request failed"
       );
-
-      menu.setAttribute(
-        "aria-hidden",
-        String(!open)
-      );
-
     }
 
-    menuBtn.addEventListener(
-      "click",
-      function(e){
 
-        e.stopPropagation();
+    const data =
+      await response.json();
 
-        setMenu(
-          menu.style.display !== "block"
-        );
 
-      }
+    const botMessage =
+      document.createElement("div");
+
+    botMessage.className =
+      "chat-message";
+
+    botMessage.textContent =
+      data.reply ||
+      "Sorry, I could not answer that.";
+
+    messages.appendChild(
+      botMessage
     );
 
-    document.addEventListener(
-      "click",
-      function(e){
+    messages.scrollTop =
+      messages.scrollHeight;
 
-        if(
-          !menu.contains(e.target) &&
-          e.target !== menuBtn
-        ){
-          setMenu(false);
-        }
 
-      }
+  }catch(error){
+
+    const errorMessage =
+      document.createElement("div");
+
+    errorMessage.className =
+      "chat-message";
+
+    errorMessage.textContent =
+      "Sorry, something went wrong. Please try again.";
+
+    messages.appendChild(
+      errorMessage
     );
 
-    document.addEventListener(
-      "keydown",
-      function(e){
+  }
 
-        if(e.key === "Escape"){
-          setMenu(false);
-        }
+}
 
+
+document
+  .getElementById("chat-input")
+  .addEventListener(
+    "keydown",
+    function(event){
+
+      if(event.key === "Enter"){
+        sendMessage();
       }
-    );
-
-  })();
-
-
-  /* VIDEO SLIDER */
-  (function(){
-
-    let index = 0;
-
-    const slides =
-      document.getElementById("slides");
-
-    const nextBtn =
-      document.getElementById("nextBtn");
-
-    const prevBtn =
-      document.getElementById("prevBtn");
-
-    if(!slides) return;
-
-    const total =
-      slides.children.length;
-
-    let lastTouch = Date.now();
-
-    function showVideo(){
-
-      slides.style.transform =
-        "translateX(-" +
-        (index * 100) +
-        "%)";
 
     }
+  );
 
-    nextBtn.addEventListener(
-      "click",
+
+/* =========================
+   SERVICE WORKER
+========================= */
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener(
+    "load",
+    function(){
+
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(function(){
+
+          console.log(
+            "T.B Agar.io service worker registered."
+          );
+
+        })
+        .catch(function(error){
+
+          console.log(
+            "Service worker error:",
+            error
+          );
+
+        });
+
+    }
+  );
+
+}
+
+
+/* =========================
+   PAGE START
+========================= */
+
+window.addEventListener(
+  "load",
+  function(){
+
+    checkInstallScreen();
+
+    setTimeout(
       function(){
 
-        index =
-          (index + 1) % total;
+        const loader =
+          document.getElementById(
+            "loader"
+          );
 
-        showVideo();
-
-        lastTouch = Date.now();
-
-      }
-    );
-
-    prevBtn.addEventListener(
-      "click",
-      function(){
-
-        index =
-          (index - 1 + total) % total;
-
-        showVideo();
-
-        lastTouch = Date.now();
-
-      }
-    );
-
-    setInterval(
-      function(){
-
-        if(Date.now() - lastTouch > 4000){
-
-          index =
-            (index + 1) % total;
-
-          showVideo();
-
+        if(loader){
+          loader.style.display =
+            "none";
         }
 
       },
-      4000
+      500
     );
 
-  })();
+  }
+);
 
 
-  /* LAZY YOUTUBE */
-  (function(){
+/* Re-check when returning to page */
 
-    const lazyIframes =
-      Array.from(
-        document.querySelectorAll(
-          "iframe.lazy-youtube"
-        )
-      );
+document.addEventListener(
+  "visibilitychange",
+  function(){
 
-    if(
-      "IntersectionObserver" in window &&
-      lazyIframes.length
-    ){
-
-      const observer =
-        new IntersectionObserver(
-          function(entries, observer){
-
-            entries.forEach(
-              function(entry){
-
-                if(entry.isIntersecting){
-
-                  const iframe =
-                    entry.target;
-
-                  const src =
-                    iframe.getAttribute(
-                      "data-src"
-                    );
-
-                  if(src && !iframe.src){
-
-                    iframe.src = src;
-
-                  }
-
-                  iframe.classList.remove(
-                    "lazy-youtube"
-                  );
-
-                  observer.unobserve(
-                    iframe
-                  );
-
-                }
-
-              }
-            );
-
-          },
-          {
-            rootMargin:"300px"
-          }
-        );
-
-      lazyIframes.forEach(
-        function(iframe){
-          observer.observe(iframe);
-        }
-      );
-
-    }else{
-
-      lazyIframes.forEach(
-        function(iframe){
-
-          const src =
-            iframe.getAttribute("data-src");
-
-          if(src){
-            iframe.src = src;
-          }
-
-        }
-      );
-
+    if(!document.hidden){
+      checkInstallScreen();
     }
 
-  })();
-
-
-  /* CARDS */
-  document
-    .querySelectorAll(".card")
-    .forEach(function(card){
-
-      const href =
-        card.getAttribute("data-href");
-
-      if(!href) return;
-
-      card.addEventListener(
-        "click",
-        function(e){
-
-          if(e.target.closest("a")) return;
-
-          window.open(
-            href,
-            "_blank",
-            "noopener"
-          );
-
-        }
-      );
-
-    });
-
-
-  /* OPTIONS */
-  (function(){
-
-    const options =
-      document.getElementById("options");
-
-    if(!options) return;
-
-    options.addEventListener(
-      "click",
-      function(e){
-
-        const option =
-          e.target.closest(".option");
-
-        if(!option) return;
-
-        const href =
-          option.dataset.href;
-
-        if(href){
-          location.href = href;
-        }
-
-      }
-    );
-
-    options.addEventListener(
-      "keydown",
-      function(e){
-
-        const option =
-          e.target.closest(".option");
-
-        if(
-          option &&
-          (e.key === "Enter" ||
-           e.key === " ")
-        ){
-
-          e.preventDefault();
-
-          const href =
-            option.dataset.href;
-
-          if(href){
-            location.href = href;
-          }
-
-        }
-
-      }
-    );
-
-  })();
-
-
-  /* CHAT */
-  (function(){
-
-    const toggleBtn =
-      document.getElementById(
-        "tb-chat-toggle"
-      );
-
-    const panel =
-      document.getElementById(
-        "tb-chat-panel"
-      );
-
-    const closeBtn =
-      document.getElementById(
-        "tb-chat-close"
-      );
-
-    const bodyDiv =
-      document.getElementById(
-        "tb-chat-body"
-      );
-
-    const input =
-      document.getElementById(
-        "tb-chat-input"
-      );
-
-    const sendBtn =
-      document.getElementById(
-        "tb-chat-send"
-      );
-
-    const STORAGE_KEY =
-      "tb_chat_client";
-
-    const SESSION_KEY =
-      "tb_session";
-
-
-    function nowISO(){
-
-      return new Date().toISOString();
-
-    }
-
-
-    function getSessionId(){
-
-      let sid =
-        localStorage.getItem(
-          SESSION_KEY
-        );
-
-      if(!sid){
-
-        sid =
-          "sess_" +
-          Math.random()
-            .toString(36)
-            .slice(2,12);
-
-        localStorage.setItem(
-          SESSION_KEY,
-          sid
-        );
-
-      }
-
-      return sid;
-
-    }
-
-
-    let state = {
-      messages:[],
-      lastActivity:Date.now()
-    };
-
-
-    function loadState(){
-
-      try{
-
-        const raw =
-          localStorage.getItem(
-            STORAGE_KEY
-          );
-
-        if(raw){
-
-          state =
-            JSON.parse(raw);
-
-          if(!state.lastActivity){
-
-            state.lastActivity =
-              Date.now();
-
-          }
-
-        }
-
-      }catch(e){}
-
-    }
-
-
-    function saveState(){
-
-      try{
-
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify(state)
-        );
-
-      }catch(e){}
-
-    }
-
-
-    function clearState(){
-
-      state = {
-        messages:[],
-        lastActivity:Date.now()
-      };
-
-      try{
-
-        localStorage.removeItem(
-          STORAGE_KEY
-        );
-
-      }catch(e){}
-
-      renderMessages();
-
-    }
-
-
-    let inactivityTimer = null;
-
-
-    function resetInactivityTimer(){
-
-      state.lastActivity =
-        Date.now();
-
-      saveState();
-
-      if(inactivityTimer){
-
-        clearTimeout(
-          inactivityTimer
-        );
-
-      }
-
-      inactivityTimer =
-        setTimeout(
-          function(){
-
-            clearState();
-
-            addBotMessage(
-              "Je chat is verwijderd wegens inactiviteit.",
-              {transient:true}
-            );
-
-          },
-          20 * 60 * 1000
-        );
-
-    }
-
-
-    function renderMessages(){
-
-      bodyDiv.innerHTML = "";
-
-      for(
-        const message
-        of state.messages
-      ){
-
-        const wrapper =
-          document.createElement("div");
-
-        wrapper.className =
-          "tb-msg " +
-          (
-            message.role === "user"
-            ? "user"
-            : "bot"
-          );
-
-        wrapper.innerText =
-          message.text || "";
-
-        bodyDiv.appendChild(
-          wrapper
-        );
-
-
-        if(
-          message.links &&
-          Array.isArray(message.links) &&
-          message.links.length
-        ){
-
-          const linksWrap =
-            document.createElement("div");
-
-          linksWrap.className =
-            "tb-links";
-
-
-          message.links.forEach(
-            function(link){
-
-              const a =
-                document.createElement("a");
-
-              a.href =
-                link.url;
-
-              a.target =
-                "_blank";
-
-              a.rel =
-                "noopener noreferrer";
-
-              a.innerText =
-                link.title +
-                " — " +
-                link.url;
-
-              linksWrap.appendChild(a);
-
-            }
-          );
-
-          bodyDiv.appendChild(
-            linksWrap
-          );
-
-        }
-
-      }
-
-      bodyDiv.scrollTop =
-        bodyDiv.scrollHeight;
-
-    }
-
-
-    function addUserMessage(text){
-
-      text =
-        text.trim();
-
-      if(!text) return;
-
-      state.messages.push({
-        role:"user",
-        text:text,
-        t:nowISO()
-      });
-
-      saveState();
-
-      renderMessages();
-
-      resetInactivityTimer();
-
-    }
-
-
-    function addBotMessage(
-      text,
-      options={}
-    ){
-
-      text =
-        String(text)
-          .replace(/[<>]/g,"");
-
-      if(!options.transient){
-
-        const message = {
-          role:"bot",
-          text:text,
-          t:nowISO()
-        };
-
-        if(options.links){
-
-          message.links =
-            options.links;
-
-        }
-
-        state.messages.push(
-          message
-        );
-
-        saveState();
-
-      }else{
-
-        const div =
-          document.createElement("div");
-
-        div.className =
-          "tb-msg bot";
-
-        div.innerText =
-          text;
-
-        bodyDiv.appendChild(
-          div
-        );
-
-        setTimeout(
-          function(){
-
-            if(
-              div &&
-              div.parentNode
-            ){
-
-              div.parentNode.removeChild(
-                div
-              );
-
-            }
-
-          },
-          6000
-        );
-
-      }
-
-      renderMessages();
-
-      resetInactivityTimer();
-
-    }
-
-
-    async function sendToServer(message){
-
-      const sessionId =
-        getSessionId();
-
-      try{
-
-        const response =
-          await fetch(
-            "/api/chat",
-            {
-              method:"POST",
-              headers:{
-                "Content-Type":
-                  "application/json"
-              },
-              body:
-                JSON.stringify({
-                  sessionId,
-                  message
-                })
-            }
-          );
-
-        return await response.json();
-
-      }catch(e){
-
-        return {
-          error:true,
-          reply:
-            "Er is een fout opgetreden bij de server."
-        };
-
-      }
-
-    }
-
-
-    async function sendCurrent(){
-
-      const text =
-        input.value.trim();
-
-      if(!text) return;
-
-      addUserMessage(text);
-
-      input.value = "";
-
-      addBotMessage(
-        "Even denken...",
-        {transient:true}
-      );
-
-      const response =
-        await sendToServer(text);
-
-      if(response){
-
-        if(response.error){
-
-          addBotMessage(
-            response.reply ||
-            "Er is een fout opgetreden."
-          );
-
-        }else{
-
-          if(response.reply){
-
-            addBotMessage(
-              response.reply,
-              {
-                links:
-                  response.links
-              }
-            );
-
-          }
-
-        }
-
-      }else{
-
-        addBotMessage(
-          "Geen antwoord ontvangen."
-        );
-
-      }
-
-    }
-
-
-    loadState();
-
-    renderMessages();
-
-    resetInactivityTimer();
-
-
-    toggleBtn.addEventListener(
-      "click",
-      function(){
-
-        if(
-          panel.style.display === "flex"
-        ){
-
-          panel.style.display =
-            "none";
-
-        }else{
-
-          panel.style.display =
-            "flex";
-
-          input.focus();
-
-        }
-
-      }
-    );
-
-
-    closeBtn.addEventListener(
-      "click",
-      function(){
-
-        panel.style.display =
-          "none";
-
-      }
-    );
-
-
-    sendBtn.addEventListener(
-      "click",
-      sendCurrent
-    );
-
-
-    input.addEventListener(
-      "keydown",
-      function(e){
-
-        if(e.key === "Enter"){
-
-          sendCurrent();
-
-        }
-
-      }
-    );
-
-
-    window.addEventListener(
-      "beforeunload",
-      function(){
-
-        if(
-          Date.now() -
-          state.lastActivity >
-          20 * 60 * 1000
-        ){
-
-          try{
-
-            localStorage.removeItem(
-              STORAGE_KEY
-            );
-
-          }catch(e){}
-
-        }else{
-
-          saveState();
-
-        }
-
-      }
-    );
-
-  })();
+  }
+);
 
 </script>
 
