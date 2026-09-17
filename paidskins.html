@@ -1,2782 +1,678 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-
-<meta charset="utf-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1,viewport-fit=cover"
->
-
-<title>T.B Agar.io — Shop</title>
-
-<link
-  rel="icon"
-  type="image/jpeg"
-  href="/IMG_0561.jpeg"
->
-
-<link
-  rel="apple-touch-icon"
-  href="/IMG_0561.jpeg"
->
-
-<style>
-
-/* =========================
-   RESET
-========================= */
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  background:#020617;
-  color:#fff;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-button,
-a{
-  -webkit-tap-highlight-color:transparent;
-}
-
-
-/* =========================
-   BACKGROUND
-========================= */
-
-body::before{
-  content:"";
-
-  position:fixed;
-
-  width:600px;
-  height:600px;
-
-  background:
-    radial-gradient(
-      circle,
-      #0ea5e9,
-      transparent 70%
-    );
-
-  top:-250px;
-  right:-200px;
-
-  opacity:.18;
-
-  z-index:-1;
-
-  pointer-events:none;
-}
-
-
-/* =========================
-   LOADER
-========================= */
-
-#loader{
-
-  position:fixed;
-
-  inset:0;
-
-  background:#020617;
-
-  display:flex;
-
-  flex-direction:column;
-
-  justify-content:center;
-
-  align-items:center;
-
-  gap:14px;
-
-  font-size:20px;
-
-  z-index:99999;
-
-  text-align:center;
-
-}
-
-.spinner{
-
-  width:40px;
-  height:40px;
-
-  border:5px solid
-    rgba(255,255,255,.15);
-
-  border-top:5px solid
-    #38bdf8;
-
-  border-radius:50%;
-
-  animation:spin 1s linear infinite;
-
-}
-
-@keyframes spin{
-
-  to{
-    transform:rotate(360deg);
-  }
-
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-
-  position:sticky;
-
-  top:0;
-
-  z-index:3000;
-
-  width:100%;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  padding:
-    calc(10px + env(safe-area-inset-top))
-    18px
-    10px
-    18px;
-
-  background:
-    rgba(2,6,23,.94);
-
-  backdrop-filter:blur(15px);
-
-  -webkit-backdrop-filter:blur(15px);
-
-  border-bottom:
-    1px solid
-    rgba(14,165,233,.25);
-
-}
-
-.left-header{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:12px;
-
-  min-width:0;
-
-}
-
-
-/* =========================
-   LOGO
-========================= */
-
-.logo-link{
-
-  display:flex;
-
-  align-items:center;
-
-  text-decoration:none;
-
-}
-
-.logo{
-
-  width:48px;
-  height:48px;
-
-  border-radius:12px;
-
-  overflow:hidden;
-
-  flex-shrink:0;
-
-  box-shadow:
-    0 5px 25px
-    rgba(14,165,233,.2);
-
-  transition:
-    transform .2s ease;
-
-}
-
-.logo-link:hover .logo{
-
-  transform:scale(1.05);
-
-}
-
-.logo img{
-
-  width:100%;
-  height:100%;
-
-  object-fit:cover;
-
-  display:block;
-
-}
-
-.site-title{
-
-  font-size:20px;
-
-  font-weight:800;
-
-  color:#fff;
-
-  white-space:nowrap;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
-}
-
-
-/* =========================
-   MENU BUTTON
-========================= */
-
-.menu-btn{
-
-  width:46px;
-  height:46px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.25);
-
-  background:#071226;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  font-size:24px;
-
-  cursor:pointer;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  transition:.2s ease;
-
-}
-
-.menu-btn:hover{
-
-  background:#0b203d;
-
-  border-color:
-    rgba(14,165,233,.5);
-
-}
-
-.menu-btn:active{
-
-  transform:scale(.96);
-
-}
-
-
-/* =========================
-   SIDE MENU
-========================= */
-
-.menu{
-
-  position:fixed;
-
-  top:0;
-
-  right:-330px;
-
-  width:310px;
-
-  max-width:88vw;
-
-  height:100vh;
-
-  background:
-    linear-gradient(
-      180deg,
-      #050d1c 0%,
-      #020617 100%
-    );
-
-  z-index:5000;
-
-  padding:
-    calc(25px + env(safe-area-inset-top))
-    20px
-    calc(25px + env(safe-area-inset-bottom));
-
-  border-left:
-    1px solid
-    rgba(14,165,233,.22);
-
-  overflow-y:auto;
-
-  transition:right .3s ease;
-
-  box-shadow:
-    -20px 0 50px
-    rgba(0,0,0,.35);
-
-}
-
-.menu.open{
-
-  right:0;
-
-}
-
-
-/* =========================
-   MENU CLOSE
-========================= */
-
-.menu-close{
-
-  width:100%;
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  margin-bottom:22px;
-
-}
-
-.menu-brand{
-
-  font-size:17px;
-
-  font-weight:800;
-
-  letter-spacing:.5px;
-
-}
-
-.menu-brand span{
-
-  color:#38bdf8;
-
-}
-
-.menu-close button{
-
-  width:40px;
-  height:40px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.18);
-
-  background:#08152a;
-
-  color:#fff;
-
-  border-radius:10px;
-
-  font-size:25px;
-
-  cursor:pointer;
-
-}
-
-
-/* =========================
-   MENU LABEL
-========================= */
-
-.menu-label{
-
-  margin:22px 4px 9px;
-
-  color:#64748b;
-
-  font-size:11px;
-
-  font-weight:800;
-
-  letter-spacing:1.5px;
-
-  text-transform:uppercase;
-
-}
-
-
-/* =========================
-   MENU LINKS
-========================= */
-
-.menu a{
-
-  display:flex;
-
-  align-items:center;
-
-  width:100%;
-
-  padding:14px;
-
-  margin:7px 0;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  background:#08152a;
-
-  border:
-    1px solid
-    rgba(14,165,233,.12);
-
-  font-weight:700;
-
-  transition:.2s ease;
-
-}
-
-.menu a:hover{
-
-  background:#0b203d;
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  transform:translateX(2px);
-
-}
-
-
-/* =========================
-   SOCIALS
-========================= */
-
-.menu-social-title{
-
-  margin:25px 4px 10px;
-
-  color:#64748b;
-
-  font-size:11px;
-
-  font-weight:800;
-
-  letter-spacing:1.5px;
-
-  text-transform:uppercase;
-
-}
-
-.menu-socials{
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
-  gap:8px;
-
-}
-
-.menu-social{
-
-  min-height:58px;
-
-  display:flex !important;
-
-  align-items:center;
-
-  justify-content:center;
-
-  text-align:center;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  background:#08152a;
-
-  border:
-    1px solid
-    rgba(14,165,233,.15);
-
-  font-size:13px;
-
-  font-weight:800;
-
-  transition:.2s ease;
-
-}
-
-.menu-social:hover{
-
-  background:#0b203d;
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  transform:translateY(-2px);
-
-}
-
-
-/* =========================
-   MENU FOOTER
-========================= */
-
-.menu-footer{
-
-  margin-top:22px;
-
-  padding-top:18px;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.1);
-
-  color:#64748b;
-
-  font-size:12px;
-
-  text-align:center;
-
-}
-
-
-/* =========================
-   MENU OVERLAY
-========================= */
-
-.menu-overlay{
-
-  position:fixed;
-
-  inset:0;
-
-  background:
-    rgba(0,0,0,.62);
-
-  backdrop-filter:blur(2px);
-
-  z-index:4500;
-
-  display:none;
-
-}
-
-.menu-overlay.show{
-
-  display:block;
-
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-main{
-
-  width:100%;
-
-  max-width:1200px;
-
-  margin:0 auto;
-
-  padding:
-    45px 18px
-    calc(55px + env(safe-area-inset-bottom));
-
-}
-
-
-/* =========================
-   HERO
-========================= */
-
-.hero{
-
-  position:relative;
-
-  text-align:center;
-
-  margin-bottom:45px;
-
-  padding:40px 20px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.12);
-
-  border-radius:24px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(14,165,233,.07),
-      rgba(7,18,38,.75)
-    );
-
-  overflow:hidden;
-
-}
-
-.hero::before{
-
-  content:"";
-
-  position:absolute;
-
-  width:240px;
-  height:240px;
-
-  background:
-    rgba(14,165,233,.12);
-
-  filter:blur(80px);
-
-  border-radius:50%;
-
-  top:-120px;
-
-  left:50%;
-
-  transform:translateX(-50%);
-
-}
-
-.hero-content{
-
-  position:relative;
-
-  z-index:1;
-
-}
-
-.hero h1{
-
-  font-size:
-    clamp(38px,7vw,58px);
-
-  font-weight:900;
-
-  letter-spacing:1px;
-
-  margin-bottom:12px;
-
-}
-
-.hero h1 span{
-
-  color:#38bdf8;
-
-}
-
-.hero p{
-
-  color:#94a3b8;
-
-  font-size:16px;
-
-  line-height:1.6;
-
-  max-width:650px;
-
-  margin:auto;
-
-}
-
-
-/* =========================
-   SHOP TITLE
-========================= */
-
-.section-header{
-
-  text-align:center;
-
-  margin-bottom:25px;
-
-}
-
-.section-header h2{
-
-  font-size:28px;
-
-  font-weight:900;
-
-  margin-bottom:8px;
-
-}
-
-.section-header h2 span{
-
-  color:#38bdf8;
-
-}
-
-.section-header p{
-
-  color:#64748b;
-
-  font-size:14px;
-
-}
-
-
-/* =========================
-   PRODUCT GRID
-========================= */
-
-#products{
-
-  display:grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(220px,1fr)
-    );
-
-  gap:20px;
-
-}
-
-
-/* =========================
-   PRODUCT CARD
-========================= */
-
-.product-card{
-
-  position:relative;
-
-  background:
-    linear-gradient(
-      145deg,
-      #08152a,
-      #071226
-    );
-
-  border:
-    1px solid
-    rgba(14,165,233,.18);
-
-  border-radius:18px;
-
-  padding:14px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:11px;
-
-  overflow:hidden;
-
-  box-shadow:
-    0 10px 35px
-    rgba(0,0,0,.22);
-
-  transition:
-    transform .2s ease,
-    border-color .2s ease,
-    box-shadow .2s ease;
-
-}
-
-.product-card:hover{
-
-  transform:translateY(-4px);
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  box-shadow:
-    0 15px 40px
-    rgba(0,0,0,.32);
-
-}
-
-
-/* =========================
-   PRODUCT IMAGE
-========================= */
-
-.product-image{
-
-  width:100%;
-
-  aspect-ratio:1/1;
-
-  border-radius:14px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #0b203d,
-      #020617
-    );
-
-  border:
-    1px solid
-    rgba(14,165,233,.12);
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  overflow:hidden;
-
-}
-
-.product-image img{
-
-  width:100%;
-
-  height:100%;
-
-  object-fit:cover;
-
-  display:block;
-
-}
-
-.image-placeholder{
-
-  color:#64748b;
-
-  font-size:13px;
-
-  font-weight:bold;
-
-}
-
-
-/* =========================
-   PRODUCT INFO
-========================= */
-
-.product-name{
-
-  font-size:18px;
-
-  font-weight:900;
-
-  color:#fff;
-
-}
-
-.product-description{
-
-  color:#94a3b8;
-
-  font-size:13px;
-
-  line-height:1.5;
-
-  min-height:38px;
-
-}
-
-
-/* =========================
-   PRICE
-========================= */
-
-.product-price{
-
-  display:flex;
-
-  align-items:baseline;
-
-  gap:5px;
-
-  margin-top:2px;
-
-}
-
-.price-currency{
-
-  color:#38bdf8;
-
-  font-size:15px;
-
-  font-weight:800;
-
-}
-
-.price-value{
-
-  font-size:25px;
-
-  font-weight:900;
-
-  color:#fff;
-
-}
-
-
-/* =========================
-   BUY BUTTON
-========================= */
-
-.buy-button{
-
-  width:100%;
-
-  padding:12px 15px;
-
-  border:none;
-
-  border-radius:10px;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-weight:900;
-
-  font-size:14px;
-
-  cursor:pointer;
-
-  transition:
-    background .2s ease,
-    transform .2s ease;
-
-}
-
-.buy-button:hover{
-
-  background:#1d4ed8;
-
-  transform:translateY(-1px);
-
-}
-
-.buy-button:active{
-
-  transform:scale(.98);
-
-}
-
-.buy-button.disabled{
-
-  background:#475569;
-
-  cursor:not-allowed;
-
-  transform:none;
-
-}
-
-
-/* =========================
-   AVAILABLE BADGE
-========================= */
-
-.product-badge{
-
-  position:absolute;
-
-  top:24px;
-
-  left:24px;
-
-  padding:6px 9px;
-
-  border-radius:7px;
-
-  background:#16a34a;
-
-  color:#fff;
-
-  font-size:11px;
-
-  font-weight:900;
-
-}
-
-.product-badge.unavailable{
-
-  background:#475569;
-
-}
-
-
-/* =========================
-   POPUP
-========================= */
-
-#buyPopup{
-
-  position:fixed;
-
-  inset:0;
-
-  background:
-    rgba(0,0,0,.78);
-
-  backdrop-filter:blur(4px);
-
-  z-index:9999;
-
-  display:none;
-
-  align-items:center;
-
-  justify-content:center;
-
-  padding:20px;
-
-}
-
-.popup-box{
-
-  width:
-    min(440px,100%);
-
-  background:
-    linear-gradient(
-      145deg,
-      #0b172b,
-      #020617
-    );
-
-  border:
-    1px solid
-    rgba(14,165,233,.35);
-
-  border-radius:20px;
-
-  padding:25px;
-
-  box-shadow:
-    0 20px 70px
-    rgba(0,0,0,.6);
-
-  text-align:center;
-
-}
-
-.popup-box h2{
-
-  font-size:24px;
-
-  margin-bottom:8px;
-
-}
-
-.popup-box p{
-
-  color:#94a3b8;
-
-  font-size:14px;
-
-  line-height:1.5;
-
-  margin-bottom:18px;
-
-}
-
-.popup-price{
-
-  color:#38bdf8;
-
-  font-size:28px;
-
-  font-weight:900;
-
-  margin-bottom:20px;
-
-}
-
-.popup-buttons{
-
-  display:flex;
-
-  gap:10px;
-
-}
-
-.popup-buttons button{
-
-  flex:1;
-
-  padding:12px;
-
-  border:none;
-
-  border-radius:10px;
-
-  font-weight:bold;
-
-  cursor:pointer;
-
-}
-
-.confirm-button{
-
-  background:#2563eb;
-
-  color:#fff;
-
-}
-
-.close-button{
-
-  background:#334155;
-
-  color:#fff;
-
-}
-
-
-/* =========================
-   UID BOX
-========================= */
-
-.uid-section{
-
-  max-width:700px;
-
-  margin:0 auto 35px;
-
-  padding:20px;
-
-  background:#071226;
-
-  border:
-    1px solid
-    rgba(14,165,233,.15);
-
-  border-radius:16px;
-
-}
-
-.uid-title{
-
-  font-size:16px;
-
-  font-weight:800;
-
-  margin-bottom:8px;
-
-}
-
-.uid-description{
-
-  color:#64748b;
-
-  font-size:13px;
-
-  line-height:1.5;
-
-  margin-bottom:14px;
-
-}
-
-.uid-row{
-
-  display:flex;
-
-  gap:8px;
-
-}
-
-.uid-row input{
-
-  flex:1;
-
-  min-width:0;
-
-  padding:12px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:10px;
-
-  background:#020617;
-
-  color:#fff;
-
-  outline:none;
-
-}
-
-.uid-row input:focus{
-
-  border-color:#38bdf8;
-
-}
-
-.uid-row button{
-
-  padding:12px 16px;
-
-  border:none;
-
-  border-radius:10px;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-
-}
-
-#uidStatus{
-
-  margin-top:9px;
-
-  color:#64748b;
-
-  font-size:12px;
-
-}
-
-
-/* =========================
-   DIVIDER
-========================= */
-
-.section-line{
-
-  border:none;
-
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #2563eb,
-      transparent
-    );
-
-  margin:45px 0;
-
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-
-  text-align:center;
-
-  padding:
-    30px 18px
-    calc(30px + env(safe-area-inset-bottom));
-
-  color:#64748b;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.1);
-
-}
-
-footer p{
-
-  margin:5px 0;
-
-}
-
-footer a{
-
-  color:#38bdf8;
-
-  text-decoration:none;
-
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:700px){
-
-  main{
-
-    padding-top:28px;
-
-  }
-
-  #products{
-
-    grid-template-columns:1fr;
-
-  }
-
-  .hero{
-
-    padding:30px 18px;
-
-  }
-
-  .hero h1{
-
-    font-size:36px;
-
-  }
-
-  .uid-row{
-
-    flex-direction:column;
-
-  }
-
-  .uid-row button{
-
-    width:100%;
-
-  }
-
-}
-
-@media(max-width:430px){
-
-  header{
-
-    padding-left:14px;
-
-    padding-right:14px;
-
-  }
-
-  .logo{
-
-    width:44px;
-
-    height:44px;
-
-  }
-
-  .site-title{
-
-    font-size:17px;
-
-  }
-
-  .menu{
-
-    width:290px;
-
-  }
-
-  .menu-socials{
-
-    grid-template-columns:1fr;
-
-  }
-
-}
-
-
-/* =========================
-   DESKTOP
-========================= */
-
-@media(min-width:701px){
-
-  #products{
-
-    grid-template-columns:
-      repeat(4,minmax(0,1fr));
-
-  }
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.B Agar.io — Shop</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #020617;
+      color: white;
+      min-height: 100vh;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px;
+      background: rgba(2, 6, 23, .95);
+      border-bottom: 1px solid #164e63;
+    }
+
+    header h1 {
+      color: #38bdf8;
+      font-size: 22px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .cart-button {
+      padding: 12px 16px;
+      background: #2563eb;
+      color: white;
+    }
+
+    .cart-count {
+      display: inline-block;
+      min-width: 22px;
+      margin-left: 6px;
+      padding: 3px 7px;
+      border-radius: 20px;
+      background: #ef4444;
+    }
+
+    main {
+      width: min(1200px, 100%);
+      margin: auto;
+      padding: 35px 18px;
+    }
+
+    .hero {
+      padding: 35px 20px;
+      margin-bottom: 35px;
+      border-radius: 20px;
+      text-align: center;
+      background: linear-gradient(145deg, #082f49, #071226);
+    }
+
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .hero span {
+      color: #38bdf8;
+    }
+
+    .hero p {
+      color: #cbd5e1;
+    }
+
+    .uid-box {
+      margin: 25px auto;
+      max-width: 550px;
+    }
+
+    .uid-box label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .uid-box input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      outline: none;
+      background: #0f172a;
+      color: white;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .product {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid #164e63;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #08152a, #071226);
+    }
+
+    .product img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 12px;
+      background: #020617;
+    }
+
+    .product h3 {
+      font-size: 20px;
+    }
+
+    .product p {
+      color: #94a3b8;
+      min-height: 40px;
+    }
+
+    .price {
+      color: #38bdf8;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .buy-button {
+      padding: 13px;
+      background: #2563eb;
+      color: white;
+    }
+
+    .buy-button:hover {
+      background: #1d4ed8;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, .75);
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .cart-modal {
+      width: min(550px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 25px;
+      border: 1px solid #164e63;
+      border-radius: 18px;
+      background: #071226;
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-button {
+      padding: 8px 12px;
+      background: #334155;
+      color: white;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .cart-item small {
+      color: #94a3b8;
+    }
+
+    .remove-button {
+      padding: 8px;
+      background: #dc2626;
+      color: white;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      margin: 25px 0;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .checkout-button {
+      width: 100%;
+      padding: 15px;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+    }
+
+    .checkout-button:disabled {
+      cursor: not-allowed;
+      opacity: .5;
+    }
+
+    .empty-cart {
+      padding: 25px 0;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .message {
+      margin-top: 15px;
+      color: #fbbf24;
+      text-align: center;
+    }
+
+    footer {
+      padding: 30px;
+      color: #64748b;
+      text-align: center;
+    }
+  </style>
 </head>
-
 
 <body>
 
-
-<!-- =========================
-     LOADER
-========================= -->
-
-<div id="loader">
-
-  Loading T.B Shop...
-
-  <div class="spinner"></div>
-
-</div>
-
-
-<!-- =========================
-     MENU OVERLAY
-========================= -->
-
-<div
-  class="menu-overlay"
-  id="menu-overlay"
-  onclick="closeMenu()">
-</div>
-
-
-<!-- =========================
-     HEADER
-========================= -->
-
 <header>
+  <h1>T.B Agar.io Shop</h1>
 
-  <div class="left-header">
-
-    <a
-      class="logo-link"
-      href="https://www.youtube.com/@T.B6"
-      target="_blank"
-      rel="noopener"
-      aria-label="Open T.B Agar.io YouTube channel">
-
-      <div class="logo">
-
-        <img
-          src="/IMG_0561.jpeg"
-          alt="T.B Agar.io">
-
-      </div>
-
-    </a>
-
-    <div class="site-title">
-
-      T.B Agar.io
-
-    </div>
-
-  </div>
-
-
-  <button
-    class="menu-btn"
-    onclick="toggleMenu()"
-    aria-label="Open menu">
-
-    ☰
-
+  <button class="cart-button" id="openCartButton">
+    🛒 Winkelwagen
+    <span class="cart-count" id="cartCount">0</span>
   </button>
-
 </header>
 
+<main>
+  <section class="hero">
+    <h2>T.B <span>Shop</span></h2>
+    <p>Koop jouw favoriete Agar.io-skins.</p>
 
-<!-- =========================
-     SIDE MENU
-========================= -->
+    <div class="uid-box">
+      <label for="playerUid">Jouw Agar.io UID</label>
+      <input
+        id="playerUid"
+        type="text"
+        placeholder="Vul hier je Agar.io UID in"
+        autocomplete="off"
+      >
+    </div>
+  </section>
 
-<div
-  class="menu"
-  id="menu">
+  <h2 class="section-title">Onze producten</h2>
 
+  <section class="products" id="products"></section>
+</main>
 
-  <div class="menu-close">
+<div class="overlay" id="cartOverlay">
+  <div class="cart-modal">
+    <div class="cart-header">
+      <h2>Jouw winkelwagen</h2>
 
-    <div class="menu-brand">
+      <button class="close-button" id="closeCartButton">
+        ✕
+      </button>
+    </div>
 
-      T.B <span>AGAR.IO</span>
+    <div id="cartItems"></div>
 
+    <div class="cart-total">
+      <span>Totaal:</span>
+      <span id="cartTotal">€ 0,00</span>
     </div>
 
     <button
-      onclick="closeMenu()"
-      aria-label="Close menu">
-
-      ×
-
+      class="checkout-button"
+      id="checkoutButton"
+    >
+      Afrekenen met iDEAL
     </button>
 
+    <div class="message" id="cartMessage"></div>
   </div>
-
-
-  <div class="menu-label">
-
-    Navigation
-
-  </div>
-
-
-  <a href="/index.html">
-
-    Home
-
-  </a>
-
-
-  <a href="/custom-skins.html">
-
-    Custom Skins
-
-  </a>
-
-
-  <a href="/key-access.html">
-
-    Key Access
-
-  </a>
-
-
-  <a href="/mod-menu.html">
-
-    Mod Menu
-
-  </a>
-
-
-  <a href="/paidskins.html">
-
-    Paid Skins
-
-  </a>
-
-
-  <a href="/buy-account.html">
-
-    Buy Account
-
-  </a>
-
-
-  <a href="/agar.io-skins.html">
-
-    Agar.io Skins
-
-  </a>
-
-
-  <div class="menu-label">
-
-    External
-
-  </div>
-
-
-  <a
-    href="https://biteyt.com/bots"
-    target="_blank"
-    rel="noopener">
-
-    Bite Bots Panel
-
-  </a>
-
-
-  <a
-    href="https://kahraba.in"
-    target="_blank"
-    rel="noopener">
-
-    Kahraba Website
-
-  </a>
-
-
-  <div class="menu-social-title">
-
-    Follow T.B Agar.io
-
-  </div>
-
-
-  <div class="menu-socials">
-
-
-    <a
-      class="menu-social"
-      href="https://discord.gg/qhuXPrVzBx"
-      target="_blank"
-      rel="noopener">
-
-      Discord
-
-    </a>
-
-
-    <a
-      class="menu-social"
-      href="https://www.youtube.com/@T.B6"
-      target="_blank"
-      rel="noopener">
-
-      YouTube
-
-    </a>
-
-
-    <a
-      class="menu-social"
-      href="https://www.instagram.com/t.bagar.io/"
-      target="_blank"
-      rel="noopener">
-
-      Instagram
-
-    </a>
-
-
-  </div>
-
-
-  <div class="menu-footer">
-
-    T.B Agar.io © 2026
-
-  </div>
-
-
 </div>
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main>
-
-
-  <!-- HERO -->
-
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <h1>
-
-        T.B <span>SHOP</span>
-
-      </h1>
-
-      <p>
-
-        Discover exclusive Agar.io skins
-        and digital products from T.B Agar.io.
-
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <!-- UID -->
-
-  <section class="uid-section">
-
-    <div class="uid-title">
-
-      Agar.io Account
-
-    </div>
-
-    <div class="uid-description">
-
-      Enter your encoded Agar.io payment UID
-      before purchasing a product.
-
-    </div>
-
-
-    <div class="uid-row">
-
-      <input
-        id="agario_uid_input"
-        type="text"
-        placeholder="Paste your encoded UID here"
-        autocomplete="off"
-      >
-
-      <button
-        id="saveUidBtn">
-
-        Save UID
-
-      </button>
-
-    </div>
-
-
-    <div id="uidStatus">
-
-      Not logged in
-
-    </div>
-
-  </section>
-
-
-  <hr class="section-line">
-
-
-  <!-- PRODUCTS -->
-
-  <section>
-
-    <div class="section-header">
-
-      <h2>
-
-        SHOP <span>PRODUCTS</span>
-
-      </h2>
-
-      <p>
-
-        Choose a product and continue to checkout.
-
-      </p>
-
-    </div>
-
-
-    <div id="products">
-
-      Loading products...
-
-    </div>
-
-  </section>
-
-
-</main>
-
-
-<!-- =========================
-     BUY POPUP
-========================= -->
-
-<div id="buyPopup">
-
-
-  <div class="popup-box">
-
-
-    <h2 id="popupProductName">
-
-      Product
-
-    </h2>
-
-
-    <p id="popupDescription">
-
-      Product description
-
-    </p>
-
-
-    <div
-      class="popup-price"
-      id="popupPrice">
-
-      $0.00
-
-    </div>
-
-
-    <div class="popup-buttons">
-
-
-      <button
-        class="confirm-button"
-        id="confirmBuy">
-
-        Continue to Checkout
-
-      </button>
-
-
-      <button
-        class="close-button"
-        onclick="closeBuyPopup()">
-
-        Cancel
-
-      </button>
-
-
-    </div>
-
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     FOOTER
-========================= -->
 
 <footer>
-
-  <p>
-
-    © 2026 T.B Agar.io
-
-  </p>
-
-
-  <p>
-
-    <a href="/index.html">
-
-      T.B Agar.io
-
-    </a>
-
-  </p>
-
+  © 2026 T.B Agar.io — Alle rechten voorbehouden.
 </footer>
 
-
 <script>
-
-
-/* =====================================================
-   PRODUCTS
-   =====================================================
-
-   HIER KUN JE ELK PRODUCT AFZONDERLIJK AANPASSEN.
-
-   image:
-   Voeg later bijvoorbeeld toe:
-   "IMG_1234.jpeg"
-
-   price:
-   Prijs van het product.
-
-   currency:
-   USD / EUR etc.
-
-   productId:
-   Jouw eigen Xsolla product/item ID.
-
-   description:
-   Beschrijving van het product.
-
-   available:
-   true = beschikbaar
-   false = niet beschikbaar
-
-   checkoutUrl:
-   Alleen gebruiken als je al een geldige
-   checkout URL/backend hebt.
-
-===================================================== */
-
-
-const products = [
-
-
-  {
-    id:"skin-001",
-
-    name:"dohnut",
-
-    price:"1.99",
-
-    currency:"EUR",
-
-    image:"IMG_5334.webp",
-
-    description:
-      "1 skin dohnut.",
-
-    productId:
-      "XSOLLA_PRODUCT_001",
-
-    available:true,
-
-    checkoutUrl:""
-
-  },
-
-
-  {
-    id:"skin-002",
-
-    name:"pumpkitty",
-
-    price:"1.99",
-
-    currency:"EUR",
-
-    image:"IMG_0923.webp",
-
-    description:
-      "1 skin pumpkitty",
-
-    productId:
-      "XSOLLA_PRODUCT_002",
-
-    available:true,
-
-    checkoutUrl:""
-
-  },
-
-
-  {
-    id:"skin-003",
-
-    name:"mindseye",
-
-    price:"1.99",
-
-    currency:"EUR",
-
-    image:"IMG_0920.webp",
-
-    description:
-      "1 skin mindseye",
-
-    productId:
-      "XSOLLA_PRODUCT_003",
-
-    available:true,
-
-    checkoutUrl:""
-
-  },
-
-
-  {
-    id:"skin-004",
-
-    name:"nomster",
-
-    price:"5.99",
-
-    currency:"EUR",
-
-    image:"IMG_0924.webp",
-
-    description:
-      "1 skin nomster",
-
-    productId:
-      "XSOLLA_PRODUCT_004",
-
-    available:true,
-
-    checkoutUrl:""
-
-  }
-
-
-];
-
-
-/* =====================================================
-   UID SYSTEM
-===================================================== */
-
-const uidInput =
-  document.getElementById(
-    "agario_uid_input"
-  );
-
-const uidStatus =
-  document.getElementById(
-    "uidStatus"
-  );
-
-
-function updateUidStatus(){
-
-  const stored =
-    localStorage.getItem(
-      "agarioEncodedUID"
-    ) || "";
-
-
-  if(
-    stored &&
-    stored.length > 10
-  ){
-
-    window.agarioEncodedUID =
-      stored;
-
-    uidInput.value =
-      stored;
-
-    uidStatus.textContent =
-      "UID saved";
-
-    uidStatus.style.color =
-      "#4ade80";
-
-  }else{
-
-    window.agarioEncodedUID =
-      null;
-
-    uidStatus.textContent =
-      "Not logged in";
-
-    uidStatus.style.color =
-      "#64748b";
-
-  }
-
-}
-
-
-document
-  .getElementById("saveUidBtn")
-  .addEventListener(
-    "click",
-    function(){
-
-      const value =
-        uidInput.value.trim();
-
-
-      if(
-        !value ||
-        value.length < 20
-      ){
-
-        alert(
-          "Please enter your full encoded Agar.io UID."
-        );
-
-        return;
-
-      }
-
-
-      localStorage.setItem(
-        "agarioEncodedUID",
-        value
-      );
-
-
-      window.agarioEncodedUID =
-        value;
-
-
-      updateUidStatus();
-
-
-      alert(
-        "UID saved successfully."
-      );
-
+  "use strict";
+
+  const products = [
+    {
+      id: "skin-001",
+      name: "dohnut",
+      price: 1.99,
+      image: "IMG_5334.webp",
+      description: "Een unieke Agar.io-skin."
+    },
+    {
+      id: "skin-002",
+      name: "pumpkitty",
+      price: 1.99,
+      image: "IMG_0923.webp",
+      description: "Een unieke Agar.io-skin."
+    },
+    {
+      id: "skin-003",
+      name: "mindseye",
+      price: 1.99,
+      image: "IMG_0920.webp",
+      description: "Een unieke Agar.io-skin."
+    },
+    {
+      id: "skin-004",
+      name: "nomster",
+      price: 5.99,
+      image: "IMG_0924.webp",
+      description: "Een unieke Agar.io-skin."
     }
-  );
+  ];
 
+  let cart = [];
 
-/* =====================================================
-   RENDER PRODUCTS
-===================================================== */
+  const productsContainer =
+    document.getElementById("products");
 
-const productsContainer =
-  document.getElementById(
-    "products"
-  );
+  const cartOverlay =
+    document.getElementById("cartOverlay");
 
+  const cartItemsContainer =
+    document.getElementById("cartItems");
 
-function renderProducts(){
+  const cartCountElement =
+    document.getElementById("cartCount");
 
-  productsContainer.innerHTML="";
+  const cartTotalElement =
+    document.getElementById("cartTotal");
 
+  const cartMessage =
+    document.getElementById("cartMessage");
 
-  products.forEach(
-    product => {
+  const checkoutButton =
+    document.getElementById("checkoutButton");
 
+  const playerUidInput =
+    document.getElementById("playerUid");
 
-      const card =
-        document.createElement(
-          "div"
-        );
+  function formatPrice(price) {
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR"
+    }).format(price);
+  }
 
+  function renderProducts() {
+    productsContainer.innerHTML = "";
 
-      card.className =
-        "product-card";
+    products.forEach(product => {
+      const productElement =
+        document.createElement("article");
 
+      productElement.className = "product";
 
-      /* BADGE */
+      productElement.innerHTML = `
+        <img
+          src="${product.image}"
+          alt="${product.name}"
+          onerror="this.style.display='none'"
+        >
 
-      const badge =
-        document.createElement(
-          "div"
-        );
+        <h3>${product.name}</h3>
 
+        <p>${product.description}</p>
 
-      badge.className =
-        "product-badge";
+        <div class="price">
+          ${formatPrice(product.price)}
+        </div>
 
-
-      if(product.available){
-
-        badge.textContent =
-          "AVAILABLE";
-
-      }else{
-
-        badge.textContent =
-          "UNAVAILABLE";
-
-        badge.classList.add(
-          "unavailable"
-        );
-
-      }
-
-
-      card.appendChild(
-        badge
-      );
-
-
-      /* IMAGE */
-
-      const imageBox =
-        document.createElement(
-          "div"
-        );
-
-
-      imageBox.className =
-        "product-image";
-
-
-      if(product.image){
-
-        const img =
-          document.createElement(
-            "img"
-          );
-
-
-        img.src =
-          product.image;
-
-
-        img.alt =
-          product.name;
-
-
-        imageBox.appendChild(
-          img
-        );
-
-      }else{
-
-        const placeholder =
-          document.createElement(
-            "div"
-          );
-
-
-        placeholder.className =
-          "image-placeholder";
-
-
-        placeholder.textContent =
-          "Product image";
-
-
-        imageBox.appendChild(
-          placeholder
-        );
-
-      }
-
-
-      card.appendChild(
-        imageBox
-      );
-
-
-      /* NAME */
-
-      const name =
-        document.createElement(
-          "div"
-        );
-
-
-      name.className =
-        "product-name";
-
-
-      name.textContent =
-        product.name;
-
-
-      card.appendChild(
-        name
-      );
-
-
-      /* DESCRIPTION */
-
-      const description =
-        document.createElement(
-          "div"
-        );
-
-
-      description.className =
-        "product-description";
-
-
-      description.textContent =
-        product.description;
-
-
-      card.appendChild(
-        description
-      );
-
-
-      /* PRICE */
-
-      const price =
-        document.createElement(
-          "div"
-        );
-
-
-      price.className =
-        "product-price";
-
-
-      price.innerHTML = `
-
-        <span class="price-currency">
-          ${product.currency}
-        </span>
-
-        <span class="price-value">
-          ${product.price}
-        </span>
-
+        <button
+          class="buy-button"
+          data-product-id="${product.id}"
+        >
+          In winkelwagen
+        </button>
       `;
 
+      productElement
+        .querySelector(".buy-button")
+        .addEventListener("click", () => {
+          addToCart(product);
+        });
 
-      card.appendChild(
-        price
-      );
-
-
-      /* BUY BUTTON */
-
-      const button =
-        document.createElement(
-          "button"
-        );
-
-
-      button.className =
-        "buy-button";
-
-
-      if(product.available){
-
-        button.textContent =
-          "Buy Now";
-
-
-        button.onclick =
-          function(){
-
-            openBuyPopup(
-              product
-            );
-
-          };
-
-      }else{
-
-        button.textContent =
-          "Unavailable";
-
-        button.classList.add(
-          "disabled"
-        );
-
-        button.disabled =
-          true;
-
-      }
-
-
-      card.appendChild(
-        button
-      );
-
-
-      productsContainer.appendChild(
-        card
-      );
-
-    }
-  );
-
-}
-
-
-/* =====================================================
-   BUY POPUP
-===================================================== */
-
-let selectedProduct =
-  null;
-
-
-function openBuyPopup(product){
-
-  const uid =
-    window.agarioEncodedUID ||
-    localStorage.getItem(
-      "agarioEncodedUID"
-    );
-
-
-  if(
-    !uid ||
-    uid.length < 20
-  ){
-
-    alert(
-      "Please save your Agar.io UID before purchasing."
-    );
-
-    return;
-
+      productsContainer.appendChild(productElement);
+    });
   }
 
+  function addToCart(product) {
+    const existingItem =
+      cart.find(item => item.id === product.id);
 
-  selectedProduct =
-    product;
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({
+        ...product,
+        quantity: 1
+      });
+    }
 
+    renderCart();
+    openCart();
+  }
 
-  document
-    .getElementById(
-      "popupProductName"
-    )
-    .textContent =
-      product.name;
+  function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    renderCart();
+  }
 
+  function changeQuantity(productId, change) {
+    const item =
+      cart.find(product => product.id === productId);
 
-  document
-    .getElementById(
-      "popupDescription"
-    )
-    .textContent =
-      product.description;
+    if (!item) {
+      return;
+    }
 
+    item.quantity += change;
 
-  document
-    .getElementById(
-      "popupPrice"
-    )
-    .textContent =
-      product.currency +
-      " " +
-      product.price;
+    if (item.quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
 
+    if (item.quantity > 20) {
+      item.quantity = 20;
+    }
 
-  document
-    .getElementById(
-      "buyPopup"
-    )
-    .style.display =
-      "flex";
+    renderCart();
+  }
 
-}
+  function getCartCount() {
+    return cart.reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
+  }
 
+  function getCartTotal() {
+    return cart.reduce(
+      (total, item) =>
+        total + item.price * item.quantity,
+      0
+    );
+  }
 
-function closeBuyPopup(){
+  function renderCart() {
+    cartCountElement.textContent = getCartCount();
 
-  document
-    .getElementById(
-      "buyPopup"
-    )
-    .style.display =
-      "none";
+    cartTotalElement.textContent =
+      formatPrice(getCartTotal());
 
+    checkoutButton.disabled = cart.length === 0;
 
-  selectedProduct =
-    null;
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = `
+        <div class="empty-cart">
+          Je winkelwagen is leeg.
+        </div>
+      `;
 
-}
+      return;
+    }
 
+    cartItemsContainer.innerHTML = "";
 
-/* =====================================================
-   CHECKOUT
-===================================================== */
+    cart.forEach(item => {
+      const itemElement =
+        document.createElement("div");
 
-document
-  .getElementById(
-    "confirmBuy"
-  )
-  .addEventListener(
-    "click",
-    async function(){
+      itemElement.className = "cart-item";
 
-      if(!selectedProduct){
+      itemElement.innerHTML = `
+        <div>
+          <strong>${item.name}</strong><br>
+          <small>
+            ${formatPrice(item.price)} per stuk
+          </small>
+          <br>
+          <button
+            class="close-button decrease-button"
+            type="button"
+          >
+            −
+          </button>
 
-        return;
+          <span> ${item.quantity} </span>
 
-      }
+          <button
+            class="close-button increase-button"
+            type="button"
+          >
+            +
+          </button>
+        </div>
 
+        <div>
+          <strong>
+            ${formatPrice(item.price * item.quantity)}
+          </strong>
+          <br>
+          <button
+            class="remove-button"
+            type="button"
+          >
+            Verwijderen
+          </button>
+        </div>
+      `;
 
-      const token =
-        window.agarioEncodedUID ||
-        localStorage.getItem(
-          "agarioEncodedUID"
-        );
+      itemElement
+        .querySelector(".decrease-button")
+        .addEventListener("click", () => {
+          changeQuantity(item.id, -1);
+        });
 
+      itemElement
+        .querySelector(".increase-button")
+        .addEventListener("click", () => {
+          changeQuantity(item.id, 1);
+        });
 
-      if(
-        !token ||
-        token.length < 20
-      ){
+      itemElement
+        .querySelector(".remove-button")
+        .addEventListener("click", () => {
+          removeFromCart(item.id);
+        });
 
-        alert(
-          "Please save your Agar.io UID first."
-        );
+      cartItemsContainer.appendChild(itemElement);
+    });
+  }
 
-        return;
+  function openCart() {
+    cartOverlay.classList.add("visible");
+    cartMessage.textContent = "";
+  }
 
-      }
+  function closeCart() {
+    cartOverlay.classList.remove("visible");
+  }
 
+  async function checkout() {
+    const uid = playerUidInput.value.trim();
 
-      const product =
-        selectedProduct;
+    if (!uid) {
+      cartMessage.textContent =
+        "Vul eerst je Agar.io UID in.";
 
+      return;
+    }
 
-      /*
-        OPTION 1:
+    if (cart.length === 0) {
+      cartMessage.textContent =
+        "Je winkelwagen is leeg.";
 
-        If you already have a checkout URL,
-        it can be opened here.
+      return;
+    }
 
-        This should point to your own
-        secure checkout/backend.
-      */
+    checkoutButton.disabled = true;
+    checkoutButton.textContent =
+      "Betaling voorbereiden...";
 
-      if(product.checkoutUrl){
+    cartMessage.textContent = "";
 
-        window.open(
-          product.checkoutUrl,
-          "_blank",
-          "noopener"
-        );
-
-        closeBuyPopup();
-
-        return;
-
-      }
-
-
-      /*
-        OPTION 2:
-
-        Recommended production flow.
-
-        Your server should create the
-        Xsolla checkout and return:
-
+    try {
+      const response = await fetch(
+        "/xshop/checkout",
         {
-          "checkout_url":
-          "https://secure.xsolla.com/..."
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            uid: uid,
+            paymentMethod: "ideal",
+            items: cart.map(item => ({
+              productId: item.id,
+              quantity: item.quantity
+            }))
+          })
         }
-
-        Merchant secrets must NEVER be placed
-        in this HTML file.
-      */
-
-      try{
-
-        const response =
-          await fetch(
-            "/xshop/checkout",
-            {
-              method:"POST",
-
-              headers:{
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:JSON.stringify({
-
-                uid:token,
-
-                product:
-                  product.productId,
-
-                currency:
-                  product.currency
-
-              })
-
-            }
-          );
-
-
-        if(!response.ok){
-
-          throw new Error(
-            "Checkout server returned " +
-            response.status
-          );
-
-        }
-
-
-        const data =
-          await response.json();
-
-
-        const checkoutUrl =
-          data.checkout_url ||
-          data.iframe_url ||
-          data.url;
-
-
-        if(!checkoutUrl){
-
-          throw new Error(
-            "No checkout URL returned."
-          );
-
-        }
-
-
-        window.open(
-          checkoutUrl,
-          "_blank",
-          "noopener"
-        );
-
-
-        closeBuyPopup();
-
-
-      }catch(error){
-
-        console.error(
-          "Checkout error:",
-          error
-        );
-
-
-        alert(
-          "Checkout could not be started. Please try again later."
-        );
-
-      }
-
-    }
-  );
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-function toggleMenu(){
-
-  const menu =
-    document.getElementById(
-      "menu"
-    );
-
-  const overlay =
-    document.getElementById(
-      "menu-overlay"
-    );
-
-
-  if(
-    menu.classList.contains(
-      "open"
-    )
-  ){
-
-    closeMenu();
-
-  }else{
-
-    menu.classList.add(
-      "open"
-    );
-
-    overlay.classList.add(
-      "show"
-    );
-
-  }
-
-}
-
-
-function closeMenu(){
-
-  const menu =
-    document.getElementById(
-      "menu"
-    );
-
-  const overlay =
-    document.getElementById(
-      "menu-overlay"
-    );
-
-
-  menu.classList.remove(
-    "open"
-  );
-
-  overlay.classList.remove(
-    "show"
-  );
-
-}
-
-
-/* ESC */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(
-      event.key ===
-      "Escape"
-    ){
-
-      closeMenu();
-
-      closeBuyPopup();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   CLOSE POPUP OUTSIDE
-===================================================== */
-
-document
-  .getElementById(
-    "buyPopup"
-  )
-  .addEventListener(
-    "click",
-    function(event){
-
-      if(
-        event.target === this
-      ){
-
-        closeBuyPopup();
-
-      }
-
-    }
-  );
-
-
-/* =====================================================
-   INIT
-===================================================== */
-
-updateUidStatus();
-
-renderProducts();
-
-
-/* LOADER */
-
-setTimeout(
-  function(){
-
-    const loader =
-      document.getElementById(
-        "loader"
       );
 
+      const data = await response.json();
 
-    if(loader){
+      if (!response.ok) {
+        throw new Error(
+          data.error ||
+          "De checkout kon niet worden gestart."
+        );
+      }
 
-      loader.style.display =
-        "none";
+      const checkoutUrl =
+        data.checkout_url || data.url;
 
+      if (!checkoutUrl) {
+        throw new Error(
+          "Geen betaalpagina ontvangen."
+        );
+      }
+
+      window.location.href = checkoutUrl;
+    } catch (error) {
+      cartMessage.textContent = error.message;
+      checkoutButton.disabled = false;
+      checkoutButton.textContent =
+        "Afrekenen met iDEAL";
     }
+  }
 
-  },
-  1800 +
-  Math.random()*1200
-);
+  document
+    .getElementById("openCartButton")
+    .addEventListener("click", openCart);
 
+  document
+    .getElementById("closeCartButton")
+    .addEventListener("click", closeCart);
 
+  cartOverlay.addEventListener("click", event => {
+    if (event.target === cartOverlay) {
+      closeCart();
+    }
+  });
+
+  checkoutButton.addEventListener("click", checkout);
+
+  renderProducts();
+  renderCart();
 </script>
 
 </body>
