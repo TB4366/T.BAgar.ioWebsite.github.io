@@ -1,437 +1,532 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Admin Panel - Skin Shop</title>
-<style>
-body { font-family: Arial; background:#111; color:#fff; padding:20px; }
-h1 { color:#0af; }
-input, button, select { padding:6px; margin:5px; border-radius:4px; border:none; font-size:14px; }
-button { cursor:pointer; }
-table { border-collapse: collapse; width:100%; margin-top:10px; }
-th, td { border:1px solid #555; padding:5px; text-align:left; }
-th { background:#333; }
-.skinThumb { width:40px; height:40px; border-radius:50%; margin:2px; cursor:pointer; border:2px solid transparent; }
-.skinThumb.selected { border-color:#0af; opacity:1; }
-.skinThumb.locked { opacity:0.4; }
-#editor, #eventEditor, #dealEditor { display:none; margin-top:20px; border:1px solid #0af; padding:10px; }
-.skinRow, .eventRow, .dealRow { margin-bottom:10px; }
-.skinRow input, .skinRow select, .eventRow input, .eventRow select, .dealRow input, .dealRow select { margin:3px; }
-.adminControls { margin-top:10px; border-top:1px solid #0af; padding-top:10px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T.B Agar.io - Admin Panel</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #10131c;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .panel {
+      background: #191e2c;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    h1, h2 {
+      color: #6ca8ff;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 12px;
+      border: 1px solid #414b63;
+      border-radius: 8px;
+      background: #10131c;
+      color: white;
+    }
+
+    button {
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 4px;
+    }
+
+    .primary {
+      background: #387cff;
+      color: white;
+    }
+
+    .success {
+      background: #22a06b;
+      color: white;
+    }
+
+    .danger {
+      background: #e5484d;
+      color: white;
+    }
+
+    .secondary {
+      background: #30384d;
+      color: white;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      margin-top: 15px;
+      color: #ffd65a;
+      line-height: 1.5;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #30384d;
+    }
+
+    th {
+      color: #6ca8ff;
+    }
+
+    .coin-input {
+      max-width: 130px;
+      display: inline-block;
+      margin: 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+
+    .stat {
+      background: #202738;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 26px;
+      color: #ffd65a;
+      margin-top: 8px;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
 
-<h1>Admin Panel</h1>
-<div id="message" style="color:yellow;"></div>
+    <!-- Admin login -->
+    <section id="loginPanel" class="panel">
+      <h1>T.B Agar.io Admin Login</h1>
 
-<h3>Add New Key</h3>
-<input id="newName" placeholder="Enter Name">
-<button onclick="addNewKey()">Add Key</button>
+      <p>Enter your administrator access code.</p>
 
-<h3>All Keys</h3>
-<table id="keysTable">
-<tr>
-  <th>Key</th>
-  <th>Name</th>
-  <th>Coins</th>
-  <th>Money</th>
-  <th>Purchased Skins</th>
-  <th>Actions</th>
-</tr>
-</table>
+      <form onsubmit="adminLogin(event)">
+        <label for="adminCode">Admin code</label>
+        <input
+          id="adminCode"
+          type="password"
+          placeholder="Enter admin code"
+          required
+        >
 
-<!-- Skin Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openSkinEditor()">Edit Skins</button>
-</div>
-<div id="editor">
-  <h2>Skin Editor</h2>
-  <button onclick="saveSkins()">Save Skins</button>
-  <button onclick="publishSkins()">Publish Skins</button>
-  <button onclick="addSkin()">Add Skin</button>
-  <div id="skinsEditor"></div>
-</div>
+        <button class="primary" type="submit">
+          Login
+        </button>
+      </form>
 
-<!-- Event Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openEventEditor()">Manage Events</button>
-</div>
-<div id="eventEditor">
-  <h2>Event Editor</h2>
-  <button onclick="addEvent()">Add Event</button>
-  <button onclick="publishEvents()">Publish Events</button>
-  <div id="eventsList"></div>
-</div>
+      <div id="loginMessage" class="message"></div>
+    </section>
 
-<!-- Deal Editor -->
-<div style="margin-top:20px;">
-  <button onclick="openDealEditor()">Manage Deals</button>
-</div>
-<div id="dealEditor">
-  <h2>Deal Editor</h2>
-  <button onclick="addDeal()">Add Deal</button>
-  <button onclick="publishDeals()">Publish Deals</button>
-  <div id="dealsList"></div>
-</div>
+    <!-- Admin dashboard -->
+    <section id="dashboard" class="hidden">
 
-<script>
-// ======= Utility =======
-function showMessage(msg){ document.getElementById('message').textContent = msg; }
+      <div class="panel">
+        <h1>Admin Dashboard</h1>
+        <p>Manage users, coins and purchase history.</p>
 
-// ======= Server Sync Function =======
-async function syncKeyToServer(key, data){
-  try {
-    await fetch('/api/key/save', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ key, keyData: data })
-    });
-  } catch(err){
-    console.warn('Server sync failed', err);
-  }
-}
+        <button class="danger" onclick="adminLogout()">
+          Logout
+        </button>
+      </div>
 
-// ======= Key Management =======
-function loadAllKeys(){
-  const table = document.getElementById('keysTable');
-  table.innerHTML = '<tr><th>Key</th><th>Name</th><th>Coins</th><th>Money</th><th>Purchased Skins</th><th>Actions</th></tr>';
-  const skinsData = JSON.parse(localStorage.getItem('skinsDataPublished') || '[]');
+      <!-- Statistics -->
+      <div class="panel">
+        <h2>Statistics</h2>
 
-  for(let i=0;i<localStorage.length;i++){
-    const k = localStorage.key(i);
-    if(k.startsWith('skinshop_')){
-      const data = JSON.parse(localStorage.getItem(k));
-      const row = table.insertRow();
-      row.dataset.storageKey = k;
+        <div class="stat-grid">
+          <div class="stat">
+            Registered users
+            <strong id="userCount">0</strong>
+          </div>
 
-      const keyCell = row.insertCell(0);
-      keyCell.innerHTML = `<input value="${k.replace('skinshop_','')}" style="width:80px" onchange="updateKey('${k}', this.value)">`;
+          <div class="stat">
+            Total coins
+            <strong id="totalCoins">0</strong>
+          </div>
 
-      const nameCell = row.insertCell(1);
-      nameCell.innerHTML = `<input value="${data.name || ''}" onchange="updateField('${k}','name',this.value)">`;
+          <div class="stat">
+            Total purchases
+            <strong id="purchaseCount">0</strong>
+          </div>
+        </div>
+      </div>
 
-      const coinsCell = row.insertCell(2);
-      coinsCell.innerHTML = `<input type="number" value="${data.coins||0}" style="width:60px" onchange="updateField('${k}','coins',parseInt(this.value))">`;
+      <!-- User management -->
+      <div class="panel">
+        <h2>User Management</h2>
 
-      const moneyCell = row.insertCell(3);
-      moneyCell.innerHTML = `<input type="number" step="0.01" value="${data.money||0}" style="width:60px" onchange="updateField('${k}','money',parseFloat(this.value))">`;
+        <input
+          id="userSearch"
+          type="search"
+          placeholder="Search users..."
+          oninput="filterUsers()"
+        >
 
-      const skinsCell = row.insertCell(4);
-      skinsCell.innerHTML = '';
-      const userOwned = data.owned || [];
-      skinsData.forEach(skin=>{
-        const img = document.createElement('img');
-        img.src = skin.image || '';
-        img.title = skin.name;
-        img.className = 'skinThumb '+(userOwned.includes(skin.id)?'selected':'locked');
-        img.onclick = ()=> toggleUserSkin(k, skin.id, img);
-        skinsCell.appendChild(img);
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Coins</th>
+                <th>Change coins</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody id="usersTable"></tbody>
+          </table>
+        </div>
+
+        <div id="userMessage" class="message"></div>
+      </div>
+
+      <!-- Purchase history -->
+      <div class="panel">
+        <h2>Purchase History</h2>
+
+        <button class="secondary" onclick="loadPurchases()">
+          Refresh purchases
+        </button>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Products</th>
+                <th>Total coins</th>
+                <th>Date and time</th>
+              </tr>
+            </thead>
+
+            <tbody id="purchasesTable"></tbody>
+          </table>
+        </div>
+
+        <div id="purchaseMessage" class="message"></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /*
+      Required protected backend endpoints:
+
+      POST /api/admin/login
+      POST /api/admin/logout
+      GET  /api/admin/users
+      PATCH /api/admin/users/:userId/coins
+      GET  /api/admin/purchases
+
+      The backend must:
+      - Validate the admin session server-side.
+      - Store passwords securely hashed.
+      - Never trust an admin ID supplied by the browser.
+      - Check authorization for every admin request.
+      - Record all coin changes in an audit log.
+      - Use a database for users, coins and purchases.
+
+      The frontend must never contain the real admin secret.
+    */
+
+    const API_BASE = "";
+
+    let allUsers = [];
+
+    async function adminLogin(event) {
+      event.preventDefault();
+
+      const code = document.getElementById("adminCode").value;
+      const message = document.getElementById("loginMessage");
+
+      try {
+        const response = await fetch(API_BASE + "/api/admin/login", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ code })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          message.textContent = data.message || "Invalid admin code.";
+          return;
+        }
+
+        document.getElementById("loginPanel").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+
+        await loadDashboard();
+
+      } catch (error) {
+        message.textContent = "Could not connect to the server.";
+      }
+    }
+
+    async function adminLogout() {
+      await fetch(API_BASE + "/api/admin/logout", {
+        method: "POST",
+        credentials: "include"
       });
 
-      const actions = row.insertCell(5);
-      actions.innerHTML = `<button onclick="deleteKey('${k}')">Delete</button>`;
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("loginPanel").classList.remove("hidden");
+      document.getElementById("adminCode").value = "";
     }
-  }
-}
 
-function addNewKey(){
-  const name = document.getElementById('newName').value.trim();
-  if(!name) return showMessage('Enter a name');
-  const key = Math.random().toString(36).substring(2,10);
-  const keyData = {name:name, coins:0, money:0, owned:[]};
-  localStorage.setItem('skinshop_'+key, JSON.stringify(keyData));
-  document.getElementById('newName').value='';
-  showMessage('✅ New key created: '+key);
-  syncKeyToServer('skinshop_'+key, keyData);
-  loadAllKeys();
-}
+    async function loadDashboard() {
+      await loadUsers();
+      await loadPurchases();
+    }
 
-function updateKey(oldKey, newKey){
-  if(!newKey) return showMessage('Key cannot be empty');
-  const data = JSON.parse(localStorage.getItem(oldKey));
-  const newStorageKey = 'skinshop_' + newKey;
-  localStorage.setItem(newStorageKey, JSON.stringify(data));
-  if(newStorageKey!==oldKey) localStorage.removeItem(oldKey);
-  showMessage('✅ Key updated');
-  syncKeyToServer(newStorageKey, data);
-  loadAllKeys();
-}
+    async function loadUsers() {
+      const message = document.getElementById("userMessage");
 
-function updateField(key, field, value){
-  const data = JSON.parse(localStorage.getItem(key));
-  data[field] = value;
-  localStorage.setItem(key, JSON.stringify(data));
-  showMessage('✅ Field updated');
-  syncKeyToServer(key, data);
-}
+      try {
+        const response = await fetch(API_BASE + "/api/admin/users", {
+          credentials: "include"
+        });
 
-function toggleUserSkin(key, skinId, imgEl){
-  const data = JSON.parse(localStorage.getItem(key));
-  if(!data.owned) data.owned=[];
-  if(data.owned.includes(skinId)){
-    data.owned = data.owned.filter(s=>s!==skinId);
-    imgEl.classList.remove('selected'); imgEl.classList.add('locked');
-  } else {
-    data.owned.push(skinId);
-    imgEl.classList.remove('locked'); imgEl.classList.add('selected');
-  }
-  localStorage.setItem(key, JSON.stringify(data));
-  syncKeyToServer(key, data);
-}
+        if (!response.ok) {
+          message.textContent = "You are not authorized to view users.";
+          return;
+        }
 
-function deleteKey(storageKey){
-  if(confirm('Are you sure you want to delete this key?')){
-    localStorage.removeItem(storageKey);
-    showMessage('✅ Key deleted');
-    fetch('/api/key/delete', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ key: storageKey })
-    }).catch(err=>console.warn('Server delete failed', err));
-    loadAllKeys();
-  }
-}
+        allUsers = await response.json();
+        renderUsers();
+        updateStatistics();
 
-// ======= Skin Editor =======
-function openSkinEditor(){ document.getElementById('editor').style.display='block'; renderSkinEditor(); }
-function getSkins(){ return JSON.parse(localStorage.getItem('skinsData')||'[]'); }
+      } catch (error) {
+        message.textContent = "Could not load users.";
+      }
+    }
 
-function renderSkinEditor(){
-  const container=document.getElementById('skinsEditor'); container.innerHTML='';
-  getSkins().forEach(skin=>{
-    const div=document.createElement('div'); div.className='skinRow'; div.dataset.id=skin.id;
-    div.innerHTML=`
-      <input class="skinName" value="${skin.name}" placeholder="Name">
-      <input class="skinPrice" value="${skin.price}" placeholder="Price">
-      <select class="skinUseFor">
-        <option value="coins" ${skin.useFor==='coins'?'selected':''}>Coins</option>
-        <option value="deals" ${skin.useFor==='deals'?'selected':''}>Deals</option>
-      </select>
-      <input class="skinImage" value="${skin.image}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadSkinImage(this,'${skin.id}')">
-      <button onclick="deleteSkin('${skin.id}')">Delete</button>
-    `;
-    container.appendChild(div);
-  });
-}
+    function renderUsers() {
+      const table = document.getElementById("usersTable");
+      const search = document.getElementById("userSearch").value
+        .toLowerCase();
 
-function addSkin(){
-  const id='skin'+Date.now();
-  const container=document.getElementById('skinsEditor');
-  const div=document.createElement('div'); div.className='skinRow'; div.dataset.id=id;
-  div.innerHTML=`
-    <input class="skinName" placeholder="Name">
-    <input class="skinPrice" placeholder="Price">
-    <select class="skinUseFor">
-      <option value="coins">Coins</option>
-      <option value="deals">Deals</option>
-    </select>
-    <input class="skinImage" placeholder="Image URL">
-    <input type="file" accept="image/*" onchange="uploadSkinImage(this,'${id}')">
-    <button onclick="deleteSkin('${id}')">Delete</button>
-  `;
-  container.appendChild(div);
-}
+      const filteredUsers = allUsers.filter(user =>
+        user.username.toLowerCase().includes(search)
+      );
 
-function uploadSkinImage(input,id){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){ document.querySelector(`.skinRow[data-id='${id}'] .skinImage`).value=e.target.result; }
-  reader.readAsDataURL(file);
-}
+      table.innerHTML = filteredUsers.map(user => `
+        <tr>
+          <td>${escapeHtml(user.username)}</td>
 
-function saveSkins(){
-  const container=document.getElementById('skinsEditor');
-  const skinElements=container.querySelectorAll('.skinRow');
-  const skinsArr=[];
-  skinElements.forEach(row=>{
-    skinsArr.push({
-      id: row.dataset.id,
-      name: row.querySelector('.skinName').value,
-      price: parseInt(row.querySelector('.skinPrice').value)||0,
-      image: row.querySelector('.skinImage').value,
-      useFor: row.querySelector('.skinUseFor').value
-    });
-  });
-  localStorage.setItem('skinsData', JSON.stringify(skinsArr));
-  alert('✅ Skins saved!');
-}
+          <td>${Number(user.coins).toLocaleString()}</td>
 
-function publishSkins(){ 
-  localStorage.setItem('skinsDataPublished', localStorage.getItem('skinsData')); 
-  fetch('/api/skins/publish', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: localStorage.getItem('skinsDataPublished')
-  }).catch(err=>console.warn('Server publish failed', err));
-  alert('✅ Skins published!'); 
-}
+          <td>
+            <input
+              class="coin-input"
+              type="number"
+              min="0"
+              step="1"
+              id="coins-${escapeHtml(user.id)}"
+              placeholder="Coins"
+            >
+          </td>
 
-// ======= Event Editor =======
-function openEventEditor(){ document.getElementById('eventEditor').style.display='block'; renderEventEditor(); }
-function getEvents(){ return JSON.parse(localStorage.getItem('eventData')||'[]'); }
+          <td>
+            <button
+              class="success"
+              onclick="addCoins('${escapeHtml(user.id)}')">
+              Add
+            </button>
 
-function renderEventEditor(){
-  const container=document.getElementById('eventsList'); container.innerHTML='';
-  getEvents().forEach((event,index)=>{
-    const div=document.createElement('div'); div.className='eventRow'; div.dataset.index=index;
-    const startVal=new Date(event.startTime).toISOString().slice(0,16);
-    const endVal=new Date(event.endTime).toISOString().slice(0,16);
-    div.innerHTML=`
-      <input class="eventName" value="${event.name}" placeholder="Event Name">
-      <input class="eventDesc" value="${event.desc}" placeholder="Event Description">
-      <label>Status:</label>
-      <select class="eventStatus">
-        <option value="active" ${event.status==='active'?'selected':''}>Active</option>
-        <option value="coming" ${event.status==='coming'?'selected':''}>Coming Soon</option>
-        <option value="inactive" ${event.status==='inactive'?'selected':''}>Inactive</option>
-      </select>
-      <label>Start:</label><input class="eventStart" type="datetime-local" value="${startVal}">
-      <label>End:</label><input class="eventEnd" type="datetime-local" value="${endVal}">
-      <label>Image URL:</label><input class="eventImage" value="${event.image||''}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadEventImage(this,${index})">
-      <button onclick="deleteEvent(${index})">Delete</button>
-    `;
-    container.appendChild(div);
-  });
-}
+            <button
+              class="primary"
+              onclick="setCoins('${escapeHtml(user.id)}')">
+              Set
+            </button>
+          </td>
+        </tr>
+      `).join("");
 
-function addEvent(){
-  const events=getEvents();
-  const id='event'+Date.now();
-  events.push({id:id,name:'New Event',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,image:''});
-  localStorage.setItem('eventData', JSON.stringify(events));
-  renderEventEditor();
-}
+      document.getElementById("userCount").textContent = allUsers.length;
+    }
 
-function deleteEvent(index){ const events=getEvents(); events.splice(index,1); localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
+    function filterUsers() {
+      renderUsers();
+    }
 
-function uploadEventImage(input,index){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){ const events=getEvents(); events[index].image=e.target.result; localStorage.setItem('eventData', JSON.stringify(events)); renderEventEditor(); }
-  reader.readAsDataURL(file);
-}
+    async function addCoins(userId) {
+      const input = document.getElementById("coins-" + userId);
+      const amount = Number(input.value);
 
-function publishEvents(){
-  const container=document.getElementById('eventsList'); const events=[];
-  container.querySelectorAll('.eventRow').forEach((div,index)=>{
-    const startInput=div.querySelector('.eventStart').value;
-    const endInput=div.querySelector('.eventEnd').value;
-    const uniqueId=getEvents()[index]?.id || 'event'+Date.now();
-    events.push({
-      id:uniqueId,
-      name:div.querySelector('.eventName').value,
-      desc:div.querySelector('.eventDesc').value,
-      status:div.querySelector('.eventStatus').value,
-      startTime:new Date(startInput).getTime(),
-      endTime:new Date(endInput).getTime(),
-      image:div.querySelector('.eventImage').value
-    });
-  });
-  localStorage.setItem('eventData', JSON.stringify(events));
-  localStorage.setItem('eventDataPublished', JSON.stringify(events));
-  fetch('/api/events/publish', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(events)
-  }).catch(err=>console.warn('Server publish failed', err));
-  alert('✅ Events published!');
-}
+      if (!Number.isSafeInteger(amount) || amount <= 0) {
+        showUserMessage("Enter a positive whole number of coins.");
+        return;
+      }
 
-// ======= Deal Editor =======
-function openDealEditor(){ document.getElementById('dealEditor').style.display='block'; renderDealEditor(); }
-function getDeals(){ return JSON.parse(localStorage.getItem('dealData')||'[]'); }
+      await updateCoins(userId, {
+        operation: "add",
+        amount
+      });
+    }
 
-function renderDealEditor(){
-  const container=document.getElementById('dealsList'); container.innerHTML='';
-  const events=getEvents();
-  const skins=getSkins();
-  getDeals().forEach((deal,index)=>{
-    const div=document.createElement('div'); div.className='dealRow'; div.dataset.index=index;
-    const startVal=new Date(deal.startTime).toISOString().slice(0,16);
-    const endVal=new Date(deal.endTime).toISOString().slice(0,16);
-    const eventOptions=events.map(e=>`<option value="${e.id}" ${deal.eventId===e.id?'selected':''}>${e.name}</option>`).join('');
-    const skinOptions=skins.map(s=>`<option value="${s.id}" ${deal.skins && deal.skins.includes(s.id)?'selected':''}>${s.name}</option>`).join('');
-    div.innerHTML=`
-      <input class="dealName" value="${deal.name}" placeholder="Deal Name">
-      <input class="dealDesc" value="${deal.desc}" placeholder="Description">
-      <input class="dealPrice" type="number" value="${deal.price||0}" placeholder="Price">
-      <label>Status:</label>
-      <select class="dealStatus">
-        <option value="active" ${deal.status==='active'?'selected':''}>Active</option>
-        <option value="coming" ${deal.status==='coming'?'selected':''}>Coming Soon</option>
-        <option value="inactive" ${deal.status==='inactive'?'selected':''}>Inactive</option>
-      </select>
-      <label>Start:</label><input class="dealStart" type="datetime-local" value="${startVal}">
-      <label>End:</label><input class="dealEnd" type="datetime-local" value="${endVal}">
-      <label>Event:</label><select class="dealEvent">${eventOptions}</select>
-      <label>Image URL:</label><input class="dealImage" value="${deal.image||''}" placeholder="Image URL">
-      <input type="file" accept="image/*" onchange="uploadDealImage(this,${index})">
-      <label>Assign Skins:</label>
-      <select class="dealSkins" multiple style="width:200px;">${skinOptions}</select>
-      <button onclick="deleteDeal(${index})">Delete</button>
-    `;
-    container.appendChild(div);
-  });
-}
+    async function setCoins(userId) {
+      const input = document.getElementById("coins-" + userId);
+      const amount = Number(input.value);
 
-function addDeal(){
-  const deals=getDeals();
-  deals.push({name:'New Deal',desc:'Description',status:'coming',startTime:Date.now(),endTime:Date.now()+3600000,price:0,eventId:'',image:'',skins:[]});
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  renderDealEditor();
-}
+      if (!Number.isSafeInteger(amount) || amount < 0) {
+        showUserMessage("Enter a valid non-negative coin amount.");
+        return;
+      }
 
-function uploadDealImage(input,index){
-  const file=input.files[0]; if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){ const deals=getDeals(); deals[index].image=e.target.result; localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
-  reader.readAsDataURL(file);
-}
+      await updateCoins(userId, {
+        operation: "set",
+        amount
+      });
+    }
 
-function deleteDeal(index){ const deals=getDeals(); deals.splice(index,1); localStorage.setItem('dealData', JSON.stringify(deals)); renderDealEditor(); }
+    async function updateCoins(userId, payload) {
+      try {
+        const response = await fetch(
+          API_BASE + "/api/admin/users/" +
+          encodeURIComponent(userId) + "/coins",
+          {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          }
+        );
 
-function publishDeals(){
-  const container=document.getElementById('dealsList'); const deals=[];
-  container.querySelectorAll('.dealRow').forEach((div,index)=>{
-    const startTime=new Date(div.querySelector('.dealStart').value).getTime();
-    const endTime=new Date(div.querySelector('.dealEnd').value).getTime();
-    const selectedSkins=[...div.querySelector('.dealSkins').selectedOptions].map(o=>o.value);
-    deals.push({
-      name:div.querySelector('.dealName').value,
-      desc:div.querySelector('.dealDesc').value,
-      price:parseFloat(div.querySelector('.dealPrice').value)||0,
-      status:div.querySelector('.dealStatus').value,
-      startTime:startTime,
-      endTime:endTime,
-      eventId:div.querySelector('.dealEvent').value,
-      image:div.querySelector('.dealImage').value,
-      skins:selectedSkins
-    });
-  });
-  localStorage.setItem('dealData', JSON.stringify(deals));
-  localStorage.setItem('dealDataPublished', JSON.stringify(deals));
-  fetch('/api/deals/publish', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(deals)
-  }).catch(err=>console.warn('Server publish failed', err));
-  alert('✅ Deals published!');
-}
+        const data = await response.json();
 
-// ======= Skin Delete =======
-function deleteSkin(id){
-  let skins=getSkins();
-  skins=skins.filter(s=>s.id!==id);
-  localStorage.setItem('skinsData', JSON.stringify(skins));
-  renderSkinEditor();
-}
+        if (!response.ok) {
+          showUserMessage(data.message || "Could not update coins.");
+          return;
+        }
 
-// ======= Init =======
-loadAllKeys();
-</script>
+        showUserMessage("Coins updated successfully.");
+        await loadUsers();
 
+      } catch (error) {
+        showUserMessage("Could not connect to the server.");
+      }
+    }
+
+    async function loadPurchases() {
+      const table = document.getElementById("purchasesTable");
+      const message = document.getElementById("purchaseMessage");
+
+      try {
+        const response = await fetch(
+          API_BASE + "/api/admin/purchases",
+          {
+            credentials: "include"
+          }
+        );
+
+        if (!response.ok) {
+          message.textContent =
+            "You are not authorized to view purchases.";
+          return;
+        }
+
+        const purchases = await response.json();
+
+        table.innerHTML = purchases.map(purchase => `
+          <tr>
+            <td>${escapeHtml(purchase.username)}</td>
+
+            <td>
+              ${escapeHtml(
+                purchase.products
+                  .map(product =>
+                    product.name + " × " + product.quantity
+                  )
+                  .join(", ")
+              )}
+            </td>
+
+            <td>${Number(purchase.totalCoins).toLocaleString()}</td>
+
+            <td>${escapeHtml(
+              new Date(purchase.createdAt).toLocaleString()
+            )}</td>
+          </tr>
+        `).join("");
+
+        document.getElementById("purchaseCount").textContent =
+          purchases.length;
+
+        updateStatistics();
+
+      } catch (error) {
+        message.textContent = "Could not load purchase history.";
+      }
+    }
+
+    function updateStatistics() {
+      const total = allUsers.reduce(
+        (sum, user) => sum + Number(user.coins || 0),
+        0
+      );
+
+      document.getElementById("totalCoins").textContent =
+        total.toLocaleString();
+    }
+
+    function showUserMessage(message) {
+      document.getElementById("userMessage").textContent = message;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
 </body>
 </html>
