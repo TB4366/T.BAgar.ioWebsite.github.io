@@ -1,115 +1,88 @@
+
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.B Agar.io — Shop</title>
+  <title>T.B Agar.io Shop</title>
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #020617;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #10131c;
       color: white;
-      min-height: 100vh;
     }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      padding: 20px;
+      background: #191e2c;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px;
-      background: rgba(2, 6, 23, .95);
-      border-bottom: 1px solid #164e63;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
     header h1 {
-      color: #38bdf8;
-      font-size: 22px;
+      margin: 0;
+      color: #6ca8ff;
     }
 
     button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
       cursor: pointer;
-      border: none;
-      border-radius: 10px;
       font-weight: bold;
     }
 
-    .cart-button {
-      padding: 12px 16px;
-      background: #2563eb;
+    .primary {
+      background: #387cff;
       color: white;
     }
 
-    .cart-count {
-      display: inline-block;
-      min-width: 22px;
-      margin-left: 6px;
-      padding: 3px 7px;
-      border-radius: 20px;
-      background: #ef4444;
+    .danger {
+      background: #e5484d;
+      color: white;
     }
 
-    main {
-      width: min(1200px, 100%);
-      margin: auto;
-      padding: 35px 18px;
+    .secondary {
+      background: #30384d;
+      color: white;
     }
 
-    .hero {
-      padding: 35px 20px;
-      margin-bottom: 35px;
-      border-radius: 20px;
-      text-align: center;
-      background: linear-gradient(145deg, #082f49, #071226);
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
 
-    .hero h2 {
-      font-size: 42px;
-      margin-bottom: 12px;
+    .panel {
+      background: #191e2c;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
     }
 
-    .hero span {
-      color: #38bdf8;
+    .hidden {
+      display: none !important;
     }
 
-    .hero p {
-      color: #cbd5e1;
+    .account-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    .uid-box {
-      margin: 25px auto;
-      max-width: 550px;
-    }
-
-    .uid-box label {
-      display: block;
-      margin-bottom: 8px;
+    .coins {
+      color: #ffd65a;
       font-weight: bold;
-    }
-
-    .uid-box input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      outline: none;
-      background: #0f172a;
-      color: white;
-    }
-
-    .section-title {
-      margin-bottom: 20px;
-      text-align: center;
-      font-size: 28px;
     }
 
     .products {
@@ -119,561 +92,517 @@
     }
 
     .product {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      background: #202738;
+      border-radius: 12px;
       padding: 15px;
-      border: 1px solid #164e63;
-      border-radius: 18px;
-      background: linear-gradient(145deg, #08152a, #071226);
+      text-align: center;
     }
 
     .product img {
       width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 12px;
-      background: #020617;
+      height: 170px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #111520;
     }
 
     .product h3 {
-      font-size: 20px;
-    }
-
-    .product p {
-      color: #94a3b8;
-      min-height: 40px;
+      margin-bottom: 8px;
     }
 
     .price {
-      color: #38bdf8;
-      font-size: 24px;
+      color: #ffd65a;
       font-weight: bold;
+      margin-bottom: 15px;
     }
 
-    .buy-button {
-      padding: 13px;
-      background: #2563eb;
-      color: white;
-    }
-
-    .buy-button:hover {
-      background: #1d4ed8;
-    }
-
-    .overlay {
+    .modal {
       position: fixed;
       inset: 0;
-      z-index: 100;
-      display: none;
+      background: rgba(0, 0, 0, .75);
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 15px;
-      background: rgba(0, 0, 0, .75);
+      padding: 20px;
+      z-index: 10;
     }
 
-    .overlay.visible {
-      display: flex;
-    }
-
-    .cart-modal {
-      width: min(550px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 25px;
-      border: 1px solid #164e63;
-      border-radius: 18px;
-      background: #071226;
-    }
-
-    .cart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .close-button {
-      padding: 8px 12px;
-      background: #334155;
-      color: white;
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      padding: 15px 0;
-      border-bottom: 1px solid #1e293b;
-    }
-
-    .cart-item small {
-      color: #94a3b8;
-    }
-
-    .remove-button {
-      padding: 8px;
-      background: #dc2626;
-      color: white;
-    }
-
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      margin: 25px 0;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .checkout-button {
+    .modal-content {
       width: 100%;
-      padding: 15px;
-      background: #16a34a;
+      max-width: 430px;
+      background: #191e2c;
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 12px;
+      border: 1px solid #414b63;
+      border-radius: 8px;
+      background: #10131c;
       color: white;
-      font-size: 16px;
-    }
-
-    .checkout-button:disabled {
-      cursor: not-allowed;
-      opacity: .5;
-    }
-
-    .empty-cart {
-      padding: 25px 0;
-      color: #94a3b8;
-      text-align: center;
     }
 
     .message {
-      margin-top: 15px;
-      color: #fbbf24;
-      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+      color: #ffcf66;
     }
 
-    footer {
-      padding: 30px;
-      color: #64748b;
-      text-align: center;
+    .cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #30384d;
+      padding: 12px 0;
+    }
+
+    .cart-total {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
     }
   </style>
 </head>
 
 <body>
+  <header>
+    <h1>T.B Agar.io Shop</h1>
 
-<header>
-  <h1>T.B Agar.io Shop</h1>
+    <div class="account-info">
+      <span id="accountStatus">You are not logged in</span>
+      <span id="coinBalance" class="coins"></span>
 
-  <button class="cart-button" id="openCartButton">
-    🛒 Winkelwagen
-    <span class="cart-count" id="cartCount">0</span>
-  </button>
-</header>
+      <button class="primary" id="loginButton" onclick="openAuth()">
+        Login / Register
+      </button>
 
-<main>
-  <section class="hero">
-    <h2>T.B <span>Shop</span></h2>
-    <p>Koop jouw favoriete Agar.io-skins.</p>
+      <button class="secondary hidden" id="logoutButton" onclick="logout()">
+        Logout
+      </button>
 
-    <div class="uid-box">
-      <label for="playerUid">Jouw Agar.io UID</label>
-      <input
-        id="playerUid"
-        type="text"
-        placeholder="Vul hier je Agar.io UID in"
-        autocomplete="off"
-      >
-    </div>
-  </section>
-
-  <h2 class="section-title">Onze producten</h2>
-
-  <section class="products" id="products"></section>
-</main>
-
-<div class="overlay" id="cartOverlay">
-  <div class="cart-modal">
-    <div class="cart-header">
-      <h2>Jouw winkelwagen</h2>
-
-      <button class="close-button" id="closeCartButton">
-        ✕
+      <button class="secondary" onclick="openCart()">
+        Cart (<span id="cartCount">0</span>)
       </button>
     </div>
+  </header>
 
-    <div id="cartItems"></div>
+  <main class="container">
+    <section class="panel">
+      <h2>Welcome to the T.B Agar.io Shop</h2>
+      <p>
+        Buy exclusive skins and other items using your coins.
+        You must be logged in to make a purchase.
+      </p>
+    </section>
 
-    <div class="cart-total">
-      <span>Totaal:</span>
-      <span id="cartTotal">€ 0,00</span>
-    </div>
+    <section>
+      <h2>Available products</h2>
+      <div id="products" class="products"></div>
+    </section>
+  </main>
 
-    <button
-      class="checkout-button"
-      id="checkoutButton"
-    >
-      Afrekenen met iDEAL
-    </button>
+  <!-- Login and registration modal -->
+  <div id="authModal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="authTitle">Login</h2>
 
-    <div class="message" id="cartMessage"></div>
-  </div>
-</div>
+      <form onsubmit="submitAuth(event)">
+        <label for="username">Username</label>
+        <input id="username" required minlength="3" maxlength="32"
+               autocomplete="username">
 
-<footer>
-  © 2026 T.B Agar.io — Alle rechten voorbehouden.
-</footer>
+        <label for="password">Password</label>
+        <input id="password" type="password" required minlength="8"
+               autocomplete="current-password">
 
-<script>
-  "use strict";
-
-  const products = [
-    {
-      id: "skin-001",
-      name: "dohnut",
-      price: 1.99,
-      image: "IMG_5334.webp",
-      description: "Een unieke Agar.io-skin."
-    },
-    {
-      id: "skin-002",
-      name: "pumpkitty",
-      price: 1.99,
-      image: "IMG_0923.webp",
-      description: "Een unieke Agar.io-skin."
-    },
-    {
-      id: "skin-003",
-      name: "mindseye",
-      price: 1.99,
-      image: "IMG_0920.webp",
-      description: "Een unieke Agar.io-skin."
-    },
-    {
-      id: "skin-004",
-      name: "nomster",
-      price: 5.99,
-      image: "IMG_0924.webp",
-      description: "Een unieke Agar.io-skin."
-    }
-  ];
-
-  let cart = [];
-
-  const productsContainer =
-    document.getElementById("products");
-
-  const cartOverlay =
-    document.getElementById("cartOverlay");
-
-  const cartItemsContainer =
-    document.getElementById("cartItems");
-
-  const cartCountElement =
-    document.getElementById("cartCount");
-
-  const cartTotalElement =
-    document.getElementById("cartTotal");
-
-  const cartMessage =
-    document.getElementById("cartMessage");
-
-  const checkoutButton =
-    document.getElementById("checkoutButton");
-
-  const playerUidInput =
-    document.getElementById("playerUid");
-
-  function formatPrice(price) {
-    return new Intl.NumberFormat("nl-NL", {
-      style: "currency",
-      currency: "EUR"
-    }).format(price);
-  }
-
-  function renderProducts() {
-    productsContainer.innerHTML = "";
-
-    products.forEach(product => {
-      const productElement =
-        document.createElement("article");
-
-      productElement.className = "product";
-
-      productElement.innerHTML = `
-        <img
-          src="${product.image}"
-          alt="${product.name}"
-          onerror="this.style.display='none'"
-        >
-
-        <h3>${product.name}</h3>
-
-        <p>${product.description}</p>
-
-        <div class="price">
-          ${formatPrice(product.price)}
-        </div>
-
-        <button
-          class="buy-button"
-          data-product-id="${product.id}"
-        >
-          In winkelwagen
+        <button class="primary" type="submit" id="authSubmit">
+          Login
         </button>
-      `;
+      </form>
 
-      productElement
-        .querySelector(".buy-button")
-        .addEventListener("click", () => {
-          addToCart(product);
-        });
+      <button class="secondary" onclick="toggleAuthMode()">
+        <span id="switchAuthText">Create an account</span>
+      </button>
 
-      productsContainer.appendChild(productElement);
-    });
-  }
+      <button class="danger" onclick="closeAuth()">Close</button>
+      <div id="authMessage" class="message"></div>
+    </div>
+  </div>
 
-  function addToCart(product) {
-    const existingItem =
-      cart.find(item => item.id === product.id);
+  <!-- Cart modal -->
+  <div id="cartModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Your cart</h2>
 
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push({
-        ...product,
-        quantity: 1
-      });
-    }
+      <div id="cartItems"></div>
+      <div id="cartTotal" class="cart-total"></div>
 
-    renderCart();
-    openCart();
-  }
+      <button class="primary" onclick="payWithCoins()">
+        Pay with coins
+      </button>
 
-  function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    renderCart();
-  }
+      <button class="secondary" onclick="closeCart()">
+        Continue shopping
+      </button>
 
-  function changeQuantity(productId, change) {
-    const item =
-      cart.find(product => product.id === productId);
+      <button class="danger" onclick="clearCart()">
+        Clear cart
+      </button>
 
-    if (!item) {
-      return;
-    }
+      <div id="cartMessage" class="message"></div>
+    </div>
+  </div>
 
-    item.quantity += change;
+  <script>
+    /*
+      Your backend must provide these endpoints:
 
-    if (item.quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
+      POST /api/auth/register
+      POST /api/auth/login
+      POST /api/auth/logout
+      GET  /api/me
+      POST /api/orders/coins
 
-    if (item.quantity > 20) {
-      item.quantity = 20;
-    }
+      The backend must use secure, server-side sessions and hashed
+      passwords. Never store passwords or coin balances in this file.
+    */
 
-    renderCart();
-  }
+    const API_BASE = "";
 
-  function getCartCount() {
-    return cart.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
-  }
+    const products = [
+      {
+        id: "skin-001",
+        name: "Dohnut",
+        price: 100,
+        image: "IMG_5334.webp"
+      },
+      {
+        id: "skin-002",
+        name: "Pumpkitty",
+        price: 100,
+        image: "IMG_0923.webp"
+      },
+      {
+        id: "skin-003",
+        name: "Mindseye",
+        price: 100,
+        image: "IMG_0920.webp"
+      },
+      {
+        id: "skin-004",
+        name: "Nomster",
+        price: 300,
+        image: "IMG_0924.webp"
+      }
+    ];
 
-  function getCartTotal() {
-    return cart.reduce(
-      (total, item) =>
-        total + item.price * item.quantity,
-      0
-    );
-  }
+    let cart = [];
+    let loggedIn = false;
+    let authMode = "login";
+    let currentUser = null;
 
-  function renderCart() {
-    cartCountElement.textContent = getCartCount();
+    function renderProducts() {
+      const container = document.getElementById("products");
 
-    cartTotalElement.textContent =
-      formatPrice(getCartTotal());
+      container.innerHTML = products.map(product => `
+        <div class="product">
+          <img src="${escapeHtml(product.image)}"
+               alt="${escapeHtml(product.name)}">
 
-    checkoutButton.disabled = cart.length === 0;
+          <h3>${escapeHtml(product.name)}</h3>
+          <div class="price">${product.price} coins</div>
 
-    if (cart.length === 0) {
-      cartItemsContainer.innerHTML = `
-        <div class="empty-cart">
-          Je winkelwagen is leeg.
-        </div>
-      `;
-
-      return;
-    }
-
-    cartItemsContainer.innerHTML = "";
-
-    cart.forEach(item => {
-      const itemElement =
-        document.createElement("div");
-
-      itemElement.className = "cart-item";
-
-      itemElement.innerHTML = `
-        <div>
-          <strong>${item.name}</strong><br>
-          <small>
-            ${formatPrice(item.price)} per stuk
-          </small>
-          <br>
-          <button
-            class="close-button decrease-button"
-            type="button"
-          >
-            −
-          </button>
-
-          <span> ${item.quantity} </span>
-
-          <button
-            class="close-button increase-button"
-            type="button"
-          >
-            +
+          <button class="primary"
+                  onclick="addToCart('${product.id}')">
+            Add to cart
           </button>
         </div>
-
-        <div>
-          <strong>
-            ${formatPrice(item.price * item.quantity)}
-          </strong>
-          <br>
-          <button
-            class="remove-button"
-            type="button"
-          >
-            Verwijderen
-          </button>
-        </div>
-      `;
-
-      itemElement
-        .querySelector(".decrease-button")
-        .addEventListener("click", () => {
-          changeQuantity(item.id, -1);
-        });
-
-      itemElement
-        .querySelector(".increase-button")
-        .addEventListener("click", () => {
-          changeQuantity(item.id, 1);
-        });
-
-      itemElement
-        .querySelector(".remove-button")
-        .addEventListener("click", () => {
-          removeFromCart(item.id);
-        });
-
-      cartItemsContainer.appendChild(itemElement);
-    });
-  }
-
-  function openCart() {
-    cartOverlay.classList.add("visible");
-    cartMessage.textContent = "";
-  }
-
-  function closeCart() {
-    cartOverlay.classList.remove("visible");
-  }
-
-  async function checkout() {
-    const uid = playerUidInput.value.trim();
-
-    if (!uid) {
-      cartMessage.textContent =
-        "Vul eerst je Agar.io UID in.";
-
-      return;
+      `).join("");
     }
 
-    if (cart.length === 0) {
-      cartMessage.textContent =
-        "Je winkelwagen is leeg.";
+    function addToCart(productId) {
+      if (!loggedIn) {
+        openAuth();
+        showAuthMessage("Please log in before adding items to your cart.");
+        return;
+      }
 
-      return;
+      const product = products.find(item => item.id === productId);
+      if (!product) return;
+
+      const existing = cart.find(item => item.id === productId);
+
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({
+          id: productId,
+          quantity: 1
+        });
+      }
+
+      renderCart();
     }
 
-    checkoutButton.disabled = true;
-    checkoutButton.textContent =
-      "Betaling voorbereiden...";
+    function renderCart() {
+      const container = document.getElementById("cartItems");
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    cartMessage.textContent = "";
+      document.getElementById("cartCount").textContent = count;
 
-    try {
-      const response = await fetch(
-        "/xshop/checkout",
-        {
+      if (cart.length === 0) {
+        container.innerHTML = "<p>Your cart is empty.</p>";
+        document.getElementById("cartTotal").textContent = "";
+        return;
+      }
+
+      let total = 0;
+
+      container.innerHTML = cart.map(item => {
+        const product = products.find(p => p.id === item.id);
+        const subtotal = product.price * item.quantity;
+        total += subtotal;
+
+        return `
+          <div class="cart-row">
+            <span>
+              ${escapeHtml(product.name)}
+              × ${item.quantity}
+            </span>
+
+            <span>${subtotal} coins</span>
+
+            <button class="danger"
+                    onclick="removeFromCart('${item.id}')">
+              Remove
+            </button>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("cartTotal").textContent =
+        "Total: " + total + " coins";
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      renderCart();
+    }
+
+    function clearCart() {
+      cart = [];
+      renderCart();
+      document.getElementById("cartMessage").textContent = "";
+    }
+
+    function openCart() {
+      if (!loggedIn) {
+        openAuth();
+        showAuthMessage("Please log in to access your cart.");
+        return;
+      }
+
+      renderCart();
+      document.getElementById("cartModal").classList.remove("hidden");
+    }
+
+    function closeCart() {
+      document.getElementById("cartModal").classList.add("hidden");
+    }
+
+    async function payWithCoins() {
+      if (!loggedIn) {
+        openAuth();
+        showAuthMessage("You must be logged in to purchase items.");
+        return;
+      }
+
+      if (cart.length === 0) {
+        showCartMessage("Your cart is empty.");
+        return;
+      }
+
+      try {
+        const response = await fetch(API_BASE + "/api/orders/coins", {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            uid: uid,
-            paymentMethod: "ideal",
-            items: cart.map(item => ({
-              productId: item.id,
-              quantity: item.quantity
-            }))
+            items: cart
           })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (data.error === "INSUFFICIENT_COINS") {
+            showCartMessage(
+              "You do not have enough coins. " +
+              "Please contact T.B Agar.io via Instagram and send " +
+              "an Apple Gift Card or Google Play Gift Card worth " +
+              "at least €5. After payment, contact T.B Agar.io " +
+              "to request more coins."
+            );
+            return;
+          }
+
+          showCartMessage(data.message || "Payment failed.");
+          return;
         }
-      );
 
-      const data = await response.json();
+        cart = [];
+        renderCart();
+        showCartMessage("Purchase completed successfully!");
+        await loadCurrentUser();
 
-      if (!response.ok) {
-        throw new Error(
-          data.error ||
-          "De checkout kon niet worden gestart."
-        );
+      } catch (error) {
+        showCartMessage("Could not connect to the server.");
       }
+    }
 
-      const checkoutUrl =
-        data.checkout_url || data.url;
+    function openAuth() {
+      document.getElementById("authModal").classList.remove("hidden");
+    }
 
-      if (!checkoutUrl) {
-        throw new Error(
-          "Geen betaalpagina ontvangen."
-        );
+    function closeAuth() {
+      document.getElementById("authModal").classList.add("hidden");
+      document.getElementById("authMessage").textContent = "";
+    }
+
+    function toggleAuthMode() {
+      authMode = authMode === "login" ? "register" : "login";
+
+      document.getElementById("authTitle").textContent =
+        authMode === "login" ? "Login" : "Register";
+
+      document.getElementById("authSubmit").textContent =
+        authMode === "login" ? "Login" : "Register";
+
+      document.getElementById("switchAuthText").textContent =
+        authMode === "login"
+          ? "Create an account"
+          : "I already have an account";
+
+      document.getElementById("authMessage").textContent = "";
+    }
+
+    async function submitAuth(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      const endpoint = authMode === "login"
+        ? "/api/auth/login"
+        : "/api/auth/register";
+
+      try {
+        const response = await fetch(API_BASE + endpoint, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          showAuthMessage(data.message || "Authentication failed.");
+          return;
+        }
+
+        await loadCurrentUser();
+        closeAuth();
+
+      } catch (error) {
+        showAuthMessage("Could not connect to the server.");
       }
-
-      window.location.href = checkoutUrl;
-    } catch (error) {
-      cartMessage.textContent = error.message;
-      checkoutButton.disabled = false;
-      checkoutButton.textContent =
-        "Afrekenen met iDEAL";
     }
-  }
 
-  document
-    .getElementById("openCartButton")
-    .addEventListener("click", openCart);
+    async function logout() {
+      await fetch(API_BASE + "/api/auth/logout", {
+        method: "POST",
+        credentials: "include"
+      });
 
-  document
-    .getElementById("closeCartButton")
-    .addEventListener("click", closeCart);
+      loggedIn = false;
+      currentUser = null;
+      cart = [];
 
-  cartOverlay.addEventListener("click", event => {
-    if (event.target === cartOverlay) {
-      closeCart();
+      updateAccountDisplay();
+      renderCart();
     }
-  });
 
-  checkoutButton.addEventListener("click", checkout);
+    async function loadCurrentUser() {
+      try {
+        const response = await fetch(API_BASE + "/api/me", {
+          credentials: "include"
+        });
 
-  renderProducts();
-  renderCart();
-</script>
+        if (!response.ok) {
+          loggedIn = false;
+          currentUser = null;
+        } else {
+          currentUser = await response.json();
+          loggedIn = true;
+        }
 
+        updateAccountDisplay();
+
+      } catch (error) {
+        loggedIn = false;
+        currentUser = null;
+        updateAccountDisplay();
+      }
+    }
+
+    function updateAccountDisplay() {
+      const status = document.getElementById("accountStatus");
+      const balance = document.getElementById("coinBalance");
+      const loginButton = document.getElementById("loginButton");
+      const logoutButton = document.getElementById("logoutButton");
+
+      if (loggedIn && currentUser) {
+        status.textContent = "Logged in as " + currentUser.username;
+        balance.textContent = "Coins: " + currentUser.coins;
+        loginButton.classList.add("hidden");
+        logoutButton.classList.remove("hidden");
+      } else {
+        status.textContent = "You are not logged in";
+        balance.textContent = "";
+        loginButton.classList.remove("hidden");
+        logoutButton.classList.add("hidden");
+      }
+    }
+
+    function showAuthMessage(message) {
+      document.getElementById("authMessage").textContent = message;
+    }
+
+    function showCartMessage(message) {
+      document.getElementById("cartMessage").textContent = message;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    renderProducts();
+    renderCart();
+    loadCurrentUser();
+  </script>
 </body>
 </html>
