@@ -1658,6 +1658,10 @@ const YOUTUBER_SKIN_NAMES = [
 "mister",
 "peps (old)",
 "Getdeadkid Xmas",
+"GDK Xmas",
+"POK",
+"agar.io news",
+"nbrhbi",
 "Yemeni (old)",
 "Majnoon",
 "statik",
@@ -2642,6 +2646,15 @@ UAE
                 .filter(name => name.length >= 2)
                 .sort((a,b) => b.length - a.length);
 
+        const extraFlagSkinNames = new Set([
+            "4chan",
+            "indiana",
+            "9gag",
+            "yaranaika",
+            "reddit",
+            "cia"
+        ].map(normalizeSkinName));
+
         const isFlagSkin =
             skin => {
                 const name = normalizeSkinName(skin.id);
@@ -2670,10 +2683,38 @@ UAE
                     "doge",
                     "doge flag",
                     "8",
-                    "8 flag"
+                    "8 flag",
+                    "char",
+                    "bulba",
+                    "squi",
+                    "kim jong un",
+                    "kim jong-un",
+                    "boris irs",
+                    "hong kong",
+                    "earth"
                 ]);
 
                 if(specialFlagNames.has(name)){
+                    return true;
+                }
+
+                if(extraFlagSkinNames.has(name)){
+                    return true;
+                }
+
+                /* Additional requested Agar.io flag/community entries. */
+                const requestedFlagNames = new Set([
+                    "char",
+                    "bulba",
+                    "squi",
+                    "agar.io",
+                    "kim jong un",
+                    "kim jong-un",
+                    "boris irs",
+                    "hong kong",
+                    "earth"
+                ]);
+                if(requestedFlagNames.has(name)){
                     return true;
                 }
 
@@ -2730,12 +2771,38 @@ UAE
                 skin => !isYouTubeSkin(skin) && !isFlagSkin(skin)
             );
 
-        /* Keep Veggie Z at the top of the normal Agar.io skins. */
+        /*
+           Move every skin that appears before Veggie Z in the live
+           configuration into Flags of Agar.io. This keeps the entire
+           block shown before Veggie Z out of the normal skin gallery.
+           Veggie Z itself becomes the first Agar.io skin.
+        */
         const veggieIndex = allSkins.findIndex(
             skin => normalizeSkinName(skin.id) === "veggie z"
         );
+
         if(veggieIndex > 0){
-            const veggie = allSkins.splice(veggieIndex, 1)[0];
+            const skinsBeforeVeggie =
+                allSkins.splice(0, veggieIndex);
+
+            agarioFlags = [
+                ...skinsBeforeVeggie.map(skin => [
+                    String(skin.id).replace(/_/g," "),
+                    skin.image,
+                    "Type the nick **" +
+                    String(skin.id).replace(/_/g," ") +
+                    "** in Agar.io to use this flag."
+                ]),
+                ...agarioFlags
+            ];
+        }
+
+        /* Veggie Z is always the first normal Agar.io skin. */
+        const finalVeggieIndex = allSkins.findIndex(
+            skin => normalizeSkinName(skin.id) === "veggie z"
+        );
+        if(finalVeggieIndex > 0){
+            const veggie = allSkins.splice(finalVeggieIndex, 1)[0];
             allSkins.unshift(veggie);
         }
 
