@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!-- T.B Agar.io Website Backup: T.B-Agar.io-Website-Backup -->
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -247,6 +245,44 @@
       border-radius: 7px;
     }
 
+    .refresh-button {
+      margin-bottom: 18px;
+    }
+
+    .loading {
+      color: #9db1c8;
+    }
+
+    .empty {
+      color: #9db1c8;
+      text-align: center;
+    }
+
+    .connection {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 13px;
+      color: #9db1c8;
+    }
+
+    .connection-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+
+    .connection-dot.online {
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, .7);
+    }
+
+    .connection-dot.offline {
+      background: #ef4444;
+    }
+
     @media (max-width: 800px) {
       .cards {
         grid-template-columns: 1fr;
@@ -262,7 +298,7 @@
 
 <body>
 
-  <!-- This message is shown to visitors without admin access -->
+  <!-- Unavailable page -->
   <section id="unavailablePage" class="page-message hidden">
     <div class="message-box">
       <h1>404 — Page Not Found</h1>
@@ -274,6 +310,7 @@
 
   <!-- Admin login -->
   <section id="loginPage" class="login-container hidden">
+
     <img
       class="logo"
       src="IMG_0561.jpeg"
@@ -283,7 +320,11 @@
     <h1 class="center">Admin Login</h1>
 
     <form id="adminLoginForm">
-      <label for="adminUsername">Username</label>
+
+      <label for="adminUsername">
+        Username
+      </label>
+
       <input
         id="adminUsername"
         type="text"
@@ -291,7 +332,10 @@
         required
       >
 
-      <label for="adminPassword">Password</label>
+      <label for="adminPassword">
+        Password
+      </label>
+
       <input
         id="adminPassword"
         type="password"
@@ -299,52 +343,127 @@
         required
       >
 
-      <button class="full-button" type="submit">
+      <button
+        class="full-button"
+        type="submit"
+        id="loginButton"
+      >
         Sign in
       </button>
 
       <p id="loginError" class="error"></p>
+
     </form>
+
   </section>
+
 
   <!-- Admin dashboard -->
   <main id="adminApp" class="admin-app hidden">
 
     <header>
+
       <div>
-        <h1>T.B Agar.io — Admin Panel</h1>
-        <p>Manage users, coins, purchases and paid skins.</p>
+
+        <h1>
+          T.B Agar.io — Admin Panel
+        </h1>
+
+        <p>
+          Manage users, coins, purchases and paid skins.
+        </p>
+
+        <div class="connection">
+          <span
+            id="connectionDot"
+            class="connection-dot"
+          ></span>
+
+          <span id="connectionText">
+            Checking database...
+          </span>
+        </div>
+
       </div>
 
-      <button id="logoutButton" class="danger">
+      <button
+        id="logoutButton"
+        class="danger"
+      >
         Log out
       </button>
+
     </header>
 
-    <p id="globalStatus" class="status"></p>
 
+    <p
+      id="globalStatus"
+      class="status"
+    ></p>
+
+
+    <!-- Statistics -->
     <section class="cards">
-      <div class="stat-card">
-        <span>Total users</span>
-        <strong id="totalUsers">0</strong>
-      </div>
 
       <div class="stat-card">
-        <span>Total purchases</span>
-        <strong id="totalPurchases">0</strong>
+
+        <span>
+          Total users
+        </span>
+
+        <strong id="totalUsers">
+          0
+        </strong>
+
       </div>
 
+
       <div class="stat-card">
-        <span>Paid skins</span>
-        <strong id="totalSkins">0</strong>
+
+        <span>
+          Total purchases
+        </span>
+
+        <strong id="totalPurchases">
+          0
+        </strong>
+
       </div>
+
+
+      <div class="stat-card">
+
+        <span>
+          Paid skins
+        </span>
+
+        <strong id="totalSkins">
+          0
+        </strong>
+
+      </div>
+
     </section>
 
+
+    <!-- Users -->
     <section class="panel">
-      <h2>Users</h2>
+
+      <h2>
+        Users
+      </h2>
+
+      <button
+        id="refreshUsersButton"
+        class="secondary refresh-button"
+      >
+        Refresh dashboard
+      </button>
 
       <table>
+
         <thead>
+
           <tr>
             <th>ID</th>
             <th>Username</th>
@@ -352,21 +471,38 @@
             <th>New username</th>
             <th>Action</th>
           </tr>
+
         </thead>
 
         <tbody id="usersTableBody">
+
           <tr>
-            <td colspan="5">Loading users...</td>
+            <td
+              colspan="5"
+              class="loading"
+            >
+              Loading users...
+            </td>
           </tr>
+
         </tbody>
+
       </table>
+
     </section>
 
+
+    <!-- Purchases -->
     <section class="panel">
-      <h2>Purchases</h2>
+
+      <h2>
+        Purchases
+      </h2>
 
       <table>
+
         <thead>
+
           <tr>
             <th>ID</th>
             <th>User ID</th>
@@ -375,256 +511,817 @@
             <th>Amount</th>
             <th>Date</th>
           </tr>
+
         </thead>
 
         <tbody id="purchasesTableBody">
+
           <tr>
-            <td colspan="6">Loading purchases...</td>
+            <td
+              colspan="6"
+              class="loading"
+            >
+              Loading purchases...
+            </td>
           </tr>
+
         </tbody>
+
       </table>
+
     </section>
 
+
+    <!-- Paid skins -->
     <section class="panel">
-      <h2>Paid skins</h2>
+
+      <h2>
+        Paid skins
+      </h2>
 
       <table>
+
         <thead>
+
           <tr>
             <th>ID</th>
             <th>Skin name</th>
             <th>Price</th>
           </tr>
+
         </thead>
 
         <tbody id="skinsTableBody">
+
           <tr>
-            <td colspan="3">Loading skins...</td>
+            <td
+              colspan="3"
+              class="loading"
+            >
+              Loading skins...
+            </td>
           </tr>
+
         </tbody>
+
       </table>
+
     </section>
 
   </main>
 
+
   <script>
+
     /*
-      Replace this with your real backend URL.
+      ============================================================
+      T.B AGAR.IO ADMIN PANEL
+      ============================================================
+
+      This Admin.html is designed for the backend included in:
+
+      TB-Agar-io-Database.zip
+
+      When Admin.html and server.js are hosted from the same
+      server/domain, leave API_BASE empty.
 
       Example:
-      const API_BASE = "https://your-backend.onrender.com";
+      https://your-domain.com/Admin.html
+      https://your-domain.com/api/admin/dashboard
+
+      If your API is hosted separately, change API_BASE to:
+
+      const API_BASE = "https://your-api-domain.com";
+
+      ============================================================
     */
+
     const API_BASE = "";
 
-    const unavailablePage = document.getElementById("unavailablePage");
-    const loginPage = document.getElementById("loginPage");
-    const adminApp = document.getElementById("adminApp");
 
-    const loginForm = document.getElementById("adminLoginForm");
-    const loginError = document.getElementById("loginError");
-    const logoutButton = document.getElementById("logoutButton");
-    const globalStatus = document.getElementById("globalStatus");
+    /*
+      ------------------------------------------------------------
+      DOM ELEMENTS
+      ------------------------------------------------------------
+    */
+
+    const unavailablePage =
+      document.getElementById("unavailablePage");
+
+    const loginPage =
+      document.getElementById("loginPage");
+
+    const adminApp =
+      document.getElementById("adminApp");
+
+    const loginForm =
+      document.getElementById("adminLoginForm");
+
+    const loginError =
+      document.getElementById("loginError");
+
+    const logoutButton =
+      document.getElementById("logoutButton");
+
+    const globalStatus =
+      document.getElementById("globalStatus");
+
+    const connectionDot =
+      document.getElementById("connectionDot");
+
+    const connectionText =
+      document.getElementById("connectionText");
+
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const refreshUsersButton =
+      document.getElementById("refreshUsersButton");
+
+
+    /*
+      ------------------------------------------------------------
+      PAGE DISPLAY
+      ------------------------------------------------------------
+    */
 
     function showOnly(element) {
+
       unavailablePage.classList.add("hidden");
+
       loginPage.classList.add("hidden");
+
       adminApp.classList.add("hidden");
 
       element.classList.remove("hidden");
+
     }
+
 
     function showUnavailablePage() {
+
       showOnly(unavailablePage);
+
     }
+
 
     function showLoginPage() {
+
       showOnly(loginPage);
+
     }
+
 
     function showAdminApp() {
+
       showOnly(adminApp);
+
     }
 
-    function setStatus(message, isError = false) {
+
+    /*
+      ------------------------------------------------------------
+      STATUS
+      ------------------------------------------------------------
+    */
+
+    function setStatus(
+      message,
+      isError = false
+    ) {
+
       globalStatus.textContent = message;
-      globalStatus.style.color = isError
-        ? "#ff8d9b"
-        : "#8fd5a4";
+
+      globalStatus.style.color =
+        isError
+          ? "#ff8d9b"
+          : "#8fd5a4";
+
     }
 
-    async function apiRequest(endpoint, options = {}) {
-      const response = await fetch(API_BASE + endpoint, {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          ...(options.headers || {})
-        },
-        ...options
-      });
+
+    /*
+      ------------------------------------------------------------
+      DATABASE CONNECTION INDICATOR
+      ------------------------------------------------------------
+    */
+
+    function setConnectionStatus(
+      online,
+      message
+    ) {
+
+      connectionDot.classList.remove(
+        "online",
+        "offline"
+      );
+
+      if (online) {
+
+        connectionDot.classList.add(
+          "online"
+        );
+
+      } else {
+
+        connectionDot.classList.add(
+          "offline"
+        );
+
+      }
+
+      connectionText.textContent =
+        message;
+
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      API REQUEST
+      ------------------------------------------------------------
+    */
+
+    async function apiRequest(
+      endpoint,
+      options = {}
+    ) {
+
+      const response =
+        await fetch(
+          API_BASE + endpoint,
+          {
+            credentials: "include",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              ...(options.headers || {})
+            },
+
+            ...options
+          }
+        );
+
 
       let data = {};
 
       try {
-        data = await response.json();
+
+        data =
+          await response.json();
+
       } catch {
+
         data = {};
+
       }
+
 
       if (!response.ok) {
-        throw new Error(data.message || "Request failed.");
+
+        throw new Error(
+          data.message ||
+          `Request failed (${response.status}).`
+        );
+
       }
+
 
       return data;
+
     }
 
-    const DEMO_ADMIN_USERNAME = "admin";
-    const DEMO_ADMIN_PASSWORD = "TBAdmin2026";
 
-    const TB_USERS_KEY = "tb_agar_users";
-    const TB_PURCHASES_KEY = "tb_agar_purchases";
+    /*
+      ------------------------------------------------------------
+      CHECK DATABASE
+      ------------------------------------------------------------
+    */
 
-    function getLocalData(key) {
+    async function checkDatabase() {
+
       try {
-        return JSON.parse(localStorage.getItem(key) || "[]");
-      } catch {
-        return [];
+
+        const response =
+          await fetch(
+            API_BASE + "/api/health",
+            {
+              credentials: "include"
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          response.ok &&
+          data.ok
+        ) {
+
+          setConnectionStatus(
+            true,
+            "Database connected"
+          );
+
+          return true;
+
+        }
+
+
+        throw new Error(
+          "Database unavailable."
+        );
+
+      } catch (error) {
+
+        setConnectionStatus(
+          false,
+          "Database offline"
+        );
+
+        return false;
+
       }
+
     }
 
-    function saveLocalData(key, value) {
-      localStorage.setItem(key, JSON.stringify(value));
-    }
 
-    function checkAdminAccess() {
-      if (sessionStorage.getItem("tb_demo_admin") === "true") {
-        showAdminApp();
-        loadDashboard();
-      } else {
+    /*
+      ------------------------------------------------------------
+      ADMIN ACCESS
+      ------------------------------------------------------------
+    */
+
+    async function checkAdminAccess() {
+
+      const databaseOnline =
+        await checkDatabase();
+
+
+      if (!databaseOnline) {
+
         showLoginPage();
+
+        loginError.textContent =
+          "Database connection unavailable.";
+
+        return;
+
       }
+
+
+      try {
+
+        await apiRequest(
+          "/api/admin/me"
+        );
+
+
+        showAdminApp();
+
+        await loadDashboard();
+
+      } catch {
+
+        showLoginPage();
+
+      }
+
     }
 
-    function loginAdmin(event) {
+
+    /*
+      ------------------------------------------------------------
+      ADMIN LOGIN
+      ------------------------------------------------------------
+    */
+
+    async function loginAdmin(event) {
+
       event.preventDefault();
+
       loginError.textContent = "";
 
-      const username = document
-        .getElementById("adminUsername")
-        .value
-        .trim();
+      loginButton.disabled = true;
 
-      const password = document
-        .getElementById("adminPassword")
-        .value;
+      loginButton.textContent =
+        "Signing in...";
 
-      if (
-        username !== DEMO_ADMIN_USERNAME ||
-        password !== DEMO_ADMIN_PASSWORD
-      ) {
-        loginError.textContent = "Incorrect username or password.";
-        return;
+
+      const username =
+        document
+          .getElementById("adminUsername")
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById("adminPassword")
+          .value;
+
+
+      try {
+
+        await apiRequest(
+          "/api/admin/login",
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              username,
+              password
+            })
+          }
+        );
+
+
+        document
+          .getElementById("adminPassword")
+          .value = "";
+
+
+        showAdminApp();
+
+        setStatus(
+          "Admin login successful."
+        );
+
+
+        await loadDashboard();
+
+      } catch (error) {
+
+        loginError.textContent =
+          error.message ||
+          "Incorrect username or password.";
+
+      } finally {
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+          "Sign in";
+
       }
 
-      sessionStorage.setItem("tb_demo_admin", "true");
-      showAdminApp();
-      loadDashboard();
     }
 
-    function logoutAdmin() {
-      sessionStorage.removeItem("tb_demo_admin");
+
+    /*
+      ------------------------------------------------------------
+      ADMIN LOGOUT
+      ------------------------------------------------------------
+    */
+
+    async function logoutAdmin() {
+
+      logoutButton.disabled = true;
+
+      try {
+
+        await apiRequest(
+          "/api/admin/logout",
+          {
+            method: "POST"
+          }
+        );
+
+      } catch {
+        // Session may already be expired.
+      }
+
+
       showLoginPage();
+
+      loginError.textContent = "";
+
+      document
+        .getElementById("adminUsername")
+        .value = "";
+
+      document
+        .getElementById("adminPassword")
+        .value = "";
+
+
+      logoutButton.disabled = false;
+
     }
 
-    function loadDashboard() {
-      const users = getLocalData(TB_USERS_KEY);
-      const purchases = getLocalData(TB_PURCHASES_KEY);
 
-      const skins = [
-        { id: "skin-001", name: "Dohnut", price: 1.99 },
-        { id: "skin-002", name: "Pumpkitty", price: 1.99 },
-        { id: "skin-003", name: "Mindseye", price: 1.99 },
-        { id: "skin-004", name: "Nomster", price: 5.99 }
-      ];
+    /*
+      ------------------------------------------------------------
+      LOAD DASHBOARD
+      ------------------------------------------------------------
+    */
 
-      document.getElementById("totalUsers").textContent = users.length;
-      document.getElementById("totalPurchases").textContent = purchases.length;
-      document.getElementById("totalSkins").textContent = skins.length;
+    async function loadDashboard() {
 
-      renderUsers(users);
-      renderPurchases(
-        purchases.map(p => ({
-          id: p.id,
-          userId: p.userId,
-          username: p.username,
-          skinName: (p.items || []).map(i => i.name).join(", "),
-          amount: p.total,
-          createdAt: p.createdAt
-        }))
+      setStatus(
+        "Loading database..."
       );
-      renderSkins(skins);
 
-      setStatus("Dashboard loaded.");
+
+      try {
+
+        const data =
+          await apiRequest(
+            "/api/admin/dashboard"
+          );
+
+
+        const users =
+          Array.isArray(data.users)
+            ? data.users
+            : [];
+
+
+        const purchases =
+          Array.isArray(data.purchases)
+            ? data.purchases
+            : [];
+
+
+        const skins =
+          Array.isArray(data.skins)
+            ? data.skins
+            : [];
+
+
+        document
+          .getElementById("totalUsers")
+          .textContent =
+            users.length;
+
+
+        document
+          .getElementById("totalPurchases")
+          .textContent =
+            purchases.length;
+
+
+        document
+          .getElementById("totalSkins")
+          .textContent =
+            skins.length;
+
+
+        renderUsers(users);
+
+        renderPurchases(purchases);
+
+        renderSkins(skins);
+
+
+        setConnectionStatus(
+          true,
+          "Database connected"
+        );
+
+
+        setStatus(
+          "Dashboard loaded."
+        );
+
+      } catch (error) {
+
+        setConnectionStatus(
+          false,
+          "Database connection error"
+        );
+
+
+        setStatus(
+          error.message ||
+          "Unable to load dashboard.",
+          true
+        );
+
+
+        if (
+          error.message &&
+          (
+            error.message.includes("Admin login") ||
+            error.message.includes("Please log in")
+          )
+        ) {
+
+          showLoginPage();
+
+          loginError.textContent =
+            error.message;
+
+        }
+
+      }
+
     }
 
 
-
-
+    /*
+      ------------------------------------------------------------
+      USERS
+      ------------------------------------------------------------
+    */
 
     function renderUsers(users) {
-      const body = document.getElementById("usersTableBody");
+
+      const body =
+        document.getElementById(
+          "usersTableBody"
+        );
+
+
       body.replaceChildren();
 
+
       if (!users.length) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="5">No users found.</td>
-          </tr>
-        `;
+
+        const row =
+          document.createElement("tr");
+
+
+        const cell =
+          document.createElement("td");
+
+
+        cell.colSpan = 5;
+
+        cell.className = "empty";
+
+        cell.textContent =
+          "No users found.";
+
+
+        row.appendChild(cell);
+
+        body.appendChild(row);
+
         return;
+
       }
 
+
       users.forEach(user => {
-        const row = document.createElement("tr");
 
-        const idCell = document.createElement("td");
-        idCell.textContent = user.id ?? "";
+        const row =
+          document.createElement("tr");
 
-        const nameCell = document.createElement("td");
-        nameCell.textContent = user.username ?? "";
 
-        const coinsCell = document.createElement("td");
-        const coinsInput = document.createElement("input");
-        coinsInput.className = "table-input";
-        coinsInput.type = "number";
-        coinsInput.min = "0";
-        coinsInput.value = Number(user.coins || 0);
-        coinsInput.id = "coins-" + user.id;
+        /*
+          ID
+        */
 
-        const coinsButton = document.createElement("button");
-        coinsButton.className = "table-button";
-        coinsButton.textContent = "Save";
-        coinsButton.addEventListener("click", () => {
-          updateCoins(user.id);
-        });
+        const idCell =
+          document.createElement("td");
 
-        coinsCell.append(coinsInput, coinsButton);
+        idCell.textContent =
+          user.id ?? "";
 
-        const nameInputCell = document.createElement("td");
-        const nameInput = document.createElement("input");
-        nameInput.className = "table-input";
-        nameInput.type = "text";
-        nameInput.placeholder = "New name";
-        nameInput.id = "name-" + user.id;
-        nameInputCell.appendChild(nameInput);
 
-        const actionCell = document.createElement("td");
-        const renameButton = document.createElement("button");
-        renameButton.className = "table-button";
-        renameButton.textContent = "Rename";
-        renameButton.addEventListener("click", () => {
-          updateUsername(user.id);
-        });
-        actionCell.appendChild(renameButton);
+        /*
+          Username
+        */
+
+        const nameCell =
+          document.createElement("td");
+
+        nameCell.textContent =
+          user.username ?? "";
+
+
+        /*
+          Coins
+        */
+
+        const coinsCell =
+          document.createElement("td");
+
+
+        const coinsInput =
+          document.createElement("input");
+
+
+        coinsInput.className =
+          "table-input";
+
+
+        coinsInput.type =
+          "number";
+
+
+        coinsInput.min =
+          "0";
+
+
+        coinsInput.step =
+          "1";
+
+
+        coinsInput.value =
+          Number(user.coins || 0);
+
+
+        coinsInput.id =
+          "coins-" + user.id;
+
+
+        const coinsButton =
+          document.createElement("button");
+
+
+        coinsButton.className =
+          "table-button";
+
+
+        coinsButton.textContent =
+          "Save";
+
+
+        coinsButton.addEventListener(
+          "click",
+          () => updateCoins(user.id)
+        );
+
+
+        coinsCell.append(
+          coinsInput,
+          coinsButton
+        );
+
+
+        /*
+          New username
+        */
+
+        const nameInputCell =
+          document.createElement("td");
+
+
+        const nameInput =
+          document.createElement("input");
+
+
+        nameInput.className =
+          "table-input";
+
+
+        nameInput.type =
+          "text";
+
+
+        nameInput.placeholder =
+          "New name";
+
+
+        nameInput.maxLength =
+          32;
+
+
+        nameInput.id =
+          "name-" + user.id;
+
+
+        nameInputCell.appendChild(
+          nameInput
+        );
+
+
+        /*
+          Rename button
+        */
+
+        const actionCell =
+          document.createElement("td");
+
+
+        const renameButton =
+          document.createElement("button");
+
+
+        renameButton.className =
+          "table-button";
+
+
+        renameButton.textContent =
+          "Rename";
+
+
+        renameButton.addEventListener(
+          "click",
+          () => updateUsername(user.id)
+        );
+
+
+        actionCell.appendChild(
+          renameButton
+        );
+
 
         row.append(
           idCell,
@@ -634,129 +1331,460 @@
           actionCell
         );
 
+
         body.appendChild(row);
+
       });
+
     }
+
+
+    /*
+      ------------------------------------------------------------
+      UPDATE COINS
+      ------------------------------------------------------------
+    */
 
     async function updateCoins(userId) {
-      const input = document.getElementById("coins-" + userId);
-      const coins = Number(input.value);
 
-      if (!Number.isInteger(coins) || coins < 0) {
-        setStatus("Enter a valid coin amount.", true);
+      const input =
+        document.getElementById(
+          "coins-" + userId
+        );
+
+
+      if (!input) {
+
+        setStatus(
+          "User input not found.",
+          true
+        );
+
         return;
+
       }
 
+
+      const coins =
+        Number(input.value);
+
+
+      if (
+        !Number.isInteger(coins) ||
+        coins < 0
+      ) {
+
+        setStatus(
+          "Enter a valid coin amount.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      setStatus(
+        "Updating coins..."
+      );
+
+
       try {
+
         await apiRequest(
-          "/api/admin/users/" + userId + "/coins",
+          "/api/admin/users/" +
+          encodeURIComponent(userId) +
+          "/coins",
           {
             method: "PATCH",
-            body: JSON.stringify({ coins })
+
+            body: JSON.stringify({
+              coins
+            })
           }
         );
 
-        setStatus("Coins updated.");
+
+        setStatus(
+          "Coins updated successfully."
+        );
+
+
         await loadDashboard();
+
       } catch (error) {
-        setStatus(error.message, true);
+
+        setStatus(
+          error.message ||
+          "Could not update coins.",
+          true
+        );
+
       }
+
     }
+
+
+    /*
+      ------------------------------------------------------------
+      UPDATE USERNAME
+      ------------------------------------------------------------
+    */
 
     async function updateUsername(userId) {
-      const input = document.getElementById("name-" + userId);
-      const username = input.value.trim();
 
-      if (!username) {
-        setStatus("Enter a username.", true);
+      const input =
+        document.getElementById(
+          "name-" + userId
+        );
+
+
+      if (!input) {
+
+        setStatus(
+          "Username input not found.",
+          true
+        );
+
         return;
+
       }
 
+
+      const username =
+        input.value.trim();
+
+
+      if (
+        username.length < 3 ||
+        username.length > 32
+      ) {
+
+        setStatus(
+          "Username must be 3-32 characters.",
+          true
+        );
+
+        return;
+
+      }
+
+
+      setStatus(
+        "Updating username..."
+      );
+
+
       try {
+
         await apiRequest(
-          "/api/admin/users/" + userId + "/username",
+          "/api/admin/users/" +
+          encodeURIComponent(userId) +
+          "/username",
           {
             method: "PATCH",
-            body: JSON.stringify({ username })
+
+            body: JSON.stringify({
+              username
+            })
           }
         );
 
-        setStatus("Username updated.");
+
+        setStatus(
+          "Username updated successfully."
+        );
+
+
         await loadDashboard();
+
       } catch (error) {
-        setStatus(error.message, true);
+
+        setStatus(
+          error.message ||
+          "Could not update username.",
+          true
+        );
+
       }
+
     }
+
+
+    /*
+      ------------------------------------------------------------
+      PURCHASES
+      ------------------------------------------------------------
+    */
 
     function renderPurchases(purchases) {
-      const body = document.getElementById("purchasesTableBody");
+
+      const body =
+        document.getElementById(
+          "purchasesTableBody"
+        );
+
+
       body.replaceChildren();
+
 
       if (!purchases.length) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="6">No purchases found.</td>
-          </tr>
-        `;
+
+        const row =
+          document.createElement("tr");
+
+
+        const cell =
+          document.createElement("td");
+
+
+        cell.colSpan = 6;
+
+        cell.className = "empty";
+
+        cell.textContent =
+          "No purchases found.";
+
+
+        row.appendChild(cell);
+
+        body.appendChild(row);
+
         return;
+
       }
+
 
       purchases.forEach(purchase => {
-        const row = document.createElement("tr");
+
+        const row =
+          document.createElement("tr");
+
 
         const values = [
+
           purchase.id,
+
           purchase.userId,
-          purchase.username || "Unknown",
-          purchase.skinName || purchase.skinId || "Unknown",
-          purchase.amount ?? purchase.price ?? "0",
-          purchase.createdAt || "Unknown"
+
+          purchase.username ||
+            "Unknown",
+
+          purchase.skinName ||
+            purchase.skinId ||
+            "Unknown",
+
+          formatMoney(
+            purchase.amount ??
+            purchase.price ??
+            0
+          ),
+
+          formatDate(
+            purchase.createdAt
+          )
+
         ];
 
+
         values.forEach(value => {
-          const cell = document.createElement("td");
-          cell.textContent = value ?? "";
+
+          const cell =
+            document.createElement("td");
+
+
+          cell.textContent =
+            value ?? "";
+
+
           row.appendChild(cell);
+
         });
 
+
         body.appendChild(row);
+
       });
+
     }
+
+
+    /*
+      ------------------------------------------------------------
+      PAID SKINS
+      ------------------------------------------------------------
+    */
 
     function renderSkins(skins) {
-      const body = document.getElementById("skinsTableBody");
+
+      const body =
+        document.getElementById(
+          "skinsTableBody"
+        );
+
+
       body.replaceChildren();
 
+
       if (!skins.length) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="3">No paid skins found.</td>
-          </tr>
-        `;
-        return;
-      }
 
-      skins.forEach(skin => {
-        const row = document.createElement("tr");
+        const row =
+          document.createElement("tr");
 
-        [
-          skin.id,
-          skin.name,
-          skin.price
-        ].forEach(value => {
-          const cell = document.createElement("td");
-          cell.textContent = value ?? "";
-          row.appendChild(cell);
-        });
+
+        const cell =
+          document.createElement("td");
+
+
+        cell.colSpan = 3;
+
+        cell.className = "empty";
+
+        cell.textContent =
+          "No paid skins found.";
+
+
+        row.appendChild(cell);
 
         body.appendChild(row);
+
+        return;
+
+      }
+
+
+      skins.forEach(skin => {
+
+        const row =
+          document.createElement("tr");
+
+
+        const idCell =
+          document.createElement("td");
+
+
+        idCell.textContent =
+          skin.id ?? "";
+
+
+        const nameCell =
+          document.createElement("td");
+
+
+        nameCell.textContent =
+          skin.name ?? "";
+
+
+        const priceCell =
+          document.createElement("td");
+
+
+        priceCell.textContent =
+          formatMoney(
+            skin.price ?? 0
+          );
+
+
+        row.append(
+          idCell,
+          nameCell,
+          priceCell
+        );
+
+
+        body.appendChild(row);
+
       });
+
     }
 
-    loginForm.addEventListener("submit", loginAdmin);
-    logoutButton.addEventListener("click", logoutAdmin);
+
+    /*
+      ------------------------------------------------------------
+      FORMATTING
+      ------------------------------------------------------------
+    */
+
+    function formatMoney(value) {
+
+      const number =
+        Number(value);
+
+
+      if (!Number.isFinite(number)) {
+
+        return "$0.00";
+
+      }
+
+
+      return "$" +
+        number.toFixed(2);
+
+    }
+
+
+    function formatDate(value) {
+
+      if (!value) {
+
+        return "Unknown";
+
+      }
+
+
+      const date =
+        new Date(value);
+
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+
+        return String(value);
+
+      }
+
+
+      return date.toLocaleString();
+
+    }
+
+
+    /*
+      ------------------------------------------------------------
+      EVENT LISTENERS
+      ------------------------------------------------------------
+    */
+
+    loginForm.addEventListener(
+      "submit",
+      loginAdmin
+    );
+
+
+    logoutButton.addEventListener(
+      "click",
+      logoutAdmin
+    );
+
+
+    refreshUsersButton.addEventListener(
+      "click",
+      loadDashboard
+    );
+
+
+    /*
+      ------------------------------------------------------------
+      START
+      ------------------------------------------------------------
+    */
 
     checkAdminAccess();
+
   </script>
 
 </body>
