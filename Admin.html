@@ -304,6 +304,9 @@
       </button>
 
       <p id="loginError" class="error"></p>
+      <p style="margin-top:8px;color:#71839a;font-size:13px;text-align:center;">
+        Demo login: <strong>admin</strong> / <strong>TBAdmin2026</strong>
+      </p>
     </form>
   </section>
 
@@ -478,29 +481,26 @@
     }
 
     async function checkAdminAccess() {
-      /*
-        Your backend must provide /api/admin/me and verify
-        the current admin session on the server.
-      */
-      try {
-        const data = await apiRequest("/api/admin/me");
+      // Use the demo login stored in this browser session.
+      if (sessionStorage.getItem("tb_demo_admin") === "true") {
+        showAdminApp();
 
-        if (!data.isAdmin && !data.admin) {
-          showUnavailablePage();
-          return;
+        try {
+          await loadDashboard();
+        } catch {
+          setStatus("Demo admin login active. Backend is not connected.", true);
         }
 
-        showAdminApp();
-        await loadDashboard();
-      } catch {
-        /*
-          If no admin session exists, show the login page.
-          Change this to showUnavailablePage() if you want
-          unauthenticated visitors to see the 404 screen.
-        */
-        showLoginPage();
+        return;
       }
+
+      showLoginPage();
     }
+
+    // Example admin login for this HTML-only version.
+    // IMPORTANT: This is only a demo login. It is NOT secure for a real website.
+    const DEMO_ADMIN_USERNAME = "admin";
+    const DEMO_ADMIN_PASSWORD = "TBAdmin2026";
 
     async function loginAdmin(event) {
       event.preventDefault();
@@ -515,29 +515,38 @@
         .getElementById("adminPassword")
         .value;
 
-      try {
-        await apiRequest("/api/admin/login", {
-          method: "POST",
-          body: JSON.stringify({
-            username,
-            password
-          })
-        });
+      if (
+        username !== DEMO_ADMIN_USERNAME ||
+        password !== DEMO_ADMIN_PASSWORD
+      ) {
+        loginError.textContent = "Incorrect username or password.";
+        return;
+      }
 
-        showAdminApp();
+      sessionStorage.setItem("tb_demo_admin", "true");
+      showAdminApp();
+
+      // The dashboard data still comes from your backend when available.
+      // If no backend is connected, keep the admin panel visible.
+      try {
         await loadDashboard();
-      } catch (error) {
-        loginError.textContent = error.message;
+      } catch {
+        setStatus("Demo admin login successful. Backend is not connected.", true);
       }
     }
 
     async function logoutAdmin() {
+      sessionStorage.removeItem("tb_demo_admin");
+
+      // Also try to log out of the backend if one is connected.
       try {
         await apiRequest("/api/admin/logout", {
           method: "POST"
         });
+      } catch {
+        // Demo mode does not require a backend.
       } finally {
-        showUnavailablePage();
+        showLoginPage();
       }
     }
 
