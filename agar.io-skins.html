@@ -1,1010 +1,5128 @@
 <!DOCTYPE html>
+
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T.B Agar.io — Shop</title>
-<link rel="icon" href="IMG_0561.jpeg">
+<title>Agar.io Skins - T.B Agar.io</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+
+/* =========================================================
+   RESET / BASIS
+========================================================= */
+
+*{
+    box-sizing:border-box;
 }
 
-body {
-  min-height: 100vh;
-  color: white;
-  background:
-    radial-gradient(circle at top right, #075985, transparent 35%),
-    #020617;
+html{
+    scroll-behavior:smooth;
 }
 
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  background: rgba(2, 6, 23, .95);
-  border-bottom: 1px solid #164e63;
+body{
+    margin:0;
+    background:#070d18;
+    color:#fff;
+    font-family:Arial,Helvetica,sans-serif;
+    font-weight:bold;
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+button,
+select{
+    font-family:inherit;
 }
 
-.logo-area img {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  object-fit: cover;
+
+/* =========================================================
+   HEADER - ZELFDE STIJL ALS MOD MENU
+========================================================= */
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    height:70px;
+    background:rgba(7,13,24,.97);
+    border-bottom:1px solid #17304c;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 22px;
+    backdrop-filter:blur(12px);
 }
 
-.logo-area h1 {
-  font-size: 20px;
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:13px;
 }
 
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: white;
-  background: #2563eb;
-  font-weight: bold;
-  cursor: pointer;
+.logo{
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    object-fit:cover;
+    cursor:pointer;
+    border:1px solid #1c9fd8;
+    transition:.2s;
 }
 
-button:hover {
-  background: #1d4ed8;
+.logo:hover{
+    border-color:#19c8ff;
+    transform:scale(1.03);
 }
 
-.header-coins {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 10px 13px;
-  border: 1px solid #854d0e;
-  border-radius: 10px;
-  background: rgba(113, 63, 18, .35);
-  color: #facc15;
-  font-weight: bold;
-  white-space: nowrap;
+.header-title{
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:.3px;
 }
 
-button.secondary {
-  background: #334155;
+.header-title span{
+    color:#19c8ff;
 }
 
-button.danger {
-  background: #dc2626;
+
+/* Hamburger */
+
+.menu-button{
+    width:45px;
+    height:45px;
+    border:1px solid #21415e;
+    border-radius:10px;
+    background:#0b1626;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:5px;
+    transition:.2s;
 }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: .5;
+.menu-button:hover{
+    background:#102238;
+    border-color:#19c8ff;
 }
 
-.header-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.menu-button span{
+    width:22px;
+    height:2px;
+    background:#fff;
+    border-radius:2px;
 }
 
-main {
-  width: min(1100px, 94%);
-  margin: 35px auto;
+
+/* =========================================================
+   MENU OVERLAY
+========================================================= */
+
+.menu-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.62);
+    z-index:1100;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
 }
 
-.hero {
-  padding: 40px 20px;
-  margin-bottom: 30px;
-  text-align: center;
-  border: 1px solid #164e63;
-  border-radius: 20px;
-  background: rgba(8, 47, 73, .5);
+.menu-overlay.active{
+    opacity:1;
+    visibility:visible;
 }
 
-.hero h2 {
-  margin-bottom: 12px;
-  font-size: clamp(30px, 6vw, 52px);
+
+/* =========================================================
+   SIDE MENU
+========================================================= */
+
+.side-menu{
+    position:fixed;
+    top:0;
+    right:-340px;
+    width:320px;
+    max-width:90%;
+    height:100vh;
+    background:#08111f;
+    border-left:1px solid #173b57;
+    z-index:1200;
+    transition:.3s ease;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:-15px 0 45px rgba(0,0,0,.35);
 }
 
-.hero h2 span {
-  color: #38bdf8;
+.side-menu.active{
+    right:0;
 }
 
-.hero p {
-  color: #cbd5e1;
-  line-height: 1.6;
+.menu-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:20px;
+    border-bottom:1px solid #17304c;
 }
 
-.account-panel {
-  display: none;
-  margin-bottom: 25px;
-  padding: 20px;
-  border: 1px solid #164e63;
-  border-radius: 16px;
-  background: #071a2e;
+.menu-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-.account-panel.visible {
-  display: block;
+.menu-brand img{
+    width:40px;
+    height:40px;
+    object-fit:cover;
+    border-radius:9px;
 }
 
-.account-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
+.menu-brand strong{
+    font-size:17px;
 }
 
-.account-top h3 {
-  margin-bottom: 7px;
+.menu-brand span{
+    color:#19c8ff;
 }
 
-.coins {
-  color: #facc15;
-  font-weight: bold;
+.close-menu{
+    width:38px;
+    height:38px;
+    border:1px solid #21415e;
+    background:#0d1a2b;
+    color:#fff;
+    border-radius:9px;
+    font-size:22px;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.account-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.close-menu:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
 }
 
-.section-title {
-  margin-bottom: 20px;
-  text-align: center;
+.menu-content{
+    overflow-y:auto;
+    padding-top:20px;
 }
 
-.section-title h2 {
-  font-size: 30px;
-  margin-bottom: 8px;
+.menu-label{
+    color:#6f8ba4;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    margin:12px 4px 8px;
+    text-transform:uppercase;
 }
 
-.section-title p {
-  color: #94a3b8;
+.menu-link{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 13px;
+    margin-bottom:6px;
+    border-radius:9px;
+    color:#dce8f2;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    border:1px solid transparent;
+    transition:.2s;
 }
 
-.products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+.menu-link:hover{
+    background:#0d2135;
+    border-color:#164867;
+    color:#19c8ff;
 }
 
-.product {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 15px;
-  border: 1px solid #164e63;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #08243b, #071226);
+.menu-link.active{
+    background:#0d2438;
+    border-color:#176184;
+    color:#19c8ff;
 }
 
-.product-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #020617;
+.menu-icon{
+    width:26px;
+    text-align:center;
+    font-size:16px;
 }
 
-.product-image img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
+.menu-bottom{
+    margin-top:auto;
+    padding-top:18px;
+    border-top:1px solid #17304c;
 }
 
-.product h3 {
-  font-size: 21px;
+.social-menu{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
 }
 
-.product p {
-  min-height: 42px;
-  color: #94a3b8;
-  line-height: 1.5;
+.social-menu a{
+    text-decoration:none;
+    color:#dce8f2;
+    background:#0c1a2b;
+    border:1px solid #1a344d;
+    border-radius:8px;
+    text-align:center;
+    padding:10px 4px;
+    font-size:11px;
+    font-weight:bold;
+    transition:.2s;
 }
 
-.price {
-  color: #38bdf8;
-  font-size: 25px;
-  font-weight: bold;
+.social-menu a:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
 }
 
-.product button {
-  width: 100%;
-  margin-top: auto;
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    max-width:1200px;
+    margin:0 auto;
+    padding:48px 20px 25px;
+    text-align:center;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(0, 0, 0, .75);
+.hero h1{
+    font-size:42px;
+    line-height:1.05;
+    font-weight:900;
+    letter-spacing:-1px;
+    margin:0;
 }
 
-.modal.open {
-  display: flex;
+.hero h1 span{
+    color:#19c8ff;
 }
 
-.modal-box {
-  width: min(430px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 25px;
-  border: 1px solid #164e63;
-  border-radius: 18px;
-  background: #071426;
+.hero p{
+    max-width:700px;
+    margin:15px auto 0;
+    color:#8fa5b9;
+    line-height:1.6;
+    font-size:15px;
 }
 
-.modal-box h2 {
-  margin-bottom: 20px;
+
+/* =========================================================
+   SECTIONS / TABS
+========================================================= */
+
+.sections{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:8px auto 22px;
+    padding:0 20px;
+    flex-wrap:wrap;
+    max-width:1200px;
 }
 
-.form-group {
-  margin-bottom: 14px;
+.section-btn{
+    background:#0a1625;
+    color:#a8bac9;
+    border:1px solid #1a3a53;
+    border-radius:9px;
+    padding:11px 17px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  color: #cbd5e1;
+.section-btn:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
+    background:#0d2135;
 }
 
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  color: white;
-  border: 1px solid #334155;
-  border-radius: 9px;
-  outline: none;
-  background: #020617;
+.section-btn.active{
+    color:#19c8ff;
+    background:#0c2639;
+    border-color:#19c8ff;
 }
 
-.form-group input:focus {
-  border-color: #38bdf8;
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main-container{
+    max-width:1450px;
+    margin:auto;
+    padding:0 20px 50px;
 }
 
-.modal-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 18px;
+
+/* =========================================================
+   VERSION
+========================================================= */
+
+.version-container{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin:8px 0 20px;
 }
 
-.modal-buttons button {
-  flex: 1;
+.version-label{
+    font-size:14px;
+    color:#91a7ba;
 }
 
-.message {
-  display: none;
-  margin-bottom: 15px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #164e63;
+#version{
+    font-size:14px;
+    padding:9px 12px;
+    background:#0b1727;
+    color:#fff;
+    border:1px solid #21415e;
+    border-radius:8px;
+    outline:none;
+    min-width:150px;
 }
 
-.message.show {
-  display: block;
+#version:focus{
+    border-color:#19c8ff;
 }
 
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid #334155;
+.loader-badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:12px;
+    background:#07223a;
+    color:#9bd1ff;
+    font-size:11px;
 }
 
-.cart-total {
-  margin-top: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #38bdf8;
+
+/* =========================================================
+   AGARIO SKINS GRID
+========================================================= */
+
+#skins{
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:10px;
+    padding:15px;
+    max-width:1400px;
+    margin:auto;
 }
 
-.empty {
-  padding: 25px;
-  color: #94a3b8;
-  text-align: center;
+.skin{
+    cursor:pointer;
+    padding:9px;
+    background:#0b1625;
+    border:1px solid #172f46;
+    border-radius:10px;
+    transition:.2s;
+    min-width:0;
 }
 
-footer {
-  padding: 40px 20px;
-  color: #64748b;
-  text-align: center;
+.skin:hover{
+    border-color:#19c8ff;
+    background:#0d1b2d;
+    transform:translateY(-2px);
 }
 
-@media (max-width: 600px) {
-  header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .header-buttons {
-    width: 100%;
-  }
-
-  .header-buttons button {
-    flex: 1;
-  }
-
-  .account-top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+.skin img{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    object-fit:cover;
+    display:block;
+    margin:0 auto;
 }
+
+.skin span{
+    display:block;
+    margin-top:7px;
+    font-size:12px;
+    color:#dce8f2;
+    word-break:break-word;
+}
+
+
+/* =========================================================
+   YOUTUBER SKINS
+========================================================= */
+
+#youtuberSkins{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    padding:15px;
+    max-width:1200px;
+    margin:auto;
+}
+
+#youtuberSkins .skin img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+}
+
+.youtuber-name{
+    font-size:15px !important;
+    color:#fff !important;
+}
+
+
+/* =========================================================
+   AGARIO YOUTUBERS
+========================================================= */
+
+#youtubersList{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:14px;
+    padding:15px;
+    max-width:1200px;
+    margin:auto;
+}
+
+.yt-card-img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    object-fit:cover;
+    display:block;
+    margin:0 auto;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.youtuber-status{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin-top:7px;
+    font-size:12px;
+}
+
+.status-label{
+    color:#7f94a8;
+}
+
+.status-value{
+    font-weight:bold;
+}
+
+.status-active{
+    color:#22c55e;
+}
+
+.status-less-active{
+    color:#facc15;
+}
+
+.status-not-active{
+    color:#f97316;
+}
+
+.status-inactive{
+    color:#ef4444;
+}
+
+
+/* =========================================================
+   INSTRUCTION
+========================================================= */
+
+.skin-instruction{
+    margin-top:10px;
+    font-size:12px;
+    line-height:1.5;
+    color:#8fa0af;
+    white-space:normal;
+    text-align:left;
+    max-height:180px;
+    overflow:auto;
+}
+
+.skin-instruction strong{
+    color:#fff;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+#agarioPages,
+#youtuberPages,
+#youtubersPages{
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    flex-wrap:wrap;
+    padding:20px 15px 40px;
+}
+
+.page-btn{
+    background:#0b1727;
+    color:#aebdca;
+    border:1px solid #1c3a52;
+    border-radius:7px;
+    padding:8px 12px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+    min-width:36px;
+    transition:.2s;
+}
+
+.page-btn:hover{
+    background:#0d2438;
+    border-color:#19c8ff;
+    color:#19c8ff;
+}
+
+.page-btn.active{
+    background:#0c2639;
+    border-color:#19c8ff;
+    color:#19c8ff;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-box{
+    grid-column:1/-1;
+    min-height:180px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    color:#8197aa;
+}
+
+.spinner{
+    width:32px;
+    height:32px;
+    border:3px solid #17354c;
+    border-top-color:#19c8ff;
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden{
+    display:none !important;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal-overlay{
+    position:fixed;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:40px 20px;
+    z-index:9999;
+    overflow:auto;
+}
+
+.modal{
+    background:#091423;
+    border:1px solid #1b4964;
+    padding:20px;
+    max-width:1000px;
+    width:100%;
+    border-radius:13px;
+    color:#fff;
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.modal-title{
+    font-size:20px;
+    font-weight:bold;
+    color:#19c8ff;
+}
+
+.modal-close{
+    background:#0d1a2b;
+    color:#fff;
+    border:1px solid #24445c;
+    padding:8px 12px;
+    border-radius:7px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.modal-close:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
+}
+
+.modal-body{
+    margin-top:15px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+}
+
+.modal-videos{
+    display:flex;
+    gap:10px;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+.modal-videos iframe{
+    width:32%;
+    height:220px;
+    border-radius:8px;
+    border:0;
+    background:#000;
+}
+
+.modal-meta{
+    color:#9aaabd;
+    margin-top:8px;
+    font-size:13px;
+    text-align:left;
+}
+
+
+/* =========================================================
+   SOCIAL
+========================================================= */
+
+.social-buttons{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:0 0 25px;
+}
+
+.social-buttons a{
+    display:inline-block;
+    color:#fff;
+    text-decoration:none;
+    padding:10px 15px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.social-buttons a:hover{
+    transform:translateY(-2px);
+    opacity:.9;
+}
+
+.youtube{
+    background:#d90000;
+}
+
+.instagram{
+    background:#c92b60;
+}
+
+.discord{
+    background:#4d59d8;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+    border-top:1px solid #152d42;
+    background:#060c16;
+    padding:25px 20px;
+    text-align:center;
+    color:#62788c;
+    font-size:12px;
+}
+
+footer strong{
+    color:#19c8ff;
+}
+
+footer a{
+    color:#8fb4cb;
+    text-decoration:none;
+}
+
+footer a:hover{
+    color:#19c8ff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1200px){
+
+    #skins{
+        grid-template-columns:repeat(8,1fr);
+    }
+
+    #youtuberSkins,
+    #youtubersList{
+        grid-template-columns:repeat(5,1fr);
+    }
+
+}
+
+@media(max-width:1000px){
+
+    #skins{
+        grid-template-columns:repeat(6,1fr);
+    }
+
+    #youtuberSkins,
+    #youtubersList{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .modal-videos{
+        flex-direction:column;
+    }
+
+    .modal-videos iframe{
+        width:100%;
+        height:200px;
+    }
+
+}
+
+@media(max-width:750px){
+
+    .header{
+        padding:0 15px;
+    }
+
+    .header-title{
+        font-size:17px;
+    }
+
+    .hero{
+        padding-top:40px;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    #skins{
+        grid-template-columns:repeat(4,1fr);
+        gap:8px;
+        padding:10px;
+    }
+
+    #youtuberSkins,
+    #youtubersList{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .skin img{
+        width:75px;
+        height:75px;
+    }
+
+    #youtuberSkins .skin img,
+    .yt-card-img{
+        width:95px;
+        height:95px;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .hero h1{
+        font-size:29px;
+    }
+
+    .hero p{
+        font-size:13px;
+    }
+
+    .sections{
+        padding:0 10px;
+    }
+
+    .section-btn{
+        font-size:12px;
+        padding:10px 12px;
+    }
+
+    #skins{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    #youtuberSkins,
+    #youtubersList{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .skin img{
+        width:72px;
+        height:72px;
+    }
+
+    #youtuberSkins .skin img,
+    .yt-card-img{
+        width:90px;
+        height:90px;
+    }
+
+    .version-container{
+        flex-wrap:wrap;
+    }
+
+}
+
+
+/* =========================================================
+   DESKTOP LARGE SKIN SIZE
+========================================================= */
+
+@media(min-width:1400px){
+
+    .skin img{
+        width:100px;
+        height:100px;
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
-<header>
-  <div class="logo-area">
-    <img src="IMG_0561.jpeg" alt="T.B Agar.io logo">
-    <h1>T.B Agar.io Shop</h1>
-  </div>
+<!-- =========================================================
+     HEADER
+========================================================= -->
 
-  <div class="header-buttons">
-    <div id="headerCoins" class="header-coins" style="display:none;">
-      🪙 <span id="headerCoinAmount">0</span> Coins
+<header class="header">
+
+<div class="header-left">
+
+    <img
+        src="IMG_0561.jpeg"
+        class="logo"
+        alt="T.B Agar.io"
+        onclick="window.location.href='https://www.youtube.com/@T.B6'"
+    >
+
+    <div class="header-title">
+        T.B <span>Agar.io</span>
     </div>
-    <button id="loginButton" onclick="openModal('loginModal')">Login</button>
-    <button id="registerButton" onclick="openModal('registerModal')">Register</button>
-    <button id="logoutButton" class="danger" onclick="logout()" style="display:none;">Logout</button>
-    <button onclick="openCart()">🛒 Cart</button>
-  </div>
+
+</div>
+
+
+<button
+    class="menu-button"
+    onclick="openMenu()"
+    aria-label="Open menu"
+>
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
 </header>
 
-<main>
+<!-- =========================================================
+     MENU OVERLAY
+========================================================= -->
+
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+    onclick="closeMenu()"
+></div>
+
+<!-- =========================================================
+     SIDE MENU
+========================================================= -->
+
+<aside
+    class="side-menu"
+    id="sideMenu"
+>
+
+<div class="menu-top">
+
+    <div class="menu-brand">
+
+        <img
+            src="IMG_0561.jpeg"
+            alt="T.B Agar.io"
+        >
+
+        <strong>
+            T.B <span>Agar.io</span>
+        </strong>
+
+    </div>
+
+
+    <button
+        class="close-menu"
+        onclick="closeMenu()"
+    >
+        ×
+    </button>
+
+</div>
+
+
+<div class="menu-content">
+
+    <div class="menu-label">
+        Navigation
+    </div>
+
+
+    <a
+        class="menu-link"
+        href="index.html"
+    >
+        <span class="menu-icon">⌂</span>
+        Home
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="custom-skins.html"
+    >
+        <span class="menu-icon">◉</span>
+        Custom Skins
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="key-access.html"
+    >
+        <span class="menu-icon">🔑</span>
+        Key Access
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="mod-menu.html"
+    >
+        <span class="menu-icon">⚙</span>
+        Mod Menu
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="paidskins.html"
+    >
+        <span class="menu-icon">◆</span>
+        Paid Skins
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="buy-account.html"
+    >
+        <span class="menu-icon">●</span>
+        Buy Account
+    </a>
+
+
+    <a
+        class="menu-link active"
+        href="agar.io-skins.html"
+    >
+        <span class="menu-icon">🎨</span>
+        Agar.io Skins
+    </a>
+
+
+    <div class="menu-label">
+        External
+    </div>
+
+
+    <a
+        class="menu-link"
+        href="https://biteyt.com/bots"
+        target="_blank"
+        rel="noopener"
+    >
+        <span class="menu-icon">🤖</span>
+        Bite Bots Panel
+    </a>
+
+
+    <a
+        class="menu-link"
+        href="https://kahraba.in"
+        target="_blank"
+        rel="noopener"
+    >
+        <span class="menu-icon">↗</span>
+        Kahraba Website
+    </a>
+
+</div>
+
+
+<div class="menu-bottom">
+
+    <div class="menu-label">
+        Follow T.B Agar.io
+    </div>
+
+
+    <div class="social-menu">
+
+        <a
+            href="https://discord.gg/qhuXPrVzBx"
+            target="_blank"
+            rel="noopener"
+        >
+            Discord
+        </a>
+
+
+        <a
+            href="https://www.youtube.com/@T.B6"
+            target="_blank"
+            rel="noopener"
+        >
+            YouTube
+        </a>
+
+
+        <a
+            href="https://www.instagram.com/t.bagar.io/"
+            target="_blank"
+            rel="noopener"
+        >
+            Instagram
+        </a>
+
+    </div>
+
+</div>
+
+</aside>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
 
 <section class="hero">
-  <h2>Welcome to <span>T.B Agar.io</span></h2>
-  <p>
-    Buy unique skins and support T.B Agar.io.
-    Log in to manage your account and purchases.
-  </p>
+
+<h1>
+    AGAR.IO <span>SKINS</span>
+</h1>
+
+<p>
+    Explore Agar.io skins, Agar.io YouTubers and Flags of Agar.io
+    on the T.B Agar.io website.
+</p>
+
 </section>
 
-<section id="accountPanel" class="account-panel">
-  <div class="account-top">
-    <div>
-      <h3>Welcome, <span id="accountName">user</span>!</h3>
-      <p>You are logged in to your T.B Agar.io account.</p>
-      <p class="coins">🪙 Coins: <span id="coinAmount">0</span></p>
+<!-- =========================================================
+     NAVIGATION TABS
+========================================================= -->
+
+<div class="sections">
+
+<button
+    class="section-btn active"
+    id="agarioSectionBtn"
+    onclick="showSection('agario')"
+>
+    Agar.io Skins
+</button>
+
+
+<button
+    class="section-btn"
+    id="youtubersListBtn"
+    onclick="showSection('youtubersList')"
+>
+    Agar.io Youtubers
+</button>
+
+
+<button
+    class="section-btn"
+    id="youtuberSectionBtn"
+    onclick="showSection('youtuber')"
+>
+    Flags of Agar.io
+</button>
+
+</div>
+
+<main class="main-container">
+
+<!-- =========================================================
+     AGARIO SKINS
+========================================================= -->
+
+<div id="agarioSection">
+
+<div class="version-container">
+
+    <span class="version-label">
+        Version
+    </span>
+
+
+    <select id="version">
+
+        <option>
+            Loading versions...
+        </option>
+
+    </select>
+
+
+    <span
+        id="preloadStatus"
+        class="loader-badge"
+        style="display:none"
+    >
+        Loading...
+    </span>
+
+</div>
+
+
+<div id="skins">
+
+    <div class="loading-box">
+
+        <div class="spinner"></div>
+
+        <span>
+            Loading Agar.io skins...
+        </span>
+
     </div>
 
-    <div class="account-actions">
-      <button onclick="openModal('usernameModal')">Change username</button>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
-  </div>
-</section>
+</div>
 
-<section>
-  <div class="section-title">
-    <h2>Our Skins</h2>
-    <p>Choose your favorite skin.</p>
-  </div>
 
-  <div class="products">
+<div id="agarioPages"></div>
 
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_5334.webp" alt="Dohnut">
-      </div>
-      <h3>Dohnut</h3>
-      <p>A unique Agar.io skin.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-001')">Add to Cart</button>
-    </article>
+</div>
 
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0923.webp" alt="Pumpkitty">
-      </div>
-      <h3>Pumpkitty</h3>
-      <p>A cool skin with a cat style.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-002')">Add to Cart</button>
-    </article>
+<!-- =========================================================
+     YOUTUBER SKINS
+========================================================= -->
 
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0920.webp" alt="Mindseye">
-      </div>
-      <h3>Mindseye</h3>
-      <p>A mysterious skin for your account.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-003')">Add to Cart</button>
-    </article>
+<div
+    id="youtuberSection"
+    class="hidden"
+>
 
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0924.webp" alt="Nomster">
-      </div>
-      <h3>Nomster</h3>
-      <p>A special premium Agar.io skin.</p>
-      <div class="price">€5,99</div>
-      <button onclick="addToCart('skin-004')">Add to Cart</button>
-    </article>
+<div id="youtuberSkins"></div>
 
-  </div>
-</section>
+<div id="youtuberPages"></div>
+
+</div>
+
+<!-- =========================================================
+     AGARIO YOUTUBERS
+========================================================= -->
+
+<div
+    id="agarioYoutubersSection"
+    class="hidden"
+>
+
+<div id="youtubersList"></div>
+
+<div id="youtubersPages"></div>
+
+</div>
 
 </main>
 
+<!-- =========================================================
+     MODAL
+========================================================= -->
+
+<div
+    id="youtuberModal"
+    class="hidden"
+>
+
+<div
+    class="modal-overlay"
+    onclick="closeYoutuberModal(event)"
+>
+
+    <div
+        class="modal"
+        onclick="event.stopPropagation()"
+    >
+
+        <div class="modal-header">
+
+            <div>
+
+                <div
+                    class="modal-title"
+                    id="modalTitle"
+                >
+                    Loading...
+                </div>
+
+
+                <div
+                    class="youtuber-status"
+                    id="modalStatus"
+                >
+
+                    <span class="status-label">
+                        Status:
+                    </span>
+
+                    <span
+                        class="status-value"
+                        id="modalStatusValue"
+                    ></span>
+
+
+                    <span
+                        id="modalLoader"
+                        class="loader-badge"
+                        style="display:none"
+                    >
+                        Loading videos...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="modal-close"
+                onclick="closeYoutuberModal()"
+            >
+                Close
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div id="modalDescription">
+                Loading description...
+            </div>
+
+
+            <div
+                class="modal-videos"
+                id="modalVideos"
+            ></div>
+
+
+            <div
+                id="modalChannelDescription"
+                class="modal-meta"
+            >
+                Channel info...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     SOCIAL
+========================================================= -->
+
+<div class="social-buttons">
+
+<a
+    class="youtube"
+    href="https://www.youtube.com/@T.B6"
+    target="_blank"
+    rel="noopener"
+>
+    YouTube
+</a>
+
+
+<a
+    class="instagram"
+    href="https://www.instagram.com/t.bagar.io/"
+    target="_blank"
+    rel="noopener"
+>
+    Instagram
+</a>
+
+
+<a
+    class="discord"
+    href="https://discord.gg/qhuXPrVzBx"
+    target="_blank"
+    rel="noopener"
+>
+    Discord
+</a>
+
+</div>
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
 <footer>
-  © 2026 T.B Agar.io — All rights reserved.
+
+<strong>T.B Agar.io</strong>
+© <span id="currentYear"></span>
+—
+<a
+    target="_blank"
+    href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html"
+>
+    T.B Website
+</a>
+—
+T.B Licence
+
 </footer>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-  <div class="modal-box">
-    <h2>Login</h2>
+<script>
 
-    <div id="loginMessage" class="message"></div>
+/* =========================================================
+   CONFIGURATION
+========================================================= */
 
-    <form onsubmit="login(event)">
-      <div class="form-group">
-        <label for="loginUsername">Username</label>
-        <input id="loginUsername" required autocomplete="username">
-      </div>
+const API =
+    "https://configs-web.agario.miniclippt.com/live/";
 
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password" required autocomplete="current-password">
-      </div>
+let version =
+    "v15/10923";
 
-      <div class="modal-buttons">
-        <button type="submit">Login</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
+const PER_PAGE =
+    120;
 
-<!-- REGISTER MODAL -->
-<div id="registerModal" class="modal">
-  <div class="modal-box">
-    <h2>Create Account</h2>
 
-    <div id="registerMessage" class="message"></div>
+/* =========================================================
+   STATUS MAP
+========================================================= */
 
-    <form onsubmit="register(event)">
-      <div class="form-group">
-        <label for="registerUsername">Username</label>
-        <input id="registerUsername" required minlength="3" maxlength="32"
-               autocomplete="username">
-      </div>
+const YOUTUBER_STATUS = {
 
-      <div class="form-group">
-        <label for="registerPassword">Password</label>
-        <input id="registerPassword" type="password" required minlength="6"
-               autocomplete="new-password">
-      </div>
+    "T.B": "active",
 
-      <div class="form-group">
-        <label for="registerPasswordAgain">Password herhalen</label>
-        <input id="registerPasswordAgain" type="password" required minlength="6"
-               autocomplete="new-password">
-      </div>
+    "Zanax": "not-active",
+    "Jonnn": "not-active",
 
-      <div class="modal-buttons">
-        <button type="submit">Register</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
+    "GetDeadKid": "inactive",
+    "7MODKA": "inactive",
+    "Bn Rhmi": "inactive",
 
-<!-- USERNAME MODAL -->
-<div id="usernameModal" class="modal">
-  <div class="modal-box">
-    <h2>Change username</h2>
+    "Sarok1": "active",
+    "Sarok2": "active",
 
-    <div id="usernameMessage" class="message"></div>
+    "Sparky": "inactive",
+    "YemeniYT": "inactive",
+    "Yemeni": "inactive",
+    "Hero": "inactive",
+    "Agarmurfs": "inactive",
+    "3ezzy": "inactive",
 
-    <form onsubmit="changeUsername(event)">
-      <div class="form-group">
-        <label for="newUsername">New username</label>
-        <input id="newUsername" required minlength="3" maxlength="32">
-      </div>
+    "alejo": "inactive",
+    "alejoyoutube": "inactive",
+    "twisted": "inactive",
+    "silver": "inactive",
+    "EvilMonkey": "inactive",
 
-      <div class="modal-buttons">
-        <button type="submit">Save</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
+    "Araizon": "active",
 
-<!-- CART MODAL -->
-<div id="cartModal" class="modal">
-  <div class="modal-box">
-    <h2>Cart</h2>
+    "Alejoyt2": "inactive",
+    "Skillsyt": "inactive",
+    "SonicGames": "inactive",
+    "Sonic": "inactive",
+    "peps": "inactive",
 
-    <div id="cartItems"></div>
-    <div id="cartTotal" class="cart-total"></div>
+    "GetDeadKid (old)": "inactive",
+    "Zone": "inactive",
+    "Skills": "inactive",
+    "Yemeni (old)": "inactive",
+    "Sonic (old)": "inactive",
 
-    <div class="modal-buttons">
-      <button onclick="checkout()">Checkout</button>
-      <button class="secondary" onclick="closeModals()">Close</button>
-    </div>
-  </div>
-</div>
+    "demon": "inactive",
+    "Ashwin": "inactive",
+    "Ashwinyt": "inactive",
+    "Togoman": "inactive",
+    "alejoyt": "inactive",
+    "bang": "inactive",
+    "demon (old)": "inactive",
+    "minhvu": "not-active",
+    "mister": "inactive",
+    "peps (old)": "inactive",
+    "Getdeadkid Xmas": "inactive",
+    "Majnoon": "inactive",
+    "statik": "inactive",
+    "Skills (old)": "inactive",
+    "Woobs": "inactive",
 
-<!-- DEEL 2 KOMT HIERONDER -->
-  <script>
-/* =========================
-   CONFIGURATIE
-========================= */
+    "xxnetro": "active",
+    "xxnetro2": "active",
 
-/*
-  Vervang dit adres door het adres van je eigen backend.
-  Voor alleen een lokale demo kun je API_BASE leeg laten.
-*/
-const API_BASE = "";
+    "52k": "inactive",
+    "Brax": "inactive",
+    "3LK": "inactive",
+    "GURI": "inactive",
+    "kbkb": "inactive",
+    "strike": "inactive",
+    "Babadook": "inactive",
+    "Mistik": "inactive",
 
-const products = {
-  "skin-001": {
-    id: "skin-001",
-    name: "Dohnut",
-    price: 1.99
-  },
-  "skin-002": {
-    id: "skin-002",
-    name: "Pumpkitty",
-    price: 1.99
-  },
-  "skin-003": {
-    id: "skin-003",
-    name: "Mindseye",
-    price: 1.99
-  },
-  "skin-004": {
-    id: "skin-004",
-    name: "Nomster",
-    price: 5.99
-  }
+    "Snay": "inactive",
+    "Snay-Gang": "inactive",
+    "Snay-Chocolate": "inactive",
+
+    "togomanyt": "inactive",
+    "Ashwin (old)": "inactive",
+    "Zone (old)": "inactive",
+
+    "Sneddy Gaming": "inactive",
+    "Timid": "inactive",
+    "Matjoy": "inactive",
+    "Kristoffer": "inactive",
+    "n0psa": "inactive",
+    "TYT": "inactive",
+    "Crystal": "inactive",
+    "Sirius": "inactive",
+    "Rayday": "inactive",
+    "M4J": "inactive"
+
 };
 
-let cart = JSON.parse(localStorage.getItem("tb_cart") || "[]");
-let currentUser = null;
 
-/* =========================
-   HULPFUNCTIES
-========================= */
+const STATUS_INFO = {
 
-function $(id) {
-  return document.getElementById(id);
-}
-
-function openModal(id) {
-  closeModals();
-  $(id).classList.add("open");
-}
-
-function closeModals() {
-  document.querySelectorAll(".modal").forEach(modal => {
-    modal.classList.remove("open");
-  });
-}
-
-function showMessage(id, text) {
-  const element = $(id);
-  element.textContent = text;
-  element.classList.add("show");
-}
-
-function clearMessage(id) {
-  const element = $(id);
-  element.textContent = "";
-  element.classList.remove("show");
-}
-
-function saveCart() {
-  localStorage.setItem("tb_cart", JSON.stringify(cart));
-}
-
-function formatPrice(price) {
-  return "€" + price.toFixed(2).replace(".", ",");
-}
-
-async function apiRequest(endpoint, options = {}) {
-  const response = await fetch(API_BASE + endpoint, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
+    "active":{
+        label:"Active",
+        className:"status-active"
     },
-    ...options
-  });
 
-  let data = {};
+    "less-active":{
+        label:"Less active",
+        className:"status-less-active"
+    },
 
-  try {
-    data = await response.json();
-  } catch {
-    data = {};
-  }
+    "not-active":{
+        label:"Nearly inactive",
+        className:"status-not-active"
+    },
 
-  if (!response.ok) {
-    throw new Error(data.message || "Er is iets misgegaan.");
-  }
+    "inactive":{
+        label:"Inactive",
+        className:"status-inactive"
+    }
 
-  return data;
+};
+
+
+function getYoutuberStatus(name){
+
+    return YOUTUBER_STATUS[name] ||
+        "inactive";
+
 }
 
-/* =========================
-   ACCOUNT
-========================= */
 
-function updateAccountPanel() {
-  const panel = $("accountPanel");
-  const loggedIn = !!currentUser;
+/* =========================================================
+   ALL YOUTUBER SKINS
+========================================================= */
 
-  // Header login/logout state
-  $("loginButton").style.display = loggedIn ? "none" : "inline-block";
-  $("registerButton").style.display = loggedIn ? "none" : "inline-block";
-  $("logoutButton").style.display = loggedIn ? "inline-block" : "none";
-  $("headerCoins").style.display = loggedIn ? "flex" : "none";
+const YOUTUBER_SKIN_NAMES = [
+"Zanax",
+"Jonnn",
+"GetDeadKid",
+"7MODKA",
+"Bn Rhmi",
+"Sarok1",
+"Sarok2",
+"Sparky",
+"YemeniYT",
+"Yemeni",
+"Hero",
+"Agarmurfs",
+"3ezzy",
+"alejo",
+"alejoyoutube",
+"twisted",
+"silver",
+"EvilMonkey",
+"Araizon",
+"Alejoyt2",
+"Skillsyt",
+"SonicGames",
+"Sonic",
+"peps",
+"GetDeadKid (old)",
+"Zone",
+"Skills",
+"Yemeni (old)",
+"Sonic (old)",
+"demon",
+"Ashwin",
+"Ashwinyt",
+"Togoman",
+"alejoyt",
+"bang",
+"demon (old)",
+"minhvu",
+"mister",
+"peps (old)",
+"Getdeadkid Xmas",
+"GDK Xmas",
+"POK",
+"agar.io news",
+"nbrhbi",
+"Yemeni (old)",
+"Majnoon",
+"statik",
+"Skills (old)",
+"Woobs",
+"xxnetro",
+"xxnetro2",
+"Sonic (old)",
+"52k",
+"Brax",
+"3LK",
+"GURI",
+"kbkb",
+"strike",
+"Babadook",
+"Mistik",
+"Snay",
+"Snay-Gang",
+"Snay-Chocolate",
+"togomanyt",
+"Ashwin (old)",
+"Zone (old)",
+"Sneddy Gaming",
+"Timid",
+"Matjoy",
+"Kristoffer",
+"n0psa",
+"TYT",
+"Crystal",
+"Sirius",
+"Rayday",
+"M4J"
+];
 
-  if (!loggedIn) {
-    panel.classList.remove("visible");
-    return;
-  }
 
-  const coins = Number(currentUser.coins) || 0;
 
-  panel.classList.add("visible");
-  $("accountName").textContent = currentUser.username;
-  $("coinAmount").textContent = coins;
-  $("headerCoinAmount").textContent = coins;
+
+/* =========================================================
+   AGARIO YOUTUBERS
+
+   These are the former manual YouTube skins.
+   They now appear in the Agar.io Youtubers tab.
+========================================================= */
+
+const AGARIO_YOUTUBERS = [
+
+    [
+        "T.B",
+        "IMG_9766.jpeg",
+        "T.B is a YouTube creator. Type the nick **T.B** in Agar.io to use this skin.",
+        "https://www.youtube.com/@T.B6"
+    ]
+
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let allSkins = [];
+
+let youtuberSkins = [];
+
+let agarioFlags = [];
+
+let agarioYoutubers = [];
+
+const youtuberMeta = {};
+
+let currentModalName = null;
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+function openMenu(){
+
+    document
+        .getElementById("sideMenu")
+        .classList.add("active");
+
+    document
+        .getElementById("menuOverlay")
+        .classList.add("active");
+
+    document.body.style.overflow =
+        "hidden";
 }
 
-function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem("tb_agar_users") || "[]");
-  } catch {
-    return [];
-  }
+
+function closeMenu(){
+
+    document
+        .getElementById("sideMenu")
+        .classList.remove("active");
+
+    document
+        .getElementById("menuOverlay")
+        .classList.remove("active");
+
+    document.body.style.overflow =
+        "";
 }
 
-function saveUsers(users) {
-  localStorage.setItem("tb_agar_users", JSON.stringify(users));
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Escape"){
+
+            closeMenu();
+            closeYoutuberModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   IMAGE LOADER
+   IMPORTANT:
+   Tries multiple possible image locations.
+========================================================= */
+
+function buildImageCandidates(image){
+
+    if(!image){
+        return [];
+    }
+
+    image =
+        String(image)
+            .replace(/\\/g,"/")
+            .trim();
+
+
+    const candidates = [];
+
+
+    /* Already a full URL */
+
+    if(
+        image.startsWith("http://") ||
+        image.startsWith("https://") ||
+        image.startsWith("data:")
+    ){
+
+        candidates.push(image);
+
+        return [
+            ...new Set(candidates)
+        ];
+
+    }
+
+
+    /* Remove leading slash */
+
+    const clean =
+        image.replace(/^\/+/,"");
+
+
+    /* Agar.io configs commonly store the normal skin filename.
+       The live client serves the high-resolution asset with _hi.png. */
+    const hiImage = /\.(png|jpg|jpeg|webp)$/i.test(clean)
+        ? clean.replace(/\.(png|jpg|jpeg|webp)$/i, "_hi.$1")
+        : clean + "_hi.png";
+
+    if(hiImage !== clean){
+        candidates.push(API + version + "/" + hiImage);
+        candidates.push(API + version + "/skins/" + hiImage);
+        candidates.push(API + version + "/images/" + hiImage);
+    }
+
+
+    /*
+       The GameConfiguration can contain:
+       images/...
+       skins/...
+       /images/...
+       or only a filename.
+    */
+
+    candidates.push(
+        API + version + "/" + clean
+    );
+
+
+    candidates.push(
+        API + version + "/skins/" + clean
+    );
+
+
+    candidates.push(
+        API + version + "/images/" + clean
+    );
+
+
+    candidates.push(
+        API + clean
+    );
+
+
+    candidates.push(clean);
+
+    candidates.push(
+        "images/" + clean
+    );
+
+    candidates.push(
+        "/images/" + clean
+    );
+
+
+    return [
+        ...new Set(candidates)
+    ];
+
 }
 
-function loadCurrentUser() {
-  const username = localStorage.getItem("tb_agar_current_user");
-  const users = getUsers();
 
-  currentUser = users.find(
-    user => user.username === username
-  ) || null;
+function setImageWithFallback(
+    imgEl,
+    image
+){
 
-  updateAccountPanel();
+    const candidates =
+        buildImageCandidates(image);
+
+
+    if(!candidates.length){
+
+        imgEl.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    let index = 0;
+
+
+    function tryNext(){
+
+        if(index >= candidates.length){
+
+            imgEl.onerror =
+                null;
+
+            imgEl.style.display =
+                "none";
+
+            return;
+
+        }
+
+
+        imgEl.src =
+            candidates[index];
+
+        index++;
+
+    }
+
+
+    imgEl.onerror =
+        function(){
+
+            tryNext();
+
+        };
+
+
+    tryNext();
+
 }
 
-function register(event) {
-  event.preventDefault();
-  clearMessage("registerMessage");
 
-  const username = $("registerUsername").value.trim();
-  const password = $("registerPassword").value;
-  const passwordAgain = $("registerPasswordAgain").value;
+/* =========================================================
+   SECTION SWITCH
+========================================================= */
 
-  if (password !== passwordAgain) {
-    showMessage("registerMessage", "The passwords do not match.");
-    return;
-  }
+function showSection(section){
 
-  if (username.length < 3) {
-    showMessage("registerMessage", "Username must be at least 3 characters.");
-    return;
-  }
+    const agario =
+        document.getElementById(
+            "agarioSection"
+        );
 
-  if (password.length < 6) {
-    showMessage("registerMessage", "Password must be at least 6 characters.");
-    return;
-  }
+    const youtuber =
+        document.getElementById(
+            "youtuberSection"
+        );
 
-  const users = getUsers();
+    const agarioList =
+        document.getElementById(
+            "agarioYoutubersSection"
+        );
 
-  if (users.some(user =>
-    user.username.toLowerCase() === username.toLowerCase()
-  )) {
-    showMessage("registerMessage", "That username is already in use.");
-    return;
-  }
 
-  const user = {
-    id: "user-" + Date.now(),
-    username,
-    password,
-    coins: 0,
-    createdAt: new Date().toISOString()
-  };
+    const agarioBtn =
+        document.getElementById(
+            "agarioSectionBtn"
+        );
 
-  users.push(user);
-  saveUsers(users);
+    const youtuberBtn =
+        document.getElementById(
+            "youtuberSectionBtn"
+        );
 
-  currentUser = user;
-  localStorage.setItem("tb_agar_current_user", user.username);
+    const agarioListBtn =
+        document.getElementById(
+            "youtubersListBtn"
+        );
 
-  updateAccountPanel();
-  closeModals();
-  alert("Your account has been created successfully!");
+
+    agario.classList.add("hidden");
+
+    youtuber.classList.add("hidden");
+
+    agarioList.classList.add("hidden");
+
+
+    agarioBtn.classList.remove(
+        "active"
+    );
+
+    youtuberBtn.classList.remove(
+        "active"
+    );
+
+    agarioListBtn.classList.remove(
+        "active"
+    );
+
+
+    if(section === "agario"){
+
+        agario.classList.remove(
+            "hidden"
+        );
+
+        agarioBtn.classList.add(
+            "active"
+        );
+
+    }
+
+
+    else if(section === "youtuber"){
+
+        youtuber.classList.remove(
+            "hidden"
+        );
+
+        youtuberBtn.classList.add(
+            "active"
+        );
+
+
+        if(
+            agarioFlags.length === 0
+        ){
+
+            loadAgarioFlags();
+
+        }
+
+    }
+
+
+    else if(
+        section === "youtubersList"
+    ){
+
+        agarioList.classList.remove(
+            "hidden"
+        );
+
+        agarioListBtn.classList.add(
+            "active"
+        );
+
+
+        if(
+            agarioYoutubers.length === 0
+        ){
+
+            loadAgarioYoutubers();
+
+        }
+
+    }
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
 }
 
-function login(event) {
-  event.preventDefault();
-  clearMessage("loginMessage");
 
-  const username = $("loginUsername").value.trim();
-  const password = $("loginPassword").value;
+/* =========================================================
+   VERSION LOADER
+========================================================= */
 
-  const user = getUsers().find(
-    user =>
-      user.username.toLowerCase() === username.toLowerCase() &&
-      user.password === password
-  );
+async function versions(){
 
-  if (!user) {
-    showMessage("loginMessage", "Incorrect username or password.");
-    return;
-  }
+    const select = document.getElementById("version");
+    if(!select) return;
 
-  currentUser = user;
-  localStorage.setItem("tb_agar_current_user", user.username);
+    select.innerHTML = "<option>Loading versions...</option>";
 
-  updateAccountPanel();
-  closeModals();
-  alert("Login successful.");
+    try{
+        const response = await fetch("https://lmsettings.snez.org/", {
+            headers:{
+                username:"LMConfigVersion",
+                password:"LMConfigVersionPass"
+            },
+            cache:"no-store"
+        });
+
+        if(!response.ok) throw new Error("Version endpoint " + response.status);
+
+        const data = await response.json();
+        const values = Object.values(data || {})
+            .map(value => String(value).replace(/\/$/, "").trim())
+            .filter(value => /^v\d+(?:\/\d+)?$/i.test(value));
+
+        const uniqueValues = [...new Set(values)];
+        const parts = value => {
+            const m = String(value).match(/^v(\d+)(?:\/(\d+))?$/i);
+            return m ? {major:Number(m[1]), build:Number(m[2] || 0)} : {major:-1, build:-1};
+        };
+
+        uniqueValues.sort((a,b) => {
+            const A=parts(a), B=parts(b);
+            if(B.major !== A.major) return B.major-A.major;
+            if(B.build !== A.build) return B.build-A.build;
+            return String(b).localeCompare(String(a), undefined, {numeric:true});
+        });
+
+        if(!uniqueValues.length) throw new Error("No valid versions found");
+
+        select.innerHTML = "";
+        uniqueValues.forEach(value => select.add(new Option(value,value)));
+
+        const preferred = uniqueValues.includes(version) ? version : uniqueValues[0];
+        version = preferred;
+        select.value = preferred;
+
+    }catch(error){
+        console.warn("Version loading failed:", error);
+
+        const fallbackVersions = ["v15/10923"];
+        select.innerHTML = "";
+        fallbackVersions.forEach(value => select.add(new Option(value,value)));
+        version = fallbackVersions[0];
+        select.value = version;
+    }
+
+    select.onchange = async function(event){
+        version = String(event.target.value || "").replace(/\/$/, "");
+        await loadSkins();
+        loadYoutuberSkins();
+        loadAgarioFlags();
+        loadAgarioYoutubers();
+    };
+
+    await loadSkins();
+    loadYoutuberSkins();
+    loadAgarioFlags();
+    loadAgarioYoutubers();
 }
 
-function logout() {
-  currentUser = null;
-  localStorage.removeItem("tb_agar_current_user");
-  updateAccountPanel();
-  closeModals();
-  alert("You have been logged out.");
+
+/* =========================================================
+   ROBUST CONFIG PARSER
+========================================================= */
+
+function findSkinObjects(value, output, seen){
+
+    if(value === null || value === undefined || typeof value !== "object") return;
+    if(seen.has(value)) return;
+    seen.add(value);
+
+    if(Array.isArray(value)){
+        for(const item of value) findSkinObjects(item, output, seen);
+        return;
+    }
+
+    const id = value.productId ?? value.productID ?? value.skinId ?? value.id ?? value.name ?? value.skinName ?? null;
+    const image = value.image ?? value.imageUrl ?? value.imageURL ?? value.icon ?? value.skinImage ?? null;
+
+    if(id !== null && image !== null && typeof image === "string" && image.trim()){
+        const imageString = image.trim();
+        if(!imageString.toLowerCase().includes("uses_spine")){
+            output.push({id:String(id), image:imageString});
+        }
+    }
+
+    for(const key of Object.keys(value)){
+        findSkinObjects(value[key], output, seen);
+    }
 }
 
-function changeUsername(event) {
-  event.preventDefault();
-  clearMessage("usernameMessage");
 
-  if (!currentUser) {
-    showMessage("usernameMessage", "Please log in first.");
-    return;
-  }
+/* =========================================================
+   FALLBACK REGEX PARSER
+========================================================= */
 
-  const username = $("newUsername").value.trim();
-
-  if (username.length < 3) {
-    showMessage("usernameMessage", "Username must be at least 3 characters.");
-    return;
-  }
-
-  const users = getUsers();
-
-  if (users.some(user =>
-    user.id !== currentUser.id &&
-    user.username.toLowerCase() === username.toLowerCase()
-  )) {
-    showMessage("usernameMessage", "That username is already in use.");
-    return;
-  }
-
-  const index = users.findIndex(user => user.id === currentUser.id);
-
-  if (index === -1) {
-    showMessage("usernameMessage", "User account could not be found.");
-    return;
-  }
-
-  users[index].username = username;
-  currentUser = users[index];
-
-  saveUsers(users);
-  localStorage.setItem("tb_agar_current_user", username);
-
-  updateAccountPanel();
-  closeModals();
-  alert("Your username has been changed.");
+function parseSkinsByRegex(text){
+    const results = [];
+    const objectRegex = /\{[^{}]{0,10000}?(?:productId|productID|skinId|id|name)\s*[:=]\s*["']([^"']+)["'][^{}]{0,10000}?(?:image|imageUrl|imageURL|icon)\s*[:=]\s*["']([^"']+)["'][^{}]{0,10000}?\}/gi;
+    let match;
+    while((match=objectRegex.exec(text)) !== null){
+        const id=match[1], image=match[2];
+        if(image && !image.toLowerCase().includes("uses_spine")) results.push({id, image});
+    }
+    return results;
 }
 
-/* =========================
-   WINKELWAGEN
 
-========================= */
+/* =========================================================
+   LOAD AGARIO SKINS
+========================================================= */
 
-function addToCart(productId) {
-  if (!products[productId]) {
-    alert("This product does not exist.");
-    return;
-  }
+async function loadSkins(){
 
-  cart.push(productId);
-  saveCart();
+    const box =
+        document.getElementById(
+            "skins"
+        );
 
-  alert(products[productId].name + " has been added to your cart.");
-}
+    const pages =
+        document.getElementById(
+            "agarioPages"
+        );
 
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  saveCart();
-  renderCart();
-}
 
-function renderCart() {
-  const container = $("cartItems");
-  const totalElement = $("cartTotal");
+    box.innerHTML = `
 
-  container.innerHTML = "";
+        <div class="loading-box">
 
-  if (cart.length === 0) {
-    container.innerHTML = '<div class="empty">Your cart is empty.</div>';
-    totalElement.textContent = "";
-    return;
-  }
+            <div class="spinner"></div>
 
-  let total = 0;
+            <span>
+                Loading Agar.io skins...
+            </span>
 
-  cart.forEach((productId, index) => {
-    const product = products[productId];
+        </div>
 
-    if (!product) return;
-
-    total += product.price;
-
-    const item = document.createElement("div");
-    item.className = "cart-item";
-
-    item.innerHTML = `
-      <div>
-        <strong>${product.name}</strong><br>
-        <span>${formatPrice(product.price)}</span>
-      </div>
-      <button class="danger" onclick="removeFromCart(${index})">
-        Remove
-      </button>
     `;
 
-    container.appendChild(item);
-  });
 
-  totalElement.textContent = "Total: " + formatPrice(total);
-}
+    pages.innerHTML = "";
 
-function openCart() {
-  renderCart();
-  openModal("cartModal");
-}
 
-function checkout() {
-  if (cart.length === 0) {
-    alert("Your cart is empty.");
-    return;
-  }
+    /*
+       IMPORTANT:
+       This URL changes with the
+       selected version.
+    */
 
-  if (!currentUser) {
-    closeModals();
-    openModal("loginModal");
-    alert("Please log in before checkout.");
-    return;
-  }
+    const configURL =
+        API +
+        version +
+        "/GameConfiguration.json";
 
-  const items = cart.map(productId => {
-    const product = products[productId];
-    return {
-      productId: product.id,
-      name: product.name,
-      price: product.price
-    };
-  });
 
-  const total = items.reduce((sum, item) => sum + item.price, 0);
-  const balance = Number(currentUser.coins) || 0;
-
-  // Coins are the account balance used to pay for skins.
-  if (balance < total) {
-    alert(
-      "You do not have enough Coins.\n\n" +
-      "Your balance: " + balance.toFixed(2) + " Coins\n" +
-      "Required: " + total.toFixed(2) + " Coins\n\n" +
-      "You need " + (total - balance).toFixed(2) + " more Coins."
+    console.log(
+        "Loading Agar.io configuration:",
+        configURL
     );
-    return;
-  }
 
-  const confirmed = confirm(
-    "You are about to pay " + total.toFixed(2) + " Coins.\n\n" +
-    "Your balance: " + balance.toFixed(2) + " Coins\n" +
-    "Balance after purchase: " + (balance - total).toFixed(2) + " Coins\n\n" +
-    "Do you want to continue?"
-  );
 
-  if (!confirmed) return;
+    try{
 
-  const purchases = JSON.parse(
-    localStorage.getItem("tb_agar_purchases") || "[]"
-  );
+        const response =
+            await fetch(
+                configURL,
+                {
+                    cache:"no-store"
+                }
+            );
 
-  // Deduct the Coins from the logged-in account.
-  const users = getUsers();
-  const userIndex = users.findIndex(user => user.id === currentUser.id);
 
-  if (userIndex === -1) {
-    alert("Your account could not be found.");
-    return;
-  }
+        if(!response.ok){
 
-  users[userIndex].coins = balance - total;
-  currentUser = users[userIndex];
-  saveUsers(users);
+            throw new Error(
+                "GameConfiguration HTTP " +
+                response.status
+            );
 
-  purchases.push({
-    id: "purchase-" + Date.now(),
-    userId: currentUser.id,
-    username: currentUser.username,
-    items,
-    total,
-    paidWith: "Coins",
-    createdAt: new Date().toISOString()
-  });
+        }
 
-  localStorage.setItem(
-    "tb_agar_purchases",
-    JSON.stringify(purchases)
-  );
 
-  cart = [];
-  saveCart();
-  renderCart();
-  updateAccountPanel();
+        const text =
+            await response.text();
 
-  alert(
-    "Your order was placed successfully!\n\n" +
-    "You paid " + total.toFixed(2) + " Coins.\n" +
-    "Remaining balance: " + currentUser.coins.toFixed(2) + " Coins."
-  );
-  closeModals();
+
+        if(
+            !text ||
+            text.length < 10
+        ){
+
+            throw new Error(
+                "Empty GameConfiguration"
+            );
+
+        }
+
+
+        let skinObjects = [];
+
+
+        /*
+           First: real JSON parsing.
+        */
+
+        try{
+
+            const json =
+                JSON.parse(text);
+
+
+            findSkinObjects(
+                json,
+                skinObjects,
+                new WeakSet()
+            );
+
+        }catch(jsonError){
+
+            console.warn(
+                "JSON parse failed, using regex fallback.",
+                jsonError
+            );
+
+        }
+
+
+        /*
+           If JSON traversal did not
+           find anything, use regex.
+        */
+
+        if(
+            skinObjects.length === 0
+        ){
+
+            skinObjects =
+                parseSkinsByRegex(
+                    text
+                );
+
+        }
+
+
+        /*
+           Remove duplicates.
+        */
+
+        const unique =
+            new Map();
+
+
+        skinObjects.forEach(
+            skin => {
+
+                const key =
+                    String(
+                        skin.id
+                    ) +
+                    "|" +
+                    String(
+                        skin.image
+                    );
+
+
+                if(
+                    !unique.has(key)
+                ){
+
+                    unique.set(
+                        key,
+                        skin
+                    );
+
+                }
+
+            }
+        );
+
+
+        allSkins =
+            [...unique.values()];
+
+
+        /*
+           Remove obvious Spine
+           assets.
+        */
+
+        allSkins =
+            allSkins.filter(
+                skin =>
+                    !String(
+                        skin.image
+                    )
+                    .toLowerCase()
+                    .includes(
+                        "uses_spine"
+                    )
+            );
+
+
+        /*
+           Keep the original behavior:
+           newest entries first.
+        */
+
+        allSkins.reverse();
+
+
+        /*
+           Separate YouTube skins and all Agar.io flags from
+           the selected GameConfiguration.
+
+           YouTube skins are moved to Agar.io Youtubers.
+           Flags are moved to Flags of Agar.io.
+           Neither group remains in Agar.io Skins.
+        */
+
+        const normalizeSkinName =
+            value =>
+                String(value)
+                    .replace(/[_-]+/g," ")
+                    .replace(/\s+/g," ")
+                    .trim()
+                    .toLowerCase();
+
+        const youtubeSkinNameSet =
+            new Set(
+                YOUTUBER_SKIN_NAMES.map(
+                    name => normalizeSkinName(name)
+                )
+            );
+
+        /* Comprehensive country/territory name list used to
+           recognise flag skins from GameConfiguration. */
+        const flagNames = new Set(`
+Agar.io
+Agar
+Chat
+Pika
+Facebook
+Fidel
+Moon
+USA
+UK
+Afghanistan
+Albania
+Algeria
+Andorra
+Angola
+Antigua and Barbuda
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahamas
+Bahrain
+Bangladesh
+Barbados
+Belarus
+Belgium
+Belize
+Benin
+Bhutan
+Bolivia
+Bosnia and Herzegovina
+Botswana
+Brazil
+Brunei
+Bulgaria
+Burkina Faso
+Burundi
+Cabo Verde
+Cambodia
+Cameroon
+Canada
+Central African Republic
+Chad
+Chile
+China
+Colombia
+Comoros
+Congo
+Democratic Republic of the Congo
+Costa Rica
+Croatia
+Cuba
+Cyprus
+Czechia
+Denmark
+Djibouti
+Dominica
+Dominican Republic
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Eritrea
+Estonia
+Eswatini
+Ethiopia
+Fiji
+Finland
+France
+Gabon
+Gambia
+Georgia
+Germany
+Ghana
+Greece
+Grenada
+Guatemala
+Guinea
+Guinea-Bissau
+Guyana
+Haiti
+Honduras
+Hungary
+Iceland
+India
+Indonesia
+Iran
+Iraq
+Ireland
+Israel
+Italy
+Ivory Coast
+Jamaica
+Japan
+Jordan
+Kazakhstan
+Kenya
+Kiribati
+Kuwait
+Kyrgyzstan
+Laos
+Latvia
+Lebanon
+Lesotho
+Liberia
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Madagascar
+Malawi
+Malaysia
+Maldives
+Mali
+Malta
+Marshall Islands
+Mauritania
+Mauritius
+Mexico
+Micronesia
+Moldova
+Monaco
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Myanmar
+Namibia
+Nauru
+Nepal
+Netherlands
+New Zealand
+Nicaragua
+Niger
+Nigeria
+North Korea
+North Macedonia
+Norway
+Oman
+Pakistan
+Palau
+Palestine
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Qatar
+Romania
+Russia
+Rwanda
+Saint Kitts and Nevis
+Saint Lucia
+Saint Vincent and the Grenadines
+Samoa
+San Marino
+Sao Tome and Principe
+Saudi Arabia
+Senegal
+Serbia
+Seychelles
+Sierra Leone
+Singapore
+Slovakia
+Slovenia
+Somalia
+South Africa
+South Korea
+South Sudan
+Spain
+Sri Lanka
+Sudan
+Suriname
+Sweden
+Switzerland
+Taiwan
+Tajikistan
+Tanzania
+Thailand
+Timor-Leste
+Togo
+Tonga
+Trinidad and Tobago
+Tunisia
+Turkey
+Tuvalu
+Uganda
+Ukraine
+United Arab Emirates
+United Kingdom
+United States
+Uruguay
+Uzbekistan
+Vanuatu
+Vatican City
+Venezuela
+Vietnam
+Yemen
+Zambia
+Zimbabwe
+Kosovo
+Kurdistan
+UAE
+`.split(/\n+/).map(x=>normalizeSkinName(x)).filter(Boolean));
+
+        const isYouTubeSkin =
+            skin => {
+                const name = normalizeSkinName(skin.id);
+                return youtubeSkinNameSet.has(name) ||
+                    /(^|[ _-])(youtube|youtuber|yt)([ _-]|$)/i.test(name) ||
+                    /youtube|youtuber/i.test(name);
+            };
+
+        /*
+           Flag detection is intentionally broad. Some GameConfiguration
+           versions use the country name directly (Jordan, Egypt, USA),
+           while others may use a country + flag style name. All of those
+           must be removed from Agar.io Skins and shown in Flags of Agar.io.
+        */
+        const flagNamePatterns =
+            Array.from(flagNames)
+                .filter(name => name.length >= 2)
+                .sort((a,b) => b.length - a.length);
+
+        const isFlagSkin =
+            skin => {
+                const name = normalizeSkinName(skin.id);
+                const image = String(skin.image || "").toLowerCase();
+
+                /* Explicit special Agar.io flag entries. */
+                const specialFlagNames = new Set([
+                    "agar.io",
+                    "agar io",
+                    "agar",
+                    "chat",
+                    "pika",
+                    "facebook",
+                    "fidel",
+                    "moon",
+                    "usa",
+                    "uk",
+                    "united states",
+                    "united kingdom",
+                    "trump",
+                    "donald trump",
+                    "trump flag",
+                    "obama",
+                    "barack obama",
+                    "obama flag",
+                    "doge",
+                    "doge flag",
+                    "8",
+                    "8 flag",
+                    "char",
+                    "bulba",
+                    "squi",
+                    "kim jong un",
+                    "kim jong-un",
+                    "boris irs",
+                    "hong kong",
+                    "earth"
+                ]);
+
+                if(specialFlagNames.has(name)){
+                    return true;
+                }
+
+                /* Additional requested Agar.io flag/community entries. */
+                const requestedFlagNames = new Set([
+                    "char",
+                    "bulba",
+                    "squi",
+                    "agar.io",
+                    "kim jong un",
+                    "kim jong-un",
+                    "boris irs",
+                    "hong kong",
+                    "earth"
+                ]);
+                if(requestedFlagNames.has(name)){
+                    return true;
+                }
+
+                /* Exact country/territory names. */
+                if(flagNames.has(name)){
+                    return true;
+                }
+
+                /* Names such as jordan flag, flag jordan, jordan_flag, etc. */
+                if(
+                    name.startsWith("flag ") ||
+                    name.endsWith(" flag") ||
+                    name.includes(" flag ") ||
+                    name.includes("_flag") ||
+                    name.includes("-flag")
+                ){
+                    return true;
+                }
+
+                /* Catch country names used inside config IDs. */
+                return flagNamePatterns.some(
+                    country => {
+                        if(country.length < 3) return false;
+                        const escaped = country.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                        return new RegExp("(^|[ _-])" + escaped + "($|[ _-])", "i").test(name);
+                    }
+                );
+            };
+
+        youtuberSkins =
+            allSkins
+                .filter(isYouTubeSkin)
+                .map(skin => [
+                    String(skin.id).replace(/_/g," "),
+                    skin.image,
+                    "Type the nick **" +
+                    String(skin.id).replace(/_/g," ") +
+                    "** in Agar.io to use this skin."
+                ]);
+
+        agarioFlags =
+            allSkins
+                .filter(isFlagSkin)
+                .map(skin => [
+                    String(skin.id).replace(/_/g," "),
+                    skin.image,
+                    "Type the nick **" +
+                    String(skin.id).replace(/_/g," ") +
+                    "** in Agar.io to use this flag."
+                ]);
+
+        allSkins =
+            allSkins.filter(
+                skin => !isYouTubeSkin(skin) && !isFlagSkin(skin)
+            );
+
+        /* Keep Veggie Z at the top of the normal Agar.io skins. */
+        const veggieIndex = allSkins.findIndex(
+            skin => normalizeSkinName(skin.id) === "veggie z"
+        );
+        if(veggieIndex > 0){
+            const veggie = allSkins.splice(veggieIndex, 1)[0];
+            allSkins.unshift(veggie);
+        }
+
+        console.log(
+            "Agar.io skins found:",
+            allSkins.length,
+            "version:",
+            version
+        );
+
+        console.log(
+            "YouTube skins found:",
+            youtuberSkins.length,
+            "version:",
+            version
+        );
+
+        console.log(
+            "Agar.io flags found:",
+            agarioFlags.length,
+            "version:",
+            version
+        );
+
+
+        if(
+            allSkins.length === 0
+        ){
+
+            throw new Error(
+                "No skins found in configuration."
+            );
+
+        }
+
+
+        renderAgarioPage(1);
+
+
+    }catch(error){
+
+        console.error(
+            "Unable to load Agar.io skins:",
+            error
+        );
+
+
+        box.innerHTML = `
+
+            <div class="loading-box">
+
+                <strong>
+                    Unable to load skins
+                </strong>
+
+                <span>
+                    Version: ${escapeHTML(version)}
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
 }
 
-/* =========================
-   MODAL GEDRAG
-========================= */
 
-document.querySelectorAll(".modal").forEach(modal => {
-  modal.addEventListener("click", event => {
-    if (event.target === modal) {
-      modal.classList.remove("open");
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   RENDER AGARIO PAGE
+========================================================= */
+
+function renderAgarioPage(page){
+
+    const box =
+        document.getElementById(
+            "skins"
+        );
+
+    const pages =
+        document.getElementById(
+            "agarioPages"
+        );
+
+
+    const skins =
+        allSkins || [];
+
+
+    const total =
+        Math.max(
+            1,
+            Math.ceil(
+                skins.length /
+                PER_PAGE
+            )
+        );
+
+
+    if(
+        page < 1
+    ){
+
+        page = 1;
+
     }
-  });
-});
 
-/* =========================
-   START
-========================= */
 
-loadCurrentUser();
+    if(
+        page > total
+    ){
+
+        page = total;
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    const start =
+        (page - 1) *
+        PER_PAGE;
+
+
+    const currentSkins =
+        skins.slice(
+            start,
+            start + PER_PAGE
+        );
+
+
+    if(
+        currentSkins.length === 0
+    ){
+
+        box.innerHTML = `
+
+            <div class="loading-box">
+
+                No skins found.
+
+            </div>
+
+        `;
+
+    }
+
+
+    currentSkins.forEach(
+        skin => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "skin";
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.alt =
+                String(
+                    skin.id
+                );
+
+
+            img.loading =
+                "lazy";
+
+
+            setImageWithFallback(
+                img,
+                skin.image
+            );
+
+
+            const name =
+                document.createElement(
+                    "span"
+                );
+
+
+            name.textContent =
+                String(
+                    skin.id
+                )
+                .replace(
+                    /_/g,
+                    " "
+                );
+
+
+            card.appendChild(
+                img
+            );
+
+            card.appendChild(
+                name
+            );
+
+
+            box.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    pages.innerHTML = "";
+
+
+    /*
+       Previous
+    */
+
+    if(total > 1){
+
+        const previous =
+            document.createElement(
+                "button"
+            );
+
+
+        previous.className =
+            "page-btn";
+
+
+        previous.textContent =
+            "‹";
+
+
+        previous.disabled =
+            page === 1;
+
+
+        previous.onclick =
+            function(){
+
+                if(page > 1){
+
+                    renderAgarioPage(
+                        page - 1
+                    );
+
+                }
+
+            };
+
+
+        pages.appendChild(
+            previous
+        );
+
+    }
+
+
+    /*
+       Page buttons
+    */
+
+    let startPage =
+        Math.max(
+            1,
+            page - 2
+        );
+
+
+    let endPage =
+        Math.min(
+            total,
+            page + 2
+        );
+
+
+    for(
+        let i = startPage;
+        i <= endPage;
+        i++
+    ){
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.className =
+            "page-btn" +
+            (
+                i === page
+                    ? " active"
+                    : ""
+            );
+
+
+        button.textContent =
+            i;
+
+
+        button.onclick =
+            function(){
+
+                renderAgarioPage(
+                    i
+                );
+
+            };
+
+
+        pages.appendChild(
+            button
+        );
+
+    }
+
+
+    /*
+       Next
+    */
+
+    if(total > 1){
+
+        const next =
+            document.createElement(
+                "button"
+            );
+
+
+        next.className =
+            "page-btn";
+
+
+        next.textContent =
+            "›";
+
+
+        next.disabled =
+            page === total;
+
+
+        next.onclick =
+            function(){
+
+                if(page < total){
+
+                    renderAgarioPage(
+                        page + 1
+                    );
+
+                }
+
+            };
+
+
+        pages.appendChild(
+            next
+        );
+
+    }
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   YOUTUBER SKINS
+========================================================= */
+
+function loadYoutuberSkins(){
+
+    renderYoutuberPage(1);
+
+}
+
+
+function renderYoutuberPage(page){
+
+    const perPage =
+        30;
+
+
+    const box =
+        document.getElementById(
+            "youtuberSkins"
+        );
+
+
+    const pages =
+        document.getElementById(
+            "youtuberPages"
+        );
+
+
+    const total =
+        Math.max(
+            1,
+            Math.ceil(
+                youtuberSkins.length /
+                perPage
+            )
+        );
+
+
+    page =
+        Math.max(
+            1,
+            Math.min(
+                page,
+                total
+            )
+        );
+
+
+    box.innerHTML = "";
+
+
+    const start =
+        (page - 1) *
+        perPage;
+
+
+    youtuberSkins
+        .slice(
+            start,
+            start + perPage
+        )
+        .forEach(
+            skin => {
+
+                const name =
+                    skin[0];
+
+                const image =
+                    skin[1];
+
+                const instruction =
+                    skin[2] || "";
+
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "skin";
+
+
+                const img =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                img.alt =
+                    name;
+
+                img.loading =
+                    "lazy";
+
+
+                setImageWithFallback(
+                    img,
+                    image
+                );
+
+
+                const title =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                title.className =
+                    "youtuber-name";
+
+
+                title.textContent =
+                    name;
+
+
+                const statusRow =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                statusRow.className =
+                    "youtuber-status";
+
+
+                const statusLabel =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                statusLabel.className =
+                    "status-label";
+
+
+                statusLabel.textContent =
+                    "Status:";
+
+
+                const statusValue =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                const statusKey =
+                    getYoutuberStatus(
+                        name
+                    );
+
+
+                const statusInfo =
+                    STATUS_INFO[
+                        statusKey
+                    ] ||
+                    STATUS_INFO.inactive;
+
+
+                statusValue.className =
+                    "status-value " +
+                    statusInfo.className;
+
+
+                statusValue.textContent =
+                    statusInfo.label;
+
+
+                statusRow.appendChild(
+                    statusLabel
+                );
+
+                statusRow.appendChild(
+                    statusValue
+                );
+
+
+                const instructionBox =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                instructionBox.className =
+                    "skin-instruction";
+
+
+                instructionBox.innerHTML =
+                    instruction.replace(
+                        /\*\*(.*?)\*\*/g,
+                        "<strong>$1</strong>"
+                    );
+
+
+                card.appendChild(
+                    img
+                );
+
+                card.appendChild(
+                    title
+                );
+
+                card.appendChild(
+                    statusRow
+                );
+
+                card.appendChild(
+                    instructionBox
+                );
+
+
+                box.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+    renderPagination(
+        pages,
+        total,
+        page,
+        renderYoutuberPage
+    );
+
+}
+
+
+/* =========================================================
+   FLAGS OF AGAR.IO
+========================================================= */
+
+function loadAgarioFlags(){
+    renderAgarioFlagsPage(1);
+}
+
+function renderAgarioFlagsPage(page){
+    const perPage = 30;
+    const box = document.getElementById("youtuberSkins");
+    const pages = document.getElementById("youtuberPages");
+    const total = Math.max(1, Math.ceil(agarioFlags.length / perPage));
+    page = Math.max(1, Math.min(page, total));
+    box.innerHTML = "";
+
+    agarioFlags.slice((page-1)*perPage, page*perPage).forEach(skin => {
+        const card = document.createElement("div");
+        card.className = "skin";
+        const img = document.createElement("img");
+        img.alt = skin[0];
+        img.loading = "lazy";
+        setImageWithFallback(img, skin[1]);
+        const title = document.createElement("span");
+        title.className = "youtuber-name";
+        title.textContent = skin[0];
+        const instruction = document.createElement("div");
+        instruction.className = "skin-instruction";
+        instruction.innerHTML = skin[2].replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>");
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(instruction);
+        box.appendChild(card);
+    });
+
+    renderPagination(pages, total, page, renderAgarioFlagsPage);
+}
+
+
+/* =========================================================
+   AGARIO YOUTUBERS
+========================================================= */
+
+function loadAgarioYoutubers(){
+
+    const manual = AGARIO_YOUTUBERS.map(item => [
+        item[0],
+        item[1],
+        item[2] || "",
+        item[3] || null
+    ]);
+
+    const configSkins = youtuberSkins.map(item => [
+        item[0],
+        item[1],
+        item[2] || "",
+        null
+    ]);
+
+    const combined = [...manual, ...configSkins];
+    const unique = new Map();
+    combined.forEach(item => {
+        const key = normalizeYoutuberName(item[0]);
+        if(!unique.has(key)) unique.set(key, item);
+    });
+
+    agarioYoutubers = [...unique.values()];
+    renderAgarioYoutubersPage(1);
+
+}
+
+function normalizeYoutuberName(name){
+    return String(name).trim().toLowerCase().replace(/[_-]+/g," ").replace(/\s+/g," ");
+}
+
+
+function renderAgarioYoutubersPage(page){
+
+    const perPage =
+        30;
+
+
+    const box =
+        document.getElementById(
+            "youtubersList"
+        );
+
+
+    const pages =
+        document.getElementById(
+            "youtubersPages"
+        );
+
+
+    const total =
+        Math.max(
+            1,
+            Math.ceil(
+                agarioYoutubers.length /
+                perPage
+            )
+        );
+
+
+    page =
+        Math.max(
+            1,
+            Math.min(
+                page,
+                total
+            )
+        );
+
+
+    box.innerHTML = "";
+
+
+    const start =
+        (page - 1) *
+        perPage;
+
+
+    agarioYoutubers
+        .slice(
+            start,
+            start + perPage
+        )
+        .forEach(
+            item => {
+
+                const name =
+                    item[0];
+
+                const image =
+                    item[1];
+
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "skin";
+
+
+                card.setAttribute(
+                    "data-name",
+                    name
+                );
+
+
+                const img =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                img.className =
+                    "yt-card-img";
+
+
+                img.alt =
+                    name;
+
+
+                img.loading =
+                    "lazy";
+
+
+                setImageWithFallback(
+                    img,
+                    image
+                );
+
+
+                const title =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                title.className =
+                    "youtuber-name";
+
+
+                title.textContent =
+                    name;
+
+
+                const statusRow =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                statusRow.className =
+                    "youtuber-status";
+
+
+                const statusLabel =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                statusLabel.className =
+                    "status-label";
+
+
+                statusLabel.textContent =
+                    "Status:";
+
+
+                const statusValue =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                const statusKey =
+                    getYoutuberStatus(
+                        name
+                    );
+
+
+                const statusInfo =
+                    STATUS_INFO[
+                        statusKey
+                    ] ||
+                    STATUS_INFO.inactive;
+
+
+                statusValue.className =
+                    "status-value " +
+                    statusInfo.className;
+
+
+                statusValue.textContent =
+                    statusInfo.label;
+
+
+                statusRow.appendChild(
+                    statusLabel
+                );
+
+                statusRow.appendChild(
+                    statusValue
+                );
+
+
+                card.appendChild(
+                    img
+                );
+
+                card.appendChild(
+                    title
+                );
+
+                card.appendChild(
+                    statusRow
+                );
+
+
+                card.onclick =
+                    function(){
+
+                        openYoutuberModal(
+                            name,
+                            item[3] || null
+                        );
+
+                    };
+
+
+                box.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+    renderPagination(
+        pages,
+        total,
+        page,
+        renderAgarioYoutubersPage
+    );
+
+}
+
+
+/* =========================================================
+   GENERIC PAGINATION
+========================================================= */
+
+function renderPagination(
+    container,
+    total,
+    page,
+    callback
+){
+
+    container.innerHTML = "";
+
+
+    if(total <= 1){
+
+        return;
+
+    }
+
+
+    const previous =
+        document.createElement(
+            "button"
+        );
+
+
+    previous.className =
+        "page-btn";
+
+
+    previous.textContent =
+        "‹";
+
+
+    previous.disabled =
+        page === 1;
+
+
+    previous.onclick =
+        function(){
+
+            if(page > 1){
+
+                callback(
+                    page - 1
+                );
+
+            }
+
+        };
+
+
+    container.appendChild(
+        previous
+    );
+
+
+    let startPage =
+        Math.max(
+            1,
+            page - 2
+        );
+
+
+    let endPage =
+        Math.min(
+            total,
+            page + 2
+        );
+
+
+    for(
+        let i = startPage;
+        i <= endPage;
+        i++
+    ){
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+
+        button.className =
+            "page-btn" +
+            (
+                i === page
+                    ? " active"
+                    : ""
+            );
+
+
+        button.textContent =
+            i;
+
+
+        button.onclick =
+            function(){
+
+                callback(i);
+
+            };
+
+
+        container.appendChild(
+            button
+        );
+
+    }
+
+
+    const next =
+        document.createElement(
+            "button"
+        );
+
+
+    next.className =
+        "page-btn";
+
+
+    next.textContent =
+        "›";
+
+
+    next.disabled =
+        page === total;
+
+
+    next.onclick =
+        function(){
+
+            if(page < total){
+
+                callback(
+                    page + 1
+                );
+
+            }
+
+        };
+
+
+    container.appendChild(
+        next
+    );
+
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openYoutuberModal(
+    name,
+    channelUrl
+){
+
+    currentModalName =
+        name;
+
+
+    const modal =
+        document.getElementById(
+            "youtuberModal"
+        );
+
+
+    const title =
+        document.getElementById(
+            "modalTitle"
+        );
+
+
+    const statusValue =
+        document.getElementById(
+            "modalStatusValue"
+        );
+
+
+    const description =
+        document.getElementById(
+            "modalDescription"
+        );
+
+
+    const videos =
+        document.getElementById(
+            "modalVideos"
+        );
+
+
+    const channelDescription =
+        document.getElementById(
+            "modalChannelDescription"
+        );
+
+
+    const loader =
+        document.getElementById(
+            "modalLoader"
+        );
+
+
+    title.textContent =
+        name;
+
+
+    const statusKey =
+        getYoutuberStatus(
+            name
+        );
+
+
+    const statusInfo =
+        STATUS_INFO[
+            statusKey
+        ] ||
+        STATUS_INFO.inactive;
+
+
+    statusValue.textContent =
+        statusInfo.label;
+
+
+    statusValue.className =
+        "status-value " +
+        statusInfo.className;
+
+
+    description.innerHTML =
+        "Loading description...";
+
+
+    videos.innerHTML = "";
+
+
+    channelDescription.textContent =
+        "";
+
+
+    loader.style.display =
+        "inline-block";
+
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    const agarioItem =
+        AGARIO_YOUTUBERS.find(
+            item =>
+                item[0] === name
+        );
+
+
+    if(agarioItem){
+
+        const fixedDescription =
+            agarioItem[2] || "";
+
+
+        description.textContent =
+            fixedDescription;
+
+
+        const fixedChannel =
+            agarioItem[3] ||
+            channelUrl;
+
+
+        if(fixedChannel){
+
+            fetchThreeChannelVideos(
+                fixedChannel
+            )
+            .then(
+                ids => {
+
+                    populateModalWithIds(
+                        name,
+                        fixedDescription,
+                        ids
+                    );
+
+                }
+            )
+            .catch(
+                error => {
+
+                    console.warn(
+                        error
+                    );
+
+                    populateModalWithIds(
+                        name,
+                        fixedDescription,
+                        []
+                    );
+
+                }
+            )
+            .finally(
+                () => {
+
+                    loader.style.display =
+                        "none";
+
+                }
+            );
+
+        }else{
+
+            loader.style.display =
+                "none";
+
+            populateModalWithIds(
+                name,
+                fixedDescription,
+                []
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    fetchYouTubeData(
+        name
+    )
+    .then(
+        data => {
+
+            const descriptionText =
+                data.channelDescription ||
+                data.generatedDescription ||
+                (
+                    name +
+                    " is a content creator associated with Agar.io."
+                );
+
+
+            description.innerHTML =
+                descriptionText;
+
+
+            populateModalWithIds(
+                name,
+                descriptionText,
+                data.videoIds.slice(
+                    0,
+                    3
+                )
+            );
+
+        }
+    )
+    .catch(
+        error => {
+
+            console.warn(
+                error
+            );
+
+
+            description.textContent =
+                "Description unavailable.";
+
+
+            populateModalWithIds(
+                name,
+                "No videos",
+                []
+            );
+
+        }
+    )
+    .finally(
+        () => {
+
+            loader.style.display =
+                "none";
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   MODAL VIDEO DISPLAY
+========================================================= */
+
+function populateModalWithIds(
+    name,
+    description,
+    ids
+){
+
+    const videos =
+        document.getElementById(
+            "modalVideos"
+        );
+
+
+    const channelDescription =
+        document.getElementById(
+            "modalChannelDescription"
+        );
+
+
+    channelDescription.textContent =
+        "";
+
+
+    videos.innerHTML =
+        "";
+
+
+    for(
+        let i = 0;
+        i < 3;
+        i++
+    ){
+
+        const videoId =
+            ids[i];
+
+
+        if(videoId){
+
+            const iframe =
+                document.createElement(
+                    "iframe"
+                );
+
+
+            iframe.src =
+                "https://www.youtube.com/embed/" +
+                encodeURIComponent(
+                    videoId
+                ) +
+                "?rel=0";
+
+
+            iframe.allow =
+                "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+
+
+            iframe.allowFullscreen =
+                true;
+
+
+            videos.appendChild(
+                iframe
+            );
+
+        }else{
+
+            const placeholder =
+                document.createElement(
+                    "div"
+                );
+
+
+            placeholder.style.flex =
+                "1";
+
+            placeholder.style.color =
+                "#8892a8";
+
+            placeholder.style.background =
+                "#071022";
+
+            placeholder.style.border =
+                "1px dashed #223";
+
+            placeholder.style.borderRadius =
+                "6px";
+
+            placeholder.style.padding =
+                "16px";
+
+            placeholder.style.fontSize =
+                "13px";
+
+            placeholder.textContent =
+                "No video found";
+
+
+            videos.appendChild(
+                placeholder
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeYoutuberModal(event){
+
+    const modal =
+        document.getElementById(
+            "youtuberModal"
+        );
+
+
+    if(
+        event &&
+        event.target &&
+        event.target !==
+            event.currentTarget
+    ){
+
+        return;
+
+    }
+
+
+    modal.classList.add(
+        "hidden"
+    );
+
+
+    currentModalName =
+        null;
+
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================================
+   YOUTUBE VIDEO FETCH
+========================================================= */
+
+async function fetchThreeChannelVideos(
+    channelUrl
+){
+
+    const proxies = [
+
+        url =>
+            "https://api.allorigins.win/raw?url=" +
+            encodeURIComponent(url),
+
+        url =>
+            url
+
+    ];
+
+
+    channelUrl =
+        channelUrl.replace(
+            /\/$/,
+            ""
+        );
+
+
+    const newestUrl =
+        channelUrl +
+        "/videos";
+
+
+    const popularUrl =
+        channelUrl +
+        "/videos?view=0&sort=p";
+
+
+    const newestIds =
+        await fetchVideoIdsFromPage(
+            newestUrl,
+            proxies
+        );
+
+
+    const popularIds =
+        await fetchVideoIdsFromPage(
+            popularUrl,
+            proxies
+        );
+
+
+    const combined =
+        Array.from(
+            new Set(
+                [
+                    ...newestIds,
+                    ...popularIds
+                ]
+            )
+        );
+
+
+    const left =
+        newestIds[0] ||
+        combined[0] ||
+        null;
+
+
+    const middle =
+        popularIds[0] ||
+        combined[1] ||
+        combined[0] ||
+        null;
+
+
+    const right =
+        combined.length > 2
+            ? combined[
+                Math.floor(
+                    Math.random() *
+                    combined.length
+                )
+            ]
+            : (
+                combined[
+                    combined.length - 1
+                ] || null
+            );
+
+
+    return [
+        left,
+        middle,
+        right
+    ].filter(Boolean);
+
+}
+
+
+/* =========================================================
+   FETCH VIDEO IDS
+========================================================= */
+
+async function fetchVideoIdsFromPage(
+    url,
+    proxies
+){
+
+    let html = "";
+
+
+    for(
+        const makeUrl of proxies
+    ){
+
+        try{
+
+            const response =
+                await fetch(
+                    makeUrl(url)
+                );
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Fetch failed: " +
+                    response.status
+                );
+
+            }
+
+
+            html =
+                await response.text();
+
+
+            if(
+                html &&
+                html.length > 200
+            ){
+
+                break;
+
+            }
+
+        }catch(error){
+
+            continue;
+
+        }
+
+    }
+
+
+    const ids = [];
+
+
+    if(html){
+
+        const regex =
+            /\/watch\?v=([A-Za-z0-9_-]{11})/g;
+
+
+        let match;
+
+
+        while(
+            (match =
+                regex.exec(html))
+            !== null
+        ){
+
+            const id =
+                match[1];
+
+
+            if(
+                !ids.includes(id)
+            ){
+
+                ids.push(id);
+
+            }
+
+
+            if(
+                ids.length >= 50
+            ){
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    return ids;
+
+}
+
+
+/* =========================================================
+   GENERIC YOUTUBE DATA
+========================================================= */
+
+async function fetchYouTubeData(
+    name
+){
+
+    const query =
+        encodeURIComponent(
+            name +
+            " Agar.io"
+        );
+
+
+    const searchUrl =
+        "https://www.youtube.com/results?search_query=" +
+        query;
+
+
+    const proxies = [
+
+        url =>
+            "https://api.allorigins.win/raw?url=" +
+            encodeURIComponent(url),
+
+        url =>
+            url
+
+    ];
+
+
+    let html = "";
+
+
+    for(
+        const makeUrl of proxies
+    ){
+
+        try{
+
+            const response =
+                await fetch(
+                    makeUrl(
+                        searchUrl
+                    )
+                );
+
+
+            if(!response.ok){
+
+                throw new Error(
+                    "Fetch failed"
+                );
+
+            }
+
+
+            html =
+                await response.text();
+
+
+            if(
+                html &&
+                html.length > 200
+            ){
+
+                break;
+
+            }
+
+        }catch(error){
+
+            continue;
+
+        }
+
+    }
+
+
+    const ids = [];
+
+
+    if(html){
+
+        const regex =
+            /\/watch\?v=([A-Za-z0-9_-]{11})/g;
+
+
+        let match;
+
+
+        while(
+            (match =
+                regex.exec(html))
+            !== null
+        ){
+
+            const id =
+                match[1];
+
+
+            if(
+                !ids.includes(id)
+            ){
+
+                ids.push(id);
+
+            }
+
+
+            if(
+                ids.length >= 12
+            ){
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    let channelUrl =
+        "";
+
+
+    if(html){
+
+        const channelRegex =
+            /href="(\/channel\/[A-Za-z0-9_-]+|\/@[^"]+|\/user\/[^"]+)"/g;
+
+
+        let match;
+
+
+        while(
+            (match =
+                channelRegex.exec(html))
+            !== null
+        ){
+
+            const link =
+                match[1];
+
+
+            if(
+                link &&
+                !link.includes("watch")
+            ){
+
+                channelUrl =
+                    "https://www.youtube.com" +
+                    link;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    let channelDescription =
+        "";
+
+
+    let logo =
+        null;
+
+
+    if(channelUrl){
+
+        const aboutUrl =
+            channelUrl +
+            "/about";
+
+
+        for(
+            const makeUrl of proxies
+        ){
+
+            try{
+
+                const response =
+                    await fetch(
+                        makeUrl(
+                            aboutUrl
+                        )
+                    );
+
+
+                if(!response.ok){
+
+                    throw new Error(
+                        "Channel fetch failed"
+                    );
+
+                }
+
+
+                const channelHTML =
+                    await response.text();
+
+
+                let match =
+                    channelHTML.match(
+                        /<meta name="description" content="([^"]+)"/
+                    );
+
+
+                if(
+                    match &&
+                    match[1]
+                ){
+
+                    channelDescription =
+                        match[1];
+
+                }else{
+
+                    match =
+                        channelHTML.match(
+                            /<meta property="og:description" content="([^"]+)"/
+                        );
+
+
+                    if(
+                        match &&
+                        match[1]
+                    ){
+
+                        channelDescription =
+                            match[1];
+
+                    }
+
+                }
+
+
+                if(
+                    !channelDescription
+                ){
+
+                    match =
+                        channelHTML.match(
+                            /"description":\s*"([^"]+)"/
+                        );
+
+
+                    if(
+                        match &&
+                        match[1]
+                    ){
+
+                        channelDescription =
+                            match[1];
+
+                    }
+
+                }
+
+
+                if(
+                    channelDescription
+                ){
+
+                    channelDescription =
+                        decodeHtmlEntities(
+                            channelDescription
+                        );
+
+                }
+
+
+                match =
+                    channelHTML.match(
+                        /<meta property="og:image" content="([^"]+)"/
+                    );
+
+
+                if(
+                    match &&
+                    match[1]
+                ){
+
+                    logo =
+                        match[1];
+
+                }
+
+
+                if(!logo){
+
+                    match =
+                        channelHTML.match(
+                            /"avatar":\s*\[\s*\{\s*"url":"([^"]+)"/
+                        );
+
+
+                    if(
+                        match &&
+                        match[1]
+                    ){
+
+                        logo =
+                            match[1]
+                            .replace(
+                                /\\u0026/g,
+                                "&"
+                            );
+
+                    }
+
+                }
+
+
+                break;
+
+            }catch(error){
+
+                continue;
+
+            }
+
+        }
+
+    }
+
+
+    if(
+        !logo &&
+        ids.length
+    ){
+
+        logo =
+            "https://i.ytimg.com/vi/" +
+            ids[0] +
+            "/hqdefault.jpg";
+
+    }
+
+
+    const generatedDescription =
+        generateAIDescription(
+            name,
+            channelDescription
+        );
+
+
+    return {
+
+        videoIds:ids,
+
+        channelDescription:
+            channelDescription,
+
+        logo:logo,
+
+        generatedDescription:
+            generatedDescription
+
+    };
+
+}
+
+
+/* =========================================================
+   DECODE HTML
+========================================================= */
+
+function decodeHtmlEntities(
+    string
+){
+
+    try{
+
+        const textarea =
+            document.createElement(
+                "textarea"
+            );
+
+
+        textarea.innerHTML =
+            string;
+
+
+        return textarea.value;
+
+    }catch(error){
+
+        return string;
+
+    }
+
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+function generateAIDescription(
+    name,
+    channelDescription
+){
+
+    if(
+        channelDescription &&
+        channelDescription.trim().length > 30
+    ){
+
+        return channelDescription;
+
+    }
+
+
+    const custom =
+        AGARIO_YOUTUBERS.find(
+            item =>
+                item[0] === name
+        );
+
+
+    if(
+        custom &&
+        custom[2]
+    ){
+
+        return custom[2]
+            .replace(
+                /\*\*(.*?)\*\*/g,
+                "<strong>$1</strong>"
+            );
+
+    }
+
+
+    return (
+        name +
+        " is a content creator associated with Agar.io. " +
+        "Their channel contains gameplay, tips and highlight videos. " +
+        "Use the nick <strong>" +
+        escapeHTML(name) +
+        "</strong> to use their skin in Agar.io."
+    );
+
+}
+
+
+/* =========================================================
+   PRELOAD
+========================================================= */
+
+async function startPreloadAllYoutubers(){
+
+    const badge =
+        document.getElementById(
+            "preloadStatus"
+        );
+
+
+    if(badge){
+
+        badge.style.display =
+            "inline-block";
+
+    }
+
+
+    const batchSize =
+        6;
+
+
+    const delay =
+        800;
+
+
+    const names = [
+        ...AGARIO_YOUTUBERS.map(
+            item => item[0]
+        )
+    ];
+
+
+    names.forEach(
+        name => {
+
+            youtuberMeta[name] = {
+
+                loaded:false,
+
+                logo:null,
+
+                channelDescription:null,
+
+                videoIds:[]
+
+            };
+
+        }
+    );
+
+
+    for(
+        let i = 0;
+        i < names.length;
+        i += batchSize
+    ){
+
+        const batch =
+            names.slice(
+                i,
+                i + batchSize
+            );
+
+
+        await Promise.all(
+            batch.map(
+                name =>
+                    preloadYoutuber(
+                        name
+                    )
+            )
+        );
+
+
+        await sleep(
+            delay
+        );
+
+    }
+
+
+    if(badge){
+
+        badge.style.display =
+            "none";
+
+    }
+
+}
+
+
+async function preloadYoutuber(
+    name
+){
+
+    if(
+        youtuberMeta[name] &&
+        youtuberMeta[name].loaded
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const data =
+            await fetchYouTubeData(
+                name
+            );
+
+
+        youtuberMeta[name] = {
+
+            loaded:true,
+
+            logo:
+                data.logo ||
+                null,
+
+            channelDescription:
+                data.channelDescription ||
+                data.generatedDescription ||
+                null,
+
+            videoIds:
+                data.videoIds ||
+                []
+
+        };
+
+    }catch(error){
+
+        youtuberMeta[name] = {
+
+            loaded:true,
+
+            logo:null,
+
+            channelDescription:null,
+
+            videoIds:[]
+
+        };
+
+    }
+
+}
+
+
+function sleep(ms){
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+/* =========================================================
+   YEAR
+========================================================= */
+
+document.getElementById(
+    "currentYear"
+).textContent =
+    new Date().getFullYear();
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+async function init(){
+
+    /*
+       Render the manually configured
+       Agar.io YouTubers immediately.
+    */
+
+    loadAgarioYoutubers();
+
+
+    /*
+       Then load the real Agar.io
+       versions and skins. The YouTube
+       skins/flags are taken from the
+       selected GameConfiguration.
+    */
+
+    await versions();
+
+
+    /*
+       Preload YouTube data in the
+       background.
+    */
+
+    startPreloadAllYoutubers();
+
+}
+
+
+if(
+    document.readyState ===
+    "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        init
+    );
+
+}else{
+
+    init();
+
+}
+
 </script>
 
 </body>
