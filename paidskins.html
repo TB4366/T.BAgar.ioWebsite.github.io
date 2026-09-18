@@ -1,1824 +1,707 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>T.B Agar.io — Xsolla Shop</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
+  <title>T.B Agar.io Shop</title>
 
-body {
-  background: #080b14;
-  color: white;
-  min-height: 100vh;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-header {
-  padding: 16px 25px;
-  background: #0d111e;
-  border-bottom: 1px solid #273247;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
+    body {
+      background: #080d18;
+      color: white;
+      min-height: 100vh;
+    }
 
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-}
+    header {
+      background: #101a2e;
+      border-bottom: 1px solid #263754;
+      padding: 22px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-.logo span {
-  color: #7c8cff;
-}
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #4ca3ff;
+      letter-spacing: 1px;
+    }
 
-.header-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+    .logo span {
+      color: white;
+    }
 
-button {
-  cursor: pointer;
-  border: 1px solid #33415c;
-  background: #171e2e;
-  color: white;
-  border-radius: 10px;
-  padding: 12px 18px;
-  font-weight: bold;
-}
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-button:hover {
-  background: #252f47;
-}
+    .discord-button {
+      background: #5865f2;
+      color: white;
+      text-decoration: none;
+      padding: 11px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
 
-button:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
+    .discord-button:hover {
+      background: #4752c4;
+    }
 
-main {
-  max-width: 1500px;
-  width: 95%;
-  margin: 35px auto;
-}
+    .hero {
+      text-align: center;
+      padding: 55px 20px 35px;
+    }
 
-.hero {
-  text-align: center;
-  padding: 45px 20px;
-  margin-bottom: 30px;
-  background: linear-gradient(135deg, #121a31, #0b101e);
-  border: 1px solid #28344b;
-  border-radius: 22px;
-}
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
 
-.hero h1 {
-  font-size: clamp(30px, 5vw, 52px);
-  margin-bottom: 12px;
-}
+    .hero h1 span {
+      color: #4ca3ff;
+    }
 
-.hero h1 span {
-  color: #8491ff;
-}
+    .hero p {
+      color: #9caecc;
+      font-size: 16px;
+    }
 
-.hero p {
-  color: #9ba7bd;
-  line-height: 1.6;
-}
+    .shop-controls {
+      max-width: 1250px;
+      margin: 0 auto 30px;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 22px;
-}
+    .search-box {
+      flex: 1;
+      min-width: 230px;
+      background: #111d31;
+      border: 1px solid #2b3c58;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+    }
 
-.toolbar input,
-.toolbar select {
-  background: #111827;
-  border: 1px solid #29354a;
-  color: white;
-  border-radius: 10px;
-  padding: 13px;
-  outline: none;
-}
+    .search-box:focus {
+      border-color: #4ca3ff;
+    }
 
-.toolbar input {
-  width: min(350px, 100%);
-}
+    .sort-select {
+      background: #111d31;
+      color: white;
+      border: 1px solid #2b3c58;
+      padding: 14px;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+    }
 
-.status {
-  color: #94a3b8;
-  font-size: 14px;
-}
+    .products-grid {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 0 20px 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+    }
 
-.products {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
-}
+    .product-card {
+      background: #111d31;
+      border: 1px solid #263754;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
 
-.product {
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 205px minmax(0, 1fr);
-  background: #111621;
-  border: 1px solid #29354a;
-  border-radius: 22px;
-  overflow: hidden;
-}
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: #4ca3ff;
+    }
 
-.product-image {
-  min-height: 205px;
-  background: #172033;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+    .product-image-container {
+      height: 230px;
+      background: radial-gradient(
+        circle,
+        #253c61 0%,
+        #142238 45%,
+        #0d1729 100%
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
 
-.product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+    .product-image {
+      max-width: 100%;
+      max-height: 190px;
+      object-fit: contain;
+      transition: transform 0.2s;
+    }
 
-.product-image img.failed {
-  display: none;
-}
+    .product-card:hover .product-image {
+      transform: scale(1.06);
+    }
 
-.product-info {
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 11px;
-  min-width: 0;
-}
+    .product-info {
+      padding: 20px;
+    }
 
-.product-name {
-  font-size: 21px;
-  font-weight: bold;
-  overflow-wrap: anywhere;
-}
+    .product-name {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 9px;
+    }
 
-.product-id {
-  font-size: 12px;
-  color: #6f7d94;
-  overflow-wrap: anywhere;
-}
+    .product-description {
+      color: #94a8c6;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 40px;
+      margin-bottom: 18px;
+    }
 
-.price {
-  display: inline-block;
-  width: fit-content;
-  background: #102d2a;
-  border: 1px solid #27635a;
-  color: #58e3b5;
-  padding: 9px 12px;
-  border-radius: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-}
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
 
-.rewards {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+    .product-price {
+      color: #55d68a;
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-.reward {
-  padding: 7px 10px;
-  background: #161e2d;
-  border: 1px solid #29354a;
-  border-radius: 20px;
-  color: #aeb9cb;
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
+    .buy-button {
+      border: none;
+      background: #247ce5;
+      color: white;
+      padding: 11px 15px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-.buy-row {
-  margin-top: auto;
-  display: flex;
-  gap: 8px;
-}
+    .buy-button:hover {
+      background: #1764bf;
+    }
 
-.buy-row button {
-  flex: 1;
-  background: #7482ff;
-  border-color: #7482ff;
-  color: white;
-}
+    .empty-message {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px;
+      color: #94a8c6;
+    }
 
-.buy-row button:hover {
-  background: #5d6ceb;
-}
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 1000;
+    }
 
-.details-button {
-  max-width: 55px;
-}
+    .modal-overlay.active {
+      display: flex;
+    }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 30px;
-}
+    .modal {
+      background: #111d31;
+      border: 1px solid #344b70;
+      border-radius: 14px;
+      max-width: 450px;
+      width: 100%;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+    }
 
-.pagination button.active {
-  background: #7482ff;
-  border-color: #7482ff;
-}
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: transparent;
+      color: #a7b7d0;
+      border: none;
+      font-size: 25px;
+      cursor: pointer;
+    }
 
-.empty {
-  padding: 40px;
-  text-align: center;
-  color: #94a3b8;
-  grid-column: 1 / -1;
-}
+    .modal-image {
+      max-width: 190px;
+      max-height: 190px;
+      object-fit: contain;
+      margin: 15px auto 20px;
+      display: block;
+    }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(0,0,0,.8);
-  z-index: 100;
-}
+    .modal h2 {
+      margin-bottom: 10px;
+    }
 
-.modal.open {
-  display: flex;
-}
+    .modal p {
+      color: #a5b5cd;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
 
-.modal-box {
-  width: min(600px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 25px;
-  background: #101827;
-  border: 1px solid #33415c;
-  border-radius: 18px;
-}
+    .modal-price {
+      font-size: 26px;
+      font-weight: bold;
+      color: #55d68a;
+      margin-bottom: 22px;
+    }
 
-.modal-box h2 {
-  margin-bottom: 20px;
-}
+    .contact-button {
+      display: inline-block;
+      text-decoration: none;
+      background: #247ce5;
+      color: white;
+      padding: 13px 22px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
 
-.form-group {
-  margin-bottom: 14px;
-}
+    footer {
+      background: #101a2e;
+      border-top: 1px solid #263754;
+      padding: 25px;
+      text-align: center;
+      color: #7f91ad;
+      font-size: 13px;
+    }
 
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  color: #b6c2d4;
-}
+    @media (max-width: 600px) {
+      header {
+        padding: 20px;
+      }
 
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  background: #080d18;
-  border: 1px solid #33415c;
-  border-radius: 9px;
-  color: white;
-}
+      .hero h1 {
+        font-size: 31px;
+      }
 
-.modal-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-}
+      .product-image-container {
+        height: 210px;
+      }
 
-.modal-buttons button {
-  flex: 1;
-}
+      .product-bottom {
+        align-items: stretch;
+        flex-direction: column;
+      }
 
-.message {
-  display: none;
-  background: #182d45;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  color: #cbd5e1;
-}
-
-.message.show {
-  display: block;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid #33415c;
-}
-
-.cart-total {
-  margin-top: 20px;
-  font-size: 22px;
-  color: #7c8cff;
-  font-weight: bold;
-}
-
-.iframe-wrap {
-  width: 100%;
-  height: 70vh;
-  min-height: 400px;
-  background: #020617;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.iframe-wrap iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.warning {
-  color: #fbbf24;
-  background: #332711;
-  border: 1px solid #6b4b18;
-  padding: 14px;
-  border-radius: 10px;
-  margin-bottom: 18px;
-  line-height: 1.5;
-}
-
-.checkbox-row {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin: 15px 0;
-  color: #cbd5e1;
-  line-height: 1.5;
-}
-
-.checkbox-row input {
-  margin-top: 4px;
-}
-
-@media(max-width: 1200px) {
-  .products {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media(max-width: 650px) {
-  header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .products {
-    grid-template-columns: 1fr;
-  }
-
-  .product {
-    grid-template-columns: 150px minmax(0, 1fr);
-  }
-
-  .product-image {
-    min-height: 150px;
-  }
-
-  .product-info {
-    padding: 12px;
-  }
-
-  .product-name {
-    font-size: 17px;
-  }
-}
-</style>
+      .buy-button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">T.B <span>Agar.io Shop</span></div>
+  <header>
+    <div class="logo">
+      T.B <span>Agar.io Shop</span>
+    </div>
 
-  <div class="header-actions">
-    <button id="loginButton" onclick="openModal('loginModal')">
-      Login
-    </button>
+    <div class="header-right">
+      <a
+        class="discord-button"
+        href="https://discord.gg/qhuXPrVzBx"
+        target="_blank"
+      >
+        Join Discord
+      </a>
+    </div>
+  </header>
 
-    <button id="registerButton" onclick="openModal('registerModal')">
-      Register
-    </button>
+  <section class="hero">
+    <h1>Choose Your <span>Skin</span></h1>
+    <p>Discover exclusive Agar.io skins from T.B.</p>
+  </section>
 
-    <button id="logoutButton" onclick="logout()" style="display:none">
-      Logout
-    </button>
-
-    <button onclick="openCart()">
-      🛒 Cart (<span id="cartCount">0</span>)
-    </button>
-  </div>
-</header>
-
-<main>
-
-<section class="hero">
-  <h1>Welcome to <span>T.B Agar.io</span></h1>
-  <p>
-    Explore Agar.io skins and special deals.
-    Prices and product information are loaded from the configuration.
-  </p>
-</section>
-
-<section>
-  <div class="toolbar">
+  <div class="shop-controls">
     <input
+      type="text"
       id="searchInput"
-      type="search"
-      placeholder="Search skins..."
-      oninput="applyFilters()"
+      class="search-box"
+      placeholder="Search for a skin..."
+      aria-label="Search skins"
     >
 
-    <select id="sortSelect" onchange="applyFilters()">
-      <option value="default">Default order</option>
-      <option value="price-low">Price: Low to High</option>
-      <option value="price-high">Price: High to Low</option>
-      <option value="name">Name: A-Z</option>
+    <select id="sortSelect" class="sort-select" aria-label="Sort skins">
+      <option value="default">Sort by</option>
+      <option value="nameAsc">Name: A-Z</option>
+      <option value="nameDesc">Name: Z-A</option>
+      <option value="priceLow">Price: Low to High</option>
+      <option value="priceHigh">Price: High to Low</option>
     </select>
-
-    <div class="status" id="loadStatus">
-      Loading configuration...
-    </div>
   </div>
 
-  <div id="productsGrid" class="products"></div>
+  <main id="productsGrid" class="products-grid"></main>
 
-  <div id="pagination" class="pagination"></div>
-</section>
-
-</main>
-
-<footer style="text-align:center;padding:35px;color:#64748b">
-  © 2026 T.B Agar.io — All rights reserved.
-</footer>
-
-<!-- LOGIN -->
-
-<div id="loginModal" class="modal">
-  <div class="modal-box">
-    <h2>Login</h2>
-
-    <div id="loginMessage" class="message"></div>
-
-    <form onsubmit="login(event)">
-      <div class="form-group">
-        <label>Username</label>
-        <input id="loginUsername" required autocomplete="username">
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input id="loginPassword" type="password" required autocomplete="current-password">
-      </div>
-
-      <div class="modal-buttons">
-        <button type="submit">Login</button>
-        <button type="button" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- REGISTER -->
-
-<div id="registerModal" class="modal">
-  <div class="modal-box">
-    <h2>Create Account</h2>
-
-    <div id="registerMessage" class="message"></div>
-
-    <form onsubmit="register(event)">
-      <div class="form-group">
-        <label>Username</label>
-        <input id="registerUsername" required minlength="3" maxlength="32">
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input id="registerPassword" type="password" required minlength="6">
-      </div>
-
-      <div class="form-group">
-        <label>Repeat password</label>
-        <input id="registerPasswordAgain" type="password" required minlength="6">
-      </div>
-
-      <div class="modal-buttons">
-        <button type="submit">Register</button>
-        <button type="button" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- CART -->
-
-<div id="cartModal" class="modal">
-  <div class="modal-box">
-    <h2>Cart</h2>
-
-    <div id="cartItems"></div>
-    <div id="cartTotal" class="cart-total"></div>
-
-    <div class="modal-buttons">
-      <button onclick="checkout()">Checkout</button>
-      <button onclick="closeModals()">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- PURCHASE CONFIRMATION -->
-
-<div id="confirmModal" class="modal">
-  <div class="modal-box">
-    <h2>Confirm Purchase</h2>
-
-    <div class="warning">
-      ⚠ BETA REAL-MONEY PURCHASE
-
-      <br><br>
-
-      You will be redirected to the official Agar.io
-      payment server and Xsolla checkout.
-    </div>
-
-    <div id="confirmDetails"></div>
-
-    <label class="checkbox-row">
-      <input type="checkbox" id="riskCheckbox">
-      <span>
-        I understand that this opens an external payment
-        page and that payment must be completed there.
-      </span>
-    </label>
-
-    <div class="modal-buttons">
-      <button id="confirmBuyButton" onclick="confirmXsollaPurchase()" disabled>
-        I Agree — Open Xsolla
+  <div id="buyModal" class="modal-overlay">
+    <div class="modal">
+      <button
+        class="modal-close"
+        id="closeModal"
+        aria-label="Close modal"
+      >
+        &times;
       </button>
 
-      <button onclick="closeModals()">Cancel</button>
+      <img
+        id="modalImage"
+        class="modal-image"
+        src=""
+        alt="Selected skin"
+      >
+
+      <h2 id="modalName"></h2>
+
+      <p id="modalDescription"></p>
+
+      <div id="modalPrice" class="modal-price"></div>
+
+      <p>
+        To purchase this skin, contact T.B. through Discord.
+      </p>
+
+      <a
+        class="contact-button"
+        href="https://discord.gg/qhuXPrVzBx"
+        target="_blank"
+      >
+        Contact on Discord
+      </a>
     </div>
   </div>
-</div>
 
-<!-- XSOLLA CHECKOUT -->
-
-<div id="paymentModal" class="modal">
-  <div class="modal-box" style="width:min(1000px,100%)">
-    <h2>Xsolla Checkout</h2>
-
-    <div id="paymentMessage" class="message"></div>
-
-    <div class="iframe-wrap">
-      <iframe
-        id="paymentFrame"
-        title="Xsolla Checkout"
-        allow="payment"
-      ></iframe>
-    </div>
-
-    <div class="modal-buttons">
-      <button onclick="closePayment()">Close</button>
-    </div>
-  </div>
-</div>
-
-<script>
-/* =====================================================
-   CONFIGURATION
-===================================================== */
-
-const CONFIG_URL =
-  "https://biteyt.com/GameConfiguration.json";
-
-/*
-  Set this to the public location where the original
-  Agar.io skin PNG files are actually hosted.
-
-  The configuration's visualSource gives filenames such
-  as jokester.png and darkfeather.png.
-
-  This is not automatically guaranteed to be the same
-  location as the JSON file.
-*/
-const IMAGE_BASE = "https://biteyt.com/";
-
-/*
-  Agar.io's payment server.
-  The checkout URL is returned by this server.
-*/
-const PAYMENT_ENDPOINT =
-  "https://payments.agario.miniclippt.com";
-
-/* =====================================================
-   EXISTING 4 SKINS
-===================================================== */
-
-const products = {
-  "skin-001": {
-    id: "skin-001",
-    name: "Dohnut",
-    price: 1.99,
-    currency: "EUR",
-    image: "IMG_5334.webp",
-    purchaseId: null,
-    description: "A unique Agar.io skin.",
-    rewards: []
-  },
-
-  "skin-002": {
-    id: "skin-002",
-    name: "Pumpkitty",
-    price: 1.99,
-    currency: "EUR",
-    image: "IMG_0923.webp",
-    purchaseId: null,
-    description: "A cool skin with a cat style.",
-    rewards: []
-  },
-
-  "skin-003": {
-    id: "skin-003",
-    name: "Mindseye",
-    price: 1.99,
-    currency: "EUR",
-    image: "IMG_0920.webp",
-    purchaseId: null,
-    description: "A mysterious skin for your account.",
-    rewards: []
-  },
-
-  "skin-004": {
-    id: "skin-004",
-    name: "Nomster",
-    price: 5.99,
-    currency: "EUR",
-    image: "IMG_0924.webp",
-    purchaseId: null,
-    description: "A special premium Agar.io skin.",
-    rewards: []
-  }
-};
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let allProducts = [];
-let visibleProducts = [];
-let currentPage = 1;
-const PER_PAGE = 12;
-
-let cart = JSON.parse(
-  localStorage.getItem("tb_cart") || "[]"
-);
-
-let currentUser = null;
-let selectedPurchase = null;
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-function $(id) {
-  return document.getElementById(id);
-}
-
-function unwrap(value) {
-  if (
-    value &&
-    typeof value === "object" &&
-    Object.prototype.hasOwnProperty.call(value, "_value")
-  ) {
-    return value._value;
-  }
-
-  return value;
-}
-
-function textValue(value) {
-  const result = unwrap(value);
-  return result == null ? "" : String(result);
-}
-
-function numberValue(value) {
-  const result = unwrap(value);
-
-  if (typeof result === "number") {
-    return result;
-  }
-
-  if (typeof result === "string") {
-    const match = result.replace(",", ".").match(
-      /-?\d+(?:\.\d+)?/
-    );
-
-    return match ? Number(match[0]) : null;
-  }
-
-  return null;
-}
-
-function escapeHtml(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}
-
-function formatPrice(price, currency = "USD") {
-  const number = Number(price);
-
-  if (!Number.isFinite(number)) {
-    return "Price unavailable";
-  }
-
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency
-  }).format(number);
-}
-
-function saveCart() {
-  localStorage.setItem("tb_cart", JSON.stringify(cart));
-}
-
-function updateCartCount() {
-  $("cartCount").textContent = cart.length;
-}
-
-function openModal(id) {
-  closeModals();
-  $(id).classList.add("open");
-}
-
-function closeModals() {
-  document.querySelectorAll(".modal").forEach(modal => {
-    modal.classList.remove("open");
-  });
-}
-
-function showMessage(id, text) {
-  $(id).textContent = text;
-  $(id).classList.add("show");
-}
-
-function clearMessage(id) {
-  $(id).textContent = "";
-  $(id).classList.remove("show");
-}
-
-/* =====================================================
-   API
-===================================================== */
-
-async function apiRequest(endpoint, options = {}) {
-  const response = await fetch(endpoint, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    },
-    ...options
-  });
-
-  let data = {};
-
-  try {
-    data = await response.json();
-  } catch {}
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || `Request failed (${response.status})`
-    );
-  }
-
-  return data;
-}
-
-/* =====================================================
-   ACCOUNT
-===================================================== */
-
-async function loadCurrentUser() {
-  try {
-    const data = await apiRequest("/api/me");
-
-    currentUser = data.user;
-    updateAccountUI();
-
-  } catch {
-    currentUser = null;
-    updateAccountUI();
-  }
-}
-
-function updateAccountUI() {
-  const loggedIn = !!currentUser;
-
-  $("loginButton").style.display =
-    loggedIn ? "none" : "inline-block";
-
-  $("registerButton").style.display =
-    loggedIn ? "none" : "inline-block";
-
-  $("logoutButton").style.display =
-    loggedIn ? "inline-block" : "none";
-}
-
-async function register(event) {
-  event.preventDefault();
-
-  clearMessage("registerMessage");
-
-  const username = $("registerUsername").value.trim();
-  const password = $("registerPassword").value;
-  const again = $("registerPasswordAgain").value;
-
-  if (password !== again) {
-    showMessage(
-      "registerMessage",
-      "The passwords do not match."
-    );
-    return;
-  }
-
-  try {
-    const data = await apiRequest("/api/register", {
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        password
-      })
-    });
-
-    currentUser = data.user;
-    updateAccountUI();
-    closeModals();
-
-    $("registerUsername").value = "";
-    $("registerPassword").value = "";
-    $("registerPasswordAgain").value = "";
-
-    alert("Your account has been created successfully!");
-
-  } catch (error) {
-    showMessage("registerMessage", error.message);
-  }
-}
-
-async function login(event) {
-  event.preventDefault();
-
-  clearMessage("loginMessage");
-
-  const username = $("loginUsername").value.trim();
-  const password = $("loginPassword").value;
-
-  try {
-    const data = await apiRequest("/api/login", {
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        password
-      })
-    });
-
-    currentUser = data.user;
-    updateAccountUI();
-    closeModals();
-
-    $("loginUsername").value = "";
-    $("loginPassword").value = "";
-
-    alert("Login successful.");
-
-  } catch (error) {
-    showMessage("loginMessage", error.message);
-  }
-}
-
-async function logout() {
-  try {
-    await apiRequest("/api/logout", {
-      method: "POST"
-    });
-  } catch {}
-
-  currentUser = null;
-  updateAccountUI();
-  closeModals();
-
-  alert("You have been logged out.");
-}
-
-/* =====================================================
-   CONFIGURATION PARSING
-===================================================== */
-
-/*
-  Returns all config records from a section.
-*/
-function getSection(config, name) {
-  return config?.gameConfig?.[name] || [];
-}
-
-/*
-  Create a productId -> image filename mapping.
-  Visual - Products uses visualSource.
-*/
-function buildVisualMap(config) {
-  const map = new Map();
-
-  for (const record of getSection(config, "Visual - Products")) {
-    const id = textValue(record.productId);
-    const source = unwrap(record.visualSource);
-
-    if (!id || !source) continue;
-
-    let filename = "";
-
-    if (typeof source === "string") {
-      filename = source;
-    } else if (typeof source === "object") {
-      filename = textValue(source.frameName);
-    }
-
-    if (filename) {
-      map.set(id, filename);
-    }
-  }
-
-  /*
-    Equippable skins also contain image filenames.
-    Use them as a fallback.
-  */
-  for (const record of getSection(config, "Gameplay - Equippable Skins")) {
-    const id = textValue(record.productId);
-    const image = textValue(record.image);
-
-    if (id && image && !map.has(id)) {
-      map.set(id, image);
-    }
-  }
-
-  return map;
-}
-
-/*
-  Creates a map of price tiers in USD.
-*/
-function buildPriceMap(config) {
-  const map = new Map();
-
-  for (const record of getSection(config, "Prices - Matrix")) {
-    const tier = numberValue(record.tier);
-    const usd = numberValue(record.USD);
-
-    if (tier != null && usd != null) {
-      map.set(tier, usd);
-    }
-  }
-
-  return map;
-}
-
-/*
-  Find all shop skin records.
-*/
-function buildShopSkinMap(config) {
-  const map = new Map();
-
-  for (const record of getSection(config, "Shop - Skins")) {
-    const id = textValue(record.productIdToQuantify);
-
-    if (!id) continue;
-
-    map.set(id, {
-      id,
-      title: textValue(record.title),
-      skinType: textValue(record.skinType),
-      visibility: textValue(record.visibility)
-    });
-  }
-
-  return map;
-}
-
-/*
-  Parse bundle contents.
-
-  Example:
-  24000_coin_1400_dna_1_mass_boost_3x_24h_1_skin_jokester
-*/
-function parseBundle(bundleId) {
-  const rewards = [];
-
-  if (!bundleId) return rewards;
-
-  const parts = bundleId.split("_");
-  let i = 0;
-
-  while (i < parts.length) {
-    const quantity = Number(parts[i]);
-
-    if (!Number.isFinite(quantity) || i + 1 >= parts.length) {
-      i++;
-      continue;
+  <footer>
+    © <span id="currentYear"></span> T.B Agar.io Shop.
+    All rights reserved.
+  </footer>
+
+  <script>
+    /*
+      =====================================
+      SKINS EN PRIJZEN
+      =====================================
+
+      image:
+      - Gebruik een bestand in dezelfde map
+      - Of gebruik een map zoals images/skin.webp
+
+      price:
+      - Gebruik een getal, bijvoorbeeld 1.99
+    */
+
+    const products = [
+      {
+        id: 1,
+        name: "Dohnut",
+        price: 1.99,
+        image: "IMG_5334.webp",
+        description: "A unique and delicious Agar.io skin."
+      },
+
+      {
+        id: 2,
+        name: "Pumpkitty",
+        price: 1.99,
+        image: "IMG_0923.webp",
+        description: "A special cat-themed Agar.io skin."
+      },
+
+      {
+        id: 3,
+        name: "Mindseye",
+        price: 1.99,
+        image: "mindseye.webp",
+        description: "A mysterious and powerful skin."
+      },
+
+      {
+        id: 4,
+        name: "Nomster",
+        price: 5.99,
+        image: "nomster.webp",
+        description: "A monster-inspired Agar.io skin."
+      },
+
+      {
+        id: 5,
+        name: "Zen Shaman",
+        price: 7.99,
+        image: "IMG_9638.webp",
+        description: "An exclusive Zen Shaman skin."
+      }
+    ];
+
+    const productsGrid = document.getElementById("productsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const sortSelect = document.getElementById("sortSelect");
+
+    const buyModal = document.getElementById("buyModal");
+    const closeModal = document.getElementById("closeModal");
+
+    const modalImage = document.getElementById("modalImage");
+    const modalName = document.getElementById("modalName");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalPrice = document.getElementById("modalPrice");
+
+    /*
+      =====================================
+      EUROPRIJS FORMATTEREN
+      =====================================
+    */
+
+    function formatPrice(price) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "EUR"
+      }).format(price);
     }
 
     /*
-      Detect known wallet product patterns.
+      =====================================
+      HTML VEILIG MAKEN
+      =====================================
     */
-    if (parts[i + 1] === "coin") {
-      rewards.push(`${quantity} coin`);
-      i += 2;
-      continue;
+
+    function escapeHTML(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    if (parts[i + 1] === "dna") {
-      rewards.push(`${quantity} dna`);
-      i += 2;
-      continue;
-    }
+    /*
+      =====================================
+      SKINS WEERGEVEN
+      =====================================
+    */
 
-    if (parts[i + 1] === "skin") {
-      const skinName = parts.slice(i + 2).join("_");
+    function renderProducts() {
+      const searchTerm = searchInput.value
+        .trim()
+        .toLowerCase();
 
-      /*
-        In a bundle with multiple items, the skin is followed
-        by the next quantity. Stop at that boundary.
-      */
-      const match = skinName.match(
-        /^(.+?)(?=_\d+_(?:skin|coin|dna|mass|xp|potion)|$)/
-      );
+      const sortValue = sortSelect.value;
 
-      const actualName = match ? match[1] : skinName;
+      let filteredProducts = products.filter(product => {
+        return (
+          product.name.toLowerCase().includes(searchTerm) ||
+          product.description.toLowerCase().includes(searchTerm)
+        );
+      });
 
-      rewards.push(`${quantity} skin_${actualName}`);
-      i += 2 + actualName.split("_").length;
-      continue;
-    }
-
-    i++;
-  }
-
-  return rewards;
-}
-
-/*
-  Get the skin IDs contained in a bundle.
-*/
-function getSkinIdsFromBundle(bundleId) {
-  const result = [];
-  const regex = /(?:^|_)1_skin_([a-zA-Z0-9_]+?)(?=_1_|$)/g;
-
-  let match;
-
-  while ((match = regex.exec(bundleId || "")) !== null) {
-    result.push("skin_" + match[1]);
-  }
-
-  /*
-    Fallback for bundles that contain a single skin.
-  */
-  if (!result.length) {
-    const simple = (bundleId || "").match(
-      /(?:^|_)1_skin_([a-zA-Z0-9_]+)$/
-    );
-
-    if (simple) {
-      result.push("skin_" + simple[1]);
-    }
-  }
-
-  return result;
-}
-
-/*
-  Extract tier number from purchaseId.
-
-  Example:
-  com.miniclip.agar.io.tier_3 -> 3
-*/
-function getTierFromPurchaseId(purchaseId) {
-  const match = String(purchaseId || "").match(
-    /tier_(\d+)/
-  );
-
-  return match ? Number(match[1]) : null;
-}
-
-/*
-  Create the new skin products from Wallet Transactions.
-
-  A transaction gives:
-  - bundleId
-  - purchaseId
-
-  The bundle contains the rewards and the transaction
-  purchaseId gives the price tier.
-*/
-function buildConfigProducts(config) {
-  const visualMap = buildVisualMap(config);
-  const priceMap = buildPriceMap(config);
-  const shopSkinMap = buildShopSkinMap(config);
-
-  const results = [];
-  const seen = new Set();
-
-  for (const transaction of getSection(config, "Wallet - Transactions")) {
-    const bundleId = textValue(transaction.bundleId);
-    const purchaseId = textValue(transaction.purchaseId);
-    const transactionId = textValue(transaction.id);
-
-    if (!bundleId || !purchaseId) continue;
-
-    const skinIds = getSkinIdsFromBundle(bundleId);
-
-    if (!skinIds.length) continue;
-
-    const tier = getTierFromPurchaseId(purchaseId);
-    const price = priceMap.get(tier);
-
-    if (price == null) continue;
-
-    for (const skinId of skinIds) {
-      const visualImage = visualMap.get(skinId);
-
-      if (!visualImage) continue;
-
-      /*
-        Unique key:
-        The same skin may appear in multiple offers.
-        Keep every offer when the price or purchase ID differs.
-      */
-      const uniqueKey = [
-        skinId,
-        purchaseId,
-        bundleId
-      ].join("|");
-
-      if (seen.has(uniqueKey)) continue;
-      seen.add(uniqueKey);
-
-      const skinName = skinId.replace(/^skin_/, "");
-
-      const product = {
-        id: "config-" + results.length,
-        name: skinName,
-        skinId,
-        price,
-        currency: "USD",
-        image: visualImage,
-        purchaseId,
-        transactionId,
-        bundleId,
-        rewards: parseBundle(bundleId),
-        description: "Official Agar.io configuration offer."
-      };
-
-      /*
-        Use a known shop record title when available.
-      */
-      const shopInfo = shopSkinMap.get(skinId);
-
-      if (shopInfo) {
-        product.title = shopInfo.title;
-        product.skinType = shopInfo.skinType;
+      if (sortValue === "nameAsc") {
+        filteredProducts.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
       }
 
-      results.push(product);
-    }
-  }
+      if (sortValue === "nameDesc") {
+        filteredProducts.sort((a, b) =>
+          b.name.localeCompare(a.name)
+        );
+      }
 
-  return results;
-}
+      if (sortValue === "priceLow") {
+        filteredProducts.sort((a, b) =>
+          a.price - b.price
+        );
+      }
 
-/* =====================================================
-   IMAGE URL
-===================================================== */
+      if (sortValue === "priceHigh") {
+        filteredProducts.sort((a, b) =>
+          b.price - a.price
+        );
+      }
 
-function getImageUrl(filename) {
-  if (!filename) return "";
-
-  if (/^https?:\/\//i.test(filename)) {
-    return filename;
-  }
-
-  return new URL(filename, IMAGE_BASE).href;
-}
-
-/* =====================================================
-   RENDER PRODUCTS
-===================================================== */
-
-function getAllProducts() {
-  return [
-    ...Object.values(products),
-    ...configProducts
-  ];
-}
-
-let configProducts = [];
-
-function renderProducts() {
-  const grid = $("productsGrid");
-
-  const start = (currentPage - 1) * PER_PAGE;
-  const end = start + PER_PAGE;
-
-  const pageProducts = visibleProducts.slice(start, end);
-
-  if (!pageProducts.length) {
-    grid.innerHTML = `
-      <div class="empty">
-        No products found.
-      </div>
-    `;
-
-    renderPagination();
-    return;
-  }
-
-  grid.innerHTML = pageProducts.map(product => {
-    const image = getImageUrl(product.image);
-
-    const rewards = (product.rewards || [])
-      .map(reward => `
-        <span class="reward">
-          ${escapeHtml(reward)}
-        </span>
-      `)
-      .join("");
-
-    const purchaseId = product.purchaseId
-      ? escapeHtml(product.purchaseId)
-      : "";
-
-    return `
-      <article class="product">
-
-        <div class="product-image">
-          <img
-            src="${escapeHtml(image)}"
-            alt="${escapeHtml(product.name)}"
-            loading="lazy"
-            onerror="this.classList.add('failed')"
-          >
-        </div>
-
-        <div class="product-info">
-
-          <div class="product-name">
-            ${escapeHtml(product.name)}
+      if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = `
+          <div class="empty-message">
+            No skins found.
           </div>
+        `;
 
-          <div class="product-id">
-            ${purchaseId || "Existing T.B skin"}
-          </div>
+        return;
+      }
 
-          <div class="price">
-            ${formatPrice(product.price, product.currency || "EUR")}
-          </div>
+      productsGrid.innerHTML = filteredProducts.map(product => {
+        const originalIndex = products.findIndex(
+          item => item.id === product.id
+        );
 
-          <div class="rewards">
-            ${rewards}
-          </div>
+        return `
+          <article class="product-card">
+            <div class="product-image-container">
+              <img
+                class="product-image"
+                src="${escapeHTML(product.image)}"
+                alt="${escapeHTML(product.name)}"
+                loading="lazy"
+                onerror="this.onerror=null; this.src='data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+                  "<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><rect width='100%' height='100%' fill='#17263d'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='14'>Image missing</text></svg>"
+                )}'"
+              >
+            </div>
 
-          <div class="buy-row">
+            <div class="product-info">
+              <h2 class="product-name">
+                ${escapeHTML(product.name)}
+              </h2>
 
-            <button
-              onclick="buyProduct('${escapeHtml(product.id)}')"
-            >
-              Add to cart
-            </button>
+              <p class="product-description">
+                ${escapeHTML(product.description)}
+              </p>
 
-            ${
-              product.purchaseId
-              ? `
+              <div class="product-bottom">
+                <div class="product-price">
+                  ${formatPrice(product.price)}
+                </div>
+
                 <button
-                  class="details-button"
-                  onclick="showProductDetails('${escapeHtml(product.id)}')"
-                  title="View details"
+                  class="buy-button"
+                  data-product-index="${originalIndex}"
                 >
-                  ↗
+                  Buy Now
                 </button>
-              `
-              : ""
-            }
-
-          </div>
-
-        </div>
-      </article>
-    `;
-  }).join("");
-
-  renderPagination();
-}
-
-function renderPagination() {
-  const pagination = $("pagination");
-  const totalPages = Math.ceil(visibleProducts.length / PER_PAGE);
-
-  pagination.innerHTML = "";
-
-  if (totalPages <= 1) return;
-
-  for (let page = 1; page <= totalPages; page++) {
-    const button = document.createElement("button");
-
-    button.textContent = page;
-
-    if (page === currentPage) {
-      button.classList.add("active");
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
     }
 
-    button.onclick = () => {
-      currentPage = page;
-      renderProducts();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    };
+    /*
+      =====================================
+      BUY MODAL OPENEN
+      =====================================
+    */
 
-    pagination.appendChild(button);
-  }
-}
+    function openBuyModal(product) {
+      modalImage.src = product.image;
+      modalImage.alt = product.name;
 
-/* =====================================================
-   SEARCH / SORT
-===================================================== */
+      modalName.textContent = product.name;
+      modalDescription.textContent = product.description;
+      modalPrice.textContent = formatPrice(product.price);
 
-function applyFilters() {
-  const query = $("searchInput").value.trim().toLowerCase();
-  const sort = $("sortSelect").value;
-
-  visibleProducts = getAllProducts().filter(product => {
-    return (
-      product.name.toLowerCase().includes(query) ||
-      (product.skinId || "").toLowerCase().includes(query) ||
-      (product.purchaseId || "").toLowerCase().includes(query)
-    );
-  });
-
-  if (sort === "price-low") {
-    visibleProducts.sort((a, b) => a.price - b.price);
-  }
-
-  if (sort === "price-high") {
-    visibleProducts.sort((a, b) => b.price - a.price);
-  }
-
-  if (sort === "name") {
-    visibleProducts.sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }
-
-  currentPage = 1;
-  renderProducts();
-
-  $("loadStatus").textContent =
-    visibleProducts.length + " products";
-}
-
-/* =====================================================
-   PRODUCT DETAILS
-===================================================== */
-
-function showProductDetails(productId) {
-  const product = getAllProducts().find(
-    item => item.id === productId
-  );
-
-  if (!product) return;
-
-  alert(
-    "Skin: " + product.name +
-    "\nPrice: " + formatPrice(product.price, product.currency) +
-    "\nPurchase ID: " + (product.purchaseId || "N/A") +
-    "\nBundle: " + (product.bundleId || "N/A")
-  );
-}
-
-/* =====================================================
-   CART
-===================================================== */
-
-function addToCart(productId) {
-  const product = getAllProducts().find(
-    item => item.id === productId
-  );
-
-  if (!product) {
-    alert("This product does not exist.");
-    return;
-  }
-
-  /*
-    For Xsolla offers, purchaseId is essential.
-    The cart stores product IDs and the current
-    product data is used when the user checks out.
-  */
-  cart.push(productId);
-  saveCart();
-  updateCartCount();
-
-  alert(product.name + " has been added to your cart.");
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  saveCart();
-  updateCartCount();
-  renderCart();
-}
-
-function renderCart() {
-  const container = $("cartItems");
-  const totalElement = $("cartTotal");
-
-  container.innerHTML = "";
-
-  let total = 0;
-
-  cart.forEach((id, index) => {
-    const product = getAllProducts().find(
-      item => item.id === id
-    );
-
-    if (!product) return;
-
-    total += product.price;
-
-    const item = document.createElement("div");
-    item.className = "cart-item";
-
-    item.innerHTML = `
-      <div>
-        <strong>${escapeHtml(product.name)}</strong>
-        <br>
-        <span>${formatPrice(product.price, product.currency)}</span>
-      </div>
-    `;
-
-    const removeButton = document.createElement("button");
-    removeButton.textContent = "Remove";
-    removeButton.onclick = () => removeFromCart(index);
-
-    item.appendChild(removeButton);
-    container.appendChild(item);
-  });
-
-  if (!container.children.length) {
-    container.innerHTML =
-      '<div class="empty">Your cart is empty.</div>';
-  }
-
-  totalElement.textContent =
-    "Total: " + formatPrice(total, "USD");
-}
-
-function openCart() {
-  renderCart();
-  openModal("cartModal");
-}
-
-/* =====================================================
-   XSOLLA FLOW
-===================================================== */
-
-/*
-  The official Agar.io client must provide this token.
-
-  Do not create or re-encode a token yourself.
-*/
-function getAgarioToken() {
-  return (
-    window.agarioEncodedUID ||
-    localStorage.getItem("agarioEncodedUID") ||
-    ""
-  );
-}
-
-/*
-  Strictly validate the returned Xsolla Pay Station URL.
-*/
-function getTrustedXsollaPaymentUrl(rawUrl) {
-  try {
-    const url = new URL(rawUrl);
-
-    if (url.protocol !== "https:") {
-      return null;
+      buyModal.classList.add("active");
+      document.body.style.overflow = "hidden";
     }
 
-    if (url.hostname !== "secure.xsolla.com") {
-      return null;
+    /*
+      =====================================
+      BUY MODAL SLUITEN
+      =====================================
+    */
+
+    function closeBuyModal() {
+      buyModal.classList.remove("active");
+      document.body.style.overflow = "";
     }
 
-    if (
-      !(
-        url.pathname.startsWith("/paystation3/") ||
-        url.pathname.startsWith("/paystation4/")
-      )
-    ) {
-      return null;
-    }
+    /*
+      =====================================
+      BUY BUTTON EVENT
+      =====================================
+    */
 
-    const token =
-      url.searchParams.get("access_token") ||
-      url.searchParams.get("token");
+    productsGrid.addEventListener("click", event => {
+      const button = event.target.closest(".buy-button");
 
-    if (!token || token.length < 16) {
-      return null;
-    }
+      if (!button) {
+        return;
+      }
 
-    return url.href;
+      const productIndex = Number(
+        button.dataset.productIndex
+      );
 
-  } catch {
-    return null;
-  }
-}
+      const product = products[productIndex];
 
-/*
-  Select a product for Xsolla checkout.
-*/
-function buyProduct(productId) {
-  const product = getAllProducts().find(
-    item => item.id === productId
-  );
+      if (!product) {
+        return;
+      }
 
-  if (!product) {
-    alert("Product not found.");
-    return;
-  }
-
-  /*
-    Existing four skins have no payment purchase ID.
-    Their original cart flow remains available.
-  */
-  if (!product.purchaseId) {
-    addToCart(productId);
-    return;
-  }
-
-  selectedPurchase = product;
-
-  $("confirmDetails").innerHTML = `
-    <p><strong>Skin:</strong> ${escapeHtml(product.name)}</p>
-    <p><strong>Price:</strong> ${formatPrice(product.price, product.currency)}</p>
-    <p><strong>Purchase ID:</strong> ${escapeHtml(product.purchaseId)}</p>
-  `;
-
-  $("riskCheckbox").checked = false;
-  $("confirmBuyButton").disabled = true;
-
-  openModal("confirmModal");
-}
-
-$("riskCheckbox").addEventListener("change", event => {
-  $("confirmBuyButton").disabled = !event.target.checked;
-});
-
-/*
-  Called after the confirmation checkbox.
-*/
-async function confirmXsollaPurchase() {
-  if (!selectedPurchase) return;
-
-  const product = selectedPurchase;
-
-  const token = getAgarioToken();
-
-  if (!token) {
-    alert(
-      "Your Agar.io payment token was not found. " +
-      "Log in through the official Agar.io client first."
-    );
-    return;
-  }
-
-  const purchaseId = product.purchaseId;
-
-  /*
-    The flow uses USD in the payment request.
-    The returned URL is validated before opening.
-  */
-  const paymentRequestUrl =
-    PAYMENT_ENDPOINT +
-    "/pay/" +
-    encodeURIComponent(token) +
-    "/" +
-    encodeURIComponent(purchaseId) +
-    "/USD";
-
-  const button = $("confirmBuyButton");
-
-  button.disabled = true;
-  button.textContent = "Opening...";
-
-  try {
-    const response = await fetch(paymentRequestUrl, {
-      method: "GET"
+      openBuyModal(product);
     });
 
-    if (!response.ok) {
-      throw new Error(
-        "Payment server returned " + response.status
-      );
-    }
+    /*
+      =====================================
+      SEARCH EN SORTERING
+      =====================================
+    */
 
-    const data = await response.json();
+    searchInput.addEventListener("input", renderProducts);
+    sortSelect.addEventListener("change", renderProducts);
 
-    const trustedUrl =
-      getTrustedXsollaPaymentUrl(data.iframe_url);
+    /*
+      =====================================
+      MODAL CONTROLS
+      =====================================
+    */
 
-    if (!trustedUrl) {
-      throw new Error(
-        "The payment server did not return a trusted Xsolla URL."
-      );
-    }
+    closeModal.addEventListener("click", closeBuyModal);
 
-    $("paymentFrame").src = trustedUrl;
-
-    closeModals();
-    openModal("paymentModal");
-
-  } catch (error) {
-    alert(
-      error.message ||
-      "Could not open Xsolla checkout."
-    );
-
-  } finally {
-    button.disabled = false;
-    button.textContent = "I Agree — Open Xsolla";
-  }
-}
-
-function closePayment() {
-  $("paymentFrame").src = "about:blank";
-  closeModals();
-}
-
-/* =====================================================
-   CHECKOUT FOR EXISTING 4 SKINS
-===================================================== */
-
-async function checkout() {
-  if (!cart.length) {
-    alert("Your cart is empty.");
-    return;
-  }
-
-  if (!currentUser) {
-    closeModals();
-    openModal("loginModal");
-    alert("Please log in before checkout.");
-    return;
-  }
-
-  const items = cart
-    .map(id => getAllProducts().find(product => product.id === id))
-    .filter(Boolean)
-    .map(product => ({
-      productId: product.id,
-      name: product.name,
-      price: product.price
-    }));
-
-  if (!items.length) {
-    alert("Your cart is empty.");
-    return;
-  }
-
-  const total = Number(
-    items.reduce((sum, item) => sum + item.price, 0).toFixed(2)
-  );
-
-  const confirmed = confirm(
-    "Place this order?\n\n" +
-    items.map(item =>
-      item.name + " — " + formatPrice(item.price, "EUR")
-    ).join("\n") +
-    "\n\nTotal: " + formatPrice(total, "EUR")
-  );
-
-  if (!confirmed) return;
-
-  try {
-    const data = await apiRequest("/api/purchases", {
-      method: "POST",
-      body: JSON.stringify({
-        items
-      })
+    buyModal.addEventListener("click", event => {
+      if (event.target === buyModal) {
+        closeBuyModal();
+      }
     });
 
-    cart = [];
-    saveCart();
-    updateCartCount();
-    renderCart();
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeBuyModal();
+      }
+    });
 
-    closeModals();
+    /*
+      =====================================
+      JAARTAL EN EERSTE WEERGAVE
+      =====================================
+    */
 
-    alert(
-      "Order placed successfully!\n\n" +
-      "Order ID: " +
-      (data.purchase?.id || "created")
-    );
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
 
-  } catch (error) {
-    alert(error.message || "Checkout failed.");
-  }
-}
+    renderProducts();
+  </script>
 
-/* =====================================================
-   LOAD CONFIG
-===================================================== */
-
-async function loadConfiguration() {
-  try {
-    const response = await fetch(CONFIG_URL);
-
-    if (!response.ok) {
-      throw new Error(
-        "Configuration request failed: " + response.status
-      );
-    }
-
-    const config = await response.json();
-
-    configProducts = buildConfigProducts(config);
-
-    applyFilters();
-
-    $("loadStatus").textContent =
-      configProducts.length +
-      " config offers loaded";
-
-  } catch (error) {
-    console.error(error);
-
-    $("loadStatus").textContent =
-      "Could not load configuration";
-
-    applyFilters();
-  }
-}
-
-/* =====================================================
-   MODAL CLOSE
-===================================================== */
-
-document.querySelectorAll(".modal").forEach(modal => {
-  modal.addEventListener("click", event => {
-    if (event.target === modal) {
-      modal.classList.remove("open");
-    }
-  });
-});
-
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") {
-    closeModals();
-  }
-});
-
-/* =====================================================
-   START
-===================================================== */
-
-updateCartCount();
-applyFilters();
-loadConfiguration();
-loadCurrentUser();
-
-</script>
 </body>
 </html>
