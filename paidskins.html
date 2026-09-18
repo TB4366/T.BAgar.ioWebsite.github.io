@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!-- T.B Agar.io Website Backup: T.B-Agar.io-Website-Backup -->
-
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -350,16 +348,16 @@ footer {
   </div>
 
   <div class="header-buttons">
-    <button onclick="openModal('loginModal')">Inloggen</button>
-    <button onclick="openModal('registerModal')">Registreren</button>
-    <button onclick="openCart()">🛒 Winkelwagen</button>
+    <button onclick="openModal('loginModal')">Login</button>
+    <button onclick="openModal('registerModal')">Register</button>
+    <button onclick="openCart()">🛒 Cart</button>
   </div>
 </header>
 
 <main>
 
 <section class="hero">
-  <h2>Welkom bij <span>T.B Agar.io</span></h2>
+  <h2>Welcome to <span>T.B Agar.io</span></h2>
   <p>
     Koop unieke skins en steun T.B Agar.io.
     Log in om je account en aankopen te beheren.
@@ -369,22 +367,22 @@ footer {
 <section id="accountPanel" class="account-panel">
   <div class="account-top">
     <div>
-      <h3>Welkom, <span id="accountName">gebruiker</span>!</h3>
-      <p>Je bent ingelogd op je T.B Agar.io-account.</p>
+      <h3>Welkom, <span id="accountName">user</span>!</h3>
+      <p>You are logged in to your T.B Agar.io account.</p>
       <p class="coins">🪙 Coins: <span id="coinAmount">0</span></p>
     </div>
 
     <div class="account-actions">
-      <button onclick="openModal('usernameModal')">Naam wijzigen</button>
-      <button class="danger" onclick="logout()">Uitloggen</button>
+      <button onclick="openModal('usernameModal')">Change username</button>
+      <button class="danger" onclick="logout()">Logout</button>
     </div>
   </div>
 </section>
 
 <section>
   <div class="section-title">
-    <h2>Onze skins</h2>
-    <p>Kies je favoriete skin.</p>
+    <h2>Our Skins</h2>
+    <p>Choose your favorite skin.</p>
   </div>
 
   <div class="products">
@@ -394,9 +392,9 @@ footer {
         <img src="IMG_5334.webp" alt="Dohnut">
       </div>
       <h3>Dohnut</h3>
-      <p>Een heerlijke en unieke Agar.io-skin.</p>
+      <p>A unique Agar.io skin.</p>
       <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-001')">Toevoegen aan winkelwagen</button>
+      <button onclick="addToCart('skin-001')">Add to Cart</button>
     </article>
 
     <article class="product">
@@ -404,9 +402,9 @@ footer {
         <img src="IMG_0923.webp" alt="Pumpkitty">
       </div>
       <h3>Pumpkitty</h3>
-      <p>Een stoere skin met een kattenstijl.</p>
+      <p>A cool skin with a cat style.</p>
       <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-002')">Toevoegen aan winkelwagen</button>
+      <button onclick="addToCart('skin-002')">Add to Cart</button>
     </article>
 
     <article class="product">
@@ -414,9 +412,9 @@ footer {
         <img src="IMG_0920.webp" alt="Mindseye">
       </div>
       <h3>Mindseye</h3>
-      <p>Een mysterieuze skin voor jouw account.</p>
+      <p>A mysterious skin for your account.</p>
       <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-003')">Toevoegen aan winkelwagen</button>
+      <button onclick="addToCart('skin-003')">Add to Cart</button>
     </article>
 
     <article class="product">
@@ -426,7 +424,7 @@ footer {
       <h3>Nomster</h3>
       <p>Een speciale premium Agar.io-skin.</p>
       <div class="price">€5,99</div>
-      <button onclick="addToCart('skin-004')">Toevoegen aan winkelwagen</button>
+      <button onclick="addToCart('skin-004')">Add to Cart</button>
     </article>
 
   </div>
@@ -441,7 +439,7 @@ footer {
 <!-- LOGIN MODAL -->
 <div id="loginModal" class="modal">
   <div class="modal-box">
-    <h2>Inloggen</h2>
+    <h2>Login</h2>
 
     <div id="loginMessage" class="message"></div>
 
@@ -457,7 +455,7 @@ footer {
       </div>
 
       <div class="modal-buttons">
-        <button type="submit">Inloggen</button>
+        <button type="submit">Login</button>
         <button type="button" class="secondary" onclick="closeModals()">Sluiten</button>
       </div>
     </form>
@@ -491,7 +489,7 @@ footer {
       </div>
 
       <div class="modal-buttons">
-        <button type="submit">Registreren</button>
+        <button type="submit">Register</button>
         <button type="button" class="secondary" onclick="closeModals()">Sluiten</button>
       </div>
     </form>
@@ -501,13 +499,13 @@ footer {
 <!-- USERNAME MODAL -->
 <div id="usernameModal" class="modal">
   <div class="modal-box">
-    <h2>Naam wijzigen</h2>
+    <h2>Change username</h2>
 
     <div id="usernameMessage" class="message"></div>
 
     <form onsubmit="changeUsername(event)">
       <div class="form-group">
-        <label for="newUsername">Nieuwe gebruikersnaam</label>
+        <label for="newUsername">Nieuwe usersnaam</label>
         <input id="newUsername" required minlength="3" maxlength="32">
       </div>
 
@@ -522,7 +520,7 @@ footer {
 <!-- CART MODAL -->
 <div id="cartModal" class="modal">
   <div class="modal-box">
-    <h2>Winkelwagen</h2>
+    <h2>Cart</h2>
 
     <div id="cartItems"></div>
     <div id="cartTotal" class="cart-total"></div>
@@ -756,7 +754,7 @@ async function changeUsername(event) {
     currentUser.username = data.username || username;
     updateAccountPanel();
     closeModals();
-    alert("Je gebruikersnaam is gewijzigd.");
+    alert("Je usersnaam is gewijzigd.");
   } catch (error) {
     showMessage("usernameMessage", error.message);
   }
@@ -768,14 +766,14 @@ async function changeUsername(event) {
 
 function addToCart(productId) {
   if (!products[productId]) {
-    alert("Dit product bestaat niet.");
+    alert("This product does not exist.");
     return;
   }
 
   cart.push(productId);
   saveCart();
 
-  alert(products[productId].name + " is toegevoegd aan je winkelwagen.");
+  alert(products[productId].name + " has been added to your cart.");
 }
 
 function removeFromCart(index) {
@@ -791,7 +789,7 @@ function renderCart() {
   container.innerHTML = "";
 
   if (cart.length === 0) {
-    container.innerHTML = '<div class="empty">Je winkelwagen is leeg.</div>';
+    container.innerHTML = '<div class="empty">Your cart is empty.</div>';
     totalElement.textContent = "";
     return;
   }
@@ -814,14 +812,14 @@ function renderCart() {
         <span>${formatPrice(product.price)}</span>
       </div>
       <button class="danger" onclick="removeFromCart(${index})">
-        Verwijderen
+        Remove
       </button>
     `;
 
     container.appendChild(item);
   });
 
-  totalElement.textContent = "Totaal: " + formatPrice(total);
+  totalElement.textContent = "Total: " + formatPrice(total);
 }
 
 function openCart() {
@@ -831,14 +829,14 @@ function openCart() {
 
 async function checkout() {
   if (cart.length === 0) {
-    alert("Je winkelwagen is leeg.");
+    alert("Your cart is empty.");
     return;
   }
 
   if (!currentUser) {
     closeModals();
     openModal("loginModal");
-    alert("Log eerst in voordat je afrekent.");
+    alert("Please log in before checkout.");
     return;
   }
 
@@ -855,36 +853,31 @@ async function checkout() {
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
   const confirmed = confirm(
-    "Je gaat " + formatPrice(total) +
-    " afrekenen. Wil je doorgaan?"
+    "You are about to pay " + formatPrice(total) +
+    ". Do you want to continue?"
   );
 
   if (!confirmed) return;
 
-  try {
-    /*
-      Deze route moet op je backend bestaan.
-      De backend moet de betaling controleren en registreren.
-    */
-    const data = await apiRequest("/api/orders", {
-      method: "POST",
-      body: JSON.stringify({
-        items,
-        total
-      })
-    });
+  const purchases = getPurchases();
 
-    cart = [];
-    saveCart();
-    renderCart();
+  purchases.push({
+    id: "purchase-" + Date.now(),
+    userId: currentUser.id,
+    username: currentUser.username,
+    items,
+    total,
+    createdAt: new Date().toISOString()
+  });
 
-    alert(data.message || "Je bestelling is succesvol geplaatst!");
-    closeModals();
-  } catch (error) {
-    alert(
-      "Afrekenen is niet gelukt: " + error.message
-    );
-  }
+  savePurchases(purchases);
+
+  cart = [];
+  saveCart();
+  renderCart();
+
+  alert("Your order was placed successfully!");
+  closeModals();
 }
 
 /* =========================
@@ -903,7 +896,22 @@ document.querySelectorAll(".modal").forEach(modal => {
    START
 ========================= */
 
+if (typeof currentUser === "undefined") {
+  var currentUser = null;
+}
+if (typeof cart === "undefined") {
+  var cart = [];
+}
 loadCurrentUser();
+
+const registerForm = document.getElementById("registerForm");
+if (registerForm) registerForm.addEventListener("submit", registerUser);
+
+const loginForm = document.getElementById("loginForm");
+if (loginForm) loginForm.addEventListener("submit", loginUser);
+
+const usernameForm = document.getElementById("usernameForm");
+if (usernameForm) usernameForm.addEventListener("submit", changeUsername);
 </script>
 
 </body>
