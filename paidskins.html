@@ -359,15 +359,15 @@ footer {
 <section class="hero">
   <h2>Welcome to <span>T.B Agar.io</span></h2>
   <p>
-    Koop unieke skins en steun T.B Agar.io.
-    Log in om je account en aankopen te beheren.
+    Buy unique skins and support T.B Agar.io.
+    Log in to manage your account and purchases.
   </p>
 </section>
 
 <section id="accountPanel" class="account-panel">
   <div class="account-top">
     <div>
-      <h3>Welkom, <span id="accountName">user</span>!</h3>
+      <h3>Welcome, <span id="accountName">user</span>!</h3>
       <p>You are logged in to your T.B Agar.io account.</p>
       <p class="coins">🪙 Coins: <span id="coinAmount">0</span></p>
     </div>
@@ -422,7 +422,7 @@ footer {
         <img src="IMG_0924.webp" alt="Nomster">
       </div>
       <h3>Nomster</h3>
-      <p>Een speciale premium Agar.io-skin.</p>
+      <p>A special premium Agar.io skin.</p>
       <div class="price">€5,99</div>
       <button onclick="addToCart('skin-004')">Add to Cart</button>
     </article>
@@ -433,7 +433,7 @@ footer {
 </main>
 
 <footer>
-  © 2026 T.B Agar.io — Alle rechten voorbehouden.
+  © 2026 T.B Agar.io — All rights reserved.
 </footer>
 
 <!-- LOGIN MODAL -->
@@ -445,18 +445,18 @@ footer {
 
     <form onsubmit="login(event)">
       <div class="form-group">
-        <label for="loginUsername">Gebruikersnaam</label>
+        <label for="loginUsername">Username</label>
         <input id="loginUsername" required autocomplete="username">
       </div>
 
       <div class="form-group">
-        <label for="loginPassword">Wachtwoord</label>
+        <label for="loginPassword">Password</label>
         <input id="loginPassword" type="password" required autocomplete="current-password">
       </div>
 
       <div class="modal-buttons">
         <button type="submit">Login</button>
-        <button type="button" class="secondary" onclick="closeModals()">Sluiten</button>
+        <button type="button" class="secondary" onclick="closeModals()">Close</button>
       </div>
     </form>
   </div>
@@ -465,32 +465,32 @@ footer {
 <!-- REGISTER MODAL -->
 <div id="registerModal" class="modal">
   <div class="modal-box">
-    <h2>Account registreren</h2>
+    <h2>Create Account</h2>
 
     <div id="registerMessage" class="message"></div>
 
     <form onsubmit="register(event)">
       <div class="form-group">
-        <label for="registerUsername">Gebruikersnaam</label>
+        <label for="registerUsername">Username</label>
         <input id="registerUsername" required minlength="3" maxlength="32"
                autocomplete="username">
       </div>
 
       <div class="form-group">
-        <label for="registerPassword">Wachtwoord</label>
+        <label for="registerPassword">Password</label>
         <input id="registerPassword" type="password" required minlength="6"
                autocomplete="new-password">
       </div>
 
       <div class="form-group">
-        <label for="registerPasswordAgain">Wachtwoord herhalen</label>
+        <label for="registerPasswordAgain">Password herhalen</label>
         <input id="registerPasswordAgain" type="password" required minlength="6"
                autocomplete="new-password">
       </div>
 
       <div class="modal-buttons">
         <button type="submit">Register</button>
-        <button type="button" class="secondary" onclick="closeModals()">Sluiten</button>
+        <button type="button" class="secondary" onclick="closeModals()">Close</button>
       </div>
     </form>
   </div>
@@ -505,13 +505,13 @@ footer {
 
     <form onsubmit="changeUsername(event)">
       <div class="form-group">
-        <label for="newUsername">Nieuwe usersnaam</label>
+        <label for="newUsername">New username</label>
         <input id="newUsername" required minlength="3" maxlength="32">
       </div>
 
       <div class="modal-buttons">
-        <button type="submit">Opslaan</button>
-        <button type="button" class="secondary" onclick="closeModals()">Sluiten</button>
+        <button type="submit">Save</button>
+        <button type="button" class="secondary" onclick="closeModals()">Close</button>
       </div>
     </form>
   </div>
@@ -526,8 +526,8 @@ footer {
     <div id="cartTotal" class="cart-total"></div>
 
     <div class="modal-buttons">
-      <button onclick="checkout()">Afrekenen</button>
-      <button class="secondary" onclick="closeModals()">Sluiten</button>
+      <button onclick="checkout()">Checkout</button>
+      <button class="secondary" onclick="closeModals()">Close</button>
     </div>
   </div>
 </div>
@@ -651,18 +651,30 @@ function updateAccountPanel() {
   $("coinAmount").textContent = currentUser.coins || 0;
 }
 
-async function loadCurrentUser() {
+function getUsers() {
   try {
-    const data = await apiRequest("/api/me");
-    currentUser = data.user || data;
-    updateAccountPanel();
+    return JSON.parse(localStorage.getItem("tb_agar_users") || "[]");
   } catch {
-    currentUser = null;
-    updateAccountPanel();
+    return [];
   }
 }
 
-async function register(event) {
+function saveUsers(users) {
+  localStorage.setItem("tb_agar_users", JSON.stringify(users));
+}
+
+function loadCurrentUser() {
+  const username = localStorage.getItem("tb_agar_current_user");
+  const users = getUsers();
+
+  currentUser = users.find(
+    user => user.username === username
+  ) || null;
+
+  updateAccountPanel();
+}
+
+function register(event) {
   event.preventDefault();
   clearMessage("registerMessage");
 
@@ -671,97 +683,129 @@ async function register(event) {
   const passwordAgain = $("registerPasswordAgain").value;
 
   if (password !== passwordAgain) {
-    showMessage("registerMessage", "De wachtwoorden komen niet overeen.");
+    showMessage("registerMessage", "The passwords do not match.");
     return;
   }
 
-  try {
-    const data = await apiRequest("/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        password
-      })
-    });
-
-    currentUser = data.user || data;
-    updateAccountPanel();
-    closeModals();
-    alert("Je account is succesvol aangemaakt!");
-  } catch (error) {
-    showMessage("registerMessage", error.message);
+  if (username.length < 3) {
+    showMessage("registerMessage", "Username must be at least 3 characters.");
+    return;
   }
+
+  if (password.length < 6) {
+    showMessage("registerMessage", "Password must be at least 6 characters.");
+    return;
+  }
+
+  const users = getUsers();
+
+  if (users.some(user =>
+    user.username.toLowerCase() === username.toLowerCase()
+  )) {
+    showMessage("registerMessage", "That username is already in use.");
+    return;
+  }
+
+  const user = {
+    id: "user-" + Date.now(),
+    username,
+    password,
+    coins: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  users.push(user);
+  saveUsers(users);
+
+  currentUser = user;
+  localStorage.setItem("tb_agar_current_user", user.username);
+
+  updateAccountPanel();
+  closeModals();
+  alert("Your account has been created successfully!");
 }
 
-async function login(event) {
+function login(event) {
   event.preventDefault();
   clearMessage("loginMessage");
 
   const username = $("loginUsername").value.trim();
   const password = $("loginPassword").value;
 
-  try {
-    const data = await apiRequest("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({
-        username,
-        password
-      })
-    });
+  const user = getUsers().find(
+    user =>
+      user.username.toLowerCase() === username.toLowerCase() &&
+      user.password === password
+  );
 
-    currentUser = data.user || data;
-    updateAccountPanel();
-    closeModals();
-    alert("Je bent succesvol ingelogd!");
-  } catch (error) {
-    showMessage("loginMessage", error.message);
-  }
-}
-
-async function logout() {
-  try {
-    await apiRequest("/api/auth/logout", {
-      method: "POST"
-    });
-  } catch {
-    // De lokale sessie wordt ook gewist als de server niet bereikbaar is.
+  if (!user) {
+    showMessage("loginMessage", "Incorrect username or password.");
+    return;
   }
 
-  currentUser = null;
+  currentUser = user;
+  localStorage.setItem("tb_agar_current_user", user.username);
+
   updateAccountPanel();
-  alert("Je bent uitgelogd.");
+  closeModals();
+  alert("Login successful.");
 }
 
-async function changeUsername(event) {
+function logout() {
+  currentUser = null;
+  localStorage.removeItem("tb_agar_current_user");
+  updateAccountPanel();
+  closeModals();
+  alert("You have been logged out.");
+}
+
+function changeUsername(event) {
   event.preventDefault();
   clearMessage("usernameMessage");
 
   if (!currentUser) {
-    showMessage("usernameMessage", "Je moet eerst inloggen.");
+    showMessage("usernameMessage", "Please log in first.");
     return;
   }
 
   const username = $("newUsername").value.trim();
 
-  try {
-    const data = await apiRequest("/api/me/username", {
-      method: "PATCH",
-      body: JSON.stringify({
-        username
-      })
-    });
-
-    currentUser.username = data.username || username;
-    updateAccountPanel();
-    closeModals();
-    alert("Je usersnaam is gewijzigd.");
-  } catch (error) {
-    showMessage("usernameMessage", error.message);
+  if (username.length < 3) {
+    showMessage("usernameMessage", "Username must be at least 3 characters.");
+    return;
   }
+
+  const users = getUsers();
+
+  if (users.some(user =>
+    user.id !== currentUser.id &&
+    user.username.toLowerCase() === username.toLowerCase()
+  )) {
+    showMessage("usernameMessage", "That username is already in use.");
+    return;
+  }
+
+  const index = users.findIndex(user => user.id === currentUser.id);
+
+  if (index === -1) {
+    showMessage("usernameMessage", "User account could not be found.");
+    return;
+  }
+
+  users[index].username = username;
+  currentUser = users[index];
+
+  saveUsers(users);
+  localStorage.setItem("tb_agar_current_user", username);
+
+  updateAccountPanel();
+  closeModals();
+  alert("Your username has been changed.");
 }
 
 /* =========================
    WINKELWAGEN
+
 ========================= */
 
 function addToCart(productId) {
@@ -827,7 +871,7 @@ function openCart() {
   openModal("cartModal");
 }
 
-async function checkout() {
+function checkout() {
   if (cart.length === 0) {
     alert("Your cart is empty.");
     return;
@@ -842,7 +886,6 @@ async function checkout() {
 
   const items = cart.map(productId => {
     const product = products[productId];
-
     return {
       productId: product.id,
       name: product.name,
@@ -859,7 +902,9 @@ async function checkout() {
 
   if (!confirmed) return;
 
-  const purchases = getPurchases();
+  const purchases = JSON.parse(
+    localStorage.getItem("tb_agar_purchases") || "[]"
+  );
 
   purchases.push({
     id: "purchase-" + Date.now(),
@@ -870,7 +915,10 @@ async function checkout() {
     createdAt: new Date().toISOString()
   });
 
-  savePurchases(purchases);
+  localStorage.setItem(
+    "tb_agar_purchases",
+    JSON.stringify(purchases)
+  );
 
   cart = [];
   saveCart();
@@ -896,12 +944,6 @@ document.querySelectorAll(".modal").forEach(modal => {
    START
 ========================= */
 
-if (typeof currentUser === "undefined") {
-  var currentUser = null;
-}
-if (typeof cart === "undefined") {
-  var cart = [];
-}
 loadCurrentUser();
 
 const registerForm = document.getElementById("registerForm");
