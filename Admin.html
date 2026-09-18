@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>T.B Agar.io - Admin Panel</title>
+
+  <title>T.B Agar.io Admin</title>
 
   <style>
     * {
@@ -13,64 +13,65 @@
 
     body {
       margin: 0;
-      padding: 20px;
       font-family: Arial, sans-serif;
-      background: #10131c;
+      background: #0d1117;
       color: white;
     }
 
     .container {
       max-width: 1200px;
       margin: auto;
+      padding: 20px;
     }
 
     .panel {
-      background: #191e2c;
-      border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 25px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
     }
 
     h1, h2 {
-      color: #6ca8ff;
+      color: #58a6ff;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 12px;
       margin: 8px 0 12px;
-      border: 1px solid #414b63;
       border-radius: 8px;
-      background: #10131c;
+      border: 1px solid #30363d;
+      background: #0d1117;
       color: white;
     }
 
     button {
-      padding: 11px 16px;
       border: 0;
       border-radius: 8px;
-      cursor: pointer;
+      padding: 10px 15px;
       font-weight: bold;
-      margin: 4px;
+      cursor: pointer;
+      margin: 3px;
     }
 
     .primary {
-      background: #387cff;
+      background: #238636;
       color: white;
     }
 
-    .success {
-      background: #22a06b;
+    .blue {
+      background: #1f6feb;
       color: white;
     }
 
     .danger {
-      background: #e5484d;
+      background: #da3633;
       color: white;
     }
 
-    .secondary {
-      background: #30384d;
+    .gray {
+      background: #30363d;
       color: white;
     }
 
@@ -79,454 +80,1129 @@
     }
 
     .message {
-      margin-top: 15px;
-      color: #ffd65a;
-      line-height: 1.5;
+      margin-top: 12px;
+      color: #f2cc60;
+      white-space: pre-wrap;
     }
 
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 12px;
-      border-bottom: 1px solid #30384d;
-    }
-
-    th {
-      color: #6ca8ff;
-    }
-
-    .coin-input {
-      max-width: 130px;
-      display: inline-block;
-      margin: 0;
-    }
-
-    .stat-grid {
+    .stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 15px;
     }
 
     .stat {
-      background: #202738;
-      border-radius: 10px;
+      background: #21262d;
       padding: 20px;
+      border-radius: 10px;
     }
 
-    .stat strong {
-      display: block;
-      font-size: 26px;
-      color: #ffd65a;
+    .stat-value {
+      font-size: 28px;
+      color: #f2cc60;
       margin-top: 8px;
+      font-weight: bold;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 750px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #30363d;
+    }
+
+    th {
+      color: #58a6ff;
+    }
+
+    .coin-input {
+      width: 120px;
+      margin: 0;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    a {
+      color: #58a6ff;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
 
-    <!-- Admin login -->
-    <section id="loginPanel" class="panel">
-      <h1>T.B Agar.io Admin Login</h1>
+<div class="container">
 
-      <p>Enter your administrator access code.</p>
+  <!-- ADMIN LOGIN -->
+  <div id="loginPanel" class="panel">
 
-      <form onsubmit="adminLogin(event)">
-        <label for="adminCode">Admin code</label>
-        <input
-          id="adminCode"
-          type="password"
-          placeholder="Enter admin code"
-          required
-        >
+    <h1>T.B Agar.io Admin</h1>
 
-        <button class="primary" type="submit">
-          Login
-        </button>
-      </form>
+    <p>Enter the administrator code.</p>
 
-      <div id="loginMessage" class="message"></div>
-    </section>
+    <form id="loginForm">
 
-    <!-- Admin dashboard -->
-    <section id="dashboard" class="hidden">
+      <input
+        type="password"
+        id="adminCode"
+        placeholder="Admin code"
+        required
+      >
 
-      <div class="panel">
-        <h1>Admin Dashboard</h1>
-        <p>Manage users, coins and purchase history.</p>
+      <button class="primary" type="submit">
+        Login
+      </button>
 
-        <button class="danger" onclick="adminLogout()">
-          Logout
-        </button>
-      </div>
+    </form>
 
-      <!-- Statistics -->
-      <div class="panel">
-        <h2>Statistics</h2>
+    <div id="loginMessage" class="message"></div>
 
-        <div class="stat-grid">
-          <div class="stat">
-            Registered users
-            <strong id="userCount">0</strong>
-          </div>
-
-          <div class="stat">
-            Total coins
-            <strong id="totalCoins">0</strong>
-          </div>
-
-          <div class="stat">
-            Total purchases
-            <strong id="purchaseCount">0</strong>
-          </div>
-        </div>
-      </div>
-
-      <!-- User management -->
-      <div class="panel">
-        <h2>User Management</h2>
-
-        <input
-          id="userSearch"
-          type="search"
-          placeholder="Search users..."
-          oninput="filterUsers()"
-        >
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Coins</th>
-                <th>Change coins</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody id="usersTable"></tbody>
-          </table>
-        </div>
-
-        <div id="userMessage" class="message"></div>
-      </div>
-
-      <!-- Purchase history -->
-      <div class="panel">
-        <h2>Purchase History</h2>
-
-        <button class="secondary" onclick="loadPurchases()">
-          Refresh purchases
-        </button>
-
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Products</th>
-                <th>Total coins</th>
-                <th>Date and time</th>
-              </tr>
-            </thead>
-
-            <tbody id="purchasesTable"></tbody>
-          </table>
-        </div>
-
-        <div id="purchaseMessage" class="message"></div>
-      </div>
-    </section>
   </div>
 
-  <script>
-    /*
-      Required protected backend endpoints:
 
-      POST /api/admin/login
-      POST /api/admin/logout
-      GET  /api/admin/users
-      PATCH /api/admin/users/:userId/coins
-      GET  /api/admin/purchases
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
 
-      The backend must:
-      - Validate the admin session server-side.
-      - Store passwords securely hashed.
-      - Never trust an admin ID supplied by the browser.
-      - Check authorization for every admin request.
-      - Record all coin changes in an audit log.
-      - Use a database for users, coins and purchases.
+    <div class="panel">
 
-      The frontend must never contain the real admin secret.
-    */
+      <div class="topbar">
 
-    const API_BASE = "";
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p>T.B Agar.io administration</p>
+        </div>
 
-    let allUsers = [];
+        <div>
 
-    async function adminLogin(event) {
-      event.preventDefault();
+          <button class="gray" onclick="refreshEverything()">
+            Refresh
+          </button>
 
-      const code = document.getElementById("adminCode").value;
-      const message = document.getElementById("loginMessage");
+          <button class="danger" onclick="logoutAdmin()">
+            Logout
+          </button>
 
-      try {
-        const response = await fetch(API_BASE + "/api/admin/login", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ code })
-        });
+        </div>
 
-        const data = await response.json();
+      </div>
 
-        if (!response.ok) {
-          message.textContent = data.message || "Invalid admin code.";
-          return;
-        }
+    </div>
 
-        document.getElementById("loginPanel").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
 
-        await loadDashboard();
+    <!-- STATISTICS -->
+    <div class="panel">
 
-      } catch (error) {
-        message.textContent = "Could not connect to the server.";
-      }
+      <h2>Statistics</h2>
+
+      <div class="stats">
+
+        <div class="stat">
+          Registered users
+          <div id="userCount" class="stat-value">
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          Total coins
+          <div id="coinCount" class="stat-value">
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          Purchases
+          <div id="purchaseCount" class="stat-value">
+            0
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- USERS -->
+    <div class="panel">
+
+      <h2>Users</h2>
+
+      <input
+        type="search"
+        id="searchUsers"
+        placeholder="Search username..."
+      >
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Username</th>
+              <th>Coins</th>
+              <th>Registered</th>
+              <th>Amount</th>
+              <th>Action</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="usersTable"></tbody>
+
+        </table>
+
+      </div>
+
+      <div id="userMessage" class="message"></div>
+
+    </div>
+
+
+    <!-- PURCHASES -->
+    <div class="panel">
+
+      <h2>Purchase History</h2>
+
+      <button
+        class="blue"
+        onclick="loadPurchases()"
+      >
+        Refresh purchases
+      </button>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>User</th>
+              <th>Products</th>
+              <th>Total</th>
+              <th>Date / Time</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="purchaseTable"></tbody>
+
+        </table>
+
+      </div>
+
+      <div id="purchaseMessage" class="message"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  /*
+    IMPORTANT:
+
+    Change this to the address where your backend is hosted.
+
+    Example:
+
+    const API_BASE =
+      "https://api.tbagario.com";
+
+    Do NOT put a slash at the end.
+  */
+
+  const API_BASE = "https://YOUR-BACKEND-URL.com";
+
+
+  let users = [];
+  let purchases = [];
+
+
+  const loginPanel =
+    document.getElementById("loginPanel");
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  const loginMessage =
+    document.getElementById("loginMessage");
+
+  const userMessage =
+    document.getElementById("userMessage");
+
+  const purchaseMessage =
+    document.getElementById("purchaseMessage");
+
+
+  /*
+  ========================================
+  ADMIN LOGIN
+  ========================================
+  */
+
+  document
+    .getElementById("loginForm")
+    .addEventListener(
+      "submit",
+      loginAdmin
+    );
+
+
+  async function loginAdmin(event) {
+
+    event.preventDefault();
+
+    loginMessage.textContent = "";
+
+    const code =
+      document
+        .getElementById("adminCode")
+        .value
+        .trim();
+
+    if (!code) {
+
+      loginMessage.textContent =
+        "Please enter the admin code.";
+
+      return;
     }
 
-    async function adminLogout() {
-      await fetch(API_BASE + "/api/admin/logout", {
-        method: "POST",
-        credentials: "include"
-      });
 
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("loginPanel").classList.remove("hidden");
-      document.getElementById("adminCode").value = "";
-    }
+    try {
 
-    async function loadDashboard() {
-      await loadUsers();
-      await loadPurchases();
-    }
-
-    async function loadUsers() {
-      const message = document.getElementById("userMessage");
-
-      try {
-        const response = await fetch(API_BASE + "/api/admin/users", {
-          credentials: "include"
-        });
-
-        if (!response.ok) {
-          message.textContent = "You are not authorized to view users.";
-          return;
-        }
-
-        allUsers = await response.json();
-        renderUsers();
-        updateStatistics();
-
-      } catch (error) {
-        message.textContent = "Could not load users.";
-      }
-    }
-
-    function renderUsers() {
-      const table = document.getElementById("usersTable");
-      const search = document.getElementById("userSearch").value
-        .toLowerCase();
-
-      const filteredUsers = allUsers.filter(user =>
-        user.username.toLowerCase().includes(search)
-      );
-
-      table.innerHTML = filteredUsers.map(user => `
-        <tr>
-          <td>${escapeHtml(user.username)}</td>
-
-          <td>${Number(user.coins).toLocaleString()}</td>
-
-          <td>
-            <input
-              class="coin-input"
-              type="number"
-              min="0"
-              step="1"
-              id="coins-${escapeHtml(user.id)}"
-              placeholder="Coins"
-            >
-          </td>
-
-          <td>
-            <button
-              class="success"
-              onclick="addCoins('${escapeHtml(user.id)}')">
-              Add
-            </button>
-
-            <button
-              class="primary"
-              onclick="setCoins('${escapeHtml(user.id)}')">
-              Set
-            </button>
-          </td>
-        </tr>
-      `).join("");
-
-      document.getElementById("userCount").textContent = allUsers.length;
-    }
-
-    function filterUsers() {
-      renderUsers();
-    }
-
-    async function addCoins(userId) {
-      const input = document.getElementById("coins-" + userId);
-      const amount = Number(input.value);
-
-      if (!Number.isSafeInteger(amount) || amount <= 0) {
-        showUserMessage("Enter a positive whole number of coins.");
-        return;
-      }
-
-      await updateCoins(userId, {
-        operation: "add",
-        amount
-      });
-    }
-
-    async function setCoins(userId) {
-      const input = document.getElementById("coins-" + userId);
-      const amount = Number(input.value);
-
-      if (!Number.isSafeInteger(amount) || amount < 0) {
-        showUserMessage("Enter a valid non-negative coin amount.");
-        return;
-      }
-
-      await updateCoins(userId, {
-        operation: "set",
-        amount
-      });
-    }
-
-    async function updateCoins(userId, payload) {
-      try {
-        const response = await fetch(
-          API_BASE + "/api/admin/users/" +
-          encodeURIComponent(userId) + "/coins",
+      const response =
+        await fetch(
+          API_BASE + "/api/admin/login",
           {
-            method: "PATCH",
+            method: "POST",
+
             credentials: "include",
+
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type":
+                "application/json"
             },
-            body: JSON.stringify(payload)
+
+            body: JSON.stringify({
+              code: code
+            })
           }
         );
 
-        const data = await response.json();
 
-        if (!response.ok) {
-          showUserMessage(data.message || "Could not update coins.");
-          return;
-        }
+      const data =
+        await response.json();
 
-        showUserMessage("Coins updated successfully.");
-        await loadUsers();
 
-      } catch (error) {
-        showUserMessage("Could not connect to the server.");
+      if (!response.ok) {
+
+        loginMessage.textContent =
+          data.message ||
+          "Admin login failed.";
+
+        return;
       }
+
+
+      loginPanel.classList.add(
+        "hidden"
+      );
+
+      dashboard.classList.remove(
+        "hidden"
+      );
+
+
+      document
+        .getElementById("adminCode")
+        .value = "";
+
+
+      await refreshEverything();
+
+
+    } catch (error) {
+
+      loginMessage.textContent =
+        "Could not connect to the backend.\n\n" +
+        "Check API_BASE and make sure your backend is online.";
+
     }
 
-    async function loadPurchases() {
-      const table = document.getElementById("purchasesTable");
-      const message = document.getElementById("purchaseMessage");
+  }
 
-      try {
-        const response = await fetch(
-          API_BASE + "/api/admin/purchases",
+
+  /*
+  ========================================
+  LOGOUT
+  ========================================
+  */
+
+  async function logoutAdmin() {
+
+    try {
+
+      await fetch(
+        API_BASE + "/api/admin/logout",
+        {
+          method: "POST",
+          credentials: "include"
+        }
+      );
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+
+    users = [];
+    purchases = [];
+
+
+    dashboard.classList.add(
+      "hidden"
+    );
+
+    loginPanel.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+  ========================================
+  LOAD USERS
+  ========================================
+  */
+
+  async function loadUsers() {
+
+    userMessage.textContent = "";
+
+    try {
+
+      const response =
+        await fetch(
+          API_BASE + "/api/admin/users",
           {
             credentials: "include"
           }
         );
 
-        if (!response.ok) {
-          message.textContent =
-            "You are not authorized to view purchases.";
-          return;
-        }
 
-        const purchases = await response.json();
+      if (response.status === 401 ||
+          response.status === 403) {
 
-        table.innerHTML = purchases.map(purchase => `
-          <tr>
-            <td>${escapeHtml(purchase.username)}</td>
+        adminSessionExpired();
 
-            <td>
-              ${escapeHtml(
-                purchase.products
-                  .map(product =>
-                    product.name + " × " + product.quantity
-                  )
-                  .join(", ")
-              )}
-            </td>
+        return;
 
-            <td>${Number(purchase.totalCoins).toLocaleString()}</td>
-
-            <td>${escapeHtml(
-              new Date(purchase.createdAt).toLocaleString()
-            )}</td>
-          </tr>
-        `).join("");
-
-        document.getElementById("purchaseCount").textContent =
-          purchases.length;
-
-        updateStatistics();
-
-      } catch (error) {
-        message.textContent = "Could not load purchase history.";
       }
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        userMessage.textContent =
+          data.message ||
+          "Could not load users.";
+
+        return;
+
+      }
+
+
+      users = data;
+
+
+      renderUsers();
+
+      updateStats();
+
+
+    } catch (error) {
+
+      userMessage.textContent =
+        "Could not connect to the backend.";
+
     }
 
-    function updateStatistics() {
-      const total = allUsers.reduce(
-        (sum, user) => sum + Number(user.coins || 0),
+  }
+
+
+  /*
+  ========================================
+  RENDER USERS
+  ========================================
+  */
+
+  function renderUsers() {
+
+    const search =
+      document
+        .getElementById(
+          "searchUsers"
+        )
+        .value
+        .trim()
+        .toLowerCase();
+
+
+    const filtered =
+      users.filter(
+        user =>
+          String(
+            user.username
+          )
+          .toLowerCase()
+          .includes(search)
+      );
+
+
+    const table =
+      document.getElementById(
+        "usersTable"
+      );
+
+
+    if (filtered.length === 0) {
+
+      table.innerHTML = `
+        <tr>
+          <td colspan="5">
+            No users found.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    table.innerHTML =
+      filtered
+        .map(user => {
+
+          const date =
+            user.createdAt
+              ? new Date(
+                  user.createdAt
+                ).toLocaleString()
+              : "-";
+
+
+          return `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  user.username
+                )}
+              </td>
+
+              <td>
+                ${formatNumber(
+                  user.coins
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(date)}
+              </td>
+
+              <td>
+
+                <input
+                  class="coin-input"
+                  id="coins-${escapeAttribute(
+                    user.id
+                  )}"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="100"
+                >
+
+              </td>
+
+              <td>
+
+                <button
+                  class="primary"
+                  onclick="addCoins(
+                    '${escapeJs(user.id)}'
+                  )"
+                >
+                  Add coins
+                </button>
+
+
+                <button
+                  class="blue"
+                  onclick="setCoins(
+                    '${escapeJs(user.id)}'
+                  )"
+                >
+                  Set coins
+                </button>
+
+              </td>
+
+            </tr>
+
+          `;
+
+        })
+        .join("");
+
+  }
+
+
+  document
+    .getElementById(
+      "searchUsers"
+    )
+    .addEventListener(
+      "input",
+      renderUsers
+    );
+
+
+  /*
+  ========================================
+  ADD COINS
+  ========================================
+  */
+
+  async function addCoins(userId) {
+
+    const input =
+      document.getElementById(
+        "coins-" + userId
+      );
+
+
+    const amount =
+      Number(input.value);
+
+
+    if (
+      !Number.isSafeInteger(amount) ||
+      amount <= 0
+    ) {
+
+      userMessage.textContent =
+        "Enter a positive whole number.";
+
+      return;
+
+    }
+
+
+    await changeCoins(
+      userId,
+      "add",
+      amount
+    );
+
+  }
+
+
+  /*
+  ========================================
+  SET COINS
+  ========================================
+  */
+
+  async function setCoins(userId) {
+
+    const input =
+      document.getElementById(
+        "coins-" + userId
+      );
+
+
+    const amount =
+      Number(input.value);
+
+
+    if (
+      !Number.isSafeInteger(amount) ||
+      amount < 0
+    ) {
+
+      userMessage.textContent =
+        "Enter a valid whole number.";
+
+      return;
+
+    }
+
+
+    await changeCoins(
+      userId,
+      "set",
+      amount
+    );
+
+  }
+
+
+  /*
+  ========================================
+  COIN UPDATE REQUEST
+  ========================================
+  */
+
+  async function changeCoins(
+    userId,
+    operation,
+    amount
+  ) {
+
+    userMessage.textContent =
+      "Updating coins...";
+
+
+    try {
+
+      const response =
+        await fetch(
+
+          API_BASE +
+          "/api/admin/users/" +
+          encodeURIComponent(
+            userId
+          ) +
+          "/coins",
+
+          {
+
+            method: "PATCH",
+
+            credentials: "include",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              operation:
+                operation,
+
+              amount:
+                amount
+
+            })
+
+          }
+
+        );
+
+
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        adminSessionExpired();
+
+        return;
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        userMessage.textContent =
+          data.message ||
+          "Could not update coins.";
+
+        return;
+
+      }
+
+
+      userMessage.textContent =
+        "Coins updated successfully.";
+
+
+      await loadUsers();
+
+
+    } catch (error) {
+
+      userMessage.textContent =
+        "Could not connect to the backend.";
+
+    }
+
+  }
+
+
+  /*
+  ========================================
+  PURCHASE HISTORY
+  ========================================
+  */
+
+  async function loadPurchases() {
+
+    purchaseMessage.textContent = "";
+
+
+    try {
+
+      const response =
+        await fetch(
+          API_BASE +
+          "/api/admin/purchases",
+          {
+            credentials: "include"
+          }
+        );
+
+
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        adminSessionExpired();
+
+        return;
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        purchaseMessage.textContent =
+          data.message ||
+          "Could not load purchases.";
+
+        return;
+
+      }
+
+
+      purchases = data;
+
+
+      renderPurchases();
+
+      updateStats();
+
+
+    } catch (error) {
+
+      purchaseMessage.textContent =
+        "Could not connect to the backend.";
+
+    }
+
+  }
+
+
+  /*
+  ========================================
+  RENDER PURCHASES
+  ========================================
+  */
+
+  function renderPurchases() {
+
+    const table =
+      document.getElementById(
+        "purchaseTable"
+      );
+
+
+    if (purchases.length === 0) {
+
+      table.innerHTML = `
+        <tr>
+          <td colspan="4">
+            No purchases yet.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    table.innerHTML =
+      purchases
+        .map(purchase => {
+
+          const productText =
+            Array.isArray(
+              purchase.products
+            )
+              ? purchase.products
+                  .map(product => {
+
+                    return (
+                      product.name +
+                      " × " +
+                      product.quantity
+                    );
+
+                  })
+                  .join(", ")
+
+              : "-";
+
+
+          const date =
+            purchase.createdAt
+              ? new Date(
+                  purchase.createdAt
+                ).toLocaleString()
+              : "-";
+
+
+          return `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(
+                  purchase.username
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  productText
+                )}
+              </td>
+
+              <td>
+                ${formatNumber(
+                  purchase.totalCoins
+                )} coins
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  date
+                )}
+              </td>
+
+            </tr>
+
+          `;
+
+        })
+        .join("");
+
+  }
+
+
+  /*
+  ========================================
+  STATISTICS
+  ========================================
+  */
+
+  function updateStats() {
+
+    const totalCoins =
+      users.reduce(
+        (total, user) =>
+          total +
+          Number(
+            user.coins || 0
+          ),
         0
       );
 
-      document.getElementById("totalCoins").textContent =
-        total.toLocaleString();
-    }
 
-    function showUserMessage(message) {
-      document.getElementById("userMessage").textContent = message;
-    }
+    document
+      .getElementById(
+        "userCount"
+      )
+      .textContent =
+        formatNumber(
+          users.length
+        );
 
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-  </script>
+
+    document
+      .getElementById(
+        "coinCount"
+      )
+      .textContent =
+        formatNumber(
+          totalCoins
+        );
+
+
+    document
+      .getElementById(
+        "purchaseCount"
+      )
+      .textContent =
+        formatNumber(
+          purchases.length
+        );
+
+  }
+
+
+  /*
+  ========================================
+  REFRESH
+  ========================================
+  */
+
+  async function refreshEverything() {
+
+    await loadUsers();
+
+    await loadPurchases();
+
+  }
+
+
+  /*
+  ========================================
+  SESSION EXPIRED
+  ========================================
+  */
+
+  function adminSessionExpired() {
+
+    dashboard.classList.add(
+      "hidden"
+    );
+
+    loginPanel.classList.remove(
+      "hidden"
+    );
+
+    loginMessage.textContent =
+      "Admin session expired. Please log in again.";
+
+  }
+
+
+  /*
+  ========================================
+  HELPERS
+  ========================================
+  */
+
+  function formatNumber(number) {
+
+    return Number(
+      number || 0
+    ).toLocaleString();
+
+  }
+
+
+  function escapeHtml(value) {
+
+    return String(value)
+
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
+
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
+
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
+
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
+
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
+
+  }
+
+
+  function escapeAttribute(value) {
+
+    return String(value)
+      .replace(
+        /[^A-Za-z0-9_-]/g,
+        ""
+      );
+
+  }
+
+
+  function escapeJs(value) {
+
+    return String(value)
+      .replaceAll(
+        "\\",
+        "\\\\"
+      )
+      .replaceAll(
+        "'",
+        "\\'"
+      );
+
+  }
+
+</script>
+
 </body>
 </html>
