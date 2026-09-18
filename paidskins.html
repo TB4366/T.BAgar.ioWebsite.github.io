@@ -349,6 +349,205 @@ footer {
     flex-direction: column;
   }
 }
+
+/* =========================================================
+   HAMBURGER MENU — COPIED FROM T.B AGAR.IO MENU
+========================================================= */
+
+.menu-button{
+    width:45px;
+    height:45px;
+    border:1px solid #21415e;
+    border-radius:10px;
+    background:#0b1626;
+    color:#fff;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:5px;
+    transition:.2s;
+}
+
+.menu-button:hover{
+    background:#102238;
+    border-color:#19c8ff;
+}
+
+.menu-button span{
+    width:22px;
+    height:2px;
+    background:#fff;
+    border-radius:2px;
+}
+
+.menu-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.62);
+    z-index:1100;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
+}
+
+.menu-overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.side-menu{
+    position:fixed;
+    top:0;
+    right:-340px;
+    width:320px;
+    max-width:90%;
+    height:100vh;
+    background:#08111f;
+    border-left:1px solid #173b57;
+    z-index:1200;
+    transition:.3s ease;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    box-shadow:-15px 0 45px rgba(0,0,0,.35);
+}
+
+.side-menu.active{
+    right:0;
+}
+
+.menu-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:20px;
+    border-bottom:1px solid #17304c;
+}
+
+.menu-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.menu-brand img{
+    width:40px;
+    height:40px;
+    object-fit:cover;
+    border-radius:9px;
+}
+
+.menu-brand strong{
+    font-size:17px;
+}
+
+.menu-brand span{
+    color:#19c8ff;
+}
+
+.close-menu{
+    width:38px;
+    height:38px;
+    border:1px solid #21415e;
+    background:#0d1a2b;
+    color:#fff;
+    border-radius:9px;
+    font-size:22px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.close-menu:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
+}
+
+.menu-content{
+    overflow-y:auto;
+    padding-top:20px;
+}
+
+.menu-label{
+    color:#6f8ba4;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:1.5px;
+    margin:12px 4px 8px;
+    text-transform:uppercase;
+}
+
+.menu-link{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 13px;
+    margin-bottom:6px;
+    border-radius:9px;
+    color:#dce8f2;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    border:1px solid transparent;
+    transition:.2s;
+}
+
+.menu-link:hover{
+    background:#0d2135;
+    border-color:#164867;
+    color:#19c8ff;
+}
+
+.menu-link.active{
+    background:#0d2438;
+    border-color:#176184;
+    color:#19c8ff;
+}
+
+.menu-icon{
+    width:26px;
+    text-align:center;
+    font-size:16px;
+}
+
+.menu-bottom{
+    margin-top:auto;
+    padding-top:18px;
+    border-top:1px solid #17304c;
+}
+
+.social-menu{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+}
+
+.social-menu a{
+    text-decoration:none;
+    color:#dce8f2;
+    background:#0c1a2b;
+    border:1px solid #1a344d;
+    border-radius:8px;
+    text-align:center;
+    padding:10px 4px;
+    font-size:11px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.social-menu a:hover{
+    border-color:#19c8ff;
+    color:#19c8ff;
+}
+
+@media (max-width:600px){
+    .menu-button{
+        align-self:flex-end;
+    }
+}
+
 </style>
 </head>
 
@@ -368,8 +567,156 @@ footer {
     <button id="registerButton" onclick="openModal('registerModal')">Register</button>
     <button id="logoutButton" class="danger" onclick="logout()" style="display:none;">Logout</button>
     <button onclick="openCart()">🛒 Cart</button>
-  </div>
+  <button
+    class="menu-button"
+    onclick="openMenu()"
+    aria-label="Open menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </header>
+
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+    onclick="closeMenu()"
+></div>
+
+<aside
+    class="side-menu"
+    id="sideMenu"
+>
+
+    <div class="menu-top">
+
+        <div class="menu-brand">
+            <img
+                src="IMG_0561.jpeg"
+                alt="T.B Agar.io"
+            >
+
+            <strong>
+                T.B <span>Agar.io</span>
+            </strong>
+        </div>
+
+        <button
+            class="close-menu"
+            onclick="closeMenu()"
+            aria-label="Close menu"
+        >
+            ×
+        </button>
+
+    </div>
+
+    <div class="menu-content">
+
+        <div class="menu-label">
+            Navigation
+        </div>
+
+        <a class="menu-link" href="index.html">
+            <span class="menu-icon">⌂</span>
+            Home
+        </a>
+
+        <a class="menu-link" href="custom-skins.html">
+            <span class="menu-icon">◉</span>
+            Custom Skins
+        </a>
+
+        <a class="menu-link" href="key-access.html">
+            <span class="menu-icon">🔑</span>
+            Key Access
+        </a>
+
+        <a class="menu-link" href="mod-menu.html">
+            <span class="menu-icon">⚙</span>
+            Mod Menu
+        </a>
+
+        <a class="menu-link active" href="paidskins.html">
+            <span class="menu-icon">◆</span>
+            Paid Skins
+        </a>
+
+        <a class="menu-link" href="buy-account.html">
+            <span class="menu-icon">●</span>
+            Buy Account
+        </a>
+
+        <a class="menu-link" href="agar.io-skins.html">
+            <span class="menu-icon">🎨</span>
+            Agar.io Skins
+        </a>
+
+        <div class="menu-label">
+            External
+        </div>
+
+        <a
+            class="menu-link"
+            href="https://biteyt.com/bots"
+            target="_blank"
+            rel="noopener"
+        >
+            <span class="menu-icon">🤖</span>
+            Bite Bots Panel
+        </a>
+
+        <a
+            class="menu-link"
+            href="https://kahraba.in"
+            target="_blank"
+            rel="noopener"
+        >
+            <span class="menu-icon">↗</span>
+            Kahraba Website
+        </a>
+
+    </div>
+
+    <div class="menu-bottom">
+
+        <div class="menu-label">
+            Follow T.B Agar.io
+        </div>
+
+        <div class="social-menu">
+
+            <a
+                href="https://discord.gg/qhuXPrVzBx"
+                target="_blank"
+                rel="noopener"
+            >
+                Discord
+            </a>
+
+            <a
+                href="https://www.youtube.com/@T.B6"
+                target="_blank"
+                rel="noopener"
+            >
+                YouTube
+            </a>
+
+            <a
+                href="https://www.instagram.com/t.bagar.io/"
+                target="_blank"
+                rel="noopener"
+            >
+                Instagram
+            </a>
+
+        </div>
+
+    </div>
+
+</aside>
+
 
 <main>
 
@@ -551,6 +898,30 @@ footer {
 
 <!-- DEEL 2 KOMT HIERONDER -->
   <script>
+
+/* =========================================================
+   HAMBURGER MENU FUNCTIONS
+========================================================= */
+
+function openMenu(){
+    document.getElementById("sideMenu").classList.add("active");
+    document.getElementById("menuOverlay").classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeMenu(){
+    document.getElementById("sideMenu").classList.remove("active");
+    document.getElementById("menuOverlay").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+document.addEventListener("keydown", function(event){
+    if(event.key === "Escape"){
+        closeMenu();
+    }
+});
+
+
 /* =========================
    CONFIGURATIE
 ========================= */
