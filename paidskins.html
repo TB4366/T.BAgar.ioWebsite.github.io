@@ -65,6 +65,19 @@ button:hover {
   background: #1d4ed8;
 }
 
+.header-coins {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid #854d0e;
+  border-radius: 10px;
+  background: rgba(113, 63, 18, .35);
+  color: #facc15;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
 button.secondary {
   background: #334155;
 }
@@ -348,8 +361,12 @@ footer {
   </div>
 
   <div class="header-buttons">
-    <button onclick="openModal('loginModal')">Login</button>
-    <button onclick="openModal('registerModal')">Register</button>
+    <div id="headerCoins" class="header-coins" style="display:none;">
+      🪙 <span id="headerCoinAmount">0</span> Coins
+    </div>
+    <button id="loginButton" onclick="openModal('loginModal')">Login</button>
+    <button id="registerButton" onclick="openModal('registerModal')">Register</button>
+    <button id="logoutButton" class="danger" onclick="logout()" style="display:none;">Logout</button>
     <button onclick="openCart()">🛒 Cart</button>
   </div>
 </header>
@@ -640,15 +657,25 @@ async function apiRequest(endpoint, options = {}) {
 
 function updateAccountPanel() {
   const panel = $("accountPanel");
+  const loggedIn = !!currentUser;
 
-  if (!currentUser) {
+  // Header login/logout state
+  $("loginButton").style.display = loggedIn ? "none" : "inline-block";
+  $("registerButton").style.display = loggedIn ? "none" : "inline-block";
+  $("logoutButton").style.display = loggedIn ? "inline-block" : "none";
+  $("headerCoins").style.display = loggedIn ? "flex" : "none";
+
+  if (!loggedIn) {
     panel.classList.remove("visible");
     return;
   }
 
+  const coins = Number(currentUser.coins) || 0;
+
   panel.classList.add("visible");
   $("accountName").textContent = currentUser.username;
-  $("coinAmount").textContent = currentUser.coins || 0;
+  $("coinAmount").textContent = coins;
+  $("headerCoinAmount").textContent = coins;
 }
 
 function getUsers() {
@@ -894,10 +921,24 @@ function checkout() {
   });
 
   const total = items.reduce((sum, item) => sum + item.price, 0);
+  const balance = Number(currentUser.coins) || 0;
+
+  // Coins are the account balance used to pay for skins.
+  if (balance < total) {
+    alert(
+      "You do not have enough Coins.\n\n" +
+      "Your balance: " + balance.toFixed(2) + " Coins\n" +
+      "Required: " + total.toFixed(2) + " Coins\n\n" +
+      "You need " + (total - balance).toFixed(2) + " more Coins."
+    );
+    return;
+  }
 
   const confirmed = confirm(
-    "You are about to pay " + formatPrice(total) +
-    ". Do you want to continue?"
+    "You are about to pay " + total.toFixed(2) + " Coins.\n\n" +
+    "Your balance: " + balance.toFixed(2) + " Coins\n" +
+    "Balance after purchase: " + (balance - total).toFixed(2) + " Coins\n\n" +
+    "Do you want to continue?"
   );
 
   if (!confirmed) return;
@@ -906,12 +947,26 @@ function checkout() {
     localStorage.getItem("tb_agar_purchases") || "[]"
   );
 
+  // Deduct the Coins from the logged-in account.
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.id === currentUser.id);
+
+  if (userIndex === -1) {
+    alert("Your account could not be found.");
+    return;
+  }
+
+  users[userIndex].coins = balance - total;
+  currentUser = users[userIndex];
+  saveUsers(users);
+
   purchases.push({
     id: "purchase-" + Date.now(),
     userId: currentUser.id,
     username: currentUser.username,
     items,
     total,
+    paidWith: "Coins",
     createdAt: new Date().toISOString()
   });
 
@@ -923,8 +978,13 @@ function checkout() {
   cart = [];
   saveCart();
   renderCart();
+  updateAccountPanel();
 
-  alert("Your order was placed successfully!");
+  alert(
+    "Your order was placed successfully!\n\n" +
+    "You paid " + total.toFixed(2) + " Coins.\n" +
+    "Remaining balance: " + currentUser.coins.toFixed(2) + " Coins."
+  );
   closeModals();
 }
 
@@ -945,15 +1005,6 @@ document.querySelectorAll(".modal").forEach(modal => {
 ========================= */
 
 loadCurrentUser();
-
-const registerForm = document.getElementById("registerForm");
-if (registerForm) registerForm.addEventListener("submit", registerUser);
-
-const loginForm = document.getElementById("loginForm");
-if (loginForm) loginForm.addEventListener("submit", loginUser);
-
-const usernameForm = document.getElementById("usernameForm");
-if (usernameForm) usernameForm.addEventListener("submit", changeUsername);
 </script>
 
 </body>
