@@ -304,9 +304,6 @@
       </button>
 
       <p id="loginError" class="error"></p>
-      <p style="margin-top:8px;color:#71839a;font-size:13px;text-align:center;">
-        Demo login: <strong>admin</strong> / <strong>TBAdmin2026</strong>
-      </p>
     </form>
   </section>
 
@@ -480,29 +477,34 @@
       return data;
     }
 
-    async function checkAdminAccess() {
-      // Use the demo login stored in this browser session.
-      if (sessionStorage.getItem("tb_demo_admin") === "true") {
-        showAdminApp();
-
-        try {
-          await loadDashboard();
-        } catch {
-          setStatus("Demo admin login active. Backend is not connected.", true);
-        }
-
-        return;
-      }
-
-      showLoginPage();
-    }
-
-    // Example admin login for this HTML-only version.
-    // IMPORTANT: This is only a demo login. It is NOT secure for a real website.
     const DEMO_ADMIN_USERNAME = "admin";
     const DEMO_ADMIN_PASSWORD = "TBAdmin2026";
 
-    async function loginAdmin(event) {
+    const TB_USERS_KEY = "tb_agar_users";
+    const TB_PURCHASES_KEY = "tb_agar_purchases";
+
+    function getLocalData(key) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLocalData(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function checkAdminAccess() {
+      if (sessionStorage.getItem("tb_demo_admin") === "true") {
+        showAdminApp();
+        loadDashboard();
+      } else {
+        showLoginPage();
+      }
+    }
+
+    function loginAdmin(event) {
       event.preventDefault();
       loginError.textContent = "";
 
@@ -525,68 +527,48 @@
 
       sessionStorage.setItem("tb_demo_admin", "true");
       showAdminApp();
-
-      // The dashboard data still comes from your backend when available.
-      // If no backend is connected, keep the admin panel visible.
-      try {
-        await loadDashboard();
-      } catch {
-        setStatus("Demo admin login successful. Backend is not connected.", true);
-      }
+      loadDashboard();
     }
 
-    async function logoutAdmin() {
+    function logoutAdmin() {
       sessionStorage.removeItem("tb_demo_admin");
-
-      // Also try to log out of the backend if one is connected.
-      try {
-        await apiRequest("/api/admin/logout", {
-          method: "POST"
-        });
-      } catch {
-        // Demo mode does not require a backend.
-      } finally {
-        showLoginPage();
-      }
+      showLoginPage();
     }
 
-    async function loadDashboard() {
-      try {
-        setStatus("Loading dashboard...");
+    function loadDashboard() {
+      const users = getLocalData(TB_USERS_KEY);
+      const purchases = getLocalData(TB_PURCHASES_KEY);
 
-        const [
-          usersData,
-          purchasesData,
-          skinsData
-        ] = await Promise.all([
-          apiRequest("/api/admin/users"),
-          apiRequest("/api/admin/purchases"),
-          apiRequest("/api/admin/skins")
-        ]);
+      const skins = [
+        { id: "skin-001", name: "Dohnut", price: 1.99 },
+        { id: "skin-002", name: "Pumpkitty", price: 1.99 },
+        { id: "skin-003", name: "Mindseye", price: 1.99 },
+        { id: "skin-004", name: "Nomster", price: 5.99 }
+      ];
 
-        const users = usersData.users || usersData || [];
-        const purchases =
-          purchasesData.purchases || purchasesData || [];
-        const skins = skinsData.skins || skinsData || [];
+      document.getElementById("totalUsers").textContent = users.length;
+      document.getElementById("totalPurchases").textContent = purchases.length;
+      document.getElementById("totalSkins").textContent = skins.length;
 
-        document.getElementById("totalUsers").textContent =
-          users.length;
+      renderUsers(users);
+      renderPurchases(
+        purchases.map(p => ({
+          id: p.id,
+          userId: p.userId,
+          username: p.username,
+          skinName: (p.items || []).map(i => i.name).join(", "),
+          amount: p.total,
+          createdAt: p.createdAt
+        }))
+      );
+      renderSkins(skins);
 
-        document.getElementById("totalPurchases").textContent =
-          purchases.length;
-
-        document.getElementById("totalSkins").textContent =
-          skins.length;
-
-        renderUsers(users);
-        renderPurchases(purchases);
-        renderSkins(skins);
-
-        setStatus("Dashboard loaded.");
-      } catch (error) {
-        setStatus(error.message, true);
-      }
+      setStatus("Dashboard loaded.");
     }
+
+
+
+
 
     function renderUsers(users) {
       const body = document.getElementById("usersTableBody");
