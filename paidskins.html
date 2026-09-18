@@ -5,1378 +5,363 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T.B Agar.io — Shop</title>
 <link rel="icon" href="IMG_0561.jpeg">
-
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  min-height: 100vh;
-  color: white;
-  background:
-    radial-gradient(circle at top right, #075985, transparent 35%),
-    #020617;
-}
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 20px;
-  background: rgba(2, 6, 23, .95);
-  border-bottom: 1px solid #164e63;
-}
-
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-area img {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  object-fit: cover;
-}
-
-.logo-area h1 {
-  font-size: 20px;
-}
-
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 12px 16px;
-  color: white;
-  background: #2563eb;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #1d4ed8;
-}
-
-.header-coins {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 10px 13px;
-  border: 1px solid #854d0e;
-  border-radius: 10px;
-  background: rgba(113, 63, 18, .35);
-  color: #facc15;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-button.secondary {
-  background: #334155;
-}
-
-button.danger {
-  background: #dc2626;
-}
-
-button:disabled {
-  cursor: not-allowed;
-  opacity: .5;
-}
-
-.header-buttons {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-main {
-  width: min(1100px, 94%);
-  margin: 35px auto;
-}
-
-.hero {
-  padding: 40px 20px;
-  margin-bottom: 30px;
-  text-align: center;
-  border: 1px solid #164e63;
-  border-radius: 20px;
-  background: rgba(8, 47, 73, .5);
-}
-
-.hero h2 {
-  margin-bottom: 12px;
-  font-size: clamp(30px, 6vw, 52px);
-}
-
-.hero h2 span {
-  color: #38bdf8;
-}
-
-.hero p {
-  color: #cbd5e1;
-  line-height: 1.6;
-}
-
-.account-panel {
-  display: none;
-  margin-bottom: 25px;
-  padding: 20px;
-  border: 1px solid #164e63;
-  border-radius: 16px;
-  background: #071a2e;
-}
-
-.account-panel.visible {
-  display: block;
-}
-
-.account-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.account-top h3 {
-  margin-bottom: 7px;
-}
-
-.coins {
-  color: #facc15;
-  font-weight: bold;
-}
-
-.account-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.section-title {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.section-title h2 {
-  font-size: 30px;
-  margin-bottom: 8px;
-}
-
-.section-title p {
-  color: #94a3b8;
-}
-
-.products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-.product {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 15px;
-  border: 1px solid #164e63;
-  border-radius: 18px;
-  background: linear-gradient(145deg, #08243b, #071226);
-}
-
-.product-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #020617;
-}
-
-.product-image img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.product h3 {
-  font-size: 21px;
-}
-
-.product p {
-  min-height: 42px;
-  color: #94a3b8;
-  line-height: 1.5;
-}
-
-.price {
-  color: #38bdf8;
-  font-size: 25px;
-  font-weight: bold;
-}
-
-.product button {
-  width: 100%;
-  margin-top: auto;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(0, 0, 0, .75);
-}
-
-.modal.open {
-  display: flex;
-}
-
-.modal-box {
-  width: min(430px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 25px;
-  border: 1px solid #164e63;
-  border-radius: 18px;
-  background: #071426;
-}
-
-.modal-box h2 {
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 6px;
-  color: #cbd5e1;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 12px;
-  color: white;
-  border: 1px solid #334155;
-  border-radius: 9px;
-  outline: none;
-  background: #020617;
-}
-
-.form-group input:focus {
-  border-color: #38bdf8;
-}
-
-.modal-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 18px;
-}
-
-.modal-buttons button {
-  flex: 1;
-}
-
-.message {
-  display: none;
-  margin-bottom: 15px;
-  padding: 12px;
-  border-radius: 8px;
-  background: #164e63;
-}
-
-.message.show {
-  display: block;
-}
-
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid #334155;
-}
-
-.cart-total {
-  margin-top: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #38bdf8;
-}
-
-.empty {
-  padding: 25px;
-  color: #94a3b8;
-  text-align: center;
-}
-
-footer {
-  padding: 40px 20px;
-  color: #64748b;
-  text-align: center;
-}
-
-@media (max-width: 600px) {
-  header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .header-buttons {
-    width: 100%;
-  }
-
-  .header-buttons button {
-    flex: 1;
-  }
-
-  .account-top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-/* =========================================================
-   HAMBURGER MENU — COPIED FROM T.B AGAR.IO MENU
-========================================================= */
-
-.menu-button{
-    width:45px;
-    height:45px;
-    border:1px solid #21415e;
-    border-radius:10px;
-    background:#0b1626;
-    color:#fff;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    gap:5px;
-    transition:.2s;
-}
-
-.menu-button:hover{
-    background:#102238;
-    border-color:#19c8ff;
-}
-
-.menu-button span{
-    width:22px;
-    height:2px;
-    background:#fff;
-    border-radius:2px;
-}
-
-.menu-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.62);
-    z-index:1100;
-    opacity:0;
-    visibility:hidden;
-    transition:.25s;
-}
-
-.menu-overlay.active{
-    opacity:1;
-    visibility:visible;
-}
-
-.side-menu{
-    position:fixed;
-    top:0;
-    right:-340px;
-    width:320px;
-    max-width:90%;
-    height:100vh;
-    background:#08111f;
-    border-left:1px solid #173b57;
-    z-index:1200;
-    transition:.3s ease;
-    padding:22px;
-    display:flex;
-    flex-direction:column;
-    box-shadow:-15px 0 45px rgba(0,0,0,.35);
-}
-
-.side-menu.active{
-    right:0;
-}
-
-.menu-top{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding-bottom:20px;
-    border-bottom:1px solid #17304c;
-}
-
-.menu-brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-
-.menu-brand img{
-    width:40px;
-    height:40px;
-    object-fit:cover;
-    border-radius:9px;
-}
-
-.menu-brand strong{
-    font-size:17px;
-}
-
-.menu-brand span{
-    color:#19c8ff;
-}
-
-.close-menu{
-    width:38px;
-    height:38px;
-    border:1px solid #21415e;
-    background:#0d1a2b;
-    color:#fff;
-    border-radius:9px;
-    font-size:22px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.close-menu:hover{
-    border-color:#19c8ff;
-    color:#19c8ff;
-}
-
-.menu-content{
-    overflow-y:auto;
-    padding-top:20px;
-}
-
-.menu-label{
-    color:#6f8ba4;
-    font-size:11px;
-    font-weight:bold;
-    letter-spacing:1.5px;
-    margin:12px 4px 8px;
-    text-transform:uppercase;
-}
-
-.menu-link{
-    width:100%;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 13px;
-    margin-bottom:6px;
-    border-radius:9px;
-    color:#dce8f2;
-    text-decoration:none;
-    font-size:14px;
-    font-weight:bold;
-    border:1px solid transparent;
-    transition:.2s;
-}
-
-.menu-link:hover{
-    background:#0d2135;
-    border-color:#164867;
-    color:#19c8ff;
-}
-
-.menu-link.active{
-    background:#0d2438;
-    border-color:#176184;
-    color:#19c8ff;
-}
-
-.menu-icon{
-    width:26px;
-    text-align:center;
-    font-size:16px;
-}
-
-.menu-bottom{
-    margin-top:auto;
-    padding-top:18px;
-    border-top:1px solid #17304c;
-}
-
-.social-menu{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:7px;
-}
-
-.social-menu a{
-    text-decoration:none;
-    color:#dce8f2;
-    background:#0c1a2b;
-    border:1px solid #1a344d;
-    border-radius:8px;
-    text-align:center;
-    padding:10px 4px;
-    font-size:11px;
-    font-weight:bold;
-    transition:.2s;
-}
-
-.social-menu a:hover{
-    border-color:#19c8ff;
-    color:#19c8ff;
-}
-
-@media (max-width:600px){
-    .menu-button{
-        align-self:flex-end;
-    }
-}
-
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{min-height:100vh;color:white;background:radial-gradient(circle at top right,#075985,transparent 35%),#020617}
+header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(2,6,23,.95);border-bottom:1px solid #164e63}
+.logo-area{display:flex;align-items:center;gap:12px}.logo-area img{width:48px;height:48px;border-radius:12px;object-fit:cover}.logo-area h1{font-size:20px}
+button{border:0;border-radius:10px;padding:12px 16px;color:white;background:#2563eb;font-weight:bold;cursor:pointer}button:hover{background:#1d4ed8}button:disabled{cursor:not-allowed;opacity:.5}
+.header-coins{display:flex;align-items:center;min-height:44px;padding:10px 13px;border:1px solid #854d0e;border-radius:10px;background:rgba(113,63,18,.35);color:#facc15;font-weight:bold;white-space:nowrap}
+button.secondary{background:#334155}button.danger{background:#dc2626}.header-buttons{display:flex;gap:8px;flex-wrap:wrap}
+main{width:min(1100px,94%);margin:35px auto}.hero{padding:40px 20px;margin-bottom:30px;text-align:center;border:1px solid #164e63;border-radius:20px;background:rgba(8,47,73,.5)}
+.hero h2{margin-bottom:12px;font-size:clamp(30px,6vw,52px)}.hero h2 span{color:#38bdf8}.hero p{color:#cbd5e1;line-height:1.6}
+.account-panel{display:none;margin-bottom:25px;padding:20px;border:1px solid #164e63;border-radius:16px;background:#071a2e}.account-panel.visible{display:block}
+.account-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.account-top h3{margin-bottom:7px}.coins{color:#facc15;font-weight:bold}.account-actions{display:flex;gap:8px;flex-wrap:wrap}
+.section-title{margin-bottom:20px;text-align:center}.section-title h2{font-size:30px;margin-bottom:8px}.section-title p{color:#94a3b8}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}.product{display:flex;flex-direction:column;gap:12px;padding:15px;border:1px solid #164e63;border-radius:18px;background:linear-gradient(145deg,#08243b,#071226)}
+.product-image{width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:12px;background:#020617}.product-image img{width:100%;height:100%;display:block;object-fit:cover}
+.product h3{font-size:21px}.product p{min-height:42px;color:#94a3b8;line-height:1.5}.price{color:#38bdf8;font-size:25px;font-weight:bold}.product button{width:100%;margin-top:auto}
+.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.75)}.modal.open{display:flex}
+.modal-box{width:min(430px,100%);max-height:90vh;overflow-y:auto;padding:25px;border:1px solid #164e63;border-radius:18px;background:#071426}.modal-box h2{margin-bottom:20px}
+.form-group{margin-bottom:14px}.form-group label{display:block;margin-bottom:6px;color:#cbd5e1}.form-group input{width:100%;padding:12px;color:white;border:1px solid #334155;border-radius:9px;outline:none;background:#020617}.form-group input:focus{border-color:#38bdf8}
+.modal-buttons{display:flex;gap:8px;margin-top:18px}.modal-buttons button{flex:1}.message{display:none;margin-bottom:15px;padding:12px;border-radius:8px;background:#164e63}.message.show{display:block}
+.cart-item{display:flex;justify-content:space-between;gap:15px;padding:12px 0;border-bottom:1px solid #334155}.cart-total{margin-top:20px;font-size:22px;font-weight:bold;color:#38bdf8}.empty{padding:25px;color:#94a3b8;text-align:center}
+footer{padding:40px 20px;color:#64748b;text-align:center}
+.menu-button{width:45px;height:45px;border:1px solid #21415e;border-radius:10px;background:#0b1626;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;transition:.2s}.menu-button:hover{background:#102238;border-color:#19c8ff}.menu-button span{width:22px;height:2px;background:#fff;border-radius:2px}
+.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:1100;opacity:0;visibility:hidden;transition:.25s}.menu-overlay.active{opacity:1;visibility:visible}
+.side-menu{position:fixed;top:0;right:-340px;width:320px;max-width:90%;height:100vh;background:#08111f;border-left:1px solid #173b57;z-index:1200;transition:.3s ease;padding:22px;display:flex;flex-direction:column;box-shadow:-15px 0 45px rgba(0,0,0,.35)}.side-menu.active{right:0}
+.menu-top{display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:1px solid #17304c}.menu-brand{display:flex;align-items:center;gap:10px}.menu-brand img{width:40px;height:40px;object-fit:cover;border-radius:9px}.menu-brand strong{font-size:17px}.menu-brand span{color:#19c8ff}
+.close-menu{width:38px;height:38px;border:1px solid #21415e;background:#0d1a2b;color:#fff;border-radius:9px;font-size:22px;cursor:pointer}.close-menu:hover{border-color:#19c8ff;color:#19c8ff}
+.menu-content{overflow-y:auto;padding-top:20px}.menu-label{color:#6f8ba4;font-size:11px;font-weight:bold;letter-spacing:1.5px;margin:12px 4px 8px;text-transform:uppercase}
+.menu-link{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;margin-bottom:6px;border-radius:9px;color:#dce8f2;text-decoration:none;font-size:14px;font-weight:bold;border:1px solid transparent;transition:.2s}.menu-link:hover{background:#0d2135;border-color:#164867;color:#19c8ff}.menu-link.active{background:#0d2438;border-color:#176184;color:#19c8ff}.menu-icon{width:26px;text-align:center;font-size:16px}
+.menu-bottom{margin-top:auto;padding-top:18px;border-top:1px solid #17304c}.social-menu{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.social-menu a{text-decoration:none;color:#dce8f2;background:#0c1a2b;border:1px solid #1a344d;border-radius:8px;text-align:center;padding:10px 4px;font-size:11px;font-weight:bold}.social-menu a:hover{border-color:#19c8ff;color:#19c8ff}
+@media(max-width:600px){header{align-items:flex-start;flex-direction:column;gap:12px}.header-buttons{width:100%}.header-buttons button{flex:1}.account-top{align-items:flex-start;flex-direction:column}.menu-button{align-self:flex-end}}
 </style>
 </head>
-
 <body>
 
 <header>
-  <div class="logo-area">
-    <img src="IMG_0561.jpeg" alt="T.B Agar.io logo">
-    <h1>T.B Agar.io Shop</h1>
-  </div>
-
+  <div class="logo-area"><img src="IMG_0561.jpeg" alt="T.B Agar.io logo"><h1>T.B Agar.io Shop</h1></div>
   <div class="header-buttons">
-    <div id="headerCoins" class="header-coins" style="display:none;">
-      🪙 <span id="headerCoinAmount">0</span> Coins
-    </div>
+    <div id="headerCoins" class="header-coins" style="display:none">🪙 <span id="headerCoinAmount">0</span> Coins</div>
     <button id="loginButton" onclick="openModal('loginModal')">Login</button>
     <button id="registerButton" onclick="openModal('registerModal')">Register</button>
-    <button id="logoutButton" class="danger" onclick="logout()" style="display:none;">Logout</button>
+    <button id="logoutButton" class="danger" onclick="logout()" style="display:none">Logout</button>
     <button onclick="openCart()">🛒 Cart</button>
-  <button
-    class="menu-button"
-    onclick="openMenu()"
-    aria-label="Open menu"
-  >
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+    <button class="menu-button" onclick="openMenu()" aria-label="Open menu"><span></span><span></span><span></span></button>
+  </div>
 </header>
 
-<div
-    class="menu-overlay"
-    id="menuOverlay"
-    onclick="closeMenu()"
-></div>
-
-<aside
-    class="side-menu"
-    id="sideMenu"
->
-
-    <div class="menu-top">
-
-        <div class="menu-brand">
-            <img
-                src="IMG_0561.jpeg"
-                alt="T.B Agar.io"
-            >
-
-            <strong>
-                T.B <span>Agar.io</span>
-            </strong>
-        </div>
-
-        <button
-            class="close-menu"
-            onclick="closeMenu()"
-            aria-label="Close menu"
-        >
-            ×
-        </button>
-
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<aside class="side-menu" id="sideMenu">
+  <div class="menu-top">
+    <div class="menu-brand"><img src="IMG_0561.jpeg" alt="T.B Agar.io"><strong>T.B <span>Agar.io</span></strong></div>
+    <button class="close-menu" onclick="closeMenu()" aria-label="Close menu">×</button>
+  </div>
+  <div class="menu-content">
+    <div class="menu-label">Navigation</div>
+    <a class="menu-link" href="index.html"><span class="menu-icon">⌂</span>Home</a>
+    <a class="menu-link" href="custom-skins.html"><span class="menu-icon">◉</span>Custom Skins</a>
+    <a class="menu-link" href="key-access.html"><span class="menu-icon">🔑</span>Key Access</a>
+    <a class="menu-link" href="mod-menu.html"><span class="menu-icon">⚙</span>Mod Menu</a>
+    <a class="menu-link active" href="paidskins.html"><span class="menu-icon">◆</span>Paid Skins</a>
+    <a class="menu-link" href="buy-account.html"><span class="menu-icon">●</span>Buy Account</a>
+    <a class="menu-link" href="agar.io-skins.html"><span class="menu-icon">🎨</span>Agar.io Skins</a>
+    <div class="menu-label">External</div>
+    <a class="menu-link" href="https://biteyt.com/bots" target="_blank" rel="noopener"><span class="menu-icon">🤖</span>Bite Bots Panel</a>
+    <a class="menu-link" href="https://kahraba.in" target="_blank" rel="noopener"><span class="menu-icon">↗</span>Kahraba Website</a>
+  </div>
+  <div class="menu-bottom">
+    <div class="menu-label">Follow T.B Agar.io</div>
+    <div class="social-menu">
+      <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
+      <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
     </div>
-
-    <div class="menu-content">
-
-        <div class="menu-label">
-            Navigation
-        </div>
-
-        <a class="menu-link" href="index.html">
-            <span class="menu-icon">⌂</span>
-            Home
-        </a>
-
-        <a class="menu-link" href="custom-skins.html">
-            <span class="menu-icon">◉</span>
-            Custom Skins
-        </a>
-
-        <a class="menu-link" href="key-access.html">
-            <span class="menu-icon">🔑</span>
-            Key Access
-        </a>
-
-        <a class="menu-link" href="mod-menu.html">
-            <span class="menu-icon">⚙</span>
-            Mod Menu
-        </a>
-
-        <a class="menu-link active" href="paidskins.html">
-            <span class="menu-icon">◆</span>
-            Paid Skins
-        </a>
-
-        <a class="menu-link" href="buy-account.html">
-            <span class="menu-icon">●</span>
-            Buy Account
-        </a>
-
-        <a class="menu-link" href="agar.io-skins.html">
-            <span class="menu-icon">🎨</span>
-            Agar.io Skins
-        </a>
-
-        <div class="menu-label">
-            External
-        </div>
-
-        <a
-            class="menu-link"
-            href="https://biteyt.com/bots"
-            target="_blank"
-            rel="noopener"
-        >
-            <span class="menu-icon">🤖</span>
-            Bite Bots Panel
-        </a>
-
-        <a
-            class="menu-link"
-            href="https://kahraba.in"
-            target="_blank"
-            rel="noopener"
-        >
-            <span class="menu-icon">↗</span>
-            Kahraba Website
-        </a>
-
-    </div>
-
-    <div class="menu-bottom">
-
-        <div class="menu-label">
-            Follow T.B Agar.io
-        </div>
-
-        <div class="social-menu">
-
-            <a
-                href="https://discord.gg/qhuXPrVzBx"
-                target="_blank"
-                rel="noopener"
-            >
-                Discord
-            </a>
-
-            <a
-                href="https://www.youtube.com/@T.B6"
-                target="_blank"
-                rel="noopener"
-            >
-                YouTube
-            </a>
-
-            <a
-                href="https://www.instagram.com/t.bagar.io/"
-                target="_blank"
-                rel="noopener"
-            >
-                Instagram
-            </a>
-
-        </div>
-
-    </div>
-
+  </div>
 </aside>
 
-
 <main>
-
-<section class="hero">
-  <h2>Welcome to <span>T.B Agar.io</span></h2>
-  <p>
-    Buy unique skins and support T.B Agar.io.
-    Log in to manage your account and purchases.
-  </p>
-</section>
+<section class="hero"><h2>Welcome to <span>T.B Agar.io</span></h2><p>Buy unique skins and support T.B Agar.io. Log in to manage your account and purchases.</p></section>
 
 <section id="accountPanel" class="account-panel">
   <div class="account-top">
-    <div>
-      <h3>Welcome, <span id="accountName">user</span>!</h3>
-      <p>You are logged in to your T.B Agar.io account.</p>
-      <p class="coins">🪙 Coins: <span id="coinAmount">0</span></p>
-    </div>
-
-    <div class="account-actions">
-      <button onclick="openModal('usernameModal')">Change username</button>
-      <button class="danger" onclick="logout()">Logout</button>
-    </div>
+    <div><h3>Welcome, <span id="accountName">user</span>!</h3><p>You are logged in to your T.B Agar.io account.</p><p class="coins">🪙 Coins: <span id="coinAmount">0</span></p></div>
+    <div class="account-actions"><button onclick="openModal('usernameModal')">Change username</button><button class="danger" onclick="logout()">Logout</button></div>
   </div>
 </section>
 
 <section>
-  <div class="section-title">
-    <h2>Our Skins</h2>
-    <p>Choose your favorite skin.</p>
-  </div>
-
+  <div class="section-title"><h2>Our Skins</h2><p>Choose your favorite skin.</p></div>
   <div class="products">
-
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_5334.webp" alt="Dohnut">
-      </div>
-      <h3>Dohnut</h3>
-      <p>A unique Agar.io skin.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-001')">Add to Cart</button>
-    </article>
-
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0923.webp" alt="Pumpkitty">
-      </div>
-      <h3>Pumpkitty</h3>
-      <p>A cool skin with a cat style.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-002')">Add to Cart</button>
-    </article>
-
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0920.webp" alt="Mindseye">
-      </div>
-      <h3>Mindseye</h3>
-      <p>A mysterious skin for your account.</p>
-      <div class="price">€1,99</div>
-      <button onclick="addToCart('skin-003')">Add to Cart</button>
-    </article>
-
-    <article class="product">
-      <div class="product-image">
-        <img src="IMG_0924.webp" alt="Nomster">
-      </div>
-      <h3>Nomster</h3>
-      <p>A special premium Agar.io skin.</p>
-      <div class="price">€5,99</div>
-      <button onclick="addToCart('skin-004')">Add to Cart</button>
-    </article>
-
+    <article class="product"><div class="product-image"><img src="IMG_5334.webp" alt="Dohnut"></div><h3>Dohnut</h3><p>A unique Agar.io skin.</p><div class="price">€1,99</div><button onclick="addToCart('skin-001')">Add to Cart</button></article>
+    <article class="product"><div class="product-image"><img src="IMG_0923.webp" alt="Pumpkitty"></div><h3>Pumpkitty</h3><p>A cool skin with a cat style.</p><div class="price">€1,99</div><button onclick="addToCart('skin-002')">Add to Cart</button></article>
+    <article class="product"><div class="product-image"><img src="IMG_0920.webp" alt="Mindseye"></div><h3>Mindseye</h3><p>A mysterious skin for your account.</p><div class="price">€1,99</div><button onclick="addToCart('skin-003')">Add to Cart</button></article>
+    <article class="product"><div class="product-image"><img src="IMG_0924.webp" alt="Nomster"></div><h3>Nomster</h3><p>A special premium Agar.io skin.</p><div class="price">€5,99</div><button onclick="addToCart('skin-004')">Add to Cart</button></article>
   </div>
 </section>
-
 </main>
+<footer>© 2026 T.B Agar.io — All rights reserved.</footer>
 
-<footer>
-  © 2026 T.B Agar.io — All rights reserved.
-</footer>
+<div id="loginModal" class="modal"><div class="modal-box"><h2>Login</h2><div id="loginMessage" class="message"></div><form onsubmit="login(event)"><div class="form-group"><label for="loginUsername">Username</label><input id="loginUsername" required autocomplete="username"></div><div class="form-group"><label for="loginPassword">Password</label><input id="loginPassword" type="password" required autocomplete="current-password"></div><div class="modal-buttons"><button type="submit">Login</button><button type="button" class="secondary" onclick="closeModals()">Close</button></div></form></div></div>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-  <div class="modal-box">
-    <h2>Login</h2>
+<div id="registerModal" class="modal"><div class="modal-box"><h2>Create Account</h2><div id="registerMessage" class="message"></div><form onsubmit="register(event)"><div class="form-group"><label for="registerUsername">Username</label><input id="registerUsername" required minlength="3" maxlength="32" autocomplete="username"></div><div class="form-group"><label for="registerPassword">Password</label><input id="registerPassword" type="password" required minlength="6" autocomplete="new-password"></div><div class="form-group"><label for="registerPasswordAgain">Password herhalen</label><input id="registerPasswordAgain" type="password" required minlength="6" autocomplete="new-password"></div><div class="modal-buttons"><button type="submit">Register</button><button type="button" class="secondary" onclick="closeModals()">Close</button></div></form></div></div>
 
-    <div id="loginMessage" class="message"></div>
+<div id="usernameModal" class="modal"><div class="modal-box"><h2>Change username</h2><div id="usernameMessage" class="message"></div><form onsubmit="changeUsername(event)"><div class="form-group"><label for="newUsername">New username</label><input id="newUsername" required minlength="3" maxlength="32"></div><div class="modal-buttons"><button type="submit">Save</button><button type="button" class="secondary" onclick="closeModals()">Close</button></div></form></div></div>
 
-    <form onsubmit="login(event)">
-      <div class="form-group">
-        <label for="loginUsername">Username</label>
-        <input id="loginUsername" required autocomplete="username">
-      </div>
+<div id="cartModal" class="modal"><div class="modal-box"><h2>Cart</h2><div id="cartItems"></div><div id="cartTotal" class="cart-total"></div><div class="modal-buttons"><button id="checkoutButton" onclick="checkout()">Checkout</button><button class="secondary" onclick="closeModals()">Close</button></div></div></div>
 
-      <div class="form-group">
-        <label for="loginPassword">Password</label>
-        <input id="loginPassword" type="password" required autocomplete="current-password">
-      </div>
-
-      <div class="modal-buttons">
-        <button type="submit">Login</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- REGISTER MODAL -->
-<div id="registerModal" class="modal">
-  <div class="modal-box">
-    <h2>Create Account</h2>
-
-    <div id="registerMessage" class="message"></div>
-
-    <form onsubmit="register(event)">
-      <div class="form-group">
-        <label for="registerUsername">Username</label>
-        <input id="registerUsername" required minlength="3" maxlength="32"
-               autocomplete="username">
-      </div>
-
-      <div class="form-group">
-        <label for="registerPassword">Password</label>
-        <input id="registerPassword" type="password" required minlength="6"
-               autocomplete="new-password">
-      </div>
-
-      <div class="form-group">
-        <label for="registerPasswordAgain">Password herhalen</label>
-        <input id="registerPasswordAgain" type="password" required minlength="6"
-               autocomplete="new-password">
-      </div>
-
-      <div class="modal-buttons">
-        <button type="submit">Register</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- USERNAME MODAL -->
-<div id="usernameModal" class="modal">
-  <div class="modal-box">
-    <h2>Change username</h2>
-
-    <div id="usernameMessage" class="message"></div>
-
-    <form onsubmit="changeUsername(event)">
-      <div class="form-group">
-        <label for="newUsername">New username</label>
-        <input id="newUsername" required minlength="3" maxlength="32">
-      </div>
-
-      <div class="modal-buttons">
-        <button type="submit">Save</button>
-        <button type="button" class="secondary" onclick="closeModals()">Close</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- CART MODAL -->
-<div id="cartModal" class="modal">
-  <div class="modal-box">
-    <h2>Cart</h2>
-
-    <div id="cartItems"></div>
-    <div id="cartTotal" class="cart-total"></div>
-
-    <div class="modal-buttons">
-      <button onclick="checkout()">Checkout</button>
-      <button class="secondary" onclick="closeModals()">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- DEEL 2 KOMT HIERONDER -->
-  <script>
-
-/* =========================================================
-   HAMBURGER MENU FUNCTIONS
-========================================================= */
-
-function openMenu(){
-    document.getElementById("sideMenu").classList.add("active");
-    document.getElementById("menuOverlay").classList.add("active");
-    document.body.style.overflow = "hidden";
-}
-
-function closeMenu(){
-    document.getElementById("sideMenu").classList.remove("active");
-    document.getElementById("menuOverlay").classList.remove("active");
-    document.body.style.overflow = "";
-}
-
-document.addEventListener("keydown", function(event){
-    if(event.key === "Escape"){
-        closeMenu();
-    }
-});
-
-
-/* =========================
-   CONFIGURATIE
-========================= */
-
+<script>
 /*
-  Vervang dit adres door het adres van je eigen backend.
-  Voor alleen een lokale demo kun je API_BASE leeg laten.
+  T.B AGAR.IO SHOP
+  Central backend: server.js from TB-Agar-io-Database.zip
+  Do NOT put SQLite or passwords in this HTML.
 */
 const API_BASE = "";
 
 const products = {
-  "skin-001": {
-    id: "skin-001",
-    name: "Dohnut",
-    price: 1.99
-  },
-  "skin-002": {
-    id: "skin-002",
-    name: "Pumpkitty",
-    price: 1.99
-  },
-  "skin-003": {
-    id: "skin-003",
-    name: "Mindseye",
-    price: 1.99
-  },
-  "skin-004": {
-    id: "skin-004",
-    name: "Nomster",
-    price: 5.99
-  }
+  "skin-001": {id:"skin-001",name:"Dohnut",price:1.99},
+  "skin-002": {id:"skin-002",name:"Pumpkitty",price:1.99},
+  "skin-003": {id:"skin-003",name:"Mindseye",price:1.99},
+  "skin-004": {id:"skin-004",name:"Nomster",price:5.99}
 };
 
 let cart = JSON.parse(localStorage.getItem("tb_cart") || "[]");
 let currentUser = null;
 
-/* =========================
-   HULPFUNCTIES
-========================= */
+function $(id){return document.getElementById(id)}
 
-function $(id) {
-  return document.getElementById(id);
+function openMenu(){
+  $("sideMenu").classList.add("active");
+  $("menuOverlay").classList.add("active");
+  document.body.style.overflow="hidden";
 }
-
-function openModal(id) {
-  closeModals();
-  $(id).classList.add("open");
+function closeMenu(){
+  $("sideMenu").classList.remove("active");
+  $("menuOverlay").classList.remove("active");
+  document.body.style.overflow="";
 }
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMenu();closeModals()}});
 
-function closeModals() {
-  document.querySelectorAll(".modal").forEach(modal => {
-    modal.classList.remove("open");
-  });
-}
+function openModal(id){closeModals();$(id).classList.add("open")}
+function closeModals(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"))}
+function showMessage(id,text){$(id).textContent=text;$(id).classList.add("show")}
+function clearMessage(id){$(id).textContent="";$(id).classList.remove("show")}
+function saveCart(){localStorage.setItem("tb_cart",JSON.stringify(cart))}
+function formatPrice(price){return "€"+Number(price).toFixed(2).replace(".",",")}
 
-function showMessage(id, text) {
-  const element = $(id);
-  element.textContent = text;
-  element.classList.add("show");
-}
-
-function clearMessage(id) {
-  const element = $(id);
-  element.textContent = "";
-  element.classList.remove("show");
-}
-
-function saveCart() {
-  localStorage.setItem("tb_cart", JSON.stringify(cart));
-}
-
-function formatPrice(price) {
-  return "€" + price.toFixed(2).replace(".", ",");
-}
-
-async function apiRequest(endpoint, options = {}) {
-  const response = await fetch(API_BASE + endpoint, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    },
+async function apiRequest(endpoint,options={}){
+  const response=await fetch(API_BASE+endpoint,{
+    credentials:"include",
+    headers:{"Content-Type":"application/json",...(options.headers||{})},
     ...options
   });
-
-  let data = {};
-
-  try {
-    data = await response.json();
-  } catch {
-    data = {};
-  }
-
-  if (!response.ok) {
-    throw new Error(data.message || "Er is iets misgegaan.");
-  }
-
+  let data={};
+  try{data=await response.json()}catch{}
+  if(!response.ok)throw new Error(data.message||`Request failed (${response.status}).`);
   return data;
 }
 
-/* =========================
-   ACCOUNT
-========================= */
-
-function updateAccountPanel() {
-  const panel = $("accountPanel");
-  const loggedIn = !!currentUser;
-
-  // Header login/logout state
-  $("loginButton").style.display = loggedIn ? "none" : "inline-block";
-  $("registerButton").style.display = loggedIn ? "none" : "inline-block";
-  $("logoutButton").style.display = loggedIn ? "inline-block" : "none";
-  $("headerCoins").style.display = loggedIn ? "flex" : "none";
-
-  if (!loggedIn) {
-    panel.classList.remove("visible");
-    return;
-  }
-
-  const coins = Number(currentUser.coins) || 0;
-
-  panel.classList.add("visible");
-  $("accountName").textContent = currentUser.username;
-  $("coinAmount").textContent = coins;
-  $("headerCoinAmount").textContent = coins;
-}
-
-function getUsers() {
-  try {
-    return JSON.parse(localStorage.getItem("tb_agar_users") || "[]");
-  } catch {
-    return [];
+/* The database is the source of truth. No local user/password database is used. */
+async function loadCurrentUser(){
+  try{
+    const data=await apiRequest("/api/me");
+    currentUser=data.user;
+    updateAccountPanel();
+  }catch{
+    currentUser=null;
+    updateAccountPanel();
   }
 }
 
-function saveUsers(users) {
-  localStorage.setItem("tb_agar_users", JSON.stringify(users));
+function updateAccountPanel(){
+  const loggedIn=!!currentUser;
+  $("loginButton").style.display=loggedIn?"none":"inline-block";
+  $("registerButton").style.display=loggedIn?"none":"inline-block";
+  $("logoutButton").style.display=loggedIn?"inline-block":"none";
+  $("headerCoins").style.display=loggedIn?"flex":"none";
+  $("accountPanel").classList.toggle("visible",loggedIn);
+  if(loggedIn){
+    const coins=Number(currentUser.coins)||0;
+    $("accountName").textContent=currentUser.username;
+    $("coinAmount").textContent=coins;
+    $("headerCoinAmount").textContent=coins;
+  }
 }
 
-function loadCurrentUser() {
-  const username = localStorage.getItem("tb_agar_current_user");
-  const users = getUsers();
-
-  currentUser = users.find(
-    user => user.username === username
-  ) || null;
-
-  updateAccountPanel();
-}
-
-function register(event) {
+async function register(event){
   event.preventDefault();
   clearMessage("registerMessage");
-
-  const username = $("registerUsername").value.trim();
-  const password = $("registerPassword").value;
-  const passwordAgain = $("registerPasswordAgain").value;
-
-  if (password !== passwordAgain) {
-    showMessage("registerMessage", "The passwords do not match.");
-    return;
-  }
-
-  if (username.length < 3) {
-    showMessage("registerMessage", "Username must be at least 3 characters.");
-    return;
-  }
-
-  if (password.length < 6) {
-    showMessage("registerMessage", "Password must be at least 6 characters.");
-    return;
-  }
-
-  const users = getUsers();
-
-  if (users.some(user =>
-    user.username.toLowerCase() === username.toLowerCase()
-  )) {
-    showMessage("registerMessage", "That username is already in use.");
-    return;
-  }
-
-  const user = {
-    id: "user-" + Date.now(),
-    username,
-    password,
-    coins: 0,
-    createdAt: new Date().toISOString()
-  };
-
-  users.push(user);
-  saveUsers(users);
-
-  currentUser = user;
-  localStorage.setItem("tb_agar_current_user", user.username);
-
-  updateAccountPanel();
-  closeModals();
-  alert("Your account has been created successfully!");
+  const username=$("registerUsername").value.trim();
+  const password=$("registerPassword").value;
+  const again=$("registerPasswordAgain").value;
+  if(password!==again){showMessage("registerMessage","The passwords do not match.");return}
+  try{
+    const data=await apiRequest("/api/register",{method:"POST",body:JSON.stringify({username,password})});
+    currentUser=data.user;
+    updateAccountPanel();
+    closeModals();
+    $("registerUsername").value="";
+    $("registerPassword").value="";
+    $("registerPasswordAgain").value="";
+    alert("Your account has been created successfully!");
+  }catch(error){showMessage("registerMessage",error.message)}
 }
 
-function login(event) {
+async function login(event){
   event.preventDefault();
   clearMessage("loginMessage");
-
-  const username = $("loginUsername").value.trim();
-  const password = $("loginPassword").value;
-
-  const user = getUsers().find(
-    user =>
-      user.username.toLowerCase() === username.toLowerCase() &&
-      user.password === password
-  );
-
-  if (!user) {
-    showMessage("loginMessage", "Incorrect username or password.");
-    return;
-  }
-
-  currentUser = user;
-  localStorage.setItem("tb_agar_current_user", user.username);
-
-  updateAccountPanel();
-  closeModals();
-  alert("Login successful.");
+  const username=$("loginUsername").value.trim();
+  const password=$("loginPassword").value;
+  try{
+    const data=await apiRequest("/api/login",{method:"POST",body:JSON.stringify({username,password})});
+    currentUser=data.user;
+    updateAccountPanel();
+    closeModals();
+    $("loginUsername").value="";
+    $("loginPassword").value="";
+    alert("Login successful.");
+  }catch(error){showMessage("loginMessage",error.message)}
 }
 
-function logout() {
-  currentUser = null;
-  localStorage.removeItem("tb_agar_current_user");
+async function logout(){
+  try{await apiRequest("/api/logout",{method:"POST"})}catch{}
+  currentUser=null;
   updateAccountPanel();
   closeModals();
   alert("You have been logged out.");
 }
 
-function changeUsername(event) {
+async function changeUsername(event){
   event.preventDefault();
   clearMessage("usernameMessage");
-
-  if (!currentUser) {
-    showMessage("usernameMessage", "Please log in first.");
-    return;
-  }
-
-  const username = $("newUsername").value.trim();
-
-  if (username.length < 3) {
-    showMessage("usernameMessage", "Username must be at least 3 characters.");
-    return;
-  }
-
-  const users = getUsers();
-
-  if (users.some(user =>
-    user.id !== currentUser.id &&
-    user.username.toLowerCase() === username.toLowerCase()
-  )) {
-    showMessage("usernameMessage", "That username is already in use.");
-    return;
-  }
-
-  const index = users.findIndex(user => user.id === currentUser.id);
-
-  if (index === -1) {
-    showMessage("usernameMessage", "User account could not be found.");
-    return;
-  }
-
-  users[index].username = username;
-  currentUser = users[index];
-
-  saveUsers(users);
-  localStorage.setItem("tb_agar_current_user", username);
-
-  updateAccountPanel();
-  closeModals();
-  alert("Your username has been changed.");
+  if(!currentUser){showMessage("usernameMessage","Please log in first.");return}
+  const username=$("newUsername").value.trim();
+  try{
+    const data=await apiRequest("/api/me/username",{method:"PATCH",body:JSON.stringify({username})});
+    currentUser=data.user;
+    updateAccountPanel();
+    closeModals();
+    $("newUsername").value="";
+    alert("Your username has been changed.");
+  }catch(error){showMessage("usernameMessage",error.message)}
 }
 
-/* =========================
-   WINKELWAGEN
-
-========================= */
-
-function addToCart(productId) {
-  if (!products[productId]) {
-    alert("This product does not exist.");
-    return;
-  }
-
+function addToCart(productId){
+  if(!products[productId]){alert("This product does not exist.");return}
   cart.push(productId);
   saveCart();
-
-  alert(products[productId].name + " has been added to your cart.");
+  alert(products[productId].name+" has been added to your cart.");
 }
 
-function removeFromCart(index) {
-  cart.splice(index, 1);
+function removeFromCart(index){
+  cart.splice(index,1);
   saveCart();
   renderCart();
 }
 
-function renderCart() {
-  const container = $("cartItems");
-  const totalElement = $("cartTotal");
-
-  container.innerHTML = "";
-
-  if (cart.length === 0) {
-    container.innerHTML = '<div class="empty">Your cart is empty.</div>';
-    totalElement.textContent = "";
+function renderCart(){
+  const container=$("cartItems");
+  const totalElement=$("cartTotal");
+  container.innerHTML="";
+  if(!cart.length){
+    container.innerHTML='<div class="empty">Your cart is empty.</div>';
+    totalElement.textContent="";
     return;
   }
-
-  let total = 0;
-
-  cart.forEach((productId, index) => {
-    const product = products[productId];
-
-    if (!product) return;
-
-    total += product.price;
-
-    const item = document.createElement("div");
-    item.className = "cart-item";
-
-    item.innerHTML = `
-      <div>
-        <strong>${product.name}</strong><br>
-        <span>${formatPrice(product.price)}</span>
-      </div>
-      <button class="danger" onclick="removeFromCart(${index})">
-        Remove
-      </button>
-    `;
-
+  let total=0;
+  cart.forEach((id,index)=>{
+    const product=products[id];
+    if(!product)return;
+    total+=product.price;
+    const item=document.createElement("div");
+    item.className="cart-item";
+    const info=document.createElement("div");
+    const strong=document.createElement("strong");
+    strong.textContent=product.name;
+    const br=document.createElement("br");
+    const span=document.createElement("span");
+    span.textContent=formatPrice(product.price);
+    info.append(strong,br,span);
+    const button=document.createElement("button");
+    button.className="danger";
+    button.textContent="Remove";
+    button.onclick=()=>removeFromCart(index);
+    item.append(info,button);
     container.appendChild(item);
   });
-
-  totalElement.textContent = "Total: " + formatPrice(total);
+  totalElement.textContent="Total: "+formatPrice(total);
 }
 
-function openCart() {
-  renderCart();
-  openModal("cartModal");
-}
+function openCart(){renderCart();openModal("cartModal")}
 
-function checkout() {
-  if (cart.length === 0) {
-    alert("Your cart is empty.");
-    return;
-  }
+/*
+  IMPORTANT:
+  The supplied server.js currently records purchases but does not deduct
+  coins. Therefore this shop does NOT pretend that a coin payment succeeded.
+  Checkout sends the order to /api/purchases and the server is the source
+  of truth. If you want Coins to be deducted automatically, server.js must
+  perform the deduction atomically before returning success.
+*/
+async function checkout(){
+  if(!cart.length){alert("Your cart is empty.");return}
+  if(!currentUser){closeModals();openModal("loginModal");alert("Please log in before checkout.");return}
 
-  if (!currentUser) {
+  const items=cart.map(id=>products[id]).filter(Boolean).map(p=>({
+    productId:p.id,
+    name:p.name,
+    price:p.price
+  }));
+
+  if(!items.length){alert("Your cart is empty.");return}
+
+  const total=Number(items.reduce((sum,item)=>sum+item.price,0).toFixed(2));
+  const confirmed=confirm(
+    "Place this order?\n\n"+
+    items.map(i=>i.name+" — "+formatPrice(i.price)).join("\n")+
+    "\n\nTotal: "+formatPrice(total)
+  );
+  if(!confirmed)return;
+
+  const button=$("checkoutButton");
+  button.disabled=true;
+  button.textContent="Processing...";
+
+  try{
+    const data=await apiRequest("/api/purchases",{
+      method:"POST",
+      body:JSON.stringify({items})
+    });
+
+    cart=[];
+    saveCart();
+    renderCart();
+
+    /* Refresh the account from the database after the purchase. */
+    await loadCurrentUser();
+
     closeModals();
-    openModal("loginModal");
-    alert("Please log in before checkout.");
-    return;
-  }
 
-  const items = cart.map(productId => {
-    const product = products[productId];
-    return {
-      productId: product.id,
-      name: product.name,
-      price: product.price
-    };
-  });
-
-  const total = items.reduce((sum, item) => sum + item.price, 0);
-  const balance = Number(currentUser.coins) || 0;
-
-  // Coins are the account balance used to pay for skins.
-  if (balance < total) {
     alert(
-      "You do not have enough Coins.\n\n" +
-      "Your balance: " + balance.toFixed(2) + " Coins\n" +
-      "Required: " + total.toFixed(2) + " Coins\n\n" +
-      "You need " + (total - balance).toFixed(2) + " more Coins."
+      "Order placed successfully!\n\n"+
+      "Order ID: "+(data.purchase?.id||"created")+
+      "\nTotal: "+formatPrice(data.purchase?.total ?? total)
     );
-    return;
+  }catch(error){
+    alert(error.message||"Checkout failed.");
+  }finally{
+    button.disabled=false;
+    button.textContent="Checkout";
   }
-
-  const confirmed = confirm(
-    "You are about to pay " + total.toFixed(2) + " Coins.\n\n" +
-    "Your balance: " + balance.toFixed(2) + " Coins\n" +
-    "Balance after purchase: " + (balance - total).toFixed(2) + " Coins\n\n" +
-    "Do you want to continue?"
-  );
-
-  if (!confirmed) return;
-
-  const purchases = JSON.parse(
-    localStorage.getItem("tb_agar_purchases") || "[]"
-  );
-
-  // Deduct the Coins from the logged-in account.
-  const users = getUsers();
-  const userIndex = users.findIndex(user => user.id === currentUser.id);
-
-  if (userIndex === -1) {
-    alert("Your account could not be found.");
-    return;
-  }
-
-  users[userIndex].coins = balance - total;
-  currentUser = users[userIndex];
-  saveUsers(users);
-
-  purchases.push({
-    id: "purchase-" + Date.now(),
-    userId: currentUser.id,
-    username: currentUser.username,
-    items,
-    total,
-    paidWith: "Coins",
-    createdAt: new Date().toISOString()
-  });
-
-  localStorage.setItem(
-    "tb_agar_purchases",
-    JSON.stringify(purchases)
-  );
-
-  cart = [];
-  saveCart();
-  renderCart();
-  updateAccountPanel();
-
-  alert(
-    "Your order was placed successfully!\n\n" +
-    "You paid " + total.toFixed(2) + " Coins.\n" +
-    "Remaining balance: " + currentUser.coins.toFixed(2) + " Coins."
-  );
-  closeModals();
 }
 
-/* =========================
-   MODAL GEDRAG
-========================= */
-
-document.querySelectorAll(".modal").forEach(modal => {
-  modal.addEventListener("click", event => {
-    if (event.target === modal) {
-      modal.classList.remove("open");
-    }
+document.querySelectorAll(".modal").forEach(modal=>{
+  modal.addEventListener("click",event=>{
+    if(event.target===modal)modal.classList.remove("open");
   });
 });
 
-/* =========================
-   START
-========================= */
-
 loadCurrentUser();
 </script>
-
 </body>
 </html>
