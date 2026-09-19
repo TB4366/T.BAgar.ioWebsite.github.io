@@ -175,11 +175,27 @@
       overflow-wrap: anywhere;
     }
 
+    .skin-price {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: #7dd3fc;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
     .skin-id {
       display: block;
-      margin-top: 5px;
+      margin-top: 6px;
       color: #64748b;
-      font-size: 10px;
+      font-size: 9px;
+      overflow-wrap: anywhere;
     }
 
     .loading,
@@ -454,156 +470,343 @@
 
     /*
       ==================================================
-      LOAD ALL SKINS
+      LOAD ALL SKINS FROM GAME CONFIGURATION
       ==================================================
+
+      The catalogue is built directly from the official
+      GameConfiguration sections. Nothing is hardcoded:
+
+      Gameplay - Equippable Skins -> every skin productId
+      Shop - Skins               -> shop/purchase relation
+      Wallet - Soft Purchases    -> current configured price
+      Visual - Products          -> skin image
     */
 
     async function loadSkins() {
-      const container =
-        document.getElementById("skins");
+      const container = document.getElementById("skins");
+      const count = document.getElementById("skinCount");
 
-      const count =
-        document.getElementById("skinCount");
-
-      container.innerHTML =
-        '<div class="loading">Loading skins...</div>';
-
+      container.innerHTML = '<div class="loading">Loading skins...</div>';
       count.textContent = "Loading...";
-
       allSkins = [];
 
       try {
-        const url =
-          API +
-          version +
-          "/GameConfiguration.json";
-
-        const response = await fetch(url);
+        const url = API + version + "/GameConfiguration.json";
+        const response = await fetch(url, { cache: "no-store" });
 
         if (!response.ok) {
-          throw new Error(
-            "GameConfiguration could not be loaded"
-          );
+          throw new Error("GameConfiguration could not be loaded");
         }
 
         const config = await response.json();
+        const gameConfig = config && config.gameConfig
+          ? config.gameConfig
+          : config;
 
-        const skinCollection =
-          findSkinCollection(config);
+        const gameplaySkins = getSectionRows(
+          gameConfig,
+          "Gameplay - Equippable Skins"
+        );
+        const shopSkins = getSectionRows(
+          gameConfig,
+          "Shop - Skins"
+        );
+        const purchases = getSectionRows(
+          gameConfig,
+          "Wallet - Soft Purchases"
+        );
+        const visualProducts = getSectionRows(
+          gameConfig,
+          "Visual - Products"
+        );
 
-        if (!skinCollection) {
-          throw new Error(
-            "Skin collection was not found"
-          );
-        }
+        const purchaseById = new Map();
+        purchases.forEach(function (purchase) {
+          if (!purchase || purchase.id == null) return;
+          purchaseById.set(String(purchase.id), purchase);
+        });
 
-        skinCollection.forEach(function (skin) {
-          if (!skin || typeof skin !== "object") {
-            return;
+        const shopByProductId = new Map();
+        shopSkins.forEach(function (shop) {
+          if (!shop) return;
+          const productId = firstValue(shop, [
+            "productIdToQuantify",
+            "productId",
+            "id"
+          ]);
+          if (productId != null && productId !== "") {
+            shopByProductId.set(String(productId), shop);
           }
+        });
 
-          const productId =
-            skin.productId ||
-            skin.id ||
-            "";
-
-          const image =
-            skin.image ||
-            skin.icon ||
-            "";
-
-          if (!productId || !image) {
-            return;
+        const visualByProductId = new Map();
+        visualProducts.forEach(function (visual) {
+          if (!visual) return;
+          const productId = firstValue(visual, ["productId", "id"]);
+          if (productId != null && productId !== "") {
+            visualByProductId.set(String(productId), visual);
           }
+        });
 
-          if (
-            String(image).includes("uses_spine")
-          ) {
-            return;
-          }
+        /*
+         * Use every configured gameplay skin. This intentionally does not
+         * remove skins just because they are not currently in the shop.
+         */
+        gameplaySkins.forEach(function (skin) {
+          if (!skin || skin.productId == null) return;
+
+          const id = String(skin.productId);
+          const shop = shopByProductId.get(id) || null;
+          const visual = visualByProductId.get(id) || null;
+
+          const purchaseId = findPurchaseId(skin, shop);
+          const purchase = purchaseId
+            ? purchaseById.get(String(purchaseId)) || null
+            : null;
+
+          const image = resolveSkinImage(skin, visual);
+          const price = resolveSkinPrice(skin, shop, purchase, purchases);
+          const currency = resolveCurrency(skin, shop, purchase);
 
           allSkins.push({
-            id: String(productId),
-            image: String(image),
-            name: String(
-              skin.displayName ||
-              productId
-                .replace(/^skin_/, "")
-                .replace(/_/g, " ")
-            )
+            id: id,
+            image: image,
+            name: resolveSkinName(skin, shop, id),
+            price: price,
+            currency: currency,
+            purchaseId: purchaseId || ""
           });
         });
 
-        // Remove duplicate skins
+        /* Some older/newer configurations may not expose a complete
+           Gameplay - Equippable Skins list. Fall back to shop entries so
+           those configured products are still visible. */
+        if (!allSkins.length) {
+          shopSkins.forEach(function (shop) {
+            if (!shop) return;
+            const id = firstValue(shop, [
+              "productIdToQuantify",
+              "productId",
+              "id"
+            ]);
+            if (id == null || id === "") return;
+
+            const visual = visualByProductId.get(String(id)) || null;
+            const purchaseId = findPurchaseId({}, shop);
+            const purchase = purchaseId
+              ? purchaseById.get(String(purchaseId)) || null
+              : null;
+
+            allSkins.push({
+              id: String(id),
+              image: resolveSkinImage({}, visual),
+              name: resolveSkinName({}, shop, String(id)),
+              price: resolveSkinPrice({}, shop, purchase, purchases),
+              currency: resolveCurrency({}, shop, purchase),
+              purchaseId: purchaseId || ""
+            });
+          });
+        }
+
         allSkins = Array.from(
-          new Map(
-            allSkins.map(function (skin) {
-              return [skin.id, skin];
-            })
-          ).values()
+          new Map(allSkins.map(function (skin) {
+            return [skin.id, skin];
+          })).values()
         );
 
         renderSkins(allSkins);
       } catch (error) {
-        console.error(error);
-
+        console.error("[T.B Skins]", error);
         container.innerHTML =
-          '<div class="error">' +
-          "Unable to load skins for this version." +
-          "</div>";
-
+          '<div class="error">Unable to load skins for this version.</div>';
         count.textContent = "0 skins";
       }
     }
 
 
-    /*
-      Find the array containing skin data.
-      This supports nested JSON structures.
-    */
+    function getSectionRows(config, name) {
+      if (!config || typeof config !== "object") return [];
 
-    function findSkinCollection(data) {
-      if (!data || typeof data !== "object") {
-        return null;
-      }
+      if (Array.isArray(config[name])) return config[name];
 
-      if (Array.isArray(data)) {
-        const containsSkin = data.some(function (item) {
-          return (
-            item &&
-            typeof item === "object" &&
-            (
-              item.productId ||
-              item.image ||
-              item.displayName
-            )
-          );
+      /* Be tolerant of wrapped/nested configuration formats. */
+      let found = null;
+
+      function walk(value) {
+        if (found || value == null || typeof value !== "object") return;
+
+        if (Array.isArray(value)) {
+          return;
+        }
+
+        if (Object.prototype.hasOwnProperty.call(value, name)) {
+          if (Array.isArray(value[name])) found = value[name];
+          return;
+        }
+
+        Object.keys(value).some(function (key) {
+          walk(value[key]);
+          return !!found;
         });
-
-        if (containsSkin) {
-          return data;
-        }
-
-        for (const item of data) {
-          const result = findSkinCollection(item);
-
-          if (result) {
-            return result;
-          }
-        }
       }
 
-      if (typeof data === "object") {
-        for (const key of Object.keys(data)) {
-          const result = findSkinCollection(data[key]);
+      walk(config);
+      return Array.isArray(found) ? found : [];
+    }
 
-          if (result) {
-            return result;
-          }
+
+    function firstValue(object, keys) {
+      if (!object || typeof object !== "object") return null;
+
+      for (const key of keys) {
+        if (
+          object[key] !== undefined &&
+          object[key] !== null &&
+          String(object[key]).trim() !== ""
+        ) {
+          return object[key];
         }
       }
 
       return null;
+    }
+
+
+    function findPurchaseId(skin, shop) {
+      const objects = [shop, skin];
+      const keys = [
+        "purchaseId",
+        "purchaseID",
+        "softPurchaseId",
+        "softPurchaseID",
+        "referenceValue",
+        "referenceId",
+        "referenceID",
+        "walletProductId"
+      ];
+
+      for (const object of objects) {
+        const value = firstValue(object, keys);
+        if (value != null) return String(value);
+      }
+
+      return "";
+    }
+
+
+    function resolveSkinImage(skin, visual) {
+      const value = firstValue(skin, [
+        "image",
+        "icon",
+        "skinImage",
+        "visualSource"
+      ]) || firstValue(visual, [
+        "visualSource",
+        "image",
+        "icon",
+        "source"
+      ]);
+
+      return value == null ? "" : String(value);
+    }
+
+
+    function resolveSkinName(skin, shop, id) {
+      const value = firstValue(skin, [
+        "displayName",
+        "localizedName",
+        "name",
+        "skinName"
+      ]) || firstValue(shop, [
+        "displayName",
+        "localizedName",
+        "name"
+      ]);
+
+      if (value) return String(value);
+
+      return String(id)
+        .replace(/^skin[_-]?/i, "")
+        .replace(/[_-]+/g, " ");
+    }
+
+
+    function resolveSkinPrice(skin, shop, purchase, purchases) {
+      const direct = firstNumber(skin, [
+        "price",
+        "cost",
+        "currencyAmount"
+      ]);
+      if (direct != null) return direct;
+
+      const shopDirect = firstNumber(shop, [
+        "price",
+        "cost",
+        "currencyAmount"
+      ]);
+      if (shopDirect != null) return shopDirect;
+
+      const purchasePrice = firstNumber(purchase, [
+        "currencyAmount",
+        "price",
+        "cost"
+      ]);
+      if (purchasePrice != null) return purchasePrice;
+
+      /* Last-resort relation scan for configurations where Shop - Skins
+         stores the purchase reference under a differently named field. */
+      const possibleIds = [];
+      [skin, shop].forEach(function (object) {
+        if (!object || typeof object !== "object") return;
+        Object.keys(object).forEach(function (key) {
+          const value = object[key];
+          if (
+            /purchase|reference/i.test(key) &&
+            (typeof value === "string" || typeof value === "number")
+          ) {
+            possibleIds.push(String(value));
+          }
+        });
+      });
+
+      for (const id of possibleIds) {
+        const match = purchases.find(function (row) {
+          return row && String(row.id) === id;
+        });
+        const price = firstNumber(match, ["currencyAmount", "price", "cost"]);
+        if (price != null) return price;
+      }
+
+      return null;
+    }
+
+
+    function firstNumber(object, keys) {
+      if (!object || typeof object !== "object") return null;
+
+      for (const key of keys) {
+        if (object[key] === undefined || object[key] === null) continue;
+        const number = Number(object[key]);
+        if (Number.isFinite(number)) return number;
+      }
+
+      return null;
+    }
+
+
+    function resolveCurrency(skin, shop, purchase) {
+      const value = firstValue(purchase, [
+        "currencyProductId",
+        "currency"
+      ]) || firstValue(shop, [
+        "currencyProductId",
+        "currency"
+      ]) || firstValue(skin, [
+        "currencyProductId",
+        "currency"
+      ]) || "DNA";
+
+      return String(value).toUpperCase();
     }
 
 
@@ -614,69 +817,60 @@
     */
 
     function renderSkins(skins) {
-      const container =
-        document.getElementById("skins");
-
-      const count =
-        document.getElementById("skinCount");
+      const container = document.getElementById("skins");
+      const count = document.getElementById("skinCount");
 
       container.innerHTML = "";
-
-      count.textContent =
-        skins.length + " skins";
+      count.textContent = skins.length + " skins";
 
       if (skins.length === 0) {
         container.innerHTML =
-          '<div class="empty">No skins found.</div>';
-
+          '<div class="empty">No skins found in the configuration.</div>';
         return;
       }
 
       skins.forEach(function (skin) {
-        const card =
-          document.createElement("article");
-
+        const card = document.createElement("article");
         card.className = "skin";
 
-        const image =
-          document.createElement("img");
-
+        const image = document.createElement("img");
         image.loading = "lazy";
-
         image.alt = skin.name;
 
-        image.src =
-          API +
-          version +
-          "/" +
-          skin.image;
+        let imagePath = skin.image || "";
+        if (imagePath && !/^https?:\/\//i.test(imagePath)) {
+          imagePath = API + version + "/" + imagePath.replace(/^\/+/, "");
+        }
 
+        image.src = imagePath;
         image.onerror = function () {
           image.style.display = "none";
         };
 
-        const name =
-          document.createElement("span");
-
+        const name = document.createElement("span");
         name.className = "skin-name";
         name.textContent = skin.name;
 
-        const id =
-          document.createElement("span");
+        const price = document.createElement("span");
+        price.className = "skin-price";
+        price.textContent = skin.price == null
+          ? "Price unavailable"
+          : Number(skin.price).toLocaleString() + " " + skin.currency;
 
+        const id = document.createElement("span");
         id.className = "skin-id";
         id.textContent = skin.id;
 
         card.appendChild(image);
         card.appendChild(name);
+        card.appendChild(price);
         card.appendChild(id);
-
         container.appendChild(card);
       });
     }
 
 
-    /*
+        /*
       ==================================================
       SEARCH
       ==================================================
