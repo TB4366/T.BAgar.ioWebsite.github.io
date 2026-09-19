@@ -7,6 +7,9 @@
 
   <title>T.B Agar.io Skins</title>
 
+  <!-- jQuery is required by ogario.v4.master.js / ogario.v4.js -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -245,7 +248,6 @@
     }
   </style>
   <!-- Dependencies used by the existing Ogario scripts -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
   <!-- Your existing files: keep these filenames in the same folder as index.html -->
@@ -338,11 +340,18 @@
 
     function loginFacebook() {
       if (window.TBFacebook && typeof window.TBFacebook.login === "function") {
-        window.TBFacebook.login();
-        return;
+        const result = window.TBFacebook.login();
+        if (result !== false) return;
       }
 
-      alert("Facebook login is still loading. Please try again in a moment.");
+      // The Master script can still be initializing while the Facebook SDK loads.
+      setTimeout(function () {
+        if (window.TBFacebook && typeof window.TBFacebook.login === "function") {
+          const result = window.TBFacebook.login();
+          if (result !== false) return;
+        }
+        alert("Facebook login could not be started. Make sure the Facebook SDK is allowed by your browser and try again.");
+      }, 1000);
     }
 
     function logoutFacebook() {
