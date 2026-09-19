@@ -247,12 +247,14 @@
       }
     }
   </style>
-  <!-- Dependencies used by the existing Ogario scripts -->
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-
-  <!-- Your existing files: keep these filenames in the same folder as index.html -->
+  <!-- Load Ogario first: ogario.v4.master.js defines the Facebook callback. -->
   <script src="ogario.v4.master.js"></script>
   <script src="ogario.v4.js"></script>
+
+  <!-- Facebook SDK loads AFTER the Ogario callback exists.
+       async is intentionally not used because it can cause a race condition. -->
+  <script defer crossorigin="anonymous"
+    src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 </head>
 
@@ -339,19 +341,49 @@
     */
 
     function loginFacebook() {
-      if (window.TBFacebook && typeof window.TBFacebook.login === "function") {
-        const result = window.TBFacebook.login();
-        if (result !== false) return;
+      /*
+       * Wait for the existing Ogario/T.B Facebook bridge.
+       * This avoids starting a second OAuth flow and also fixes the
+       * timing problem where the Facebook SDK was ready before master.js.
+       */
+      let attempts = 0;
+      const maxAttempts = 100;
+
+      function tryLogin() {
+        attempts++;
+
+        if (window.TBFacebook &&
+            typeof window.TBFacebook.login === "function") {
+          try {
+            const result = window.TBFacebook.login();
+            if (result !== false) return;
+          } catch (error) {
+            console.error("[T.B Facebook] Login error:", error);
+          }
+        }
+
+        if (window.master &&
+            typeof window.master.facebookLogin === "function") {
+          try {
+            const result = window.master.facebookLogin();
+            if (result !== false) return;
+          } catch (error) {
+            console.error("[T.B Facebook] Master login error:", error);
+          }
+        }
+
+        if (attempts < maxAttempts) {
+          setTimeout(tryLogin, 100);
+          return;
+        }
+
+        alert(
+          "Facebook login could not be started. " +
+          "Please wait for the page to finish loading and try again."
+        );
       }
 
-      // The Master script can still be initializing while the Facebook SDK loads.
-      setTimeout(function () {
-        if (window.TBFacebook && typeof window.TBFacebook.login === "function") {
-          const result = window.TBFacebook.login();
-          if (result !== false) return;
-        }
-        alert("Facebook login could not be started. Make sure the Facebook SDK is allowed by your browser and try again.");
-      }, 1000);
+      tryLogin();
     }
 
     function logoutFacebook() {
