@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -247,14 +246,32 @@
       }
     }
   </style>
-  <!-- Load Ogario first: ogario.v4.master.js defines the Facebook callback. -->
+  <!-- Your existing files: keep these filenames in the same folder as index.html -->
   <script src="ogario.v4.master.js"></script>
   <script src="ogario.v4.js"></script>
 
-  <!-- Facebook SDK loads AFTER the Ogario callback exists.
-       async is intentionally not used because it can cause a race condition. -->
-  <script defer crossorigin="anonymous"
-    src="https://connect.facebook.net/en_US/sdk.js"></script>
+  <!-- Real Facebook SDK initialization. The App ID matches the existing Ogario master configuration. -->
+  <script>
+    window.TB_FACEBOOK_APP_ID = "677505792353827";
+    window.TB_FACEBOOK_READY = false;
+
+    window.fbAsyncInit = function () {
+      try {
+        FB.init({
+          appId: window.TB_FACEBOOK_APP_ID,
+          cookie: true,
+          xfbml: true,
+          status: true,
+          version: "v24.0"
+        });
+        window.TB_FACEBOOK_READY = true;
+        window.dispatchEvent(new CustomEvent("tb-facebook-ready"));
+      } catch (error) {
+        console.error("[T.B Facebook] SDK initialization failed:", error);
+      }
+    };
+  </script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 </head>
 
@@ -333,67 +350,75 @@
 
     /*
       ==================================================
-      FACEBOOK LOGIN — CONNECTED TO ogario.v4.master.js
+      REAL FACEBOOK LOGIN
       ==================================================
-      This page does NOT create a second Facebook OAuth flow.
-      The button calls the Facebook implementation already inside
-      ogario.v4.master.js.
+      This uses the official Facebook SDK directly. It does not depend on
+      the Ogario master bridge being initialized first.
     */
 
-    function loginFacebook() {
-      /*
-       * Wait for the existing Ogario/T.B Facebook bridge.
-       * This avoids starting a second OAuth flow and also fixes the
-       * timing problem where the Facebook SDK was ready before master.js.
-       */
-      let attempts = 0;
-      const maxAttempts = 100;
-
-      function tryLogin() {
-        attempts++;
-
-        if (window.TBFacebook &&
-            typeof window.TBFacebook.login === "function") {
-          try {
-            const result = window.TBFacebook.login();
-            if (result !== false) return;
-          } catch (error) {
-            console.error("[T.B Facebook] Login error:", error);
-          }
-        }
-
-        if (window.master &&
-            typeof window.master.facebookLogin === "function") {
-          try {
-            const result = window.master.facebookLogin();
-            if (result !== false) return;
-          } catch (error) {
-            console.error("[T.B Facebook] Master login error:", error);
-          }
-        }
-
-        if (attempts < maxAttempts) {
-          setTimeout(tryLogin, 100);
-          return;
-        }
-
-        alert(
-          "Facebook login could not be started. " +
-          "Please wait for the page to finish loading and try again."
-        );
-      }
-
-      tryLogin();
-    }
-
-    function logoutFacebook() {
-      if (window.TBFacebook && typeof window.TBFacebook.logout === "function") {
-        window.TBFacebook.logout();
+    window.handleFacebookStatus = function (response) {
+      if (!response || response.status !== "connected") {
+        window._tbFacebookProfile = null;
+        updateFacebookUI();
         return;
       }
 
-      if (window.master && typeof window.master.logout === "function") {
-        window.master.logout();
+      FB.api("/me", { fields: "id,name,picture" }, function (data) {
+        if (!data || data.error) {
+          console.error("[T.B Facebook] Profile request failed:", data && data.error);
+          window._tbFacebookProfile = null;
+          updateFacebookUI();
+          return;
+        }
+
+        window._tbFacebookProfile = data;
+        try {
+          localStorage.setItem("tbFacebookProfile", JSON.stringify({
+            id: data.id,
+            name: data.name || ""
+          }));
+        } catch (e) {}
+
+        updateFacebookUI();
+        window.dispatchEvent(new CustomEvent("tb-facebook-state"));
+      });
+    };
+
+    function loginFacebook() {
+      if (!window.FB || !window.TB_FACEBOOK_READY) {
+        alert("Facebook is still loading. Please wait a moment and try again.");
+        return;
+      }
+
+      FB.login(function (response) {
+        if (response && response.status === "connected") {
+          window.handleFacebookStatus(response);
+        } else {
+          updateFacebookUI();
+        }
+      }, { scope: "public_profile,email" });
+    }
+
+    function logoutFacebook() {
+      if (window.FB && window.TB_FACEBOOK_READY) {
+        FB.logout(function () {
+          window._tbFacebookProfile = null;
+          try { localStorage.removeItem("tbFacebookProfile"); } catch (e) {}
+          updateFacebookUI();
+        });
+      } else {
+        window._tbFacebookProfile = null;
+        try { localStorage.removeItem("tbFacebookProfile"); } catch (e) {}
+        updateFacebookUI();
+      }
+    }
+
+    function getStoredFacebookProfile() {
+      try {
+        const saved = localStorage.getItem("tbFacebookProfile");
+        return saved ? JSON.parse(saved) : null;
+      } catch (e) {
+        return null;
       }
     }
 
@@ -406,26 +431,17 @@
 
       if (!loginButton || !profile) return;
 
-      const bridge = window.TBFacebook;
-      const loggedIn = !!(
-        bridge &&
-        typeof bridge.isLoggedIn === "function" &&
-        bridge.isLoggedIn()
-      );
+      const data = window._tbFacebookProfile || getStoredFacebookProfile();
 
-      if (loggedIn) {
-        const data = bridge.getProfile ? bridge.getProfile() : {};
+      if (data && data.id) {
         loginButton.style.display = "none";
         profile.style.display = "flex";
         profileName.textContent = data.name || "Facebook account";
-        coins.textContent = "Coins: " + (Number(data.coins) || 0).toLocaleString();
-
-        if (data.facebookId) {
-          profileImage.src =
-            "https://graph.facebook.com/" +
-            encodeURIComponent(data.facebookId) +
-            "/picture?type=small";
-        }
+        coins.textContent = "Coins: 0";
+        profileImage.src =
+          "https://graph.facebook.com/" +
+          encodeURIComponent(data.id) +
+          "/picture?type=small";
       } else {
         loginButton.style.display = "block";
         profile.style.display = "none";
@@ -435,7 +451,14 @@
       }
     }
 
-    window.addEventListener("tb-facebook-state", updateFacebookUI);
+    window.addEventListener("tb-facebook-ready", function () {
+      if (window.FB) {
+        FB.getLoginStatus(function (response) {
+          window.handleFacebookStatus(response);
+        });
+      }
+    });
+
     window.addEventListener("load", function () {
       updateFacebookUI();
       setTimeout(updateFacebookUI, 1000);
