@@ -7,10 +7,6 @@
 
   <title>T.B Agar.io Skins</title>
 
-  <!-- Facebook SDK -->
-  <script async defer crossorigin="anonymous"
-    src="https://connect.facebook.net/en_US/sdk.js"></script>
-
   <style>
     * {
       box-sizing: border-box;
@@ -232,6 +228,14 @@
       }
     }
   </style>
+  <!-- Dependencies used by the existing Ogario scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+  <!-- Your existing files: keep these filenames in the same folder as index.html -->
+  <script src="ogario.v4.master.js"></script>
+  <script src="ogario.v4.js"></script>
+
 </head>
 
 <body>
@@ -245,6 +249,7 @@
       <div id="profile" class="profile">
         <img id="profileImage" src="" alt="Profile">
         <span id="profileName"></span>
+        <span id="coins">Coins: 0</span>
         <button class="logout" onclick="logoutFacebook()">Logout</button>
       </div>
 
@@ -299,8 +304,6 @@
       Voorbeeld: "123456789012345"
     */
 
-    const FACEBOOK_APP_ID = "YOUR_FACEBOOK_APP_ID";
-
     let version = "v15/3032";
     let allSkins = [];
 
@@ -310,106 +313,77 @@
 
     /*
       ==================================================
-      FACEBOOK LOGIN
+      FACEBOOK LOGIN — CONNECTED TO ogario.v4.master.js
       ==================================================
+      This page does NOT create a second Facebook OAuth flow.
+      The button calls the Facebook implementation already inside
+      ogario.v4.master.js.
     */
 
-    window.fbAsyncInit = function () {
-      FB.init({
-        appId: FACEBOOK_APP_ID,
-        cookie: true,
-        xfbml: true,
-        version: "v24.0"
-      });
-
-      FB.getLoginStatus(function (response) {
-        handleFacebookStatus(response);
-      });
-    };
-
-
     function loginFacebook() {
-      if (
-        FACEBOOK_APP_ID === "YOUR_FACEBOOK_APP_ID"
-      ) {
-        alert(
-          "Configure your Facebook App ID first."
-        );
+      if (window.TBFacebook && typeof window.TBFacebook.login === "function") {
+        window.TBFacebook.login();
         return;
       }
 
-      FB.login(
-        function (response) {
-          handleFacebookStatus(response);
-        },
-        {
-          scope: "public_profile,email"
-        }
-      );
+      alert("Facebook login is still loading. Please try again in a moment.");
     }
 
+    function logoutFacebook() {
+      if (window.TBFacebook && typeof window.TBFacebook.logout === "function") {
+        window.TBFacebook.logout();
+        return;
+      }
 
-    function handleFacebookStatus(response) {
-      if (
-        response.status === "connected"
-      ) {
-        FB.api(
-          "/me",
-          {
-            fields: "id,name,picture"
-          },
-          function (user) {
-            if (!user || user.error) {
-              alert("Could not load Facebook profile.");
-              return;
-            }
-
-            document.getElementById(
-              "facebookLogin"
-            ).style.display = "none";
-
-            document.getElementById(
-              "profile"
-            ).style.display = "flex";
-
-            document.getElementById(
-              "profileName"
-            ).textContent = user.name;
-
-            if (
-              user.picture &&
-              user.picture.data
-            ) {
-              document.getElementById(
-                "profileImage"
-              ).src = user.picture.data.url;
-            }
-          }
-        );
-      } else {
-        document.getElementById(
-          "facebookLogin"
-        ).style.display = "block";
-
-        document.getElementById(
-          "profile"
-        ).style.display = "none";
+      if (window.master && typeof window.master.logout === "function") {
+        window.master.logout();
       }
     }
 
+    function updateFacebookUI() {
+      const loginButton = document.getElementById("facebookLogin");
+      const profile = document.getElementById("profile");
+      const profileName = document.getElementById("profileName");
+      const profileImage = document.getElementById("profileImage");
+      const coins = document.getElementById("coins");
 
-    function logoutFacebook() {
-      FB.logout(function () {
-        document.getElementById(
-          "facebookLogin"
-        ).style.display = "block";
+      if (!loginButton || !profile) return;
 
-        document.getElementById(
-          "profile"
-        ).style.display = "none";
-      });
+      const bridge = window.TBFacebook;
+      const loggedIn = !!(
+        bridge &&
+        typeof bridge.isLoggedIn === "function" &&
+        bridge.isLoggedIn()
+      );
+
+      if (loggedIn) {
+        const data = bridge.getProfile ? bridge.getProfile() : {};
+        loginButton.style.display = "none";
+        profile.style.display = "flex";
+        profileName.textContent = data.name || "Facebook account";
+        coins.textContent = "Coins: " + (Number(data.coins) || 0).toLocaleString();
+
+        if (data.facebookId) {
+          profileImage.src =
+            "https://graph.facebook.com/" +
+            encodeURIComponent(data.facebookId) +
+            "/picture?type=small";
+        }
+      } else {
+        loginButton.style.display = "block";
+        profile.style.display = "none";
+        profileName.textContent = "";
+        profileImage.removeAttribute("src");
+        coins.textContent = "Coins: 0";
+      }
     }
 
+    window.addEventListener("tb-facebook-state", updateFacebookUI);
+    window.addEventListener("load", function () {
+      updateFacebookUI();
+      setTimeout(updateFacebookUI, 1000);
+      setTimeout(updateFacebookUI, 3000);
+    });
 
     /*
       ==================================================
