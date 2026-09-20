@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -245,7 +246,46 @@
         font-size: 10px;
       }
     }
-  </style>
+  
+
+    .skin-buy {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .skin-buy:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .skin-buy:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .tb-purchase-message {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%);
+      z-index: 99999;
+      background: rgba(15, 23, 42, .96);
+      color: #fff;
+      padding: 13px 18px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.3);
+      font-weight: 600;
+      display: none;
+    }
+
+</style>
   <!-- Dependencies used by the existing Ogario scripts -->
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
@@ -393,6 +433,55 @@
       openAgarLogin("google");
     }
 
+    function showPurchaseMessage(text) {
+      let box = document.getElementById("tbPurchaseMessage");
+      if (!box) {
+        box = document.createElement("div");
+        box.id = "tbPurchaseMessage";
+        box.className = "tb-purchase-message";
+        document.body.appendChild(box);
+      }
+      box.textContent = text;
+      box.style.display = "block";
+      clearTimeout(window.__tbPurchaseMessageTimer);
+      window.__tbPurchaseMessageTimer = setTimeout(function () {
+        box.style.display = "none";
+      }, 3500);
+    }
+
+    function buySkinFromAgar(skin) {
+      if (!TB_ACCOUNT_LOGGED_IN) {
+        showPurchaseMessage("Please log in with Facebook or Google first.");
+        return;
+      }
+
+      if (!skin || !skin.purchaseId) {
+        showPurchaseMessage("This skin is not available for purchase.");
+        return;
+      }
+
+      const w = window.TB_AGAR_WINDOW;
+
+      if (!w || w.closed) {
+        showPurchaseMessage("Agar.io is not connected. Please log in again.");
+        return;
+      }
+
+      try {
+        w.postMessage({
+          source: "TB_AGARIO_SHOP",
+          type: "TB_REQUEST_AGAR_PURCHASE",
+          purchaseId: skin.purchaseId,
+          productId: skin.id,
+          name: skin.name
+        }, "https://agar.io");
+
+        showPurchaseMessage("Purchase request sent to Agar.io...");
+      } catch (e) {
+        showPurchaseMessage("Could not connect to Agar.io.");
+      }
+    }
+
     function requestAgarState() {
       const w = window.TB_AGAR_WINDOW;
       if (!w || w.closed) return;
@@ -501,12 +590,25 @@
               try {
                 if (w && !w.closed) w.close();
               } catch (e) {}
-              window.TB_AGAR_WINDOW = null;
+              // Keep the reference so the shop can send official purchase requests.
+              // The window may still be available after close; state polling handles that case.
             }, 350);
           }
         } else if (!TB_ACCOUNT_LOGGED_IN) {
           resetAccountUI();
         }
+      }
+
+      if (message.type === "TB_PURCHASE_RESULT") {
+        if (message.data && message.data.success) {
+          showPurchaseMessage("Purchase request accepted by Agar.io.");
+        } else {
+          showPurchaseMessage(
+            (message.data && message.data.message) ||
+            "Agar.io could not start this purchase."
+          );
+        }
+        requestAgarState();
       }
 
       if (message.type === "TB_LOGOUT_RESULT") {
@@ -990,10 +1092,21 @@
         id.className = "skin-id";
         id.textContent = skin.id;
 
+        const buy = document.createElement("button");
+        buy.className = "skin-buy";
+        buy.type = "button";
+        buy.textContent = skin.purchaseId ? "Buy" : "Unavailable";
+        buy.disabled = !skin.purchaseId;
+
+        buy.addEventListener("click", function () {
+          buySkinFromAgar(skin);
+        });
+
         card.appendChild(image);
         card.appendChild(name);
         card.appendChild(price);
         card.appendChild(id);
+        card.appendChild(buy);
         container.appendChild(card);
       });
     }
