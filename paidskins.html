@@ -1,3407 +1,2723 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-  <title>T.B Agar.io Skins</title>
+<title>T.B Agar.io Skins</title>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{
+    box-sizing:border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      background:
-        radial-gradient(circle at top right, #075985, transparent 35%),
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#fff;
+    background:
+        radial-gradient(circle at 85% 0%,rgba(14,165,233,.28),transparent 30%),
+        radial-gradient(circle at 10% 40%,rgba(37,99,235,.18),transparent 30%),
         #020617;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 18px 5%;
-      background: rgba(2, 6, 23, 0.95);
-      border-bottom: 1px solid #164e63;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-size: 23px;
-      font-weight: bold;
-    }
-
-    .logo span {
-      color: #38bdf8;
-    }
-
-    .login-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    button {
-      cursor: pointer;
-      border: 0;
-      border-radius: 9px;
-      padding: 11px 16px;
-      font-weight: bold;
-      color: white;
-      background: #1877f2;
-    }
-
-    button:hover {
-      background: #0d65d9;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: wait;
-    }
-
-    .logout {
-      background: #334155;
-    }
-
-    .logout:hover {
-      background: #475569;
-    }
-
-    .profile {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      color: #cbd5e1;
-      font-size: 13px;
-    }
-
-    .profile img {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #0f172a;
-    }
-
-    .profile-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .profile-name {
-      color: white;
-      font-weight: bold;
-    }
-
-    .coin-display {
-      color: #38bdf8;
-      font-weight: bold;
-    }
-
-    main {
-      width: min(1400px, 94%);
-      margin: 30px auto;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 35px 15px;
-      border: 1px solid #164e63;
-      border-radius: 20px;
-      background: rgba(8, 47, 73, 0.35);
-      margin-bottom: 25px;
-    }
-
-    .hero h1 {
-      margin: 0 0 10px;
-      font-size: clamp(30px, 5vw, 52px);
-    }
-
-    .hero h1 span {
-      color: #38bdf8;
-    }
-
-    .hero p {
-      color: #cbd5e1;
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    input,
-    select {
-      padding: 12px;
-      color: white;
-      background: #071a2e;
-      border: 1px solid #28506a;
-      border-radius: 9px;
-      outline: none;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #38bdf8;
-    }
-
-    #search {
-      flex: 1;
-      min-width: 230px;
-    }
-
-    #skinCount {
-      align-self: center;
-      color: #94a3b8;
-      font-size: 14px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin: 30px 0 15px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .section-title span {
-      color: #64748b;
-      font-size: 13px;
-    }
-
-    #skins {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-      gap: 14px;
-    }
-
-    .skin {
-      min-width: 0;
-      padding: 12px 8px;
-      text-align: center;
-      background: linear-gradient(145deg, #08243b, #071226);
-      border: 1px solid #164e63;
-      border-radius: 14px;
-      transition: .2s ease;
-    }
-
-    .skin:hover {
-      transform: translateY(-4px);
-      border-color: #38bdf8;
-      box-shadow: 0 8px 25px rgba(14, 165, 233, .15);
-    }
-
-    .skin img {
-      display: block;
-      width: 100%;
-      height: 105px;
-      object-fit: contain;
-      margin-bottom: 9px;
-    }
-
-    .skin-name {
-      display: block;
-      min-height: 32px;
-      font-size: 13px;
-      font-weight: bold;
-      overflow-wrap: anywhere;
-    }
-
-    .skin-price {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      margin-top: 8px;
-      padding: 5px 9px;
-      border-radius: 999px;
-      background: rgba(14, 165, 233, .12);
-      border: 1px solid rgba(56, 189, 248, .25);
-      color: #7dd3fc;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .skin-id {
-      display: block;
-      margin-top: 6px;
-      color: #64748b;
-      font-size: 9px;
-      overflow-wrap: anywhere;
-    }
-
-    .buy-button {
-      width: 100%;
-      margin-top: 10px;
-      background: #2563eb;
-      font-size: 12px;
-      padding: 9px;
-    }
-
-    .buy-button:hover {
-      background: #1d4ed8;
-    }
-
-    .loading,
-    .error,
-    .empty {
-      grid-column: 1 / -1;
-      padding: 40px;
-      text-align: center;
-      color: #cbd5e1;
-    }
-
-    .error {
-      color: #fca5a5;
-    }
-
-    .login-required {
-      margin-top: 10px;
-      color: #94a3b8;
-      font-size: 11px;
-    }
-
-    /*
-      PAID SKINS
-    */
-
-    .paid-section {
-      margin-top: 40px;
-      padding: 24px;
-      border: 1px solid #164e63;
-      border-radius: 20px;
-      background:
-        linear-gradient(
-          145deg,
-          rgba(8, 47, 73, .65),
-          rgba(2, 6, 23, .9)
-        );
-    }
-
-    .paid-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 18px;
-    }
-
-    .paid-header h2 {
-      margin: 0;
-      font-size: 25px;
-    }
-
-    .paid-header h2 span {
-      color: #38bdf8;
-    }
-
-    .paid-header p {
-      margin: 5px 0 0;
-      color: #94a3b8;
-      font-size: 13px;
-    }
-
-    .paid-login-status {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 13px;
-      border-radius: 10px;
-      background: #071a2e;
-      border: 1px solid #164e63;
-      font-size: 13px;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #64748b;
-    }
-
-    .status-dot.online {
-      background: #22c55e;
-      box-shadow: 0 0 10px rgba(34, 197, 94, .7);
-    }
-
-    #paidSkins {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 14px;
-    }
-
-    .paid-skin {
-      position: relative;
-      min-width: 0;
-      padding: 14px;
-      text-align: center;
-      background: linear-gradient(145deg, #0b2942, #071226);
-      border: 1px solid #164e63;
-      border-radius: 15px;
-      transition: .2s ease;
-    }
-
-    .paid-skin:hover {
-      transform: translateY(-3px);
-      border-color: #38bdf8;
-    }
-
-    .paid-skin img {
-      width: 100%;
-      height: 125px;
-      object-fit: contain;
-    }
-
-    .paid-skin-name {
-      margin-top: 8px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .paid-skin-price {
-      margin-top: 8px;
-      color: #38bdf8;
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    /*
-      LOGIN MODAL
-    */
-
-    #loginModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, .75);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-    }
-
-    .login-modal-box {
-      width: min(440px, 100%);
-      padding: 28px;
-      text-align: center;
-      background: #071426;
-      border: 1px solid #164e63;
-      border-radius: 20px;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
-    }
-
-    .login-modal-box h2 {
-      margin: 0 0 10px;
-    }
-
-    .login-modal-box p {
-      color: #94a3b8;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .agar-login-button {
-      width: 100%;
-      margin-top: 15px;
-      background: #1877f2;
-    }
-
-    .cancel-login {
-      width: 100%;
-      margin-top: 8px;
-      background: #334155;
-    }
-
-    /*
-      PURCHASE MODAL
-    */
-
-    #purchaseModal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1100;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, .78);
-      backdrop-filter: blur(6px);
-      padding: 20px;
-    }
-
-    .purchase-box {
-      width: min(460px, 100%);
-      padding: 28px;
-      text-align: center;
-      background: #071426;
-      border: 1px solid #164e63;
-      border-radius: 20px;
-    }
-
-    .purchase-box h2 {
-      margin: 0 0 10px;
-    }
-
-    .purchase-box p {
-      color: #94a3b8;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .purchase-price {
-      display: inline-block;
-      margin: 10px 0;
-      padding: 8px 14px;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, .1);
-      border: 1px solid rgba(56, 189, 248, .25);
-      border-radius: 999px;
-      font-weight: bold;
-    }
-
-    .purchase-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .purchase-actions button {
-      flex: 1;
-    }
-
-    .close-modal {
-      background: #334155;
-    }
-
-    footer {
-      margin-top: 40px;
-      padding: 25px;
-      text-align: center;
-      color: #64748b;
-      border-top: 1px solid #164e63;
-      font-size: 13px;
-    }
-
-    @media (max-width: 700px) {
-      .paid-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .paid-login-status {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      #skins {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-      }
-
-      .skin {
-        padding: 8px 4px;
-      }
-
-      .skin img {
-        height: 75px;
-      }
-
-      .skin-name {
-        font-size: 10px;
-      }
-
-      #paidSkins {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .paid-skin img {
-        height: 100px;
-      }
-    }
-  </style>
-
-  <script
-    async
-    defer
-    crossorigin="anonymous"
-    src="https://connect.facebook.net/en_US/sdk.js">
-  </script>
-
-  <script src="ogario.v4.master.js"></script>
-  <script src="ogario.v4.js"></script>
-
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:15px 5%;
+    background:rgba(2,6,23,.96);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid #164e63;
+}
+
+.logo{
+    font-size:23px;
+    font-weight:900;
+    white-space:nowrap;
+}
+
+.logo span{
+    color:#38bdf8;
+}
+
+.login-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.facebook-login{
+    border:0;
+    border-radius:10px;
+    padding:11px 17px;
+    background:#1877f2;
+    color:#fff;
+    font-weight:800;
+    transition:.2s;
+}
+
+.facebook-login:hover{
+    background:#0d65d9;
+    transform:translateY(-1px);
+}
+
+.profile{
+    display:none;
+    align-items:center;
+    gap:10px;
+}
+
+.profile img{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    object-fit:cover;
+    background:#0f172a;
+    border:2px solid #38bdf8;
+}
+
+.profile-info{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.profile-name{
+    font-size:13px;
+    font-weight:800;
+}
+
+.coins{
+    color:#facc15;
+    font-size:12px;
+    font-weight:800;
+}
+
+.logout{
+    border:0;
+    border-radius:8px;
+    padding:8px 11px;
+    color:#fff;
+    background:#334155;
+    font-size:12px;
+    font-weight:800;
+}
+
+.logout:hover{
+    background:#475569;
+}
+
+main{
+    width:min(1450px,94%);
+    margin:30px auto 50px;
+}
+
+.hero{
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    padding:55px 20px;
+    margin-bottom:25px;
+    border:1px solid #164e63;
+    border-radius:22px;
+    background:
+        linear-gradient(135deg,rgba(8,47,73,.85),rgba(15,23,42,.85));
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.hero:before{
+    content:"";
+    position:absolute;
+    width:260px;
+    height:260px;
+    right:-100px;
+    top:-120px;
+    background:#0ea5e9;
+    opacity:.12;
+    border-radius:50%;
+    filter:blur(10px);
+}
+
+.hero h1{
+    position:relative;
+    margin:0 0 12px;
+    font-size:clamp(32px,5vw,55px);
+}
+
+.hero h1 span{
+    color:#38bdf8;
+}
+
+.hero p{
+    position:relative;
+    margin:0;
+    color:#94a3b8;
+}
+
+.account-banner{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:25px;
+    padding:16px 20px;
+    border:1px solid rgba(56,189,248,.25);
+    border-radius:14px;
+    background:rgba(8,47,73,.5);
+}
+
+.account-banner.show{
+    display:flex;
+}
+
+.account-banner strong{
+    color:#38bdf8;
+}
+
+.account-banner .balance{
+    color:#facc15;
+    font-weight:900;
+}
+
+.toolbar{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+#search{
+    flex:1;
+    min-width:230px;
+}
+
+input,
+select{
+    padding:12px 13px;
+    color:#fff;
+    background:#071a2e;
+    border:1px solid #28506a;
+    border-radius:9px;
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 0 2px rgba(56,189,248,.1);
+}
+
+#skinCount{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin:35px 0 15px;
+}
+
+.section-title h2{
+    margin:0;
+    font-size:25px;
+}
+
+.section-title span{
+    color:#64748b;
+    font-size:13px;
+}
+
+#skins,
+#paidSkins{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+    gap:14px;
+}
+
+.skin{
+    min-width:0;
+    padding:12px 8px;
+    text-align:center;
+    background:linear-gradient(145deg,#08243b,#071226);
+    border:1px solid #164e63;
+    border-radius:14px;
+    transition:.2s ease;
+}
+
+.skin:hover{
+    transform:translateY(-4px);
+    border-color:#38bdf8;
+    box-shadow:0 8px 25px rgba(14,165,233,.15);
+}
+
+.skin img{
+    display:block;
+    width:100%;
+    height:110px;
+    object-fit:contain;
+    margin-bottom:9px;
+}
+
+.skin-name{
+    display:block;
+    min-height:34px;
+    font-size:13px;
+    font-weight:800;
+    overflow-wrap:anywhere;
+}
+
+.skin-price{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    margin-top:8px;
+    padding:5px 9px;
+    border-radius:999px;
+    background:rgba(14,165,233,.12);
+    border:1px solid rgba(56,189,248,.25);
+    color:#7dd3fc;
+    font-size:12px;
+    font-weight:800;
+}
+
+.skin-id{
+    display:block;
+    margin-top:6px;
+    color:#475569;
+    font-size:9px;
+    overflow-wrap:anywhere;
+}
+
+.paid-skin{
+    position:relative;
+    min-width:0;
+    padding:14px 10px;
+    text-align:center;
+    background:linear-gradient(145deg,#0b2943,#071226);
+    border:1px solid #164e63;
+    border-radius:16px;
+    transition:.2s;
+}
+
+.paid-skin:hover{
+    transform:translateY(-4px);
+    border-color:#38bdf8;
+}
+
+.paid-skin img{
+    width:100%;
+    height:125px;
+    object-fit:contain;
+    display:block;
+    margin-bottom:8px;
+}
+
+.paid-name{
+    min-height:34px;
+    font-size:14px;
+    font-weight:900;
+    overflow-wrap:anywhere;
+}
+
+.paid-price{
+    margin-top:8px;
+    color:#facc15;
+    font-size:14px;
+    font-weight:900;
+}
+
+.buy-button{
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    border:0;
+    border-radius:9px;
+    background:linear-gradient(135deg,#0284c7,#2563eb);
+    color:#fff;
+    font-weight:900;
+    transition:.2s;
+}
+
+.buy-button:hover{
+    filter:brightness(1.12);
+    transform:translateY(-1px);
+}
+
+.buy-button:disabled{
+    cursor:not-allowed;
+    opacity:.5;
+}
+
+.loading,
+.error,
+.empty{
+    grid-column:1/-1;
+    padding:45px;
+    text-align:center;
+    color:#cbd5e1;
+}
+
+.error{
+    color:#fca5a5;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(8px);
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(460px,100%);
+    padding:25px;
+    border:1px solid #164e63;
+    border-radius:18px;
+    background:#071426;
+    box-shadow:0 30px 100px rgba(0,0,0,.5);
+}
+
+.modal-box h3{
+    margin:0 0 10px;
+}
+
+.modal-box p{
+    color:#94a3b8;
+    line-height:1.6;
+    font-size:14px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.modal-actions button{
+    flex:1;
+    padding:11px;
+    border:0;
+    border-radius:9px;
+    font-weight:800;
+}
+
+.cancel{
+    color:#fff;
+    background:#334155;
+}
+
+.confirm{
+    color:#fff;
+    background:#2563eb;
+}
+
+footer{
+    margin-top:50px;
+    padding:25px;
+    text-align:center;
+    color:#64748b;
+    border-top:1px solid #164e63;
+    font-size:13px;
+}
+
+@media(max-width:650px){
+
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .login-area{
+        width:100%;
+    }
+
+    .facebook-login{
+        width:100%;
+    }
+
+    .profile{
+        width:100%;
+    }
+
+    #skins,
+    #paidSkins{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:8px;
+    }
+
+    .skin{
+        padding:8px 4px;
+    }
+
+    .skin img{
+        height:78px;
+    }
+
+    .paid-skin{
+        padding:8px 4px;
+    }
+
+    .paid-skin img{
+        height:80px;
+    }
+
+    .paid-name,
+    .skin-name{
+        font-size:10px;
+    }
+
+    .buy-button{
+        font-size:10px;
+        padding:8px 3px;
+    }
+
+    .paid-price{
+        font-size:10px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
+<header>
 
     <div class="logo">
-      T.B <span>Agar.io Skins</span>
+        T.B <span>Agar.io Skins</span>
     </div>
 
     <div class="login-area">
 
-      <div id="profile" class="profile">
+        <div id="profile" class="profile">
 
-        <img
-          id="profileImage"
-          src=""
-          alt="Profile"
-        >
+            <img
+                id="profileImage"
+                src=""
+                alt="Profile"
+            >
 
-        <div class="profile-info">
+            <div class="profile-info">
 
-          <span
-            id="profileName"
-            class="profile-name">
-          </span>
+                <div
+                    id="profileName"
+                    class="profile-name"
+                >
+                    Agar.io Player
+                </div>
 
-          <span
-            id="coins"
-            class="coin-display">
-            Coins: 0
-          </span>
+                <div
+                    id="coins"
+                    class="coins"
+                >
+                    🪙 0 Coins
+                </div>
+
+            </div>
+
+            <button
+                class="logout"
+                onclick="logoutFacebook()"
+            >
+                Logout
+            </button>
 
         </div>
 
         <button
-          class="logout"
-          onclick="logoutFacebook()">
-          Logout
+            id="facebookLogin"
+            class="facebook-login"
+            onclick="requestAgarLogin()"
+        >
+            Login with Facebook
         </button>
-
-      </div>
-
-      <button
-        id="facebookLogin"
-        onclick="loginFacebook()">
-        Login with Facebook
-      </button>
 
     </div>
 
-  </header>
+</header>
 
 
-  <main>
+<main>
 
     <section class="hero">
 
-      <h1>
-        All <span>Agar.io Skins</span>
-      </h1>
+        <h1>
+            All <span>Agar.io Skins</span>
+        </h1>
 
-      <p>
-        Explore the available Agar.io skins from the official game configuration.
-      </p>
+        <p>
+            Explore the available Agar.io skins from the game configuration.
+        </p>
 
     </section>
 
 
+    <div
+        id="accountBanner"
+        class="account-banner"
+    >
+
+        <div>
+            Logged in as
+            <strong id="bannerName">
+                Agar.io Player
+            </strong>
+        </div>
+
+        <div
+            id="bannerCoins"
+            class="balance"
+        >
+            🪙 0 Coins
+        </div>
+
+    </div>
+
+
     <div class="toolbar">
 
-      <input
-        id="search"
-        type="search"
-        placeholder="Search for a skin..."
-        oninput="filterSkins()"
-      >
+        <input
+            id="search"
+            type="search"
+            placeholder="Search for a skin..."
+            oninput="filterSkins()"
+        >
 
-      <select
-        id="version"
-        onchange="changeVersion()">
+        <select
+            id="version"
+            onchange="changeVersion()"
+        >
+            <option value="v15/3032">
+                v15/3032
+            </option>
+        </select>
 
-        <option value="v15/3032">
-          v15/3032
-        </option>
+        <span id="skinCount">
+            Loading skins...
+        </span>
 
-      </select>
+    </div>
 
-      <span id="skinCount">
-        Loading skins...
-      </span>
+
+    <div class="section-title">
+
+        <h2>
+            Agar.io Skins
+        </h2>
+
+        <span>
+            Game Configuration
+        </span>
 
     </div>
 
 
     <section id="skins">
 
-      <div class="loading">
-        Loading skins...
-      </div>
+        <div class="loading">
+            Loading skins...
+        </div>
 
     </section>
 
 
-    <!--
-      ==================================================
-      PAID SKINS
-      ==================================================
-    -->
+    <div class="section-title">
 
-    <section class="paid-section">
+        <h2>
+            Paid Skins
+        </h2>
 
-      <div class="paid-header">
+        <span>
+            Buy with Coins
+        </span>
 
-        <div>
-
-          <h2>
-            Paid <span>Skins</span>
-          </h2>
-
-          <p>
-            Login through Agar.io to continue with your account.
-          </p>
-
-        </div>
+    </div>
 
 
-        <div
-          id="paidLoginStatus"
-          class="paid-login-status">
-
-          <span
-            id="loginStatusDot"
-            class="status-dot">
-          </span>
-
-          <span id="loginStatusText">
-            Not logged in
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <div id="paidSkins">
+    <section id="paidSkins">
 
         <div class="loading">
-          Loading paid skins...
+            Loading paid skins...
         </div>
-
-      </div>
 
     </section>
 
-  </main>
+</main>
 
 
-  <footer>
+<footer>
 
     © <span id="year"></span>
     T.B Agar.io Skins
 
-  </footer>
+</footer>
 
 
-  <!--
-    ==================================================
-    LOGIN MODAL
-    ==================================================
-  -->
+<!-- BUY MODAL -->
 
-  <div id="loginModal">
+<div
+    id="buyModal"
+    class="modal"
+>
 
-    <div class="login-modal-box">
+    <div class="modal-box">
 
-      <h2>
-        Login to continue
-      </h2>
+        <h3 id="buyTitle">
+            Buy Skin
+        </h3>
 
-      <p>
-        You will be taken to Agar.io where the existing
-        Agar.io Facebook login can be used. After the
-        login is confirmed, return to this shop.
-      </p>
+        <p id="buyText">
+            Checking account...
+        </p>
 
-      <button
-        class="agar-login-button"
-        onclick="startAgarLogin()">
+        <div class="modal-actions">
 
-        Continue with Agar.io
+            <button
+                class="cancel"
+                onclick="closeBuyModal()"
+            >
+                Cancel
+            </button>
 
-      </button>
+            <button
+                class="confirm"
+                id="confirmBuy"
+                onclick="confirmPurchase()"
+            >
+                Continue
+            </button>
 
-      <button
-        class="cancel-login"
-        onclick="closeLoginModal()">
-
-        Cancel
-
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!--
-    ==================================================
-    PURCHASE MODAL
-    ==================================================
-  -->
-
-  <div id="purchaseModal">
-
-    <div class="purchase-box">
-
-      <h2 id="purchaseTitle">
-        Purchase Skin
-      </h2>
-
-      <p id="purchaseDescription">
-        Confirm your selection.
-      </p>
-
-      <div
-        id="purchasePrice"
-        class="purchase-price">
-      </div>
-
-      <div class="purchase-actions">
-
-        <button
-          id="confirmPurchase"
-          onclick="confirmPaidSkinPurchase()">
-
-          Continue
-
-        </button>
-
-        <button
-          class="close-modal"
-          onclick="closePurchaseModal()">
-
-          Cancel
-
-        </button>
-
-      </div>
+        </div>
 
     </div>
 
-  </div>
+</div>
 
 
-  <script>
+<script>
 
-    /*
-      ==================================================
-      CONFIGURATION
-      ==================================================
-    */
-
-    const API =
-      "https://configs-web.agario.miniclippt.com/live/";
-
-    let version =
-      "v15/3032";
-
-    let allSkins =
-      [];
-
-    let paidSkins =
-      [];
-
-    let selectedPaidSkin =
-      null;
-
-    let agarLoginWindow =
-      null;
-
-    let loginWaiting =
-      false;
+/* =========================================================
+   T.B AGAR.IO SHOP
+   ========================================================= */
 
 
-    document.getElementById(
-      "year"
-    ).textContent =
-      new Date().getFullYear();
+/* ================================
+   CONFIGURATION
+================================ */
+
+const API =
+    "https://configs-web.agario.miniclippt.com/live/";
+
+let version =
+    "v15/3032";
+
+let allSkins = [];
+
+let paidSkins = [];
+
+let agarAccount = {
+
+    loggedIn:false,
+
+    name:"",
+
+    facebookId:"",
+
+    coins:0
+
+};
+
+let agarWindow = null;
+
+let selectedSkin = null;
 
 
-    /*
-      ==================================================
-      FACEBOOK / AGAR.IO LOGIN
-      ==================================================
+/*
+   IMPORTANT
 
-      Priority:
+   Replace this with your REAL GitHub Pages origin.
 
-      1. Existing T.BFacebook bridge
-      2. Existing master.facebookLogin()
-      3. Open Agar.io for the user
+   Example:
 
-      We do not create a second OAuth implementation.
-    */
+   https://tbagario.github.io
 
+   Do NOT put a trailing slash.
+*/
 
-    function loginFacebook() {
-
-      if (
-        window.TBFacebook &&
-        typeof window.TBFacebook.login === "function"
-      ) {
-
-        try {
-
-          const result =
-            window.TBFacebook.login();
-
-          if (result !== false) {
-            return;
-          }
-
-        } catch (error) {
-
-          console.error(
-            "[T.B Facebook]",
-            error
-          );
-
-        }
-
-      }
+const AGAR_ORIGIN =
+    "https://agar.io";
 
 
-      if (
-        window.master &&
-        typeof window.master.facebookLogin === "function"
-      ) {
+/* ================================
+   YEAR
+================================ */
 
-        try {
-
-          window.master.facebookLogin();
-
-          return;
-
-        } catch (error) {
-
-          console.error(
-            "[T.B Master Facebook]",
-            error
-          );
-
-        }
-
-      }
+document.getElementById(
+    "year"
+).textContent =
+    new Date().getFullYear();
 
 
-      /*
-        If this is being used as the external shop,
-        open Agar.io instead of inventing another
-        Facebook OAuth flow.
-      */
-
-      startAgarLogin();
-    }
+/* =========================================================
+   AGAR.IO LOGIN BRIDGE
+   ========================================================= */
 
 
-    /*
-      ==================================================
-      OPEN AGAR.IO
-      ==================================================
-    */
+/*
+   Open Agar.io.
 
-    function startAgarLogin() {
+   Tampermonkey running on Agar.io
+   will use window.opener to send
+   the account status back here.
+*/
 
-      closeLoginModal();
+function requestAgarLogin(){
 
-      loginWaiting =
-        true;
-
-
-      try {
-
-        localStorage.setItem(
-          "TB_AGAR_LOGIN_REQUEST",
-          JSON.stringify({
-            requested: true,
-            timestamp: Date.now()
-          })
-        );
-
-      } catch (error) {}
-
-
-      agarLoginWindow =
+    agarWindow =
         window.open(
-          "https://agar.io/",
-          "TBAgarIOLogin",
-          "width=1200,height=800,resizable=yes,scrollbars=yes"
+            "https://agar.io/",
+            "TB_AGAR_LOGIN"
         );
 
-
-      if (!agarLoginWindow) {
-
-        loginWaiting =
-          false;
+    if(!agarWindow){
 
         alert(
-          "Please allow pop-ups for this website so Agar.io can be opened."
+            "Please allow popups for the T.B Shop."
         );
 
         return;
-      }
-
-
-      try {
-        agarLoginWindow.focus();
-      } catch (error) {}
-
-
-      const button =
-        document.getElementById(
-          "facebookLogin"
-        );
-
-
-      if (button) {
-
-        button.disabled =
-          true;
-
-        button.textContent =
-          "Waiting for Agar.io...";
-
-      }
-
-
-      const status =
-        document.getElementById(
-          "loginStatusText"
-        );
-
-      if (status) {
-
-        status.textContent =
-          "Waiting for Agar.io login...";
-
-      }
-
-
-      /*
-        Poll for a login result that can be supplied
-        by the Agar.io/T.B bridge.
-
-        IMPORTANT:
-        A normal web page cannot directly read
-        Agar.io localStorage because agar.io is another
-        origin. The bridge must therefore run inside
-        Agar.io (for example through Tampermonkey).
-      */
-
-      waitForAgarLoginResult();
     }
 
 
-    /*
-      ==================================================
-      WAIT FOR AGAR.IO RESULT
-      ==================================================
-    */
+    setTimeout(function(){
 
-    function waitForAgarLoginResult() {
+        sendLoginRequest();
 
-      let attempts =
-        0;
+    },1500);
 
-      const checker =
-        setInterval(
-          function () {
 
-            attempts++;
+    setTimeout(function(){
 
+        sendLoginRequest();
 
-            let result =
-              null;
+    },3500);
 
 
-            /*
-              The result can be provided by an
-              installed T.B Agar.io bridge.
-            */
+    setTimeout(function(){
 
-            try {
+        requestAgarState();
 
-              result =
-                localStorage.getItem(
-                  "TB_AGAR_LOGIN_RESULT"
-                );
+    },6000);
 
-            } catch (error) {}
+}
 
 
-            if (result) {
+/*
+   Ask the Tampermonkey bridge
+   to start the existing Agar.io
+   Facebook login.
+*/
 
-              try {
+function sendLoginRequest(){
 
-                const data =
-                  JSON.parse(result);
-
-
-                if (
-                  data &&
-                  data.loggedIn === true
-                ) {
-
-                  clearInterval(
-                    checker
-                  );
-
-                  completeAgarLogin(
-                    data
-                  );
-
-                  return;
-
-                }
-
-              } catch (error) {
-
-                console.warn(
-                  "[T.B] Invalid Agar.io login result."
-                );
-
-              }
-
-            }
-
-
-            /*
-              Stop after five minutes.
-            */
-
-            if (
-              attempts >= 300
-            ) {
-
-              clearInterval(
-                checker
-              );
-
-              loginWaiting =
-                false;
-
-              resetLoginButton();
-
-              updatePaidLoginStatus();
-
-            }
-
-          },
-          1000
-        );
-    }
-
-
-    /*
-      ==================================================
-      COMPLETE LOGIN
-      ==================================================
-    */
-
-    function completeAgarLogin(
-      data
-    ) {
-
-      loginWaiting =
-        false;
-
-
-      /*
-        Store only the profile information needed
-        by this UI.
-
-        No Facebook password, cookie or access token
-        is stored here.
-      */
-
-      try {
-
-        sessionStorage.setItem(
-          "TB_AGAR_PROFILE",
-          JSON.stringify({
-            name:
-              data.name ||
-              "Agar.io Player",
-
-            facebookId:
-              data.facebookId ||
-              "",
-
-            coins:
-              Number(data.coins) || 0
-          })
-        );
-
-      } catch (error) {}
-
-
-      resetLoginButton();
-
-      updateFacebookUI();
-
-      updatePaidLoginStatus();
-
-
-      try {
-
-        localStorage.removeItem(
-          "TB_AGAR_LOGIN_RESULT"
-        );
-
-        localStorage.removeItem(
-          "TB_AGAR_LOGIN_REQUEST"
-        );
-
-      } catch (error) {}
-
-
-      /*
-        Close the login window if the browser
-        allows it.
-      */
-
-      try {
-
-        if (
-          agarLoginWindow &&
-          !agarLoginWindow.closed
-        ) {
-
-          agarLoginWindow.close();
-
-        }
-
-      } catch (error) {}
-
-
-      agarLoginWindow =
-        null;
-    }
-
-
-    /*
-      ==================================================
-      GET CURRENT PROFILE
-      ==================================================
-    */
-
-    function getAgarProfile() {
-
-      /*
-        First use the real T.B bridge if it exists.
-      */
-
-      try {
-
-        if (
-          window.TBFacebook &&
-          typeof window.TBFacebook.isLoggedIn ===
-            "function" &&
-          window.TBFacebook.isLoggedIn()
-        ) {
-
-          const profile =
-            window.TBFacebook.getProfile
-              ? window.TBFacebook.getProfile()
-              : {};
-
-          return {
-
-            loggedIn: true,
-
-            name:
-              profile.name ||
-              "Facebook account",
-
-            facebookId:
-              profile.facebookId ||
-              "",
-
-            coins:
-              Number(profile.coins) || 0
-
-          };
-
-        }
-
-      } catch (error) {}
-
-
-      /*
-        Then use the profile received from the
-        Agar.io bridge.
-      */
-
-      try {
-
-        const saved =
-          sessionStorage.getItem(
-            "TB_AGAR_PROFILE"
-          );
-
-
-        if (saved) {
-
-          const data =
-            JSON.parse(saved);
-
-
-          if (data) {
-
-            return {
-
-              loggedIn: true,
-
-              name:
-                data.name ||
-                "Agar.io Player",
-
-              facebookId:
-                data.facebookId ||
-                "",
-
-              coins:
-                Number(data.coins) || 0
-
-            };
-
-          }
-
-        }
-
-      } catch (error) {}
-
-
-      return {
-
-        loggedIn: false,
-
-        name: "",
-
-        facebookId: "",
-
-        coins: 0
-
-      };
-    }
-
-
-    /*
-      ==================================================
-      UPDATE HEADER LOGIN UI
-      ==================================================
-    */
-
-    function updateFacebookUI() {
-
-      const loginButton =
-        document.getElementById(
-          "facebookLogin"
-        );
-
-      const profile =
-        document.getElementById(
-          "profile"
-        );
-
-      const profileName =
-        document.getElementById(
-          "profileName"
-        );
-
-      const profileImage =
-        document.getElementById(
-          "profileImage"
-        );
-
-      const coins =
-        document.getElementById(
-          "coins"
-        );
-
-
-      if (
-        !loginButton ||
-        !profile
-      ) {
+    if(
+        !agarWindow ||
+        agarWindow.closed
+    ){
         return;
-      }
-
-
-      const data =
-        getAgarProfile();
-
-
-      if (
-        data.loggedIn
-      ) {
-
-        loginButton.style.display =
-          "none";
-
-        profile.style.display =
-          "flex";
-
-
-        profileName.textContent =
-          data.name ||
-          "Agar.io Player";
-
-
-        coins.textContent =
-          "Coins: " +
-          (
-            Number(data.coins) || 0
-          ).toLocaleString();
-
-
-        if (
-          data.facebookId
-        ) {
-
-          profileImage.src =
-            "https://graph.facebook.com/" +
-            encodeURIComponent(
-              data.facebookId
-            ) +
-            "/picture?type=small";
-
-        }
-
-      } else {
-
-        loginButton.style.display =
-          "block";
-
-        profile.style.display =
-          "none";
-
-        profileName.textContent =
-          "";
-
-        profileImage.removeAttribute(
-          "src"
-        );
-
-        coins.textContent =
-          "Coins: 0";
-
-      }
-
-
-      updatePaidLoginStatus();
     }
 
+    try{
 
-    /*
-      ==================================================
-      UPDATE PAID LOGIN STATUS
-      ==================================================
-    */
-
-    function updatePaidLoginStatus() {
-
-      const data =
-        getAgarProfile();
-
-
-      const text =
-        document.getElementById(
-          "loginStatusText"
+        agarWindow.postMessage(
+            {
+                type:
+                    "TB_REQUEST_AGAR_LOGIN"
+            },
+            AGAR_ORIGIN
         );
 
-      const dot =
-        document.getElementById(
-          "loginStatusDot"
-        );
-
-
-      if (
-        !text ||
-        !dot
-      ) {
-        return;
-      }
-
-
-      if (
-        data.loggedIn
-      ) {
-
-        text.textContent =
-          "Logged in as " +
-          (
-            data.name ||
-            "Agar.io Player"
-          );
-
-        dot.classList.add(
-          "online"
-        );
-
-      } else {
-
-        text.textContent =
-          loginWaiting
-            ? "Waiting for Agar.io..."
-            : "Not logged in";
-
-        dot.classList.remove(
-          "online"
-        );
-
-      }
-    }
-
-
-    /*
-      ==================================================
-      LOGOUT
-      ==================================================
-    */
-
-    function logoutFacebook() {
-
-      try {
-
-        if (
-          window.TBFacebook &&
-          typeof window.TBFacebook.logout ===
-            "function"
-        ) {
-
-          window.TBFacebook.logout();
-
-        } else if (
-          window.master &&
-          typeof window.master.logout ===
-            "function"
-        ) {
-
-          window.master.logout();
-
-        }
-
-      } catch (error) {
+    }catch(error){
 
         console.error(
-          "[T.B] Logout failed:",
-          error
+            "[T.B Shop]",
+            error
         );
 
-      }
-
-
-      try {
-
-        sessionStorage.removeItem(
-          "TB_AGAR_PROFILE"
-        );
-
-        localStorage.removeItem(
-          "TB_AGAR_LOGIN_RESULT"
-        );
-
-        localStorage.removeItem(
-          "TB_AGAR_LOGIN_REQUEST"
-        );
-
-      } catch (error) {}
-
-
-      resetLoginButton();
-
-      updateFacebookUI();
     }
 
-
-    /*
-      ==================================================
-      RESET LOGIN BUTTON
-      ==================================================
-    */
-
-    function resetLoginButton() {
-
-      const button =
-        document.getElementById(
-          "facebookLogin"
-        );
+}
 
 
-      if (!button) {
+/*
+   Ask Agar.io for current
+   account information.
+*/
+
+function requestAgarState(){
+
+    if(
+        !agarWindow ||
+        agarWindow.closed
+    ){
         return;
-      }
-
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Login with Facebook";
     }
 
+    try{
 
-    /*
-      ==================================================
-      LOGIN MODAL
-      ==================================================
-    */
-
-    function openLoginModal() {
-
-      const modal =
-        document.getElementById(
-          "loginModal"
+        agarWindow.postMessage(
+            {
+                type:
+                    "TB_REQUEST_AGAR_STATE"
+            },
+            AGAR_ORIGIN
         );
 
+    }catch(error){
 
-      if (modal) {
-
-        modal.style.display =
-          "flex";
-
-      }
+        console.error(
+            "[T.B Shop]",
+            error
+        );
 
     }
 
+}
 
-    function closeLoginModal() {
 
-      const modal =
+/*
+   Receive account information
+   from Tampermonkey on Agar.io.
+*/
+
+window.addEventListener(
+    "message",
+    function(event){
+
+        if(
+            event.origin !==
+            AGAR_ORIGIN
+        ){
+            return;
+        }
+
+
+        if(!event.data){
+            return;
+        }
+
+
+        if(
+            event.data.type !==
+            "TB_AGAR_LOGIN_RESULT"
+        ){
+            return;
+        }
+
+
+        const data =
+            event.data.data || {};
+
+
+        agarAccount = {
+
+            loggedIn:
+                data.loggedIn === true,
+
+            name:
+                data.name || "",
+
+            facebookId:
+                data.facebookId || "",
+
+            coins:
+                Number(data.coins) || 0
+
+        };
+
+
+        updateAccountUI();
+
+        renderPaidSkins();
+
+    }
+);
+
+
+/* ================================
+   ACCOUNT UI
+================================ */
+
+function updateAccountUI(){
+
+    const loginButton =
         document.getElementById(
-          "loginModal"
+            "facebookLogin"
+        );
+
+    const profile =
+        document.getElementById(
+            "profile"
+        );
+
+    const profileName =
+        document.getElementById(
+            "profileName"
+        );
+
+    const coins =
+        document.getElementById(
+            "coins"
+        );
+
+    const profileImage =
+        document.getElementById(
+            "profileImage"
+        );
+
+    const banner =
+        document.getElementById(
+            "accountBanner"
+        );
+
+    const bannerName =
+        document.getElementById(
+            "bannerName"
+        );
+
+    const bannerCoins =
+        document.getElementById(
+            "bannerCoins"
         );
 
 
-      if (modal) {
+    if(
+        agarAccount.loggedIn
+    ){
 
-        modal.style.display =
-          "none";
+        loginButton.style.display =
+            "none";
 
-      }
+        profile.style.display =
+            "flex";
+
+        profileName.textContent =
+            agarAccount.name ||
+            "Agar.io Player";
+
+        coins.textContent =
+            "🪙 " +
+            agarAccount.coins
+                .toLocaleString() +
+            " Coins";
+
+
+        banner.classList.add(
+            "show"
+        );
+
+        bannerName.textContent =
+            agarAccount.name ||
+            "Agar.io Player";
+
+        bannerCoins.textContent =
+            "🪙 " +
+            agarAccount.coins
+                .toLocaleString() +
+            " Coins";
+
+
+        if(
+            agarAccount.facebookId
+        ){
+
+            profileImage.src =
+                "https://graph.facebook.com/" +
+                encodeURIComponent(
+                    agarAccount.facebookId
+                ) +
+                "/picture?type=small";
+
+        }
+
+    }else{
+
+        loginButton.style.display =
+            "block";
+
+        profile.style.display =
+            "none";
+
+        profileName.textContent =
+            "";
+
+        coins.textContent =
+            "🪙 0 Coins";
+
+        profileImage.removeAttribute(
+            "src"
+        );
+
+        banner.classList.remove(
+            "show"
+        );
 
     }
 
+}
 
-    /*
-      ==================================================
-      LOAD VERSIONS
-      ==================================================
-    */
 
-    async function loadVersions() {
+/* ================================
+   LOGOUT
+================================ */
 
-      const select =
+function logoutFacebook(){
+
+    agarAccount = {
+
+        loggedIn:false,
+
+        name:"",
+
+        facebookId:"",
+
+        coins:0
+
+    };
+
+
+    updateAccountUI();
+
+    renderPaidSkins();
+
+}
+
+
+/* ================================
+   AUTOMATIC ACCOUNT REFRESH
+================================ */
+
+setInterval(
+    requestAgarState,
+    3000
+);
+
+
+/* =========================================================
+   LOAD VERSIONS
+   ========================================================= */
+
+async function loadVersions(){
+
+    const select =
         document.getElementById(
-          "version"
+            "version"
         );
 
 
-      try {
+    try{
 
         const response =
-          await fetch(
-            "https://lmsettings.snez.org/",
-            {
-              headers: {
-                username:
-                  "LMConfigVersion",
+            await fetch(
+                "https://lmsettings.snez.org/",
+                {
+                    headers:{
+                        username:
+                            "LMConfigVersion",
 
-                password:
-                  "LMConfigVersionPass"
-              }
-            }
-          );
+                        password:
+                            "LMConfigVersionPass"
+                    }
+                }
+            );
 
 
-        if (!response.ok) {
-
-          throw new Error(
-            "Version request failed"
-          );
-
+        if(!response.ok){
+            throw new Error(
+                "Version request failed"
+            );
         }
 
 
         const versions =
-          await response.json();
+            await response.json();
 
 
-        select.innerHTML =
-          "";
+        select.innerHTML = "";
 
 
         Object.values(
-          versions
-        ).forEach(
-          function (item) {
+            versions
+        ).forEach(function(item){
 
             const cleanVersion =
-              String(item)
-                .replace(
-                  /\/$/,
-                  ""
-                );
+                String(item)
+                    .replace(/\/$/,"");
 
 
             const option =
-              document.createElement(
-                "option"
-              );
+                document.createElement(
+                    "option"
+                );
 
 
             option.value =
-              cleanVersion;
+                cleanVersion;
 
             option.textContent =
-              cleanVersion;
+                cleanVersion;
 
 
             select.appendChild(
-              option
+                option
             );
 
-          }
-        );
+        });
 
 
-        if (
-          select.options.length > 0
-        ) {
+        if(
+            select.options.length
+        ){
 
-          version =
-            select.options[
-              select.options.length - 1
-            ].value;
+            version =
+                select.options[
+                    select.options.length - 1
+                ].value;
 
-          select.value =
-            version;
+            select.value =
+                version;
 
         }
 
-      } catch (error) {
+    }catch(error){
 
-        select.innerHTML =
-          "";
-
+        select.innerHTML = "";
 
         const option =
-          document.createElement(
-            "option"
-          );
-
+            document.createElement(
+                "option"
+            );
 
         option.value =
-          version;
+            version;
 
         option.textContent =
-          version;
-
+            version;
 
         select.appendChild(
-          option
+            option
         );
 
-      }
-
-
-      await loadSkins();
     }
 
 
-    /*
-      ==================================================
-      LOAD SKINS
-      ==================================================
-    */
+    await loadSkins();
 
-    async function loadSkins() {
+}
 
-      const container =
+
+/* =========================================================
+   LOAD SKINS
+   ========================================================= */
+
+async function loadSkins(){
+
+    const container =
         document.getElementById(
-          "skins"
+            "skins"
         );
 
-      const count =
+    const count =
         document.getElementById(
-          "skinCount"
+            "skinCount"
         );
 
 
-      container.innerHTML =
+    container.innerHTML =
         '<div class="loading">Loading skins...</div>';
 
-      count.textContent =
+    count.textContent =
         "Loading...";
 
-      allSkins =
-        [];
+
+    allSkins = [];
 
 
-      try {
+    try{
 
         const url =
-          API +
-          version +
-          "/GameConfiguration.json";
+            API +
+            version +
+            "/GameConfiguration.json";
 
 
         const response =
-          await fetch(
-            url,
-            {
-              cache:
-                "no-store"
-            }
-          );
+            await fetch(
+                url,
+                {
+                    cache:
+                        "no-store"
+                }
+            );
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
-          throw new Error(
-            "GameConfiguration could not be loaded"
-          );
+            throw new Error(
+                "GameConfiguration could not be loaded"
+            );
 
         }
 
 
         const config =
-          await response.json();
+            await response.json();
 
 
         const gameConfig =
-          config &&
-          config.gameConfig
-            ? config.gameConfig
-            : config;
+            config &&
+            config.gameConfig
+                ? config.gameConfig
+                : config;
 
 
         const gameplaySkins =
-          getSectionRows(
-            gameConfig,
-            "Gameplay - Equippable Skins"
-          );
+            getSectionRows(
+                gameConfig,
+                "Gameplay - Equippable Skins"
+            );
 
 
         const shopSkins =
-          getSectionRows(
-            gameConfig,
-            "Shop - Skins"
-          );
+            getSectionRows(
+                gameConfig,
+                "Shop - Skins"
+            );
 
 
         const purchases =
-          getSectionRows(
-            gameConfig,
-            "Wallet - Soft Purchases"
-          );
+            getSectionRows(
+                gameConfig,
+                "Wallet - Soft Purchases"
+            );
 
 
         const visualProducts =
-          getSectionRows(
-            gameConfig,
-            "Visual - Products"
-          );
+            getSectionRows(
+                gameConfig,
+                "Visual - Products"
+            );
 
 
         const purchaseById =
-          new Map();
+            new Map();
 
 
         purchases.forEach(
-          function (purchase) {
+            function(purchase){
 
-            if (
-              !purchase ||
-              purchase.id == null
-            ) {
-              return;
+                if(
+                    !purchase ||
+                    purchase.id == null
+                ){
+                    return;
+                }
+
+                purchaseById.set(
+                    String(purchase.id),
+                    purchase
+                );
+
             }
-
-
-            purchaseById.set(
-              String(
-                purchase.id
-              ),
-              purchase
-            );
-
-          }
         );
 
 
         const shopByProductId =
-          new Map();
+            new Map();
 
 
         shopSkins.forEach(
-          function (shop) {
+            function(shop){
 
-            if (!shop) {
-              return;
+                if(!shop){
+                    return;
+                }
+
+
+                const productId =
+                    firstValue(
+                        shop,
+                        [
+                            "productIdToQuantify",
+                            "productId",
+                            "id"
+                        ]
+                    );
+
+
+                if(
+                    productId != null &&
+                    productId !== ""
+                ){
+
+                    shopByProductId.set(
+                        String(productId),
+                        shop
+                    );
+
+                }
+
             }
-
-
-            const productId =
-              firstValue(
-                shop,
-                [
-                  "productIdToQuantify",
-                  "productId",
-                  "id"
-                ]
-              );
-
-
-            if (
-              productId != null &&
-              productId !== ""
-            ) {
-
-              shopByProductId.set(
-                String(productId),
-                shop
-              );
-
-            }
-
-          }
         );
 
 
         const visualByProductId =
-          new Map();
+            new Map();
 
 
         visualProducts.forEach(
-          function (visual) {
+            function(visual){
 
-            if (!visual) {
-              return;
+                if(!visual){
+                    return;
+                }
+
+
+                const productId =
+                    firstValue(
+                        visual,
+                        [
+                            "productId",
+                            "id"
+                        ]
+                    );
+
+
+                if(
+                    productId != null &&
+                    productId !== ""
+                ){
+
+                    visualByProductId.set(
+                        String(productId),
+                        visual
+                    );
+
+                }
+
             }
-
-
-            const productId =
-              firstValue(
-                visual,
-                [
-                  "productId",
-                  "id"
-                ]
-              );
-
-
-            if (
-              productId != null &&
-              productId !== ""
-            ) {
-
-              visualByProductId.set(
-                String(productId),
-                visual
-              );
-
-            }
-
-          }
         );
 
 
         gameplaySkins.forEach(
-          function (skin) {
+            function(skin){
 
-            if (
-              !skin ||
-              skin.productId == null
-            ) {
-              return;
-            }
-
-
-            const id =
-              String(
-                skin.productId
-              );
+                if(
+                    !skin ||
+                    skin.productId == null
+                ){
+                    return;
+                }
 
 
-            const shop =
-              shopByProductId.get(
-                id
-              ) || null;
-
-
-            const visual =
-              visualByProductId.get(
-                id
-              ) || null;
-
-
-            const purchaseId =
-              findPurchaseId(
-                skin,
-                shop
-              );
-
-
-            const purchase =
-              purchaseId
-                ? purchaseById.get(
+                const id =
                     String(
-                      purchaseId
-                    )
-                  ) || null
-                : null;
+                        skin.productId
+                    );
 
 
-            const image =
-              resolveSkinImage(
-                skin,
-                visual
-              );
+                const shop =
+                    shopByProductId.get(id) ||
+                    null;
 
 
-            const price =
-              resolveSkinPrice(
-                skin,
-                shop,
-                purchase,
-                purchases
-              );
+                const visual =
+                    visualByProductId.get(id) ||
+                    null;
 
 
-            const currency =
-              resolveCurrency(
-                skin,
-                shop,
-                purchase
-              );
+                const purchaseId =
+                    findPurchaseId(
+                        skin,
+                        shop
+                    );
 
 
-            allSkins.push({
-
-              id:
-                id,
-
-              image:
-                image,
-
-              name:
-                resolveSkinName(
-                  skin,
-                  shop,
-                  id
-                ),
-
-              price:
-                price,
-
-              currency:
-                currency,
-
-              purchaseId:
-                purchaseId ||
-                ""
-
-            });
-
-          }
-        );
+                const purchase =
+                    purchaseId
+                        ? purchaseById.get(
+                            String(purchaseId)
+                          ) || null
+                        : null;
 
 
-        if (
-          !allSkins.length
-        ) {
+                allSkins.push({
 
-          shopSkins.forEach(
-            function (shop) {
+                    id:id,
 
-              if (!shop) {
-                return;
-              }
+                    image:
+                        resolveSkinImage(
+                            skin,
+                            visual
+                        ),
 
+                    name:
+                        resolveSkinName(
+                            skin,
+                            shop,
+                            id
+                        ),
 
-              const id =
-                firstValue(
-                  shop,
-                  [
-                    "productIdToQuantify",
-                    "productId",
-                    "id"
-                  ]
-                );
+                    price:
+                        resolveSkinPrice(
+                            skin,
+                            shop,
+                            purchase,
+                            purchases
+                        ),
 
+                    currency:
+                        resolveCurrency(
+                            skin,
+                            shop,
+                            purchase
+                        ),
 
-              if (
-                id == null ||
-                id === ""
-              ) {
-                return;
-              }
+                    purchaseId:
+                        purchaseId || ""
 
-
-              const visual =
-                visualByProductId.get(
-                  String(id)
-                ) || null;
-
-
-              const purchaseId =
-                findPurchaseId(
-                  {},
-                  shop
-                );
-
-
-              const purchase =
-                purchaseId
-                  ? purchaseById.get(
-                      String(
-                        purchaseId
-                      )
-                    ) || null
-                  : null;
-
-
-              allSkins.push({
-
-                id:
-                  String(id),
-
-                image:
-                  resolveSkinImage(
-                    {},
-                    visual
-                  ),
-
-                name:
-                  resolveSkinName(
-                    {},
-                    shop,
-                    String(id)
-                  ),
-
-                price:
-                  resolveSkinPrice(
-                    {},
-                    shop,
-                    purchase,
-                    purchases
-                  ),
-
-                currency:
-                  resolveCurrency(
-                    {},
-                    shop,
-                    purchase
-                  ),
-
-                purchaseId:
-                  purchaseId ||
-                  ""
-
-              });
+                });
 
             }
-          );
-
-        }
+        );
 
 
         allSkins =
-          Array.from(
-            new Map(
-              allSkins.map(
-                function (skin) {
-                  return [
-                    skin.id,
-                    skin
-                  ];
+            Array.from(
+                new Map(
+                    allSkins.map(
+                        function(skin){
+                            return [
+                                skin.id,
+                                skin
+                            ];
+                        }
+                    )
+                ).values()
+            );
+
+
+        paidSkins =
+            allSkins.filter(
+                function(skin){
+
+                    return (
+                        skin.price != null &&
+                        Number(skin.price) > 0
+                    );
+
                 }
-              )
-            ).values()
-          );
+            );
 
 
         renderSkins(
-          allSkins
+            allSkins
         );
 
+        renderPaidSkins();
 
-        /*
-          Build the Paid Skins list from the same
-          configuration data.
-        */
 
-        buildPaidSkins(
-          allSkins
-        );
-
-      } catch (error) {
+    }catch(error){
 
         console.error(
-          "[T.B Skins]",
-          error
+            "[T.B Skins]",
+            error
         );
 
 
         container.innerHTML =
-          '<div class="error">Unable to load skins for this version.</div>';
-
+            '<div class="error">Unable to load skins for this version.</div>';
 
         count.textContent =
-          "0 skins";
+            "0 skins";
+
+    }
+
+}
 
 
-        buildPaidSkins(
-          []
-        );
-      }
+/* =========================================================
+   CONFIG HELPERS
+   ========================================================= */
+
+function getSectionRows(
+    config,
+    name
+){
+
+    if(
+        !config ||
+        typeof config !== "object"
+    ){
+        return [];
     }
 
 
-    /*
-      ==================================================
-      GET CONFIG SECTION
-      ==================================================
-    */
-
-    function getSectionRows(
-      config,
-      name
-    ) {
-
-      if (
-        !config ||
-        typeof config !==
-          "object"
-      ) {
-
-        return [];
-
-      }
-
-
-      if (
+    if(
         Array.isArray(
-          config[name]
+            config[name]
         )
-      ) {
-
+    ){
         return config[name];
-
-      }
-
-
-      let found =
-        null;
+    }
 
 
-      function walk(
-        value
-      ) {
+    let found = null;
 
-        if (
-          found ||
-          value == null ||
-          typeof value !==
-            "object"
-        ) {
 
-          return;
+    function walk(value){
 
+        if(
+            found ||
+            value == null ||
+            typeof value !== "object"
+        ){
+            return;
         }
 
 
-        if (
-          Array.isArray(
-            value
-          )
-        ) {
-
-          return;
-
-        }
-
-
-        if (
-          Object.prototype.hasOwnProperty.call(
-            value,
-            name
-          )
-        ) {
-
-          if (
-            Array.isArray(
-              value[name]
+        if(
+            Object.prototype.hasOwnProperty.call(
+                value,
+                name
             )
-          ) {
+        ){
 
-            found =
-              value[name];
+            if(
+                Array.isArray(
+                    value[name]
+                )
+            ){
 
-          }
+                found =
+                    value[name];
 
-          return;
+            }
+
+            return;
 
         }
 
 
-        Object.keys(
-          value
-        ).some(
-          function (key) {
+        Object.keys(value).some(
+            function(key){
 
-            walk(
-              value[key]
-            );
+                walk(
+                    value[key]
+                );
 
-            return !!found;
+                return !!found;
 
-          }
+            }
         );
 
-      }
+    }
 
 
-      walk(
-        config
-      );
+    walk(config);
 
 
-      return Array.isArray(
-        found
-      )
+    return Array.isArray(found)
         ? found
         : [];
+
+}
+
+
+function firstValue(
+    object,
+    keys
+){
+
+    if(
+        !object ||
+        typeof object !== "object"
+    ){
+        return null;
     }
 
 
-    /*
-      ==================================================
-      VALUE HELPERS
-      ==================================================
-    */
-
-    function firstValue(
-      object,
-      keys
-    ) {
-
-      if (
-        !object ||
-        typeof object !==
-          "object"
-      ) {
-
-        return null;
-
-      }
-
-
-      for (
+    for(
         const key of keys
-      ) {
+    ){
 
-        if (
-          object[key] !==
-            undefined &&
-          object[key] !==
-            null &&
-          String(
-            object[key]
-          ).trim() !== ""
-        ) {
+        if(
+            object[key] !== undefined &&
+            object[key] !== null &&
+            String(
+                object[key]
+            ).trim() !== ""
+        ){
 
-          return object[key];
+            return object[key];
 
         }
 
-      }
-
-
-      return null;
     }
 
 
-    function firstNumber(
-      object,
-      keys
-    ) {
+    return null;
 
-      if (
+}
+
+
+function firstNumber(
+    object,
+    keys
+){
+
+    if(
         !object ||
-        typeof object !==
-          "object"
-      ) {
-
+        typeof object !== "object"
+    ){
         return null;
+    }
 
-      }
 
-
-      for (
+    for(
         const key of keys
-      ) {
+    ){
 
-        if (
-          object[key] ===
-            undefined ||
-          object[key] ===
-            null
-        ) {
-
-          continue;
-
+        if(
+            object[key] === undefined ||
+            object[key] === null
+        ){
+            continue;
         }
 
 
         const number =
-          Number(
-            object[key]
-          );
+            Number(
+                object[key]
+            );
 
 
-        if (
-          Number.isFinite(
-            number
-          )
-        ) {
-
-          return number;
-
+        if(
+            Number.isFinite(number)
+        ){
+            return number;
         }
 
-      }
-
-
-      return null;
     }
 
 
-    function findPurchaseId(
-      skin,
-      shop
-    ) {
+    return null;
 
-      const objects =
+}
+
+
+function findPurchaseId(
+    skin,
+    shop
+){
+
+    const objects =
         [
-          shop,
-          skin
+            shop,
+            skin
         ];
 
 
-      const keys =
+    const keys =
         [
-          "purchaseId",
-          "purchaseID",
-          "softPurchaseId",
-          "softPurchaseID",
-          "referenceValue",
-          "referenceId",
-          "referenceID",
-          "walletProductId"
+            "purchaseId",
+            "purchaseID",
+            "softPurchaseId",
+            "softPurchaseID",
+            "referenceValue",
+            "referenceId",
+            "referenceID",
+            "walletProductId"
         ];
 
 
-      for (
+    for(
         const object of objects
-      ) {
+    ){
 
         const value =
-          firstValue(
-            object,
-            keys
-          );
+            firstValue(
+                object,
+                keys
+            );
 
 
-        if (
-          value != null
-        ) {
+        if(
+            value != null
+        ){
 
-          return String(
-            value
-          );
+            return String(
+                value
+            );
 
         }
 
-      }
-
-
-      return "";
     }
 
 
-    function resolveSkinImage(
-      skin,
-      visual
-    ) {
+    return "";
 
-      const value =
+}
+
+
+function resolveSkinImage(
+    skin,
+    visual
+){
+
+    const value =
         firstValue(
-          skin,
-          [
-            "image",
-            "icon",
-            "skinImage",
-            "visualSource"
-          ]
+            skin,
+            [
+                "image",
+                "icon",
+                "skinImage",
+                "visualSource"
+            ]
         ) ||
         firstValue(
-          visual,
-          [
-            "visualSource",
-            "image",
-            "icon",
-            "source"
-          ]
+            visual,
+            [
+                "visualSource",
+                "image",
+                "icon",
+                "source"
+            ]
         );
 
 
-      return value == null
+    return value == null
         ? ""
-        : String(
-            value
-          );
+        : String(value);
+
+}
+
+
+function resolveSkinName(
+    skin,
+    shop,
+    id
+){
+
+    const value =
+        firstValue(
+            skin,
+            [
+                "displayName",
+                "localizedName",
+                "name",
+                "skinName"
+            ]
+        ) ||
+        firstValue(
+            shop,
+            [
+                "displayName",
+                "localizedName",
+                "name"
+            ]
+        );
+
+
+    if(value){
+        return String(value);
     }
 
 
-    function resolveSkinName(
-      skin,
-      shop,
-      id
-    ) {
-
-      const value =
-        firstValue(
-          skin,
-          [
-            "displayName",
-            "localizedName",
-            "name",
-            "skinName"
-          ]
-        ) ||
-        firstValue(
-          shop,
-          [
-            "displayName",
-            "localizedName",
-            "name"
-          ]
-        );
-
-
-      if (
-        value
-      ) {
-
-        return String(
-          value
-        );
-
-      }
-
-
-      return String(
-        id
-      )
+    return String(id)
         .replace(
-          /^skin[_-]?/i,
-          ""
+            /^skin[_-]?/i,
+            ""
         )
         .replace(
-          /[_-]+/g,
-          " "
+            /[_-]+/g,
+            " "
         );
-    }
+
+}
 
 
-    function resolveSkinPrice(
-      skin,
-      shop,
-      purchase,
-      purchases
-    ) {
+function resolveSkinPrice(
+    skin,
+    shop,
+    purchase,
+    purchases
+){
 
-      const direct =
+    const direct =
         firstNumber(
-          skin,
-          [
-            "price",
-            "cost",
-            "currencyAmount"
-          ]
-        );
-
-
-      if (
-        direct != null
-      ) {
-
-        return direct;
-
-      }
-
-
-      const shopDirect =
-        firstNumber(
-          shop,
-          [
-            "price",
-            "cost",
-            "currencyAmount"
-          ]
-        );
-
-
-      if (
-        shopDirect != null
-      ) {
-
-        return shopDirect;
-
-      }
-
-
-      const purchasePrice =
-        firstNumber(
-          purchase,
-          [
-            "currencyAmount",
-            "price",
-            "cost"
-          ]
-        );
-
-
-      if (
-        purchasePrice != null
-      ) {
-
-        return purchasePrice;
-
-      }
-
-
-      const possibleIds =
-        [];
-
-
-      [
-        skin,
-        shop
-      ].forEach(
-        function (object) {
-
-          if (
-            !object ||
-            typeof object !==
-              "object"
-          ) {
-
-            return;
-
-          }
-
-
-          Object.keys(
-            object
-          ).forEach(
-            function (key) {
-
-              const value =
-                object[key];
-
-
-              if (
-                /purchase|reference/i.test(
-                  key
-                ) &&
-                (
-                  typeof value ===
-                    "string" ||
-                  typeof value ===
-                    "number"
-                )
-              ) {
-
-                possibleIds.push(
-                  String(
-                    value
-                  )
-                );
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-
-      for (
-        const id of possibleIds
-      ) {
-
-        const match =
-          purchases.find(
-            function (row) {
-
-              return (
-                row &&
-                String(
-                  row.id
-                ) === id
-              );
-
-            }
-          );
-
-
-        const price =
-          firstNumber(
-            match,
+            skin,
             [
-              "currencyAmount",
-              "price",
-              "cost"
+                "price",
+                "cost",
+                "currencyAmount"
             ]
-          );
+        );
 
 
-        if (
-          price != null
-        ) {
-
-          return price;
-
-        }
-
-      }
-
-
-      return null;
+    if(
+        direct != null
+    ){
+        return direct;
     }
 
 
-    function resolveCurrency(
-      skin,
-      shop,
-      purchase
-    ) {
+    const shopDirect =
+        firstNumber(
+            shop,
+            [
+                "price",
+                "cost",
+                "currencyAmount"
+            ]
+        );
 
-      const value =
+
+    if(
+        shopDirect != null
+    ){
+        return shopDirect;
+    }
+
+
+    const purchasePrice =
+        firstNumber(
+            purchase,
+            [
+                "currencyAmount",
+                "price",
+                "cost"
+            ]
+        );
+
+
+    if(
+        purchasePrice != null
+    ){
+        return purchasePrice;
+    }
+
+
+    return null;
+
+}
+
+
+function resolveCurrency(
+    skin,
+    shop,
+    purchase
+){
+
+    const value =
         firstValue(
-          purchase,
-          [
-            "currencyProductId",
-            "currency"
-          ]
+            purchase,
+            [
+                "currencyProductId",
+                "currency"
+            ]
         ) ||
         firstValue(
-          shop,
-          [
-            "currencyProductId",
-            "currency"
-          ]
+            shop,
+            [
+                "currencyProductId",
+                "currency"
+            ]
         ) ||
         firstValue(
-          skin,
-          [
-            "currencyProductId",
-            "currency"
-          ]
+            skin,
+            [
+                "currencyProductId",
+                "currency"
+            ]
         ) ||
         "DNA";
 
 
-      return String(
+    return String(
         value
-      ).toUpperCase();
-    }
+    ).toUpperCase();
+
+}
 
 
-    /*
-      ==================================================
-      RENDER NORMAL SKINS
-      ==================================================
-    */
+/* =========================================================
+   RENDER NORMAL SKINS
+   ========================================================= */
 
-    function renderSkins(
-      skins
-    ) {
+function renderSkins(
+    skins
+){
 
-      const container =
+    const container =
         document.getElementById(
-          "skins"
+            "skins"
+        );
+
+    const count =
+        document.getElementById(
+            "skinCount"
         );
 
 
-      const count =
-        document.getElementById(
-          "skinCount"
-        );
-
-
-      container.innerHTML =
+    container.innerHTML =
         "";
 
 
-      count.textContent =
+    count.textContent =
         skins.length +
         " skins";
 
 
-      if (
-        skins.length === 0
-      ) {
+    if(!skins.length){
 
         container.innerHTML =
-          '<div class="empty">No skins found in the configuration.</div>';
+            '<div class="empty">No skins found in the configuration.</div>';
 
         return;
-      }
 
-
-      skins.forEach(
-        function (skin) {
-
-          const card =
-            document.createElement(
-              "article"
-            );
-
-
-          card.className =
-            "skin";
-
-
-          const image =
-            document.createElement(
-              "img"
-            );
-
-
-          image.loading =
-            "lazy";
-
-
-          image.alt =
-            skin.name;
-
-
-          let imagePath =
-            skin.image ||
-            "";
-
-
-          if (
-            imagePath &&
-            !/^https?:\/\//i.test(
-              imagePath
-            )
-          ) {
-
-            imagePath =
-              API +
-              version +
-              "/" +
-              imagePath.replace(
-                /^\/+/,
-                ""
-              );
-
-          }
-
-
-          image.src =
-            imagePath;
-
-
-          image.onerror =
-            function () {
-
-              image.style.display =
-                "none";
-
-            };
-
-
-          const name =
-            document.createElement(
-              "span"
-            );
-
-
-          name.className =
-            "skin-name";
-
-
-          name.textContent =
-            skin.name;
-
-
-          const price =
-            document.createElement(
-              "span"
-            );
-
-
-          price.className =
-            "skin-price";
-
-
-          price.textContent =
-            skin.price == null
-              ? "Price unavailable"
-              : Number(
-                  skin.price
-                ).toLocaleString() +
-                " " +
-                skin.currency;
-
-
-          const id =
-            document.createElement(
-              "span"
-            );
-
-
-          id.className =
-            "skin-id";
-
-
-          id.textContent =
-            skin.id;
-
-
-          card.appendChild(
-            image
-          );
-
-          card.appendChild(
-            name
-          );
-
-          card.appendChild(
-            price
-          );
-
-          card.appendChild(
-            id
-          );
-
-
-          container.appendChild(
-            card
-          );
-
-        }
-      );
     }
 
 
-    /*
-      ==================================================
-      PAID SKINS
-      ==================================================
-    */
+    skins.forEach(
+        function(skin){
 
-    function buildPaidSkins(
-      skins
-    ) {
+            const card =
+                document.createElement(
+                    "article"
+                );
 
-      const container =
+
+            card.className =
+                "skin";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.loading =
+                "lazy";
+
+
+            image.alt =
+                skin.name;
+
+
+            let imagePath =
+                skin.image || "";
+
+
+            if(
+                imagePath &&
+                !/^https?:\/\//i.test(
+                    imagePath
+                )
+            ){
+
+                imagePath =
+                    API +
+                    version +
+                    "/" +
+                    imagePath.replace(
+                        /^\/+/,
+                        ""
+                    );
+
+            }
+
+
+            image.src =
+                imagePath;
+
+
+            image.onerror =
+                function(){
+
+                    image.style.display =
+                        "none";
+
+                };
+
+
+            const name =
+                document.createElement(
+                    "span"
+                );
+
+
+            name.className =
+                "skin-name";
+
+
+            name.textContent =
+                skin.name;
+
+
+            const price =
+                document.createElement(
+                    "span"
+                );
+
+
+            price.className =
+                "skin-price";
+
+
+            price.textContent =
+                skin.price == null
+                    ? "Price unavailable"
+                    : Number(
+                        skin.price
+                      ).toLocaleString() +
+                      " " +
+                      skin.currency;
+
+
+            const id =
+                document.createElement(
+                    "span"
+                );
+
+
+            id.className =
+                "skin-id";
+
+
+            id.textContent =
+                skin.id;
+
+
+            card.appendChild(
+                image
+            );
+
+            card.appendChild(
+                name
+            );
+
+            card.appendChild(
+                price
+            );
+
+            card.appendChild(
+                id
+            );
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PAID SKINS
+   ========================================================= */
+
+function renderPaidSkins(){
+
+    const container =
         document.getElementById(
-          "paidSkins"
+            "paidSkins"
         );
 
 
-      if (!container) {
-        return;
-      }
-
-
-      paidSkins =
-        Array.isArray(
-          skins
-        )
-          ? skins.slice()
-          : [];
-
-
-      container.innerHTML =
+    container.innerHTML =
         "";
 
 
-      if (
-        paidSkins.length === 0
-      ) {
+    if(
+        !paidSkins.length
+    ){
 
         container.innerHTML =
-          '<div class="empty">No paid skins are available in this configuration.</div>';
+            '<div class="empty">No paid skins found.</div>';
 
         return;
-      }
+
+    }
 
 
-      paidSkins.forEach(
-        function (skin) {
+    paidSkins.forEach(
+        function(skin){
 
-          const card =
-            document.createElement(
-              "article"
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "paid-skin";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            image.loading =
+                "lazy";
+
+
+            image.alt =
+                skin.name;
+
+
+            let imagePath =
+                skin.image || "";
+
+
+            if(
+                imagePath &&
+                !/^https?:\/\//i.test(
+                    imagePath
+                )
+            ){
+
+                imagePath =
+                    API +
+                    version +
+                    "/" +
+                    imagePath.replace(
+                        /^\/+/,
+                        ""
+                    );
+
+            }
+
+
+            image.src =
+                imagePath;
+
+
+            image.onerror =
+                function(){
+
+                    image.style.display =
+                        "none";
+
+                };
+
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+
+            name.className =
+                "paid-name";
+
+
+            name.textContent =
+                skin.name;
+
+
+            const price =
+                document.createElement(
+                    "div"
+                );
+
+
+            price.className =
+                "paid-price";
+
+
+            price.textContent =
+                skin.price == null
+                    ? "Price unavailable"
+                    : "🪙 " +
+                      Number(
+                          skin.price
+                      ).toLocaleString() +
+                      " " +
+                      skin.currency;
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "buy-button";
+
+
+            button.textContent =
+                "Buy";
+
+
+            button.onclick =
+                function(){
+
+                    openBuyModal(
+                        skin
+                    );
+
+                };
+
+
+            card.appendChild(
+                image
+            );
+
+            card.appendChild(
+                name
+            );
+
+            card.appendChild(
+                price
+            );
+
+            card.appendChild(
+                button
             );
 
 
-          card.className =
-            "paid-skin";
-
-
-          const image =
-            document.createElement(
-              "img"
+            container.appendChild(
+                card
             );
 
+        }
+    );
 
-          image.loading =
-            "lazy";
-
-
-          image.alt =
-            skin.name;
+}
 
 
-          let imagePath =
-            skin.image ||
-            "";
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function filterSkins(){
+
+    const query =
+        document.getElementById(
+            "search"
+        ).value
+        .toLowerCase()
+        .trim();
 
 
-          if (
-            imagePath &&
-            !/^https?:\/\//i.test(
-              imagePath
-            )
-          ) {
+    const filtered =
+        allSkins.filter(
+            function(skin){
 
-            imagePath =
-              API +
-              version +
-              "/" +
-              imagePath.replace(
-                /^\/+/,
-                ""
-              );
+                return (
 
-          }
+                    skin.name
+                        .toLowerCase()
+                        .includes(query)
+
+                    ||
+
+                    skin.id
+                        .toLowerCase()
+                        .includes(query)
+
+                );
+
+            }
+        );
 
 
-          image.src =
-            imagePath;
+    renderSkins(
+        filtered
+    );
+
+}
 
 
-          image.onerror =
-            function () {
+/* =========================================================
+   VERSION
+   ========================================================= */
 
-              image.style.display =
-                "none";
+function changeVersion(){
+
+    version =
+        document.getElementById(
+            "version"
+        ).value;
+
+
+    loadSkins();
+
+}
+
+
+/* =========================================================
+   BUY MODAL
+   ========================================================= */
+
+function openBuyModal(
+    skin
+){
+
+    selectedSkin =
+        skin;
+
+
+    const modal =
+        document.getElementById(
+            "buyModal"
+        );
+
+
+    const title =
+        document.getElementById(
+            "buyTitle"
+        );
+
+
+    const text =
+        document.getElementById(
+            "buyText"
+        );
+
+
+    const confirm =
+        document.getElementById(
+            "confirmBuy"
+        );
+
+
+    title.textContent =
+        "Buy " +
+        skin.name;
+
+
+    if(
+        !agarAccount.loggedIn
+    ){
+
+        text.innerHTML =
+            "You need to login with Facebook through Agar.io before buying this skin.";
+
+
+        confirm.textContent =
+            "Login";
+
+
+        confirm.onclick =
+            function(){
+
+                closeBuyModal();
+
+                requestAgarLogin();
 
             };
 
 
-          const name =
-            document.createElement(
-              "div"
-            );
+        modal.classList.add(
+            "show"
+        );
+
+        return;
+
+    }
 
 
-          name.className =
-            "paid-skin-name";
+    const price =
+        Number(
+            skin.price
+        );
 
 
-          name.textContent =
-            skin.name;
+    if(
+        agarAccount.coins <
+        price
+    ){
+
+        text.innerHTML =
+            "You don't have enough Coins.<br><br>" +
+            "Your balance: <strong>🪙 " +
+            agarAccount.coins.toLocaleString() +
+            "</strong><br>" +
+            "Required: <strong>🪙 " +
+            price.toLocaleString() +
+            "</strong>";
 
 
-          const price =
-            document.createElement(
-              "div"
-            );
+        confirm.textContent =
+            "Not enough Coins";
 
 
-          price.className =
-            "paid-skin-price";
+        confirm.disabled =
+            true;
 
 
-          price.textContent =
-            skin.price == null
-              ? "Price unavailable"
-              : Number(
-                  skin.price
-                ).toLocaleString() +
-                " " +
-                skin.currency;
+        confirm.onclick =
+            null;
 
 
-          const button =
-            document.createElement(
-              "button"
-            );
+    }else{
+
+        text.innerHTML =
+            "You are logged in as <strong>" +
+            escapeHtml(
+                agarAccount.name ||
+                "Agar.io Player"
+            ) +
+            "</strong>.<br><br>" +
+
+            "Balance: <strong>🪙 " +
+            agarAccount.coins.toLocaleString() +
+            "</strong><br>" +
+
+            "Price: <strong>🪙 " +
+            price.toLocaleString() +
+            "</strong><br><br>" +
+
+            "Continue to the official Agar.io/Miniclip purchase flow to complete the purchase.";
 
 
-          button.className =
-            "buy-button";
+        confirm.textContent =
+            "Continue";
 
 
-          button.textContent =
-            "Buy Skin";
+        confirm.disabled =
+            false;
 
 
-          button.addEventListener(
-            "click",
-            function () {
+        confirm.onclick =
+            confirmPurchase;
 
-              openPaidSkinPurchase(
-                skin
-              );
-
-            }
-          );
+    }
 
 
-          card.appendChild(
-            image
-          );
+    modal.classList.add(
+        "show"
+    );
 
-          card.appendChild(
-            name
-          );
-
-          card.appendChild(
-            price
-          );
-
-          card.appendChild(
-            button
-          );
+}
 
 
-          container.appendChild(
-            card
-          );
+/* =========================================================
+   CONFIRM PURCHASE
+   ========================================================= */
+
+function confirmPurchase(){
+
+    if(
+        !selectedSkin
+    ){
+        return;
+    }
+
+
+    if(
+        !agarAccount.loggedIn
+    ){
+
+        closeBuyModal();
+
+        requestAgarLogin();
+
+        return;
+
+    }
+
+
+    const price =
+        Number(
+            selectedSkin.price
+        );
+
+
+    if(
+        agarAccount.coins <
+        price
+    ){
+
+        alert(
+            "You don't have enough Coins."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       IMPORTANT:
+
+       The HTML does not fake or locally
+       deduct real Agar.io Coins.
+
+       A real purchase needs to be completed
+       through the official Agar.io/Miniclip
+       purchase system.
+    */
+
+
+    alert(
+        "You have enough Coins for " +
+        selectedSkin.name +
+        ". Continue the purchase through the official Agar.io/Miniclip checkout."
+    );
+
+
+    closeBuyModal();
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+   ========================================================= */
+
+function closeBuyModal(){
+
+    const modal =
+        document.getElementById(
+            "buyModal"
+        );
+
+
+    modal.classList.remove(
+        "show"
+    );
+
+
+    const confirm =
+        document.getElementById(
+            "confirmBuy"
+        );
+
+
+    confirm.disabled =
+        false;
+
+
+    confirm.onclick =
+        confirmPurchase;
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+    value
+){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================================================
+   MODAL BACKGROUND CLICK
+   ========================================================= */
+
+document.getElementById(
+    "buyModal"
+).addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === this
+        ){
+
+            closeBuyModal();
 
         }
-      );
 
-
-      updatePaidLoginStatus();
     }
+);
 
 
-    /*
-      ==================================================
-      OPEN PAID SKIN PURCHASE
-      ==================================================
-    */
+/* =========================================================
+   START
+   ========================================================= */
 
-    function openPaidSkinPurchase(
-      skin
-    ) {
+updateAccountUI();
 
-      const profile =
-        getAgarProfile();
+loadVersions();
 
-
-      /*
-        User must be authenticated first.
-      */
-
-      if (
-        !profile.loggedIn
-      ) {
-
-        openLoginModal();
-
-        return;
-      }
-
-
-      selectedPaidSkin =
-        skin;
-
-
-      const modal =
-        document.getElementById(
-          "purchaseModal"
-        );
-
-
-      const title =
-        document.getElementById(
-          "purchaseTitle"
-        );
-
-
-      const description =
-        document.getElementById(
-          "purchaseDescription"
-        );
-
-
-      const price =
-        document.getElementById(
-          "purchasePrice"
-        );
-
-
-      title.textContent =
-        skin.name;
-
-
-      description.textContent =
-        "You are signed in as " +
-        (
-          profile.name ||
-          "Agar.io Player"
-        ) +
-        ". Continue to the official purchase process for this skin.";
-
-
-      price.textContent =
-        skin.price == null
-          ? "Price unavailable"
-          : Number(
-              skin.price
-            ).toLocaleString() +
-            " " +
-            skin.currency;
-
-
-      modal.style.display =
-        "flex";
-    }
-
-
-    /*
-      ==================================================
-      CONFIRM PURCHASE
-      ==================================================
-    */
-
-    function confirmPaidSkinPurchase() {
-
-      if (
-        !selectedPaidSkin
-      ) {
-
-        return;
-      }
-
-
-      const profile =
-        getAgarProfile();
-
-
-      if (
-        !profile.loggedIn
-      ) {
-
-        closePurchaseModal();
-
-        openLoginModal();
-
-        return;
-      }
-
-
-      /*
-        IMPORTANT:
-
-        Do not locally subtract coins.
-
-        The website does not have an official
-        Agar.io purchase endpoint in the supplied
-        Pasted text(7).txt.
-
-        Therefore this button only verifies the
-        authenticated account and explains that
-        the official Agar.io purchase process is
-        required.
-
-        This prevents fake/local Coins from being
-        mistaken for real Agar.io currency.
-      */
-
-      alert(
-        "Your Agar.io account is logged in. The actual skin purchase must be completed through the official Agar.io/Miniclip purchase system."
-      );
-
-
-      closePurchaseModal();
-    }
-
-
-    function closePurchaseModal() {
-
-      const modal =
-        document.getElementById(
-          "purchaseModal"
-        );
-
-
-      if (modal) {
-
-        modal.style.display =
-          "none";
-
-      }
-
-
-      selectedPaidSkin =
-        null;
-    }
-
-
-    /*
-      ==================================================
-      SEARCH
-      ==================================================
-    */
-
-    function filterSkins() {
-
-      const query =
-        document.getElementById(
-          "search"
-        )
-          .value
-          .toLowerCase()
-          .trim();
-
-
-      const filtered =
-        allSkins.filter(
-          function (skin) {
-
-            return (
-              skin.name
-                .toLowerCase()
-                .includes(
-                  query
-                ) ||
-
-              skin.id
-                .toLowerCase()
-                .includes(
-                  query
-                )
-            );
-
-          }
-        );
-
-
-      renderSkins(
-        filtered
-      );
-    }
-
-
-    /*
-      ==================================================
-      VERSION CHANGE
-      ==================================================
-    */
-
-    function changeVersion() {
-
-      version =
-        document.getElementById(
-          "version"
-        ).value;
-
-
-      loadSkins();
-    }
-
-
-    /*
-      ==================================================
-      T.B FACEBOOK STATE EVENT
-      ==================================================
-    */
-
-    window.addEventListener(
-      "tb-facebook-state",
-      function () {
-
-        updateFacebookUI();
-
-      }
-    );
-
-
-    /*
-      ==================================================
-      LOAD / START
-      ==================================================
-    */
-
-    window.addEventListener(
-      "load",
-      function () {
-
-        updateFacebookUI();
-
-        updatePaidLoginStatus();
-
-        setTimeout(
-          updateFacebookUI,
-          1000
-        );
-
-        setTimeout(
-          updateFacebookUI,
-          3000
-        );
-
-      }
-    );
-
-
-    loadVersions();
-
-  </script>
+</script>
 
 </body>
 </html>
