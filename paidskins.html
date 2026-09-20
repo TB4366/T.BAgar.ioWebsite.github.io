@@ -342,65 +342,203 @@
       ogario.v4.master.js.
     */
 
+    let TB_LOGIN_PENDING = false;
+    let TB_LOGIN_PROVIDER = "";
+    let TB_ACCOUNT_LOGGED_IN = false;
+
     function openAgarLogin(provider) {
-      const agarWindow = window.open("https://agar.io/", "tbAgarLogin", "width=1280,height=900");
+      TB_LOGIN_PENDING = true;
+      TB_LOGIN_PROVIDER = provider;
+
+      const agarWindow = window.open(
+        "https://agar.io/",
+        "tbAgarLogin",
+        "width=1280,height=900"
+      );
+
       if (!agarWindow) {
+        TB_LOGIN_PENDING = false;
+        TB_LOGIN_PROVIDER = "";
         alert("Please allow pop-ups for tbagario.com so Agar.io can open.");
         return;
       }
+
       window.TB_AGAR_WINDOW = agarWindow;
-      const sendLogin = () => {
+
+      // Tell the Tampermonkey bridge which official Agar.io login
+      // method should be started automatically.
+      const sendLoginRequest = () => {
         try {
-          agarWindow.postMessage({source:"TB_AGARIO_SHOP", type:"TB_REQUEST_AGAR_LOGIN", provider}, "https://agar.io");
-        } catch(e) {}
+          agarWindow.postMessage({
+            source: "TB_AGARIO_SHOP",
+            type: "TB_REQUEST_AGAR_LOGIN",
+            provider: provider
+          }, "https://agar.io");
+        } catch (e) {}
       };
-      setTimeout(sendLogin, 2500);
-      [4000,7000,10000,15000].forEach(d => setTimeout(requestAgarState,d));
+
+      // Agar.io needs a moment to load before the userscript can receive the request.
+      [1500, 3000, 5000].forEach(d => setTimeout(sendLoginRequest, d));
+
+      // Ask for the account state while the official login is being completed.
+      [4000, 7000, 10000, 15000, 20000].forEach(d =>
+        setTimeout(requestAgarState, d)
+      );
     }
 
-    function loginFacebook() { openAgarLogin("facebook"); }
-    function loginGoogle() { openAgarLogin("google"); }
+    function loginFacebook() {
+      openAgarLogin("facebook");
+    }
+
+    function loginGoogle() {
+      openAgarLogin("google");
+    }
 
     function requestAgarState() {
-      const w=window.TB_AGAR_WINDOW;
-      if(!w || w.closed) return;
-      try { w.postMessage({source:"TB_AGARIO_SHOP",type:"TB_REQUEST_AGAR_STATE"},"https://agar.io"); } catch(e) {}
+      const w = window.TB_AGAR_WINDOW;
+      if (!w || w.closed) return;
+
+      try {
+        w.postMessage({
+          source: "TB_AGARIO_SHOP",
+          type: "TB_REQUEST_AGAR_STATE"
+        }, "https://agar.io");
+      } catch (e) {}
     }
 
     function logoutFacebook() {
-      const w=window.TB_AGAR_WINDOW;
-      if(w && !w.closed) {
-        try { w.postMessage({source:"TB_AGARIO_SHOP",type:"TB_REQUEST_AGAR_LOGOUT"},"https://agar.io"); } catch(e) {}
+      const w = window.TB_AGAR_WINDOW;
+
+      if (w && !w.closed) {
+        try {
+          w.postMessage({
+            source: "TB_AGARIO_SHOP",
+            type: "TB_REQUEST_AGAR_LOGOUT"
+          }, "https://agar.io");
+        } catch (e) {}
       }
+
+      TB_LOGIN_PENDING = false;
+      TB_LOGIN_PROVIDER = "";
+      TB_ACCOUNT_LOGGED_IN = false;
       resetAccountUI();
     }
 
     function resetAccountUI() {
-      const fb=document.getElementById("facebookLogin"), google=document.getElementById("googleLogin"), profile=document.getElementById("profile"), name=document.getElementById("profileName"), image=document.getElementById("profileImage"), coins=document.getElementById("coins"), dna=document.getElementById("dna");
-      if(fb) fb.style.display="block"; if(google) google.style.display="block"; if(profile) profile.style.display="none";
-      if(name) name.textContent=""; if(image) image.removeAttribute("src"); if(coins) coins.textContent="Coins: 0"; if(dna) dna.textContent="DNA: 0";
+      const fb = document.getElementById("facebookLogin");
+      const google = document.getElementById("googleLogin");
+      const profile = document.getElementById("profile");
+      const name = document.getElementById("profileName");
+      const image = document.getElementById("profileImage");
+      const coins = document.getElementById("coins");
+      const dna = document.getElementById("dna");
+
+      if (fb) fb.style.display = "block";
+      if (google) google.style.display = "block";
+      if (profile) profile.style.display = "none";
+      if (name) name.textContent = "";
+      if (image) image.removeAttribute("src");
+      if (coins) coins.textContent = "Coins: 0";
+      if (dna) dna.textContent = "DNA: 0";
     }
 
     function updateAccountUI(data) {
-      if(!data || !data.loggedIn) { resetAccountUI(); return; }
-      const fb=document.getElementById("facebookLogin"), google=document.getElementById("googleLogin"), profile=document.getElementById("profile"), name=document.getElementById("profileName"), image=document.getElementById("profileImage"), coins=document.getElementById("coins"), dna=document.getElementById("dna");
-      if(fb) fb.style.display="none"; if(google) google.style.display="none"; if(profile) profile.style.display="flex";
-      if(name) name.textContent=data.name || "Agar.io account";
-      if(coins) coins.textContent="Coins: "+Number(data.coins||0).toLocaleString();
-      if(dna) dna.textContent="DNA: "+Number(data.dna||0).toLocaleString();
-      if(image && data.facebookId) image.src="https://graph.facebook.com/"+encodeURIComponent(data.facebookId)+"/picture?type=small";
+      if (!data || !data.loggedIn) {
+        if (!TB_ACCOUNT_LOGGED_IN) resetAccountUI();
+        return;
+      }
+
+      TB_ACCOUNT_LOGGED_IN = true;
+      TB_LOGIN_PENDING = false;
+
+      const fb = document.getElementById("facebookLogin");
+      const google = document.getElementById("googleLogin");
+      const profile = document.getElementById("profile");
+      const name = document.getElementById("profileName");
+      const image = document.getElementById("profileImage");
+      const coins = document.getElementById("coins");
+      const dna = document.getElementById("dna");
+
+      if (fb) fb.style.display = "none";
+      if (google) google.style.display = "none";
+      if (profile) profile.style.display = "flex";
+      if (name) name.textContent = data.name || "Agar.io account";
+      if (coins) coins.textContent = "Coins: " + Number(data.coins || 0).toLocaleString();
+      if (dna) dna.textContent = "DNA: " + Number(data.dna || 0).toLocaleString();
+
+      if (image && data.facebookId) {
+        image.src =
+          "https://graph.facebook.com/" +
+          encodeURIComponent(data.facebookId) +
+          "/picture?type=small";
+      }
     }
 
-    window.addEventListener("message",function(event){
-      if(event.origin!=="https://agar.io" || !event.data || event.data.source!=="TB_AGARIO_BRIDGE") return;
-      if(event.data.type==="TB_AGAR_STATE" || event.data.type==="TB_RETURN_TO_SHOP") { updateAccountUI(event.data.data); try{window.focus();}catch(e){} }
-      if(event.data.type==="TB_LOGOUT_RESULT") resetAccountUI();
+    window.addEventListener("message", function(event) {
+      if (
+        event.origin !== "https://agar.io" ||
+        !event.data ||
+        event.data.source !== "TB_AGARIO_BRIDGE"
+      ) return;
+
+      const message = event.data;
+
+      if (
+        message.type === "TB_AGAR_STATE" ||
+        message.type === "TB_RETURN_TO_SHOP"
+      ) {
+        const data = message.data;
+
+        if (data && data.loggedIn) {
+          updateAccountUI(data);
+
+          // Login succeeded. Agar.io can now be closed automatically;
+          // the shop keeps the received account information on screen.
+          if (message.type === "TB_RETURN_TO_SHOP") {
+            try { window.focus(); } catch (e) {}
+
+            const w = window.TB_AGAR_WINDOW;
+            setTimeout(function() {
+              try {
+                if (w && !w.closed) w.close();
+              } catch (e) {}
+              window.TB_AGAR_WINDOW = null;
+            }, 350);
+          }
+        } else if (!TB_ACCOUNT_LOGGED_IN) {
+          resetAccountUI();
+        }
+      }
+
+      if (message.type === "TB_LOGOUT_RESULT") {
+        TB_ACCOUNT_LOGGED_IN = false;
+        TB_LOGIN_PENDING = false;
+        TB_LOGIN_PROVIDER = "";
+        resetAccountUI();
+      }
     });
 
-    setInterval(function(){
-      if(window.TB_AGAR_WINDOW && window.TB_AGAR_WINDOW.closed) resetAccountUI();
-      else requestAgarState();
-    },1500);
+    // Keep the displayed account information synchronized while Agar.io
+    // is open. If the user closes Agar.io before login succeeds, return to
+    // the normal login buttons. After a successful login the shop keeps
+    // the successful state even after Agar.io closes.
+    setInterval(function() {
+      const w = window.TB_AGAR_WINDOW;
+
+      if (w && w.closed) {
+        window.TB_AGAR_WINDOW = null;
+
+        if (TB_LOGIN_PENDING && !TB_ACCOUNT_LOGGED_IN) {
+          TB_LOGIN_PENDING = false;
+          TB_LOGIN_PROVIDER = "";
+          resetAccountUI();
+        }
+
+        return;
+      }
+
+      if (w && !w.closed) requestAgarState();
+    }, 1500);
 
     window.addEventListener("load",requestAgarState);
 
