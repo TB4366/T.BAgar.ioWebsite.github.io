@@ -460,26 +460,55 @@
         return;
       }
 
-      const w = window.TB_AGAR_WINDOW;
+      let w = window.TB_AGAR_WINDOW;
 
+      // Agar.io may have been closed after login. Reopen it automatically
+      // and let the bridge send the official purchase request once loaded.
       if (!w || w.closed) {
-        showPurchaseMessage("Agar.io is not connected. Please log in again.");
-        return;
+        w = window.open(
+          "https://agar.io/#ffa",
+          "tbAgarLogin",
+          "width=1280,height=900"
+        );
+
+        if (!w) {
+          showPurchaseMessage("Please allow pop-ups for tbagario.com.");
+          return;
+        }
+
+        window.TB_AGAR_WINDOW = w;
       }
 
-      try {
-        w.postMessage({
-          source: "TB_AGARIO_SHOP",
-          type: "TB_REQUEST_AGAR_PURCHASE",
-          purchaseId: skin.purchaseId,
-          productId: skin.id,
-          name: skin.name
-        }, "https://agar.io");
+      const sendPurchase = () => {
+        try {
+          w.postMessage({
+            source: "TB_AGARIO_SHOP",
+            type: "TB_REQUEST_AGAR_PURCHASE",
+            purchaseId: skin.purchaseId,
+            productId: skin.id,
+            name: skin.name
+          }, "https://agar.io");
+          showPurchaseMessage("Purchase request sent to Agar.io...");
+        } catch (e) {
+          showPurchaseMessage("Could not connect to Agar.io.");
+        }
+      };
 
-        showPurchaseMessage("Purchase request sent to Agar.io...");
-      } catch (e) {
-        showPurchaseMessage("Could not connect to Agar.io.");
-      }
+      // Give Agar.io time to load and restore the existing social session.
+      [1000, 2500, 5000, 8000].forEach(function(delay) {
+        setTimeout(function() {
+          try {
+            if (w && !w.closed) {
+              w.postMessage({
+                source: "TB_AGARIO_SHOP",
+                type: "TB_REQUEST_AGAR_STATE"
+              }, "https://agar.io");
+            }
+          } catch(e) {}
+        }, delay);
+      });
+
+      setTimeout(sendPurchase, 6000);
     }
 
     function requestAgarState() {
@@ -573,26 +602,19 @@
 
       if (
         message.type === "TB_AGAR_STATE" ||
-        message.type === "TB_RETURN_TO_SHOP"
+        message.type === "TB_RETURN_TO_SHOP" ||
+        message.type === "TB_LOGIN_SUCCESS"
       ) {
         const data = message.data;
 
         if (data && data.loggedIn) {
           updateAccountUI(data);
 
-          // Login succeeded. Agar.io can now be closed automatically;
-          // the shop keeps the received account information on screen.
-          if (message.type === "TB_RETURN_TO_SHOP") {
+          // Login succeeded. Bring the shop back to the front.
+          // Keep Agar.io available because real skin purchases are sent through
+          // Agar.io's own softPurchase() function.
+          if (message.type === "TB_RETURN_TO_SHOP" || message.type === "TB_LOGIN_SUCCESS") {
             try { window.focus(); } catch (e) {}
-
-            const w = window.TB_AGAR_WINDOW;
-            setTimeout(function() {
-              try {
-                if (w && !w.closed) w.close();
-              } catch (e) {}
-              // Keep the reference so the shop can send official purchase requests.
-              // The window may still be available after close; state polling handles that case.
-            }, 350);
           }
         } else if (!TB_ACCOUNT_LOGGED_IN) {
           resetAccountUI();
