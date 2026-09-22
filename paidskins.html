@@ -817,6 +817,8 @@
 
     if (!box) return;
 
+    box.classList.remove("tb-success");
+
     box.textContent = message;
 
     box.style.display = "block";
@@ -824,10 +826,48 @@
     clearTimeout(statusTimer);
 
     statusTimer = setTimeout(function () {
-
       box.style.display = "none";
-
     }, 5000);
+  }
+
+  function showLoginSuccess(account) {
+
+    const box =
+      document.getElementById("tbStatus");
+
+    if (!box) return;
+
+    box.classList.add("tb-success");
+
+    box.innerHTML = `
+      <div class="tb-success-inner">
+        <div class="tb-success-check">✓</div>
+        <div>
+          <div class="tb-success-title">Inloggen succesvol!</div>
+          <div class="tb-success-subtitle">
+            ${escapeHtml(account && account.name ? account.name : "Agar.io account")}
+          </div>
+        </div>
+      </div>
+    `;
+
+    box.style.display = "block";
+
+    clearTimeout(statusTimer);
+
+    statusTimer = setTimeout(function () {
+      box.style.display = "none";
+      box.classList.remove("tb-success");
+    }, 5000);
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
   }
 
 
@@ -1028,7 +1068,7 @@
          */
 
         showStatus(
-          "Agar.io wordt geopend. Facebook-login wordt daar gestart..."
+          "Facebook-login wordt via Agar.io gestart..."
         );
 
       }
@@ -2365,32 +2405,109 @@
 
 
   /* ==========================================================
-     INITIAL ACCOUNT
+     REAL AGAR.IO ACCOUNT BRIDGE
      ========================================================== */
 
   /*
-   * The Tampermonkey bridge writes the real account state
-   * into this page.
+   * The Tampermonkey bridge runs on Agar.io itself.
+   * It sends account updates back to this page with postMessage.
    *
-   * We also listen for the browser storage event so the UI
-   * can update immediately if the bridge exposes it there.
+   * IMPORTANT:
+   * The page never creates fake Coins/DNA or fake login data.
    */
 
-  window.addEventListener(
-    "storage",
-    function () {
+  window.addEventListener("message", function (event) {
 
-      /*
-       * No fake account is generated here.
-       * Tampermonkey remains the authority.
-       */
+    const data = event.data;
 
+    if (!data || data.source !== "TB_AGARIO_BRIDGE") {
+      return;
     }
-  );
 
+    if (data.type === "LOGIN_STARTED") {
+      showStatus(
+        "Agar.io wordt geopend. Facebook-login wordt gestart..."
+      );
+      return;
+    }
+
+    if (data.type === "LOGIN_SUCCESS") {
+
+      const account = data.account || {};
+
+      updateAccountUI({
+        loggedIn: true,
+        name: account.name || "",
+        coins: Number(account.coins || 0),
+        dna: Number(account.dna || 0),
+        facebookId: account.facebookId || "",
+        provider: account.provider || "facebook"
+      });
+
+      showLoginSuccess(account);
+      return;
+    }
+
+    if (data.type === "ACCOUNT_UPDATE") {
+
+      const account = data.account || {};
+
+      updateAccountUI(account);
+
+      if (account.loggedIn) {
+        return;
+      }
+
+      showStatus("Je bent uitgelogd bij Agar.io.");
+      return;
+    }
+
+    if (data.type === "LOGIN_ERROR") {
+
+      showStatus(
+        data.message ||
+        "Facebook-login kon niet worden voltooid."
+      );
+
+      return;
+    }
+
+    if (data.type === "PURCHASE_STARTED") {
+
+      showStatus(
+        "Agar.io aankoop wordt gestart..."
+      );
+
+      return;
+    }
+
+    if (data.type === "PURCHASE_ERROR") {
+
+      showStatus(
+        data.message ||
+        "De aankoop kon niet worden gestart."
+      );
+
+      return;
+    }
+  });
+
+  /*
+   * Ask the bridge for the current real account immediately
+   * after the shop loads.
+   */
+  window.postMessage({
+    source: "TB_AGARIO_SHOP",
+    type: "REQUEST_ACCOUNT"
+  }, "*");
 
   /* ==========================================================
      START
+     ========================================================== */
+
+  loadVersions();
+
+
      ========================================================== */
 
   loadVersions();
