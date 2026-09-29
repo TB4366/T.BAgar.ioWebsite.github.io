@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -907,26 +908,10 @@ hr.section-line{
   line-height:1.5;
 }
 
-.help-buttons{
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  gap:14px;
-
-  flex-wrap:wrap;
-}
-
-.help-button,
-.private-server-button{
-  min-width:170px;
-
+.help-button{
   display:inline-flex;
 
   align-items:center;
-
   justify-content:center;
 
   background:#2563eb;
@@ -944,125 +929,163 @@ hr.section-line{
   transition:
     transform .2s ease,
     background .2s ease;
+
+  border:none;
+  cursor:pointer;
+  font-size:15px;
 }
 
-.help-button:hover,
-.private-server-button:hover{
+.help-button:hover{
   background:#1d4ed8;
 
   transform:translateY(-2px);
 }
 
-.private-server-button{
-  border:none;
-
-  cursor:pointer;
-
-  font-family:Arial,Helvetica,sans-serif;
-
-  font-size:14px;
-}
-
 
 /* =========================
-   PRIVATE SERVER MODAL
+   HELP MODAL
 ========================= */
 
-.private-server-overlay{
+.help-modal{
   position:fixed;
-
   inset:0;
 
-  background:rgba(0,0,0,.78);
+  background:rgba(0,0,0,.72);
 
   backdrop-filter:blur(8px);
-
   -webkit-backdrop-filter:blur(8px);
 
-  z-index:9000;
+  z-index:10000;
 
   display:none;
 
-  overflow-y:auto;
-
-  padding:
-    25px 15px
-    calc(25px + env(safe-area-inset-bottom));
-}
-
-.private-server-overlay.show{
-  display:flex;
-
+  align-items:center;
   justify-content:center;
 
-  align-items:flex-start;
+  padding:
+    20px
+    20px
+    calc(20px + env(safe-area-inset-bottom));
+
+  overflow-y:auto;
 }
 
-.private-server-modal{
-  width:100%;
+.help-modal.show{
+  display:flex;
+}
 
-  max-width:1100px;
+.help-box{
+  width:min(850px,100%);
 
-  margin:auto;
+  max-height:90vh;
+
+  overflow-y:auto;
 
   background:
     linear-gradient(
       145deg,
-      #061126,
+      #071226,
       #020617
     );
 
   border:
     1px solid
-    rgba(14,165,233,.55);
+    rgba(14,165,233,.3);
 
-  border-radius:20px;
+  border-radius:22px;
 
   box-shadow:
     0 25px 80px
-    rgba(0,0,0,.65),
-    0 0 35px
-    rgba(14,165,233,.12);
+    rgba(0,0,0,.55);
 
-  overflow:hidden;
-
-  position:relative;
+  animation:
+    helpOpen .25s ease;
 }
 
-.private-server-header{
+@keyframes helpOpen{
+  from{
+    opacity:0;
+    transform:translateY(15px) scale(.98);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+
+/* HELP HEADER */
+
+.help-modal-header{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  padding:18px 20px;
+
+  position:sticky;
+  top:0;
+
+  z-index:3;
+
+  background:
+    rgba(2,6,23,.96);
+
+  backdrop-filter:blur(15px);
+
+  border-bottom:
+    1px solid
+    rgba(14,165,233,.15);
+}
+
+.help-modal-brand{
   display:flex;
 
   align-items:center;
 
   gap:12px;
-
-  padding:16px 18px;
-
-  border-bottom:
-    1px solid
-    rgba(14,165,233,.2);
 }
 
-.private-server-header img{
-  width:42px;
-  height:42px;
+.help-modal-logo{
+  width:46px;
+  height:46px;
+
+  border-radius:12px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 5px 25px
+    rgba(14,165,233,.2);
+
+  flex-shrink:0;
+}
+
+.help-modal-logo img{
+  width:100%;
+  height:100%;
 
   object-fit:cover;
 
-  border-radius:10px;
+  display:block;
 }
 
-.private-server-brand{
-  font-size:17px;
+.help-modal-title{
+  font-size:20px;
 
   font-weight:900;
+
+  color:#fff;
 }
 
-.private-server-close{
-  margin-left:auto;
+.help-close{
+  width:42px;
+  height:42px;
 
-  width:40px;
-  height:40px;
+  border-radius:11px;
 
   border:
     1px solid
@@ -1072,52 +1095,38 @@ hr.section-line{
 
   color:#fff;
 
-  border-radius:10px;
-
   font-size:25px;
 
   cursor:pointer;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  transition:.2s ease;
 }
 
-.private-server-close:hover{
+.help-close:hover{
   background:#0b203d;
+
+  border-color:
+    rgba(14,165,233,.5);
+
+  transform:scale(1.04);
 }
 
 
-/* =========================
-   PRIVATE SERVER TITLE
-========================= */
+/* HELP CONTENT */
 
-.private-server-title{
-  text-align:center;
-
-  padding:
-    25px 20px 20px;
+.help-content{
+  padding:28px;
 }
 
-.private-server-title h2{
-  font-size:
-    clamp(28px,5vw,42px);
-
-  font-weight:900;
-}
-
-.private-server-title h2 span{
-  color:#38bdf8;
-}
-
-.private-server-title::after{
-  content:"";
-
-  display:block;
-
-  width:90%;
-
-  max-width:850px;
+.help-content > hr{
+  border:0;
 
   height:1px;
-
-  margin:18px auto 0;
 
   background:
     linear-gradient(
@@ -1126,25 +1135,49 @@ hr.section-line{
       #2563eb,
       transparent
     );
+
+  margin-bottom:25px;
+}
+
+.help-intro{
+  text-align:center;
+
+  margin-bottom:25px;
+}
+
+.help-intro h2{
+  font-size:24px;
+
+  margin-bottom:8px;
+
+  font-weight:900;
+}
+
+.help-intro p{
+  color:#94a3b8;
+
+  font-size:15px;
+
+  line-height:1.5;
 }
 
 
-/* =========================
-   PRIVATE SERVER STEPS
-========================= */
+/* HELP BUTTON GRID */
 
-.private-server-steps{
+.help-options{
   display:grid;
 
   grid-template-columns:
-    repeat(3,minmax(0,1fr));
+    repeat(2,minmax(0,1fr));
 
-  gap:14px;
-
-  padding:0 18px 20px;
+  gap:16px;
 }
 
-.private-step{
+.help-option{
+  min-height:100px;
+
+  padding:20px;
+
   background:
     linear-gradient(
       145deg,
@@ -1154,330 +1187,122 @@ hr.section-line{
 
   border:
     1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:15px;
-
-  padding:15px;
-
-  position:relative;
-
-  min-width:0;
-}
-
-.private-step:hover{
-  border-color:
-    rgba(14,165,233,.45);
-}
-
-.step-number{
-  position:absolute;
-
-  top:12px;
-  left:12px;
-
-  width:32px;
-  height:32px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  border-radius:50%;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-size:14px;
-
-  font-weight:900;
-
-  z-index:2;
-}
-
-.private-step h3{
-  font-size:16px;
-
-  line-height:1.4;
-
-  margin:
-    3px 0 14px 43px;
-
-  color:#fff;
-}
-
-.step-content{
-  display:flex;
-
-  align-items:center;
-
-  gap:14px;
-}
-
-.step-image{
-  width:105px;
-  height:105px;
-
-  flex-shrink:0;
-
-  object-fit:cover;
-
-  border-radius:12px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.25);
-
-  background:#020617;
-}
-
-.step-text{
-  color:#cbd5e1;
-
-  font-size:13px;
-
-  line-height:1.55;
-}
-
-.step-link{
-  display:block;
-
-  margin-top:8px;
-
-  color:#38bdf8;
-
-  font-size:12px;
-
-  word-break:break-all;
-}
-
-.step-link:hover{
-  text-decoration:underline;
-}
-
-
-/* =========================
-   SCRIPT
-========================= */
-
-.script-button{
-  width:100%;
-
-  margin-top:10px;
-
-  padding:11px;
-
-  border:none;
-
-  border-radius:10px;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-}
-
-.script-button:hover{
-  background:#1d4ed8;
-}
-
-
-/* =========================
-   SCRIPT POPUP
-========================= */
-
-.script-popup{
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.82);
-
-  backdrop-filter:blur(6px);
-
-  z-index:10000;
-
-  display:none;
-
-  align-items:center;
-
-  justify-content:center;
-
-  padding:20px;
-}
-
-.script-popup.show{
-  display:flex;
-}
-
-.script-popup-box{
-  width:100%;
-
-  max-width:700px;
-
-  background:#071226;
-
-  border:
-    1px solid
-    rgba(14,165,233,.4);
+    rgba(14,165,233,.18);
 
   border-radius:16px;
 
-  padding:20px;
-
-  position:relative;
-}
-
-.script-popup-box h3{
-  color:#38bdf8;
-
-  margin-bottom:12px;
-}
-
-.script-popup-close{
-  position:absolute;
-
-  top:12px;
-  right:12px;
-
-  width:38px;
-  height:38px;
-
-  border:none;
-
-  border-radius:9px;
-
-  background:#08152a;
-
   color:#fff;
 
-  font-size:22px;
-
   cursor:pointer;
-}
 
-.script-code{
-  width:100%;
+  text-align:left;
 
-  min-height:260px;
+  font-weight:800;
 
-  resize:vertical;
+  font-size:16px;
 
-  background:#020617;
+  transition:
+    transform .2s ease,
+    border-color .2s ease,
+    background .2s ease,
+    box-shadow .2s ease;
 
-  color:#cbd5e1;
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:10px;
-
-  padding:12px;
-
-  font-family:monospace;
-
-  font-size:12px;
-}
-
-.copy-script{
-  width:100%;
-
-  margin-top:10px;
-
-  padding:12px;
-
-  background:#2563eb;
-
-  border:none;
-
-  border-radius:10px;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-}
-
-.copy-script:hover{
-  background:#1d4ed8;
-}
-
-
-/* =========================
-   CONTACT
-========================= */
-
-.private-contact{
-  margin:
-    0 18px
-    20px;
-
-  padding:
-    25px 15px;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.2);
-
-  text-align:center;
-}
-
-.private-contact h3{
-  font-size:21px;
-
-  margin-bottom:8px;
-}
-
-.private-contact p{
-  color:#94a3b8;
-
-  line-height:1.5;
-
-  margin-bottom:18px;
-}
-
-.private-socials{
   display:flex;
 
-  justify-content:center;
-
-  gap:10px;
-
-  flex-wrap:wrap;
+  align-items:center;
 }
 
-.private-social{
-  padding:11px 18px;
+.help-option:hover{
+  transform:translateY(-3px);
+
+  border-color:
+    rgba(14,165,233,.5);
+
+  background:#0b203d;
+
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.25);
+}
+
+.help-option:active{
+  transform:scale(.98);
+}
+
+.help-option span{
+  display:block;
+}
+
+
+/* HELP SUBPAGES */
+
+.help-page{
+  display:none;
+}
+
+.help-page.show{
+  display:block;
+}
+
+.help-page-title{
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+  margin-bottom:20px;
+}
+
+.help-back{
+  width:40px;
+  height:40px;
+
+  border:1px solid
+    rgba(14,165,233,.2);
 
   background:#08152a;
 
-  border:
-    1px solid
-    rgba(14,165,233,.2);
+  color:#fff;
 
   border-radius:10px;
 
-  color:#fff;
+  cursor:pointer;
 
-  text-decoration:none;
-
-  font-weight:bold;
-
-  transition:.2s ease;
+  font-size:20px;
 }
 
-.private-social:hover{
-  background:#0b203d;
+.help-page-title h2{
+  font-size:23px;
+}
 
-  transform:translateY(-2px);
+.help-text{
+  color:#cbd5e1;
+
+  line-height:1.7;
+
+  font-size:15px;
+
+  background:#08152a;
+
+  border:1px solid
+    rgba(14,165,233,.12);
+
+  border-radius:14px;
+
+  padding:20px;
+}
+
+.help-text strong{
+  color:#38bdf8;
+}
+
+.help-step{
+  margin:12px 0;
+}
+
+.help-step:first-child{
+  margin-top:0;
 }
 
 
@@ -1514,14 +1339,6 @@ footer a{
    MOBILE
 ========================= */
 
-@media(max-width:800px){
-
-  .private-server-steps{
-    grid-template-columns:1fr;
-  }
-
-}
-
 @media(max-width:700px){
 
   main{
@@ -1540,6 +1357,18 @@ footer a{
     font-size:36px;
   }
 
+  .help-content{
+    padding:20px 16px;
+  }
+
+  .help-options{
+    grid-template-columns:1fr;
+  }
+
+  .help-option{
+    min-height:75px;
+  }
+
 }
 
 @media(min-width:701px){
@@ -1547,27 +1376,6 @@ footer a{
   .grid{
     grid-template-columns:
       repeat(3,minmax(0,1fr));
-  }
-
-}
-
-@media(max-width:520px){
-
-  .step-content{
-    align-items:flex-start;
-  }
-
-  .step-image{
-    width:85px;
-    height:85px;
-  }
-
-  .private-server-overlay{
-    padding:10px;
-  }
-
-  .private-server-modal{
-    border-radius:14px;
   }
 
 }
@@ -1596,14 +1404,22 @@ footer a{
     grid-template-columns:1fr;
   }
 
-  .help-buttons{
-    flex-direction:column;
+  .help-modal{
+    padding:10px;
   }
 
-  .help-button,
-  .private-server-button{
-    width:100%;
-    max-width:320px;
+  .help-box{
+    border-radius:17px;
+    max-height:94vh;
+  }
+
+  .help-modal-title{
+    font-size:17px;
+  }
+
+  .help-modal-logo{
+    width:42px;
+    height:42px;
   }
 
 }
@@ -2207,7 +2023,7 @@ footer a{
 
 
 <!-- =========================
-     AGAR.IO TOOLS
+     AGAR.IO LINKS
 ========================= -->
 
 <hr class="section-line">
@@ -2359,56 +2175,59 @@ footer a{
     Learn how to install and use the available mods.
   </p>
 
-  <div class="help-buttons">
+  <button
+    class="help-button"
+    onclick="openHelp()">
 
-    <a
-      class="help-button"
-      href="/mods-help.html">
+    Help Mods
 
-      Help Mods
-
-    </a>
-
-    <button
-      class="private-server-button"
-      onclick="openPrivateServer()">
-
-      ⚙ Agar.io Private Server
-
-    </button>
-
-  </div>
+  </button>
 
 </div>
 
 
+</main>
+
+
 <!-- =========================
-     PRIVATE SERVER MODAL
+     HELP MODAL
 ========================= -->
 
 <div
-  class="private-server-overlay"
-  id="private-server-overlay">
+  class="help-modal"
+  id="help-modal"
+  onclick="closeHelpOutside(event)">
 
-  <div class="private-server-modal">
+  <div
+    class="help-box"
+    id="help-box">
 
 
-    <!-- HEADER -->
+    <!-- HELP HEADER -->
 
-    <div class="private-server-header">
+    <div class="help-modal-header">
 
-      <img
-        src="/IMG_0561.jpeg"
-        alt="T.B Agar.io">
+      <div class="help-modal-brand">
 
-      <div class="private-server-brand">
-        T.B Agar.io
+        <div class="help-modal-logo">
+
+          <img
+            src="/IMG_0561.jpeg"
+            alt="T.B Agar.io">
+
+        </div>
+
+        <div class="help-modal-title">
+          T.B Agar.io
+        </div>
+
       </div>
 
+
       <button
-        class="private-server-close"
-        onclick="closePrivateServer()"
-        aria-label="Close">
+        class="help-close"
+        onclick="closeHelp()"
+        aria-label="Close help">
 
         ×
 
@@ -2417,415 +2236,269 @@ footer a{
     </div>
 
 
-    <!-- TITLE -->
+    <!-- HELP HOME -->
 
-    <div class="private-server-title">
+    <div
+      class="help-content"
+      id="help-home">
 
-      <h2>
-        Agar.io <span>Private Server</span>
-      </h2>
+      <hr>
+
+      <div class="help-intro">
+
+        <h2>
+          We want to help you as much as possible
+        </h2>
+
+        <p>
+          Choose your option below to get the help you need.
+        </p>
+
+      </div>
+
+
+      <div class="help-options">
+
+
+        <button
+          class="help-option"
+          onclick="showHelpPage('esign-install')">
+
+          <span>
+            How install eSign
+          </span>
+
+        </button>
+
+
+        <button
+          class="help-option"
+          onclick="showHelpPage('esign-work')">
+
+          <span>
+            Hoe werkt eSign?
+          </span>
+
+        </button>
+
+
+        <button
+          class="help-option"
+          onclick="showHelpPage('agario-install')">
+
+          <span>
+            How install Agar.io mods
+          </span>
+
+        </button>
+
+
+        <button
+          class="help-option"
+          onclick="showHelpPage('agario-setup')">
+
+          <span>
+            Hoe stel je Agar.io mods in
+          </span>
+
+        </button>
+
+
+      </div>
 
     </div>
 
 
-    <!-- STEPS -->
+    <!-- ESIGN INSTALL -->
 
-    <div class="private-server-steps">
+    <div
+      class="help-content help-page"
+      id="esign-install">
 
+      <div class="help-page-title">
 
-      <!-- STEP 1 -->
+        <button
+          class="help-back"
+          onclick="showHelpHome()">
 
-      <div class="private-step">
+          ←
 
-        <div class="step-number">
-          1
-        </div>
+        </button>
 
-        <h3>
-          Install Sing-box
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/IMG_1118.png"
-            alt="Sing-box">
-
-          <div class="step-text">
-
-            <strong>
-              Install Sing-box
-            </strong>
-
-            <a
-              class="step-link"
-              href="https://apps.apple.com/nl/app/sing-box-mt/id6785326793"
-              target="_blank"
-              rel="noopener">
-
-              Open Sing-box on the App Store ↗
-
-            </a>
-
-          </div>
-
-        </div>
+        <h2>
+          How install eSign
+        </h2>
 
       </div>
 
+      <div class="help-text">
 
-      <!-- STEP 2 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          2
+        <div class="help-step">
+          <strong>Step 1:</strong>
+          Download and install eSign on your iPhone.
         </div>
 
-        <h3>
-          Open your iPhone Settings
-        </h3>
+        <div class="help-step">
+          <strong>Step 2:</strong>
+          Make sure the required profile or certificate is installed correctly.
+        </div>
 
-        <div class="step-content">
+        <div class="help-step">
+          <strong>Step 3:</strong>
+          Open eSign and allow the required permissions when iOS asks.
+        </div>
 
-          <img
-            class="step-image"
-            src="/IMG_1119.jpeg"
-            alt="Settings">
-
-          <div class="step-text">
-
-            Go to:
-
-            <strong>
-              Settings → General → VPN &amp; Device Management → Profile Download
-            </strong>
-
-          </div>
-
+        <div class="help-step">
+          <strong>Step 4:</strong>
+          You can then use eSign to install compatible IPA files.
         </div>
 
       </div>
-
-
-      <!-- STEP 3 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          3
-        </div>
-
-        <h3>
-          Install your Agar.io mod
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="IMG_6587.png"
-            alt="Agar.io">
-
-          <div class="step-text">
-
-            Install your Agar.io mod from this website.
-
-            <a
-              class="step-link"
-              href="/mod-menu.html">
-
-              Open T.B Agar.io Mod Menu ↗
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 4 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          4
-        </div>
-
-        <h3>
-          Open Sing-box and create a profile
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="IMG_1120.jpeg"
-            alt="Sing-box Profile">
-
-          <div class="step-text">
-
-            Open the Sing-box app and go to
-            <strong>Dashboard</strong>.
-
-            <br><br>
-
-            Under Dashboard, open
-            <strong>Profile</strong>.
-
-            <br><br>
-
-            Press the <strong>+</strong> button in the
-            top-right corner.
-
-            <br><br>
-
-            Select <strong>New Profile</strong>.
-
-            <br><br>
-
-            Press the bottom button
-            <strong>Create Manually</strong>.
-
-            <br><br>
-
-            Press <strong>Name</strong> and enter a name,
-            for example:
-
-            <strong>Agar.io Private Server</strong>.
-
-            <br><br>
-
-            Press <strong>Create</strong>.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 5 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          5
-        </div>
-
-        <h3>
-          Add the server script
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="IMG_1121.jpeg"
-            alt="Sing-box Edit Content">
-
-          <div class="step-text">
-
-            Press the <strong>+</strong> button again.
-
-            <br><br>
-
-            Tap <strong>Edit Content</strong>.
-
-            <br><br>
-
-            Open <strong>Script</strong> at the bottom.
-
-            <br><br>
-
-            Copy the script below and paste it into
-            the Sing-box app.
-
-            <button
-              class="script-button"
-              onclick="openScriptPopup()">
-
-              📋 View Script
-
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 6 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          6
-        </div>
-
-        <h3>
-          Turn on the VPN
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="IMG_1122.jpeg"
-            alt="VPN">
-
-          <div class="step-text">
-
-            Press the <strong>Play</strong> button in the
-            bottom-right corner of your screen.
-
-            <br><br>
-
-            When the VPN is active, open Agar.io.
-
-            <br><br>
-
-            You may need to wait a little while before
-            the server appears.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 7 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          7
-        </div>
-
-        <h3>
-          Copy the server script
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="IMG_1125.jpeg"
-            alt="Server Script">
-
-          <div class="step-text">
-
-            When the server appears, press the
-            <strong>Script</strong> button.
-
-            <br><br>
-
-            You will see the script.
-
-            <br><br>
-
-            Press <strong>Copy</strong> to copy it.
-
-            <br><br>
-
-            Press the <strong>×</strong> in the
-            top-right corner to return to the steps.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 8 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          8
-        </div>
-
-        <h3>
-          Close the instructions
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/IMG_0561.jpeg"
-            alt="T.B Agar.io">
-
-          <div class="step-text">
-
-            The <strong>×</strong> in the top-right corner
-            next to T.B Agar.io closes the instructions.
-
-            <br><br>
-
-            Press it when you are finished.
-
-          </div>
-
-        </div>
-
-      </div>
-
 
     </div>
 
 
-    <!-- CONTACT -->
+    <!-- ESIGN WORK -->
 
-    <div class="private-contact">
+    <div
+      class="help-content help-page"
+      id="esign-work">
 
-      <h3>
-        Questions or need help?
-      </h3>
+      <div class="help-page-title">
 
-      <p>
-        Need help with something?
-        Feel free to contact T.B Agar.io.
-        You can contact us using the buttons below.
-      </p>
+        <button
+          class="help-back"
+          onclick="showHelpHome()">
 
-      <div class="private-socials">
+          ←
 
-        <a
-          class="private-social"
-          href="https://www.youtube.com/@T.B6"
-          target="_blank"
-          rel="noopener">
+        </button>
 
-          ▶ YouTube
+        <h2>
+          Hoe werkt eSign?
+        </h2>
 
-        </a>
+      </div>
 
-        <a
-          class="private-social"
-          href="https://discord.gg/qhuXPrVzBx"
-          target="_blank"
-          rel="noopener">
+      <div class="help-text">
 
-          💬 Discord
+        <div class="help-step">
+          <strong>Step 1:</strong>
+          Open eSign after it has been installed.
+        </div>
 
-        </a>
+        <div class="help-step">
+          <strong>Step 2:</strong>
+          Import the compatible IPA file that you want to install.
+        </div>
 
-        <a
-          class="private-social"
-          href="https://www.instagram.com/t.bagar.io/"
-          target="_blank"
-          rel="noopener">
+        <div class="help-step">
+          <strong>Step 3:</strong>
+          Select the IPA inside eSign and use the install option.
+        </div>
 
-          ◎ Instagram
+        <div class="help-step">
+          <strong>Step 4:</strong>
+          Wait until the installation has finished and then check your Home Screen.
+        </div>
 
-        </a>
+      </div>
+
+    </div>
+
+
+    <!-- AGARIO INSTALL -->
+
+    <div
+      class="help-content help-page"
+      id="agario-install">
+
+      <div class="help-page-title">
+
+        <button
+          class="help-back"
+          onclick="showHelpHome()">
+
+          ←
+
+        </button>
+
+        <h2>
+          How install Agar.io mods
+        </h2>
+
+      </div>
+
+      <div class="help-text">
+
+        <div class="help-step">
+          <strong>Step 1:</strong>
+          Go back to the T.B Agar.io Mod Menu.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 2:</strong>
+          Choose the Agar.io mod you want to install.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 3:</strong>
+          Follow the installation instructions for your device.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 4:</strong>
+          After installation, open the Agar.io mod from your device.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- AGARIO SETUP -->
+
+    <div
+      class="help-content help-page"
+      id="agario-setup">
+
+      <div class="help-page-title">
+
+        <button
+          class="help-back"
+          onclick="showHelpHome()">
+
+          ←
+
+        </button>
+
+        <h2>
+          Hoe stel je Agar.io mods in
+        </h2>
+
+      </div>
+
+      <div class="help-text">
+
+        <div class="help-step">
+          <strong>Step 1:</strong>
+          Install the Agar.io mod from the T.B Agar.io Mod Menu.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 2:</strong>
+          Open the installed mod and check that it starts correctly.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 3:</strong>
+          Open the available mod settings and configure the options you want to use.
+        </div>
+
+        <div class="help-step">
+          <strong>Step 4:</strong>
+          Save the settings and restart the mod if this is required.
+        </div>
 
       </div>
 
@@ -2835,51 +2508,6 @@ footer a{
   </div>
 
 </div>
-
-
-<!-- =========================
-     SCRIPT POPUP
-========================= -->
-
-<div
-  class="script-popup"
-  id="script-popup">
-
-  <div class="script-popup-box">
-
-    <button
-      class="script-popup-close"
-      onclick="closeScriptPopup()"
-      aria-label="Close">
-
-      ×
-
-    </button>
-
-    <h3>
-      Agar.io Private Server Script
-    </h3>
-
-    <textarea
-      class="script-code"
-      id="private-server-script"
-      readonly
-      placeholder="Paste your private server script here...">PASTE YOUR AGAR.IO PRIVATE SERVER SCRIPT HERE</textarea>
-
-    <button
-      class="copy-script"
-      onclick="copyPrivateServerScript()">
-
-      📋 Copy Script
-
-    </button>
-
-  </div>
-
-</div>
-
-
-</main>
 
 
 <!-- =========================
@@ -2928,7 +2556,7 @@ setTimeout(
 
 
 /* =========================
-   MENU
+   SIDE MENU
 ========================= */
 
 function toggleMenu(){
@@ -2983,10 +2611,119 @@ document.addEventListener(
 
       closeMenu();
 
+      closeHelp();
+
     }
 
   }
 );
+
+
+/* =========================
+   HELP MODAL
+========================= */
+
+function openHelp(){
+
+  const modal =
+    document.getElementById("help-modal");
+
+  modal.classList.add("show");
+
+  document.body.style.overflow = "hidden";
+
+  showHelpHome();
+
+}
+
+
+function closeHelp(){
+
+  const modal =
+    document.getElementById("help-modal");
+
+  modal.classList.remove("show");
+
+  document.body.style.overflow = "";
+
+  showHelpHome();
+
+}
+
+
+function closeHelpOutside(event){
+
+  if(
+    event.target ===
+    document.getElementById("help-modal")
+  ){
+
+    closeHelp();
+
+  }
+
+}
+
+
+/* =========================
+   HELP PAGES
+========================= */
+
+function showHelpHome(){
+
+  document
+    .querySelectorAll(".help-page")
+    .forEach(page => {
+
+      page.classList.remove("show");
+
+    });
+
+
+  document
+    .getElementById("help-home")
+    .style.display = "block";
+
+}
+
+
+function showHelpPage(pageId){
+
+  document
+    .getElementById("help-home")
+    .style.display = "none";
+
+
+  document
+    .querySelectorAll(".help-page")
+    .forEach(page => {
+
+      page.classList.remove("show");
+
+    });
+
+
+  const page =
+    document.getElementById(pageId);
+
+
+  if(page){
+
+    page.classList.add("show");
+
+  }
+
+
+  const box =
+    document.getElementById("help-box");
+
+  if(box){
+
+    box.scrollTop = 0;
+
+  }
+
+}
 
 
 /* =========================
@@ -3435,6 +3172,7 @@ document
               1500
             );
 
+
           },
           random(10000,20000)
         );
@@ -3471,253 +3209,11 @@ document
 
   });
 
-
-/* =========================
-   PRIVATE SERVER
-========================= */
-
-function openPrivateServer(){
-
-  const overlay =
-    document.getElementById(
-      "private-server-overlay"
-    );
-
-  if(overlay){
-
-    overlay.classList.add("show");
-
-    document.body.style.overflow =
-      "hidden";
-
-  }
-
-}
-
-
-function closePrivateServer(){
-
-  const overlay =
-    document.getElementById(
-      "private-server-overlay"
-    );
-
-  if(overlay){
-
-    overlay.classList.remove("show");
-
-    document.body.style.overflow =
-      "";
-
-  }
-
-}
-
-
-/* =========================
-   SCRIPT POPUP
-========================= */
-
-function openScriptPopup(){
-
-  const popup =
-    document.getElementById(
-      "script-popup"
-    );
-
-  if(popup){
-
-    popup.classList.add("show");
-
-  }
-
-}
-
-
-function closeScriptPopup(){
-
-  const popup =
-    document.getElementById(
-      "script-popup"
-    );
-
-  if(popup){
-
-    popup.classList.remove("show");
-
-  }
-
-}
-
-
-/* =========================
-   COPY SCRIPT
-========================= */
-
-function copyPrivateServerScript(){
-
-  const script =
-    document.getElementById(
-      "private-server-script"
-    );
-
-  if(!script){
-
-    return;
-
-  }
-
-
-  if(
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ){
-
-    navigator.clipboard.writeText(
-      script.value
-    ).then(function(){
-
-      showCopied();
-
-    }).catch(function(){
-
-      fallbackCopy(script);
-
-    });
-
-  }else{
-
-    fallbackCopy(script);
-
-  }
-
-}
-
-
-function fallbackCopy(script){
-
-  script.removeAttribute("readonly");
-
-  script.select();
-
-  script.setSelectionRange(
-    0,
-    script.value.length
-  );
-
-  document.execCommand("copy");
-
-  script.setAttribute(
-    "readonly",
-    "readonly"
-  );
-
-  showCopied();
-
-}
-
-
-function showCopied(){
-
-  const button =
-    document.querySelector(
-      ".copy-script"
-    );
-
-  if(button){
-
-    const oldText =
-      button.innerText;
-
-    button.innerText =
-      "✔ Script Copied";
-
-    setTimeout(
-      function(){
-
-        button.innerText =
-          oldText;
-
-      },
-      2000
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ESC CLOSE
-========================= */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Escape"){
-
-      closeScriptPopup();
-
-      closePrivateServer();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   CLICK OUTSIDE
-========================= */
-
-const privateOverlay =
-  document.getElementById(
-    "private-server-overlay"
-  );
-
-if(privateOverlay){
-
-  privateOverlay.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closePrivateServer();
-
-      }
-
-    }
-  );
-
-}
-
-
-const scriptPopup =
-  document.getElementById(
-    "script-popup"
-  );
-
-if(scriptPopup){
-
-  scriptPopup.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closeScriptPopup();
-
-      }
-
-    }
-  );
-
-}
-
 </script>
 
 
 </body>
 </html>
+```
+
+De **Help Mods**-knop opent nu direct het nieuwe menu zonder naar een andere pagina te gaan. De `×` rechtsboven sluit het menu en `←` brengt vanuit een helponderdeel terug naar het keuzemenu.
