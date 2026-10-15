@@ -43,9 +43,7 @@ body{
   width:78px;height:78px;border-radius:50%;background:conic-gradient(#ff7a18 0 25%, #0b0b0b 25% 50%, #ffb86b 50% 75%, #0b0b0b 75% 100%);
   animation: rotate360 4s linear infinite;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 40px rgba(0,0,0,.6);
 }
-.loader-center{
-  width:40px;height:40px;border-radius:50%;background:#0b0610;border:4px solid rgba(255,122,24,.12);display:block;
-}
+.loader-center{width:40px;height:40px;border-radius:50%;background:#0b0610;border:4px solid rgba(255,122,24,.12);display:block}
 @keyframes rotate360{to{transform:rotate(360deg)}}
 #loader p{margin:0;color:#ffd1a3;font-weight:800}
 
@@ -121,20 +119,20 @@ main{max-width:1200px;margin:0 auto;padding:60px 18px calc(60px + env(safe-area-
 .hallow-timer{color:#ffd1a3;margin-top:8px;font-weight:800}
 
 /* =========================
-   Modal: Halloween giveaway
+   Modal: Halloween giveaway (smaller and scrollable)
    ========================= */
-#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:8000;padding:20px}
+#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:8000;padding:12px}
 #halloween-modal.open{display:flex}
-.hmodal{width:100%;max-width:920px;background:linear-gradient(180deg,#07020a,#050007);padding:18px;border-radius:12px;border:1px solid rgba(255,122,24,.06);box-shadow:0 30px 80px rgba(0,0,0,.6)}
-.hmodal-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.hmodal-title{font-weight:900;font-size:20px}
+.hmodal{width:100%;max-width:880px;background:linear-gradient(180deg,#07020a,#050007);padding:14px;border-radius:12px;border:1px solid rgba(255,122,24,.06);box-shadow:0 30px 80px rgba(0,0,0,.6);max-height:calc(100vh - 120px);overflow:auto}
+/* reduced vertical size with overflow so top and bottom visible on small screens */
+.hmodal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:linear-gradient(180deg,rgba(7,2,6,.01),rgba(7,2,6,.01));padding-top:6px;padding-bottom:6px;z-index:5}
+.hmodal-title{font-weight:900;font-size:18px}
 .hmodal-close{background:#0b0610;border:2px solid #ff7a18;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
 .hmodal-divider{height:1px;background:linear-gradient(90deg, rgba(255,122,24,.03), rgba(255,255,255,.02));margin:12px 0}
 
-/* wheel + legend */
+/* wheel + legend - slightly smaller to fit in modal */
 .wheel-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.wheel{width:360px;height:360px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 12px 60px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
-/* conic-gradient segments: first 5 unique colors, last 5 same 'nothing' color */
+.wheel{width:320px;height:320px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 12px 60px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
 .wheel{background:conic-gradient(
   #ffd54f 0deg 36deg,
   #ffffff 36deg 72deg,
@@ -143,11 +141,11 @@ main{max-width:1200px;margin:0 auto;padding:60px 18px calc(60px + env(safe-area-
   #ff7a18 144deg 180deg,
   #6b6b6b 180deg 360deg
 );}
-.wheel .center{width:96px;height:96px;border-radius:50%;background:#0b0610;border:8px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
-.pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:30px solid #ff7a18;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
+.wheel .center{width:84px;height:84px;border-radius:50%;background:#0b0610;border:8px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
+.pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:26px solid #ff7a18;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
 
 /* legend & price list */
-.legend{flex:1;min-width:260px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.03)}
+.legend{flex:1;min-width:240px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.03)}
 .legend-item{display:flex;align-items:center;gap:12px;padding:6px 0}
 .legend-color{width:30px;height:26px;border-radius:6px}
 .legend-name{font-weight:800}
@@ -163,13 +161,18 @@ main{max-width:1200px;margin:0 auto;padding:60px 18px calc(60px + env(safe-area-
 .spin-btn.secondary{background:#6b21a8;border-color:#ff7a18;color:#fff}
 .spin-result{margin-top:12px;font-weight:900;color:#ffd1a3}
 
+/* Big code status banner */
+.code-status{margin-top:12px;padding:12px;border-radius:10px;font-weight:900;text-align:center;font-size:16px;display:none}
+.code-status.valid{background:linear-gradient(90deg,#05250d,#0b3a1f);color:#a5ffbf;border:2px solid #2fd16a;display:block}
+.code-status.invalid{background:linear-gradient(90deg,#3b0b0b,#4f0b0b);color:#ffd1c3;border:2px solid #ff6b6b;display:block}
+
 /* footer */
 footer{text-align:center;padding:28px 18px calc(28px + env(safe-area-inset-bottom));color:#9aa3b1;border-top:1px solid rgba(255,122,24,.03)}
 footer a{color:#ffd1a3;text-decoration:none}
 
 /* responsive */
-@media(max-width:900px){.options-grid{grid-template-columns:repeat(2,1fr)}.wheel{width:300px;height:300px}.legend{min-width:200px}}
-@media(max-width:480px){.options-grid{grid-template-columns:1fr}.wheel{width:260px;height:260px}.hmodal{padding:12px}}
+@media(max-width:900px){.options-grid{grid-template-columns:repeat(2,1fr)}.wheel{width:280px;height:280px}.legend{min-width:200px}}
+@media(max-width:480px){.options-grid{grid-template-columns:1fr}.wheel{width:240px;height:240px}.hmodal{padding:10px}}
 </style>
 </head>
 <body>
@@ -306,7 +309,7 @@ footer a{color:#ffd1a3;text-decoration:none}
     <div class="hmodal-divider" aria-hidden="true"></div>
 
     <div style="font-weight:900;margin-bottom:8px">Giveaway</div>
-    <div style="color:#c9c9c9;margin-bottom:8px">You get 1 free spin per device. If you've already spun, enter a code to spin again. Codes are one-time use.</div>
+    <div style="color:#c9c9c9;margin-bottom:8px">You get 1 free spin per device. If you've already spun, check your code and (if valid) you may spin once.</div>
 
     <div class="wheel-wrap">
       <div style="position:relative">
@@ -349,10 +352,12 @@ footer a{color:#ffd1a3;text-decoration:none}
 
     <div class="controls">
       <input id="code-input" class="input-code" placeholder="Enter your code (if you already spun)" aria-label="Spin code">
-      <button id="spin-button" class="spin-btn">Spin</button>
-      <button id="fast-spin-button" class="spin-btn secondary">Spin (fast)</button>
+      <button id="check-code-btn" class="spin-btn" type="button">Check code</button>
+      <button id="spin-button" class="spin-btn" type="button" disabled>Spin</button>
+      <button id="fast-spin-button" class="spin-btn secondary" type="button" disabled>Spin (fast)</button>
     </div>
 
+    <div id="code-status" class="code-status" aria-live="polite"></div>
     <div id="spin-result" class="spin-result" role="status" aria-live="polite"></div>
   </div>
 </div>
@@ -382,154 +387,69 @@ footer a{color:#ffd1a3;text-decoration:none}
 
 <script>
 /* ============================================================================
-   FULL SCRIPT: UI behavior, countdown, wheel/giveaway logic, code validation
-   - One complete file. Clear comments for maintainability.
-   - Codes are fixed (10 codes per tier). For production, validate server-side.
+   Updated script:
+   - smaller modal
+   - code-check button with clear big messages (valid / invalid / used)
+   - only fixed codes from CODES_BY_TIER are accepted
+   - validated code enables one spin (code marked used only when spin pressed)
    ============================================================================ */
 
-/* -------------------
-   Helpers & DOM refs
-   ------------------- */
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+/* DOM refs */
+const loader = document.getElementById("loader");
+const sideMenu = document.getElementById("side-menu");
+const menuOverlay = document.getElementById("menu-overlay");
+const openHalloweenBtn = document.getElementById("open-halloween");
+const halloweenModal = document.getElementById("halloween-modal");
+const hallowCountdown = document.getElementById("hallow-countdown");
+const modalEndTime = document.getElementById("modal-end-time");
+const wheelEl = document.getElementById("wheel");
+const checkCodeBtn = document.getElementById("check-code-btn");
+const spinBtn = document.getElementById("spin-button");
+const fastSpinBtn = document.getElementById("fast-spin-button");
+const codeInput = document.getElementById("code-input");
+const codeStatus = document.getElementById("code-status");
+const spinResult = document.getElementById("spin-result");
+const welcomeText = document.getElementById("welcome-text");
+const chatInput = document.getElementById("chat-input");
+const chatMessages = document.getElementById("chat-messages");
+const chatBox = document.getElementById("chat-box");
 
-const loader = $("#loader");
-const menuOverlay = $("#menu-overlay");
-const sideMenu = $("#side-menu");
-const openHalloweenBtn = $("#open-halloween");
-const halloweenModal = $("#halloween-modal");
-const hallowCountdown = $("#hallow-countdown");
-const modalEndTime = $("#modal-end-time");
-const wheelEl = $("#wheel");
-const spinBtn = $("#spin-button");
-const fastSpinBtn = $("#fast-spin-button");
-const codeInput = $("#code-input");
-const spinResultEl = $("#spin-result");
-const chatBox = $("#chat-box");
-const chatInput = $("#chat-input");
-const chatMessages = $("#chat-messages");
-const welcomeText = $("#welcome-text");
-
-/* -------------------
-   Safe element checks
-   ------------------- */
-function ensure(el, name){ if(!el) console.warn("Missing element:", name); }
-
-/* -------------------
-   Menu open/close
-   ------------------- */
+/* Event helpers for menu */
 function openMenu(){ if(sideMenu) sideMenu.classList.add("open"); if(menuOverlay) menuOverlay.classList.add("show"); }
 function closeMenu(){ if(sideMenu) sideMenu.classList.remove("open"); if(menuOverlay) menuOverlay.classList.remove("show"); }
 
-/* -------------------
-   Chat behavior (simple local)
-   ------------------- */
+/* Chat simple */
 function toggleChat(){ if(!chatBox) return; chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block"; }
-async function sendMessage(){
-  if(!chatInput || !chatMessages) return;
-  const txt = chatInput.value.trim();
-  if(!txt) return;
-  const userMsg = document.createElement("div");
-  userMsg.style.background = "#0b0610";
-  userMsg.style.padding = "8px";
-  userMsg.style.borderRadius = "8px";
-  userMsg.style.marginBottom = "8px";
-  userMsg.textContent = txt;
-  chatMessages.appendChild(userMsg);
-  chatInput.value = "";
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-  setTimeout(()=> {
-    const bot = document.createElement("div");
-    bot.style.background = "#0f0810";
-    bot.style.padding = "8px";
-    bot.style.borderRadius = "8px";
-    bot.style.marginBottom = "8px";
-    bot.textContent = "Thanks — we'll respond on Discord or here soon.";
-    chatMessages.appendChild(bot);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }, 800);
-}
+function sendMessage(){ if(!chatInput || !chatMessages) return; const t = chatInput.value.trim(); if(!t) return; const d=document.createElement("div"); d.style.background="#0b0610"; d.style.padding="8px"; d.style.borderRadius="8px"; d.style.marginBottom="8px"; d.textContent=t; chatMessages.appendChild(d); chatInput.value=""; chatMessages.scrollTop=chatMessages.scrollHeight; setTimeout(()=>{ const r=document.createElement("div"); r.style.background="#0f0810"; r.style.padding="8px"; r.style.borderRadius="8px"; r.style.marginBottom="8px"; r.textContent="Thanks — we'll respond on Discord or here soon."; chatMessages.appendChild(r); chatMessages.scrollTop=chatMessages.scrollHeight; },700); }
+if(chatInput) chatInput.addEventListener("keydown", (e)=> { if(e.key==="Enter") sendMessage(); });
 
-/* Enter to send chat */
-if(chatInput) chatInput.addEventListener("keydown", (e)=> { if(e.key === "Enter") sendMessage(); });
+/* Welcome animation and loader hide */
+function animateWelcome(){ if(!welcomeText) return; welcomeText.classList.remove("animated"); void welcomeText.offsetWidth; welcomeText.classList.add("animated"); }
+window.addEventListener("load", ()=> { animateWelcome(); setInterval(animateWelcome,3200); setTimeout(()=>{ if(loader) loader.style.display="none"; },700); });
 
-/* -------------------
-   Welcome text animation loop
-   ------------------- */
-function animateWelcome(){
-  if(!welcomeText) return;
-  welcomeText.classList.remove("animated");
-  // Force reflow
-  void welcomeText.offsetWidth;
-  welcomeText.classList.add("animated");
-}
-window.addEventListener("load", () => {
-  animateWelcome();
-  setInterval(animateWelcome, 3200);
-  // hide loader
-  setTimeout(()=> { if(loader) loader.style.display = "none"; }, 700);
-});
-
-/* -------------------
-   Countdown to event end (Nov 1, 2026 23:59 local)
-   ------------------- */
+/* Countdown */
 const EVENT_END = new Date("2026-11-01T23:59:00");
-function updateCountdown(){
-  if(!hallowCountdown || !modalEndTime) return;
-  const now = new Date();
-  const diff = EVENT_END - now;
-  if(diff <= 0){
-    hallowCountdown.textContent = "Event ended";
-    modalEndTime.textContent = "Ends: Nov 1, 2026 23:59";
-    return;
-  }
-  const days = Math.floor(diff / (24*3600*1000));
-  const hours = Math.floor((diff % (24*3600*1000)) / (3600*1000));
-  const mins = Math.floor((diff % (3600*1000)) / (60*1000));
-  hallowCountdown.textContent = `${days} days ${hours} hrs ${mins} min`;
-  modalEndTime.textContent = `Ends: Nov 1, 2026 23:59`;
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
+function updateCountdown(){ if(!hallowCountdown || !modalEndTime) return; const now=new Date(); const diff=EVENT_END-now; if(diff<=0){ hallowCountdown.textContent="Event ended"; modalEndTime.textContent="Ends: Nov 1, 2026 23:59"; return; } const days=Math.floor(diff/(24*3600*1000)); const hours=Math.floor((diff%(24*3600*1000))/(3600*1000)); const mins=Math.floor((diff%(3600*1000))/(60*1000)); hallowCountdown.textContent=`${days} days ${hours} hrs ${mins} min`; modalEndTime.textContent=`Ends: Nov 1, 2026 23:59`; }
+updateCountdown(); setInterval(updateCountdown,1000);
 
-/* -------------------
-   Modal open/close
-   ------------------- */
-if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", ()=> {
-  if(halloweenModal) { halloweenModal.classList.add("open"); halloweenModal.setAttribute("aria-hidden","false"); }
-});
-function closeHalloween(){ if(halloweenModal) { halloweenModal.classList.remove("open"); halloweenModal.setAttribute("aria-hidden","true"); } }
-document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeHalloween(); });
+/* Modal open/close */
+if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", ()=> { if(halloweenModal){ halloweenModal.classList.add("open"); halloweenModal.setAttribute("aria-hidden","false"); resetCodeState(); } });
+function closeHalloween(){ if(halloweenModal){ halloweenModal.classList.remove("open"); halloweenModal.setAttribute("aria-hidden","true"); } }
+document.addEventListener("keydown", (e)=> { if(e.key==="Escape") closeHalloween(); });
 
-/* -------------------
+/* =======================
    Giveaway logic
-   - prizes: 10 slices
-   - fixed codes: 10 codes per tier (1..10) — replace with your codes if needed
-   - single free spin per device via localStorage
-   - used codes tracked in localStorage
-   ------------------- */
-
-/* Prize labels */
+   ======================= */
+/* Prizes */
 const PRIZES = [
-  "Halloween Agar.io skin",
-  "Scar Agar.io skin",
-  "5 days bots",
-  "2 days bots",
-  "1 Gameplay with T.B",
-  "Sorry — nothing",
-  "Sorry — nothing",
-  "Sorry — nothing",
-  "Sorry — nothing",
-  "Sorry — nothing"
+  "Halloween Agar.io skin","Scar Agar.io skin","5 days bots","2 days bots","1 Gameplay with T.B",
+  "Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing"
 ];
-
 /* LocalStorage keys */
-const FREE_SPIN_KEY = "tb_free_spin_used_v2";
-const USED_CODES_KEY = "tb_used_codes_v2";
+const FREE_SPIN_KEY = "tb_free_spin_used_v3";
+const USED_CODES_KEY = "tb_used_codes_v3";
 
-/* Fixed codes per tier (10 each) — edit these codes if you have your own list.
-   For production move code lists + validation to a server for security.
-*/
+/* Fixed codes per tier (10 each) */
 const CODES_BY_TIER = {
   1: ["TB1-001","TB1-002","TB1-003","TB1-004","TB1-005","TB1-006","TB1-007","TB1-008","TB1-009","TB1-010"],
   2: ["TB2-011","TB2-012","TB2-013","TB2-014","TB2-015","TB2-016","TB2-017","TB2-018","TB2-019","TB2-020"],
@@ -542,165 +462,189 @@ const CODES_BY_TIER = {
   9: ["TB9-081","TB9-082","TB9-083","TB9-084","TB9-085","TB9-086","TB9-087","TB9-088","TB9-089","TB9-090"],
  10: ["TB10-091","TB10-092","TB10-093","TB10-094","TB10-095","TB10-096","TB10-097","TB10-098","TB10-099","TB10-100"]
 };
+/* Debug: list codes in console */
+console.log("CODES_BY_TIER (fixed):", CODES_BY_TIER);
 
-/* Debug: list codes in console (remove in production if secret) */
-console.log("CODES_BY_TIER:", CODES_BY_TIER);
+/* Used codes storage helpers */
+function loadUsedCodes(){ try{ const raw=localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){return []; } }
+function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){ console.warn("Could not save used codes", e); } }
+function isCodeUsed(code){ if(!code) return false; const arr = loadUsedCodes(); return arr.includes(code.toUpperCase()); }
+function markCodeUsed(code){ if(!code) return; const arr = loadUsedCodes(); const n = code.toUpperCase(); if(!arr.includes(n)){ arr.push(n); saveUsedCodes(arr); } }
 
-/* load used codes from localStorage */
-function loadUsedCodes(){
-  try{ const raw = localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }
-  catch(e){ return []; }
-}
-function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); } catch(e){ console.warn("Could not save used codes:", e); } }
-function isCodeUsed(code){
-  if(!code) return false;
-  const arr = loadUsedCodes();
-  return arr.includes(code.toUpperCase());
-}
-function markCodeUsed(code){
-  if(!code) return;
-  const arr = loadUsedCodes();
-  const normalized = code.toUpperCase();
-  if(!arr.includes(normalized)){ arr.push(normalized); saveUsedCodes(arr); }
-}
+/* Find tier for a code */
+function findTierForCode(code){ if(!code) return null; const n = code.toUpperCase(); for(let t=1;t<=10;t++){ const list = CODES_BY_TIER[t].map(v=>v.toUpperCase()); if(list.includes(n)) return t; } return null; }
 
-/* Determine tier for a given code (returns tier number or null) */
-function findTierForCode(code){
-  if(!code) return null;
-  const normalized = code.toUpperCase();
-  for(let t=1;t<=10;t++){
-    const list = CODES_BY_TIER[t].map(c=>c.toUpperCase());
-    if(list.includes(normalized)) return t;
-  }
-  return null;
-}
+/* Weights per tier */
+function weightsForTier(tier){ const base=[5,4,3,2,1,30,20,15,10,10]; const mult = 1 + (tier - 1) * 0.18; return base.map((w,i)=> i<=4 ? Math.max(1, Math.round(w*mult)) : w); }
+function weightedPick(weights){ const sum = weights.reduce((a,b)=>a+b,0); let r = Math.random()*sum; for(let i=0;i<weights.length;i++){ if(r<weights[i]) return i; r -= weights[i]; } return weights.length-1; }
 
-/* Weight function: higher tier increases weight for top prizes */
-function weightsForTier(tier){
-  // base weights (first 5 are desirable)
-  const base = [5,4,3,2,1,30,20,15,10,10];
-  const multiplier = 1 + (tier - 1) * 0.18; // tuned multiplier
-  return base.map((w,i) => i<=4 ? Math.max(1, Math.round(w * multiplier)) : w);
-}
-
-/* pick random index by weights */
-function weightedPick(weights){
-  const sum = weights.reduce((a,b)=>a+b,0);
-  let r = Math.random() * sum;
-  for(let i=0;i<weights.length;i++){
-    if(r < weights[i]) return i;
-    r -= weights[i];
-  }
-  return weights.length-1;
-}
-
-/* Wheel spin implementation */
+/* Spin state */
 let spinning = false;
-function spinWheel({fast=false, tier=1} = {}) {
-  if(!wheelEl){ console.warn("Wheel element missing"); return; }
+/* validatedCode: holds code string if user checked and is valid (not yet consumed) */
+let validatedCode = null;
+
+/* Update UI for code status */
+function showCodeStatus(type, message){
+  if(!codeStatus) return;
+  codeStatus.className = "code-status";
+  codeStatus.textContent = message;
+  if(type === "valid") codeStatus.classList.add("valid");
+  else if(type === "invalid") codeStatus.classList.add("invalid");
+  else codeStatus.style.display = "none";
+}
+
+/* Reset code state when opening modal */
+function resetCodeState(){
+  validatedCode = null;
+  if(codeInput) codeInput.value = "";
+  if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable(); // enable only if free
+  if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+  showCodeStatus("", "");
+  if(spinResult) spinResult.textContent = "";
+}
+
+/* Check if free spin is available */
+function isFreeSpinAvailable(){ return !localStorage.getItem(FREE_SPIN_KEY); }
+
+/* Spin wheel animation and outcome */
+function spinWheel({fast=false, tier=1} = {}){
+  if(!wheelEl) return;
   if(spinning) return;
   spinning = true;
   if(spinBtn) spinBtn.disabled = true;
   if(fastSpinBtn) fastSpinBtn.disabled = true;
-  if(spinResultEl) spinResultEl.textContent = "Spinning... good luck!";
+  if(spinResult) spinResult.textContent = "Spinning... good luck!";
 
   const weights = weightsForTier(tier);
-  const chosenIndex = weightedPick(weights); // 0..9
-
-  const sliceDeg = 360 / PRIZES.length; // 36deg
-  const randomOffset = (Math.random() * (sliceDeg - 6)) - (sliceDeg/2 - 3);
+  const chosenIndex = weightedPick(weights);
+  const sliceDeg = 360 / PRIZES.length;
+  const randomOffset = (Math.random()*(sliceDeg - 6)) - (sliceDeg/2 - 3);
   const targetDeg = (360 - (chosenIndex * sliceDeg + sliceDeg/2) + randomOffset + 360) % 360;
   const extraTurns = fast ? (6 + Math.floor(Math.random()*4)) : (3 + Math.floor(Math.random()*3));
-  const finalRotation = extraTurns * 360 + targetDeg;
+  const finalRotation = extraTurns*360 + targetDeg;
   const duration = fast ? 3000 : 5000;
 
-  // Animate
   wheelEl.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
   wheelEl.style.transform = `rotate(${finalRotation}deg)`;
-  // Save rotation so subsequent spins continue smooth (not required but neat)
   wheelEl.dataset.rotation = finalRotation;
 
   setTimeout(()=> {
     spinning = false;
-    if(spinBtn) spinBtn.disabled = false;
-    if(fastSpinBtn) fastSpinBtn.disabled = false;
+    if(spinBtn) spinBtn.disabled = true; // disable after spin (one spin)
+    if(fastSpinBtn) fastSpinBtn.disabled = true;
     const prize = PRIZES[chosenIndex] || "Sorry — nothing";
-    if(spinResultEl) spinResultEl.textContent = `Result: ${prize}`;
-    // mark free spin used if not already
+    if(spinResult) spinResult.textContent = `Result: ${prize}`;
+    // mark free spin used if it was free
     if(!localStorage.getItem(FREE_SPIN_KEY)) localStorage.setItem(FREE_SPIN_KEY, "1");
+    // if a validated code was used for this spin, mark it used now
+    if(validatedCode){
+      markCodeUsed(validatedCode);
+      validatedCode = null;
+      showCodeStatus("invalid", "Code used — you cannot use it again.");
+    }
   }, duration + 50);
 }
 
-/* Attempt spin: handles free spin or code-based spin */
+/* Attempt to spin: checks free state or validated code */
 function attemptSpin(fast=false){
   if(spinning) return;
-  const freeUsed = !!localStorage.getItem(FREE_SPIN_KEY);
-  const entered = (codeInput && codeInput.value) ? codeInput.value.trim().toUpperCase() : "";
-
-  if(!freeUsed){
-    // allow free spin (tier 1 by default)
+  const freeAvailable = isFreeSpinAvailable();
+  if(freeAvailable){
+    // free spin consumes the free allowance at spin end (we set it in spinWheel)
     spinWheel({fast, tier:1});
     return;
   }
-
-  // Free used: require code
-  if(!entered){
-    if(spinResultEl) spinResultEl.textContent = "You already used your free spin. Enter a valid code to spin again.";
+  // free not available: require validatedCode
+  if(!validatedCode){
+    showCodeStatus("invalid","No valid code checked. Enter and press Check code first.");
     return;
   }
-
-  const tier = findTierForCode(entered);
-  if(!tier){
-    if(spinResultEl) spinResultEl.textContent = "Invalid code. Make sure you typed it exactly.";
+  // safety: ensure code still unused
+  if(isCodeUsed(validatedCode)){
+    showCodeStatus("invalid","This code has already been used.");
+    validatedCode = null;
+    if(spinBtn) spinBtn.disabled = true;
+    if(fastSpinBtn) fastSpinBtn.disabled = true;
     return;
   }
-
-  if(isCodeUsed(entered)){
-    if(spinResultEl) spinResultEl.textContent = "This code has already been used.";
-    return;
-  }
-
-  // Use the code: mark and spin with appropriate tier
-  markCodeUsed(entered);
-  if(codeInput) codeInput.value = "";
-  if(spinResultEl) spinResultEl.textContent = `Code accepted (Tier $${tier}). Spinning...`;
+  // use the validated code's tier for weights
+  const tier = findTierForCode(validatedCode) || 1;
   spinWheel({fast, tier});
 }
 
-/* Hook up spin buttons */
+/* Check code button logic: does not consume code, only validates and enables one spin */
+if(checkCodeBtn){
+  checkCodeBtn.addEventListener("click", ()=>{
+    const code = codeInput ? (codeInput.value || "").trim().toUpperCase() : "";
+    if(!code){
+      showCodeStatus("invalid","Please enter a code to check.");
+      validatedCode = null;
+      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+      return;
+    }
+    const tier = findTierForCode(code);
+    if(!tier){
+      showCodeStatus("invalid","This code is invalid.");
+      validatedCode = null;
+      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+      return;
+    }
+    if(isCodeUsed(code)){
+      showCodeStatus("invalid","This code has already been used.");
+      validatedCode = null;
+      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+      return;
+    }
+    // Valid and unused
+    validatedCode = code;
+    showCodeStatus("valid",`This code is valid (Tier $${tier}). You may spin one time.`);
+    // enable spin buttons
+    if(spinBtn) spinBtn.disabled = false;
+    if(fastSpinBtn) fastSpinBtn.disabled = false;
+  });
+}
+
+/* hook spin buttons */
 if(spinBtn) spinBtn.addEventListener("click", ()=> attemptSpin(false));
 if(fastSpinBtn) fastSpinBtn.addEventListener("click", ()=> attemptSpin(true));
 
-/* -------------------
-   Utility: reset demo state (for testing only)
-   ------------------- */
+/* Reset code state when modal opens */
+function initializeModal(){
+  resetCodeState();
+  // Enable spin if free spin available
+  const free = isFreeSpinAvailable();
+  if(spinBtn) spinBtn.disabled = !free;
+  if(fastSpinBtn) fastSpinBtn.disabled = !free;
+}
+if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", initializeModal);
+
+/* Demo reset helper (for testing) */
 window._tb_demo_reset_spins = function(){
   localStorage.removeItem(FREE_SPIN_KEY);
   localStorage.removeItem(USED_CODES_KEY);
-  if(spinResultEl) spinResultEl.textContent = "Demo reset — free spin available.";
+  if(spinResult) spinResult.textContent = "Demo reset — free spin available.";
   if(codeInput) codeInput.value = "";
+  validatedCode = null;
+  showCodeStatus("", "");
+  if(spinBtn) spinBtn.disabled = false;
+  if(fastSpinBtn) fastSpinBtn.disabled = false;
   console.info("Demo spin state reset.");
 };
 
-/* -------------------
-   Accessibility & small polish
-   ------------------- */
-document.addEventListener("visibilitychange", () => {
-  if(!document.hidden) updateCountdown();
-});
+/* small accessibility behavior */
+document.addEventListener("visibilitychange", ()=> { if(!document.hidden) updateCountdown(); });
 
-/* -------------------
-   Wire up small controls (menu, chat)
-   ------------------- */
-function initUI(){
-  // Show/hide menu overlay
-  if(menuOverlay) menuOverlay.addEventListener("click", closeMenu);
-  // attach open menu button (already inline)
-  // attach welcome animations handled in load
-}
-initUI();
+/* Utility functions (re-used) */
+function loadUsedCodes(){ try{ const raw=localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
+function findTierForCode(code){ if(!code) return null; const n = code.toUpperCase(); for(let t=1;t<=10;t++){ const list=CODES_BY_TIER[t].map(v=>v.toUpperCase()); if(list.includes(n)) return t; } return null; }
+function isCodeUsed(code){ if(!code) return false; return loadUsedCodes().includes(code.toUpperCase()); }
+function markCodeUsed(code){ if(!code) return; const arr = loadUsedCodes(); const n = code.toUpperCase(); if(!arr.includes(n)){ arr.push(n); saveUsedCodes(arr); } }
+function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){console.warn("save fail", e);} }
 
-/* End of script */
+/* End script */
 </script>
 
 </body>
