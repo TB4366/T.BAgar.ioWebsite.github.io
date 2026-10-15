@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>T.B AGAR.IO — Halloween</title>
+<meta name="theme-color" content="#0b0410">
+<meta name="description" content="T.B Agar.io — Halloween season, custom skins, videos and more.">
+<link rel="manifest" href="/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="T.B Agar.io">
+<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+
+<style>
+/* Reset / base */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  margin:0;padding:0;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255,130,0,0.06), transparent 10%),
+    radial-gradient(circle at 90% 90%, rgba(120,0,160,0.04), transparent 15%),
+    linear-gradient(180deg,#050007 0%, #0b0410 60%, #08040a 100%);
+  color:#fff;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden;
+}
+
+/* selection */
+::selection{background:#ff7a18;color:#fff}
+
+/* LOADER - halloween style */
+#loader{
+  position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.9), rgba(15,4,10,0.95));
+  display:flex;justify-content:center;align-items:center;z-index:99999;flex-direction:column;gap:18px;
+}
+.loader-spinner{
+  width:70px;height:70px;border-radius:50%;
+  background:conic-gradient(#ff7a18 0 25%, #0b0b0b 25% 50%, #ffb86b 50% 75%, #0b0b0b 75% 100%);
+  animation: loader-idle 6s linear infinite;
+  box-shadow:0 8px 40px rgba(0,0,0,.6), inset 0 -6px 20px rgba(0,0,0,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.loader-pumpkin{
+  width:36px;height:36px;border-radius:50%;background:#0b0b0b;
+  box-shadow:inset 0 -6px 10px rgba(255,120,0,.45);
+  position:relative;
+}
+.loader-pumpkin::after{content:"";position:absolute;left:50%;top:-8px;width:6px;height:8px;background:#3b2a00;border-radius:2px;transform:translateX(-50%)}
+@keyframes loader-idle{to{transform:rotate(360deg)}}
+
+/* Bats and fog */
+.bats{position:fixed;inset:0;pointer-events:none;z-index:2}
+.bat{position:absolute;width:90px;height:24px;background:transparent;opacity:.12;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6)); animation:bat-fly 12s linear infinite}
+.bat::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;background:linear-gradient(90deg,#000000,#ff7a18);border-radius:12px;transform:skewX(-20deg)}
+@keyframes bat-fly{0%{transform:translateX(-20vw) translateY(0) scale(0.8)}50%{transform:translateX(120vw) translateY(-18vh) scale(1.05)}100%{transform:translateX(-20vw) translateY(0) scale(0.8)}}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:1000;width:100%;
+  background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(8,4,8,.75));
+  padding:calc(8px + env(safe-area-inset-top)) 18px 10px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,122,24,.06)
+}
+.header-left{display:flex;align-items:center;gap:12px;min-width:0}
+.logo-link{display:flex;align-items:center;text-decoration:none}
+.header-logo{width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0;transition:transform .2s}
+.logo-link:hover .header-logo{transform:scale(1.05)}
+.header-title{font-size:20px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-button{width:46px;height:46px;border:1px solid rgba(255,122,24,.12);background:#14060a;color:#fff;border-radius:12px;font-size:22px;cursor:pointer}
+
+/* side menu */
+#side-menu{position:fixed;top:0;right:-330px;width:320px;max-width:88vw;height:100%;background:linear-gradient(180deg,#09040a,#050007);z-index:5000;padding:calc(24px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));border-left:1px solid rgba(255,122,24,.06);transition:right .3s ease;overflow-y:auto;box-shadow:-20px 0 50px rgba(0,0,0,.6)}
+#side-menu.open{right:0}
+.menu-link{display:flex;align-items:center;width:100%;padding:12px;margin:8px 0;border-radius:12px;text-decoration:none;color:#fff;background:#0b0610;border:1px solid rgba(255,122,24,.06);font-weight:700}
+
+/* overlay */
+.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:4999;display:none}
+.menu-overlay.show{display:block}
+
+/* main & hero */
+main{width:100%;max-width:1200px;margin:auto;padding:55px 18px calc(55px + env(safe-area-inset-bottom))}
+.hero{position:relative;text-align:center;margin-bottom:60px;padding:35px 20px;border-radius:24px;background:linear-gradient(145deg, rgba(255,122,24,.02), rgba(8,4,8,.75));border:1px solid rgba(255,122,24,.05);overflow:hidden}
+.hero::before{content:"";position:absolute;width:300px;height:300px;background:radial-gradient(circle, rgba(255,122,24,.12), transparent 35%);filter:blur(36px);top:-120px;left:50%;transform:translateX(-50%)}
+.hero-content{position:relative;z-index:1}
+.hero h1{font-size:clamp(32px,6vw,64px);margin:0 0 10px;font-weight:900;letter-spacing:3px;display:inline-block;transform-origin:center}
+.hero h1 span{color:#ff7a18}
+/* text jump animation */
+@keyframes jump-in {0%{transform:translateY(30px) scale(.9);opacity:0}30%{transform:translateY(-6px) scale(1.06);opacity:1}60%{transform:translateY(2px) scale(.98)}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes fade-out {0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.hero h1.animated{animation: jump-in 700ms cubic-bezier(.2,.9,.3,1), fade-out 2s ease 2.2s infinite}
+
+/* subtitle */
+.hero p{color:#cbd5e1;font-size:16px;max-width:700px;margin:0 auto}
+.hero-subtitle{color:#e6e6e6;font-size:15px;margin-top:8px}
+
+/* section titles */
+.section-title{text-align:center;margin:0 0 20px}
+.section-title h2{margin:0 0 8px;font-size:26px}
+.section-title p{color:#9aa3b1;margin:0}
+
+/* video slider preserved */
+.video-slider{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:5px 2px 15px}
+.video-card{flex:0 0 min(88vw,520px);scroll-snap-align:center;background:#0b0610;border-radius:18px;border:1px solid rgba(255,122,24,.06);overflow:hidden;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+.video-card iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+
+/* Discord area */
+.community-wrap{text-align:center;margin-top:18px}
+.join-text{font-weight:900;color:#ffd1a3;margin-bottom:8px}
+.discord-button{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:#5865f2;border:0;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 8px 30px rgba(88,101,242,.15)}
+.discord-button:hover{transform:translateY(-3px)}
+
+/* options grid - will include halloween button slot */
+.options-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:12px}
+.option{min-height:110px;background:linear-gradient(145deg,#0a0610,#0b0410);border-radius:18px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:#fff;text-decoration:none;font-size:18px;font-weight:800;border:1px solid rgba(255,122,24,.04);transition:transform .2s ease}
+.option:hover{transform:translateY(-4px);border-color:rgba(255,122,24,.12)}
+
+/* halloween button style */
+.halloween-button{display:flex;flex-direction:column;align-items:center;gap:8px}
+.hallow-btn{background:linear-gradient(180deg,#ff7a18,#8b2bff);padding:12px 18px;border-radius:14px;color:#0b0410;font-weight:900;border:0;cursor:pointer;box-shadow:0 8px 30px rgba(255,122,24,.15)}
+.hallow-timer{color:#ffd1a3;font-weight:800;font-size:14px}
+
+/* modal (halloween season) */
+#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,2,2,.6);z-index:8000;padding:24px}
+#halloween-modal.open{display:flex}
+.hmodal{width:100%;max-width:760px;background:#07020a;border-radius:14px;padding:18px;border:1px solid rgba(255,122,24,.06);box-shadow:0 20px 80px rgba(0,0,0,.7)}
+.hmodal-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hmodal-title{font-weight:900;font-size:20px}
+.hmodal-close{background:#0b0610;border:1px solid rgba(255,122,24,.06);color:#fff;padding:6px 10px;border-radius:10px;cursor:pointer}
+.hmodal-line{height:1px;background:linear-gradient(90deg, rgba(255,122,24,.02), rgba(255,255,255,.02));margin:12px 0}
+
+/* wheel area */
+.wheel-wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.wheel{width:320px;height:320px;border-radius:50%;background:conic-gradient(
+  #ffd54f 0% 36%,
+  #fff 36% 72%,
+  #ffb86b 72% 108%,
+  #ffc85c 108% 144%,
+  #ff7a18 144% 180%,
+  #e6e6e6 180% 216%,
+  #c9c9c9 216% 252%,
+  #d7b36a 252% 288%,
+  #ffb86b 288% 324%,
+  #ffffff 324% 360%
+);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
+.wheel .center{width:84px;height:84px;border-radius:50%;background:#0b0610;border:6px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
+.pointer{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-bottom:24px solid #ff7a18;filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))}
+
+/* legend */
+.legend{flex:1;min-width:220px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:12px;border:1px solid rgba(255,122,24,.04)}
+.legend-item{display:flex;gap:10px;align-items:center;padding:6px 0}
+.legend-color{width:26px;height:26px;border-radius:6px;flex-shrink:0}
+.legend-name{flex:1;font-weight:800}
+
+/* spinner controls */
+.spin-controls{display:flex;gap:10px;margin-top:12px;align-items:center}
+.spin-btn{padding:10px 14px;border-radius:12px;background:#ff7a18;color:#0b0410;font-weight:900;border:0;cursor:pointer}
+.spin-btn[disabled]{opacity:.45;cursor:not-allowed}
+.code-input{padding:10px;border-radius:10px;border:1px solid rgba(255,122,24,.06);background:#0b0610;color:#fff;flex:1}
+
+/* result text */
+.spin-result{margin-top:12px;font-weight:900;color:#ffd1a3}
+
+/* footer */
+footer{text-align:center;padding:30px 18px calc(30px + env(safe-area-inset-bottom));color:#9aa3b1;border-top:1px solid rgba(255,122,24,.03)}
+footer a{color:#ffd1a3;text-decoration:none}
+
+/* responsiveness */
+@media(max-width:900px){.wheel-wrap{flex-direction:column;align-items:center}.options-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:430px){.options-grid{grid-template-columns:1fr}.header-title{font-size:16px}}
+</style>
+
+</head>
+
+<body>
+
+<!-- LOADER -->
+<div id="loader" aria-hidden="false">
+  <div class="loader-spinner" aria-hidden="true">
+    <div class="loader-pumpkin" aria-hidden="true"></div>
+  </div>
+  <div style="color:#ffd1a3;font-weight:800">Spooky loading... preparing Halloween surprises</div>
+</div>
+
+<!-- bats (decorative) -->
+<div class="bats" aria-hidden="true">
+  <div class="bat" style="top:8vh;left:-10vw;animation-delay:0s"></div>
+  <div class="bat" style="top:28vh;left:-20vw;animation-delay:3s;opacity:.18"></div>
+  <div class="bat" style="top:56vh;left:-30vw;animation-delay:6s;opacity:.14"></div>
+</div>
+
+<!-- SIDE MENU OVERLAY -->
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+
+<!-- SIDE MENU -->
+<div id="side-menu" role="navigation" aria-label="Site menu">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div style="font-weight:900">T.B <span style="color:#ff7a18">AGAR.IO</span></div>
+    <button onclick="closeMenu()" class="hmodal-close" aria-label="Close menu">×</button>
+  </div>
+
+  <a class="menu-link" href="/index.html">Home</a>
+  <a class="menu-link" href="/custom-skins.html">Custom Skins</a>
+  <a class="menu-link" href="/key-access.html">Key Access</a>
+  <a class="menu-link" href="/mod-menu.html">Mod Menu</a>
+  <a class="menu-link" href="/paidskins.html">Paid Skins</a>
+  <a class="menu-link" href="/buy-account.html">Buy Account</a>
+  <a class="menu-link" href="/agar.io-skins.html">Agar.io Skins</a>
+
+  <div style="margin-top:18px;border-top:1px solid rgba(255,122,24,.03);padding-top:12px;color:#9aa3b1;font-size:13px;text-align:center">
+    Follow T.B Agar.io
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <a class="menu-link" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
+      <a class="menu-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
+      <a class="menu-link" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+    <div style="margin-top:12px;color:#7b7b7b">T.B Agar.io © 2026</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <a class="logo-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open T.B Agar.io YouTube channel">
+      <img class="header-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io">
+    </a>
+    <div class="header-title">T.B Agar.io — Halloween</div>
+  </div>
+  <button class="menu-button" onclick="openMenu()" aria-label="Open menu">☰</button>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 id="welcome-text" class="animated">WELCOME TO <span>T.B AGAR.IO</span></h1>
+      <p>Your place for Agar.io skins, tools, videos and spooky seasonal giveaways.</p>
+      <p class="hero-subtitle">Explore the Halloween season and join the community!</p>
+    </div>
+  </section>
+
+  <!-- CHANNEL (videos preserved) -->
+  <section>
+    <div class="section-title">
+      <h2>T.B CHANNEL</h2>
+      <p>Watch the latest videos from T.B Agar.io.</p>
+    </div>
+
+    <div class="video-slider" id="video-slider">
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/02x2YFHWh2o" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/d8DluzJAd2w" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/c234keB_q3c" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/MVl6S3JvxC0" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/Zg3-FACfyHE" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/TdoL76Jt22A" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+      <div class="video-card">
+        <iframe src="https://www.youtube.com/embed/0Tk29twxcJ8" title="T.B Agar.io video" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="community-wrap">
+      <div class="join-text">Join our community!</div>
+      <a class="discord-button" href="https://discord.gg/tbagario" target="_blank" rel="noopener" aria-label="Join Discord">
+        <svg width="18" height="18" viewBox="0 0 245 240" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M104.4 104.8c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.6-11.2-10.2-11.2zm36.2 0c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.5-11.2-10.2-11.2z"/></svg>
+        Join Discord
+      </a>
+    </div>
+  </section>
+
+  <!-- HALLOWEEN SEASON + OPTIONS -->
+  <section>
+    <div class="section-title">
+      <h2>EXPLORE T.B AGAR.IO</h2>
+      <p>Choose a section and explore the website.</p>
+    </div>
+
+    <div class="options-grid">
+      <a class="option" href="/custom-skins.html">Custom Skins</a>
+      <a class="option" href="/key-access.html">Key Access</a>
+
+      <!-- HALLOWEEN BUTTON slot -->
+      <div class="option halloween-button" style="padding:16px;">
+        <button class="hallow-btn" id="open-halloween">HALLOWEEN SEASON</button>
+        <div class="hallow-timer" id="hallow-countdown">Ends in —</div>
+      </div>
+
+      <a class="option" href="/mod-menu.html">Mod Menu</a>
+      <a class="option" href="/paidskins.html">Paid Skins</a>
+      <a class="option" href="/buy-account.html">Buy Account</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- HALLOWEEN MODAL (GIVEAWAY SPINNER) -->
+<div id="halloween-modal" aria-hidden="true">
+  <div class="hmodal" role="dialog" aria-modal="true" aria-labelledby="hmodal-title">
+    <div class="hmodal-header">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="hmodal-title" id="hmodal-title">Halloween Season — Giveaway</div>
+        <div id="modal-end-time" style="color:#ffd1a3;font-weight:800"></div>
+      </div>
+      <div>
+        <button class="hmodal-close" onclick="closeHalloween()" aria-label="Close Halloween">×</button>
+      </div>
+    </div>
+
+    <div class="hmodal-line" aria-hidden="true"></div>
+
+    <div style="font-weight:900;margin-bottom:10px">Giveaway</div>
+    <div style="color:#c9c9c9;margin-bottom:8px">You get 1 free spin per device. If you've already spun, enter a code to spin again.</div>
+
+    <div class="wheel-wrap">
+      <div style="position:relative">
+        <div class="pointer" aria-hidden="true"></div>
+        <div id="wheel" class="wheel" role="img" aria-label="Prize wheel" style="transform:rotate(0deg)">
+          <div class="center">SPIN</div>
+        </div>
+      </div>
+
+      <div class="legend" aria-hidden="false">
+        <div style="font-weight:900;margin-bottom:8px">Prizes (top to bottom)</div>
+
+        <div class="legend-item"><div class="legend-color" style="background:#ffd54f"></div><div class="legend-name">Halloween Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#fff"></div><div class="legend-name">Scar Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffb86b"></div><div class="legend-name">5 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffc85c"></div><div class="legend-name">2 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff7a18"></div><div class="legend-name">1 Gameplay with T.B</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#e6e6e6"></div><div class="legend-name">Sorry — nothing</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#c9c9c9"></div><div class="legend-name">Sorry — nothing</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#d7b36a"></div><div class="legend-name">Sorry — nothing</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffb86b"></div><div class="legend-name">Sorry — nothing</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffffff"></div><div class="legend-name">Sorry — nothing</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+      <input id="code-input" class="code-input" placeholder="Enter code (if you already spun)" aria-label="Spin code">
+      <button id="spin-button" class="spin-btn">Spin</button>
+      <button id="fast-spin-button" class="spin-btn" style="background:#6b21a8">Spin (fast)</button>
+    </div>
+
+    <div style="margin-top:10px;color:#c9c9c9;font-size:13px">Prize list example probabilities by spend tier (demo): $1..$10 maps to higher chance for top prizes. Codes are one-time only and are validated client-side for demo. For production move codes + verification to server.</div>
+
+    <div class="spin-result" id="spin-result" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- CHAT BUTTON -->
+<button id="chat-button" onclick="toggleChat()" aria-label="Open chat" style="position:fixed;right:18px;bottom:18px;width:58px;height:58px;border:0;border-radius:50%;background:#ff7a18;z-index:3000;box-shadow:0 8px 30px rgba(0,0,0,.35)">
+  <img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="Chat" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+</button>
+
+<!-- CHAT BOX -->
+<div id="chat-box" style="position:fixed;right:18px;bottom:88px;width:min(360px,calc(100vw - 36px));background:#0b0610;border:1px solid rgba(255,122,24,.06);border-radius:18px;z-index:3001;display:none;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.5)">
+  <div class="chat-header" style="padding:12px;background:linear-gradient(90deg,#0b0610,#100317);font-weight:900">T.B Agar.io Support</div>
+  <div id="chat-messages" style="height:220px;overflow-y:auto;padding:12px">
+    <div class="chat-message" style="background:#0f0810;padding:10px;border-radius:8px;margin-bottom:8px">Welcome to T.B Agar.io Support!</div>
+  </div>
+  <div class="chat-input" style="display:flex;border-top:1px solid rgba(255,122,24,.04)">
+    <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off" style="flex:1;min-width:0;padding:12px;border:0;outline:0;background:#07020a;color:#fff">
+    <button onclick="sendMessage()" style="padding:0 14px;border:0;background:#ff7a18;color:#0b0410;font-weight:900">Send</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 T.B Agar.io</p>
+  <p><a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Agar.io Website</a></p>
+</footer>
+
+<script>
+/* =========================
+   Utility and UI
+========================= */
+
+function openMenu(){
+  document.getElementById("side-menu").classList.add("open");
+  document.getElementById("menu-overlay").classList.add("show");
+}
+function closeMenu(){
+  document.getElementById("side-menu").classList.remove("open");
+  document.getElementById("menu-overlay").classList.remove("show");
+}
+
+/* CHAT toggle & send */
+function toggleChat(){
+  document.getElementById("chat-box").classList.toggle("open");
+}
+async function sendMessage(){
+  const input = document.getElementById("chat-input");
+  const messages = document.getElementById("chat-messages");
+  const text = (input.value||"").trim();
+  if(!text) return;
+  const userMessage = document.createElement("div");
+  userMessage.className = "chat-message";
+  userMessage.style.background="#0b0610";
+  userMessage.textContent = text;
+  messages.appendChild(userMessage);
+  input.value="";
+  messages.scrollTop = messages.scrollHeight;
+  // simple simulated reply (no server)
+  setTimeout(()=> {
+    const botMessage = document.createElement("div");
+    botMessage.className = "chat-message";
+    botMessage.style.background="#0f0810";
+    botMessage.textContent = "Thanks! We'll reply on Discord or here soon.";
+    messages.appendChild(botMessage);
+    messages.scrollTop = messages.scrollHeight;
+  },700);
+}
+document.getElementById("chat-input").addEventListener("keydown", function(e){
+  if(e.key === "Enter") sendMessage();
+});
+
+/* Loader hide on page load */
+window.addEventListener("load", function(){
+  // animate welcome text repeating in and out
+  const w = document.getElementById("welcome-text");
+  function restartAnimation(){
+    w.classList.remove("animated");
+    void w.offsetWidth;
+    w.classList.add("animated");
+  }
+  restartAnimation();
+  setInterval(restartAnimation, 3200);
+
+  setTimeout(()=> {
+    const loader = document.getElementById("loader");
+    if(loader) loader.style.display = "none";
+  }, 800);
+});
+
+/* =========================
+   HALLOWEEN countdown
+   ends at Nov 1, 2026 23:59 local time
+========================= */
+const halloweenEnd = new Date("2026-11-01T23:59:00");
+function updateCountdown(){
+  const now = new Date();
+  const diff = halloweenEnd - now;
+  const el = document.getElementById("hallow-countdown");
+  const modalEnd = document.getElementById("modal-end-time");
+  if(diff <= 0){
+    el.textContent = "Event ended";
+    modalEnd.textContent = "Ends: Nov 1, 2026 23:59";
+    return;
+  }
+  const days = Math.floor(diff / (24*3600*1000));
+  const hours = Math.floor((diff % (24*3600*1000)) / (3600*1000));
+  const mins = Math.floor((diff % (3600*1000)) / (60*1000));
+  const secs = Math.floor((diff % (60*1000)) / 1000);
+  el.textContent = `${days} days ${hours} hrs ${mins} min`;
+  modalEnd.textContent = `Ends: Nov 1, 2026 23:59`;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+/* =========================
+   HALLOWEEN modal open/close
+========================= */
+const modal = document.getElementById("halloween-modal");
+document.getElementById("open-halloween").addEventListener("click", ()=> {
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+});
+function closeHalloween(){
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+}
+
+/* =========================
+   SPINNER / WHEEL GIVEAWAY LOGIC
+   - one free spin per device (localStorage)
+   - if device already used, require a valid code to spin
+   - codes defined per tier ($1..$10) inside script (demo)
+   - weights change by tier to increase chance for top prizes
+========================= */
+
+const wheel = document.getElementById("wheel");
+const spinButton = document.getElementById("spin-button");
+const fastSpinButton = document.getElementById("fast-spin-button");
+const codeInput = document.getElementById("code-input");
+const spinResult = document.getElementById("spin-result");
+const FREE_SPIN_KEY = "tb_free_spin_used";
+const USED_CODES_KEY = "tb_used_codes_v1";
+
+/* prizes array with 10 entries (same order as wheel slices)
+   We'll map indices 0..9 to the prize names shown in legend.
+*/
+const prizes = [
+  "Halloween Agar.io skin",
+  "Scar Agar.io skin",
+  "5 days bots",
+  "2 days bots",
+  "1 Gameplay with T.B",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing"
+];
+
+/* Example code lists per tier (demo). For production, keep codes server-side.
+   We'll create 10 example codes for each tier $1..$10 (10 codes each).
+   Codes formatted TB{tier}-{random}
+*/
+const codesByTier = {};
+for(let t=1;t<=10;t++){
+  codesByTier[t] = [];
+  for(let i=0;i<10;i++){
+    codesByTier[t].push(`TB${t}-${Math.random().toString(36).substr(2,6).toUpperCase()}`);
+  }
+}
+// For demo: expose codes in console (so you can test)
+console.log("Demo codes (use these to test entering a code after free spin):", codesByTier);
+
+/* local used codes store */
+function loadUsedCodes(){ try{ return JSON.parse(localStorage.getItem(USED_CODES_KEY) || "[]"); }catch(e){return []} }
+function markCodeUsed(code){ const arr = loadUsedCodes(); if(!arr.includes(code)){arr.push(code); localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); } }
+
+/* Helper: determine weight distribution by tier.
+   Returns an array of weights for 10 prizes. Higher tier increases weights for top 4 prizes.
+*/
+function weightsForTier(tier){
+  // base weights (favor "nothing" heavily)
+  // index 0..4 = desirable prizes, 5..9 = "nothing" entries
+  const base = [5,4,3,2,1,30,20,15,10,10];
+  // apply multiplier by tier (1..10) to desirable prizes
+  const mult = 1 + (tier - 1) * 0.18; // increases with tier
+  const weights = base.map((w,i)=> i<=4 ? Math.max(1, Math.round(w * mult)) : w);
+  return weights;
+}
+
+/* pick index by weights */
+function weightedPick(weights){
+  const sum = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random() * sum;
+  for(let i=0;i<weights.length;i++){
+    if(r < weights[i]) return i;
+    r -= weights[i];
+  }
+  return weights.length-1;
+}
+
+/* spin action */
+let spinning = false;
+function performSpin({fast=false, tier=1} = {}){
+  if(spinning) return;
+  // We will rotate the wheel by a random number of full turns + landing angle determined by chosen index.
+  spinning = true;
+  spinButton.disabled = true;
+  fastSpinButton.disabled = true;
+  spinResult.textContent = "Spinning... good luck!";
+  const weights = weightsForTier(tier);
+  const chosenIndex = weightedPick(weights); // 0..9
+  // For smoothness: compute degrees such that chosen slice lands at pointer (top)
+  // Each slice span = 360 / 10 = 36deg. We want center of slice at top (0deg).
+  const sliceDeg = 360 / prizes.length;
+  // random offset inside slice
+  const randomOffset = (Math.random()* (sliceDeg - 6)) - (sliceDeg/2 - 3);
+  const targetDeg = (360 - (chosenIndex * sliceDeg + sliceDeg/2) + randomOffset) % 360;
+  const extraTurns = fast ? (6 + Math.floor(Math.random()*4)) : (3 + Math.floor(Math.random()*3));
+  const currentRotation = (wheel._rotation || 0) % 360;
+  const finalDeg = extraTurns*360 + targetDeg;
+  const duration = fast ? 3000 : 5000;
+  wheel.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
+  wheel.style.transform = `rotate(${finalDeg}deg)`;
+  wheel._rotation = finalDeg;
+  setTimeout(()=> {
+    spinning = false;
+    wheel.style.transition = "";
+    // mark free spin used if tier was the free one
+    if(tier === 0 || tier === "free"){ /* not used */ }
+    // show result
+    const prize = prizes[chosenIndex] || "Sorry — nothing";
+    spinResult.textContent = `Result: ${prize}`;
+    // if user used free spin now store key
+    if(!localStorage.getItem(FREE_SPIN_KEY)){
+      localStorage.setItem(FREE_SPIN_KEY, "1");
+    }
+    spinButton.disabled = false;
+    fastSpinButton.disabled = false;
+  }, duration + 50);
+}
+
+/* spin button handler: checks free spin state or code input.
+   Free spin: allowed once per device.
+   If used, require valid code. If valid, mark code used and use its tier to determine weight.
+*/
+spinButton.addEventListener("click", ()=> attemptSpin(false));
+fastSpinButton.addEventListener("click", ()=> attemptSpin(true));
+
+function attemptSpin(fast){
+  if(spinning) return;
+  const freeUsed = !!localStorage.getItem(FREE_SPIN_KEY);
+  const code = (codeInput.value||"").trim().toUpperCase();
+  if(!freeUsed){
+    // allow free spin (tier = 1 default low-power)
+    performSpin({fast, tier:1});
+    return;
+  }
+  // If free used, require a code to spin
+  if(!code){
+    spinResult.textContent = "You already used your free spin. Enter a valid code to spin again.";
+    return;
+  }
+  // validate code across tiers
+  let foundTier = null;
+  for(let t=1;t<=10;t++){
+    const list = codesByTier[t].map(c=>c.toUpperCase());
+    if(list.includes(code)){
+      foundTier = t;
+      break;
+    }
+  }
+  if(!foundTier){
+    spinResult.textContent = "Invalid code. Make sure you typed it exactly.";
+    return;
+  }
+  // check used codes
+  const used = loadUsedCodes();
+  if(used.includes(code)){
+    spinResult.textContent = "This code was already used.";
+    return;
+  }
+  // Everything is okay: mark code used and spin with tier weights (use foundTier)
+  markCodeUsed(code);
+  codeInput.value = "";
+  spinResult.textContent = `Code accepted (Tier $${foundTier}). Spinning...`;
+  performSpin({fast, tier:foundTier});
+}
+
+/* When using an iPad or any device, free spin recorded in localStorage prevents another free spin.
+   The user requested: "if you spun via iPad you cannot spin again" — localStorage meets that requirement per-device.
+*/
+
+/* expose function to reset demo keys (useful for testing) */
+window._tb_demo_reset_spins = function(){
+  localStorage.removeItem(FREE_SPIN_KEY);
+  localStorage.removeItem(USED_CODES_KEY);
+  alert("Demo spins reset (localStorage cleared).");
+};
+
+/* show codes in console for quick manual testing (demo) */
+console.log("Demo: to test second spins, paste one of the codes printed earlier into the modal input after your free spin.");
+
+/* Accessibility: close modal on Escape */
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape") closeHalloween();
+});
+</script>
+
+</body>
+</html>
