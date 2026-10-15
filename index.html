@@ -1,92 +1,536 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>T.B AGAR.IO — Halloween</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>T.B AGAR.IO — Halloween Season</title>
 <meta name="theme-color" content="#0b0410">
 <meta name="description" content="T.B Agar.io — Halloween season, custom skins, videos and more.">
 <link rel="manifest" href="/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="T.B Agar.io">
-<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
-<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+<link rel="icon" href="/IMG_0561.jpeg" type="image/jpeg">
 
 <style>
-/* (Same CSS as before — omitted here for brevity in display) */
-... (keep the full CSS from the prior response unchanged) ...
+/* =========================
+   Base & Layout
+   ========================= */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;font-family:Inter,Arial,Helvetica,sans-serif}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255,122,24,0.05), transparent 12%),
+    linear-gradient(180deg,#07020a 0%, #0b0410 60%, #050007 100%);
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+
+/* Selection */
+::selection{background:#ff7a18;color:#fff}
+
+/* =========================
+   Loader (spooky)
+   ========================= */
+#loader{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.88), rgba(4,0,8,0.95));z-index:99999;
+}
+.loader-spinner{
+  width:78px;height:78px;border-radius:50%;background:conic-gradient(#ff7a18 0 25%, #0b0b0b 25% 50%, #ffb86b 50% 75%, #0b0b0b 75% 100%);
+  animation: rotate360 4s linear infinite;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 40px rgba(0,0,0,.6);
+}
+.loader-center{
+  width:40px;height:40px;border-radius:50%;background:#0b0610;border:4px solid rgba(255,122,24,.12);display:block;
+}
+@keyframes rotate360{to{transform:rotate(360deg)}}
+#loader p{margin:0;color:#ffd1a3;font-weight:800}
+
+/* =========================
+   Decorative bats / fog
+   ========================= */
+.bats{position:fixed;inset:0;pointer-events:none;z-index:2}
+.bat{position:absolute;width:110px;height:34px;opacity:.12;filter:blur(.5px);animation:bat-fly 14s linear infinite}
+.bat::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;background:linear-gradient(90deg,#000,#ff7a18);border-radius:24px;transform:skewX(-20deg)}
+@keyframes bat-fly{0%{transform:translateX(-30vw) translateY(0) scale(.8)}50%{transform:translateX(130vw) translateY(-18vh) scale(1.05)}100%{transform:translateX(-30vw) translateY(0) scale(.8)}}
+
+/* =========================
+   Header
+   ========================= */
+header{
+  position:sticky;top:0;z-index:1000;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
+  display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(4,0,6,.75));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,122,24,.06)
+}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-logo{width:48px;height:48px;border-radius:10px;object-fit:cover}
+.header-title{font-weight:900;font-size:18px;letter-spacing:.6px}
+.menu-button{width:46px;height:46px;border-radius:12px;border:1px solid rgba(255,122,24,.12);background:#14060a;color:#fff;font-size:20px;cursor:pointer}
+
+/* =========================
+   Side menu
+   ========================= */
+#side-menu{position:fixed;top:0;right:-360px;width:340px;height:100%;background:linear-gradient(180deg,#0a0410,#050007);padding:calc(20px + env(safe-area-inset-top)) 18px;box-shadow:-20px 0 50px rgba(0,0,0,.6);z-index:5000;transition:right .28s ease;border-left:1px solid rgba(255,122,24,.04)}
+#side-menu.open{right:0}
+.menu-link{display:block;padding:12px;border-radius:12px;margin-bottom:8px;background:#09040a;border:1px solid rgba(255,122,24,.03);text-decoration:none;color:#fff;font-weight:800}
+
+/* overlay */
+.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:4999;display:none}
+.menu-overlay.show{display:block}
+
+/* =========================
+   Main layout
+   ========================= */
+main{max-width:1200px;margin:0 auto;padding:60px 18px calc(60px + env(safe-area-inset-bottom));}
+
+/* Hero */
+.hero{padding:34px;border-radius:22px;background:linear-gradient(145deg, rgba(255,122,24,.02), rgba(6,3,8,.7));border:1px solid rgba(255,122,24,.04);text-align:center;position:relative;overflow:hidden;margin-bottom:32px}
+.hero::after{content:"";position:absolute;left:50%;top:-110px;width:260px;height:260px;background:radial-gradient(circle,#ff7a18 0%,transparent 45%);filter:blur(36px);transform:translateX(-50%)}
+.hero h1{font-size:clamp(30px,6vw,56px);margin:0;font-weight:900;letter-spacing:2px}
+.hero h1 span{color:#ff7a18}
+.hero p{color:#cbd5e1;margin-top:10px}
+
+/* jump animation */
+@keyframes jumpIn{0%{opacity:0;transform:translateY(26px) scale(.96)}30%{opacity:1;transform:translateY(-6px) scale(1.04)}60%{transform:translateY(2px)}100%{transform:translateY(0)}}
+@keyframes fadeLoop{0%{opacity:1}60%{opacity:1}100%{opacity:0}}
+#welcome-text{display:inline-block;animation:jumpIn .7s cubic-bezier(.2,.9,.3,1), fadeLoop 2.8s linear 1s infinite}
+
+/* =========================
+   Channel & Discord area
+   ========================= */
+.section-title{text-align:center;margin-bottom:12px}
+.video-slider{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+.video-card{flex:0 0 min(88vw,520px);border-radius:14px;background:#08030a;border:1px solid rgba(255,122,24,.04);overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.45)}
+.video-card iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+
+/* discord callout above videos */
+.community-wrap{text-align:center;margin:18px 0 8px}
+.join-text{font-weight:900;color:#ffd1a3;margin-bottom:8px}
+.discord-button{display:inline-flex;gap:10px;align-items:center;padding:12px 18px;border-radius:14px;background:#5865f2;border:2px solid #ff7a18;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 8px 30px rgba(88,101,242,.12)}
+.discord-button:hover{transform:translateY(-3px)}
+
+/* =========================
+   Options / Halloween slot
+   ========================= */
+.options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.option{background:linear-gradient(180deg,#0a0410,#07020a);padding:18px;border-radius:14px;text-align:center;font-weight:900;color:#fff;border:1px solid rgba(255,122,24,.03);cursor:pointer}
+.option:hover{transform:translateY(-4px);border-color:rgba(255,122,24,.12)}
+.hallow-btn{background:linear-gradient(180deg,#ff7a18,#9c3cff);padding:12px 18px;border-radius:12px;color:#0b0410;border:2px solid #ff7a18;font-weight:900;cursor:pointer}
+.hallow-timer{color:#ffd1a3;margin-top:8px;font-weight:800}
+
+/* =========================
+   Modal: Halloween giveaway
+   ========================= */
+#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:8000;padding:20px}
+#halloween-modal.open{display:flex}
+.hmodal{width:100%;max-width:920px;background:linear-gradient(180deg,#07020a,#050007);padding:18px;border-radius:12px;border:1px solid rgba(255,122,24,.06);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.hmodal-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hmodal-title{font-weight:900;font-size:20px}
+.hmodal-close{background:#0b0610;border:2px solid #ff7a18;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
+.hmodal-divider{height:1px;background:linear-gradient(90deg, rgba(255,122,24,.03), rgba(255,255,255,.02));margin:12px 0}
+
+/* wheel + legend */
+.wheel-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.wheel{width:360px;height:360px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 12px 60px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
+/* conic-gradient segments: first 5 unique colors, last 5 same 'nothing' color */
+.wheel{background:conic-gradient(
+  #ffd54f 0deg 36deg,
+  #ffffff 36deg 72deg,
+  #ffb86b 72deg 108deg,
+  #ffc85c 108deg 144deg,
+  #ff7a18 144deg 180deg,
+  #6b6b6b 180deg 360deg
+);}
+.wheel .center{width:96px;height:96px;border-radius:50%;background:#0b0610;border:8px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
+.pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:30px solid #ff7a18;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
+
+/* legend & price list */
+.legend{flex:1;min-width:260px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.03)}
+.legend-item{display:flex;align-items:center;gap:12px;padding:6px 0}
+.legend-color{width:30px;height:26px;border-radius:6px}
+.legend-name{font-weight:800}
+.price-list{margin-top:12px;border-radius:8px;padding:8px;background:#09030a;border:1px solid rgba(255,122,24,.03);font-size:14px}
+.price-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px dashed rgba(255,122,24,.03)}
+.price-row:last-child{border-bottom:0}
+.price-label{color:#ffd1a3;font-weight:800}
+
+/* controls */
+.controls{display:flex;gap:10px;margin-top:16px;align-items:center}
+.input-code{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.05);background:#0b0610;color:#fff}
+.spin-btn{padding:10px 16px;border-radius:12px;border:2px solid #ff7a18;background:#ff7a18;color:#0b0410;font-weight:900;cursor:pointer}
+.spin-btn.secondary{background:#6b21a8;border-color:#ff7a18;color:#fff}
+.spin-result{margin-top:12px;font-weight:900;color:#ffd1a3}
+
+/* footer */
+footer{text-align:center;padding:28px 18px calc(28px + env(safe-area-inset-bottom));color:#9aa3b1;border-top:1px solid rgba(255,122,24,.03)}
+footer a{color:#ffd1a3;text-decoration:none}
+
+/* responsive */
+@media(max-width:900px){.options-grid{grid-template-columns:repeat(2,1fr)}.wheel{width:300px;height:300px}.legend{min-width:200px}}
+@media(max-width:480px){.options-grid{grid-template-columns:1fr}.wheel{width:260px;height:260px}.hmodal{padding:12px}}
 </style>
-
 </head>
-
 <body>
 
-<!-- (All HTML content from previous version remains unchanged: loader, bats, header, main, modal, etc.) -->
-... (keep the full HTML content from the prior response unchanged) ...
+<!-- LOADER -->
+<div id="loader" aria-hidden="false">
+  <div class="loader-spinner" aria-hidden="true"><span class="loader-center" aria-hidden="true"></span></div>
+  <p>Spooky loading... preparing Halloween surprises</p>
+</div>
 
-<!-- FOOTER -->
+<!-- DECORATION -->
+<div class="bats" aria-hidden="true">
+  <div class="bat" style="top:6vh;left:-20vw;animation-delay:0s"></div>
+  <div class="bat" style="top:30vh;left:-30vw;animation-delay:3s;opacity:.18"></div>
+  <div class="bat" style="top:56vh;left:-40vw;animation-delay:6s;opacity:.12"></div>
+</div>
+
+<!-- MENU OVERLAY -->
+<div id="menu-overlay" class="menu-overlay" onclick="closeMenu()" aria-hidden="true"></div>
+
+<!-- SIDE MENU -->
+<nav id="side-menu" aria-label="Site navigation">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="font-weight:900">T.B <span style="color:#ff7a18">AGAR.IO</span></div>
+    <button class="hmodal-close" onclick="closeMenu()" aria-label="Close menu">×</button>
+  </div>
+
+  <a class="menu-link" href="/index.html">Home</a>
+  <a class="menu-link" href="/custom-skins.html">Custom Skins</a>
+  <a class="menu-link" href="/key-access.html">Key Access</a>
+  <a class="menu-link" href="/mod-menu.html">Mod Menu</a>
+  <a class="menu-link" href="/paidskins.html">Paid Skins</a>
+  <a class="menu-link" href="/buy-account.html">Buy Account</a>
+  <a class="menu-link" href="/agar.io-skins.html">Agar.io Skins</a>
+
+  <div style="margin-top:18px;border-top:1px solid rgba(255,122,24,.03);padding-top:12px;color:#9aa3b1">
+    Follow T.B Agar.io
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+      <a class="menu-link" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
+      <a class="menu-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
+      <a class="menu-link" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+    <div style="margin-top:12px;color:#7b7b7b">T.B Agar.io © 2026</div>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open channel">
+      <img class="header-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io">
+    </a>
+    <div class="header-title">T.B Agar.io — Halloween</div>
+  </div>
+  <div>
+    <button class="menu-button" onclick="openMenu()" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <h1 id="welcome-text">WELCOME TO <span>T.B AGAR.IO</span></h1>
+    <p>Your place for Agar.io skins, videos and spooky seasonal giveaways.</p>
+  </section>
+
+  <!-- COMMUNITY CALL -->
+  <div class="community-wrap" role="region" aria-label="Join our community">
+    <div class="join-text">Join our community!</div>
+    <a class="discord-button" href="https://discord.gg/tbagario" target="_blank" rel="noopener" aria-label="Join our Discord">
+      <svg width="18" height="18" viewBox="0 0 245 240" aria-hidden="true" focusable="false"><path fill="#fff" d="M104.4 104.8c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.6-11.2-10.2-11.2zm36.2 0c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.5-11.2-10.2-11.2z"/></svg>
+      Join Discord
+    </a>
+    <div style="color:#c9c9c9;margin-top:8px;font-size:13px">
+      Contact us on Discord if you need another spin or support:
+      <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a>
+    </div>
+  </div>
+
+  <!-- CHANNEL VIDEOS -->
+  <section aria-labelledby="channel-title">
+    <div class="section-title">
+      <h2 id="channel-title">T.B CHANNEL</h2>
+      <p>Watch the latest videos from T.B Agar.io.</p>
+    </div>
+
+    <div class="video-slider" id="video-slider" aria-live="polite">
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/02x2YFHWh2o" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/d8DluzJAd2w" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/c234keB_q3c" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/MVl6S3JvxC0" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/Zg3-FACfyHE" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/TdoL76Jt22A" title="T.B Agar.io video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/0Tk29twxcJ8" title="T.B Agar.io video" allowfullscreen></iframe></div>
+    </div>
+  </section>
+
+  <!-- OPTIONS & HALLOWEEN BUTTON -->
+  <section>
+    <div class="section-title"><h2>EXPLORE T.B AGAR.IO</h2><p>Choose a section and explore the website.</p></div>
+
+    <div class="options-grid" role="navigation" aria-label="Site sections">
+      <a class="option" href="/custom-skins.html">Custom Skins</a>
+      <a class="option" href="/key-access.html">Key Access</a>
+
+      <div class="option" aria-hidden="false">
+        <button id="open-halloween" class="hallow-btn" aria-haspopup="dialog">HALLOWEEN SEASON</button>
+        <div id="hallow-countdown" class="hallow-timer" aria-live="polite">Ends in —</div>
+      </div>
+
+      <a class="option" href="/mod-menu.html">Mod Menu</a>
+      <a class="option" href="/paidskins.html">Paid Skins</a>
+      <a class="option" href="/buy-account.html">Buy Account</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- HALLOWEEN MODAL -->
+<div id="halloween-modal" aria-hidden="true">
+  <div class="hmodal" role="dialog" aria-modal="true" aria-labelledby="hmodal-title">
+    <div class="hmodal-header">
+      <div style="display:flex;gap:14px;align-items:center">
+        <div class="hmodal-title" id="hmodal-title">Halloween Season — Giveaway</div>
+        <div id="modal-end-time" style="color:#ffd1a3;font-weight:800"></div>
+      </div>
+      <div>
+        <button class="hmodal-close" onclick="closeHalloween()" aria-label="Close">×</button>
+      </div>
+    </div>
+
+    <div class="hmodal-divider" aria-hidden="true"></div>
+
+    <div style="font-weight:900;margin-bottom:8px">Giveaway</div>
+    <div style="color:#c9c9c9;margin-bottom:8px">You get 1 free spin per device. If you've already spun, enter a code to spin again. Codes are one-time use.</div>
+
+    <div class="wheel-wrap">
+      <div style="position:relative">
+        <div class="pointer" aria-hidden="true"></div>
+        <div id="wheel" class="wheel" role="img" aria-label="Prize wheel" style="transform:rotate(0deg)">
+          <div class="center">SPIN</div>
+        </div>
+      </div>
+
+      <aside class="legend" aria-label="Prizes and price list">
+        <div style="font-weight:900;margin-bottom:10px">Prizes & legend</div>
+
+        <div class="legend-item"><div class="legend-color" style="background:#ffd54f"></div><div class="legend-name">Halloween Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffffff"></div><div class="legend-name">Scar Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffb86b"></div><div class="legend-name">5 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffc85c"></div><div class="legend-name">2 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff7a18"></div><div class="legend-name">1 Gameplay with T.B</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6b6b6b"></div><div class="legend-name">Sorry — nothing</div></div>
+
+        <div style="font-weight:900;margin-top:12px">Prize chance by spend tier</div>
+        <div class="price-list" aria-hidden="false">
+          <div class="price-row"><div class="price-label">$1 (free)</div><div>$1 tier — low chance on top prizes</div></div>
+          <div class="price-row"><div class="price-label">$2</div><div>7% chance</div></div>
+          <div class="price-row"><div class="price-label">$3</div><div>10% chance</div></div>
+          <div class="price-row"><div class="price-label">$4</div><div>13% chance</div></div>
+          <div class="price-row"><div class="price-label">$5</div><div>19% chance</div></div>
+          <div class="price-row"><div class="price-label">$6</div><div>23% chance</div></div>
+          <div class="price-row"><div class="price-label">$7</div><div>27% chance</div></div>
+          <div class="price-row"><div class="price-label">$8</div><div>35% chance</div></div>
+          <div class="price-row"><div class="price-label">$9</div><div>42% chance</div></div>
+          <div class="price-row"><div class="price-label">$10</div><div>49% chance</div></div>
+        </div>
+
+        <div style="margin-top:10px;font-size:13px;color:#c9c9c9">
+          Need help or another code? Contact on Discord:
+          <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a>
+        </div>
+      </aside>
+    </div>
+
+    <div class="controls">
+      <input id="code-input" class="input-code" placeholder="Enter your code (if you already spun)" aria-label="Spin code">
+      <button id="spin-button" class="spin-btn">Spin</button>
+      <button id="fast-spin-button" class="spin-btn secondary">Spin (fast)</button>
+    </div>
+
+    <div id="spin-result" class="spin-result" role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<!-- Chat button -->
+<button id="chat-button" onclick="toggleChat()" aria-label="Open chat" style="position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;border:0;background:#ff7a18;z-index:3000;box-shadow:0 8px 30px rgba(0,0,0,.35)">
+  <img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="Chat" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
+</button>
+
+<!-- Chat box -->
+<div id="chat-box" style="position:fixed;right:18px;bottom:88px;width:min(360px,calc(100vw - 36px));background:#0b0610;border:1px solid rgba(255,122,24,.06);border-radius:18px;z-index:3001;display:none;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.5)">
+  <div style="padding:12px;background:linear-gradient(90deg,#0b0610,#100317);font-weight:900">T.B Agar.io Support</div>
+  <div id="chat-messages" style="height:220px;overflow-y:auto;padding:12px">
+    <div style="background:#0f0810;padding:10px;border-radius:8px;margin-bottom:8px">Welcome to T.B Agar.io Support!</div>
+  </div>
+  <div style="display:flex;border-top:1px solid rgba(255,122,24,.04)">
+    <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off" style="flex:1;padding:12px;border:0;background:#07020a;color:#fff">
+    <button onclick="sendMessage()" style="padding:0 14px;border:0;background:#ff7a18;color:#0b0410;font-weight:900">Send</button>
+  </div>
+</div>
+
+<!-- Footer -->
 <footer>
   <p>© 2026 T.B Agar.io</p>
   <p><a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Agar.io Website</a></p>
 </footer>
 
 <script>
-/* =========================
-   Utility and UI
-========================= */
-function openMenu(){document.getElementById("side-menu").classList.add("open");document.getElementById("menu-overlay").classList.add("show")}
-function closeMenu(){document.getElementById("side-menu").classList.remove("open");document.getElementById("menu-overlay").classList.remove("show")}
+/* ============================================================================
+   FULL SCRIPT: UI behavior, countdown, wheel/giveaway logic, code validation
+   - One complete file. Clear comments for maintainability.
+   - Codes are fixed (10 codes per tier). For production, validate server-side.
+   ============================================================================ */
 
-/* CHAT toggle & send */
-function toggleChat(){document.getElementById("chat-box").classList.toggle("open")}
-async function sendMessage(){const input=document.getElementById("chat-input");const messages=document.getElementById("chat-messages");const text=(input.value||"").trim(); if(!text) return;const userMessage=document.createElement("div");userMessage.className="chat-message";userMessage.style.background="#0b0610";userMessage.textContent=text;messages.appendChild(userMessage);input.value="";messages.scrollTop=messages.scrollHeight;setTimeout(()=>{const botMessage=document.createElement("div");botMessage.className="chat-message";botMessage.style.background="#0f0810";botMessage.textContent="Thanks! We'll reply on Discord or here soon.";messages.appendChild(botMessage);messages.scrollTop=messages.scrollHeight;},700)}
-document.getElementById("chat-input").addEventListener("keydown", function(e){ if(e.key==="Enter") sendMessage() })
+/* -------------------
+   Helpers & DOM refs
+   ------------------- */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-/* Loader hide on page load + welcome animation */
-window.addEventListener("load", function(){
-  const w=document.getElementById("welcome-text");
-  function restartAnimation(){ w.classList.remove("animated"); void w.offsetWidth; w.classList.add("animated"); }
-  restartAnimation(); setInterval(restartAnimation, 3200);
-  setTimeout(()=>{const loader=document.getElementById("loader"); if(loader) loader.style.display="none"},800);
+const loader = $("#loader");
+const menuOverlay = $("#menu-overlay");
+const sideMenu = $("#side-menu");
+const openHalloweenBtn = $("#open-halloween");
+const halloweenModal = $("#halloween-modal");
+const hallowCountdown = $("#hallow-countdown");
+const modalEndTime = $("#modal-end-time");
+const wheelEl = $("#wheel");
+const spinBtn = $("#spin-button");
+const fastSpinBtn = $("#fast-spin-button");
+const codeInput = $("#code-input");
+const spinResultEl = $("#spin-result");
+const chatBox = $("#chat-box");
+const chatInput = $("#chat-input");
+const chatMessages = $("#chat-messages");
+const welcomeText = $("#welcome-text");
+
+/* -------------------
+   Safe element checks
+   ------------------- */
+function ensure(el, name){ if(!el) console.warn("Missing element:", name); }
+
+/* -------------------
+   Menu open/close
+   ------------------- */
+function openMenu(){ if(sideMenu) sideMenu.classList.add("open"); if(menuOverlay) menuOverlay.classList.add("show"); }
+function closeMenu(){ if(sideMenu) sideMenu.classList.remove("open"); if(menuOverlay) menuOverlay.classList.remove("show"); }
+
+/* -------------------
+   Chat behavior (simple local)
+   ------------------- */
+function toggleChat(){ if(!chatBox) return; chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block"; }
+async function sendMessage(){
+  if(!chatInput || !chatMessages) return;
+  const txt = chatInput.value.trim();
+  if(!txt) return;
+  const userMsg = document.createElement("div");
+  userMsg.style.background = "#0b0610";
+  userMsg.style.padding = "8px";
+  userMsg.style.borderRadius = "8px";
+  userMsg.style.marginBottom = "8px";
+  userMsg.textContent = txt;
+  chatMessages.appendChild(userMsg);
+  chatInput.value = "";
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  setTimeout(()=> {
+    const bot = document.createElement("div");
+    bot.style.background = "#0f0810";
+    bot.style.padding = "8px";
+    bot.style.borderRadius = "8px";
+    bot.style.marginBottom = "8px";
+    bot.textContent = "Thanks — we'll respond on Discord or here soon.";
+    chatMessages.appendChild(bot);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 800);
+}
+
+/* Enter to send chat */
+if(chatInput) chatInput.addEventListener("keydown", (e)=> { if(e.key === "Enter") sendMessage(); });
+
+/* -------------------
+   Welcome text animation loop
+   ------------------- */
+function animateWelcome(){
+  if(!welcomeText) return;
+  welcomeText.classList.remove("animated");
+  // Force reflow
+  void welcomeText.offsetWidth;
+  welcomeText.classList.add("animated");
+}
+window.addEventListener("load", () => {
+  animateWelcome();
+  setInterval(animateWelcome, 3200);
+  // hide loader
+  setTimeout(()=> { if(loader) loader.style.display = "none"; }, 700);
 });
 
-/* =========================
-   HALLOWEEN countdown
-   ends at Nov 1, 2026 23:59 local time
-========================= */
-const halloweenEnd = new Date("2026-11-01T23:59:00");
-function updateCountdown(){ const now=new Date(); const diff=halloweenEnd-now; const el=document.getElementById("hallow-countdown"); const modalEnd=document.getElementById("modal-end-time"); if(diff<=0){ el.textContent="Event ended"; modalEnd.textContent="Ends: Nov 1, 2026 23:59"; return; } const days=Math.floor(diff/(24*3600*1000)); const hours=Math.floor((diff%(24*3600*1000))/(3600*1000)); const mins=Math.floor((diff%(3600*1000))/(60*1000)); el.textContent=`${days} days ${hours} hrs ${mins} min`; modalEnd.textContent=`Ends: Nov 1, 2026 23:59`; }
-updateCountdown(); setInterval(updateCountdown,1000);
+/* -------------------
+   Countdown to event end (Nov 1, 2026 23:59 local)
+   ------------------- */
+const EVENT_END = new Date("2026-11-01T23:59:00");
+function updateCountdown(){
+  if(!hallowCountdown || !modalEndTime) return;
+  const now = new Date();
+  const diff = EVENT_END - now;
+  if(diff <= 0){
+    hallowCountdown.textContent = "Event ended";
+    modalEndTime.textContent = "Ends: Nov 1, 2026 23:59";
+    return;
+  }
+  const days = Math.floor(diff / (24*3600*1000));
+  const hours = Math.floor((diff % (24*3600*1000)) / (3600*1000));
+  const mins = Math.floor((diff % (3600*1000)) / (60*1000));
+  hallowCountdown.textContent = `${days} days ${hours} hrs ${mins} min`;
+  modalEndTime.textContent = `Ends: Nov 1, 2026 23:59`;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
 
-/* =========================
-   HALLOWEEN modal open/close
-========================= */
-const modal=document.getElementById("halloween-modal");
-document.getElementById("open-halloween").addEventListener("click", ()=>{ modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); });
-function closeHalloween(){ modal.classList.remove("open"); modal.setAttribute("aria-hidden","true"); }
+/* -------------------
+   Modal open/close
+   ------------------- */
+if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", ()=> {
+  if(halloweenModal) { halloweenModal.classList.add("open"); halloweenModal.setAttribute("aria-hidden","false"); }
+});
+function closeHalloween(){ if(halloweenModal) { halloweenModal.classList.remove("open"); halloweenModal.setAttribute("aria-hidden","true"); } }
+document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeHalloween(); });
 
-/* =========================
-   SPINNER / WHEEL GIVEAWAY LOGIC
-   - one free spin per device (localStorage)
-   - if device already used, require a valid code to spin again
-   - FIXED code lists per tier: each tier $1..$10 has exactly 10 codes (no random generation)
-========================= */
-const wheel=document.getElementById("wheel");
-const spinButton=document.getElementById("spin-button");
-const fastSpinButton=document.getElementById("fast-spin-button");
-const codeInput=document.getElementById("code-input");
-const spinResult=document.getElementById("spin-result");
-const FREE_SPIN_KEY="tb_free_spin_used";
-const USED_CODES_KEY="tb_used_codes_v1";
+/* -------------------
+   Giveaway logic
+   - prizes: 10 slices
+   - fixed codes: 10 codes per tier (1..10) — replace with your codes if needed
+   - single free spin per device via localStorage
+   - used codes tracked in localStorage
+   ------------------- */
 
-const prizes=["Halloween Agar.io skin","Scar Agar.io skin","5 days bots","2 days bots","1 Gameplay with T.B","Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing"];
+/* Prize labels */
+const PRIZES = [
+  "Halloween Agar.io skin",
+  "Scar Agar.io skin",
+  "5 days bots",
+  "2 days bots",
+  "1 Gameplay with T.B",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing",
+  "Sorry — nothing"
+];
 
-/* ====== FIXED CODES PER TIER ======
-   Each tier (1..10) contains exactly 10 predefined codes.
-   Replace these strings with your real/generated codes if needed.
+/* LocalStorage keys */
+const FREE_SPIN_KEY = "tb_free_spin_used_v2";
+const USED_CODES_KEY = "tb_used_codes_v2";
+
+/* Fixed codes per tier (10 each) — edit these codes if you have your own list.
+   For production move code lists + validation to a server for security.
 */
-const codesByTier = {
+const CODES_BY_TIER = {
   1: ["TB1-001","TB1-002","TB1-003","TB1-004","TB1-005","TB1-006","TB1-007","TB1-008","TB1-009","TB1-010"],
   2: ["TB2-011","TB2-012","TB2-013","TB2-014","TB2-015","TB2-016","TB2-017","TB2-018","TB2-019","TB2-020"],
   3: ["TB3-021","TB3-022","TB3-023","TB3-024","TB3-025","TB3-026","TB3-027","TB3-028","TB3-029","TB3-030"],
@@ -99,24 +543,47 @@ const codesByTier = {
  10: ["TB10-091","TB10-092","TB10-093","TB10-094","TB10-095","TB10-096","TB10-097","TB10-098","TB10-099","TB10-100"]
 };
 
-/* For admin/debug: list codes in console (you can remove this in production) */
-console.log("Fixed demo codes per tier:", codesByTier);
+/* Debug: list codes in console (remove in production if secret) */
+console.log("CODES_BY_TIER:", CODES_BY_TIER);
 
-/* local used codes store */
-function loadUsedCodes(){ try{ return JSON.parse(localStorage.getItem(USED_CODES_KEY) || "[]"); }catch(e){return []} }
-function markCodeUsed(code){ const arr = loadUsedCodes(); if(!arr.includes(code)){arr.push(code); localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); } }
-
-/* Helper: determine weight distribution by tier.
-   Returns an array of weights for 10 prizes. Higher tier increases chance for top prizes.
-*/
-function weightsForTier(tier){
-  const base = [5,4,3,2,1,30,20,15,10,10];
-  const mult = 1 + (tier - 1) * 0.18;
-  const weights = base.map((w,i)=> i<=4 ? Math.max(1, Math.round(w * mult)) : w);
-  return weights;
+/* load used codes from localStorage */
+function loadUsedCodes(){
+  try{ const raw = localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }
+  catch(e){ return []; }
+}
+function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); } catch(e){ console.warn("Could not save used codes:", e); } }
+function isCodeUsed(code){
+  if(!code) return false;
+  const arr = loadUsedCodes();
+  return arr.includes(code.toUpperCase());
+}
+function markCodeUsed(code){
+  if(!code) return;
+  const arr = loadUsedCodes();
+  const normalized = code.toUpperCase();
+  if(!arr.includes(normalized)){ arr.push(normalized); saveUsedCodes(arr); }
 }
 
-/* pick index by weights */
+/* Determine tier for a given code (returns tier number or null) */
+function findTierForCode(code){
+  if(!code) return null;
+  const normalized = code.toUpperCase();
+  for(let t=1;t<=10;t++){
+    const list = CODES_BY_TIER[t].map(c=>c.toUpperCase());
+    if(list.includes(normalized)) return t;
+  }
+  return null;
+}
+
+/* Weight function: higher tier increases weight for top prizes */
+function weightsForTier(tier){
+  // base weights (first 5 are desirable)
+  const base = [5,4,3,2,1,30,20,15,10,10];
+  const multiplier = 1 + (tier - 1) * 0.18; // tuned multiplier
+  return base.map((w,i) => i<=4 ? Math.max(1, Math.round(w * multiplier)) : w);
+}
+
+/* pick random index by weights */
 function weightedPick(weights){
   const sum = weights.reduce((a,b)=>a+b,0);
   let r = Math.random() * sum;
@@ -127,90 +594,113 @@ function weightedPick(weights){
   return weights.length-1;
 }
 
-/* spin action */
+/* Wheel spin implementation */
 let spinning = false;
-function performSpin({fast=false, tier=1} = {}){
+function spinWheel({fast=false, tier=1} = {}) {
+  if(!wheelEl){ console.warn("Wheel element missing"); return; }
   if(spinning) return;
   spinning = true;
-  spinButton.disabled = true;
-  fastSpinButton.disabled = true;
-  spinResult.textContent = "Spinning... good luck!";
+  if(spinBtn) spinBtn.disabled = true;
+  if(fastSpinBtn) fastSpinBtn.disabled = true;
+  if(spinResultEl) spinResultEl.textContent = "Spinning... good luck!";
+
   const weights = weightsForTier(tier);
   const chosenIndex = weightedPick(weights); // 0..9
-  const sliceDeg = 360 / prizes.length;
-  const randomOffset = (Math.random()* (sliceDeg - 6)) - (sliceDeg/2 - 3);
-  const targetDeg = (360 - (chosenIndex * sliceDeg + sliceDeg/2) + randomOffset) % 360;
+
+  const sliceDeg = 360 / PRIZES.length; // 36deg
+  const randomOffset = (Math.random() * (sliceDeg - 6)) - (sliceDeg/2 - 3);
+  const targetDeg = (360 - (chosenIndex * sliceDeg + sliceDeg/2) + randomOffset + 360) % 360;
   const extraTurns = fast ? (6 + Math.floor(Math.random()*4)) : (3 + Math.floor(Math.random()*3));
-  const finalDeg = extraTurns*360 + targetDeg;
+  const finalRotation = extraTurns * 360 + targetDeg;
   const duration = fast ? 3000 : 5000;
-  wheel.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
-  wheel.style.transform = `rotate(${finalDeg}deg)`;
-  wheel._rotation = finalDeg;
+
+  // Animate
+  wheelEl.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
+  wheelEl.style.transform = `rotate(${finalRotation}deg)`;
+  // Save rotation so subsequent spins continue smooth (not required but neat)
+  wheelEl.dataset.rotation = finalRotation;
+
   setTimeout(()=> {
     spinning = false;
-    wheel.style.transition = "";
-    const prize = prizes[chosenIndex] || "Sorry — nothing";
-    spinResult.textContent = `Result: ${prize}`;
-    if(!localStorage.getItem(FREE_SPIN_KEY)){
-      localStorage.setItem(FREE_SPIN_KEY, "1");
-    }
-    spinButton.disabled = false;
-    fastSpinButton.disabled = false;
+    if(spinBtn) spinBtn.disabled = false;
+    if(fastSpinBtn) fastSpinBtn.disabled = false;
+    const prize = PRIZES[chosenIndex] || "Sorry — nothing";
+    if(spinResultEl) spinResultEl.textContent = `Result: ${prize}`;
+    // mark free spin used if not already
+    if(!localStorage.getItem(FREE_SPIN_KEY)) localStorage.setItem(FREE_SPIN_KEY, "1");
   }, duration + 50);
 }
 
-/* spin button handler */
-spinButton.addEventListener("click", ()=> attemptSpin(false));
-fastSpinButton.addEventListener("click", ()=> attemptSpin(true));
-
-function attemptSpin(fast){
+/* Attempt spin: handles free spin or code-based spin */
+function attemptSpin(fast=false){
   if(spinning) return;
   const freeUsed = !!localStorage.getItem(FREE_SPIN_KEY);
-  const code = (codeInput.value||"").trim().toUpperCase();
+  const entered = (codeInput && codeInput.value) ? codeInput.value.trim().toUpperCase() : "";
+
   if(!freeUsed){
-    performSpin({fast, tier:1});
+    // allow free spin (tier 1 by default)
+    spinWheel({fast, tier:1});
     return;
   }
-  if(!code){
-    spinResult.textContent = "You already used your free spin. Enter a valid code to spin again.";
+
+  // Free used: require code
+  if(!entered){
+    if(spinResultEl) spinResultEl.textContent = "You already used your free spin. Enter a valid code to spin again.";
     return;
   }
-  // Validate code across tiers
-  let foundTier = null;
-  for(let t=1;t<=10;t++){
-    const list = codesByTier[t].map(c=>c.toUpperCase());
-    if(list.includes(code)){
-      foundTier = t;
-      break;
-    }
-  }
-  if(!foundTier){
-    spinResult.textContent = "Invalid code. Make sure you typed it exactly.";
+
+  const tier = findTierForCode(entered);
+  if(!tier){
+    if(spinResultEl) spinResultEl.textContent = "Invalid code. Make sure you typed it exactly.";
     return;
   }
-  // check used codes
-  const used = loadUsedCodes();
-  if(used.includes(code)){
-    spinResult.textContent = "This code was already used.";
+
+  if(isCodeUsed(entered)){
+    if(spinResultEl) spinResultEl.textContent = "This code has already been used.";
     return;
   }
-  // mark code used and spin with that tier
-  markCodeUsed(code);
-  codeInput.value = "";
-  spinResult.textContent = `Code accepted (Tier $${foundTier}). Spinning...`;
-  performSpin({fast, tier:foundTier});
+
+  // Use the code: mark and spin with appropriate tier
+  markCodeUsed(entered);
+  if(codeInput) codeInput.value = "";
+  if(spinResultEl) spinResultEl.textContent = `Code accepted (Tier $${tier}). Spinning...`;
+  spinWheel({fast, tier});
 }
 
-/* reset demo function */
+/* Hook up spin buttons */
+if(spinBtn) spinBtn.addEventListener("click", ()=> attemptSpin(false));
+if(fastSpinBtn) fastSpinBtn.addEventListener("click", ()=> attemptSpin(true));
+
+/* -------------------
+   Utility: reset demo state (for testing only)
+   ------------------- */
 window._tb_demo_reset_spins = function(){
   localStorage.removeItem(FREE_SPIN_KEY);
   localStorage.removeItem(USED_CODES_KEY);
-  alert("Demo spins reset (localStorage cleared).");
+  if(spinResultEl) spinResultEl.textContent = "Demo reset — free spin available.";
+  if(codeInput) codeInput.value = "";
+  console.info("Demo spin state reset.");
 };
 
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape") closeHalloween();
+/* -------------------
+   Accessibility & small polish
+   ------------------- */
+document.addEventListener("visibilitychange", () => {
+  if(!document.hidden) updateCountdown();
 });
+
+/* -------------------
+   Wire up small controls (menu, chat)
+   ------------------- */
+function initUI(){
+  // Show/hide menu overlay
+  if(menuOverlay) menuOverlay.addEventListener("click", closeMenu);
+  // attach open menu button (already inline)
+  // attach welcome animations handled in load
+}
+initUI();
+
+/* End of script */
 </script>
 
 </body>
