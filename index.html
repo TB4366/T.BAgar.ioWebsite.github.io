@@ -6,450 +6,286 @@
 <title>T.B AGAR.IO — Halloween Season</title>
 <meta name="theme-color" content="#0b0410">
 <meta name="description" content="T.B Agar.io — Halloween season, custom skins, videos and more.">
-<link rel="manifest" href="/manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="T.B Agar.io">
 <link rel="icon" href="/IMG_0561.jpeg" type="image/jpeg">
 
 <style>
-/* =========================
-   Base & Layout
-   ========================= */
+/* Basic + theme styling (kept compact) */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth;font-family:Inter,Arial,Helvetica,sans-serif}
-body{
-  margin:0;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(255,122,24,0.05), transparent 12%),
-    linear-gradient(180deg,#07020a 0%, #0b0410 60%, #050007 100%);
-  color:#fff;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  overflow-x:hidden;
-}
-
-/* Selection */
+body{margin:0;background:linear-gradient(180deg,#07020a,#0b0410);color:#fff;overflow-x:hidden}
 ::selection{background:#ff7a18;color:#fff}
 
-/* =========================
-   Loader (spooky)
-   ========================= */
-#loader{
-  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;
-  background:linear-gradient(180deg, rgba(0,0,0,0.88), rgba(4,0,8,0.95));z-index:99999;
-}
-.loader-spinner{
-  width:78px;height:78px;border-radius:50%;background:conic-gradient(#ff7a18 0 25%, #0b0b0b 25% 50%, #ffb86b 50% 75%, #0b0b0b 75% 100%);
-  animation: rotate360 4s linear infinite;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 40px rgba(0,0,0,.6);
-}
-.loader-center{width:40px;height:40px;border-radius:50%;background:#0b0610;border:4px solid rgba(255,122,24,.12);display:block}
-@keyframes rotate360{to{transform:rotate(360deg)}}
-#loader p{margin:0;color:#ffd1a3;font-weight:800}
+/* Loader */
+#loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(0,0,0,.9);z-index:9999}
+.loader-spinner{width:70px;height:70px;border-radius:50%;background:conic-gradient(#ff7a18 0 30%, #0b0b0b 30% 60%, #ffb86b 60% 90%);animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loader p{color:#ffd1a3;font-weight:800;margin:0}
 
-/* =========================
-   Decorative bats / fog
-   ========================= */
-.bats{position:fixed;inset:0;pointer-events:none;z-index:2}
-.bat{position:absolute;width:110px;height:34px;opacity:.12;filter:blur(.5px);animation:bat-fly 14s linear infinite}
-.bat::before{content:"";position:absolute;left:0;right:0;top:0;height:100%;background:linear-gradient(90deg,#000,#ff7a18);border-radius:24px;transform:skewX(-20deg)}
-@keyframes bat-fly{0%{transform:translateX(-30vw) translateY(0) scale(.8)}50%{transform:translateX(130vw) translateY(-18vh) scale(1.05)}100%{transform:translateX(-30vw) translateY(0) scale(.8)}}
+/* Header */
+header{position:sticky;top:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);padding:10px 18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,122,24,.06);z-index:1000}
+.header-title{font-weight:900}
+.menu-button{border-radius:10px;padding:8px;border:1px solid rgba(255,122,24,.12);background:#14060a;color:#fff}
 
-/* =========================
-   Header
-   ========================= */
-header{
-  position:sticky;top:0;z-index:1000;padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
-  display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(4,0,6,.75));backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,122,24,.06)
-}
-.header-left{display:flex;align-items:center;gap:12px}
-.header-logo{width:48px;height:48px;border-radius:10px;object-fit:cover}
-.header-title{font-weight:900;font-size:18px;letter-spacing:.6px}
-.menu-button{width:46px;height:46px;border-radius:12px;border:1px solid rgba(255,122,24,.12);background:#14060a;color:#fff;font-size:20px;cursor:pointer}
-
-/* =========================
-   Side menu
-   ========================= */
-#side-menu{position:fixed;top:0;right:-360px;width:340px;height:100%;background:linear-gradient(180deg,#0a0410,#050007);padding:calc(20px + env(safe-area-inset-top)) 18px;box-shadow:-20px 0 50px rgba(0,0,0,.6);z-index:5000;transition:right .28s ease;border-left:1px solid rgba(255,122,24,.04)}
-#side-menu.open{right:0}
-.menu-link{display:block;padding:12px;border-radius:12px;margin-bottom:8px;background:#09040a;border:1px solid rgba(255,122,24,.03);text-decoration:none;color:#fff;font-weight:800}
-
-/* overlay */
-.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:4999;display:none}
-.menu-overlay.show{display:block}
-
-/* =========================
-   Main layout
-   ========================= */
-main{max-width:1200px;margin:0 auto;padding:60px 18px calc(60px + env(safe-area-inset-bottom));}
-
-/* Hero */
-.hero{padding:34px;border-radius:22px;background:linear-gradient(145deg, rgba(255,122,24,.02), rgba(6,3,8,.7));border:1px solid rgba(255,122,24,.04);text-align:center;position:relative;overflow:hidden;margin-bottom:32px}
-.hero::after{content:"";position:absolute;left:50%;top:-110px;width:260px;height:260px;background:radial-gradient(circle,#ff7a18 0%,transparent 45%);filter:blur(36px);transform:translateX(-50%)}
-.hero h1{font-size:clamp(30px,6vw,56px);margin:0;font-weight:900;letter-spacing:2px}
+/* Main */
+main{max-width:1100px;margin:0 auto;padding:48px 18px}
+.hero{padding:28px;border-radius:16px;background:linear-gradient(145deg, rgba(255,122,24,.02), rgba(6,3,8,.75));text-align:center;border:1px solid rgba(255,122,24,.04)}
+.hero h1{font-size:clamp(28px,5vw,48px);margin:0 0 10px;font-weight:900}
 .hero h1 span{color:#ff7a18}
-.hero p{color:#cbd5e1;margin-top:10px}
+.hero p{color:#cbd5e1}
 
-/* jump animation */
-@keyframes jumpIn{0%{opacity:0;transform:translateY(26px) scale(.96)}30%{opacity:1;transform:translateY(-6px) scale(1.04)}60%{transform:translateY(2px)}100%{transform:translateY(0)}}
-@keyframes fadeLoop{0%{opacity:1}60%{opacity:1}100%{opacity:0}}
-#welcome-text{display:inline-block;animation:jumpIn .7s cubic-bezier(.2,.9,.3,1), fadeLoop 2.8s linear 1s infinite}
+/* Community area */
+.community-wrap{text-align:center;margin:18px 0}
+.discord-button{display:inline-flex;gap:10px;align-items:center;padding:10px 16px;border-radius:12px;background:#5865f2;border:2px solid #ff7a18;color:#fff;font-weight:800;text-decoration:none}
 
-/* =========================
-   Channel & Discord area
-   ========================= */
-.section-title{text-align:center;margin-bottom:12px}
-.video-slider{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
-.video-card{flex:0 0 min(88vw,520px);border-radius:14px;background:#08030a;border:1px solid rgba(255,122,24,.04);overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.45)}
+/* Videos */
+.video-slider{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px}
+.video-card{flex:0 0 min(88vw,480px);background:#08030a;border-radius:12px;overflow:hidden;border:1px solid rgba(255,122,24,.04)}
 .video-card iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
 
-/* discord callout above videos */
-.community-wrap{text-align:center;margin:18px 0 8px}
-.join-text{font-weight:900;color:#ffd1a3;margin-bottom:8px}
-.discord-button{display:inline-flex;gap:10px;align-items:center;padding:12px 18px;border-radius:14px;background:#5865f2;border:2px solid #ff7a18;color:#fff;font-weight:800;text-decoration:none;box-shadow:0 8px 30px rgba(88,101,242,.12)}
-.discord-button:hover{transform:translateY(-3px)}
-
-/* =========================
-   Options / Halloween slot
-   ========================= */
-.options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
-.option{background:linear-gradient(180deg,#0a0410,#07020a);padding:18px;border-radius:14px;text-align:center;font-weight:900;color:#fff;border:1px solid rgba(255,122,24,.03);cursor:pointer}
-.option:hover{transform:translateY(-4px);border-color:rgba(255,122,24,.12)}
-.hallow-btn{background:linear-gradient(180deg,#ff7a18,#9c3cff);padding:12px 18px;border-radius:12px;color:#0b0410;border:2px solid #ff7a18;font-weight:900;cursor:pointer}
+/* Options */
+.options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.option{background:linear-gradient(180deg,#0a0410,#07020a);padding:14px;border-radius:12px;text-align:center;font-weight:800;border:1px solid rgba(255,122,24,.03)}
+.hallow-btn{background:linear-gradient(180deg,#ff7a18,#9c3cff);padding:10px 14px;border-radius:10px;color:#0b0410;border:2px solid #ff7a18;font-weight:900;cursor:pointer}
 .hallow-timer{color:#ffd1a3;margin-top:8px;font-weight:800}
 
-/* =========================
-   Modal: Halloween giveaway (smaller and scrollable)
-   ========================= */
-#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:8000;padding:12px}
+/* Modal (smaller and scrollable) */
+#halloween-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:9998;padding:12px}
 #halloween-modal.open{display:flex}
-.hmodal{width:100%;max-width:880px;background:linear-gradient(180deg,#07020a,#050007);padding:14px;border-radius:12px;border:1px solid rgba(255,122,24,.06);box-shadow:0 30px 80px rgba(0,0,0,.6);max-height:calc(100vh - 120px);overflow:auto}
-/* reduced vertical size with overflow so top and bottom visible on small screens */
-.hmodal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:linear-gradient(180deg,rgba(7,2,6,.01),rgba(7,2,6,.01));padding-top:6px;padding-bottom:6px;z-index:5}
-.hmodal-title{font-weight:900;font-size:18px}
+.hmodal{width:100%;max-width:820px;background:linear-gradient(180deg,#07020a,#050007);padding:12px;border-radius:12px;border:1px solid rgba(255,122,24,.06);box-shadow:0 20px 60px rgba(0,0,0,.6);max-height:calc(100vh - 100px);overflow:auto}
+.hmodal-header{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:transparent;padding-bottom:8px;z-index:3}
+.hmodal-title{font-weight:900}
 .hmodal-close{background:#0b0610;border:2px solid #ff7a18;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
-.hmodal-divider{height:1px;background:linear-gradient(90deg, rgba(255,122,24,.03), rgba(255,255,255,.02));margin:12px 0}
+.hmodal-divider{height:1px;background:linear-gradient(90deg, rgba(255,122,24,.03), rgba(255,255,255,.02));margin:10px 0}
 
-/* wheel + legend - slightly smaller to fit in modal */
-.wheel-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
-.wheel{width:320px;height:320px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 12px 60px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
-.wheel{background:conic-gradient(
-  #ffd54f 0deg 36deg,
-  #ffffff 36deg 72deg,
-  #ffb86b 72deg 108deg,
-  #ffc85c 108deg 144deg,
-  #ff7a18 144deg 180deg,
-  #6b6b6b 180deg 360deg
-);}
-.wheel .center{width:84px;height:84px;border-radius:50%;background:#0b0610;border:8px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
-.pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:26px solid #ff7a18;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
+/* Wheel and idle rotate behavior */
+.wheel-wrap{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.wheel{width:320px;height:320px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;background:conic-gradient(#ffd54f 0deg 36deg,#ffffff 36deg 72deg,#ffb86b 72deg 108deg,#ffc85c 108deg 144deg,#ff7a18 144deg 180deg,#6b6b6b 180deg 360deg);box-shadow:0 10px 40px rgba(0,0,0,.6);transition:transform 5s cubic-bezier(.12,.85,.2,1)}
+.wheel.idle{animation:slowRotate 18s linear infinite}
+@keyframes slowRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.wheel .center{width:84px;height:84px;border-radius:50%;background:#0b0610;border:6px solid rgba(255,122,24,.06);display:flex;align-items:center;justify-content:center;font-weight:900}
+.pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:26px solid #ff7a18}
 
-/* legend & price list */
-.legend{flex:1;min-width:240px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.03)}
-.legend-item{display:flex;align-items:center;gap:12px;padding:6px 0}
-.legend-color{width:30px;height:26px;border-radius:6px}
-.legend-name{font-weight:800}
-.price-list{margin-top:12px;border-radius:8px;padding:8px;background:#09030a;border:1px solid rgba(255,122,24,.03);font-size:14px}
+/* Legend */
+.legend{flex:1;min-width:220px;background:linear-gradient(180deg,#08030a,#07020a);padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.03)}
+.legend-item{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.legend-color{width:28px;height:22px;border-radius:6px}
+.price-list{margin-top:12px;background:#09030a;padding:8px;border-radius:8px;border:1px solid rgba(255,122,24,.03);font-size:14px}
 .price-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px dashed rgba(255,122,24,.03)}
 .price-row:last-child{border-bottom:0}
-.price-label{color:#ffd1a3;font-weight:800}
 
-/* controls */
-.controls{display:flex;gap:10px;margin-top:16px;align-items:center}
-.input-code{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,122,24,.05);background:#0b0610;color:#fff}
-.spin-btn{padding:10px 16px;border-radius:12px;border:2px solid #ff7a18;background:#ff7a18;color:#0b0410;font-weight:900;cursor:pointer}
+/* Controls */
+.controls{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap}
+.input-code{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,122,24,.05);background:#0b0610;color:#fff}
+.spin-btn{padding:9px 12px;border-radius:10px;border:2px solid #ff7a18;background:#ff7a18;color:#0b0410;font-weight:900;cursor:pointer}
 .spin-btn.secondary{background:#6b21a8;border-color:#ff7a18;color:#fff}
-.spin-result{margin-top:12px;font-weight:900;color:#ffd1a3}
 
-/* Big code status banner */
-.code-status{margin-top:12px;padding:12px;border-radius:10px;font-weight:900;text-align:center;font-size:16px;display:none}
+/* Code status banners */
+.code-status{margin-top:10px;padding:12px;border-radius:10px;font-weight:900;text-align:center;font-size:15px;display:none}
 .code-status.valid{background:linear-gradient(90deg,#05250d,#0b3a1f);color:#a5ffbf;border:2px solid #2fd16a;display:block}
 .code-status.invalid{background:linear-gradient(90deg,#3b0b0b,#4f0b0b);color:#ffd1c3;border:2px solid #ff6b6b;display:block}
 
-/* footer */
-footer{text-align:center;padding:28px 18px calc(28px + env(safe-area-inset-bottom));color:#9aa3b1;border-top:1px solid rgba(255,122,24,.03)}
-footer a{color:#ffd1a3;text-decoration:none}
+/* Spin result */
+.spin-result{margin-top:12px;font-weight:900;color:#ffd1a3}
 
-/* responsive */
-@media(max-width:900px){.options-grid{grid-template-columns:repeat(2,1fr)}.wheel{width:280px;height:280px}.legend{min-width:200px}}
-@media(max-width:480px){.options-grid{grid-template-columns:1fr}.wheel{width:240px;height:240px}.hmodal{padding:10px}}
+/* Footer */
+footer{text-align:center;padding:24px 18px;color:#9aa3b1;border-top:1px solid rgba(255,122,24,.03)}
+
+/* Responsive */
+@media(max-width:900px){.options-grid{grid-template-columns:repeat(2,1fr)}.wheel{width:260px;height:260px}}
+@media(max-width:520px){.options-grid{grid-template-columns:1fr}.wheel{width:220px;height:220px}}
 </style>
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="loader" aria-hidden="false">
-  <div class="loader-spinner" aria-hidden="true"><span class="loader-center" aria-hidden="true"></span></div>
-  <p>Spooky loading... preparing Halloween surprises</p>
-</div>
+<!-- Loader -->
+<div id="loader"><div class="loader-spinner"></div><p>Spooky loading... preparing Halloween surprises</p></div>
 
-<!-- DECORATION -->
-<div class="bats" aria-hidden="true">
-  <div class="bat" style="top:6vh;left:-20vw;animation-delay:0s"></div>
-  <div class="bat" style="top:30vh;left:-30vw;animation-delay:3s;opacity:.18"></div>
-  <div class="bat" style="top:56vh;left:-40vw;animation-delay:6s;opacity:.12"></div>
-</div>
-
-<!-- MENU OVERLAY -->
-<div id="menu-overlay" class="menu-overlay" onclick="closeMenu()" aria-hidden="true"></div>
-
-<!-- SIDE MENU -->
-<nav id="side-menu" aria-label="Site navigation">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-    <div style="font-weight:900">T.B <span style="color:#ff7a18">AGAR.IO</span></div>
-    <button class="hmodal-close" onclick="closeMenu()" aria-label="Close menu">×</button>
-  </div>
-
-  <a class="menu-link" href="/index.html">Home</a>
-  <a class="menu-link" href="/custom-skins.html">Custom Skins</a>
-  <a class="menu-link" href="/key-access.html">Key Access</a>
-  <a class="menu-link" href="/mod-menu.html">Mod Menu</a>
-  <a class="menu-link" href="/paidskins.html">Paid Skins</a>
-  <a class="menu-link" href="/buy-account.html">Buy Account</a>
-  <a class="menu-link" href="/agar.io-skins.html">Agar.io Skins</a>
-
-  <div style="margin-top:18px;border-top:1px solid rgba(255,122,24,.03);padding-top:12px;color:#9aa3b1">
-    Follow T.B Agar.io
-    <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
-      <a class="menu-link" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
-      <a class="menu-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
-      <a class="menu-link" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
-    </div>
-    <div style="margin-top:12px;color:#7b7b7b">T.B Agar.io © 2026</div>
-  </div>
-</nav>
-
-<!-- HEADER -->
+<!-- Header -->
 <header>
-  <div class="header-left">
-    <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open channel">
-      <img class="header-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io">
-    </a>
-    <div class="header-title">T.B Agar.io — Halloween</div>
-  </div>
-  <div>
-    <button class="menu-button" onclick="openMenu()" aria-label="Open menu">☰</button>
-  </div>
+  <div class="header-title">T.B Agar.io — Halloween</div>
+  <button class="menu-button" onclick="toggleMenu()">☰</button>
 </header>
 
-<!-- MAIN -->
 <main>
-
-  <!-- HERO -->
-  <section class="hero" aria-labelledby="hero-title">
+  <section class="hero">
     <h1 id="welcome-text">WELCOME TO <span>T.B AGAR.IO</span></h1>
     <p>Your place for Agar.io skins, videos and spooky seasonal giveaways.</p>
   </section>
 
-  <!-- COMMUNITY CALL -->
-  <div class="community-wrap" role="region" aria-label="Join our community">
+  <div class="community-wrap">
     <div class="join-text">Join our community!</div>
-    <a class="discord-button" href="https://discord.gg/tbagario" target="_blank" rel="noopener" aria-label="Join our Discord">
-      <svg width="18" height="18" viewBox="0 0 245 240" aria-hidden="true" focusable="false"><path fill="#fff" d="M104.4 104.8c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.6-11.2-10.2-11.2zm36.2 0c-5.7 0-10.2 5-10.2 11.2 0 6.2 4.6 11.2 10.2 11.2 5.7 0 10.3-5 10.2-11.2 0-6.2-4.5-11.2-10.2-11.2z"/></svg>
-      Join Discord
-    </a>
-    <div style="color:#c9c9c9;margin-top:8px;font-size:13px">
-      Contact us on Discord if you need another spin or support:
-      <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a>
-    </div>
+    <a class="discord-button" href="https://discord.gg/tbagario" target="_blank" rel="noopener">Join Discord</a>
+    <div style="color:#c9c9c9;margin-top:8px;font-size:13px">Contact on Discord for more spins or help: <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a></div>
   </div>
 
-  <!-- CHANNEL VIDEOS -->
-  <section aria-labelledby="channel-title">
-    <div class="section-title">
-      <h2 id="channel-title">T.B CHANNEL</h2>
-      <p>Watch the latest videos from T.B Agar.io.</p>
-    </div>
-
-    <div class="video-slider" id="video-slider" aria-live="polite">
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/02x2YFHWh2o" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/d8DluzJAd2w" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/c234keB_q3c" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/MVl6S3JvxC0" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/Zg3-FACfyHE" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/TdoL76Jt22A" title="T.B Agar.io video" allowfullscreen></iframe></div>
-      <div class="video-card"><iframe src="https://www.youtube.com/embed/0Tk29twxcJ8" title="T.B Agar.io video" allowfullscreen></iframe></div>
+  <section>
+    <div class="section-title"><h2>T.B CHANNEL</h2><p>Watch latest videos.</p></div>
+    <div class="video-slider">
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/02x2YFHWh2o" title="video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/d8DluzJAd2w" title="video" allowfullscreen></iframe></div>
+      <div class="video-card"><iframe src="https://www.youtube.com/embed/c234keB_q3c" title="video" allowfullscreen></iframe></div>
     </div>
   </section>
 
-  <!-- OPTIONS & HALLOWEEN BUTTON -->
   <section>
-    <div class="section-title"><h2>EXPLORE T.B AGAR.IO</h2><p>Choose a section and explore the website.</p></div>
-
-    <div class="options-grid" role="navigation" aria-label="Site sections">
+    <div class="section-title"><h2>EXPLORE T.B AGAR.IO</h2><p>Choose a section.</p></div>
+    <div class="options-grid">
       <a class="option" href="/custom-skins.html">Custom Skins</a>
       <a class="option" href="/key-access.html">Key Access</a>
-
-      <div class="option" aria-hidden="false">
-        <button id="open-halloween" class="hallow-btn" aria-haspopup="dialog">HALLOWEEN SEASON</button>
-        <div id="hallow-countdown" class="hallow-timer" aria-live="polite">Ends in —</div>
-      </div>
-
+      <div class="option"><button id="open-halloween" class="hallow-btn">HALLOWEEN SEASON</button><div id="hallow-countdown" class="hallow-timer">Ends in —</div></div>
       <a class="option" href="/mod-menu.html">Mod Menu</a>
       <a class="option" href="/paidskins.html">Paid Skins</a>
       <a class="option" href="/buy-account.html">Buy Account</a>
     </div>
   </section>
-
 </main>
 
-<!-- HALLOWEEN MODAL -->
+<!-- Modal -->
 <div id="halloween-modal" aria-hidden="true">
   <div class="hmodal" role="dialog" aria-modal="true" aria-labelledby="hmodal-title">
     <div class="hmodal-header">
-      <div style="display:flex;gap:14px;align-items:center">
-        <div class="hmodal-title" id="hmodal-title">Halloween Season — Giveaway</div>
-        <div id="modal-end-time" style="color:#ffd1a3;font-weight:800"></div>
-      </div>
-      <div>
-        <button class="hmodal-close" onclick="closeHalloween()" aria-label="Close">×</button>
-      </div>
+      <div><div id="hmodal-title" class="hmodal-title">Halloween Season — Giveaway</div><div id="modal-end-time" style="color:#ffd1a3;font-weight:700"></div></div>
+      <button class="hmodal-close" onclick="closeHalloween()">×</button>
     </div>
 
-    <div class="hmodal-divider" aria-hidden="true"></div>
+    <div class="hmodal-divider"></div>
 
-    <div style="font-weight:900;margin-bottom:8px">Giveaway</div>
-    <div style="color:#c9c9c9;margin-bottom:8px">You get 1 free spin per device. If you've already spun, check your code and (if valid) you may spin once.</div>
+    <div style="font-weight:900">Giveaway</div>
+    <div style="color:#c9c9c9;margin-bottom:8px">One free spin per device. If you've already spun, check your code — valid code allows one spin.</div>
 
     <div class="wheel-wrap">
       <div style="position:relative">
         <div class="pointer" aria-hidden="true"></div>
-        <div id="wheel" class="wheel" role="img" aria-label="Prize wheel" style="transform:rotate(0deg)">
-          <div class="center">SPIN</div>
-        </div>
+        <div id="wheel" class="wheel idle" role="img" aria-label="Prize wheel"><div class="center">SPIN</div></div>
       </div>
 
-      <aside class="legend" aria-label="Prizes and price list">
-        <div style="font-weight:900;margin-bottom:10px">Prizes & legend</div>
+      <aside class="legend">
+        <div style="font-weight:900;margin-bottom:8px">Prizes</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffd54f"></div><div>Halloween Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffffff"></div><div>Scar Agar.io skin</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffb86b"></div><div>5 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ffc85c"></div><div>2 days bots</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#ff7a18"></div><div>1 Gameplay with T.B</div></div>
+        <div class="legend-item"><div class="legend-color" style="background:#6b6b6b"></div><div>Sorry — nothing (multiple slices)</div></div>
 
-        <div class="legend-item"><div class="legend-color" style="background:#ffd54f"></div><div class="legend-name">Halloween Agar.io skin</div></div>
-        <div class="legend-item"><div class="legend-color" style="background:#ffffff"></div><div class="legend-name">Scar Agar.io skin</div></div>
-        <div class="legend-item"><div class="legend-color" style="background:#ffb86b"></div><div class="legend-name">5 days bots</div></div>
-        <div class="legend-item"><div class="legend-color" style="background:#ffc85c"></div><div class="legend-name">2 days bots</div></div>
-        <div class="legend-item"><div class="legend-color" style="background:#ff7a18"></div><div class="legend-name">1 Gameplay with T.B</div></div>
-        <div class="legend-item"><div class="legend-color" style="background:#6b6b6b"></div><div class="legend-name">Sorry — nothing</div></div>
-
-        <div style="font-weight:900;margin-top:12px">Prize chance by spend tier</div>
-        <div class="price-list" aria-hidden="false">
-          <div class="price-row"><div class="price-label">$1 (free)</div><div>$1 tier — low chance on top prizes</div></div>
-          <div class="price-row"><div class="price-label">$2</div><div>7% chance</div></div>
-          <div class="price-row"><div class="price-label">$3</div><div>10% chance</div></div>
-          <div class="price-row"><div class="price-label">$4</div><div>13% chance</div></div>
-          <div class="price-row"><div class="price-label">$5</div><div>19% chance</div></div>
-          <div class="price-row"><div class="price-label">$6</div><div>23% chance</div></div>
-          <div class="price-row"><div class="price-label">$7</div><div>27% chance</div></div>
-          <div class="price-row"><div class="price-label">$8</div><div>35% chance</div></div>
-          <div class="price-row"><div class="price-label">$9</div><div>42% chance</div></div>
-          <div class="price-row"><div class="price-label">$10</div><div>49% chance</div></div>
+        <div style="font-weight:900;margin-top:12px">Prize chance by tier</div>
+        <div class="price-list">
+          <div class="price-row"><div class="price-label">$1 (free)</div><div>Low chance top prizes</div></div>
+          <div class="price-row"><div class="price-label">$2</div><div>7%</div></div>
+          <div class="price-row"><div class="price-label">$3</div><div>10%</div></div>
+          <div class="price-row"><div class="price-label">$4</div><div>13%</div></div>
+          <div class="price-row"><div class="price-label">$5</div><div>19%</div></div>
+          <div class="price-row"><div class="price-label">$6</div><div>23%</div></div>
+          <div class="price-row"><div class="price-label">$7</div><div>27%</div></div>
+          <div class="price-row"><div class="price-label">$8</div><div>35%</div></div>
+          <div class="price-row"><div class="price-label">$9</div><div>42%</div></div>
+          <div class="price-row"><div class="price-label">$10</div><div>49%</div></div>
         </div>
 
-        <div style="margin-top:10px;font-size:13px;color:#c9c9c9">
-          Need help or another code? Contact on Discord:
-          <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a>
-        </div>
+        <div style="margin-top:10px;font-size:13px;color:#c9c9c9">Need help? DM on Discord: <a href="https://discord.gg/tbagario" style="color:#ffd1a3">https://discord.gg/tbagario</a></div>
       </aside>
     </div>
 
     <div class="controls">
-      <input id="code-input" class="input-code" placeholder="Enter your code (if you already spun)" aria-label="Spin code">
-      <button id="check-code-btn" class="spin-btn" type="button">Check code</button>
-      <button id="spin-button" class="spin-btn" type="button" disabled>Spin</button>
-      <button id="fast-spin-button" class="spin-btn secondary" type="button" disabled>Spin (fast)</button>
+      <input id="code-input" class="input-code" placeholder="Enter code if applicable">
+      <button id="check-code-btn" class="spin-btn">Check code</button>
+      <button id="spin-button" class="spin-btn" disabled>Spin</button>
+      <button id="fast-spin-button" class="spin-btn secondary" disabled>Spin (fast)</button>
     </div>
 
     <div id="code-status" class="code-status" aria-live="polite"></div>
-    <div id="spin-result" class="spin-result" role="status" aria-live="polite"></div>
+    <div id="spin-result" class="spin-result" aria-live="polite"></div>
   </div>
 </div>
 
-<!-- Chat button -->
-<button id="chat-button" onclick="toggleChat()" aria-label="Open chat" style="position:fixed;right:18px;bottom:18px;width:58px;height:58px;border-radius:50%;border:0;background:#ff7a18;z-index:3000;box-shadow:0 8px 30px rgba(0,0,0,.35)">
-  <img src="/74BF9245-C3FD-4FAE-9CE1-D1AA11CFA7FF.jpeg" alt="Chat" style="width:100%;height:100%;object-fit:cover;border-radius:50%">
-</button>
-
-<!-- Chat box -->
-<div id="chat-box" style="position:fixed;right:18px;bottom:88px;width:min(360px,calc(100vw - 36px));background:#0b0610;border:1px solid rgba(255,122,24,.06);border-radius:18px;z-index:3001;display:none;overflow:hidden;box-shadow:0 15px 50px rgba(0,0,0,.5)">
-  <div style="padding:12px;background:linear-gradient(90deg,#0b0610,#100317);font-weight:900">T.B Agar.io Support</div>
-  <div id="chat-messages" style="height:220px;overflow-y:auto;padding:12px">
-    <div style="background:#0f0810;padding:10px;border-radius:8px;margin-bottom:8px">Welcome to T.B Agar.io Support!</div>
-  </div>
-  <div style="display:flex;border-top:1px solid rgba(255,122,24,.04)">
-    <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off" style="flex:1;padding:12px;border:0;background:#07020a;color:#fff">
-    <button onclick="sendMessage()" style="padding:0 14px;border:0;background:#ff7a18;color:#0b0410;font-weight:900">Send</button>
-  </div>
-</div>
-
-<!-- Footer -->
-<footer>
-  <p>© 2026 T.B Agar.io</p>
-  <p><a href="https://tb4366.github.io/T.BAgar.ioWebsite.github.io/index.html">T.B Agar.io Website</a></p>
-</footer>
+<footer><p>© 2026 T.B Agar.io</p></footer>
 
 <script>
-/* ============================================================================
-   Updated script:
-   - smaller modal
-   - code-check button with clear big messages (valid / invalid / used)
-   - only fixed codes from CODES_BY_TIER are accepted
-   - validated code enables one spin (code marked used only when spin pressed)
-   ============================================================================ */
+/* ---------- DOM refs ---------- */
+const loader = document.getElementById('loader');
+const openHalloween = document.getElementById('open-halloween');
+const modal = document.getElementById('halloween-modal');
+const wheel = document.getElementById('wheel');
+const checkCodeBtn = document.getElementById('check-code-btn');
+const spinBtn = document.getElementById('spin-button');
+const fastSpinBtn = document.getElementById('fast-spin-button');
+const codeInput = document.getElementById('code-input');
+const codeStatus = document.getElementById('code-status');
+const spinResult = document.getElementById('spin-result');
+const hallowCountdown = document.getElementById('hallow-countdown');
+const modalEndTime = document.getElementById('modal-end-time');
+const welcomeText = document.getElementById('welcome-text');
 
-/* DOM refs */
-const loader = document.getElementById("loader");
-const sideMenu = document.getElementById("side-menu");
-const menuOverlay = document.getElementById("menu-overlay");
-const openHalloweenBtn = document.getElementById("open-halloween");
-const halloweenModal = document.getElementById("halloween-modal");
-const hallowCountdown = document.getElementById("hallow-countdown");
-const modalEndTime = document.getElementById("modal-end-time");
-const wheelEl = document.getElementById("wheel");
-const checkCodeBtn = document.getElementById("check-code-btn");
-const spinBtn = document.getElementById("spin-button");
-const fastSpinBtn = document.getElementById("fast-spin-button");
-const codeInput = document.getElementById("code-input");
-const codeStatus = document.getElementById("code-status");
-const spinResult = document.getElementById("spin-result");
-const welcomeText = document.getElementById("welcome-text");
-const chatInput = document.getElementById("chat-input");
-const chatMessages = document.getElementById("chat-messages");
-const chatBox = document.getElementById("chat-box");
+/* ---------- Initial behavior ---------- */
+window.addEventListener('load', ()=> {
+  if(loader) loader.style.display = 'none';
+  animateWelcome();
+  setInterval(animateWelcome, 3200);
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+});
 
-/* Event helpers for menu */
-function openMenu(){ if(sideMenu) sideMenu.classList.add("open"); if(menuOverlay) menuOverlay.classList.add("show"); }
-function closeMenu(){ if(sideMenu) sideMenu.classList.remove("open"); if(menuOverlay) menuOverlay.classList.remove("show"); }
+/* Welcome animation helper */
+function animateWelcome(){
+  if(!welcomeText) return;
+  welcomeText.classList.remove('animated');
+  void welcomeText.offsetWidth;
+  welcomeText.classList.add('animated');
+}
 
-/* Chat simple */
-function toggleChat(){ if(!chatBox) return; chatBox.style.display = (chatBox.style.display === "block") ? "none" : "block"; }
-function sendMessage(){ if(!chatInput || !chatMessages) return; const t = chatInput.value.trim(); if(!t) return; const d=document.createElement("div"); d.style.background="#0b0610"; d.style.padding="8px"; d.style.borderRadius="8px"; d.style.marginBottom="8px"; d.textContent=t; chatMessages.appendChild(d); chatInput.value=""; chatMessages.scrollTop=chatMessages.scrollHeight; setTimeout(()=>{ const r=document.createElement("div"); r.style.background="#0f0810"; r.style.padding="8px"; r.style.borderRadius="8px"; r.style.marginBottom="8px"; r.textContent="Thanks — we'll respond on Discord or here soon."; chatMessages.appendChild(r); chatMessages.scrollTop=chatMessages.scrollHeight; },700); }
-if(chatInput) chatInput.addEventListener("keydown", (e)=> { if(e.key==="Enter") sendMessage(); });
+/* ---------- Countdown ---------- */
+const EVENT_END = new Date('2026-11-01T23:59:00');
+function updateCountdown(){
+  if(!hallowCountdown) return;
+  const now = new Date();
+  const d = EVENT_END - now;
+  if(d <= 0){
+    hallowCountdown.textContent = 'Event ended';
+    modalEndTime.textContent = 'Ends: Nov 1, 2026 23:59';
+    return;
+  }
+  const days = Math.floor(d/(24*3600*1000));
+  const hours = Math.floor((d%(24*3600*1000))/(3600*1000));
+  const mins = Math.floor((d%(3600*1000))/(60*1000));
+  hallowCountdown.textContent = `${days} days ${hours} hrs ${mins} min`;
+  modalEndTime.textContent = 'Ends: Nov 1, 2026 23:59';
+}
 
-/* Welcome animation and loader hide */
-function animateWelcome(){ if(!welcomeText) return; welcomeText.classList.remove("animated"); void welcomeText.offsetWidth; welcomeText.classList.add("animated"); }
-window.addEventListener("load", ()=> { animateWelcome(); setInterval(animateWelcome,3200); setTimeout(()=>{ if(loader) loader.style.display="none"; },700); });
+/* ---------- Modal open/close ---------- */
+openHalloween && openHalloween.addEventListener('click', ()=> {
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+  resetCodeState();
+  ensureIdleRotation();
+});
+function closeHalloween(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+document.addEventListener('keydown', e=> { if(e.key === 'Escape') closeHalloween(); });
 
-/* Countdown */
-const EVENT_END = new Date("2026-11-01T23:59:00");
-function updateCountdown(){ if(!hallowCountdown || !modalEndTime) return; const now=new Date(); const diff=EVENT_END-now; if(diff<=0){ hallowCountdown.textContent="Event ended"; modalEndTime.textContent="Ends: Nov 1, 2026 23:59"; return; } const days=Math.floor(diff/(24*3600*1000)); const hours=Math.floor((diff%(24*3600*1000))/(3600*1000)); const mins=Math.floor((diff%(3600*1000))/(60*1000)); hallowCountdown.textContent=`${days} days ${hours} hrs ${mins} min`; modalEndTime.textContent=`Ends: Nov 1, 2026 23:59`; }
-updateCountdown(); setInterval(updateCountdown,1000);
+/* ---------- Idle rotation behavior ---------- */
+/* wheel.idle class causes a slow continuous rotation.
+   When an actual spin starts we remove .idle and animate a single long rotation.
+*/
+function ensureIdleRotation(){
+  if(!wheel) return;
+  // Idle only if not currently spinning and user still allowed to spin or code not validated
+  if(!isSpinning && !isAnimatingSpin){
+    wheel.classList.add('idle');
+  }
+}
+function stopIdleRotation(){
+  if(!wheel) return;
+  wheel.classList.remove('idle');
+}
 
-/* Modal open/close */
-if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", ()=> { if(halloweenModal){ halloweenModal.classList.add("open"); halloweenModal.setAttribute("aria-hidden","false"); resetCodeState(); } });
-function closeHalloween(){ if(halloweenModal){ halloweenModal.classList.remove("open"); halloweenModal.setAttribute("aria-hidden","true"); } }
-document.addEventListener("keydown", (e)=> { if(e.key==="Escape") closeHalloween(); });
-
-/* =======================
-   Giveaway logic
-   ======================= */
-/* Prizes */
+/* ---------- Giveaway logic ---------- */
 const PRIZES = [
   "Halloween Agar.io skin","Scar Agar.io skin","5 days bots","2 days bots","1 Gameplay with T.B",
   "Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing","Sorry — nothing"
 ];
-/* LocalStorage keys */
-const FREE_SPIN_KEY = "tb_free_spin_used_v3";
-const USED_CODES_KEY = "tb_used_codes_v3";
+const FREE_SPIN_KEY = 'tb_free_spin_used_v4';
+const USED_CODES_KEY = 'tb_used_codes_v4';
 
-/* Fixed codes per tier (10 each) */
+/* fixed codes per tier (10 each) */
 const CODES_BY_TIER = {
   1: ["TB1-001","TB1-002","TB1-003","TB1-004","TB1-005","TB1-006","TB1-007","TB1-008","TB1-009","TB1-010"],
   2: ["TB2-011","TB2-012","TB2-013","TB2-014","TB2-015","TB2-016","TB2-017","TB2-018","TB2-019","TB2-020"],
@@ -462,190 +298,216 @@ const CODES_BY_TIER = {
   9: ["TB9-081","TB9-082","TB9-083","TB9-084","TB9-085","TB9-086","TB9-087","TB9-088","TB9-089","TB9-090"],
  10: ["TB10-091","TB10-092","TB10-093","TB10-094","TB10-095","TB10-096","TB10-097","TB10-098","TB10-099","TB10-100"]
 };
-/* Debug: list codes in console */
-console.log("CODES_BY_TIER (fixed):", CODES_BY_TIER);
 
-/* Used codes storage helpers */
-function loadUsedCodes(){ try{ const raw=localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){return []; } }
-function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){ console.warn("Could not save used codes", e); } }
-function isCodeUsed(code){ if(!code) return false; const arr = loadUsedCodes(); return arr.includes(code.toUpperCase()); }
+/* storage helpers */
+function loadUsedCodes(){ try{ const raw = localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
+function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){} }
+function isCodeUsed(code){ if(!code) return false; return loadUsedCodes().includes(code.toUpperCase()); }
 function markCodeUsed(code){ if(!code) return; const arr = loadUsedCodes(); const n = code.toUpperCase(); if(!arr.includes(n)){ arr.push(n); saveUsedCodes(arr); } }
-
-/* Find tier for a code */
-function findTierForCode(code){ if(!code) return null; const n = code.toUpperCase(); for(let t=1;t<=10;t++){ const list = CODES_BY_TIER[t].map(v=>v.toUpperCase()); if(list.includes(n)) return t; } return null; }
-
-/* Weights per tier */
-function weightsForTier(tier){ const base=[5,4,3,2,1,30,20,15,10,10]; const mult = 1 + (tier - 1) * 0.18; return base.map((w,i)=> i<=4 ? Math.max(1, Math.round(w*mult)) : w); }
-function weightedPick(weights){ const sum = weights.reduce((a,b)=>a+b,0); let r = Math.random()*sum; for(let i=0;i<weights.length;i++){ if(r<weights[i]) return i; r -= weights[i]; } return weights.length-1; }
-
-/* Spin state */
-let spinning = false;
-/* validatedCode: holds code string if user checked and is valid (not yet consumed) */
-let validatedCode = null;
-
-/* Update UI for code status */
-function showCodeStatus(type, message){
-  if(!codeStatus) return;
-  codeStatus.className = "code-status";
-  codeStatus.textContent = message;
-  if(type === "valid") codeStatus.classList.add("valid");
-  else if(type === "invalid") codeStatus.classList.add("invalid");
-  else codeStatus.style.display = "none";
-}
-
-/* Reset code state when opening modal */
-function resetCodeState(){
-  validatedCode = null;
-  if(codeInput) codeInput.value = "";
-  if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable(); // enable only if free
-  if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
-  showCodeStatus("", "");
-  if(spinResult) spinResult.textContent = "";
-}
-
-/* Check if free spin is available */
+function findTierForCode(code){ if(!code) return null; const n = code.toUpperCase(); for(let t=1;t<=10;t++){ if(CODES_BY_TIER[t].map(c=>c.toUpperCase()).includes(n)) return t; } return null; }
 function isFreeSpinAvailable(){ return !localStorage.getItem(FREE_SPIN_KEY); }
 
-/* Spin wheel animation and outcome */
-function spinWheel({fast=false, tier=1} = {}){
-  if(!wheelEl) return;
-  if(spinning) return;
-  spinning = true;
-  if(spinBtn) spinBtn.disabled = true;
-  if(fastSpinBtn) fastSpinBtn.disabled = true;
-  if(spinResult) spinResult.textContent = "Spinning... good luck!";
+/* weights & pick */
+function weightsForTier(tier){ const base=[5,4,3,2,1,30,20,15,10,10]; const mult=1+(tier-1)*0.18; return base.map((w,i)=> i<=4 ? Math.max(1, Math.round(w*mult)) : w); }
+function weightedPick(weights){ const sum = weights.reduce((a,b)=>a+b,0); let r = Math.random()*sum; for(let i=0;i<weights.length;i++){ if(r < weights[i]) return i; r -= weights[i]; } return weights.length-1; }
 
+/* state */
+let validatedCode = null; // code confirmed by check but not yet consumed
+let isSpinning = false;
+let isAnimatingSpin = false;
+
+/* show code status */
+function showCodeStatus(type, message){
+  if(!codeStatus) return;
+  codeStatus.className = 'code-status';
+  codeStatus.textContent = message;
+  if(type === 'valid') codeStatus.classList.add('valid');
+  else if(type === 'invalid') codeStatus.classList.add('invalid');
+  else codeStatus.style.display = 'none';
+}
+
+/* reset state when opening modal */
+function resetCodeState(){
+  validatedCode = null;
+  if(codeInput) codeInput.value = '';
+  if(spinResult) spinResult.textContent = '';
+  // enable spin buttons only if free spin available
+  const free = isFreeSpinAvailable();
+  spinBtn.disabled = !free;
+  fastSpinBtn.disabled = !free;
+  if(!free){
+    // show hint that free spin used
+    showCodeStatus('invalid','You already used your free spin. Enter a valid code to spin again or DM T.B for more: https://discord.gg/tbagario');
+  } else {
+    showCodeStatus('', '');
+  }
+}
+
+/* check-code button */
+checkCodeBtn && checkCodeBtn.addEventListener('click', ()=>{
+  const code = codeInput ? (codeInput.value||'').trim().toUpperCase() : '';
+  if(!code){
+    showCodeStatus('invalid','Please enter a code to check.');
+    validatedCode = null;
+    // if free spin already used, keep spin disabled
+    if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+    if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+    return;
+  }
+  const tier = findTierForCode(code);
+  if(!tier){
+    showCodeStatus('invalid','This code is invalid.');
+    validatedCode = null;
+    if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+    if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+    return;
+  }
+  if(isCodeUsed(code)){
+    showCodeStatus('invalid','This code has already been used.');
+    validatedCode = null;
+    if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
+    if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
+    return;
+  }
+  // valid, not used
+  validatedCode = code;
+  showCodeStatus('valid', `Code valid (Tier $${tier}). You may spin one time.`);
+  // enable spin buttons
+  spinBtn.disabled = false;
+  fastSpinBtn.disabled = false;
+});
+
+/* Spin action */
+function beginSpin({fast=false} = {}){
+  if(isSpinning) return;
+  const freeAvailable = isFreeSpinAvailable();
+  // If free available and no validated code -> spin free (tier 1)
+  let tier = 1;
+  if(!freeAvailable){
+    // must have validated code
+    if(!validatedCode){
+      showCodeStatus('invalid','You already used free spin; enter and check a valid code or DM T.B for more: https://discord.gg/tbagario');
+      return;
+    }
+    // ensure code still unused
+    if(isCodeUsed(validatedCode)){
+      showCodeStatus('invalid','This code was used in the meantime.');
+      validatedCode = null;
+      return;
+    }
+    tier = findTierForCode(validatedCode) || 1;
+  }
+  // proceed to spin
+  performSpin({fast, tier, consumingCode: !freeAvailable && !!validatedCode});
+}
+
+spinBtn && spinBtn.addEventListener('click', ()=> beginSpin({fast:false}));
+fastSpinBtn && fastSpinBtn.addEventListener('click', ()=> beginSpin({fast:true}));
+
+/* performSpin: animate wheel, mark code used at end if consumingCode true */
+function performSpin({fast=false, tier=1, consumingCode=false}){
+  if(!wheel) return;
+  if(isSpinning) return;
+  isSpinning = true;
+  isAnimatingSpin = true;
+  // stop idle rotation
+  stopIdleRotation();
+  if(spinResult) spinResult.textContent = 'Spinning... good luck!';
+  // disable buttons while spinning
+  spinBtn.disabled = true;
+  fastSpinBtn.disabled = true;
+  checkCodeBtn.disabled = true;
+
+  // Select prize by weighted pick
   const weights = weightsForTier(tier);
   const chosenIndex = weightedPick(weights);
   const sliceDeg = 360 / PRIZES.length;
-  const randomOffset = (Math.random()*(sliceDeg - 6)) - (sliceDeg/2 - 3);
+  const randomOffset = (Math.random() * (sliceDeg - 6)) - (sliceDeg / 2 - 3);
   const targetDeg = (360 - (chosenIndex * sliceDeg + sliceDeg/2) + randomOffset + 360) % 360;
   const extraTurns = fast ? (6 + Math.floor(Math.random()*4)) : (3 + Math.floor(Math.random()*3));
   const finalRotation = extraTurns*360 + targetDeg;
   const duration = fast ? 3000 : 5000;
 
-  wheelEl.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
-  wheelEl.style.transform = `rotate(${finalRotation}deg)`;
-  wheelEl.dataset.rotation = finalRotation;
+  // apply transform animation (override idle)
+  wheel.style.transition = `transform ${duration}ms cubic-bezier(.12,.85,.2,1)`;
+  // apply rotation (read dataset for current rotation to ensure continuity)
+  const prev = parseFloat(wheel.dataset.rotation || '0') || 0;
+  const newRotation = prev + finalRotation;
+  wheel.style.transform = `rotate(${newRotation}deg)`;
+  wheel.dataset.rotation = newRotation;
 
+  // when spin ends
   setTimeout(()=> {
-    spinning = false;
-    if(spinBtn) spinBtn.disabled = true; // disable after spin (one spin)
-    if(fastSpinBtn) fastSpinBtn.disabled = true;
-    const prize = PRIZES[chosenIndex] || "Sorry — nothing";
-    if(spinResult) spinResult.textContent = `Result: ${prize}`;
-    // mark free spin used if it was free
-    if(!localStorage.getItem(FREE_SPIN_KEY)) localStorage.setItem(FREE_SPIN_KEY, "1");
-    // if a validated code was used for this spin, mark it used now
-    if(validatedCode){
+    isSpinning = false;
+    isAnimatingSpin = false;
+    // mark free spin used or code used
+    if(isFreeSpinAvailable()){
+      // consume free spin now
+      localStorage.setItem(FREE_SPIN_KEY, '1');
+    }
+    if(consumingCode && validatedCode){
       markCodeUsed(validatedCode);
+      // show message that code was used
+      showCodeStatus('invalid','Code used — you cannot use it again. DM T.B for more: https://discord.gg/tbagario');
       validatedCode = null;
-      showCodeStatus("invalid", "Code used — you cannot use it again.");
     }
-  }, duration + 50);
+    // show prize
+    const prize = PRIZES[chosenIndex] || 'Sorry — nothing';
+    if(spinResult) spinResult.textContent = `Result: ${prize}`;
+    // after spin, keep wheel idle rotating slowly if you want but usually keep it idle
+    ensureIdleRotation();
+    // re-enable check button for next time (but spin buttons remain disabled unless a code validated or free spin available)
+    checkCodeBtn.disabled = false;
+    // if free spin already used and no validated code, show DM message
+    if(!isFreeSpinAvailable() && !validatedCode){
+      showCodeStatus('invalid','You already used your free spin. DM T.B for more: https://discord.gg/tbagario');
+    }
+  }, duration + 60);
 }
 
-/* Attempt to spin: checks free state or validated code */
-function attemptSpin(fast=false){
-  if(spinning) return;
-  const freeAvailable = isFreeSpinAvailable();
-  if(freeAvailable){
-    // free spin consumes the free allowance at spin end (we set it in spinWheel)
-    spinWheel({fast, tier:1});
-    return;
-  }
-  // free not available: require validatedCode
-  if(!validatedCode){
-    showCodeStatus("invalid","No valid code checked. Enter and press Check code first.");
-    return;
-  }
-  // safety: ensure code still unused
-  if(isCodeUsed(validatedCode)){
-    showCodeStatus("invalid","This code has already been used.");
-    validatedCode = null;
-    if(spinBtn) spinBtn.disabled = true;
-    if(fastSpinBtn) fastSpinBtn.disabled = true;
-    return;
-  }
-  // use the validated code's tier for weights
-  const tier = findTierForCode(validatedCode) || 1;
-  spinWheel({fast, tier});
+/* mark code used helper */
+function markCodeUsed(code){
+  if(!code) return;
+  const used = loadUsedCodes();
+  const n = code.toUpperCase();
+  if(!used.includes(n)){ used.push(n); saveUsedCodes(used); }
 }
+/* storage helpers reused */
+function loadUsedCodes(){ try{ const raw = localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){return[];} }
+function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){} }
 
-/* Check code button logic: does not consume code, only validates and enables one spin */
-if(checkCodeBtn){
-  checkCodeBtn.addEventListener("click", ()=>{
-    const code = codeInput ? (codeInput.value || "").trim().toUpperCase() : "";
-    if(!code){
-      showCodeStatus("invalid","Please enter a code to check.");
-      validatedCode = null;
-      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
-      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
-      return;
-    }
-    const tier = findTierForCode(code);
-    if(!tier){
-      showCodeStatus("invalid","This code is invalid.");
-      validatedCode = null;
-      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
-      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
-      return;
-    }
-    if(isCodeUsed(code)){
-      showCodeStatus("invalid","This code has already been used.");
-      validatedCode = null;
-      if(spinBtn) spinBtn.disabled = !isFreeSpinAvailable();
-      if(fastSpinBtn) fastSpinBtn.disabled = !isFreeSpinAvailable();
-      return;
-    }
-    // Valid and unused
-    validatedCode = code;
-    showCodeStatus("valid",`This code is valid (Tier $${tier}). You may spin one time.`);
-    // enable spin buttons
-    if(spinBtn) spinBtn.disabled = false;
-    if(fastSpinBtn) fastSpinBtn.disabled = false;
-  });
-}
+/* check-code convenience: validate existence and unused status — message already handled above */
 
-/* hook spin buttons */
-if(spinBtn) spinBtn.addEventListener("click", ()=> attemptSpin(false));
-if(fastSpinBtn) fastSpinBtn.addEventListener("click", ()=> attemptSpin(true));
+/* show idle rotation at start */
+ensureIdleRotation();
 
-/* Reset code state when modal opens */
-function initializeModal(){
-  resetCodeState();
-  // Enable spin if free spin available
-  const free = isFreeSpinAvailable();
-  if(spinBtn) spinBtn.disabled = !free;
-  if(fastSpinBtn) fastSpinBtn.disabled = !free;
-}
-if(openHalloweenBtn) openHalloweenBtn.addEventListener("click", initializeModal);
-
-/* Demo reset helper (for testing) */
+/* demo helper to reset local state (only for testing) */
 window._tb_demo_reset_spins = function(){
   localStorage.removeItem(FREE_SPIN_KEY);
   localStorage.removeItem(USED_CODES_KEY);
-  if(spinResult) spinResult.textContent = "Demo reset — free spin available.";
-  if(codeInput) codeInput.value = "";
   validatedCode = null;
-  showCodeStatus("", "");
+  if(codeStatus) { codeStatus.className='code-status'; codeStatus.style.display='none'; }
+  if(spinResult) spinResult.textContent = 'Demo reset — free spin available.';
   if(spinBtn) spinBtn.disabled = false;
   if(fastSpinBtn) fastSpinBtn.disabled = false;
-  console.info("Demo spin state reset.");
+  ensureIdleRotation();
+  console.info('Demo reset');
 };
 
-/* small accessibility behavior */
-document.addEventListener("visibilitychange", ()=> { if(!document.hidden) updateCountdown(); });
+/* menu toggle (simple) */
+function toggleMenu(){ const el = document.getElementById('side-menu'); if(!el) { createSideMenu(); return; } if(el.classList.contains('open')) el.classList.remove('open'); else el.classList.add('open'); }
 
-/* Utility functions (re-used) */
-function loadUsedCodes(){ try{ const raw=localStorage.getItem(USED_CODES_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
-function findTierForCode(code){ if(!code) return null; const n = code.toUpperCase(); for(let t=1;t<=10;t++){ const list=CODES_BY_TIER[t].map(v=>v.toUpperCase()); if(list.includes(n)) return t; } return null; }
-function isCodeUsed(code){ if(!code) return false; return loadUsedCodes().includes(code.toUpperCase()); }
-function markCodeUsed(code){ if(!code) return; const arr = loadUsedCodes(); const n = code.toUpperCase(); if(!arr.includes(n)){ arr.push(n); saveUsedCodes(arr); } }
-function saveUsedCodes(arr){ try{ localStorage.setItem(USED_CODES_KEY, JSON.stringify(arr)); }catch(e){console.warn("save fail", e);} }
+/* optional: create side menu if missing (keeps file short) */
+function createSideMenu(){
+  const nav = document.createElement('nav'); nav.id='side-menu'; nav.style.cssText='position:fixed;top:0;right:0;width:300px;height:100%;background:#07020a;padding:20px;z-index:9999';
+  nav.innerHTML = '<button onclick="toggleMenu()">Close</button><hr><a href=\"/\">Home</a>';
+  document.body.appendChild(nav);
+}
 
-/* End script */
+/* When modal opens, ensure code state shows appropriate message */
+document.addEventListener('click', (e)=>{
+  if(e.target && e.target.id === 'open-halloween'){ resetCodeState(); ensureIdleRotation(); }
+});
 </script>
-
 </body>
 </html>
