@@ -2826,25 +2826,27 @@ footer a{
 <script>
 
 /* =========================
-   LOADER
+   LOADER (robuuste versie)
+   - verberg bij window.load
+   - fallback na 8s om te voorkomen dat de loader eeuwig blijft staan
 ========================= */
 
-setTimeout(
+function hideLoader() {
+  const loader = document.getElementById("loader");
+  if (loader) {
+    loader.style.display = "none";
+  }
+  // herstel eventueel overflow als die gewijzigd is
+  try {
+    document.body.style.overflow = "";
+  } catch (e) {
+    // silent
+  }
+}
 
-  () => {
-
-    const loader =
-      document.getElementById("loader");
-
-    if(loader){
-      loader.style.display = "none";
-    }
-
-  },
-
-  2000 + Math.random() * 2000
-
-);
+window.addEventListener("load", hideLoader);
+// Fallback: forceer verbergen na 8 seconden
+setTimeout(hideLoader, 8000);
 
 
 /* =========================
@@ -3473,7 +3475,11 @@ const helpStepsData = [
       { title: "Go to General --> VPN & Device Management", img: "/IMG_1456.png", text: "Open eSign and create an account or sign in." },
       { title: "Install the profile", img: "/singbox-profile.png", text: "Create any required profiles inside the eSign app following prompts." },
       { title: "Go back to the T.B. website --> install an e-sign mod that has a checkmark next to it", img: "/singbox-edit.png", text: "Follow the verification steps the app asks for (email/pincode)." },
-      { title: "Install the mod --> go to Settings --> General --> VPN & Device Management --> tap on eSign and select "Trust"; once you have confirmed the "Trust" action, restart your device.", img: "/IMG_2462.jpeg", text: "Close the instructions and open the app to check everything works." }
+      {
+        title: "Install the mod --> go to Settings --> General --> VPN & Device Management --> tap on eSign and select 'Trust'; once you have confirmed the 'Trust' action, restart your device.",
+        img: "/IMG_2462.jpeg",
+        text: "Close the instructions and open the app to check everything works."
+      }
     ]
   },
   {
