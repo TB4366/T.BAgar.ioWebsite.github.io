@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -7,211 +7,149 @@
   <meta name="theme-color" content="#020617" />
   <link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg" />
   <link rel="apple-touch-icon" href="/IMG_0561.jpeg" />
-  <meta name="robots" content="noindex,nofollow">
-
   <style>
-    /* =========================
-       RESET & BASE
-    ========================= */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
+    /* --------------------
+       Reset & base
+    -------------------- */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background: #020617;
-      color: #fff;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
-      overflow-x: hidden;
-      line-height: 1.4;
+      background:#020617;color:#fff;min-height:100vh;overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
     }
-    a { color: inherit; text-decoration: none; }
-    button { font: inherit; }
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;cursor:pointer}
 
-    /* =========================
-       BACKGROUND ACCENT
-    ========================= */
-    body::before {
-      content: "";
-      position: fixed;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle,#0ea5e9,transparent 70%);
-      top: -250px;
-      right: -200px;
-      opacity: .12;
-      z-index: -1;
-      pointer-events: none;
+    /* --------------------
+       Background accent
+    -------------------- */
+    body::before{
+      content:"";
+      position:fixed;
+      width:600px;height:600px;
+      background:radial-gradient(circle,#0ea5e9,transparent 70%);
+      top:-250px;right:-200px;opacity:.12;z-index:-1;pointer-events:none;
     }
 
-    /* =========================
-       LOADER
-    ========================= */
-    #loader {
-      position: fixed;
-      inset: 0;
-      background: #020617;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-      text-align: center;
-      color: #dbeafe;
-      font-size: 18px;
+    /* --------------------
+       Loader
+    -------------------- */
+    #loader{
+      position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+      background:#020617;z-index:99999;color:#dbeafe;font-size:18px;text-align:center;
     }
-    .spinner {
-      width: 44px;
-      height: 44px;
-      border: 5px solid rgba(255,255,255,.12);
-      border-top-color: #38bdf8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+    .spinner{width:44px;height:44px;border:5px solid rgba(255,255,255,.12);border-top-color:#38bdf8;border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* --------------------
+       Header
+    -------------------- */
+    header{
+      position:sticky;top:0;z-index:3000;display:flex;align-items:center;justify-content:space-between;
+      padding:calc(10px + env(safe-area-inset-top)) 18px 10px 18px;
+      background:rgba(2,6,23,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(14,165,233,.12);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .header-left{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;overflow:hidden;box-shadow:0 6px 30px rgba(14,165,233,.12)}
+    .logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .site-title{font-weight:800;font-size:18px}
+    .menu-btn{width:46px;height:46px;border-radius:12px;background:#071226;border:1px solid rgba(14,165,233,.18);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center}
+    .menu-btn:hover{background:#0b203d;border-color:rgba(14,165,233,.4)}
 
-    /* =========================
-       HEADER
-    ========================= */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 3000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(10px + env(safe-area-inset-top)) 18px 10px 18px;
-      background: rgba(2,6,23,.94);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(14,165,233,.12);
+    /* --------------------
+       Side menu
+    -------------------- */
+    .menu{position:fixed;top:0;right:-360px;width:340px;height:100vh;padding:calc(20px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#061126,#020617);border-left:1px solid rgba(14,165,233,.16);box-shadow:-20px 0 60px rgba(0,0,0,.5);transition:right .28s ease;z-index:4500;overflow:auto}
+    .menu.open{right:0}
+    .menu .brand{font-weight:900;font-size:17px;margin-bottom:14px}
+    .menu a{display:block;padding:12px;border-radius:10px;margin-bottom:8px;background:#071726;color:#fff;font-weight:700;border:1px solid rgba(14,165,233,.06)}
+    .menu a:hover{background:#0b203d}
+    .menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.44);z-index:4400;display:none}
+    .menu-overlay.show{display:block}
+
+    /* --------------------
+       Page layout
+    -------------------- */
+    main{max-width:1200px;margin:0 auto;padding:36px 18px 90px}
+    .hero{padding:22px;border-radius:12px;border:1px solid rgba(14,165,233,.06);background:linear-gradient(145deg,rgba(14,165,233,.02),rgba(7,18,38,.6));text-align:center;margin-bottom:28px}
+    .hero h1{font-size:30px;font-weight:900}
+    .hero p{color:#94a3b8;margin-top:8px}
+
+    /* --------------------
+       Section header + glowing line
+    -------------------- */
+    .section-center { text-align:center; margin-bottom:18px; }
+    .section-title { font-weight:900; font-size:20px; }
+    .section-sub { color:#94a3b8; margin-top:6px; font-size:14px; }
+
+    .glow-line{
+      height:4px;
+      width:80%;
+      max-width:900px;
+      margin:16px auto;
+      border-radius:40px;
+      background:linear-gradient(90deg,#0ea5e9,#2563eb);
+      box-shadow:0 6px 24px rgba(37,99,235,.18), 0 2px 8px rgba(14,165,233,.08);
+      opacity:0.95;
     }
-    .header-left { display:flex; align-items:center; gap:12px; }
-    .logo { width:48px; height:48px; border-radius:10px; overflow:hidden; box-shadow: 0 6px 30px rgba(14,165,233,.12); }
-    .logo img { width:100%; height:100%; object-fit:cover; display:block; }
-    .site-title { font-weight: 800; font-size: 18px; color: #fff; }
 
-    .menu-btn {
-      width:46px; height:46px; border-radius:12px;
-      background:#071226; border:1px solid rgba(14,165,233,.18);
-      color:#fff; font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer;
-    }
-    .menu-btn:hover { background:#0b203d; border-color: rgba(14,165,233,.4); }
+    /* --------------------
+       Mods grid
+    -------------------- */
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+    .card{background:linear-gradient(145deg,#08152a,#061025);border-radius:12px;padding:12px;border:1px solid rgba(14,165,233,.12);box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:10px;transition:transform .15s}
+    .card:hover{transform:translateY(-6px)}
+    .card img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+    .label{font-weight:900}
+    .meta{color:#94a3b8;font-size:13px}
+    .download{padding:10px 14px;border-radius:10px;background:#2563eb;border:none;color:#fff;font-weight:800;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+    .download.secondary{background:#0b203d;border:1px solid rgba(14,165,233,.06)}
 
-    /* =========================
-       SIDE MENU
-    ========================= */
-    .menu {
-      position: fixed;
-      top: 0;
-      right: -360px;
-      width: 340px;
-      max-width: 88vw;
-      height: 100vh;
-      padding: calc(20px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));
-      background: linear-gradient(180deg,#061126,#020617);
-      border-left: 1px solid rgba(14,165,233,.16);
-      box-shadow: -20px 0 60px rgba(0,0,0,.5);
-      transition: right .28s ease;
-      z-index: 4500;
-      overflow-y: auto;
-    }
-    .menu.open { right: 0; }
-    .menu .brand { font-weight:900; font-size:17px; margin-bottom:14px; }
-    .menu a { display:block; padding:12px; border-radius:10px; margin-bottom:8px; background:#071726; color:#fff; font-weight:700; border:1px solid rgba(14,165,233,.06); }
-    .menu a:hover { background:#0b203d; }
+    .overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);border-radius:12px;color:#fff;z-index:10;padding:20px;text-align:center}
 
-    .menu-overlay { position: fixed; inset:0; background: rgba(0,0,0,.44); z-index: 4400; display:none; }
-    .menu-overlay.show { display:block; }
+    /* --------------------
+       Tools & help
+    -------------------- */
+    .tools-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px}
+    .help-area{text-align:center;margin-top:20px}
+    .help-button{padding:12px 18px;border-radius:10px;background:#2563eb;border:none;color:#fff;font-weight:800;cursor:pointer}
+    .help-button:hover{background:#1d4ed8}
 
-    /* =========================
-       LAYOUT / MAIN
-    ========================= */
-    main { max-width: 1200px; margin: 0 auto; padding: 36px 18px 90px; }
+    /* --------------------
+       Help modal
+    -------------------- */
+    .help-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:99998;display:none;align-items:center;justify-content:center;padding:20px}
+    .help-modal-overlay.show{display:flex}
+    .help-modal{width:100%;max-width:820px;background:linear-gradient(145deg,#061126,#020617);padding:18px;border-radius:12px;border:1px solid rgba(14,165,233,.45);box-shadow:0 30px 100px rgba(0,0,0,.6);max-height:90vh;overflow:auto}
+    .help-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .help-option{padding:14px;border-radius:10px;background:linear-gradient(145deg,#08152a,#071226);border:1px solid rgba(14,165,233,.12);cursor:pointer}
+    .help-option-title{font-weight:900}
+    .help-option-sub{color:#64748b;margin-top:6px;font-size:13px}
 
-    .hero {
-      padding: 24px;
-      border-radius: 14px;
-      border: 1px solid rgba(14,165,233,.06);
-      background: linear-gradient(145deg, rgba(14,165,233,.02), rgba(7,18,38,.6));
-      margin-bottom: 28px;
-      text-align:center;
-    }
-    .hero h1 { font-size: 30px; font-weight:900; }
-    .hero p { color:#94a3b8; margin-top:8px; }
+    .topic-view{display:none}
+    .topic-view.show{display:block}
+    .steps-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:12px}
+    .step-card{background:linear-gradient(145deg,#08152a,#071226);padding:12px;border-radius:10px;border:1px solid rgba(14,165,233,.08)}
+    .step-number{display:inline-block;background:#2563eb;color:#fff;padding:6px 10px;border-radius:8px;font-weight:900;margin-bottom:8px}
 
-    /* =========================
-       GRID & CARD
-    ========================= */
-    .grid { display:grid; gap:18px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .card {
-      background: linear-gradient(145deg,#08152a,#061025);
-      border-radius:12px;
-      padding:12px;
-      border:1px solid rgba(14,165,233,.12);
-      box-shadow: 0 10px 30px rgba(0,0,0,.45);
-      display:flex; flex-direction:column; gap:10px; transition: transform .15s ease;
-    }
-    .card:hover { transform: translateY(-6px); }
-    .card img { width:100%; height:140px; object-fit:cover; border-radius:8px; }
-    .card .label { font-weight:900; font-size:15px; margin-top:6px; }
-    .card .meta { color:#94a3b8; font-size:13px; margin-top:4px; }
+    /* --------------------
+       Footer (centered)
+    -------------------- */
+    footer{padding:22px;text-align:center;border-top:1px solid rgba(14,165,233,.06);color:#94a3b8;margin-top:28px}
+    footer .copyright{color:#64748b;font-weight:700;margin-bottom:6px}
+    footer .contact-text{color:#cbd5e1;margin-bottom:10px}
+    footer .socials{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:8px}
+    .social{padding:8px 12px;border-radius:10px;background:#08152a;color:#fff;border:1px solid rgba(14,165,233,.08);font-weight:800}
 
-    .btn { display:inline-flex; gap:8px; align-items:center; justify-content:center; padding:10px 14px; border-radius:10px; background:#2563eb; border:none; color:#fff; font-weight:800; cursor:pointer; }
-    .btn.secondary { background:#0b203d; border:1px solid rgba(14,165,233,.06); }
-
-    /* =========================
-       HELP AREA
-    ========================= */
-    .help-area { text-align:center; margin-top:28px; }
-    .help-buttons { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:12px; }
-    .help-button { padding:12px 18px; border-radius:10px; background:#2563eb; color:#fff; border:none; font-weight:800; cursor:pointer; }
-    .help-button:hover { background:#1d4ed8; }
-
-    /* =========================
-       HELP MODAL
-    ========================= */
-    .help-modal-overlay{
-      position: fixed; inset:0; background: rgba(0,0,0,.78); z-index: 99998; display:none; align-items:center; justify-content:center; padding:20px;
-    }
-    .help-modal-overlay.show { display:flex; }
-    .help-modal {
-      width:100%; max-width:820px; background: linear-gradient(145deg,#061126,#020617); border-radius:12px; padding:18px; border:1px solid rgba(14,165,233,.45); box-shadow:0 30px 100px rgba(0,0,0,.6); max-height:90vh; overflow:auto;
-    }
-    .help-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
-    .help-title { font-weight:900; font-size:20px; }
-    .help-intro { color:#cbd5e1; text-align:center; margin-bottom:12px; }
-    .help-options { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
-    .help-option {
-      padding:14px; border-radius:10px; background: linear-gradient(145deg,#08152a,#071226); border:1px solid rgba(14,165,233,.12); cursor:pointer;
-    }
-    .help-option-title { font-weight: 900; }
-    .help-option-sub { color:#64748b; margin-top:6px; font-size:13px; }
-
-    .topic-view { display:none; }
-    .topic-view.show { display:block; }
-    .topic-back { padding:10px; border-radius:10px; background:#08152a; border:1px solid rgba(14,165,233,.12); color:#fff; cursor:pointer; margin-right:10px; }
-
-    .steps-grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); margin-top:12px; }
-    .step-card { background: linear-gradient(145deg,#08152a,#071226); padding:12px; border-radius:10px; border:1px solid rgba(14,165,233,.08); }
-    .step-number { display:inline-block; background:#2563eb; color:#fff; padding:6px 10px; border-radius:8px; font-weight:900; margin-bottom:8px; }
-
-    /* =========================
-       FOOTER (static)
-    ========================= */
-    footer { padding:22px 18px; text-align:center; border-top:1px solid rgba(14,165,233,.06); color:#94a3b8; margin-top:24px; }
-    footer .copyright { color:#64748b; font-weight:700; margin-bottom:6px; }
-    footer .contact-text { color:#cbd5e1; margin-bottom:10px; }
-    footer .socials { display:flex; gap:10px; justify-content:center; align-items:center; margin-top:8px; }
-    .social { padding:8px 12px; background:#08152a; border-radius:10px; color:#fff; font-weight:800; border:1px solid rgba(14,165,233,.08); }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-    @media (max-width: 720px) {
-      .help-options { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    /* --------------------
+       Responsive
+    -------------------- */
+    @media(max-width:720px){
+      .help-options{grid-template-columns:1fr}
+      .grid{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+      .tools-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -237,7 +175,7 @@
     <button class="menu-btn" onclick="toggleMenu()" aria-expanded="false" aria-controls="menu">☰</button>
   </header>
 
-  <!-- Side Menu -->
+  <!-- Side menu -->
   <nav id="menu" class="menu" aria-hidden="true" aria-label="Main navigation">
     <div class="brand">T.B <span style="color:#38bdf8">AGAR.IO</span></div>
     <a href="/index.html">Home</a>
@@ -253,175 +191,189 @@
     <a href="https://kahraba.in" target="_blank" rel="noopener">Kahraba Website</a>
 
     <div style="margin-top:12px;color:#94a3b8;font-size:13px">Follow</div>
-    <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener" class="menu-link">Discord</a>
-    <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" class="menu-link">YouTube</a>
-    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener" class="menu-link">Instagram</a>
+    <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
+    <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
 
     <div style="margin-top:18px;color:#64748b;font-size:12px;text-align:center">T.B Agar.io © 2026</div>
   </nav>
 
-  <!-- Main -->
+  <!-- Main content -->
   <main>
     <section class="hero" aria-label="Intro">
-      <h1>T.B MOD MENU</h1>
-      <p>Professionele verzameling Agar.io-mods — download veilig en eenvoudig.</p>
+      <h1>Mod Menu</h1>
+      <p>Download and explore available Agar.io mods, tools and useful resources.</p>
     </section>
 
-    <!-- Mods Section -->
-    <section aria-labelledby="mods-title">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div>
-          <div id="mods-title" style="font-weight:900;font-size:18px">Available <span style="color:#38bdf8">Mods</span></div>
-          <div style="color:#94a3b8;font-size:13px">Kies je versie en download direct</div>
-        </div>
-        <div>
-          <button class="btn" onclick="openHelpModal()" aria-haspopup="dialog">Help Mods</button>
-        </div>
-      </div>
+    <!-- Available Mods header (centered) -->
+    <div class="section-center" style="text-align:center;margin-bottom:8px">
+      <div class="section-title">Available Mods</div>
+      <div class="section-sub">Choose your version and download directly</div>
+    </div>
 
+    <!-- Glowing line -->
+    <div class="glow-line" aria-hidden="true"></div>
+
+    <!-- Mods grid -->
+    <section aria-labelledby="mods-title" style="margin-top:18px">
       <div class="grid" role="list">
-        <!-- Shark Mod iOS -->
+
+        <!-- Card: Shark iOS -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_9406.jpeg" alt="Shark Mod iOS">
           <div class="label">Shark Mod — iOS</div>
           <div class="meta">Version: 26.6.0 • 18-10-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa" hidden></a>
         </article>
 
-        <!-- Shark Mod Android -->
+        <!-- Card: Shark Android -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_9406.jpeg" alt="Shark Mod Android">
           <div class="label">Shark Mod — Android</div>
           <div class="meta">Version: 26.6.0 • 18-10-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk" hidden></a>
         </article>
 
-        <!-- Kahraba -->
+        <!-- Card: Kahraba -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_6587.png" alt="Kahraba Mod">
           <div class="label">Kahraba Mod</div>
           <div class="meta">Version: 26.6.0 • 05-07-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa" hidden></a>
         </article>
 
-        <!-- Kahraba + Shark -->
+        <!-- Card: Kahraba + Shark -->
         <article class="card" role="listitem" data-status="active">
-          <img src="/IMG_6587.png" alt="Kahraba + Shark Mod">
+          <img src="/IMG_6587.png" alt="Kahraba + Shark">
           <div class="label">Kahraba + Shark</div>
           <div class="meta">Version: 26.6.0 • 05-07-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa" hidden></a>
         </article>
 
-        <!-- Bite Skin Mod -->
+        <!-- Card: Bite Skin -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_6587.png" alt="Bite Skin Mod">
           <div class="label">Bite Skin Mod</div>
           <div class="meta">Version: 26.6.0 • 05-07-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa" hidden></a>
         </article>
 
-        <!-- Myu Mod -->
+        <!-- Card: Myu -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_6587.png" alt="Myu Mod">
           <div class="label">Myu Mod</div>
           <div class="meta">Version: 26.6.0 • 05-07-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa" hidden></a>
         </article>
 
-        <!-- T.B Mod (locked) -->
+        <!-- Card: T.B Mod (locked) -->
         <article class="card" role="listitem" data-status="not">
           <img src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg" alt="T.B Mod">
           <div class="label">T.B Mod (Kabrah)</div>
           <div class="meta">Version: 26.3.5 • 15-01-2026</div>
+          <div class="overlay" aria-hidden="true">Not Available</div>
           <div style="margin-top:auto">
-            <button class="btn secondary" disabled>Unavailable</button>
+            <button class="download secondary" disabled>Unavailable</button>
           </div>
         </article>
 
-        <!-- Spotify Mod -->
+        <!-- Card: Spotify -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_4318.png" alt="Spotify Premium Mod">
           <div class="label">Spotify Premium Mod</div>
           <div class="meta">Version: 9.0.66 • 03-08-2025</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa" hidden></a>
         </article>
 
-        <!-- DNS Profile -->
+        <!-- Card: DNS Profile -->
         <article class="card" role="listitem" data-status="active">
           <img src="/IMG_2462.jpeg" alt="DNS Profile">
           <div class="label">DNS Profile</div>
           <div class="meta">Available for iPhone (iOS) • 14-09-2026</div>
+          <div class="overlay" aria-hidden="true"></div>
           <div style="margin-top:auto">
-            <a href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig" target="_blank" rel="noopener">
-              <button class="btn">Download</button>
-            </a>
+            <button class="download" aria-haspopup="dialog">Download</button>
           </div>
+          <a class="download-link" href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig" hidden></a>
         </article>
 
       </div>
     </section>
 
-    <!-- Tools -->
-    <section style="margin-top:28px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <div>
-          <div style="font-weight:900;font-size:18px">Agar.io <span style="color:#38bdf8">Tools</span></div>
-          <div style="color:#94a3b8;font-size:13px">Handige websites & panels</div>
-        </div>
-      </div>
+    <!-- Glowing line after mods -->
+    <div class="glow-line" aria-hidden="true" style="margin-top:26px"></div>
 
-      <div class="grid">
-        <article class="card">
-          <img src="/IMG_0321.jpeg" alt="Bite Bots Panel">
-          <div class="label">Bite Bots Panel</div>
-          <div class="meta">Version: 26.6.0 • 19-08-2026</div>
-          <div style="margin-top:auto">
-            <a href="https://biteyt.com/bots" target="_blank" rel="noopener"><button class="btn">Open</button></a>
-          </div>
-        </article>
+    <!-- Tools header centered -->
+    <div class="section-center" style="text-align:center;margin-top:18px">
+      <div class="section-title">Agar.io Tools</div>
+      <div class="section-sub">Useful websites &amp; panels</div>
+    </div>
 
+    <!-- Tools (Kahraba, Bite) -->
+    <section style="margin-top:12px">
+      <div class="tools-grid">
         <article class="card">
           <img src="/IMG_0322.jpeg" alt="Kahraba Website">
           <div class="label">Kahraba Website</div>
           <div class="meta">Version: 26.6.0 • 21-08-2026</div>
           <div style="margin-top:auto">
-            <a href="https://kahraba.in" target="_blank" rel="noopener"><button class="btn">Open</button></a>
+            <a href="https://kahraba.in" target="_blank" rel="noopener"><button class="download">Open</button></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <img src="/IMG_0321.jpeg" alt="Bite Bots Panel">
+          <div class="label">Bite Bots Panel</div>
+          <div class="meta">Version: 26.6.0 • 19-08-2026</div>
+          <div style="margin-top:auto">
+            <a href="https://biteyt.com/bots" target="_blank" rel="noopener"><button class="download">Open</button></a>
           </div>
         </article>
       </div>
     </section>
 
+    <!-- Glowing line after tools -->
+    <div class="glow-line" aria-hidden="true" style="margin-top:22px"></div>
+
+    <!-- Help Mods button centered -->
+    <div class="help-area" style="margin-top:18px">
+      <button class="help-button" onclick="openHelpModal()">Help Mods</button>
+    </div>
+
+    <!-- divider line -->
+    <hr style="border:none;height:1px;background:linear-gradient(90deg,transparent,#2563eb,transparent);margin:26px 0;opacity:.6">
+
   </main>
 
-  <!-- Help Modal -->
+  <!-- Help modal -->
   <div id="help-modal-overlay" class="help-modal-overlay" aria-hidden="true">
     <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
       <div class="help-header">
@@ -429,7 +381,7 @@
           <div style="width:48px;height:48px;border-radius:10px;overflow:hidden"><img src="/IMG_0561.jpeg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
           <div>
             <div id="help-title" class="help-title">Help Mods</div>
-            <div style="color:#94a3b8;font-size:13px">Kies een onderwerp</div>
+            <div style="color:#94a3b8;font-size:13px">Choose a topic to see step-by-step instructions</div>
           </div>
         </div>
         <div>
@@ -437,41 +389,30 @@
         </div>
       </div>
 
-      <div class="help-intro">Hieronder vind je stap-voor-stap instructies per onderwerp.</div>
+      <div class="help-intro">We want to help you as best as possible. Choose a topic below.</div>
 
-      <!-- Options view -->
-      <div id="help-options" class="help-options" aria-hidden="false">
-        <div class="help-option" data-topic="0" tabindex="0">
-          <div class="help-option-title">How to install eSign</div>
-          <div class="help-option-sub">Installatie hulp voor eSign</div>
-        </div>
-        <div class="help-option" data-topic="1" tabindex="0">
-          <div class="help-option-title">How eSign works</div>
-          <div class="help-option-sub">Uitleg en beveiliging</div>
-        </div>
-        <div class="help-option" data-topic="2" tabindex="0">
-          <div class="help-option-title">How to install Agar.io mods</div>
-          <div class="help-option-sub">Download & installatie</div>
-        </div>
-        <div class="help-option" data-topic="3" tabindex="0">
-          <div class="help-option-title">How to configure Agar.io mods</div>
-          <div class="help-option-sub">Sing-box, script & VPN stappen</div>
-        </div>
+      <!-- Options -->
+      <div id="help-options" class="help-options">
+        <div class="help-option" data-topic="0" tabindex="0"><div class="help-option-title">How to install eSign</div><div class="help-option-sub">Installation help for eSign</div></div>
+        <div class="help-option" data-topic="1" tabindex="0"><div class="help-option-title">How eSign works</div><div class="help-option-sub">Explanation of features and security</div></div>
+        <div class="help-option" data-topic="2" tabindex="0"><div class="help-option-title">How to install Agar.io mods</div><div class="help-option-sub">Download & install steps</div></div>
+        <div class="help-option" data-topic="3" tabindex="0"><div class="help-option-title">How to configure Agar.io mods</div><div class="help-option-sub">Sing-box, script & VPN steps</div></div>
       </div>
 
-      <!-- Topic detail view -->
-      <div id="help-topic" class="topic-view" aria-hidden="true">
-        <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
-          <button class="topic-back" onclick="backToHelpOptions()">← Terug</button>
+      <!-- Topic view -->
+      <div id="help-topic" class="topic-view" aria-hidden="true" style="margin-top:12px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <button class="topic-back" onclick="backToHelpOptions()">← Back</button>
           <div id="topic-title" style="font-weight:900"></div>
         </div>
-        <div id="topic-steps" class="steps-grid" style="margin-top:12px"></div>
-        <div style="text-align:center;margin-top:12px"><button class="btn" onclick="backToHelpOptions()">Klaar</button></div>
+        <div id="topic-steps" class="steps-grid"></div>
+        <div style="text-align:center;margin-top:12px"><button class="btn" onclick="backToHelpOptions()">Done</button></div>
       </div>
+
     </div>
   </div>
 
-  <!-- Footer (static) -->
+  <!-- Footer (centered) -->
   <footer>
     <div class="copyright">© 2026 T.B Agar.io</div>
     <div class="contact-text">If you have questions, you can always contact us.</div>
@@ -482,64 +423,34 @@
     </div>
   </footer>
 
+  <!-- Verification modal (reused overlay inside card + logic below) -->
   <script>
-    // =========================
-    // Helper / initialization
-    // =========================
-    (function () {
-      // Hide loader after a short delay then show page content (footer is in flow)
+    /* Utility: hide loader after short time */
+    (function(){
       const loader = document.getElementById('loader');
-      setTimeout(() => {
-        if (loader) loader.style.display = 'none';
-      }, 800 + Math.random() * 1200);
+      setTimeout(() => { if(loader) loader.style.display = 'none'; }, 900 + Math.random()*1100);
     })();
 
-    // =========================
-    // Menu open/close
-    // =========================
-    function toggleMenu() {
+    /* Menu open/close */
+    function toggleMenu(){
       const menu = document.getElementById('menu');
       const overlay = document.getElementById('menu-overlay');
-      if (!menu) return;
-      const isOpen = menu.classList.contains('open');
-      if (isOpen) {
-        menu.classList.remove('open');
-        overlay.classList.remove('show');
-        document.querySelector('.menu-btn').setAttribute('aria-expanded','false');
-        menu.setAttribute('aria-hidden','true');
-      } else {
-        menu.classList.add('open');
-        overlay.classList.add('show');
-        document.querySelector('.menu-btn').setAttribute('aria-expanded','true');
-        menu.setAttribute('aria-hidden','false');
-      }
+      if(!menu) return;
+      const open = menu.classList.contains('open');
+      if(open){ menu.classList.remove('open'); overlay.classList.remove('show'); document.querySelector('.menu-btn').setAttribute('aria-expanded','false'); menu.setAttribute('aria-hidden','true'); }
+      else { menu.classList.add('open'); overlay.classList.add('show'); document.querySelector('.menu-btn').setAttribute('aria-expanded','true'); menu.setAttribute('aria-hidden','false'); }
     }
-    function closeMenu() {
-      const menu = document.getElementById('menu');
-      const overlay = document.getElementById('menu-overlay');
-      if (!menu) return;
-      menu.classList.remove('open');
-      overlay.classList.remove('show');
-      document.querySelector('.menu-btn').setAttribute('aria-expanded','false');
-      menu.setAttribute('aria-hidden','true');
-    }
+    function closeMenu(){ const menu = document.getElementById('menu'), overlay = document.getElementById('menu-overlay'); if(menu){menu.classList.remove('open'); menu.setAttribute('aria-hidden','true');} if(overlay) overlay.classList.remove('show'); document.querySelector('.menu-btn').setAttribute('aria-expanded','false'); }
 
-    // Close menu on ESC
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') {
-        closeMenu();
-        closeHelpModal();
-      }
-    });
+    // Close on ESC
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ closeMenu(); closeHelpModal(); } });
 
-    // =========================
-    // Help modal logic + topics
-    // =========================
-    const topics = [
+    /* Help modal logic */
+    const helpTopics = [
       {
         title: "How to install eSign",
         steps: [
-          "Open the App Store and search 'eSign'.",
+          "Open the App Store and search for 'eSign'.",
           "Install eSign and open the app.",
           "Create or sign in to your account.",
           "Import the document and choose 'Sign'."
@@ -556,9 +467,9 @@
       {
         title: "How to install Agar.io mods",
         steps: [
-          "Click the 'Download' button for the desired mod on this page.",
-          "On iOS, you may need to install a profile: Settings → General → VPN & Device Management → Profile Download.",
-          "If a proxy/server is required, use Sing-box steps described in 'How to configure Agar.io mods'.",
+          "Click the Download button for the mod you want on this page.",
+          "On iOS you may need to install a profile: Settings → General → VPN & Device Management → Profile Download.",
+          "If a proxy/server is required, follow the Sing-box steps in 'How to configure Agar.io mods'.",
           "Open Agar.io and verify the mod is active."
         ]
       },
@@ -567,100 +478,160 @@
         steps: [
           "Install Sing-box from the App Store.",
           "Open Sing-box → Dashboard → Profile → + → Create Manually.",
-          "Name the profile (e.g. 'Agar.io Private Server').",
+          "Name the profile (for example 'Agar.io Private Server').",
           "Edit Content → Script and paste the server script.",
           "Start the profile (VPN) and open Agar.io to connect."
         ]
       }
     ];
 
-    function openHelpModal() {
+    function openHelpModal(){
       const overlay = document.getElementById('help-modal-overlay');
-      if (!overlay) return;
-      overlay.classList.add('show');
-      overlay.setAttribute('aria-hidden','false');
+      if(!overlay) return;
+      overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
       document.getElementById('help-options').style.display = 'grid';
-      document.getElementById('help-topic').classList.remove('show');
+      document.getElementById('help-topic').classList.remove('show'); document.getElementById('help-topic').setAttribute('aria-hidden','true');
       document.body.style.overflow = 'hidden';
     }
-
-    function closeHelpModal() {
+    function closeHelpModal(){
       const overlay = document.getElementById('help-modal-overlay');
-      if (!overlay) return;
-      overlay.classList.remove('show');
-      overlay.setAttribute('aria-hidden','true');
-      document.body.style.overflow = '';
+      if(!overlay) return;
+      overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); document.body.style.overflow = '';
     }
+    function backToHelpOptions(){ document.getElementById('help-options').style.display = 'grid'; document.getElementById('help-topic').classList.remove('show'); document.getElementById('help-topic').setAttribute('aria-hidden','true'); }
 
-    function backToHelpOptions(){
-      document.getElementById('help-options').style.display = 'grid';
-      document.getElementById('help-topic').classList.remove('show');
-      document.getElementById('help-topic').setAttribute('aria-hidden','true');
-    }
-
-    function showTopic(index) {
-      const t = topics[index];
-      if (!t) return;
+    function showTopic(index){
+      const t = helpTopics[index];
+      if(!t) return;
       document.getElementById('topic-title').textContent = t.title;
       const stepsContainer = document.getElementById('topic-steps');
       stepsContainer.innerHTML = '';
-      t.steps.forEach((s, i) => {
-        const card = document.createElement('div');
-        card.className = 'step-card';
-        card.innerHTML = '<div class="step-number">Stap ' + (i+1) + '</div><div style="margin-top:8px;color:#cbd5e1">' + s + '</div>';
-        stepsContainer.appendChild(card);
+      t.steps.forEach((s,i) => {
+        const el = document.createElement('div'); el.className = 'step-card';
+        el.innerHTML = '<div class="step-number">Step '+(i+1)+'</div><div style="margin-top:8px;color:#cbd5e1">'+s+'</div>';
+        stepsContainer.appendChild(el);
       });
       document.getElementById('help-options').style.display = 'none';
-      document.getElementById('help-topic').classList.add('show');
-      document.getElementById('help-topic').setAttribute('aria-hidden','false');
+      document.getElementById('help-topic').classList.add('show'); document.getElementById('help-topic').setAttribute('aria-hidden','false');
     }
 
-    // attach click listeners for help option tiles
     document.addEventListener('DOMContentLoaded', function(){
       document.querySelectorAll('.help-option').forEach(function(el){
-        el.addEventListener('click', function(){
-          const idx = parseInt(el.getAttribute('data-topic') || '0', 10);
-          showTopic(idx);
-        });
-        // keyboard accessibility: Enter/Space
-        el.addEventListener('keydown', function(e){
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            const idx = parseInt(el.getAttribute('data-topic') || '0', 10);
-            showTopic(idx);
-          }
-        });
+        el.addEventListener('click', function(){ const idx = parseInt(el.getAttribute('data-topic') || '0',10); showTopic(idx); });
+        el.addEventListener('keydown', function(e){ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); const idx = parseInt(el.getAttribute('data-topic') || '0',10); showTopic(idx); } });
       });
-
-      // click outside to close help modal
-      const helpOverlay = document.getElementById('help-modal-overlay');
-      if (helpOverlay) {
-        helpOverlay.addEventListener('click', function(e){
-          if (e.target === helpOverlay) closeHelpModal();
-        });
-      }
+      const overlay = document.getElementById('help-modal-overlay');
+      if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) closeHelpModal(); });
     });
 
-    // =========================
-    // Card "unavailable" handling is already set via data-status in markup.
-    // If you want additional behavior (e.g. overlay details) we can extend here.
-    // =========================
+    /* =========================
+       Download verification flow (YouTube + Instagram)
+       - Each .card has a .download button and a hidden .download-link (anchor)
+       - On click we show the overlay verification UI in the card
+       - After both verifications, enable Unlock -> start simulated download then navigate to .download-link
+    ========================= */
+    function randomized(min,max){ return Math.random()*(max-min)+min; }
 
-    // Ensure links open in new tab when appropriate (progressive enhancement)
-    document.querySelectorAll('.card a').forEach(a => { a.setAttribute('rel','noopener'); });
+    document.addEventListener('DOMContentLoaded', function(){
+      document.querySelectorAll('.card').forEach(function(card){
+        const status = card.getAttribute('data-status');
+        const downloadBtn = card.querySelector('.download');
+        const overlay = card.querySelector('.overlay');
+        const linkEl = card.querySelector('.download-link');
+        const finalLink = linkEl ? linkEl.getAttribute('href') : '#';
 
-    // =========================
-    // Accessibility / small UX improvements
-    // =========================
-    // focus management when opening help modal
-    (function() {
-      const helpBtn = document.querySelector('.btn');
-      document.addEventListener('keydown', function(e){
-        if (e.key === 'Tab') {
-          // no-op placeholder for further focus traps if desired
+        // If card marked "not", show overlay text and disable button
+        if(status === 'not'){
+          if(overlay){ overlay.style.display = 'flex'; overlay.textContent = 'Not Available'; }
+          if(downloadBtn){ downloadBtn.disabled = true; downloadBtn.classList.add('secondary'); downloadBtn.innerText = 'Unavailable'; }
+          return;
         }
+
+        if(!downloadBtn || !overlay) return;
+
+        downloadBtn.addEventListener('click', function(e){
+          e.preventDefault();
+          // show initial spinner in overlay
+          overlay.style.display = 'flex';
+          overlay.innerHTML = '<div style="text-align:center">Preparing download...<div class="spinner" style="margin:12px auto;"></div></div>';
+          // after short delay show verification
+          setTimeout(function(){ showVerificationUI(card, overlay, finalLink); }, randomized(1200, 2600));
+        });
       });
-    })();
+    });
+
+    function showVerificationUI(card, overlay, finalLink){
+      overlay.innerHTML = `
+        <div style="max-width:320px;text-align:center">
+          <div style="font-weight:900;color:#38bdf8;margin-bottom:10px">Verification</div>
+          <button id="ytBtn" style="width:100%;padding:10px;border-radius:10px;background:#2563eb;border:none;color:#fff;font-weight:800;cursor:pointer;margin-bottom:8px">Subscribe on YouTube</button>
+          <div id="ytStatus" style="margin-bottom:10px;color:#94a3b8">⏳</div>
+          <button id="igBtn" style="width:100%;padding:10px;border-radius:10px;background:#2563eb;border:none;color:#fff;font-weight:800;cursor:pointer;margin-bottom:8px">Follow on Instagram</button>
+          <div id="igStatus" style="margin-bottom:12px;color:#94a3b8">⏳</div>
+          <button id="unlockBtn" style="width:100%;padding:10px;border-radius:10px;background:gray;border:none;color:#fff;font-weight:900;cursor:pointer">🔒 Locked</button>
+        </div>
+      `;
+
+      let ytDone = false, igDone = false;
+
+      const ytBtn = document.getElementById('ytBtn');
+      const igBtn = document.getElementById('igBtn');
+      const ytStatus = document.getElementById('ytStatus');
+      const igStatus = document.getElementById('igStatus');
+      const unlockBtn = document.getElementById('unlockBtn');
+
+      if(ytBtn){
+        ytBtn.addEventListener('click', function(){
+          window.open('https://www.youtube.com/@T.B6', '_blank');
+          ytStatus.textContent = 'Checking...';
+          setTimeout(function(){ ytDone = true; ytStatus.textContent = '✔ Verified'; maybeUnlock(); }, randomized(3000,9000));
+        });
+      }
+      if(igBtn){
+        igBtn.addEventListener('click', function(){
+          window.open('https://www.instagram.com/t.bagar.io/', '_blank');
+          igStatus.textContent = 'Checking...';
+          setTimeout(function(){ igDone = true; igStatus.textContent = '✔ Verified'; maybeUnlock(); }, randomized(3000,9000));
+        });
+      }
+
+      function maybeUnlock(){
+        if(ytDone && igDone){
+          unlockBtn.style.background = '#22c55e';
+          unlockBtn.textContent = '🔓 Unlock';
+          unlockBtn.onclick = function(){
+            startDownloadSimulation(overlay, finalLink);
+          };
+        }
+      }
+
+      unlockBtn.onclick = function(){
+        alert('Please complete YouTube and Instagram verification first.');
+      };
+    }
+
+    function startDownloadSimulation(overlay, finalLink){
+      overlay.innerHTML = '<div style="text-align:center"><div id="dlText" style="font-weight:900">Downloading...</div><div class="spinner" style="margin:12px auto"></div></div>';
+      let texts = ['Downloading...','Preparing file...','Almost done...'];
+      let i = 0;
+      const interval = setInterval(function(){ i=(i+1)%texts.length; const el = document.getElementById('dlText'); if(el) el.textContent = texts[i]; }, 1800);
+      setTimeout(function(){
+        clearInterval(interval);
+        overlay.innerHTML = '<div style="text-align:center;color:#4ade80;font-weight:900">✔ Download complete</div>';
+        setTimeout(function(){
+          // navigate to final link if supplied, otherwise close overlay
+          if(finalLink && finalLink !== '#'){ window.location.href = finalLink; }
+          else{ overlay.style.display = 'none'; }
+        }, 1000);
+      }, randomized(9000,16000));
+    }
+
+    /* Utility: random helper used above */
+    function randomized(min,max){ return Math.floor(Math.random()*(max-min) + min); }
+
+    /* Accessibility: safe close of modals with Escape (help already handled above) */
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ closeHelpModal(); closeMenu(); } });
+
   </script>
 </body>
 </html>
