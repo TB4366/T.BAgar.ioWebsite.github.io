@@ -965,7 +965,7 @@ hr.section-line{
 
 
 /* =========================
-   PRIVATE SERVER MODAL
+   PRIVATE SERVER (reused styles for help steps modal)
 ========================= */
 
 .private-server-overlay{
@@ -2409,7 +2409,7 @@ footer a{
 
 <!-- =========================
      AGAR.IO TOOLS
-========================= -->
+======================== -->
 
 <hr class="section-line">
 
@@ -2571,16 +2571,13 @@ footer a{
 
     </button>
 
-    <button
-      class="private-server-button"
-      type="button"
-      onclick="openPrivateServer()">
-
-      ⚙ Agar.io Private Server
-
-    </button>
-
   </div>
+
+  <!-- lijn en contact tekst onder de Help Mods knop -->
+  <hr style="border:none;height:1px;margin:20px auto 8px;width:90%;background:linear-gradient(90deg,transparent,#2563eb,transparent);opacity:.8;">
+  <p style="text-align:center;color:#64748b;margin-top:6px;">
+    © 2026 T.B Agar.io If you have questions, you can always contact us. 💬 Discord ▶ YouTube ◎ Instagram
+  </p>
 
 </div>
 
@@ -2647,7 +2644,8 @@ footer a{
 
       <button
         class="help-option"
-        type="button">
+        type="button"
+        onclick="openHelpSteps(0)">
 
         <span class="help-option-title">
           How install eSign
@@ -2661,7 +2659,8 @@ footer a{
 
       <button
         class="help-option"
-        type="button">
+        type="button"
+        onclick="openHelpSteps(1)">
 
         <span class="help-option-title">
           Hoe werkt eSign?
@@ -2675,7 +2674,8 @@ footer a{
 
       <button
         class="help-option"
-        type="button">
+        type="button"
+        onclick="openHelpSteps(2)">
 
         <span class="help-option-title">
           How install Agar.io mods
@@ -2689,7 +2689,8 @@ footer a{
 
       <button
         class="help-option"
-        type="button">
+        type="button"
+        onclick="openHelpSteps(3)">
 
         <span class="help-option-title">
           Hoe stel je Agar.io mods in
@@ -2709,17 +2710,14 @@ footer a{
 
 
 <!-- =========================
-     PRIVATE SERVER MODAL
+     HELP STEPS MODAL (vervangt private server modal)
 ========================= -->
 
 <div
   class="private-server-overlay"
-  id="private-server-overlay">
+  id="help-steps-overlay">
 
-  <div class="private-server-modal">
-
-
-    <!-- HEADER -->
+  <div class="private-server-modal" role="dialog" aria-modal="true" aria-labelledby="help-steps-title">
 
     <div class="private-server-header">
 
@@ -2733,7 +2731,7 @@ footer a{
 
       <button
         class="private-server-close"
-        onclick="closePrivateServer()"
+        onclick="closeHelpSteps()"
         aria-label="Close">
 
         ×
@@ -2742,372 +2740,17 @@ footer a{
 
     </div>
 
-
-    <!-- TITLE -->
-
     <div class="private-server-title">
 
-      <h2>
-        Agar.io <span>Private Server</span>
+      <h2 id="help-steps-title">
+        Help: Steps
       </h2>
 
     </div>
 
-
-    <!-- STEPS -->
-
-    <div class="private-server-steps">
-
-
-      <!-- STEP 1 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          1
-        </div>
-
-        <h3>
-          Install Sing-box
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/singbox.png"
-            alt="Sing-box">
-
-          <div class="step-text">
-
-            <strong>
-              Install Sing-box
-            </strong>
-
-            <a
-              class="step-link"
-              href="https://apps.apple.com/nl/app/sing-box-mt/id6785326793"
-              target="_blank"
-              rel="noopener">
-
-              Open Sing-box on the App Store ↗
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 2 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          2
-        </div>
-
-        <h3>
-          Open your iPhone Settings
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/settings.png"
-            alt="Settings">
-
-          <div class="step-text">
-
-            Go to:
-
-            <strong>
-              Settings → General → VPN &amp; Device Management → Profile Download
-            </strong>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 3 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          3
-        </div>
-
-        <h3>
-          Install your Agar.io mod
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/agario.png"
-            alt="Agar.io">
-
-          <div class="step-text">
-
-            Install your Agar.io mod from this website.
-
-            <a
-              class="step-link"
-              href="/mod-menu.html">
-
-              Open T.B Agar.io Mod Menu ↗
-
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 4 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          4
-        </div>
-
-        <h3>
-          Open Sing-box and create a profile
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/singbox-profile.png"
-            alt="Sing-box Profile">
-
-          <div class="step-text">
-
-            Open the Sing-box app and go to
-            <strong>Dashboard</strong>.
-
-            <br><br>
-
-            Under Dashboard, open
-            <strong>Profile</strong>.
-
-            <br><br>
-
-            Press the <strong>+</strong> button in the
-            top-right corner.
-
-            <br><br>
-
-            Select <strong>New Profile</strong>.
-
-            <br><br>
-
-            Press the bottom button
-            <strong>Create Manually</strong>.
-
-            <br><br>
-
-            Press <strong>Name</strong> and enter a name,
-            for example:
-
-            <strong>Agar.io Private Server</strong>.
-
-            <br><br>
-
-            Press <strong>Create</strong>.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 5 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          5
-        </div>
-
-        <h3>
-          Add the server script
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/singbox-edit.png"
-            alt="Sing-box Edit Content">
-
-          <div class="step-text">
-
-            Press the <strong>+</strong> button again.
-
-            <br><br>
-
-            Tap <strong>Edit Content</strong>.
-
-            <br><br>
-
-            Open <strong>Script</strong> at the bottom.
-
-            <br><br>
-
-            Copy the script below and paste it into
-            the Sing-box app.
-
-            <button
-              class="script-button"
-              onclick="openScriptPopup()">
-
-              📋 View Script
-
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 6 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          6
-        </div>
-
-        <h3>
-          Turn on the VPN
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/vpn.png"
-            alt="VPN">
-
-          <div class="step-text">
-
-            Press the <strong>Play</strong> button in the
-            bottom-right corner of your screen.
-
-            <br><br>
-
-            When the VPN is active, open Agar.io.
-
-            <br><br>
-
-            You may need to wait a little while before
-            the server appears.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 7 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          7
-        </div>
-
-        <h3>
-          Copy the server script
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/script.png"
-            alt="Server Script">
-
-          <div class="step-text">
-
-            When the server appears, press the
-            <strong>Script</strong> button.
-
-            <br><br>
-
-            You will see the script.
-
-            <br><br>
-
-            Press <strong>Copy</strong> to copy it.
-
-            <br><br>
-
-            Press the <strong>×</strong> in the
-            top-right corner to return to the steps.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- STEP 8 -->
-
-      <div class="private-step">
-
-        <div class="step-number">
-          8
-        </div>
-
-        <h3>
-          Close the instructions
-        </h3>
-
-        <div class="step-content">
-
-          <img
-            class="step-image"
-            src="/IMG_0561.jpeg"
-            alt="T.B Agar.io">
-
-          <div class="step-text">
-
-            The <strong>×</strong> in the top-right corner
-            next to T.B Agar.io closes the instructions.
-
-            <br><br>
-
-            Press it when you are finished.
-
-          </div>
-
-        </div>
-
-      </div>
-
-
+    <div class="private-server-steps" id="help-steps-steps">
+      <!-- Steps worden via JavaScript ingeladen -->
     </div>
-
-
-    <!-- CONTACT -->
 
     <div class="private-contact">
 
@@ -3156,7 +2799,6 @@ footer a{
       </div>
 
     </div>
-
 
   </div>
 
@@ -3799,7 +3441,7 @@ document
 
 
 /* =========================
-   HELP MODS
+   HELP MODAL
 ========================= */
 
 function openHelpModal(){
@@ -3862,48 +3504,119 @@ if(helpOverlay){
 
 }
 
-
 /* =========================
-   PRIVATE SERVER
+   HELP STEPS (dynamisch per keuze)
 ========================= */
 
-function openPrivateServer(){
+const helpStepsData = [
+  {
+    title: "How install eSign",
+    steps: [
+      { title: "Install eSign app", img: "/IMG_0321.jpeg", text: "Open the App Store and install the eSign app." },
+      { title: "Open Settings", img: "/settings.png", text: "Go to Settings → General → VPN & Device Management." },
+      { title: "Create/Sign in", img: "/IMG_0561.jpeg", text: "Open eSign and create an account or sign in." },
+      { title: "Add profile", img: "/singbox-profile.png", text: "Create any required profiles inside the eSign app following prompts." },
+      { title: "Verify", img: "/singbox-edit.png", text: "Follow the verification steps the app asks for (email/pincode)." },
+      { title: "Finish", img: "/IMG_0561.jpeg", text: "Close the instructions and open the app to check everything works." }
+    ]
+  },
+  {
+    title: "Hoe werkt eSign?",
+    steps: [
+      { title: "Wat is eSign?", img: "/IMG_0322.jpeg", text: "eSign is een digitale handtekening en profielmanager voor apparaten." },
+      { title: "Account aanmaken", img: "/IMG_0321.jpeg", text: "Maak een account aan in de app of log in met je bestaande gegevens." },
+      { title: "Profielen beheren", img: "/singbox-profile.png", text: "Maak en beheer profielen via het dashboard in de app." },
+      { title: "Gebruik in apps", img: "/agario.png", text: "Activeer het profiel en open de app waarvoor je het nodig hebt." },
+      { title: "Problemen oplossen", img: "/settings.png", text: "Controleer instellingen en herstart de app bij fouten." }
+    ]
+  },
+  {
+    title: "How install Agar.io mods",
+    steps: [
+      { title: "Download mod", img: "/IMG_9406.jpeg", text: "Download de gewenste mod via de download-knop op deze pagina." },
+      { title: "Installeer profiel", img: "/IMG_2462.jpeg", text: "Installeer eventueel benodigde .mobileconfig profielen (indien aangegeven)." },
+      { title: "Open Settings", img: "/settings.png", text: "Ga naar Settings → General → VPN & Device Management en installeer certificaten/profielen." },
+      { title: "Installeer mod", img: "/agario.png", text: "Open het gedownloade bestand en volg de installatie-stappen." },
+      { title: "Controleer in game", img: "/IMG_0561.jpeg", text: "Start Agar.io en controleer of de mod werkt." }
+    ]
+  },
+  {
+    title: "Hoe stel je Agar.io mods in",
+    steps: [
+      { title: "Open de mod", img: "/agario.png", text: "Open de mod-applicatie of het profiel dat je hebt geïnstalleerd." },
+      { title: "Toegang verlenen", img: "/settings.png", text: "Geef de benodigde toestemmingen in Instellingen, zoals netwerk/profiel toegang." },
+      { title: "Configureren", img: "/singbox-edit.png", text: "Pas instellingen aan zoals skins, framerate of private servers (indien aanwezig)." },
+      { title: "Testen", img: "/IMG_9406.jpeg", text: "Start Agar.io en test of de instellingen het gewenste effect hebben." },
+      { title: "Hulp nodig?", img: "/IMG_0561.jpeg", text: "Neem contact met ons op via Discord/YouTube/Instagram als iets niet werkt." }
+    ]
+  }
+];
+
+function openHelpSteps(index){
 
   const overlay =
-    document.getElementById(
-      "private-server-overlay"
-    );
+    document.getElementById("help-steps-overlay");
 
-  if(overlay){
+  const titleEl =
+    document.getElementById("help-steps-title");
 
-    overlay.classList.add("show");
+  const stepsContainer =
+    document.getElementById("help-steps-steps");
 
-    document.body.style.overflow =
-      "hidden";
+  if(!overlay || !titleEl || !stepsContainer) return;
 
-  }
+  const data = helpStepsData[index] || helpStepsData[0];
+
+  titleEl.innerText = data.title;
+
+  // bouw de stappen op zoals de private-step markup
+  let html = "";
+
+  data.steps.forEach((s, i) => {
+
+    html += `
+      <div class="private-step">
+        <div class="step-number">${i+1}</div>
+        <h3>${s.title}</h3>
+        <div class="step-content">
+          <img class="step-image" src="${s.img}" alt="${s.title}">
+          <div class="step-text">${s.text}</div>
+        </div>
+      </div>
+    `;
+
+  });
+
+  stepsContainer.innerHTML = html;
+
+  overlay.classList.add("show");
+  document.body.style.overflow = "hidden";
 
 }
 
-
-function closePrivateServer(){
+function closeHelpSteps(){
 
   const overlay =
-    document.getElementById(
-      "private-server-overlay"
-    );
+    document.getElementById("help-steps-overlay");
 
   if(overlay){
 
     overlay.classList.remove("show");
-
-    document.body.style.overflow =
-      "";
+    document.body.style.overflow = "";
 
   }
 
 }
 
+/* click buiten sluit help steps modal */
+const helpStepsOverlay = document.getElementById("help-steps-overlay");
+if(helpStepsOverlay){
+  helpStepsOverlay.addEventListener("click", function(event){
+    if(event.target === this){
+      closeHelpSteps();
+    }
+  });
+}
 
 /* =========================
    SCRIPT POPUP
@@ -4039,7 +3752,7 @@ function showCopied(){
 
 
 /* =========================
-   ESC CLOSE
+   ESC CLOSE (globaal)
 ========================= */
 
 document.addEventListener(
@@ -4050,64 +3763,14 @@ document.addEventListener(
 
       closeScriptPopup();
 
-      closePrivateServer();
-
       closeHelpModal();
+
+      closeHelpSteps();
 
     }
 
   }
 );
-
-
-/* =========================
-   CLICK OUTSIDE
-========================= */
-
-const privateOverlay =
-  document.getElementById(
-    "private-server-overlay"
-  );
-
-if(privateOverlay){
-
-  privateOverlay.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closePrivateServer();
-
-      }
-
-    }
-  );
-
-}
-
-
-const scriptPopup =
-  document.getElementById(
-    "script-popup"
-  );
-
-if(scriptPopup){
-
-  scriptPopup.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closeScriptPopup();
-
-      }
-
-    }
-  );
-
-}
 
 </script>
 
