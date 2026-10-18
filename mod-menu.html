@@ -1,55 +1,332 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mod Menu — T.B Agar.io</title>
-<meta name="theme-color" content="#020617" />
-<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg" />
+<meta name="theme-color" content="#020617">
+<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+
 <style>
-/* --- base reset & core styles --- */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{
+/* =========================
+   BASE
+========================= */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
   font-family:Arial,Helvetica,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+html{ scroll-behavior:smooth; }
+body{
   background:#020617;
   color:#fff;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+button,a{
+  -webkit-tap-highlight-color:transparent;
 }
 
-/* loader (covers viewport while loading) */
+/* =========================
+   BACKGROUND
+========================= */
+body::before{
+  content:"";
+  position:fixed;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#0ea5e9,transparent 70%);
+  top:-250px;
+  right:-200px;
+  opacity:.18;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* =========================
+   LOADER
+========================= */
 #loader{
   position:fixed;
   inset:0;
+  background:#020617;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  font-size:20px;
+  z-index:2147483646;
+  text-align:center;
+}
+.spinner{
+  width:40px;
+  height:40px;
+  border:5px solid rgba(255,255,255,.15);
+  border-top:5px solid #38bdf8;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+/* =========================
+   HEADER
+========================= */
+header{
+  position:sticky;
+  top:0;
+  z-index:3000;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:calc(10px + env(safe-area-inset-top)) 18px 10px 18px;
+  background:rgba(2,6,23,.94);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(14,165,233,.25);
+}
+.left-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.logo-link{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  overflow:hidden;
+  flex-shrink:0;
+  box-shadow:0 5px 25px rgba(14,165,233,.2);
+}
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.site-title{
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.menu-btn{
+  width:46px;
+  height:46px;
+  border:1px solid rgba(14,165,233,.25);
+  background:#071226;
+  border-radius:12px;
+  color:#fff;
+  font-size:24px;
+  cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-direction:column;
-  gap:12px;
-  z-index:2147483646; /* below forced footer */
-  background:#020617;
-  color:#fff;
 }
-.spinner{width:44px;height:44px;border:5px solid rgba(255,255,255,.12);border-top:5px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+.menu-btn:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.5);
+}
 
-/* header/main simplified for brevity */
-header{position:sticky;top:0;z-index:3000;display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(2,6,23,.94);border-bottom:1px solid rgba(14,165,233,.12)}
-.logo img{width:44px;height:44px;border-radius:10px;object-fit:cover}
-main{max-width:1200px;margin:0 auto;padding:45px 18px 220px}
+/* =========================
+   SIDE MENU
+========================= */
+.menu{
+  position:fixed;
+  top:0;
+  right:-330px;
+  width:310px;
+  max-width:88vw;
+  height:100vh;
+  background:linear-gradient(180deg,#050d1c 0%,#020617 100%);
+  z-index:5000;
+  padding:calc(25px + env(safe-area-inset-top)) 20px calc(25px + env(safe-area-inset-bottom));
+  border-left:1px solid rgba(14,165,233,.22);
+  overflow-y:auto;
+  transition:right .3s ease;
+  box-shadow:-20px 0 50px rgba(0,0,0,.35);
+}
+.menu.open{ right:0; }
+.menu-close{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.menu-brand{ font-size:17px; font-weight:800; letter-spacing:.5px; }
+.menu-brand span{ color:#38bdf8; }
+.menu-close button{
+  width:40px; height:40px; border:1px solid rgba(14,165,233,.18); background:#08152a; color:#fff; border-radius:10px; font-size:25px; cursor:pointer;
+}
+.menu-label{
+  margin:22px 4px 9px; color:#64748b; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+}
+.menu a{
+  display:flex; align-items:center; width:100%; padding:14px; margin:7px 0; border-radius:12px; color:#fff; text-decoration:none; background:#08152a; border:1px solid rgba(14,165,233,.12); font-weight:700;
+}
+.menu a:hover{
+  background:#0b203d; border-color:rgba(14,165,233,.4);
+}
+.menu-social-title{
+  margin:25px 4px 10px; color:#64748b; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase;
+}
+.menu-socials{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.menu-social{
+  min-height:58px; display:flex; align-items:center; justify-content:center; text-align:center; border-radius:12px; color:#fff; text-decoration:none; background:#08152a; border:1px solid rgba(14,165,233,.15); font-size:13px; font-weight:800;
+}
+.menu-footer{
+  margin-top:22px; padding-top:18px; border-top:1px solid rgba(14,165,233,.1); color:#64748b; font-size:12px; text-align:center;
+}
+.menu-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.62); backdrop-filter:blur(2px); z-index:4500; display:none;
+}
+.menu-overlay.show{ display:block; }
 
-/* sample cards styles (kept from your site) */
-.grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.card{background:linear-gradient(145deg,#08152a,#071226);border-radius:18px;padding:12px;border:1px solid rgba(14,165,233,.18);box-shadow:0 10px 35px rgba(0,0,0,.22)}
-.card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block}
-.download{padding:11px 14px;background:#2563eb;border:none;border-radius:10px;color:#fff;cursor:pointer}
+/* =========================
+   MAIN
+========================= */
+main{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  padding:45px 18px 220px;
+}
 
-/* --- NEW: persistent footer container (empty initially) --- */
-/* Important: lots of !important to override any other styles */
-#persistent-footer {
+/* =========================
+   PAGE TITLE
+========================= */
+.page-title{
+  position:relative; text-align:center; margin-bottom:42px; padding:35px 20px; border:1px solid rgba(14,165,233,.12); border-radius:24px;
+  background:linear-gradient(145deg,rgba(14,165,233,.07),rgba(7,18,38,.75));
+  overflow:hidden;
+}
+.page-title::before{
+  content:""; position:absolute; width:220px; height:220px; background:rgba(14,165,233,.12); filter:blur(80px); border-radius:50%; top:-120px; left:50%; transform:translateX(-50%);
+}
+.page-title-content{ position:relative; z-index:1; }
+.page-title h1{
+  font-size:clamp(38px,7vw,58px); margin-bottom:12px; font-weight:900; letter-spacing:1px;
+}
+.page-title h1 span{ color:#38bdf8; }
+.page-title p{ color:#94a3b8; font-size:16px; line-height:1.6; max-width:650px; margin:0 auto; }
+
+/* =========================
+   GRID / CARD
+========================= */
+.section{ margin-bottom:55px; }
+.section-header{ text-align:center; margin-bottom:24px; }
+.section-header h2{ margin-bottom:7px; font-size:28px; font-weight:900; }
+.section-header h2 span{ color:#38bdf8; }
+.section-header p{ color:#64748b; font-size:14px; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; width:100%; }
+.card{
+  background:linear-gradient(145deg,#08152a,#071226); border-radius:18px; border:1px solid rgba(14,165,233,.18); padding:12px; display:flex; flex-direction:column; gap:10px; position:relative; box-shadow:0 10px 35px rgba(0,0,0,.22);
+}
+.card img{
+  width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:12px; display:block;
+}
+.status-label{ position:absolute; top:20px; left:20px; padding:6px 10px; border-radius:7px; font-weight:bold; display:none; z-index:2; }
+.update{ background:#ef4444; }
+.not{ background:#7c3aed; }
+.download{
+  padding:11px 14px; background:#2563eb; border:none; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; transition:transform .2s ease,background .2s ease;
+}
+.download:hover{ background:#1d4ed8; transform:translateY(-1px); }
+.locked{ background:#475569 !important; cursor:not-allowed !important; }
+.info{ color:#94a3b8; font-size:.9rem; line-height:1.4; }
+
+/* =========================
+   MODALS
+========================= */
+.help-modal-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(8px); z-index:9500; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.help-modal-overlay.show{ display:flex; }
+.help-modal{
+  width:100%; max-width:720px; max-height:90vh; overflow-y:auto; background:linear-gradient(145deg,#061126,#020617); border:1px solid rgba(14,165,233,.45); border-radius:20px; box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12); padding:18px;
+}
+.help-modal-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.help-modal-brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+.help-modal-logo{ width:48px; height:48px; border-radius:12px; overflow:hidden; box-shadow:0 5px 25px rgba(14,165,233,.2); }
+.help-modal-logo img{ width:100%; height:100%; object-fit:cover; display:block; }
+.help-modal-title{ font-size:20px; font-weight:900; color:#fff; }
+.help-modal-close{
+  width:42px; height:42px; border-radius:10px; background:#08152a; color:#fff; border:1px solid rgba(14,165,233,.2); font-size:26px; cursor:pointer;
+}
+.help-modal-line{ width:100%; height:1px; margin:16px 0 20px; background:linear-gradient(90deg,transparent,#2563eb,transparent); }
+.help-modal-intro{ text-align:center; color:#cbd5e1; font-size:15px; line-height:1.7; margin-bottom:20px; }
+.help-options{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.help-option{
+  width:100%; min-height:105px; padding:18px; border:1px solid rgba(14,165,233,.18); border-radius:14px; background:linear-gradient(145deg,#08152a,#071226); color:#fff; text-align:left; cursor:pointer;
+}
+.help-option-title{ display:block; font-size:15px; font-weight:900; color:#fff; }
+.help-option-sub{ display:block; margin-top:7px; color:#64748b; font-size:12px; line-height:1.4; }
+.help-topic-back{ width:40px; height:40px; border:1px solid rgba(14,165,233,.2); background:#08152a; color:#fff; border-radius:10px; font-size:20px; cursor:pointer; }
+
+.private-server-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(8px); z-index:9000; display:none; overflow-y:auto; padding:25px 15px;
+}
+.private-server-overlay.show{ display:flex; justify-content:center; align-items:flex-start; }
+.private-server-modal{
+  width:100%; max-width:1100px; margin:auto; background:linear-gradient(145deg,#061126,#020617); border:1px solid rgba(14,165,233,.55); border-radius:20px; box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12); overflow:hidden; position:relative;
+}
+.private-server-header{ display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid rgba(14,165,233,.2); }
+.private-server-header img{ width:42px; height:42px; object-fit:cover; border-radius:10px; }
+.private-server-brand{ font-size:17px; font-weight:900; }
+.private-server-close{
+  margin-left:auto; width:40px; height:40px; border:1px solid rgba(14,165,233,.2); background:#08152a; color:#fff; border-radius:10px; font-size:25px; cursor:pointer;
+}
+.private-server-title{ text-align:center; padding:25px 20px 20px; }
+.private-server-title h2{ font-size:clamp(28px,5vw,42px); font-weight:900; }
+.private-server-title h2 span{ color:#38bdf8; }
+.private-server-steps{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; padding:0 18px 20px;
+}
+.private-step{
+  background:linear-gradient(145deg,#08152a,#071226); border:1px solid rgba(14,165,233,.2); border-radius:15px; padding:15px; position:relative; min-width:0;
+}
+.step-number{
+  position:absolute; top:12px; left:12px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#2563eb; color:#fff; font-size:14px; font-weight:900; z-index:2;
+}
+.private-step h3{ font-size:16px; line-height:1.4; margin:3px 0 14px 43px; color:#fff; }
+.step-content{ display:flex; align-items:center; gap:14px; }
+.step-image{ width:105px; height:105px; object-fit:cover; border-radius:12px; border:1px solid rgba(14,165,233,.25); background:#020617; }
+.step-text{ color:#cbd5e1; font-size:13px; line-height:1.55; }
+.step-link{ display:block; margin-top:8px; color:#38bdf8; font-size:12px; word-break:break-all; }
+.script-button{
+  width:100%; margin-top:10px; padding:11px; border:none; border-radius:10px; background:#2563eb; color:#fff; font-weight:bold; cursor:pointer;
+}
+.script-popup{
+  position:fixed; inset:0; background:rgba(0,0,0,.82); backdrop-filter:blur(6px); z-index:10000; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.script-popup.show{ display:flex; }
+.script-popup-box{
+  width:100%; max-width:700px; background:#071226; border:1px solid rgba(14,165,233,.4); border-radius:16px; padding:20px; position:relative;
+}
+.script-popup-box h3{ color:#38bdf8; margin-bottom:12px; }
+.script-popup-close{
+  position:absolute; top:12px; right:12px; width:38px; height:38px; border:none; border-radius:9px; background:#08152a; color:#fff; font-size:22px; cursor:pointer;
+}
+.script-code{
+  width:100%; min-height:260px; resize:vertical; background:#020617; color:#cbd5e1; border:1px solid rgba(14,165,233,.2); border-radius:10px; padding:12px; font-family:monospace; font-size:12px;
+}
+.copy-script{
+  width:100%; margin-top:10px; padding:12px; background:#2563eb; border:none; border-radius:10px; color:#fff; font-weight:bold; cursor:pointer;
+}
+
+/* =========================
+   FOOTER FIX
+========================= */
+#persistent-footer{
   position:fixed !important;
   left:0 !important;
   right:0 !important;
@@ -61,7 +338,7 @@ main{max-width:1200px;margin:0 auto;padding:45px 18px 220px}
   justify-content:center !important;
   gap:8px !important;
   padding:12px 18px calc(12px + env(safe-area-inset-bottom)) !important;
-  background: rgba(2,6,23,0) !important;
+  background:rgba(2,6,23,0) !important;
   border-top:1px solid rgba(14,165,233,.06) !important;
   text-align:center !important;
   color:#cbd5e1 !important;
@@ -70,152 +347,236 @@ main{max-width:1200px;margin:0 auto;padding:45px 18px 220px}
   -webkit-transform:none !important;
   backface-visibility:hidden !important;
   will-change:auto !important;
+  visibility:visible !important;
 }
-
-/* footer inner elements */
-#persistent-footer .copyright{ color:#94a3b8; font-size:14px; font-weight:600; }
+#persistent-footer .copyright{ color:#64748b; font-size:14px; font-weight:600; }
 #persistent-footer .contact-text{ color:#cbd5e1; font-size:14px; }
-#persistent-footer .footer-socials{ display:flex; gap:10px; align-items:center; justify-content:center; }
-#persistent-footer .footer-social{ background:#08152a;color:#fff;padding:8px 12px;border-radius:10px;text-decoration:none;border:1px solid rgba(14,165,233,.08);font-weight:700; }
-
-/* small responsive tweak */
+#persistent-footer .footer-socials{ display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+#persistent-footer .footer-social{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:8px 14px; border-radius:10px; background:#08152a; border:1px solid rgba(14,165,233,.12); color:#fff; text-decoration:none; font-weight:700; font-size:14px;
+}
 @media(max-width:520px){
-  main{padding-bottom:260px}
-  #persistent-footer .contact-text{font-size:13px}
-  #persistent-footer .footer-social{font-size:13px;padding:8px 10px}
+  #persistent-footer .contact-text{ font-size:13px; }
+  #persistent-footer .footer-social{ font-size:13px; padding:8px 12px; }
+  main{ padding-bottom:240px; }
 }
 </style>
 </head>
 <body>
 
-<!-- -------------- IMMEDIATE FOOTER GUARD: create persistent container ASAP -------------- -->
-<script>
-/*
-  Create a persistent footer container at the top of the body
-  and keep it available to receive the real footer content later.
-  We place this script at the top so the container exists before rest of DOM loads.
-*/
-(function createPersistentFooterContainer(){
-  try{
-    if(!document.getElementById('persistent-footer')){
-      const pf = document.createElement('div');
-      pf.id = 'persistent-footer';
-      // initial hidden state until we populate it (loader logic will unhide as needed)
-      pf.style.visibility = 'hidden';
-      pf.style.pointerEvents = 'none';
-      document.body.appendChild(pf);
-    }
-  }catch(e){ /* ignore */ }
-})();
-</script>
-
-<!-- =========================
-     LOADER
-========================= -->
-<div id="loader" aria-hidden="false">
+<!-- loader -->
+<div id="loader">
   <div>Loading Agar.io Mods...</div>
-  <div class="spinner" aria-hidden="true"></div>
+  <div class="spinner"></div>
 </div>
 
-<!-- =========================
-     HEADER
-========================= -->
+<!-- header -->
 <header>
-  <div style="display:flex;align-items:center;gap:12px">
-    <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener"><img src="/IMG_0561.jpeg" alt="T.B" style="width:44px;height:44px;border-radius:10px"></a>
-    <div style="font-weight:800">T.B Agar.io</div>
+  <div class="left-header">
+    <a class="logo-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">
+      <div class="logo"><img src="/IMG_0561.jpeg" alt="T.B Agar.io"></div>
+    </a>
+    <div class="site-title">T.B Agar.io</div>
   </div>
-  <div style="display:flex;align-items:center;gap:12px">
-    <div style="padding:6px 12px;border-radius:14px;background:rgba(255,255,255,.06)">tbagario.com</div>
-    <button class="menu-btn" aria-label="Open menu">☰</button>
-  </div>
+  <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu">☰</button>
 </header>
 
-<!-- =========================
-     MAIN
-========================= -->
-<main>
-  <div style="text-align:center;margin-bottom:20px">
-    <h1 style="font-size:28px">T.B MOD MENU</h1>
-    <p style="color:#94a3b8">Download and explore available Agar.io mods, tools and useful resources.</p>
+<!-- side menu -->
+<div class="menu" id="menu">
+  <div class="menu-close">
+    <div class="menu-brand">T.B <span>AGAR.IO</span></div>
+    <button onclick="closeMenu()" aria-label="Close menu">×</button>
   </div>
 
-  <section style="margin-bottom:40px">
+  <div class="menu-label">Navigation</div>
+  <a href="/index.html">Home</a>
+  <a href="/custom-skins.html">Custom Skins</a>
+  <a href="/key-access.html">Key Access</a>
+  <a href="/mod-menu.html">Mod Menu</a>
+  <a href="/paidskins.html">Paid Skins</a>
+  <a href="/buy-account.html">Buy Account</a>
+  <a href="/agar.io-skins.html">Agar.io Skins</a>
+
+  <div class="menu-label">External</div>
+  <a href="https://biteyt.com/bots" target="_blank" rel="noopener">Bite Bots Panel</a>
+  <a href="https://kahraba.in" target="_blank" rel="noopener">Kahraba Website</a>
+
+  <div class="menu-social-title">Follow T.B Agar.io</div>
+  <div class="menu-socials">
+    <a class="menu-social" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">Discord</a>
+    <a class="menu-social" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">YouTube</a>
+    <a class="menu-social" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">Instagram</a>
+  </div>
+
+  <div class="menu-footer">T.B Agar.io © 2026</div>
+</div>
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+
+<main>
+  <div class="page-title">
+    <div class="page-title-content">
+      <h1>T.B <span>MOD MENU</span></h1>
+      <p>Download and explore available Agar.io mods, tools and useful resources.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-header">
+      <h2>AVAILABLE <span>MODS</span></h2>
+      <p>Available Agar.io modifications and tools.</p>
+    </div>
+
     <div class="grid">
-      <!-- your full mod cards should be here (kept intact in final file) -->
       <div class="card">
-        <img src="/IMG_9406.jpeg" alt="Shark">
-        <button class="download">Download</button>
+        <img src="/IMG_9406.jpeg" alt="Shark Mod IOS">
+        <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa">
+          <button class="download">Download</button>
+        </a>
         <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 18-10-2026</div>
+        <div class="info">Update Shark Mod version 2.0.0 - Private Server - Smoother than ever - 120 FPS</div>
       </div>
+
       <div class="card">
-        <img src="/IMG_6587.png" alt="Kahraba">
-        <button class="download">Download</button>
+        <img src="/IMG_9406.jpeg" alt="Shark Mod Android">
+        <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk">
+          <button class="download">Download</button>
+        </a>
         <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 18-10-2026</div>
+        <div class="info">Shark Mod NEW Android — Private Server support</div>
       </div>
-      <!-- add rest of your cards as before -->
+
+      <div class="card">
+        <img src="/IMG_6587.png" alt="Kahraba Mod">
+        <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 05-07-2026</div>
+        <div class="info">Kahraba Mod</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_6587.png" alt="Kahraba + Shark Mod">
+        <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 05-07-2026</div>
+        <div class="info">Kahraba + Shark Mod</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_6587.png" alt="Bite Skin Mod">
+        <a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 05-07-2026</div>
+        <div class="info">Bite Skin Mod</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_6587.png" alt="Myu Mod">
+        <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 05-07-2026</div>
+        <div class="info">Myu Mod</div>
+      </div>
+
+      <div class="card">
+        <div class="status-label update">UPDATE</div>
+        <img src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg" alt="T.B Mod">
+        <a href="#"><button class="download">Download</button></a>
+        <div class="info">Version: 26.3.5</div>
+        <div class="info">NEW Date: 15-01-2026</div>
+        <div class="info">T.B Mod (Kabrah) Unlock Skin</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_4318.png" alt="Spotify Premium Mod">
+        <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Version: 9.0.66</div>
+        <div class="info">Date: 03-08-2025</div>
+        <div class="info">Spotify Premium Mod</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_2462.jpeg" alt="DNS Profile">
+        <a href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
+          <button class="download">Download</button>
+        </a>
+        <div class="info">Available for iPhone (iOS)</div>
+        <div class="info">Date: 14-09-2026</div>
+        <div class="info">DNS Profile</div>
+      </div>
     </div>
   </section>
 
-  <div style="text-align:center;margin-top:30px;">
+  <hr class="section-line" style="border:none;height:1px;background:linear-gradient(90deg,transparent,#2563eb,transparent);margin:45px 0;opacity:.8;">
+
+  <section class="section">
+    <div class="section-header">
+      <h2>AGAR.IO <span>TOOLS</span></h2>
+      <p>Useful Agar.io websites and tools.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <img src="/IMG_0321.jpeg" alt="Bite Bots Panel">
+        <a href="https://biteyt.com/bots" target="_blank" rel="noopener">
+          <button class="download">Bite Bots Panel</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 19-08-2026</div>
+        <div class="info">Bite Bots Panel</div>
+      </div>
+
+      <div class="card">
+        <img src="/IMG_0322.jpeg" alt="Kahraba Website">
+        <a href="https://kahraba.in" target="_blank" rel="noopener">
+          <button class="download">Kahraba Website</button>
+        </a>
+        <div class="info">Version: 26.6.0</div>
+        <div class="info">Date: 21-08-2026</div>
+        <div class="info">Kahraba Website</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="help-section">
     <h2>Need Help?</h2>
-    <p style="color:#94a3b8">Learn how to install and use the available mods.</p>
-    <div style="display:flex;gap:12px;justify-content:center;margin-top:10px">
-      <button class="download" onclick="openHelpModal()">Help Mods</button>
-      <button class="download" onclick="openPrivateServer()">Agar.io Private Server</button>
+    <p>Learn how to install and use the available mods.</p>
+    <div class="help-buttons">
+      <button class="help-button" type="button" onclick="openHelpModal()">Help Mods</button>
+      <button class="private-server-button" type="button" onclick="openPrivateServer()">Agar.io Private Server</button>
     </div>
   </div>
 </main>
 
-<!-- =========================
-     ORIGINAL FOOTER (kept in DOM but will be hidden and replaced by persistent footer)
-========================= -->
-<footer id="original-footer" style="display:block;opacity:1;">
-  <div style="text-align:center;padding:20px 0;color:#cbd5e1">
-    <div style="color:#94a3b8">© 2026 T.B Agar.io</div>
-    <div style="margin-top:6px">If you have questions, you can always contact us.</div>
-    <div style="margin-top:10px;display:flex;gap:10px;justify-content:center">
-      <a class="footer-social" href="https://discord.gg/qhuXPrVzBx">💬 Discord</a>
-      <a class="footer-social" href="https://www.youtube.com/@T.B6">▶ YouTube</a>
-      <a class="footer-social" href="https://www.instagram.com/t.bagar.io/">◎ Instagram</a>
-    </div>
+<!-- Final fixed footer inserted with JS into persistent container -->
+<div id="persistent-footer" aria-label="Site footer">
+  <div class="copyright">© 2026 T.B Agar.io</div>
+  <div class="contact-text">If you have questions, you can always contact us.</div>
+  <div class="footer-socials">
+    <a class="footer-social" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener">💬 Discord</a>
+    <a class="footer-social" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener">▶ YouTube</a>
+    <a class="footer-social" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">◎ Instagram</a>
   </div>
-</footer>
+</div>
 
-<!-- =========================
-     SCRIPT: move footer content to persistent container and enforce fixed behavior
-========================= -->
 <script>
-/*
-  Footer enforcement script:
-  - waits for DOMContentLoaded
-  - clones inner content of #original-footer into #persistent-footer
-  - hides #original-footer visually (display:none) to avoid duplicates
-  - ensures persistent footer is fixed, visible after loader hides
-  - listens to visualViewport resize/scroll to reapply styles (iOS quirks)
-*/
-(function robustFooterFix(){
-
+(function setupFooterFix(){
   const persistent = document.getElementById('persistent-footer');
+  const loader = document.getElementById('loader');
 
-  function applyPersistentFooterContent(){
-    const original = document.getElementById('original-footer');
-    if(!original || !persistent) return;
-
-    // Move the inner HTML (clone) so we can keep original until moved
-    persistent.innerHTML = original.innerHTML;
-
-    // apply classes/attributes to persistent children (minimal)
-    persistent.querySelectorAll('.footer-social').forEach(el => {
-      el.setAttribute('target','_blank');
-      el.setAttribute('rel','noopener');
-    });
-
-    // hide the original footer but keep it in DOM (avoid layout jumps)
-    original.style.display = 'none';
-  }
-
-  function ensureFixedStyles(){
+  function ensureFooterStyles(){
     if(!persistent) return;
     persistent.style.position = 'fixed';
     persistent.style.left = '0';
@@ -226,118 +587,107 @@ main{max-width:1200px;margin:0 auto;padding:45px 18px 220px}
     persistent.style.webkitTransform = 'none';
     persistent.style.backfaceVisibility = 'hidden';
     persistent.style.pointerEvents = 'auto';
-    // show it only if loader is gone (handled elsewhere)
+    persistent.style.visibility = 'visible';
   }
 
-  function updateMainPadding(){
-    const main = document.querySelector('main');
-    if(!persistent) return;
-    const rect = persistent.getBoundingClientRect();
-    const footerH = Math.ceil(rect.height || 72);
-    if(main){
-      main.style.paddingBottom = (footerH + 20) + 'px';
-    }else{
-      document.body.style.paddingBottom = (footerH + 20) + 'px';
-    }
-  }
-
-  // show/hide persistent footer depending on loader visibility
-  function syncFooterVisibilityWithLoader(){
-    const loader = document.getElementById('loader');
-    if(!persistent) return;
-    function isLoaderVisible(){
-      if(!loader) return false;
-      const cs = window.getComputedStyle(loader);
-      return cs && cs.display !== 'none' && cs.visibility !== 'hidden' && !loader.hasAttribute('hidden');
-    }
-    if(isLoaderVisible()){
+  function syncFooterVisibility(){
+    if(!persistent || !loader) return;
+    const cs = window.getComputedStyle(loader);
+    const visible = cs.display !== 'none' && cs.visibility !== 'hidden' && !loader.hidden;
+    if(visible){
       persistent.style.visibility = 'hidden';
       persistent.style.pointerEvents = 'none';
     } else {
-      persistent.style.visibility = '';
-      persistent.style.pointerEvents = '';
+      persistent.style.visibility = 'visible';
+      persistent.style.pointerEvents = 'auto';
     }
   }
 
-  // attach visualViewport listeners for iOS behavior
-  function attachViewportListeners(){
-    const vv = window.visualViewport;
-    if(vv){
-      vv.addEventListener('resize', ()=>{ ensureFixedStyles(); updateMainPadding(); syncFooterVisibilityWithLoader(); });
-      vv.addEventListener('scroll', ()=>{ ensureFixedStyles(); updateMainPadding(); });
-    } else {
-      window.addEventListener('resize', ()=>{ ensureFixedStyles(); updateMainPadding(); });
-      window.addEventListener('orientationchange', ()=>{ ensureFixedStyles(); updateMainPadding(); });
+  function ensureMainPadding(){
+    const main = document.querySelector('main');
+    if(!persistent) return;
+    const h = persistent.offsetHeight || 72;
+    if(main){
+      main.style.paddingBottom = (h + 28) + 'px';
     }
   }
 
-  // Run as soon as DOM is ready
-  function init(){
-    applyPersistentFooterContent();
-    ensureFixedStyles();
-    updateMainPadding();
-    syncFooterVisibilityWithLoader();
-    attachViewportListeners();
+  ensureFooterStyles();
+  ensureMainPadding();
+  syncFooterVisibility();
 
-    // Re-apply repeatedly for first 8-10 seconds to handle mobile URL-bar quirks
-    let runs = 0;
-    const iv = setInterval(()=>{
-      ensureFixedStyles();
-      updateMainPadding();
-      syncFooterVisibilityWithLoader();
-      runs++;
-      if(runs > 36) clearInterval(iv); // ~9s
+  // keep it pinned on scroll/resize
+  let ticking = false;
+  function rafEnforce(){
+    if(!ticking){
+      requestAnimationFrame(() => {
+        ensureFooterStyles();
+        ensureMainPadding();
+        syncFooterVisibility();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', rafEnforce, { passive: true });
+  window.addEventListener('resize', rafEnforce, { passive: true });
+  window.addEventListener('orientationchange', rafEnforce);
+
+  // loader mutation observer
+  if(loader){
+    const mo = new MutationObserver(() => syncFooterVisibility());
+    mo.observe(loader, { attributes: true, attributeFilter: ['style','class','hidden'] });
+
+    const interval = setInterval(() => {
+      syncFooterVisibility();
+      if(window.getComputedStyle(loader).display === 'none' || loader.hidden === true){
+        clearInterval(interval);
+        mo.disconnect();
+      }
     }, 250);
-
-    // Also observe changes to original footer in case it is replaced dynamically
-    const orig = document.getElementById('original-footer');
-    if(orig){
-      const mo = new MutationObserver(()=> { applyPersistentFooterContent(); updateMainPadding(); syncFooterVisibilityWithLoader(); });
-      mo.observe(orig, { childList:true, subtree:true, attributes:true, characterData:true });
-    }
-
-    // Watch loader removal/visibility
-    const loader = document.getElementById('loader');
-    if(loader){
-      const mo2 = new MutationObserver(()=> syncFooterVisibilityWithLoader());
-      mo2.observe(loader, { attributes:true, attributeFilter:['style','class','hidden'] });
-
-      // polling fallback in case loader removed
-      const poll = setInterval(()=>{
-        if(!document.body.contains(loader) || window.getComputedStyle(loader).display === 'none' || loader.hidden === true){
-          syncFooterVisibilityWithLoader();
-          clearInterval(poll);
-          try{ mo2.disconnect(); }catch(e){}
-        }
-      }, 250);
-      window.addEventListener('load', ()=> { syncFooterVisibilityWithLoader(); try{ mo2.disconnect(); }catch(e){} }, { once:true });
-    }
   }
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  // iOS visualViewport
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', rafEnforce);
+    window.visualViewport.addEventListener('scroll', rafEnforce);
   }
-
 })();
 </script>
 
-<!-- =========================
-     YOUR ORIGINAL SCRIPTS (menu, loader hide, mod verification, help modal, etc.)
-     Re-insert any full scripts you had before here. Example minimal script to hide loader:
-========================= -->
 <script>
-/* hide loader after small random timeout (simulate the original behaviour you had) */
-setTimeout(()=> {
+setTimeout(() => {
   const loader = document.getElementById('loader');
   if(loader) loader.style.display = 'none';
-  // after hiding loader, persistent footer will become visible via the observer logic
-}, 1200 + Math.random()*1600);
+}, 2000 + Math.random() * 1500);
 
-/* basic menu toggle (kept minimal) */
-function openHelpModal(){ alert('Open help modal (implement your full modal)'); }
-function openPrivateServer(){ alert('Open private server modal (implement your full modal)'); }
+function toggleMenu(){
+  const menu = document.getElementById('menu');
+  const overlay = document.getElementById('menu-overlay');
+  if(menu.classList.contains('open')) closeMenu();
+  else { menu.classList.add('open'); overlay.classList.add('show'); }
+}
+
+function closeMenu(){
+  const menu = document.getElementById('menu');
+  const overlay = document.getElementById('menu-overlay');
+  if(menu) menu.classList.remove('open');
+  if(overlay) overlay.classList.remove('show');
+}
+
+function openHelpModal(){
+  alert('Open your help modal here');
+}
+function openPrivateServer(){
+  alert('Open your private server modal here');
+}
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    closeMenu();
+  }
+});
 </script>
 
 </body>
