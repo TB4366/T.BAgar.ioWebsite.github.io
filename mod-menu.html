@@ -1675,39 +1675,30 @@ hr.section-line{
 
 }
 
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-  text-align:center;
-
-  padding:
-    30px 18px
-    calc(30px + env(safe-area-inset-bottom));
-
-  color:#64748b;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.1);
+/* extra styles for topic view inside help modal */
+.help-topic-header {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0 6px;
+}
+.help-topic-back {
+  width:40px;
+  height:40px;
+  border:1px solid rgba(14,165,233,.2);
+  background:#08152a;
+  color:#fff;
+  border-radius:10px;
+  font-size:20px;
+  cursor:pointer;
+}
+.help-topic-title {
+  font-size:18px;
+  font-weight:900;
+  color:#fff;
 }
 
-footer p{
-  margin:5px 0;
-}
-
-footer a{
-  color:#38bdf8;
-
-  text-decoration:none;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
+/* responsive */
 @media(max-width:800px){
 
   .private-server-steps{
@@ -2064,7 +2055,7 @@ footer a{
   <div class="grid">
 
 
-    <!-- SHARK MOD -->
+    <!-- SHARK MOD (iOS) -->
 
     <div
       class="card"
@@ -2586,7 +2577,7 @@ footer a{
 
 
 <!-- =========================
-     HELP MODS MODAL
+     HELP MODS MODAL (OPTIONS + TOPIC VIEW)
 ========================= -->
 
 <div
@@ -2635,71 +2626,106 @@ footer a{
 
     <div class="help-modal-line"></div>
 
-    <div class="help-modal-intro">
+    <!-- VIEW: OPTIONS -->
+    <div id="help-options-view">
 
-      We willen jou zo goed mogelijk helpen.
-      <br>
-      Kies jouw optie.
+      <div class="help-modal-intro">
+
+        We willen jou zo goed mogelijk helpen.
+        <br>
+        Kies jouw optie.
+
+      </div>
+
+      <div class="help-options">
+
+        <button
+          class="help-option"
+          type="button"
+          data-topic="0">
+
+          <span class="help-option-title">
+            How install eSign
+          </span>
+
+          <span class="help-option-sub">
+            Installatie hulp voor eSign
+          </span>
+
+        </button>
+
+        <button
+          class="help-option"
+          type="button"
+          data-topic="1">
+
+          <span class="help-option-title">
+            Hoe werkt eSign?
+          </span>
+
+          <span class="help-option-sub">
+            Uitleg over het gebruik van eSign
+          </span>
+
+        </button>
+
+        <button
+          class="help-option"
+          type="button"
+          data-topic="2">
+
+          <span class="help-option-title">
+            How install Agar.io mods
+          </span>
+
+          <span class="help-option-sub">
+            Leer hoe je Agar.io mods installeert
+          </span>
+
+        </button>
+
+        <button
+          class="help-option"
+          type="button"
+          data-topic="3">
+
+          <span class="help-option-title">
+            Hoe stel je Agar.io mods in
+          </span>
+
+          <span class="help-option-sub">
+            Hulp bij het instellen van Agar.io mods
+          </span>
+
+        </button>
+
+      </div>
 
     </div>
 
-    <div class="help-options">
+    <!-- VIEW: TOPIC (initially hidden) -->
+    <div id="help-topic-view" style="display:none; padding-bottom:18px;">
 
-      <button
-        class="help-option"
-        type="button">
+      <div class="help-topic-header" style="padding:10px 18px;">
+        <button class="help-topic-back" id="helpTopicBack" aria-label="Terug">←</button>
 
-        <span class="help-option-title">
-          How install eSign
-        </span>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="help-modal-logo" style="width:48px; height:48px;">
+            <img src="/IMG_0561.jpeg" alt="T.B Agar.io">
+          </div>
+          <div>
+            <div class="help-topic-title" id="helpTopicTitle">Titel</div>
+            <div style="color:#94a3b8; font-size:13px;" id="helpTopicSub">Subtitel</div>
+          </div>
+        </div>
 
-        <span class="help-option-sub">
-          Installatie hulp voor eSign
-        </span>
+      </div>
 
-      </button>
+      <div id="help-topic-steps-container" style="padding:0 18px 18px;"></div>
 
-      <button
-        class="help-option"
-        type="button">
-
-        <span class="help-option-title">
-          Hoe werkt eSign?
-        </span>
-
-        <span class="help-option-sub">
-          Uitleg over het gebruik van eSign
-        </span>
-
-      </button>
-
-      <button
-        class="help-option"
-        type="button">
-
-        <span class="help-option-title">
-          How install Agar.io mods
-        </span>
-
-        <span class="help-option-sub">
-          Leer hoe je Agar.io mods installeert
-        </span>
-
-      </button>
-
-      <button
-        class="help-option"
-        type="button">
-
-        <span class="help-option-title">
-          Hoe stel je Agar.io mods in
-        </span>
-
-        <span class="help-option-sub">
-          Hulp bij het instellen van Agar.io mods
-        </span>
-
-      </button>
+      <div style="padding: 0 18px 18px;">
+        <button class="script-button" id="helpTopicDone" onclick="goBackToOptions()">Klaar</button>
+      </div>
 
     </div>
 
@@ -3799,8 +3825,50 @@ document
 
 
 /* =========================
-   HELP MODS
+   HELP MODS: topics + dynamic steps
 ========================= */
+
+const helpTopics = [
+  {
+    title: "How install eSign",
+    sub: "Installatie hulp voor eSign",
+    steps: [
+      { title: "Open App Store", text: "Zoek 'eSign' in de App Store en installeer de app.", img: "/IMG_0321.jpeg" },
+      { title: "Open eSign", text: "Maak een account of log in met je bestaande gegevens.", img: "/IMG_0322.jpeg" },
+      { title: "Import document", text: "Voeg het document toe dat je wilt ondertekenen.", img: "" },
+      { title: "Ondertekenen", text: "Selecteer 'Sign' en volg de stappen om te tekenen en te verzenden.", img: "" }
+    ]
+  },
+  {
+    title: "Hoe werkt eSign?",
+    sub: "Uitleg over het gebruik van eSign",
+    steps: [
+      { title: "Account", text: "Het account bevat je documenten en handtekeningen.", img: "" },
+      { title: "Documenten beheren", text: "Upload, deel en beheer toegangsrechten.", img: "" },
+      { title: "Beveiliging", text: "Gebruik 2FA en controleer ontvangers voor privacy.", img: "" }
+    ]
+  },
+  {
+    title: "How install Agar.io mods",
+    sub: "Leer hoe je Agar.io mods installeert",
+    steps: [
+      { title: "Download mod", text: "Klik op 'Download' naast de mod die je wilt installeren.", img: "/IMG_9406.jpeg" },
+      { title: "Installeer profiel (iOS)", text: "Volg de stappen: Settings → General → VPN & Device Management → Profile Download.", img: "/settings.png" },
+      { title: "Installeer via Sing-box (optioneel)", text: "Gebruik de Sing-box stappen zoals in de 'Private Server' instructie als je een server/proxy nodig hebt.", img: "/singbox.png" },
+      { title: "Start Agar.io", text: "Open het spel en controleer of de mod actief is.", img: "/agario.png" }
+    ]
+  },
+  {
+    title: "Hoe stel je Agar.io mods in",
+    sub: "Hulp bij het instellen van Agar.io mods",
+    steps: [
+      { title: "Profiel aanmaken", text: "Maak een Sing-box profiel aan en plak het server-script.", img: "/singbox-profile.png" },
+      { title: "Script toevoegen", text: "Open 'Edit Content' → 'Script' en plak het script.", img: "/singbox-edit.png" },
+      { title: "VPN aanzetten", text: "Activeer de VPN in Sing-box en ga naar Agar.io.", img: "/vpn.png" },
+      { title: "Controleer instellingen", text: "Instellingen zoals FPS en skin unlocks kun je in de mod-menu's aanpassen.", img: "" }
+    ]
+  }
+];
 
 function openHelpModal(){
 
@@ -3815,6 +3883,9 @@ function openHelpModal(){
 
     document.body.style.overflow =
       "hidden";
+
+    // reset to options view
+    goBackToOptions();
 
   }
 
@@ -3840,27 +3911,50 @@ function closeHelpModal(){
 }
 
 
-const helpOverlay =
-  document.getElementById(
-    "help-modal-overlay"
-  );
+// attach click handlers to options
+document.querySelectorAll(".help-option").forEach(el => {
+  el.addEventListener("click", function(){
+    const idx = parseInt(this.dataset.topic || "0", 10);
+    showHelpTopic(idx);
+  });
+});
 
-if(helpOverlay){
-
-  helpOverlay.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closeHelpModal();
-
-      }
-
-    }
-  );
-
+function showHelpTopic(idx){
+  const topic = helpTopics[idx];
+  if(!topic) return;
+  document.getElementById("helpTopicTitle").innerText = topic.title;
+  document.getElementById("helpTopicSub").innerText = topic.sub;
+  const container = document.getElementById("help-topic-steps-container");
+  container.innerHTML = "";
+  const stepsGrid = document.createElement("div");
+  stepsGrid.className = "private-server-steps";
+  topic.steps.forEach((s, i) => {
+    const step = document.createElement("div");
+    step.className = "private-step";
+    step.innerHTML = `
+      <div class="step-number">${i+1}</div>
+      <h3>${s.title}</h3>
+      <div class="step-content">
+        ${s.img ? `<img class="step-image" src="${s.img}" alt="${s.title}">` : ""}
+        <div class="step-text">${s.text}</div>
+      </div>
+    `;
+    stepsGrid.appendChild(step);
+  });
+  container.appendChild(stepsGrid);
+  document.getElementById("help-options-view").style.display = "none";
+  document.getElementById("help-topic-view").style.display = "block";
+  document.getElementById("helpTopicBack").focus();
 }
+
+function goBackToOptions(){
+  document.getElementById("help-options-view").style.display = "block";
+  document.getElementById("help-topic-view").style.display = "none";
+}
+
+document.getElementById("helpTopicBack").addEventListener("click", function(){
+  goBackToOptions();
+});
 
 
 /* =========================
@@ -4063,6 +4157,29 @@ document.addEventListener(
 /* =========================
    CLICK OUTSIDE
 ========================= */
+
+const helpOverlay =
+  document.getElementById(
+    "help-modal-overlay"
+  );
+
+if(helpOverlay){
+
+  helpOverlay.addEventListener(
+    "click",
+    function(event){
+
+      if(event.target === this){
+
+        closeHelpModal();
+
+      }
+
+    }
+  );
+
+}
+
 
 const privateOverlay =
   document.getElementById(
