@@ -9,242 +9,1061 @@
 <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
 
 <style>
-/* =========================
-   BASE
-========================= */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{background:#020617;color:#fff;min-height:100vh;overflow-x:hidden}
-button,a{-webkit-tap-highlight-color:transparent}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#020617;
+  color:#fff;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+button,a{
+  -webkit-tap-highlight-color:transparent;
+}
 
 /* =========================
    BACKGROUND
 ========================= */
-body::before{content:"";position:fixed;width:600px;height:600px;background:radial-gradient(circle,#0ea5e9,transparent 70%);top:-250px;right:-200px;opacity:.18;z-index:-1;pointer-events:none}
+body::before{
+  content:"";
+  position:fixed;
+  width:600px;
+  height:600px;
+  background:radial-gradient(circle,#0ea5e9,transparent 70%);
+  top:-250px;
+  right:-200px;
+  opacity:.18;
+  z-index:-1;
+  pointer-events:none;
+}
 
 /* =========================
    LOADER
 ========================= */
-#loader{position:fixed;inset:0;background:#020617;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;font-size:20px;z-index:99999;text-align:center}
-.spinner{width:40px;height:40px;border:5px solid rgba(255,255,255,.15);border-top:5px solid #38bdf8;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+#loader{
+  position:fixed;
+  inset:0;
+  background:#020617;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  font-size:20px;
+  z-index:99999;
+  text-align:center;
+}
+.spinner{
+  width:40px;
+  height:40px;
+  border:5px solid rgba(255,255,255,.15);
+  border-top:5px solid #38bdf8;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg);} }
 
 /* =========================
    HEADER
 ========================= */
-header{position:sticky;top:0;z-index:3000;width:100%;display:flex;justify-content:space-between;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 18px 10px 18px;background:rgba(2,6,23,.94);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-bottom:1px solid rgba(14,165,233,.25)}
-.left-header{display:flex;align-items:center;gap:12px;min-width:0}
-.logo-link{display:flex;align-items:center;text-decoration:none}
-.logo{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;box-shadow:0 5px 25px rgba(14,165,233,.2);transition:transform .2s ease}
-.logo-link:hover .logo{transform:scale(1.05)}
-.logo img{width:100%;height:100%;object-fit:cover;display:block}
-.site-title{font-size:20px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header{
+  position:sticky;
+  top:0;
+  z-index:3000;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:calc(10px + env(safe-area-inset-top)) 18px 10px 18px;
+  background:rgba(2,6,23,.94);
+  backdrop-filter:blur(15px);
+  -webkit-backdrop-filter:blur(15px);
+  border-bottom:1px solid rgba(14,165,233,.25);
+}
+.left-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.logo-link{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  overflow:hidden;
+  flex-shrink:0;
+  box-shadow:0 5px 25px rgba(14,165,233,.2);
+  transition:transform .2s ease;
+}
+.logo-link:hover .logo{
+  transform:scale(1.05);
+}
+.logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.site-title{
+  font-size:20px;
+  font-weight:800;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
 /* =========================
    MENU BUTTON
 ========================= */
-.menu-btn{width:46px;height:46px;border:1px solid rgba(14,165,233,.25);background:#071226;border-radius:12px;color:#fff;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s ease}
-.menu-btn:hover{background:#0b203d;border-color:rgba(14,165,233,.5)}
-.menu-btn:active{transform:scale(.96)}
+.menu-btn{
+  width:46px;
+  height:46px;
+  border:1px solid rgba(14,165,233,.25);
+  background:#071226;
+  border-radius:12px;
+  color:#fff;
+  font-size:24px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s ease;
+}
+.menu-btn:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.5);
+}
+.menu-btn:active{
+  transform:scale(.96);
+}
 
 /* =========================
    SIDE MENU
 ========================= */
-.menu{position:fixed;top:0;right:-330px;width:310px;max-width:88vw;height:100vh;background:linear-gradient(180deg,#050d1c 0%,#020617 100%);z-index:5000;padding:calc(25px + env(safe-area-inset-top)) 20px calc(25px + env(safe-area-inset-bottom));border-left:1px solid rgba(14,165,233,.22);overflow-y:auto;transition:right .3s ease;box-shadow:-20px 0 50px rgba(0,0,0,.35)}
-.menu.open{right:0}
-.menu-close{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-.menu-brand{font-size:17px;font-weight:800;letter-spacing:.5px}
-.menu-brand span{color:#38bdf8}
-.menu-close button{width:40px;height:40px;border:1px solid rgba(14,165,233,.18);background:#08152a;color:#fff;border-radius:10px;font-size:25px;cursor:pointer}
-.menu-label{margin:22px 4px 9px;color:#64748b;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
-.menu a{display:flex;align-items:center;width:100%;padding:14px;margin:7px 0;border-radius:12px;color:#fff;text-decoration:none;background:#08152a;border:1px solid rgba(14,165,233,.12);font-weight:700;transition:.2s ease}
-.menu a:hover{background:#0b203d;border-color:rgba(14,165,233,.4);transform:translateX(2px)}
+.menu{
+  position:fixed;
+  top:0;
+  right:-330px;
+  width:310px;
+  max-width:88vw;
+  height:100vh;
+  background:linear-gradient(180deg,#050d1c 0%,#020617 100%);
+  z-index:5000;
+  padding:calc(25px + env(safe-area-inset-top)) 20px calc(25px + env(safe-area-inset-bottom));
+  border-left:1px solid rgba(14,165,233,.22);
+  overflow-y:auto;
+  transition:right .3s ease;
+  box-shadow:-20px 0 50px rgba(0,0,0,.35);
+}
+.menu.open{ right:0; }
+.menu-close{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+.menu-brand{
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+.menu-brand span{ color:#38bdf8; }
+.menu-close button{
+  width:40px;
+  height:40px;
+  border:1px solid rgba(14,165,233,.18);
+  background:#08152a;
+  color:#fff;
+  border-radius:10px;
+  font-size:25px;
+  cursor:pointer;
+}
+.menu-label{
+  margin:22px 4px 9px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.menu a{
+  display:flex;
+  align-items:center;
+  width:100%;
+  padding:14px;
+  margin:7px 0;
+  border-radius:12px;
+  color:#fff;
+  text-decoration:none;
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.12);
+  font-weight:700;
+  transition:.2s ease;
+}
+.menu a:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.4);
+  transform:translateX(2px);
+}
 
 /* =========================
    SOCIAL MENU
 ========================= */
-.menu-social-title{margin:25px 4px 10px;color:#64748b;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
-.menu-socials{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.menu-social{min-height:58px;display:flex !important;align-items:center;justify-content:center;text-align:center;border-radius:12px;color:#fff;text-decoration:none;background:#08152a;border:1px solid rgba(14,165,233,.15);font-size:13px;font-weight:800;transition:.2s ease}
-.menu-social:hover{background:#0b203d;border-color:rgba(14,165,233,.4);transform:translateY(-2px)}
-.menu-footer{margin-top:22px;padding-top:18px;border-top:1px solid rgba(14,165,233,.1);color:#64748b;font-size:12px;text-align:center}
+.menu-social-title{
+  margin:25px 4px 10px;
+  color:#64748b;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.menu-socials{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.menu-social{
+  min-height:58px;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border-radius:12px;
+  color:#fff;
+  text-decoration:none;
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.15);
+  font-size:13px;
+  font-weight:800;
+  transition:.2s ease;
+}
+.menu-social:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.4);
+  transform:translateY(-2px);
+}
+.menu-footer{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid rgba(14,165,233,.1);
+  color:#64748b;
+  font-size:12px;
+  text-align:center;
+}
+
+/* =========================
+   MENU OVERLAY
+========================= */
+.menu-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.62);
+  backdrop-filter:blur(2px);
+  z-index:4500;
+  display:none;
+}
+.menu-overlay.show{ display:block; }
 
 /* =========================
    MAIN
-   (adjusted padding-bottom so footer does not overlap)
 ========================= */
-main{width:100%;max-width:1200px;margin:0 auto;padding:45px 18px calc(55px + env(safe-area-inset-bottom) + 110px)}
+main{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  padding:45px 18px calc(55px + env(safe-area-inset-bottom) + 110px);
+}
 
 /* =========================
    PAGE HERO
 ========================= */
-.page-title{position:relative;text-align:center;margin-bottom:42px;padding:35px 20px;border:1px solid rgba(14,165,233,.12);border-radius:24px;background:linear-gradient(145deg,rgba(14,165,233,.07),rgba(7,18,38,.75));overflow:hidden}
-.page-title::before{content:"";position:absolute;width:220px;height:220px;background:rgba(14,165,233,.12);filter:blur(80px);border-radius:50%;top:-120px;left:50%;transform:translateX(-50%)}
-.page-title-content{position:relative;z-index:1}
-.page-title h1{font-size:clamp(38px,7vw,58px);margin-bottom:12px;font-weight:900;letter-spacing:1px}
-.page-title h1 span{color:#38bdf8}
-.page-title p{color:#94a3b8;font-size:16px;line-height:1.6;max-width:650px;margin:0 auto}
+.page-title{
+  position:relative;
+  text-align:center;
+  margin-bottom:42px;
+  padding:35px 20px;
+  border:1px solid rgba(14,165,233,.12);
+  border-radius:24px;
+  background:linear-gradient(145deg,rgba(14,165,233,.07),rgba(7,18,38,.75));
+  overflow:hidden;
+}
+.page-title::before{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  background:rgba(14,165,233,.12);
+  filter:blur(80px);
+  border-radius:50%;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+}
+.page-title-content{
+  position:relative;
+  z-index:1;
+}
+.page-title h1{
+  font-size:clamp(38px,7vw,58px);
+  margin-bottom:12px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+.page-title h1 span{ color:#38bdf8; }
+.page-title p{
+  color:#94a3b8;
+  font-size:16px;
+  line-height:1.6;
+  max-width:650px;
+  margin:0 auto;
+}
 
 /* =========================
    SECTION
 ========================= */
-.section{margin-bottom:55px}
-.section-header{text-align:center;margin-bottom:24px}
-.section-header h2{margin-bottom:7px;font-size:28px;font-weight:900}
-.section-header h2 span{color:#38bdf8}
-.section-header p{color:#64748b;font-size:14px}
+.section{ margin-bottom:55px; }
+.section-header{ text-align:center; margin-bottom:24px; }
+.section-header h2{ margin-bottom:7px; font-size:28px; font-weight:900; }
+.section-header h2 span{ color:#38bdf8; }
+.section-header p{ color:#64748b; font-size:14px; }
 
 /* =========================
    GRID
 ========================= */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;width:100%}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+  width:100%;
+}
 
 /* =========================
    CARD
 ========================= */
-.card{background:linear-gradient(145deg,#08152a,#071226);border-radius:18px;border:1px solid rgba(14,165,233,.18);padding:12px;display:flex;flex-direction:column;gap:10px;position:relative;box-shadow:0 10px 35px rgba(0,0,0,.22);overflow:hidden;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-.card:hover{transform:translateY(-4px);border-color:rgba(14,165,233,.4);box-shadow:0 15px 40px rgba(0,0,0,.32)}
-.card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;display:block}
+.card{
+  background:linear-gradient(145deg,#08152a,#071226);
+  border-radius:18px;
+  border:1px solid rgba(14,165,233,.18);
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  position:relative;
+  box-shadow:0 10px 35px rgba(0,0,0,.22);
+  overflow:hidden;
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(14,165,233,.4);
+  box-shadow:0 15px 40px rgba(0,0,0,.32);
+}
+.card img{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+}
 
 /* =========================
    STATUS
 ========================= */
-.status-label{position:absolute;top:20px;left:20px;padding:6px 10px;border-radius:7px;font-weight:bold;display:none;z-index:2}
-.update{background:#ef4444}
-.soon{background:#2563eb}
-.not{background:#7c3aed}
+.status-label{
+  position:absolute;
+  top:20px;
+  left:20px;
+  padding:6px 10px;
+  border-radius:7px;
+  font-weight:bold;
+  display:none;
+  z-index:2;
+}
+.update{ background:#ef4444; }
+.soon{ background:#2563eb; }
+.not{ background:#7c3aed; }
 
 /* =========================
    BUTTONS
 ========================= */
-.download,.Site,.Install{padding:11px 14px;background:#2563eb;border:none;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;transition:transform .2s ease,background .2s ease}
-.download:hover,.Site:hover,.Install:hover{background:#1d4ed8;transform:translateY(-1px)}
-.download:active,.Site:active,.Install:active{transform:scale(.98)}
-.locked{background:#475569 !important;cursor:not-allowed !important}
+.download,.Site,.Install{
+  padding:11px 14px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  transition:transform .2s ease,background .2s ease;
+}
+.download:hover,.Site:hover,.Install:hover{
+  background:#1d4ed8;
+  transform:translateY(-1px);
+}
+.download:active,.Site:active,.Install:active{
+  transform:scale(.98);
+}
+.locked{
+  background:#475569 !important;
+  cursor:not-allowed !important;
+}
 
 /* =========================
    INFO
 ========================= */
-.info{color:#94a3b8;font-size:.9rem;line-height:1.4}
+.info{
+  color:#94a3b8;
+  font-size:.9rem;
+  line-height:1.4;
+}
 
 /* =========================
    CARD OVERLAY
 ========================= */
-.overlay{position:absolute;inset:0;display:none;justify-content:center;align-items:center;background:rgba(0,0,0,.72);border-radius:18px;font-weight:bold;z-index:10;padding:20px;text-align:center}
+.overlay{
+  position:absolute;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.72);
+  border-radius:18px;
+  font-weight:bold;
+  z-index:10;
+  padding:20px;
+  text-align:center;
+}
 
 /* =========================
    VERIFY BOX
 ========================= */
-.verify-box{background:#0f172a;padding:20px;border-radius:15px;border:1px solid #2563eb;box-shadow:0 0 20px rgba(0,140,255,.3);text-align:center;width:min(300px,90%);min-width:260px}
-.verify-title{font-size:18px;margin-bottom:10px;color:#38bdf8;font-weight:bold}
-.status{font-size:18px;margin-top:6px}
+.verify-box{
+  background:#0f172a;
+  padding:20px;
+  border-radius:15px;
+  border:1px solid #2563eb;
+  box-shadow:0 0 20px rgba(0,140,255,.3);
+  text-align:center;
+  width:min(300px,90%);
+  min-width:260px;
+}
+.verify-title{
+  font-size:18px;
+  margin-bottom:10px;
+  color:#38bdf8;
+  font-weight:bold;
+}
+.status{
+  font-size:18px;
+  margin-top:6px;
+}
 
 /* =========================
    EXTERNAL ICON
 ========================= */
-.external-icon{width:14px;height:14px;display:inline-block;fill:white}
+.external-icon{
+  width:14px;
+  height:14px;
+  display:inline-block;
+  fill:white;
+}
 
 /* =========================
    SECTION LINE
 ========================= */
-hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transparent,#2563eb,transparent);margin:45px 0;opacity:.8}
+hr.section-line{
+  border:none;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#2563eb,transparent);
+  margin:45px 0;
+  opacity:.8;
+}
 
 /* =========================
    HELP
 ========================= */
-.help-section{text-align:center;padding:5px 10px calc(30px + env(safe-area-inset-bottom))}
-.help-section h2{font-size:24px;margin-bottom:8px}
-.help-section p{color:#64748b;margin-bottom:20px;line-height:1.5}
-.help-buttons{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
-.help-button,.private-server-button{min-width:170px;display:inline-flex;align-items:center;justify-content:center;background:#2563eb;padding:12px 25px;border-radius:10px;color:#fff;text-decoration:none;font-weight:bold;transition:transform .2s ease,background .2s ease}
-.help-button:hover,.private-server-button:hover{background:#1d4ed8;transform:translateY(-2px)}
-.private-server-button{border:none;cursor:pointer;font-family:Arial,Helvetica,sans-serif;font-size:14px}
+.help-section{
+  text-align:center;
+  padding:5px 10px calc(30px + env(safe-area-inset-bottom));
+}
+.help-section h2{
+  font-size:24px;
+  margin-bottom:8px;
+}
+.help-section p{
+  color:#64748b;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+.help-buttons{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.help-button,.private-server-button{
+  min-width:170px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#2563eb;
+  padding:12px 25px;
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+  transition:transform .2s ease,background .2s ease;
+}
+.help-button:hover,.private-server-button:hover{
+  background:#1d4ed8;
+  transform:translateY(-2px);
+}
+.private-server-button{
+  border:none;
+  cursor:pointer;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:14px;
+}
 
 /* =========================
    PRIVATE SERVER MODAL
 ========================= */
-.private-server-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9000;display:none;overflow-y:auto;padding:25px 15px calc(25px + env(safe-area-inset-bottom))}
-.private-server-overlay.show{display:flex;justify-content:center;align-items:flex-start}
-.private-server-modal{width:100%;max-width:1100px;margin:auto;background:linear-gradient(145deg,#061126,#020617);border:1px solid rgba(14,165,233,.55);border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12);overflow:hidden;position:relative}
-.private-server-header{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid rgba(14,165,233,.2)}
-.private-server-header img{width:42px;height:42px;object-fit:cover;border-radius:10px}
-.private-server-brand{font-size:17px;font-weight:900}
-.private-server-close{margin-left:auto;width:40px;height:40px;border:1px solid rgba(14,165,233,.2);background:#08152a;color:#fff;border-radius:10px;font-size:25px;cursor:pointer}
-.private-server-close:hover{background:#0b203d}
+.private-server-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:9000;
+  display:none;
+  overflow-y:auto;
+  padding:25px 15px calc(25px + env(safe-area-inset-bottom));
+}
+.private-server-overlay.show{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+}
+.private-server-modal{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  background:linear-gradient(145deg,#061126,#020617);
+  border:1px solid rgba(14,165,233,.55);
+  border-radius:20px;
+  box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12);
+  overflow:hidden;
+  position:relative;
+}
+.private-server-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  border-bottom:1px solid rgba(14,165,233,.2);
+}
+.private-server-header img{
+  width:42px;
+  height:42px;
+  object-fit:cover;
+  border-radius:10px;
+}
+.private-server-brand{
+  font-size:17px;
+  font-weight:900;
+}
+.private-server-close{
+  margin-left:auto;
+  width:40px;
+  height:40px;
+  border:1px solid rgba(14,165,233,.2);
+  background:#08152a;
+  color:#fff;
+  border-radius:10px;
+  font-size:25px;
+  cursor:pointer;
+}
+.private-server-close:hover{
+  background:#0b203d;
+}
 
-/* private server title and steps are reused for help topics */
-.private-server-title{text-align:center;padding:25px 20px 20px}
-.private-server-title h2{font-size:clamp(28px,5vw,42px);font-weight:900}
-.private-server-title h2 span{color:#38bdf8}
-.private-server-title::after{content:"";display:block;width:90%;max-width:850px;height:1px;margin:18px auto 0;background:linear-gradient(90deg,transparent,#2563eb,transparent)}
-.private-server-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:0 18px 20px}
-.private-step{background:linear-gradient(145deg,#08152a,#071226);border:1px solid rgba(14,165,233,.2);border-radius:15px;padding:15px;position:relative;min-width:0}
-.private-step:hover{border-color:rgba(14,165,233,.45)}
-.step-number{position:absolute;top:12px;left:12px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#2563eb;color:#fff;font-size:14px;font-weight:900;z-index:2}
-.private-step h3{font-size:16px;line-height:1.4;margin:3px 0 14px 43px;color:#fff}
-.step-content{display:flex;align-items:center;gap:14px}
-.step-image{width:105px;height:105px;flex-shrink:0;object-fit:cover;border-radius:12px;border:1px solid rgba(14,165,233,.25);background:#020617}
-.step-text{color:#cbd5e1;font-size:13px;line-height:1.55}
-.step-link{display:block;margin-top:8px;color:#38bdf8;font-size:12px;word-break:break-all}
-.step-link:hover{text-decoration:underline}
+/* =========================
+   PRIVATE SERVER TITLE
+========================= */
+.private-server-title{
+  text-align:center;
+  padding:25px 20px 20px;
+}
+.private-server-title h2{
+  font-size:clamp(28px,5vw,42px);
+  font-weight:900;
+}
+.private-server-title h2 span{ color:#38bdf8; }
+.private-server-title::after{
+  content:"";
+  display:block;
+  width:90%;
+  max-width:850px;
+  height:1px;
+  margin:18px auto 0;
+  background:linear-gradient(90deg,transparent,#2563eb,transparent);
+}
+
+/* =========================
+   PRIVATE SERVER STEPS
+========================= */
+.private-server-steps{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  padding:0 18px 20px;
+}
+.private-step{
+  background:linear-gradient(145deg,#08152a,#071226);
+  border:1px solid rgba(14,165,233,.2);
+  border-radius:15px;
+  padding:15px;
+  position:relative;
+  min-width:0;
+}
+.private-step:hover{
+  border-color:rgba(14,165,233,.45);
+}
+.step-number{
+  position:absolute;
+  top:12px;
+  left:12px;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:#2563eb;
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  z-index:2;
+}
+.private-step h3{
+  font-size:16px;
+  line-height:1.4;
+  margin:3px 0 14px 43px;
+  color:#fff;
+}
+.step-content{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.step-image{
+  width:105px;
+  height:105px;
+  flex-shrink:0;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid rgba(14,165,233,.25);
+  background:#020617;
+}
+.step-text{
+  color:#cbd5e1;
+  font-size:13px;
+  line-height:1.55;
+}
+.step-link{
+  display:block;
+  margin-top:8px;
+  color:#38bdf8;
+  font-size:12px;
+  word-break:break-all;
+}
+.step-link:hover{
+  text-decoration:underline;
+}
+
+/* =========================
+   SCRIPT
+========================= */
+.script-button{
+  width:100%;
+  margin-top:10px;
+  padding:11px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+.script-button:hover{ background:#1d4ed8; }
 
 /* =========================
    SCRIPT POPUP
 ========================= */
-.script-popup{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px}
-.script-popup.show{display:flex}
-.script-popup-box{width:100%;max-width:700px;background:#071226;border:1px solid rgba(14,165,233,.4);border-radius:16px;padding:20px;position:relative}
-.script-popup-box h3{color:#38bdf8;margin-bottom:12px}
-.script-popup-close{position:absolute;top:12px;right:12px;width:38px;height:38px;border:none;border-radius:9px;background:#08152a;color:#fff;font-size:22px;cursor:pointer}
-.script-code{width:100%;min-height:260px;resize:vertical;background:#020617;color:#cbd5e1;border:1px solid rgba(14,165,233,.2);border-radius:10px;padding:12px;font-family:monospace;font-size:12px}
-.copy-script{width:100%;margin-top:10px;padding:12px;background:#2563eb;border:none;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer}
-.copy-script:hover{background:#1d4ed8}
+.script-popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(6px);
+  z-index:10000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.script-popup.show{ display:flex; }
+.script-popup-box{
+  width:100%;
+  max-width:700px;
+  background:#071226;
+  border:1px solid rgba(14,165,233,.4);
+  border-radius:16px;
+  padding:20px;
+  position:relative;
+}
+.script-popup-box h3{
+  color:#38bdf8;
+  margin-bottom:12px;
+}
+.script-popup-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:38px;
+  height:38px;
+  border:none;
+  border-radius:9px;
+  background:#08152a;
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+}
+.script-code{
+  width:100%;
+  min-height:260px;
+  resize:vertical;
+  background:#020617;
+  color:#cbd5e1;
+  border:1px solid rgba(14,165,233,.2);
+  border-radius:10px;
+  padding:12px;
+  font-family:monospace;
+  font-size:12px;
+}
+.copy-script{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+.copy-script:hover{ background:#1d4ed8; }
+
+/* =========================
+   CONTACT
+========================= */
+.private-contact{
+  margin:0 18px 20px;
+  padding:25px 15px;
+  border-top:1px solid rgba(14,165,233,.2);
+  text-align:center;
+}
+.private-contact h3{
+  font-size:21px;
+  margin-bottom:8px;
+}
+.private-contact p{
+  color:#94a3b8;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+.private-socials{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.private-social{
+  padding:11px 18px;
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.2);
+  border-radius:10px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:bold;
+  transition:.2s ease;
+}
+.private-social:hover{
+  background:#0b203d;
+  transform:translateY(-2px);
+}
 
 /* =========================
    HELP MODAL
 ========================= */
-.help-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9500;display:none;align-items:center;justify-content:center;padding:20px}
-.help-modal-overlay.show{display:flex}
-.help-modal{width:100%;max-width:720px;max-height:90vh;overflow-y:auto;background:linear-gradient(145deg,#061126,#020617);border:1px solid rgba(14,165,233,.45);border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12);padding:18px}
-.help-modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.help-modal-brand{display:flex;align-items:center;gap:12px;min-width:0}
-.help-modal-logo{width:48px;height:48px;flex-shrink:0;border-radius:12px;overflow:hidden;box-shadow:0 5px 25px rgba(14,165,233,.2)}
-.help-modal-logo img{width:100%;height:100%;object-fit:cover;display:block}
-.help-modal-title{font-size:20px;font-weight:900;color:#fff}
-.help-modal-close{width:42px;height:42px;flex-shrink:0;border:1px solid rgba(14,165,233,.2);background:#08152a;color:#fff;border-radius:10px;font-size:26px;line-height:1;cursor:pointer;transition:.2s ease}
-.help-modal-close:hover{background:#0b203d;border-color:rgba(14,165,233,.5)}
-.help-modal-line{width:100%;height:1px;margin:16px 0 20px;background:linear-gradient(90deg,transparent,#2563eb,transparent)}
-.help-modal-intro{text-align:center;color:#cbd5e1;font-size:15px;line-height:1.7;margin-bottom:20px}
-.help-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.help-option{width:100%;min-height:105px;padding:18px;border:1px solid rgba(14,165,233,.18);border-radius:14px;background:linear-gradient(145deg,#08152a,#071226);color:#fff;text-align:left;cursor:pointer;transition:transform .2s ease,border-color .2s ease,background .2s ease}
-.help-option:hover{transform:translateY(-2px);border-color:rgba(14,165,233,.5);background:#0b203d}
-.help-option-title{display:block;font-size:15px;font-weight:900;color:#fff}
-.help-option-sub{display:block;margin-top:7px;color:#64748b;font-size:12px;line-height:1.4}
+.help-modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:9500;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.help-modal-overlay.show{ display:flex; }
+.help-modal{
+  width:100%;
+  max-width:720px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:linear-gradient(145deg,#061126,#020617);
+  border:1px solid rgba(14,165,233,.45);
+  border-radius:20px;
+  box-shadow:0 25px 80px rgba(0,0,0,.65),0 0 35px rgba(14,165,233,.12);
+  padding:18px;
+}
+.help-modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.help-modal-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.help-modal-logo{
+  width:48px;
+  height:48px;
+  flex-shrink:0;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 5px 25px rgba(14,165,233,.2);
+}
+.help-modal-logo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.help-modal-title{
+  font-size:20px;
+  font-weight:900;
+  color:#fff;
+}
+.help-modal-close{
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  border:1px solid rgba(14,165,233,.2);
+  background:#08152a;
+  color:#fff;
+  border-radius:10px;
+  font-size:26px;
+  line-height:1;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.help-modal-close:hover{
+  background:#0b203d;
+  border-color:rgba(14,165,233,.5);
+}
+.help-modal-line{
+  width:100%;
+  height:1px;
+  margin:16px 0 20px;
+  background:linear-gradient(90deg,transparent,#2563eb,transparent);
+}
+.help-modal-intro{
+  text-align:center;
+  color:#cbd5e1;
+  font-size:15px;
+  line-height:1.7;
+  margin-bottom:20px;
+}
+.help-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.help-option{
+  width:100%;
+  min-height:105px;
+  padding:18px;
+  border:1px solid rgba(14,165,233,.18);
+  border-radius:14px;
+  background:linear-gradient(145deg,#08152a,#071226);
+  color:#fff;
+  text-align:left;
+  cursor:pointer;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
+.help-option:hover{
+  transform:translateY(-2px);
+  border-color:rgba(14,165,233,.5);
+  background:#0b203d;
+}
+.help-option-title{
+  display:block;
+  font-size:15px;
+  font-weight:900;
+  color:#fff;
+}
+.help-option-sub{
+  display:block;
+  margin-top:7px;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.4;
+}
 
 /* help topic view header */
-.help-topic-header{display:flex;align-items:center;gap:12px;padding:10px 0 6px}
-.help-topic-back{width:40px;height:40px;border:1px solid rgba(14,165,233,.2);background:#08152a;color:#fff;border-radius:10px;font-size:20px;cursor:pointer}
-.help-topic-title{font-size:18px;font-weight:900;color:#fff}
+.help-topic-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0 6px;
+}
+.help-topic-back{
+  width:40px;
+  height:40px;
+  border:1px solid rgba(14,165,233,.2);
+  background:#08152a;
+  color:#fff;
+  border-radius:10px;
+  font-size:20px;
+  cursor:pointer;
+}
+.help-topic-title{
+  font-size:18px;
+  font-weight:900;
+  color:#fff;
+}
 
 /* =========================
-   FOOTER (fixed & centered)
+   FOOTER (fixed and centered)
 ========================= */
-.footer{position:fixed;left:0;right:0;bottom:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 18px calc(12px + env(safe-area-inset-bottom));color:#94a3b8;border-top:1px solid rgba(14,165,233,.06);background:linear-gradient(180deg,rgba(2,6,23,0.0),rgba(2,6,23,0.0));text-align:center}
-.footer .copyright{color:#64748b;margin-bottom:6px;font-size:14px;font-weight:600}
-.footer .contact-text{color:#cbd5e1;margin-bottom:10px;font-size:14px}
-.footer-socials{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
-.footer-social{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;background:#08152a;border:1px solid rgba(14,165,233,.12);color:#fff;text-decoration:none;font-weight:700;font-size:14px;transition:transform .12s ease, background .12s ease}
-.footer-social:hover{background:#0b203d;transform:translateY(-2px)}
-.footer-youtube{margin-top:6px}
+.footer{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:2000;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+  color:#94a3b8;
+  border-top:1px solid rgba(14,165,233,.06);
+  background:rgba(2,6,23,0);
+  text-align:center;
+}
+.footer .copyright{
+  color:#64748b;
+  margin-bottom:6px;
+  font-size:14px;
+  font-weight:600;
+}
+.footer .contact-text{
+  color:#cbd5e1;
+  margin-bottom:10px;
+  font-size:14px;
+}
+.footer-socials{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:8px;
+  flex-wrap:wrap;
+  transform:none;
+  will-change:auto;
+}
+.footer-social{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 14px;
+  border-radius:10px;
+  background:#08152a;
+  border:1px solid rgba(14,165,233,.12);
+  color:#fff;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  transition:background .12s ease;
+}
+.footer-social:hover{
+  background:#0b203d;
+  transform:none;
+}
 
 /* =========================
    RESPONSIVE
 ========================= */
-@media(max-width:800px){.private-server-steps{grid-template-columns:1fr}}
-@media(max-width:700px){main{padding-top:28px}.grid{grid-template-columns:1fr}.page-title{padding:30px 18px}.page-title h1{font-size:36px}}
-@media(min-width:701px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:520px){.step-content{align-items:flex-start}.step-image{width:85px;height:85px}.private-server-overlay{padding:10px}.private-server-modal{border-radius:14px}}
-@media(max-width:430px){header{padding-left:14px;padding-right:14px}.logo{width:44px;height:44px}.site-title{font-size:17px}.menu{width:290px}.menu-socials{grid-template-columns:1fr}.help-buttons{flex-direction:column}.help-button,.private-server-button{width:100%;max-width:320px}}
+@media(max-width:800px){
+  .private-server-steps{ grid-template-columns:1fr; }
+}
+@media(max-width:700px){
+  main{ padding-top:28px; }
+  .grid{ grid-template-columns:1fr; }
+  .page-title{ padding:30px 18px; }
+  .page-title h1{ font-size:36px; }
+}
+@media(min-width:701px){
+  .grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media(max-width:520px){
+  .step-content{ align-items:flex-start; }
+  .step-image{ width:85px; height:85px; }
+  .private-server-overlay{ padding:10px; }
+  .private-server-modal{ border-radius:14px; }
+  .footer .contact-text{ font-size:13px; }
+  .footer-social{ font-size:13px; padding:8px 12px; }
+}
+@media(max-width:430px){
+  header{ padding-left:14px; padding-right:14px; }
+  .logo{ width:44px; height:44px; }
+  .site-title{ font-size:17px; }
+  .menu{ width:290px; }
+  .menu-socials{ grid-template-columns:1fr; }
+  .help-buttons{ flex-direction:column; }
+  .help-button,.private-server-button{ width:100%; max-width:320px; }
+}
 </style>
 </head>
 <body>
@@ -252,7 +1071,10 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
 <!-- =========================
      LOADER
 ========================= -->
-<div id="loader">Loading Agar.io Mods...<div class="spinner"></div></div>
+<div id="loader">
+  Loading Agar.io Mods...
+  <div class="spinner"></div>
+</div>
 
 <!-- =========================
      MENU OVERLAY
@@ -265,7 +1087,9 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
 <header>
   <div class="left-header">
     <a class="logo-link" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open T.B Agar.io YouTube channel">
-      <div class="logo"><img src="/IMG_0561.jpeg" alt="T.B Agar.io"></div>
+      <div class="logo">
+        <img src="/IMG_0561.jpeg" alt="T.B Agar.io">
+      </div>
     </a>
     <div class="site-title">T.B Agar.io</div>
   </div>
@@ -436,7 +1260,6 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
         <div class="overlay"></div>
       </div>
 
-      <!-- You can add more mod cards below as needed -->
     </div>
   </section>
 
@@ -449,11 +1272,16 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
     </div>
 
     <div class="grid">
+
       <div class="card" data-status="active">
         <img src="/IMG_0321.jpeg" alt="Bite Bots Panel">
         <a href="https://biteyt.com/bots" target="_blank" rel="noopener">
-          <button class="download">Bite Bots Panel
-            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h5v10h10v-3h2v5H5z"></path></svg>
+          <button class="download">
+            Bite Bots Panel
+            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+              <path d="M5 5h5v10h10v-3h2v5H5z"></path>
+            </svg>
           </button>
         </a>
         <div class="info">Version: 26.6.0</div>
@@ -465,8 +1293,12 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
       <div class="card" data-status="active">
         <img src="/IMG_0322.jpeg" alt="Kahraba Website">
         <a href="https://kahraba.in" target="_blank" rel="noopener">
-          <button class="download">Kahraba Website
-            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path><path d="M5 5h5v10h10v-3h2v5H5z"></path></svg>
+          <button class="download">
+            Kahraba Website
+            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+              <path d="M5 5h5v10h10v-3h2v5H5z"></path>
+            </svg>
           </button>
         </a>
         <div class="info">Version: 26.6.0</div>
@@ -474,6 +1306,7 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
         <div class="info">Kahraba Website</div>
         <div class="overlay"></div>
       </div>
+
     </div>
   </section>
 
@@ -488,7 +1321,7 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
     </div>
   </div>
 
-  <!-- Help modal and topic view -->
+  <!-- HELP MODAL -->
   <div class="help-modal-overlay" id="help-modal-overlay">
     <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
       <div class="help-modal-header">
@@ -501,22 +1334,28 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
 
       <div class="help-modal-line"></div>
 
-      <!-- OPTIONS VIEW -->
       <div id="help-options-view">
-        <div class="help-modal-intro">We want to help you as best as possible.<br>Choose your option.</div>
+        <div class="help-modal-intro">
+          We want to help you as best as possible.<br>
+          Choose your option.
+        </div>
+
         <div class="help-options">
           <button class="help-option" type="button" data-topic="0">
             <span class="help-option-title">How to install eSign</span>
             <span class="help-option-sub">Installation help for eSign</span>
           </button>
+
           <button class="help-option" type="button" data-topic="1">
             <span class="help-option-title">How eSign works</span>
             <span class="help-option-sub">Explanation of how to use eSign</span>
           </button>
+
           <button class="help-option" type="button" data-topic="2">
             <span class="help-option-title">How to install Agar.io mods</span>
             <span class="help-option-sub">Learn how to install Agar.io mods</span>
           </button>
+
           <button class="help-option" type="button" data-topic="3">
             <span class="help-option-title">How to configure Agar.io mods</span>
             <span class="help-option-sub">Help configuring Agar.io mods</span>
@@ -524,12 +1363,13 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
         </div>
       </div>
 
-      <!-- TOPIC VIEW -->
       <div id="help-topic-view" style="display:none; padding-bottom:18px;">
         <div class="help-topic-header" style="padding:10px 18px;">
           <button class="help-topic-back" id="helpTopicBack" aria-label="Back">←</button>
           <div style="display:flex; align-items:center; gap:12px;">
-            <div class="help-modal-logo" style="width:48px; height:48px;"><img src="/IMG_0561.jpeg" alt="T.B Agar.io"></div>
+            <div class="help-modal-logo" style="width:48px; height:48px;">
+              <img src="/IMG_0561.jpeg" alt="T.B Agar.io">
+            </div>
             <div>
               <div class="help-topic-title" id="helpTopicTitle">Title</div>
               <div style="color:#94a3b8; font-size:13px;" id="helpTopicSub">Subtitle</div>
@@ -547,7 +1387,7 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
     </div>
   </div>
 
-  <!-- Private server modal (full content) -->
+  <!-- PRIVATE SERVER MODAL -->
   <div class="private-server-overlay" id="private-server-overlay">
     <div class="private-server-modal">
       <div class="private-server-header">
@@ -579,7 +1419,10 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Open your iPhone Settings</h3>
           <div class="step-content">
             <img class="step-image" src="/settings.png" alt="Settings">
-            <div class="step-text">Go to: <strong>Settings → General → VPN &amp; Device Management → Profile Download</strong></div>
+            <div class="step-text">
+              Go to:
+              <strong>Settings → General → VPN &amp; Device Management → Profile Download</strong>
+            </div>
           </div>
         </div>
 
@@ -588,7 +1431,10 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Install your Agar.io mod</h3>
           <div class="step-content">
             <img class="step-image" src="/agario.png" alt="Agar.io">
-            <div class="step-text">Install your Agar.io mod from this website.<br><a class="step-link" href="/mod-menu.html">Open T.B Agar.io Mod Menu ↗</a></div>
+            <div class="step-text">
+              Install your Agar.io mod from this website.
+              <a class="step-link" href="/mod-menu.html">Open T.B Agar.io Mod Menu ↗</a>
+            </div>
           </div>
         </div>
 
@@ -597,7 +1443,16 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Open Sing-box and create a profile</h3>
           <div class="step-content">
             <img class="step-image" src="/singbox-profile.png" alt="Sing-box Profile">
-            <div class="step-text">Open the Sing-box app and go to <strong>Dashboard</strong>.<br><br>Under Dashboard, open <strong>Profile</strong>.<br><br>Press the <strong>+</strong> button in the top-right corner.<br><br>Select <strong>New Profile</strong>.<br><br>Press <strong>Create Manually</strong>.<br><br>Enter a name like <strong>Agar.io Private Server</strong> and press <strong>Create</strong>.</div>
+            <div class="step-text">
+              Open the Sing-box app and go to <strong>Dashboard</strong>.<br><br>
+              Under Dashboard, open <strong>Profile</strong>.<br><br>
+              Press the <strong>+</strong> button in the top-right corner.<br><br>
+              Select <strong>New Profile</strong>.<br><br>
+              Press the bottom button <strong>Create Manually</strong>.<br><br>
+              Press <strong>Name</strong> and enter a name, for example:
+              <strong>Agar.io Private Server</strong>.<br><br>
+              Press <strong>Create</strong>.
+            </div>
           </div>
         </div>
 
@@ -606,7 +1461,13 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Add the server script</h3>
           <div class="step-content">
             <img class="step-image" src="/singbox-edit.png" alt="Sing-box Edit Content">
-            <div class="step-text">Press the <strong>+</strong> button again.<br><br>Tap <strong>Edit Content</strong>.<br><br>Open <strong>Script</strong> at the bottom.<br><br>Copy the script below and paste it into the Sing-box app.<br><br><button class="script-button" onclick="openScriptPopup()">📋 View Script</button></div>
+            <div class="step-text">
+              Press the <strong>+</strong> button again.<br><br>
+              Tap <strong>Edit Content</strong>.<br><br>
+              Open <strong>Script</strong> at the bottom.<br><br>
+              Copy the script below and paste it into the Sing-box app.<br><br>
+              <button class="script-button" onclick="openScriptPopup()">📋 View Script</button>
+            </div>
           </div>
         </div>
 
@@ -615,7 +1476,11 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Turn on the VPN</h3>
           <div class="step-content">
             <img class="step-image" src="/vpn.png" alt="VPN">
-            <div class="step-text">Press the <strong>Play</strong> button in the bottom-right corner of your screen.<br><br>When the VPN is active, open Agar.io.<br><br>You may need to wait a little while before the server appears.</div>
+            <div class="step-text">
+              Press the <strong>Play</strong> button in the bottom-right corner of your screen.<br><br>
+              When the VPN is active, open Agar.io.<br><br>
+              You may need to wait a little while before the server appears.
+            </div>
           </div>
         </div>
 
@@ -624,7 +1489,12 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Copy the server script</h3>
           <div class="step-content">
             <img class="step-image" src="/script.png" alt="Server Script">
-            <div class="step-text">When the server appears, press the <strong>Script</strong> button.<br><br>You will see the script.<br><br>Press <strong>Copy</strong> to copy it.<br><br>Press the <strong>×</strong> in the top-right corner to return to the steps.</div>
+            <div class="step-text">
+              When the server appears, press the <strong>Script</strong> button.<br><br>
+              You will see the script.<br><br>
+              Press <strong>Copy</strong> to copy it.<br><br>
+              Press the <strong>×</strong> in the top-right corner to return to the steps.
+            </div>
           </div>
         </div>
 
@@ -633,7 +1503,10 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
           <h3>Close the instructions</h3>
           <div class="step-content">
             <img class="step-image" src="/IMG_0561.jpeg" alt="T.B Agar.io">
-            <div class="step-text">The <strong>×</strong> in the top-right corner next to T.B Agar.io closes the instructions.<br><br>Press it when you are finished.</div>
+            <div class="step-text">
+              The <strong>×</strong> in the top-right corner next to T.B Agar.io closes the instructions.<br><br>
+              Press it when you are finished.
+            </div>
           </div>
         </div>
 
@@ -665,24 +1538,18 @@ hr.section-line{border:none;height:1px;background:linear-gradient(90deg,transpar
 </main>
 
 <!-- =========================
-     FOOTER (CENTERED)
+     FOOTER
 ========================= -->
 <footer class="footer" role="contentinfo">
   <div class="copyright">© 2026 T.B Agar.io</div>
   <div class="contact-text">If you have questions, you can always contact us.</div>
   <div class="footer-socials" aria-label="Contact options">
-    <a class="footer-social" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener" aria-label="Open Discord">Discord</a>
-    <a class="footer-social" href="https://biteyt.com/bots" target="_blank" rel="noopener" aria-label="Open Bite Bots">Bite Bots</a>
-    <a class="footer-social" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener" aria-label="Open Instagram">Instagram</a>
-  </div>
-  <div class="footer-youtube">
-    <a class="footer-social footer-youtube-btn" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open YouTube" style="padding:10px 18px;">▶ YouTube</a>
+    <a class="footer-social" href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener" aria-label="Open Discord">💬 Discord</a>
+    <a class="footer-social" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open YouTube">▶ YouTube</a>
+    <a class="footer-social" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener" aria-label="Open Instagram">◎ Instagram</a>
   </div>
 </footer>
 
-<!-- =========================
-     SCRIPTS (full)
-========================= -->
 <script>
 /* =========================
    LOADER
@@ -707,7 +1574,11 @@ function closeMenu(){
   menu.classList.remove("open");
   overlay.classList.remove("show");
 }
-document.addEventListener("keydown", function(e){ if(e.key === "Escape"){ closeMenu(); closeHelpModal(); closePrivateServer(); closeScriptPopup(); } });
+document.addEventListener("keydown", function(event){
+  if(event.key === "Escape"){
+    closeMenu();
+  }
+});
 
 /* =========================
    STATUS SYSTEM
@@ -725,10 +1596,16 @@ document.querySelectorAll(".card").forEach(card => {
     if(btn){
       btn.textContent = "Unavailable";
       btn.classList.add("locked");
-      btn.onclick = function(event){ event.preventDefault(); alert("This mod is not available."); };
+      btn.onclick = function(event){
+        event.preventDefault();
+        alert("This mod is not available.");
+      };
     }
     card.style.opacity = "0.45";
-    if(overlay){ overlay.style.display = "flex"; overlay.textContent = "Not Available"; }
+    if(overlay){
+      overlay.style.display = "flex";
+      overlay.textContent = "Not Available";
+    }
   }
 });
 
@@ -748,7 +1625,9 @@ document.querySelectorAll(".card").forEach(card => {
 
   btn.addEventListener("click", function(event){
     event.preventDefault();
+
     if(card.dataset.status === "not") return;
+
     overlay.style.display = "flex";
     overlay.innerHTML = `
       <div style="text-align:center;">
@@ -756,6 +1635,7 @@ document.querySelectorAll(".card").forEach(card => {
         <div class="spinner" style="margin:12px auto;"></div>
       </div>
     `;
+
     setTimeout(showVerify, random(3000,6000));
   });
 
@@ -774,15 +1654,26 @@ document.querySelectorAll(".card").forEach(card => {
 
     document.getElementById("ytBtn").onclick = function(){
       window.open("https://www.youtube.com/@T.B6", "_blank");
-      setTimeout(function(){ ytDone = true; document.getElementById("ytStatus").innerHTML = "✔"; checkUnlock(); }, random(5000,12000));
+      setTimeout(function(){
+        ytDone = true;
+        document.getElementById("ytStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
     };
+
     document.getElementById("igBtn").onclick = function(){
       window.open("https://www.instagram.com/t.bagar.io/", "_blank");
-      setTimeout(function(){ igDone = true; document.getElementById("igStatus").innerHTML = "✔"; checkUnlock(); }, random(5000,12000));
+      setTimeout(function(){
+        igDone = true;
+        document.getElementById("igStatus").innerHTML = "✔";
+        checkUnlock();
+      }, random(5000,12000));
     };
 
     const unlockBtn = document.getElementById("unlockBtn");
-    unlockBtn.onclick = function(){ alert("Complete YouTube and Instagram verification first."); };
+    unlockBtn.onclick = function(){
+      alert("Complete YouTube and Instagram verification first.");
+    };
 
     function checkUnlock(){
       if(ytDone && igDone){
@@ -795,12 +1686,14 @@ document.querySelectorAll(".card").forEach(card => {
     function startDownload(){
       const texts = ["Downloading...","Please wait...","Preparing file..."];
       let i = 0;
+
       overlay.innerHTML = `
         <div style="text-align:center;">
           <div id="dlText">${texts[0]}</div>
           <div class="spinner" style="margin:12px auto;"></div>
         </div>
       `;
+
       const interval = setInterval(function(){
         i = (i + 1) % texts.length;
         const dlText = document.getElementById("dlText");
@@ -809,8 +1702,14 @@ document.querySelectorAll(".card").forEach(card => {
 
       setTimeout(function(){
         clearInterval(interval);
-        overlay.innerHTML = `<div style="text-align:center;color:#4ade80;font-weight:bold;">✔ Download complete</div>`;
-        setTimeout(function(){ window.location.href = link; }, 1500);
+        overlay.innerHTML = `
+          <div style="text-align:center;color:#4ade80;font-weight:bold;">
+            ✔ Download complete
+          </div>
+        `;
+        setTimeout(function(){
+          window.location.href = link;
+        }, 1500);
       }, random(10000,20000));
     }
   }
@@ -820,11 +1719,13 @@ document.querySelectorAll(".card").forEach(card => {
     return infos.length ? infos[infos.length - 1].innerText : "Mod";
   }
 
-  function random(min,max){ return Math.random() * (max - min) + min; }
+  function random(min,max){
+    return Math.random() * (max - min) + min;
+  }
 });
 
 /* =========================
-   HELP TOPICS DATA + LOGIC
+   HELP MODS: topics + dynamic steps
 ========================= */
 const helpTopics = [
   {
@@ -861,7 +1762,7 @@ const helpTopics = [
     sub: "Help configuring Agar.io mods",
     steps: [
       { title: "Create profile", text: "Create a Sing-box profile and paste the server script.", img: "/singbox-profile.png" },
-      { title: "Add script", text: "In Sing-box: Edit Content → Script and paste the script.", img: "/singbox-edit.png" },
+      { title: "Add script", text: "Open 'Edit Content' → 'Script' and paste the script.", img: "/singbox-edit.png" },
       { title: "Enable VPN", text: "Turn on VPN in Sing-box and open Agar.io.", img: "/vpn.png" },
       { title: "Check settings", text: "Adjust FPS and skin unlock settings in the mod menus.", img: "" }
     ]
@@ -914,6 +1815,7 @@ function showHelpTopic(idx){
     stepsGrid.appendChild(step);
   });
   container.appendChild(stepsGrid);
+
   document.getElementById("help-options-view").style.display = "none";
   document.getElementById("help-topic-view").style.display = "block";
   document.getElementById("helpTopicBack").focus();
@@ -922,39 +1824,61 @@ function goBackToOptions(){
   document.getElementById("help-options-view").style.display = "block";
   document.getElementById("help-topic-view").style.display = "none";
 }
-document.getElementById("helpTopicBack").addEventListener("click", function(){ goBackToOptions(); });
+document.getElementById("helpTopicBack").addEventListener("click", function(){
+  goBackToOptions();
+});
 
 /* =========================
-   PRIVATE SERVER modal open/close
+   PRIVATE SERVER modal
 ========================= */
 function openPrivateServer(){
   const overlay = document.getElementById("private-server-overlay");
-  if(overlay){ overlay.classList.add("show"); document.body.style.overflow = "hidden"; }
+  if(overlay){
+    overlay.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
 }
 function closePrivateServer(){
   const overlay = document.getElementById("private-server-overlay");
-  if(overlay){ overlay.classList.remove("show"); document.body.style.overflow = ""; }
+  if(overlay){
+    overlay.classList.remove("show");
+    document.body.style.overflow = "";
+  }
 }
 
 /* =========================
-   SCRIPT POPUP (view & copy)
+   SCRIPT POPUP
 ========================= */
-function openScriptPopup(){ const popup = document.getElementById("script-popup"); if(popup) popup.classList.add("show"); }
-function closeScriptPopup(){ const popup = document.getElementById("script-popup"); if(popup) popup.classList.remove("show"); }
+function openScriptPopup(){
+  const popup = document.getElementById("script-popup");
+  if(popup) popup.classList.add("show");
+}
+function closeScriptPopup(){
+  const popup = document.getElementById("script-popup");
+  if(popup) popup.classList.remove("show");
+}
 
+/* =========================
+   COPY SCRIPT
+========================= */
 function copyPrivateServerScript(){
   const script = document.getElementById("private-server-script");
   if(!script) return;
+
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(script.value).then(function(){ showCopied(); }).catch(function(){ fallbackCopy(script); });
-  } else { fallbackCopy(script); }
+    navigator.clipboard.writeText(script.value)
+      .then(function(){ showCopied(); })
+      .catch(function(){ fallbackCopy(script); });
+  } else {
+    fallbackCopy(script);
+  }
 }
 function fallbackCopy(script){
   script.removeAttribute("readonly");
   script.select();
   script.setSelectionRange(0, script.value.length);
   document.execCommand("copy");
-  script.setAttribute("readonly", "readonly");
+  script.setAttribute("readonly","readonly");
   showCopied();
 }
 function showCopied(){
@@ -962,16 +1886,20 @@ function showCopied(){
   if(button){
     const oldText = button.innerText;
     button.innerText = "✔ Script Copied";
-    setTimeout(function(){ button.innerText = oldText; }, 2000);
+    setTimeout(function(){
+      button.innerText = oldText;
+    }, 2000);
   }
 }
 
 /* =========================
-   ESC and click outside handling
+   ESC + OUTSIDE CLICKS
 ========================= */
 document.addEventListener("keydown", function(event){
   if(event.key === "Escape"){
-    closeScriptPopup(); closePrivateServer(); closeHelpModal(); closeMenu();
+    closeScriptPopup();
+    closePrivateServer();
+    closeHelpModal();
   }
 });
 
@@ -981,14 +1909,21 @@ if(helpOverlay){
     if(event.target === this) closeHelpModal();
   });
 }
+
 const privateOverlay = document.getElementById("private-server-overlay");
 if(privateOverlay){
-  privateOverlay.addEventListener("click", function(event){ if(event.target === this) closePrivateServer(); });
+  privateOverlay.addEventListener("click", function(event){
+    if(event.target === this) closePrivateServer();
+  });
 }
+
 const scriptPopup = document.getElementById("script-popup");
 if(scriptPopup){
-  scriptPopup.addEventListener("click", function(event){ if(event.target === this) closeScriptPopup(); });
+  scriptPopup.addEventListener("click", function(event){
+    if(event.target === this) closeScriptPopup();
+  });
 }
 </script>
+
 </body>
 </html>
