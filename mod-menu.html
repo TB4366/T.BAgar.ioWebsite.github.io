@@ -919,8 +919,7 @@ hr.section-line{
   flex-wrap:wrap;
 }
 
-.help-button,
-.private-server-button{
+.help-button{
   min-width:170px;
 
   display:inline-flex;
@@ -946,21 +945,10 @@ hr.section-line{
     background .2s ease;
 }
 
-.help-button:hover,
-.private-server-button:hover{
+.help-button:hover{
   background:#1d4ed8;
 
   transform:translateY(-2px);
-}
-
-.private-server-button{
-  border:none;
-
-  cursor:pointer;
-
-  font-family:Arial,Helvetica,sans-serif;
-
-  font-size:14px;
 }
 
 
@@ -2583,7 +2571,7 @@ footer a{
 
 
 <!-- =========================
-     HELP MODS MODAL
+     HELP MODS MODAL (één modaal — opties -> stappen)
 ========================= -->
 
 <div
@@ -2632,169 +2620,82 @@ footer a{
 
     <div class="help-modal-line"></div>
 
-    <div class="help-modal-intro">
+    <!-- body area: we wisselen hier tussen opties en stappen -->
+    <div id="help-modal-body">
 
-      We willen jou zo goed mogelijk helpen.
-      <br>
-      Kies jouw optie.
+      <div class="help-modal-intro">
 
-    </div>
+        We willen jou zo goed mogelijk helpen.
+        <br>
+        Kies jouw optie.
 
-    <div class="help-options">
-
-      <button
-        class="help-option"
-        type="button"
-        onclick="openHelpSteps(0)">
-
-        <span class="help-option-title">
-          How install eSign
-        </span>
-
-        <span class="help-option-sub">
-          Installatie hulp voor eSign
-        </span>
-
-      </button>
-
-      <button
-        class="help-option"
-        type="button"
-        onclick="openHelpSteps(1)">
-
-        <span class="help-option-title">
-          Hoe werkt eSign?
-        </span>
-
-        <span class="help-option-sub">
-          Uitleg over het gebruik van eSign
-        </span>
-
-      </button>
-
-      <button
-        class="help-option"
-        type="button"
-        onclick="openHelpSteps(2)">
-
-        <span class="help-option-title">
-          How install Agar.io mods
-        </span>
-
-        <span class="help-option-sub">
-          Leer hoe je Agar.io mods installeert
-        </span>
-
-      </button>
-
-      <button
-        class="help-option"
-        type="button"
-        onclick="openHelpSteps(3)">
-
-        <span class="help-option-title">
-          Hoe stel je Agar.io mods in
-        </span>
-
-        <span class="help-option-sub">
-          Hulp bij het instellen van Agar.io mods
-        </span>
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     HELP STEPS MODAL (vervangt private server modal)
-========================= -->
-
-<div
-  class="private-server-overlay"
-  id="help-steps-overlay">
-
-  <div class="private-server-modal" role="dialog" aria-modal="true" aria-labelledby="help-steps-title">
-
-    <div class="private-server-header">
-
-      <img
-        src="/IMG_0561.jpeg"
-        alt="T.B Agar.io">
-
-      <div class="private-server-brand">
-        T.B Agar.io
       </div>
 
-      <button
-        class="private-server-close"
-        onclick="closeHelpSteps()"
-        aria-label="Close">
+      <div class="help-options" id="help-options-list">
 
-        ×
+        <button
+          class="help-option"
+          type="button"
+          data-index="0"
+          onclick="showHelpStepsInModal(0)">
 
-      </button>
+          <span class="help-option-title">
+            How install eSign
+          </span>
 
-    </div>
+          <span class="help-option-sub">
+            Installatie hulp voor eSign
+          </span>
 
-    <div class="private-server-title">
+        </button>
 
-      <h2 id="help-steps-title">
-        Help: Steps
-      </h2>
+        <button
+          class="help-option"
+          type="button"
+          data-index="1"
+          onclick="showHelpStepsInModal(1)">
 
-    </div>
+          <span class="help-option-title">
+            Hoe werkt eSign?
+          </span>
 
-    <div class="private-server-steps" id="help-steps-steps">
-      <!-- Steps worden via JavaScript ingeladen -->
-    </div>
+          <span class="help-option-sub">
+            Uitleg over het gebruik van eSign
+          </span>
 
-    <div class="private-contact">
+        </button>
 
-      <h3>
-        Questions or need help?
-      </h3>
+        <button
+          class="help-option"
+          type="button"
+          data-index="2"
+          onclick="showHelpStepsInModal(2)">
 
-      <p>
-        Need help with something?
-        Feel free to contact T.B Agar.io.
-        You can contact us using the buttons below.
-      </p>
+          <span class="help-option-title">
+            How install Agar.io mods
+          </span>
 
-      <div class="private-socials">
+          <span class="help-option-sub">
+            Leer hoe je Agar.io mods installeert
+          </span>
 
-        <a
-          class="private-social"
-          href="https://www.youtube.com/@T.B6"
-          target="_blank"
-          rel="noopener">
+        </button>
 
-          ▶ YouTube
+        <button
+          class="help-option"
+          type="button"
+          data-index="3"
+          onclick="showHelpStepsInModal(3)">
 
-        </a>
+          <span class="help-option-title">
+            Hoe stel je Agar.io mods in
+          </span>
 
-        <a
-          class="private-social"
-          href="https://discord.gg/qhuXPrVzBx"
-          target="_blank"
-          rel="noopener">
+          <span class="help-option-sub">
+            Hulp bij het instellen van Agar.io mods
+          </span>
 
-          💬 Discord
-
-        </a>
-
-        <a
-          class="private-social"
-          href="https://www.instagram.com/t.bagar.io/"
-          target="_blank"
-          rel="noopener">
-
-          ◎ Instagram
-
-        </a>
+        </button>
 
       </div>
 
@@ -3441,7 +3342,7 @@ document
 
 
 /* =========================
-   HELP MODAL
+   HELP MODAL (open/close)
 ========================= */
 
 function openHelpModal(){
@@ -3458,10 +3359,12 @@ function openHelpModal(){
     document.body.style.overflow =
       "hidden";
 
+    // zorg dat de body-area terug naar de opties staat
+    resetHelpModalBody();
+
   }
 
 }
-
 
 function closeHelpModal(){
 
@@ -3480,7 +3383,6 @@ function closeHelpModal(){
   }
 
 }
-
 
 const helpOverlay =
   document.getElementById(
@@ -3505,9 +3407,12 @@ if(helpOverlay){
 }
 
 /* =========================
-   HELP STEPS (dynamisch per keuze)
+   HELP OPTIONS -> STAPPEN IN DEZELFDE MODAL
 ========================= */
 
+/* Data voor de 4 help-opties en hun stappen.
+   Pas hier tekst/afbeeldingen aan indien nodig.
+*/
 const helpStepsData = [
   {
     title: "How install eSign",
@@ -3552,28 +3457,63 @@ const helpStepsData = [
   }
 ];
 
-function openHelpSteps(index){
+function resetHelpModalBody(){
+  const body = document.getElementById("help-modal-body");
+  if(!body) return;
 
-  const overlay =
-    document.getElementById("help-steps-overlay");
+  body.innerHTML = `
+    <div class="help-modal-intro">
+      We willen jou zo goed mogelijk helpen.
+      <br>
+      Kies jouw optie.
+    </div>
 
-  const titleEl =
-    document.getElementById("help-steps-title");
+    <div class="help-options" id="help-options-list">
 
-  const stepsContainer =
-    document.getElementById("help-steps-steps");
+      <button class="help-option" type="button" data-index="0" onclick="showHelpStepsInModal(0)">
+        <span class="help-option-title">How install eSign</span>
+        <span class="help-option-sub">Installatie hulp voor eSign</span>
+      </button>
 
-  if(!overlay || !titleEl || !stepsContainer) return;
+      <button class="help-option" type="button" data-index="1" onclick="showHelpStepsInModal(1)">
+        <span class="help-option-title">Hoe werkt eSign?</span>
+        <span class="help-option-sub">Uitleg over het gebruik van eSign</span>
+      </button>
+
+      <button class="help-option" type="button" data-index="2" onclick="showHelpStepsInModal(2)">
+        <span class="help-option-title">How install Agar.io mods</span>
+        <span class="help-option-sub">Leer hoe je Agar.io mods installeert</span>
+      </button>
+
+      <button class="help-option" type="button" data-index="3" onclick="showHelpStepsInModal(3)">
+        <span class="help-option-title">Hoe stel je Agar.io mods in</span>
+        <span class="help-option-sub">Hulp bij het instellen van Agar.io mods</span>
+      </button>
+
+    </div>
+  `;
+}
+
+/* Wanneer een optie gekozen wordt wordt binnen dezelfde modal de opties vervangen door het stappenplan.
+   Er verschijnt een Back-knop bovenin de body zodat gebruiker terug kan.
+*/
+function showHelpStepsInModal(index){
+  const body = document.getElementById("help-modal-body");
+  if(!body) return;
 
   const data = helpStepsData[index] || helpStepsData[0];
 
-  titleEl.innerText = data.title;
+  // bouw header met back-knop
+  let html = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <button onclick="resetHelpModalBody()" style="background:#08152a;border:1px solid rgba(14,165,233,.18);color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;">← Back</button>
+      <div style="font-weight:900;font-size:18px;color:#fff;">${data.title}</div>
+    </div>
+  `;
 
-  // bouw de stappen op zoals de private-step markup
-  let html = "";
+  html += `<div class="private-server-steps">`;
 
   data.steps.forEach((s, i) => {
-
     html += `
       <div class="private-step">
         <div class="step-number">${i+1}</div>
@@ -3584,38 +3524,11 @@ function openHelpSteps(index){
         </div>
       </div>
     `;
-
   });
 
-  stepsContainer.innerHTML = html;
+  html += `</div>`;
 
-  overlay.classList.add("show");
-  document.body.style.overflow = "hidden";
-
-}
-
-function closeHelpSteps(){
-
-  const overlay =
-    document.getElementById("help-steps-overlay");
-
-  if(overlay){
-
-    overlay.classList.remove("show");
-    document.body.style.overflow = "";
-
-  }
-
-}
-
-/* click buiten sluit help steps modal */
-const helpStepsOverlay = document.getElementById("help-steps-overlay");
-if(helpStepsOverlay){
-  helpStepsOverlay.addEventListener("click", function(event){
-    if(event.target === this){
-      closeHelpSteps();
-    }
-  });
+  body.innerHTML = html;
 }
 
 /* =========================
@@ -3765,7 +3678,8 @@ document.addEventListener(
 
       closeHelpModal();
 
-      closeHelpSteps();
+      // reset modal body zodra gesloten
+      resetHelpModalBody();
 
     }
 
