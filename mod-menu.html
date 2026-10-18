@@ -976,7 +976,7 @@ hr.section-line{
 }
 
 /* =========================
-   FOOTER (fixed and always visible)
+   FOOTER
 ========================= */
 .footer{
   position:fixed !important;
@@ -984,11 +984,10 @@ hr.section-line{
   right:0;
   bottom:0;
   z-index:999999 !important;
-  pointer-events:auto;
   transform:none !important;
   -webkit-transform:none !important;
   backface-visibility:hidden;
-
+  pointer-events:auto;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -1142,8 +1141,6 @@ hr.section-line{
      MAIN
 ========================= -->
 <main>
-
-  <!-- PAGE TITLE -->
   <div class="page-title">
     <div class="page-title-content">
       <h1>T.B <span>MOD MENU</span></h1>
@@ -1151,7 +1148,6 @@ hr.section-line{
     </div>
   </div>
 
-  <!-- AVAILABLE MODS -->
   <section class="section">
     <div class="section-header">
       <h2>AVAILABLE <span>MODS</span></h2>
@@ -1260,7 +1256,6 @@ hr.section-line{
     </div>
   </section>
 
-  <!-- TOOLS -->
   <hr class="section-line">
 
   <section class="section">
@@ -1306,12 +1301,12 @@ hr.section-line{
     </div>
   </section>
 
-  <!-- HELP -->
   <hr class="section-line">
 
   <div class="help-section">
     <h2>Need Help?</h2>
     <p>Learn how to install and use the available mods.</p>
+
     <div class="help-buttons">
       <button class="help-button" type="button" onclick="openHelpModal()">Help Mods</button>
       <button class="private-server-button" type="button" onclick="openPrivateServer()">⚙ Agar.io Private Server</button>
@@ -1380,7 +1375,6 @@ hr.section-line{
           <button class="script-button" id="helpTopicDone" onclick="goBackToOptions()">Done</button>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -1518,7 +1512,6 @@ hr.section-line{
           <a class="private-social" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener">◎ Instagram</a>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -1548,6 +1541,79 @@ hr.section-line{
 </footer>
 
 <script>
+(function keepFooterPinnedAndHideDuringLoader(){
+  const footer = document.querySelector('.footer');
+  const loader = document.getElementById('loader');
+
+  if(!footer) return;
+
+  if(footer.parentElement !== document.body){
+    document.body.appendChild(footer);
+  }
+
+  function ensureFooterStyles(){
+    footer.style.position = 'fixed';
+    footer.style.left = '0';
+    footer.style.right = '0';
+    footer.style.bottom = '0';
+    footer.style.zIndex = '999999';
+    footer.style.transform = 'none';
+    footer.style.webkitTransform = 'none';
+    footer.style.backfaceVisibility = 'hidden';
+    footer.style.willChange = 'auto';
+  }
+  ensureFooterStyles();
+
+  window.addEventListener('resize', ensureFooterStyles, {passive:true});
+  window.addEventListener('orientationchange', ensureFooterStyles);
+
+  if(loader){
+    footer.style.visibility = 'hidden';
+    footer.style.pointerEvents = 'none';
+
+    const obs = new MutationObserver(() => {
+      const display = window.getComputedStyle(loader).display;
+      const hiddenAttr = loader.hidden;
+      if(display === 'none' || hiddenAttr === true){
+        footer.style.visibility = '';
+        footer.style.pointerEvents = '';
+        obs.disconnect();
+        clearInterval(poll);
+      }
+    });
+
+    obs.observe(loader, { attributes: true, attributeFilter: ['style','class','hidden'] });
+
+    const poll = setInterval(() => {
+      if(!document.body.contains(loader) || window.getComputedStyle(loader).display === 'none' || loader.hidden === true){
+        footer.style.visibility = '';
+        footer.style.pointerEvents = '';
+        clearInterval(poll);
+        try { obs.disconnect(); } catch(e){}
+      }
+    }, 250);
+
+    window.addEventListener('load', function(){
+      footer.style.visibility = '';
+      footer.style.pointerEvents = '';
+      try { obs.disconnect(); } catch(e){}
+      clearInterval(poll);
+    });
+  } else {
+    footer.style.visibility = '';
+    footer.style.pointerEvents = '';
+  }
+
+  let enforcementCount = 0;
+  const enforceInterval = setInterval(() => {
+    ensureFooterStyles();
+    enforcementCount++;
+    if(enforcementCount > 40){
+      clearInterval(enforceInterval);
+    }
+  }, 250);
+})();
+
 /* =========================
    LOADER
 ========================= */
