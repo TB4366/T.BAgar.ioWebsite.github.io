@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#07111f">
-  <meta name="description" content="Welkom bij T.B Agar.io en de T.B Clan. Ontdek Agar.io skins, video's en join onze Discord-community.">
-  <title>T.B Agar.io — Winterseizoen</title>
+  <meta name="description" content="Welcome to T.B Agar.io and the T.B Clan. Discover Agar.io skins, videos, and join our Discord community.">
+  <title>T.B Agar.io — Winter Season</title>
   <link rel="icon" href="/IMG_0561.jpeg" type="image/jpeg">
 
   <style>
@@ -35,14 +35,15 @@
       overflow-x: hidden;
     }
 
+    body.menu-open { overflow: hidden; }
     a { color: inherit; }
     button { font: inherit; }
 
     .snow {
       position: fixed;
       inset: 0;
-      pointer-events: none;
       z-index: 1;
+      pointer-events: none;
       opacity: .35;
       background-image:
         radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 55%),
@@ -59,7 +60,7 @@
     header {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -88,15 +89,11 @@
       border: 1px solid var(--border);
     }
 
-    nav { display: flex; align-items: center; gap: 22px; }
-    nav a {
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: color .2s ease;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    nav a:hover { color: var(--ice); }
 
     .button {
       display: inline-flex;
@@ -114,21 +111,172 @@
     }
 
     .button:hover { transform: translateY(-2px); }
+
     .button-discord {
       background: var(--discord);
       box-shadow: 0 8px 26px rgba(88, 101, 242, .27);
     }
+
     .button-discord:hover {
       background: #4752d9;
       box-shadow: 0 12px 32px rgba(88, 101, 242, .38);
     }
+
     .button-outline {
       background: rgba(255,255,255,.04);
       border-color: var(--border);
     }
+
     .button-outline:hover { background: rgba(255,255,255,.09); }
 
     .discord-icon { width: 21px; height: 21px; flex: 0 0 auto; }
+
+    .menu-button {
+      display: inline-flex;
+      width: 48px;
+      height: 48px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .menu-button:hover {
+      background: var(--surface-light);
+      border-color: rgba(169, 227, 255, .4);
+    }
+
+    .menu-icon {
+      display: grid;
+      gap: 5px;
+    }
+
+    .menu-icon span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-button[aria-expanded="true"] .menu-icon span:first-child {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-button[aria-expanded="true"] .menu-icon span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-button[aria-expanded="true"] .menu-icon span:last-child {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 29;
+      background: rgba(0, 0, 0, .62);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .menu-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      width: min(360px, 88vw);
+      height: 100vh;
+      height: 100dvh;
+      padding: 24px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #0c1a2c, #07111f);
+      border-left: 1px solid var(--border);
+      box-shadow: -20px 0 60px rgba(0,0,0,.4);
+      transform: translateX(105%);
+      transition: transform .28s ease;
+    }
+
+    .side-menu.open { transform: translateX(0); }
+
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-title { font-weight: 850; font-size: 18px; }
+
+    .menu-close {
+      width: 40px;
+      height: 40px;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .menu-links {
+      display: grid;
+      gap: 9px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      color: var(--text);
+      background: rgba(255,255,255,.035);
+      border: 1px solid transparent;
+      border-radius: 12px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .menu-link:hover {
+      background: var(--surface-light);
+      border-color: var(--border);
+    }
+
+    .menu-link span:last-child { color: var(--ice); }
+
+    .menu-community {
+      margin-top: auto;
+      padding-top: 24px;
+    }
+
+    .menu-community p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .menu-community .button { width: 100%; }
 
     main {
       position: relative;
@@ -138,7 +286,6 @@
     }
 
     .hero {
-      position: relative;
       display: grid;
       grid-template-columns: 1.2fr .8fr;
       align-items: center;
@@ -202,8 +349,8 @@
     .hero-card::after {
       content: "❄";
       position: absolute;
-      right: -10px;
       top: -44px;
+      right: -10px;
       color: rgba(169, 227, 255, .09);
       font-size: 190px;
       line-height: 1;
@@ -212,6 +359,7 @@
     .hero-card > * { position: relative; z-index: 1; }
     .hero-card h2 { margin: 0 0 10px; font-size: 23px; }
     .hero-card p { margin: 0 0 22px; color: var(--muted); line-height: 1.7; }
+
     .community-label {
       display: inline-block;
       margin-bottom: 14px;
@@ -225,13 +373,19 @@
     }
 
     section { padding: 44px 0; }
+
     .section-heading { margin-bottom: 22px; }
     .section-heading h2 {
       margin: 0 0 8px;
       font-size: clamp(26px, 4vw, 34px);
       letter-spacing: -.8px;
     }
-    .section-heading p { margin: 0; color: var(--muted); line-height: 1.6; }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
 
     .video-slider {
       display: grid;
@@ -250,6 +404,7 @@
       border-radius: var(--radius);
       scroll-snap-align: start;
     }
+
     .video-card iframe {
       display: block;
       width: 100%;
@@ -278,11 +433,13 @@
       text-decoration: none;
       transition: border-color .2s ease, transform .2s ease, background .2s ease;
     }
+
     .link-card:hover {
       transform: translateY(-2px);
       background: var(--surface-light);
       border-color: rgba(169, 227, 255, .4);
     }
+
     .link-card span:last-child { color: var(--ice); font-size: 20px; }
 
     .clan-banner {
@@ -296,6 +453,7 @@
       border: 1px solid var(--border);
       border-radius: 20px;
     }
+
     .clan-banner h2 { margin: 0 0 8px; font-size: 25px; }
     .clan-banner p { margin: 0; color: var(--muted); line-height: 1.65; }
 
@@ -308,12 +466,12 @@
       border-top: 1px solid var(--border);
       font-size: 14px;
     }
+
     footer a { color: var(--ice); text-decoration: none; }
 
     @media (max-width: 760px) {
       header { padding: 10px 18px; }
-      nav a:not(.button) { display: none; }
-      nav { gap: 0; }
+      .header-discord { display: none; }
       .hero {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -330,7 +488,6 @@
       main { width: min(100% - 32px, 1120px); }
       .brand { font-size: 15px; }
       .brand img { width: 38px; height: 38px; }
-      .header-discord { min-height: 42px; padding: 0 12px; font-size: 13px; }
       .hero-copy { font-size: 15px; }
       .link-grid { grid-template-columns: 1fr; }
       .clan-banner { padding: 23px; }
@@ -356,29 +513,65 @@
       <span>T.B <span style="color:var(--ice)">AGAR.IO</span></span>
     </a>
 
-    <nav aria-label="Hoofdnavigatie">
-      <a href="#videos">Video's</a>
-      <a href="#ontdek">Ontdek</a>
+    <div class="header-actions">
       <a class="button button-discord header-discord"
          href="https://discord.gg/tbagario"
          target="_blank" rel="noopener noreferrer"
-         aria-label="Join de T.B Clan op Discord">
+         aria-label="Join the T.B Clan on Discord">
         <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
         Join Discord
       </a>
-    </nav>
+
+      <button class="menu-button" id="menu-button" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+        <span class="menu-icon" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
   </header>
+
+  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+
+  <aside class="side-menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
+    <div class="menu-header">
+      <div class="menu-title">Explore T.B Agar.io</div>
+      <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <nav class="menu-links" aria-label="Site links">
+      <a class="menu-link" href="/index.html"><span>Home</span><span>↗</span></a>
+      <a class="menu-link" href="/custom-skins.html"><span>Custom Skins</span><span>↗</span></a>
+      <a class="menu-link" href="/key-access.html"><span>Key Access</span><span>↗</span></a>
+      <a class="menu-link" href="/mod-menu.html"><span>Mod Menu</span><span>↗</span></a>
+      <a class="menu-link" href="/paidskins.html"><span>Paid Skins</span><span>↗</span></a>
+      <a class="menu-link" href="/buy-account.html"><span>Buy Account</span><span>↗</span></a>
+      <a class="menu-link" href="/agar.io-skins.html"><span>Agar.io Skins</span><span>↗</span></a>
+      <a class="menu-link" href="#videos"><span>T.B Videos</span><span>↓</span></a>
+    </nav>
+
+    <div class="menu-community">
+      <p>Join the T.B Clan community on Discord and stay connected.</p>
+      <a class="button button-discord" href="https://discord.gg/tbagario"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
+        </svg>
+        Join the T.B Clan
+      </a>
+    </div>
+  </aside>
 
   <main>
     <section class="hero">
       <div>
-        <div class="eyebrow">Het winterseizoen is begonnen</div>
-        <h1>Welkom bij <span>T.B Agar.io</span></h1>
+        <div class="eyebrow">The winter season is here</div>
+        <h1>Welcome to <span>T.B Agar.io</span></h1>
         <p class="hero-copy">
-          Ontdek Agar.io skins, video's en meer. Word onderdeel van de T.B Clan,
-          ontmoet andere spelers en blijf op de hoogte via onze Discord-community.
+          Discover Agar.io skins, videos, and more. Become part of the T.B Clan,
+          meet other players, and stay up to date through our Discord community.
         </p>
         <div class="hero-actions">
           <a class="button button-discord" href="https://discord.gg/tbagario"
@@ -386,18 +579,18 @@
             <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
             </svg>
-            Join de T.B Clan
+            Join the T.B Clan
           </a>
-          <a class="button button-outline" href="#videos">Bekijk video's</a>
+          <a class="button button-outline" href="#videos">Watch Videos</a>
         </div>
       </div>
 
       <aside class="hero-card">
         <span class="community-label">❄ T.B CLAN COMMUNITY</span>
-        <h2>Speel mee met de community</h2>
+        <h2>Play with the community</h2>
         <p>
-          Join onze Discord-server voor contact met de T.B Clan, community-updates
-          en hulp. We zien je daar!
+          Join our Discord server to connect with the T.B Clan, get community
+          updates, and find support. We hope to see you there!
         </p>
         <a class="button button-discord" href="https://discord.gg/tbagario"
            target="_blank" rel="noopener noreferrer">
@@ -411,8 +604,8 @@
 
     <section id="videos">
       <div class="section-heading">
-        <h2>Video's van T.B</h2>
-        <p>Bekijk de nieuwste Agar.io-video's van het kanaal.</p>
+        <h2>T.B Videos</h2>
+        <p>Watch the latest Agar.io videos from the channel.</p>
       </div>
 
       <div class="video-slider">
@@ -426,10 +619,10 @@
       </div>
     </section>
 
-    <section id="ontdek">
+    <section id="explore">
       <div class="section-heading">
-        <h2>Ontdek T.B Agar.io</h2>
-        <p>Kies een onderdeel en ontdek meer van de website.</p>
+        <h2>Explore T.B Agar.io</h2>
+        <p>Choose a section and discover more of the website.</p>
       </div>
 
       <div class="link-grid">
@@ -444,21 +637,68 @@
 
     <section class="clan-banner">
       <div>
-        <h2>Sluit je aan bij de T.B Clan</h2>
-        <p>Join onze Discord-server en maak deel uit van de T.B Agar.io-community.</p>
+        <h2>Join the T.B Clan</h2>
+        <p>Join our Discord server and become part of the T.B Agar.io community.</p>
       </div>
       <a class="button button-discord" href="https://discord.gg/tbagario"
          target="_blank" rel="noopener noreferrer">
         <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
-        Join de T.B Clan
+        Join the T.B Clan
       </a>
     </section>
   </main>
 
   <footer>
-    <p>© 2026 T.B Agar.io · <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube-kanaal</a></p>
+    <p>© 2026 T.B Agar.io · <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube Channel</a></p>
   </footer>
+
+  <script>
+    const menuButton = document.getElementById('menu-button');
+    const sideMenu = document.getElementById('side-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuClose = document.getElementById('menu-close');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('show');
+      sideMenu.setAttribute('aria-hidden', 'false');
+      menuOverlay.setAttribute('aria-hidden', 'false');
+      menuButton.setAttribute('aria-expanded', 'true');
+      menuButton.setAttribute('aria-label', 'Close menu');
+      document.body.classList.add('menu-open');
+      menuClose.focus();
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      menuOverlay.setAttribute('aria-hidden', 'true');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Open menu');
+      document.body.classList.remove('menu-open');
+      menuButton.focus();
+    }
+
+    menuButton.addEventListener('click', () => {
+      if (sideMenu.classList.contains('open')) closeMenu();
+      else openMenu();
+    });
+
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.menu-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && sideMenu.classList.contains('open')) {
+        closeMenu();
+      }
+    });
+  </script>
 </body>
 </html>
