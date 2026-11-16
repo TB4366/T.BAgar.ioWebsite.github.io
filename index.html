@@ -19,6 +19,10 @@
       --ice: #a9e3ff;
       --blue: #58b9ed;
       --discord: #5865f2;
+      --youtube: #e62117;
+      --instagram-start: #7b37c8;
+      --instagram-mid: #d62976;
+      --instagram-end: #f58529;
       --border: rgba(169, 227, 255, .13);
       --radius: 18px;
     }
@@ -92,63 +96,93 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .button {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       min-height: 48px;
-      padding: 0 20px;
+      padding: 0 18px;
       color: white;
       font-weight: 800;
       text-decoration: none;
-      border: 1px solid transparent;
+      border: 1px solid rgba(255,255,255,.28);
       border-radius: 12px;
-      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 26px rgba(0,0,0,.24);
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease, background .2s ease;
     }
 
-    .button:hover { transform: translateY(-2px); }
+    .button:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.12);
+    }
 
     .button-discord {
       background: var(--discord);
-      box-shadow: 0 8px 26px rgba(88, 101, 242, .27);
+      border-color: #9da5ff;
+      box-shadow: 0 0 18px rgba(88, 101, 242, .38), 0 8px 26px rgba(0,0,0,.24);
     }
 
-    .button-discord:hover {
-      background: #4752d9;
-      box-shadow: 0 12px 32px rgba(88, 101, 242, .38);
+    .button-youtube {
+      background: var(--youtube);
+      border-color: #ff746d;
+      box-shadow: 0 0 18px rgba(230, 33, 23, .34), 0 8px 26px rgba(0,0,0,.24);
+    }
+
+    .button-youtube:hover { background: #c91c14; }
+
+    .button-instagram {
+      background: linear-gradient(120deg, var(--instagram-start), var(--instagram-mid), var(--instagram-end));
+      border-color: #f3a5cb;
+      box-shadow: 0 0 18px rgba(214, 41, 118, .32), 0 8px 26px rgba(0,0,0,.24);
+    }
+
+    .button-instagram:hover {
+      background: linear-gradient(120deg, #8b42d8, #e33683, #ff9638);
     }
 
     .button-outline {
       background: rgba(255,255,255,.04);
       border-color: var(--border);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.05), 0 8px 24px rgba(0,0,0,.2);
     }
 
     .button-outline:hover { background: rgba(255,255,255,.09); }
 
-    .discord-icon { width: 21px; height: 21px; flex: 0 0 auto; }
+    .discord-icon, .social-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+    }
 
     .menu-button {
+      position: relative;
       display: inline-flex;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       align-items: center;
       justify-content: center;
       padding: 0;
       color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      background: linear-gradient(145deg, #142b43, #0b1828);
+      border: 1px solid rgba(169, 227, 255, .45);
+      border-radius: 15px;
+      box-shadow: 0 0 18px rgba(88, 185, 237, .18), inset 0 1px rgba(255,255,255,.08);
       cursor: pointer;
-      transition: background .2s ease, border-color .2s ease;
+      transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
     }
 
     .menu-button:hover {
-      background: var(--surface-light);
-      border-color: rgba(169, 227, 255, .4);
+      background: linear-gradient(145deg, #1a3855, #10243a);
+      border-color: #a9e3ff;
+      box-shadow: 0 0 24px rgba(88, 185, 237, .35);
+      transform: translateY(-1px);
     }
 
     .menu-icon {
@@ -158,10 +192,11 @@
 
     .menu-icon span {
       display: block;
-      width: 20px;
+      width: 21px;
       height: 2px;
-      border-radius: 2px;
-      background: currentColor;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #fff, #a9e3ff);
+      box-shadow: 0 0 8px rgba(169, 227, 255, .4);
       transition: transform .2s ease, opacity .2s ease;
     }
 
@@ -262,7 +297,13 @@
       border-color: var(--border);
     }
 
-    .menu-link span:last-child { color: var(--ice); }
+    .menu-link span:last-child {
+      color: var(--ice);
+      transform: translate(-1px, -1px) rotate(-45deg);
+      display: inline-block;
+      font-size: 18px;
+      line-height: 1;
+    }
 
     .menu-community {
       margin-top: auto;
@@ -334,7 +375,11 @@
       line-height: 1.75;
     }
 
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
     .hero-card {
       position: relative;
@@ -440,7 +485,22 @@
       border-color: rgba(169, 227, 255, .4);
     }
 
-    .link-card span:last-child { color: var(--ice); font-size: 20px; }
+    .diagonal-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      color: var(--ice);
+      transition: transform .2s ease;
+      transform: rotate(-45deg);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .link-card:hover .diagonal-arrow {
+      transform: translate(2px, -2px) rotate(-45deg);
+    }
 
     .clan-banner {
       display: flex;
@@ -471,7 +531,6 @@
 
     @media (max-width: 760px) {
       header { padding: 10px 18px; }
-      .header-discord { display: none; }
       .hero {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -484,13 +543,24 @@
       .clan-banner { align-items: flex-start; flex-direction: column; }
     }
 
+    @media (max-width: 560px) {
+      .header-actions { gap: 8px; }
+      .button {
+        min-height: 42px;
+        padding: 0 14px;
+        font-size: 13px;
+      }
+      .header-actions .button { display: none; }
+      .link-grid { grid-template-columns: 1fr; }
+      .clan-banner { padding: 23px; }
+      .menu-button { width: 46px; height: 46px; }
+    }
+
     @media (max-width: 480px) {
       main { width: min(100% - 32px, 1120px); }
       .brand { font-size: 15px; }
       .brand img { width: 38px; height: 38px; }
       .hero-copy { font-size: 15px; }
-      .link-grid { grid-template-columns: 1fr; }
-      .clan-banner { padding: 23px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -514,14 +584,31 @@
     </a>
 
     <div class="header-actions">
-      <a class="button button-discord header-discord"
-         href="https://discord.gg/tbagario"
+      <a class="button button-discord" href="https://discord.gg/tbagario"
          target="_blank" rel="noopener noreferrer"
          aria-label="Join the T.B Clan on Discord">
         <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
         Join Discord
+      </a>
+
+      <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Open T.B YouTube channel">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
+        </svg>
+        YouTube
+      </a>
+
+      <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Open T.B Instagram">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
+        </svg>
+        Instagram
       </a>
 
       <button class="menu-button" id="menu-button" type="button"
@@ -549,7 +636,7 @@
       <a class="menu-link" href="/paidskins.html"><span>Paid Skins</span><span>↗</span></a>
       <a class="menu-link" href="/buy-account.html"><span>Buy Account</span><span>↗</span></a>
       <a class="menu-link" href="/agar.io-skins.html"><span>Agar.io Skins</span><span>↗</span></a>
-      <a class="menu-link" href="#videos"><span>T.B Videos</span><span>↓</span></a>
+      <a class="menu-link" href="#videos"><span>T.B Videos</span><span>↗</span></a>
     </nav>
 
     <div class="menu-community">
@@ -579,9 +666,24 @@
             <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
             </svg>
-            Join the T.B Clan
+            Join Discord
           </a>
-          <a class="button button-outline" href="#videos">Watch Videos</a>
+
+          <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
+            </svg>
+            YouTube
+          </a>
+
+          <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
+            </svg>
+            Instagram
+          </a>
         </div>
       </div>
 
@@ -626,12 +728,12 @@
       </div>
 
       <div class="link-grid">
-        <a class="link-card" href="/custom-skins.html"><span>Custom Skins</span><span>↗</span></a>
-        <a class="link-card" href="/key-access.html"><span>Key Access</span><span>↗</span></a>
-        <a class="link-card" href="/mod-menu.html"><span>Mod Menu</span><span>↗</span></a>
-        <a class="link-card" href="/paidskins.html"><span>Paid Skins</span><span>↗</span></a>
-        <a class="link-card" href="/buy-account.html"><span>Buy Account</span><span>↗</span></a>
-        <a class="link-card" href="/agar.io-skins.html"><span>Agar.io Skins</span><span>↗</span></a>
+        <a class="link-card" href="/custom-skins.html"><span>Custom Skins</span><span class="diagonal-arrow">↗</span></a>
+        <a class="link-card" href="/key-access.html"><span>Key Access</span><span class="diagonal-arrow">↗</span></a>
+        <a class="link-card" href="/mod-menu.html"><span>Mod Menu</span><span class="diagonal-arrow">↗</span></a>
+        <a class="link-card" href="/paidskins.html"><span>Paid Skins</span><span class="diagonal-arrow">↗</span></a>
+        <a class="link-card" href="/buy-account.html"><span>Buy Account</span><span class="diagonal-arrow">↗</span></a>
+        <a class="link-card" href="/agar.io-skins.html"><span>Agar.io Skins</span><span class="diagonal-arrow">↗</span></a>
       </div>
     </section>
 
