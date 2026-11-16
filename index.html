@@ -24,11 +24,12 @@
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 85px;
+      scroll-padding-top: 88px;
     }
 
     body {
       margin: 0;
+      padding-top: 68px;
       color: var(--text);
       font-family: Inter, Arial, Helvetica, sans-serif;
       background:
@@ -42,6 +43,15 @@
     a { color: inherit; }
     button { font: inherit; }
 
+    /* Reusable SVG symbol container */
+    .svg-definitions {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* Winter snowfall */
     .snow {
       position: fixed;
       inset: 0;
@@ -60,17 +70,20 @@
       to { background-position: 0 190px, 80px 310px, 150px 260px; }
     }
 
-    /* Header */
+    /* Fixed header */
     header {
-      position: sticky;
+      position: fixed;
       top: 0;
-      z-index: 20;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      padding: 12px max(22px, calc((100vw - 1180px) / 2));
-      background: rgba(7, 17, 31, .88);
+      padding: 10px max(22px, calc((100vw - 1180px) / 2));
+      background: rgba(7, 17, 31, .92);
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -102,15 +115,15 @@
       gap: 10px;
     }
 
-    /* Buttons */
+    /* Social and action buttons */
     .button {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      min-height: 48px;
-      padding: 0 18px;
+      min-height: 46px;
+      padding: 0 17px;
       color: #fff;
       font-weight: 800;
       text-decoration: none;
@@ -164,11 +177,11 @@
       flex: 0 0 auto;
     }
 
-    /* Hamburger */
+    /* Hamburger button */
     .menu-button {
       display: inline-flex;
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       align-items: center;
       justify-content: center;
       padding: 0;
@@ -216,7 +229,7 @@
     .menu-overlay {
       position: fixed;
       inset: 0;
-      z-index: 29;
+      z-index: 49;
       background: rgba(0, 0, 0, .62);
       backdrop-filter: blur(3px);
       opacity: 0;
@@ -233,7 +246,7 @@
       position: fixed;
       top: 0;
       right: 0;
-      z-index: 30;
+      z-index: 50;
       display: flex;
       flex-direction: column;
       width: min(360px, 88vw);
@@ -297,7 +310,7 @@
       box-shadow: 0 0 14px rgba(88, 185, 237, .16);
     }
 
-    /* Glowing diagonal SVG arrow, shared by cards and menu */
+    /* Glowing diagonal SVG arrow shared by menu and Explore cards */
     .arrow-icon {
       width: 21px;
       height: 21px;
@@ -445,7 +458,7 @@
       line-height: 1.6;
     }
 
-    /* Video carousels */
+    /* Infinite, swipeable video carousels */
     .video-section + .video-section { margin-top: 20px; }
 
     .video-slider {
@@ -459,13 +472,16 @@
       scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-x;
+      overscroll-behavior-inline: contain;
     }
 
     .video-slider::-webkit-scrollbar { height: 8px; }
+
     .video-slider::-webkit-scrollbar-track {
       background: #0c1a2c;
       border-radius: 99px;
     }
+
     .video-slider::-webkit-scrollbar-thumb {
       background: linear-gradient(90deg, #58b9ed, #a9e3ff);
       border-radius: 99px;
@@ -544,7 +560,7 @@
       letter-spacing: -.02em;
     }
 
-    /* Community banner */
+    /* Clan banner */
     .clan-banner {
       display: flex;
       align-items: center;
@@ -593,14 +609,24 @@
     }
 
     @media (max-width: 560px) {
+      body { padding-top: 60px; }
+
+      header {
+        height: 60px;
+        padding: 8px 16px;
+      }
+
       main { width: min(100% - 32px, 1120px); }
+
       .brand { font-size: 15px; }
       .brand img { width: 38px; height: 38px; }
+
       .header-actions .header-social { display: none; }
+
       .hero-copy { font-size: 15px; }
       .link-grid { grid-template-columns: 1fr; }
       .clan-banner { padding: 23px; }
-      .menu-button { width: 46px; height: 46px; }
+      .menu-button { width: 44px; height: 44px; }
       .video-card { flex-basis: min(86vw, 360px); }
     }
 
@@ -645,20 +671,26 @@
     </a>
 
     <div class="header-actions">
-      <a class="button button-discord header-social" href="https://discord.gg/tbagario"
-         target="_blank" rel="noopener noreferrer" aria-label="Join the T.B Clan on Discord">
+      <a class="button button-discord header-social"
+         href="https://discord.gg/tbagario"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Join the T.B Clan on Discord">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
         Discord
       </a>
 
-      <a class="button button-youtube header-social" href="https://www.youtube.com/@T.B6"
-         target="_blank" rel="noopener noreferrer" aria-label="Open T.B YouTube channel">
+      <a class="button button-youtube header-social"
+         href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Open T.B YouTube channel">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
         YouTube
       </a>
 
-      <a class="button button-instagram header-social" href="https://www.instagram.com/t.bagar.io/"
-         target="_blank" rel="noopener noreferrer" aria-label="Open T.B Instagram">
+      <a class="button button-instagram header-social"
+         href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer"
+         aria-label="Open T.B Instagram">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
         Instagram
       </a>
@@ -717,7 +749,8 @@
 
     <div class="menu-community">
       <p>Join the T.B Clan community on Discord and stay connected.</p>
-      <a class="button button-discord" href="https://discord.gg/tbagario"
+      <a class="button button-discord"
+         href="https://discord.gg/tbagario"
          target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
         Join the T.B Clan
@@ -736,7 +769,8 @@
         </p>
 
         <div class="hero-actions">
-          <a class="button button-discord" href="https://discord.gg/tbagario"
+          <a class="button button-discord"
+             href="https://discord.gg/tbagario"
              target="_blank" rel="noopener noreferrer">
             <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
             Join the T.B Clan
@@ -745,12 +779,14 @@
         </div>
 
         <div class="social-buttons" aria-label="Follow T.B Agar.io">
-          <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
+          <a class="button button-youtube"
+             href="https://www.youtube.com/@T.B6"
              target="_blank" rel="noopener noreferrer">
             <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
             YouTube
           </a>
-          <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
+          <a class="button button-instagram"
+             href="https://www.instagram.com/t.bagar.io/"
              target="_blank" rel="noopener noreferrer">
             <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
             Instagram
@@ -765,7 +801,8 @@
           Join our Discord server to connect with the T.B Clan, get community
           updates, and find support. We hope to see you there!
         </p>
-        <a class="button button-discord" href="https://discord.gg/tbagario"
+        <a class="button button-discord"
+           href="https://discord.gg/tbagario"
            target="_blank" rel="noopener noreferrer">
           <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
           Join Discord
@@ -813,13 +850,14 @@
                   title="Latest T.B Agar.io video 8" allowfullscreen></iframe>
         </div>
       </div>
-      <p class="carousel-note">Swipe or scroll to browse. The videos also advance automatically.</p>
+
+      <p class="carousel-note">Swipe or scroll in either direction. The carousel loops and advances automatically.</p>
     </section>
 
     <section class="video-section">
       <div class="section-heading">
         <h2>Popular Videos</h2>
-        <p>More popular videos from the T.B Agar.io channel.</p>
+        <p>More videos from the T.B Agar.io channel.</p>
       </div>
 
       <div class="video-slider" aria-label="Popular T.B Agar.io videos">
@@ -852,7 +890,8 @@
                   title="Popular T.B Agar.io video 7" allowfullscreen></iframe>
         </div>
       </div>
-      <p class="carousel-note">Swipe or scroll to browse. The videos also advance automatically.</p>
+
+      <p class="carousel-note">Swipe or scroll in either direction. The carousel loops and advances automatically.</p>
     </section>
 
     <section id="explore">
@@ -894,7 +933,8 @@
         <h2>Join the T.B Clan</h2>
         <p>Join our Discord server and become part of the T.B Agar.io community.</p>
       </div>
-      <a class="button button-discord" href="https://discord.gg/tbagario"
+      <a class="button button-discord"
+         href="https://discord.gg/tbagario"
          target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
         Join the T.B Clan
@@ -960,55 +1000,124 @@
       }
     });
 
-    /* Video carousels: auto-advance and remain swipeable */
+    /* Infinite, swipeable video carousels */
     document.querySelectorAll('.video-slider').forEach(slider => {
+      const originalCards = Array.from(slider.children);
+      const originalCount = originalCards.length;
+
+      if (originalCount < 2) return;
+
+      /*
+       * Add a copy of the cards to both ends.
+       * This lets the user keep swiping left or right without reaching an end.
+       */
+      const beforeClones = originalCards.map(card => card.cloneNode(true));
+      const afterClones = originalCards.map(card => card.cloneNode(true));
+
+      beforeClones.forEach(card => {
+        card.setAttribute('aria-hidden', 'true');
+        card.querySelectorAll('iframe').forEach(frame => frame.setAttribute('tabindex', '-1'));
+      });
+
+      afterClones.forEach(card => {
+        card.setAttribute('aria-hidden', 'true');
+        card.querySelectorAll('iframe').forEach(frame => frame.setAttribute('tabindex', '-1'));
+      });
+
+      const beforeFragment = document.createDocumentFragment();
+      beforeClones.forEach(card => beforeFragment.appendChild(card));
+      slider.prepend(beforeFragment);
+
+      const afterFragment = document.createDocumentFragment();
+      afterClones.forEach(card => slider.appendChild(card));
+
+      let cards = Array.from(slider.children);
+      let autoTimer = null;
+      let resumeTimer = null;
+      let scrollEndTimer = null;
+      let isAutoScrolling = false;
+      let isJumping = false;
+
       const autoAdvanceDelay = 4500;
       const resumeDelay = 7000;
-      let autoTimer;
-      let resumeTimer;
-      let isAutoScrolling = false;
 
-      function getCards() {
-        return Array.from(slider.querySelectorAll('.video-card'));
+      function cardPosition(card) {
+        const sliderRect = slider.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        return slider.scrollLeft + cardRect.left - sliderRect.left - slider.clientLeft;
       }
 
-      function getCurrentIndex() {
-        const cards = getCards();
-        if (!cards.length) return 0;
-
-        const sliderLeft = slider.getBoundingClientRect().left;
-        let closestIndex = 0;
-        let closestDistance = Infinity;
+      function nearestCardIndex() {
+        const targetLeft = slider.getBoundingClientRect().left + slider.clientLeft + 4;
+        let nearestIndex = 0;
+        let nearestDistance = Infinity;
 
         cards.forEach((card, index) => {
-          const distance = Math.abs(card.getBoundingClientRect().left - sliderLeft - 4);
-          if (distance < closestDistance) {
-            closestDistance = distance;
-            closestIndex = index;
+          const distance = Math.abs(card.getBoundingClientRect().left - targetLeft);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
           }
         });
 
-        return closestIndex;
+        return nearestIndex;
+      }
+
+      function jumpBy(distance) {
+        isJumping = true;
+        slider.style.scrollSnapType = 'none';
+        slider.scrollLeft += distance;
+
+        requestAnimationFrame(() => {
+          slider.style.scrollSnapType = '';
+          requestAnimationFrame(() => {
+            isJumping = false;
+          });
+        });
+      }
+
+      function normalizePosition() {
+        if (isJumping) return;
+
+        const index = nearestCardIndex();
+        const firstOriginalIndex = originalCount;
+        const firstAfterCloneIndex = originalCount * 2;
+
+        if (index < firstOriginalIndex) {
+          const equivalentIndex = index + originalCount;
+          jumpBy(cardPosition(cards[equivalentIndex]) - cardPosition(cards[index]));
+        } else if (index >= firstAfterCloneIndex) {
+          const equivalentIndex = index - originalCount;
+          jumpBy(cardPosition(cards[equivalentIndex]) - cardPosition(cards[index]));
+        }
+      }
+
+      function scheduleNormalize() {
+        window.clearTimeout(scrollEndTimer);
+        scrollEndTimer = window.setTimeout(normalizePosition, 140);
       }
 
       function goToNextCard() {
-        const cards = getCards();
-        if (cards.length < 2) return;
+        if (isAutoScrolling || isJumping) return;
 
-        const currentIndex = getCurrentIndex();
-        const nextIndex = (currentIndex + 1) % cards.length;
-        const nextCard = cards[nextIndex];
+        const index = nearestCardIndex();
+        const nextIndex = index + 1;
+
+        if (nextIndex >= cards.length) {
+          normalizePosition();
+          return;
+        }
 
         isAutoScrolling = true;
-
         slider.scrollTo({
-          left: nextCard.offsetLeft - slider.offsetLeft - 4,
+          left: cardPosition(cards[nextIndex]),
           behavior: 'smooth'
         });
 
         window.setTimeout(() => {
           isAutoScrolling = false;
-        }, 900);
+          normalizePosition();
+        }, 850);
       }
 
       function startAutoAdvance() {
@@ -1016,22 +1125,28 @@
         autoTimer = window.setInterval(goToNextCard, autoAdvanceDelay);
       }
 
-      function pauseThenResume() {
+      function pauseAndResume() {
         window.clearInterval(autoTimer);
         window.clearTimeout(resumeTimer);
         resumeTimer = window.setTimeout(startAutoAdvance, resumeDelay);
       }
 
-      slider.addEventListener('pointerdown', pauseThenResume, { passive: true });
-      slider.addEventListener('touchstart', pauseThenResume, { passive: true });
-      slider.addEventListener('wheel', pauseThenResume, { passive: true });
-      slider.addEventListener('keydown', pauseThenResume);
+      slider.addEventListener('pointerdown', pauseAndResume, { passive: true });
+      slider.addEventListener('touchstart', pauseAndResume, { passive: true });
+      slider.addEventListener('wheel', pauseAndResume, { passive: true });
+      slider.addEventListener('keydown', pauseAndResume);
 
       slider.addEventListener('scroll', () => {
-        if (!isAutoScrolling) pauseThenResume();
+        scheduleNormalize();
+        if (!isAutoScrolling && !isJumping) pauseAndResume();
       }, { passive: true });
 
-      startAutoAdvance();
+      /* Start on the first real card, after the leading clones. */
+      requestAnimationFrame(() => {
+        cards = Array.from(slider.children);
+        slider.scrollLeft = cardPosition(cards[originalCount]);
+        startAutoAdvance();
+      });
     });
   </script>
 </body>
