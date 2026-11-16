@@ -1,229 +1,234 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="Welcome to T.B Agar.io and the T.B Clan. Discover Agar.io skins, videos, and join our Discord community.">
-  <title>T.B Agar.io — Winter Season</title>
-  <link rel="icon" href="/IMG_0561.jpeg" type="image/jpeg">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07111f" />
+  <meta name="description" content="Welcome to T.B Agar.io — the winter edition. Join the T.B Clan, discover skins, videos and the latest community updates." />
+  <title>T.B Agar.io — Winter Edition</title>
+  <link rel="icon" href="/IMG_0561.jpeg" type="image/jpeg" />
 
   <style>
     :root {
-      color-scheme: dark;
-      --bg: #07111f;
-      --surface: #0c1a2c;
-      --surface-light: #10233a;
-      --text: #f4f8ff;
-      --muted: #aab9ca;
+      --bg-1: #050d19;
+      --bg-2: #091827;
+      --bg-3: #0d1f31;
+      --panel: rgba(13, 31, 49, 0.7);
+      --panel-strong: rgba(17, 38, 58, 0.88);
+      --panel-soft: rgba(19, 48, 72, 0.68);
+      --line: rgba(169, 227, 255, 0.16);
+      --line-strong: rgba(169, 227, 255, 0.34);
+      --text: #edf6ff;
+      --muted: #b9c9d8;
+      --muted-2: #8ea4ba;
       --ice: #a9e3ff;
-      --blue: #58b9ed;
+      --ice-strong: #79d6ff;
+      --cyan: #58b9ed;
+      --blue: #1d8bd5;
       --discord: #5865f2;
-      --youtube: #e62117;
+      --youtube: #ff2b2b;
       --instagram-start: #7b37c8;
       --instagram-mid: #d62976;
       --instagram-end: #f58529;
-      --border: rgba(169, 227, 255, .13);
-      --radius: 18px;
+      --shadow: rgba(0, 0, 0, 0.38);
+      --radius: 20px;
+      --radius-sm: 14px;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      color: var(--text);
       font-family: Inter, Arial, Helvetica, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(ellipse at 50% -20%, rgba(88, 185, 237, .2), transparent 55%),
-        linear-gradient(180deg, #07111f, #091625 55%, #07111f);
+        radial-gradient(circle at 50% -10%, rgba(88, 185, 237, 0.18), transparent 36%),
+        radial-gradient(circle at 10% 10%, rgba(169, 227, 255, 0.08), transparent 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 52%, var(--bg-1) 100%);
       overflow-x: hidden;
     }
 
     body.menu-open { overflow: hidden; }
-    a { color: inherit; }
+
+    a { color: inherit; text-decoration: none; }
     button { font: inherit; }
+    img { max-width: 100%; }
 
     .snow {
       position: fixed;
       inset: 0;
-      z-index: 1;
       pointer-events: none;
-      opacity: .35;
+      z-index: 1;
+      opacity: 0.38;
       background-image:
-        radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 55%),
-        radial-gradient(2px 2px at 80px 120px, #bceaff 50%, transparent 55%),
-        radial-gradient(3px 3px at 150px 70px, #fff 50%, transparent 55%);
-      background-size: 190px 190px;
+        radial-gradient(2px 2px at 20px 30px, #ffffff 50%, transparent 55%),
+        radial-gradient(2px 2px at 80px 120px, #dfffff 50%, transparent 55%),
+        radial-gradient(3px 3px at 150px 70px, #ffffff 50%, transparent 55%),
+        radial-gradient(2px 2px at 230px 50px, #dff7ff 50%, transparent 55%);
+      background-size: 240px 240px;
       animation: snowfall 18s linear infinite;
     }
 
     @keyframes snowfall {
-      to { background-position: 0 190px, 80px 310px, 150px 260px; }
+      to { background-position: 0 240px, 40px 300px, 120px 260px, 180px 190px; }
     }
 
-    header {
+    .topbar {
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 40;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      padding: 12px max(22px, calc((100vw - 1180px) / 2));
-      background: rgba(7, 17, 31, .88);
-      border-bottom: 1px solid var(--border);
+      width: 100%;
+      padding: 12px max(18px, calc((100vw - 1180px)/2));
+      background: rgba(5, 13, 25, 0.78);
+      border-bottom: 1px solid var(--line);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
     .brand {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 12px;
-      text-decoration: none;
+      font-weight: 900;
+      letter-spacing: -0.03em;
       font-size: 18px;
-      font-weight: 850;
-      letter-spacing: -.3px;
+      white-space: nowrap;
     }
 
-    .brand img {
-      width: 44px;
-      height: 44px;
+    .brand-logo {
+      width: 46px;
+      height: 46px;
       object-fit: cover;
-      border-radius: 13px;
-      border: 1px solid var(--border);
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
     }
+
+    .brand span { color: var(--text); }
+    .brand span strong { color: var(--ice); }
 
     .header-actions {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
-      justify-content: flex-end;
     }
 
-    .button {
+    .btn {
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      min-height: 48px;
+      min-height: 46px;
       padding: 0 18px;
-      color: white;
-      font-weight: 800;
-      text-decoration: none;
-      border: 1px solid rgba(255,255,255,.28);
       border-radius: 12px;
-      box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 26px rgba(0,0,0,.24);
-      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease, background .2s ease;
-    }
-
-    .button:hover {
-      transform: translateY(-3px);
-      filter: brightness(1.12);
-    }
-
-    .button-discord {
-      background: var(--discord);
-      border-color: #9da5ff;
-      box-shadow: 0 0 18px rgba(88, 101, 242, .38), 0 8px 26px rgba(0,0,0,.24);
-    }
-
-    .button-youtube {
-      background: var(--youtube);
-      border-color: #ff746d;
-      box-shadow: 0 0 18px rgba(230, 33, 23, .34), 0 8px 26px rgba(0,0,0,.24);
-    }
-
-    .button-youtube:hover { background: #c91c14; }
-
-    .button-instagram {
-      background: linear-gradient(120deg, var(--instagram-start), var(--instagram-mid), var(--instagram-end));
-      border-color: #f3a5cb;
-      box-shadow: 0 0 18px rgba(214, 41, 118, .32), 0 8px 26px rgba(0,0,0,.24);
-    }
-
-    .button-instagram:hover {
-      background: linear-gradient(120deg, #8b42d8, #e33683, #ff9638);
-    }
-
-    .button-outline {
-      background: rgba(255,255,255,.04);
-      border-color: var(--border);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.05), 0 8px 24px rgba(0,0,0,.2);
-    }
-
-    .button-outline:hover { background: rgba(255,255,255,.09); }
-
-    .discord-icon, .social-icon {
-      width: 20px;
-      height: 20px;
-      flex: 0 0 auto;
-    }
-
-    .menu-button {
-      position: relative;
-      display: inline-flex;
-      width: 50px;
-      height: 50px;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
+      border: 1px solid rgba(255,255,255,0.18);
       color: var(--text);
-      background: linear-gradient(145deg, #142b43, #0b1828);
-      border: 1px solid rgba(169, 227, 255, .45);
+      font-weight: 800;
+      transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 10px 24px rgba(0,0,0,0.22);
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .btn-discord {
+      background: linear-gradient(180deg, rgba(88,101,242,1), rgba(71,82,217,1));
+      border-color: rgba(166, 176, 255, 0.8);
+      box-shadow: 0 0 18px rgba(88, 101, 242, 0.42), 0 12px 28px rgba(0,0,0,0.25);
+    }
+
+    .btn-youtube {
+      background: linear-gradient(180deg, rgba(255,43,43,1), rgba(210,27,27,1));
+      border-color: rgba(255, 150, 150, 0.9);
+      box-shadow: 0 0 18px rgba(255, 43, 43, 0.32), 0 12px 28px rgba(0,0,0,0.25);
+    }
+
+    .btn-instagram {
+      background: linear-gradient(120deg, var(--instagram-start), var(--instagram-mid), var(--instagram-end));
+      border-color: rgba(244, 186, 216, 0.8);
+      box-shadow: 0 0 18px rgba(214, 41, 118, 0.32), 0 12px 28px rgba(0,0,0,0.25);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 12px 24px rgba(0,0,0,0.2);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      display: inline-block;
+    }
+
+    .menu-btn {
+      width: 52px;
+      height: 52px;
+      padding: 0;
+      background: linear-gradient(145deg, rgba(19, 48, 72, 0.9), rgba(9, 24, 38, 0.96));
+      border: 1px solid rgba(169, 227, 255, 0.35);
       border-radius: 15px;
-      box-shadow: 0 0 18px rgba(88, 185, 237, .18), inset 0 1px rgba(255,255,255,.08);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 0 20px rgba(88,185,237,0.18), 0 12px 24px rgba(0,0,0,0.2);
       cursor: pointer;
-      transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .menu-button:hover {
-      background: linear-gradient(145deg, #1a3855, #10243a);
-      border-color: #a9e3ff;
-      box-shadow: 0 0 24px rgba(88, 185, 237, .35);
+    .menu-btn:hover {
       transform: translateY(-1px);
+      border-color: rgba(169, 227, 255, 0.6);
+      box-shadow: 0 0 20px rgba(88,185,237,0.3), 0 16px 28px rgba(0,0,0,0.24);
     }
 
-    .menu-icon {
+    .menu-lines {
       display: grid;
       gap: 5px;
+      justify-items: center;
     }
 
-    .menu-icon span {
-      display: block;
-      width: 21px;
+    .menu-lines span {
+      width: 22px;
       height: 2px;
-      border-radius: 4px;
-      background: linear-gradient(90deg, #fff, #a9e3ff);
-      box-shadow: 0 0 8px rgba(169, 227, 255, .4);
-      transition: transform .2s ease, opacity .2s ease;
+      display: block;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #ffffff, #a9e3ff);
+      box-shadow: 0 0 8px rgba(169,227,255,0.35);
+      transition: transform 0.22s ease, opacity 0.22s ease;
     }
 
-    .menu-button[aria-expanded="true"] .menu-icon span:first-child {
+    .menu-btn[aria-expanded="true"] .menu-lines span:nth-child(1) {
       transform: translateY(7px) rotate(45deg);
     }
-
-    .menu-button[aria-expanded="true"] .menu-icon span:nth-child(2) {
+    .menu-btn[aria-expanded="true"] .menu-lines span:nth-child(2) {
       opacity: 0;
     }
-
-    .menu-button[aria-expanded="true"] .menu-icon span:last-child {
+    .menu-btn[aria-expanded="true"] .menu-lines span:nth-child(3) {
       transform: translateY(-7px) rotate(-45deg);
     }
 
-    .menu-overlay {
+    .overlay {
       position: fixed;
       inset: 0;
-      z-index: 29;
-      background: rgba(0, 0, 0, .62);
-      backdrop-filter: blur(3px);
+      z-index: 30;
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(4px);
       opacity: 0;
       visibility: hidden;
-      transition: opacity .25s ease, visibility .25s ease;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
     }
 
-    .menu-overlay.show {
+    .overlay.show {
       opacity: 1;
       visibility: visible;
     }
@@ -232,19 +237,17 @@
       position: fixed;
       top: 0;
       right: 0;
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
+      z-index: 31;
       width: min(360px, 88vw);
       height: 100vh;
       height: 100dvh;
-      padding: 24px;
-      overflow-y: auto;
-      background: linear-gradient(180deg, #0c1a2c, #07111f);
-      border-left: 1px solid var(--border);
-      box-shadow: -20px 0 60px rgba(0,0,0,.4);
+      padding: 26px 18px 22px;
+      background: linear-gradient(180deg, rgba(12, 26, 39, 0.98), rgba(7, 17, 31, 0.98));
+      border-left: 1px solid var(--line);
+      box-shadow: -20px 0 60px rgba(0,0,0,0.38);
       transform: translateX(105%);
-      transition: transform .28s ease;
+      transition: transform 0.28s ease;
+      overflow-y: auto;
     }
 
     .side-menu.open { transform: translateX(0); }
@@ -253,28 +256,32 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 22px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
     }
 
-    .menu-title { font-weight: 850; font-size: 18px; }
+    .menu-title {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
 
     .menu-close {
       width: 40px;
       height: 40px;
-      color: var(--text);
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
       border-radius: 10px;
-      font-size: 24px;
+      background: rgba(255,255,255,0.025);
+      color: var(--text);
+      font-size: 26px;
       cursor: pointer;
     }
 
     .menu-links {
       display: grid;
-      gap: 9px;
+      gap: 10px;
     }
 
     .menu-link {
@@ -282,171 +289,218 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 14px;
-      color: var(--text);
-      background: rgba(255,255,255,.035);
-      border: 1px solid transparent;
+      padding: 14px 12px;
       border-radius: 12px;
-      font-weight: 750;
-      text-decoration: none;
-      transition: background .2s ease, border-color .2s ease;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.035);
+      color: var(--text);
+      font-weight: 800;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .menu-link:hover {
-      background: var(--surface-light);
-      border-color: var(--border);
+      background: rgba(255,255,255,0.06);
+      border-color: var(--line);
+      transform: translateX(-2px);
     }
 
-    .menu-link span:last-child {
-      color: var(--ice);
-      transform: translate(-1px, -1px) rotate(-45deg);
-      display: inline-block;
+    .arrow-diag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 18px;
       line-height: 1;
+      color: var(--ice);
+      transform: rotate(-45deg);
+      transition: transform 0.18s ease;
+    }
+
+    .menu-link:hover .arrow-diag {
+      transform: translate(2px, -2px) rotate(-45deg);
     }
 
     .menu-community {
-      margin-top: auto;
-      padding-top: 24px;
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
     }
 
     .menu-community p {
       margin: 0 0 14px;
       color: var(--muted);
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
-    .menu-community .button { width: 100%; }
+    .menu-community .btn {
+      width: 100%;
+      justify-content: center;
+    }
 
-    main {
+    .container {
       position: relative;
       z-index: 2;
-      width: min(1120px, calc(100% - 40px));
+      width: min(1180px, calc(100% - 36px));
       margin: 0 auto;
     }
 
     .hero {
       display: grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1.25fr 0.75fr;
       align-items: center;
-      gap: 40px;
-      min-height: 510px;
-      padding: 76px 0 64px;
+      gap: 34px;
+      min-height: 560px;
+      padding: 76px 0 52px;
     }
 
     .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      margin-bottom: 18px;
       color: var(--ice);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
+      margin-bottom: 18px;
     }
 
     .eyebrow::before {
       content: "";
-      width: 24px;
+      display: inline-block;
+      width: 22px;
       height: 2px;
-      background: var(--blue);
+      background: linear-gradient(90deg, var(--ice), #ffffff);
+      border-radius: 999px;
     }
 
     h1 {
-      max-width: 700px;
       margin: 0;
-      font-size: clamp(42px, 7vw, 72px);
-      line-height: 1.04;
-      letter-spacing: -3px;
+      font-size: clamp(42px, 7vw, 70px);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+      max-width: 700px;
     }
 
-    h1 span {
+    h1 .gradient {
       color: var(--ice);
-      text-shadow: 0 0 36px rgba(88, 185, 237, .24);
+      text-shadow: 0 0 22px rgba(169,227,255,0.25);
     }
 
-    .hero-copy {
-      max-width: 590px;
-      margin: 20px 0 28px;
+    .lead {
+      max-width: 600px;
+      margin: 18px 0 26px;
       color: var(--muted);
-      font-size: 17px;
-      line-height: 1.75;
+      font-size: 18px;
+      line-height: 1.7;
     }
 
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      align-items: center;
     }
 
-    .hero-card {
+    .social-rail {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .hero-box {
       position: relative;
-      padding: 30px;
-      overflow: hidden;
-      background: linear-gradient(145deg, rgba(20, 53, 78, .9), rgba(12, 26, 44, .9));
-      border: 1px solid var(--border);
+      padding: 28px 26px 24px;
       border-radius: 24px;
-      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(15, 33, 49, 0.88), rgba(9, 20, 31, 0.92)),
+        rgba(13, 31, 49, 0.72);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.28);
+      overflow: hidden;
+      min-height: 280px;
     }
 
-    .hero-card::after {
+    .hero-box::before {
       content: "❄";
       position: absolute;
-      top: -44px;
-      right: -10px;
-      color: rgba(169, 227, 255, .09);
+      top: -32px;
+      right: -14px;
       font-size: 190px;
       line-height: 1;
+      color: rgba(169,227,255,0.08);
     }
 
-    .hero-card > * { position: relative; z-index: 1; }
-    .hero-card h2 { margin: 0 0 10px; font-size: 23px; }
-    .hero-card p { margin: 0 0 22px; color: var(--muted); line-height: 1.7; }
-
-    .community-label {
-      display: inline-block;
-      margin-bottom: 14px;
-      padding: 7px 10px;
+    .pill {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
       color: var(--ice);
-      background: rgba(169, 227, 255, .09);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      font-size: 12px;
-      font-weight: 800;
+      background: rgba(169,227,255,0.06);
+      margin-bottom: 12px;
     }
 
-    section { padding: 44px 0; }
+    .hero-box h2 {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
 
-    .section-heading { margin-bottom: 22px; }
-    .section-heading h2 {
+    .hero-box p {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    section {
+      padding: 40px 0;
+    }
+
+    .section-head {
+      margin-bottom: 22px;
+    }
+
+    .section-head h3 {
       margin: 0 0 8px;
-      font-size: clamp(26px, 4vw, 34px);
-      letter-spacing: -.8px;
+      font-size: clamp(28px, 3.6vw, 38px);
+      letter-spacing: -0.06em;
     }
 
-    .section-heading p {
+    .section-head p {
       margin: 0;
       color: var(--muted);
-      line-height: 1.6;
+      font-size: 16px;
+      line-height: 1.7;
     }
 
-    .video-slider {
+    .video-row {
       display: grid;
-      grid-auto-columns: minmax(270px, 1fr);
+      grid-auto-columns: minmax(300px, 1fr);
       grid-auto-flow: column;
       gap: 16px;
       overflow-x: auto;
-      padding: 4px 2px 16px;
+      padding: 6px 2px 18px;
       scroll-snap-type: x mandatory;
     }
 
     .video-card {
-      overflow: hidden;
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
       border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.16);
       scroll-snap-align: start;
     }
 
@@ -457,9 +511,9 @@
       border: 0;
     }
 
-    .link-grid {
+    .grid-links {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -469,36 +523,38 @@
       justify-content: space-between;
       gap: 12px;
       min-height: 86px;
-      padding: 20px;
-      color: var(--text);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      font-weight: 800;
-      text-decoration: none;
-      transition: border-color .2s ease, transform .2s ease, background .2s ease;
+      padding: 22px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(9, 24, 38, 0.9), rgba(13, 31, 49, 0.82));
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .link-card:hover {
       transform: translateY(-2px);
-      background: var(--surface-light);
-      border-color: rgba(169, 227, 255, .4);
+      border-color: var(--line-strong);
+      box-shadow: 0 20px 32px rgba(0,0,0,0.2);
     }
 
-    .diagonal-arrow {
+    .link-card .name {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .link-card .arrow {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       color: var(--ice);
-      transition: transform .2s ease;
-      transform: rotate(-45deg);
       font-size: 18px;
-      line-height: 1;
+      transform: rotate(-45deg);
+      transition: transform 0.18s ease;
     }
 
-    .link-card:hover .diagonal-arrow {
+    .link-card:hover .arrow {
       transform: translate(2px, -2px) rotate(-45deg);
     }
 
@@ -506,69 +562,73 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
-      margin: 30px 0 70px;
-      padding: 30px;
-      background: linear-gradient(110deg, rgba(32, 83, 117, .55), rgba(12, 26, 44, .95));
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      gap: 20px;
+      padding: 26px 28px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(110deg, rgba(21, 52, 74, 0.75), rgba(12, 26, 44, 0.92));
+      box-shadow: 0 24px 52px rgba(0,0,0,0.18);
+      margin: 18px 0 60px;
     }
 
-    .clan-banner h2 { margin: 0 0 8px; font-size: 25px; }
-    .clan-banner p { margin: 0; color: var(--muted); line-height: 1.65; }
+    .clan-banner h4 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 2.8vw, 32px);
+      letter-spacing: -0.05em;
+    }
+
+    .clan-banner p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
 
     footer {
       position: relative;
       z-index: 2;
-      padding: 26px 20px;
-      color: var(--muted);
       text-align: center;
-      border-top: 1px solid var(--border);
+      color: var(--muted);
+      padding: 22px 16px 30px;
+      border-top: 1px solid var(--line);
       font-size: 14px;
     }
 
-    footer a { color: var(--ice); text-decoration: none; }
+    footer a {
+      color: var(--ice);
+      font-weight: 700;
+    }
 
-    @media (max-width: 760px) {
-      header { padding: 10px 18px; }
+    @media (max-width: 900px) {
       .hero {
         grid-template-columns: 1fr;
-        gap: 30px;
-        min-height: auto;
-        padding: 64px 0 42px;
+        gap: 28px;
+        padding-top: 66px;
       }
-      h1 { letter-spacing: -2px; }
-      .hero-card { padding: 24px; }
-      .link-grid { grid-template-columns: repeat(2, 1fr); }
-      .clan-banner { align-items: flex-start; flex-direction: column; }
+      .grid-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .clan-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
 
-    @media (max-width: 560px) {
-      .header-actions { gap: 8px; }
-      .button {
-        min-height: 42px;
-        padding: 0 14px;
-        font-size: 13px;
+    @media (max-width: 600px) {
+      .header-actions .btn:not(.menu-btn) {
+        display: none;
       }
-      .header-actions .button { display: none; }
-      .link-grid { grid-template-columns: 1fr; }
-      .clan-banner { padding: 23px; }
-      .menu-button { width: 46px; height: 46px; }
-    }
-
-    @media (max-width: 480px) {
-      main { width: min(100% - 32px, 1120px); }
-      .brand { font-size: 15px; }
-      .brand img { width: 38px; height: 38px; }
-      .hero-copy { font-size: 15px; }
+      .container { width: min(100% - 28px, 1180px); }
+      .hero-box { padding: 22px 20px; }
+      .grid-links { grid-template-columns: 1fr; }
+      .btn { min-height: 44px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
+        animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
       }
     }
   </style>
@@ -577,50 +637,45 @@
 <body>
   <div class="snow" aria-hidden="true"></div>
 
-  <header>
-    <a class="brand" href="/">
-      <img src="/IMG_0561.jpeg" alt="T.B Agar.io logo">
-      <span>T.B <span style="color:var(--ice)">AGAR.IO</span></span>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="T.B Agar.io home">
+      <img class="brand-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io logo" />
+      <span>T.B <strong>AGAR.IO</strong></span>
     </a>
 
     <div class="header-actions">
-      <a class="button button-discord" href="https://discord.gg/tbagario"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="Join the T.B Clan on Discord">
-        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <a class="btn btn-discord" href="https://discord.gg/tbagario" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
         Join Discord
       </a>
 
-      <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="Open T.B YouTube channel">
-        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <a class="btn btn-youtube" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
         </svg>
         YouTube
       </a>
 
-      <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
-         target="_blank" rel="noopener noreferrer"
-         aria-label="Open T.B Instagram">
-        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <a class="btn btn-instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
         </svg>
         Instagram
       </a>
 
-      <button class="menu-button" id="menu-button" type="button"
-              aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
-        <span class="menu-icon" aria-hidden="true">
-          <span></span><span></span><span></span>
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+        <span class="menu-lines" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
         </span>
       </button>
     </div>
   </header>
 
-  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
 
   <aside class="side-menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
     <div class="menu-header">
@@ -628,22 +683,21 @@
       <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">×</button>
     </div>
 
-    <nav class="menu-links" aria-label="Site links">
-      <a class="menu-link" href="/index.html"><span>Home</span><span>↗</span></a>
-      <a class="menu-link" href="/custom-skins.html"><span>Custom Skins</span><span>↗</span></a>
-      <a class="menu-link" href="/key-access.html"><span>Key Access</span><span>↗</span></a>
-      <a class="menu-link" href="/mod-menu.html"><span>Mod Menu</span><span>↗</span></a>
-      <a class="menu-link" href="/paidskins.html"><span>Paid Skins</span><span>↗</span></a>
-      <a class="menu-link" href="/buy-account.html"><span>Buy Account</span><span>↗</span></a>
-      <a class="menu-link" href="/agar.io-skins.html"><span>Agar.io Skins</span><span>↗</span></a>
-      <a class="menu-link" href="#videos"><span>T.B Videos</span><span>↗</span></a>
+    <nav class="menu-links" aria-label="Main navigation">
+      <a class="menu-link" href="/index.html"><span>Home</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/custom-skins.html"><span>Custom Skins</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/key-access.html"><span>Key Access</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/mod-menu.html"><span>Mod Menu</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/paidskins.html"><span>Paid Skins</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/buy-account.html"><span>Buy Account</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="/agar.io-skins.html"><span>Agar.io Skins</span><span class="arrow-diag">↗</span></a>
+      <a class="menu-link" href="#videos"><span>T.B Videos</span><span class="arrow-diag">↗</span></a>
     </nav>
 
     <div class="menu-community">
       <p>Join the T.B Clan community on Discord and stay connected.</p>
-      <a class="button button-discord" href="https://discord.gg/tbagario"
-         target="_blank" rel="noopener noreferrer">
-        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <a class="btn btn-discord" href="https://discord.gg/tbagario" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
         Join the T.B Clan
@@ -651,35 +705,37 @@
     </div>
   </aside>
 
-  <main>
+  <main class="container">
     <section class="hero">
       <div>
-        <div class="eyebrow">The winter season is here</div>
-        <h1>Welcome to <span>T.B Agar.io</span></h1>
-        <p class="hero-copy">
-          Discover Agar.io skins, videos, and more. Become part of the T.B Clan,
-          meet other players, and stay up to date through our Discord community.
+        <div class="eyebrow">Winter season</div>
+        <h1>Welcome to <span class="gradient">T.B Agar.io</span></h1>
+        <p class="lead">
+          Discover Agar.io skins, videos and more. Become part of the T.B Clan,
+          connect with other players and stay updated through our Discord community.
         </p>
+
         <div class="hero-actions">
-          <a class="button button-discord" href="https://discord.gg/tbagario"
-             target="_blank" rel="noopener noreferrer">
-            <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <a class="btn btn-discord" href="https://discord.gg/tbagario" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
             </svg>
             Join Discord
           </a>
 
-          <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
-             target="_blank" rel="noopener noreferrer">
-            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <a class="btn btn-ghost" href="#videos">Watch videos</a>
+        </div>
+
+        <div class="social-rail">
+          <a class="btn btn-youtube" href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
             </svg>
             YouTube
           </a>
 
-          <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
-             target="_blank" rel="noopener noreferrer">
-            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <a class="btn btn-instagram" href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
             </svg>
             Instagram
@@ -687,16 +743,15 @@
         </div>
       </div>
 
-      <aside class="hero-card">
-        <span class="community-label">❄ T.B CLAN COMMUNITY</span>
+      <aside class="hero-box">
+        <span class="pill">T.B Clan Community</span>
         <h2>Play with the community</h2>
         <p>
-          Join our Discord server to connect with the T.B Clan, get community
-          updates, and find support. We hope to see you there!
+          Join our Discord server to connect with the T.B Clan, get updates,
+          share experiences and find support from the community.
         </p>
-        <a class="button button-discord" href="https://discord.gg/tbagario"
-           target="_blank" rel="noopener noreferrer">
-          <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <a class="btn btn-discord" href="https://discord.gg/tbagario" target="_blank" rel="noopener noreferrer">
+          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
           </svg>
           Join Discord
@@ -705,12 +760,12 @@
     </section>
 
     <section id="videos">
-      <div class="section-heading">
-        <h2>T.B Videos</h2>
-        <p>Watch the latest Agar.io videos from the channel.</p>
+      <div class="section-head">
+        <h3>T.B Videos</h3>
+        <p>Watch the latest Agar.io videos from the T.B channel.</p>
       </div>
 
-      <div class="video-slider">
+      <div class="video-row">
         <div class="video-card"><iframe loading="lazy" src="https://www.youtube.com/embed/02x2YFHWh2o" title="T.B Agar.io video 1" allowfullscreen></iframe></div>
         <div class="video-card"><iframe loading="lazy" src="https://www.youtube.com/embed/d8DluzJAd2w" title="T.B Agar.io video 2" allowfullscreen></iframe></div>
         <div class="video-card"><iframe loading="lazy" src="https://www.youtube.com/embed/c234keB_q3c" title="T.B Agar.io video 3" allowfullscreen></iframe></div>
@@ -721,30 +776,48 @@
       </div>
     </section>
 
-    <section id="explore">
-      <div class="section-heading">
-        <h2>Explore T.B Agar.io</h2>
+    <section>
+      <div class="section-head">
+        <h3>Explore T.B Agar.io</h3>
         <p>Choose a section and discover more of the website.</p>
       </div>
 
-      <div class="link-grid">
-        <a class="link-card" href="/custom-skins.html"><span>Custom Skins</span><span class="diagonal-arrow">↗</span></a>
-        <a class="link-card" href="/key-access.html"><span>Key Access</span><span class="diagonal-arrow">↗</span></a>
-        <a class="link-card" href="/mod-menu.html"><span>Mod Menu</span><span class="diagonal-arrow">↗</span></a>
-        <a class="link-card" href="/paidskins.html"><span>Paid Skins</span><span class="diagonal-arrow">↗</span></a>
-        <a class="link-card" href="/buy-account.html"><span>Buy Account</span><span class="diagonal-arrow">↗</span></a>
-        <a class="link-card" href="/agar.io-skins.html"><span>Agar.io Skins</span><span class="diagonal-arrow">↗</span></a>
+      <div class="grid-links">
+        <a class="link-card" href="/custom-skins.html">
+          <span class="name">Custom Skins</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="link-card" href="/key-access.html">
+          <span class="name">Key Access</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="link-card" href="/mod-menu.html">
+          <span class="name">Mod Menu</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="link-card" href="/paidskins.html">
+          <span class="name">Paid Skins</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="link-card" href="/buy-account.html">
+          <span class="name">Buy Account</span>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="link-card" href="/agar.io-skins.html">
+          <span class="name">Agar.io Skins</span>
+          <span class="arrow">↗</span>
+        </a>
       </div>
     </section>
 
     <section class="clan-banner">
       <div>
-        <h2>Join the T.B Clan</h2>
+        <h4>Join the T.B Clan</h4>
         <p>Join our Discord server and become part of the T.B Agar.io community.</p>
       </div>
-      <a class="button button-discord" href="https://discord.gg/tbagario"
-         target="_blank" rel="noopener noreferrer">
-        <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+
+      <a class="btn btn-discord" href="https://discord.gg/tbagario" target="_blank" rel="noopener noreferrer">
+        <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
         </svg>
         Join the T.B Clan
@@ -753,50 +826,50 @@
   </main>
 
   <footer>
-    <p>© 2026 T.B Agar.io · <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube Channel</a></p>
+    © 2026 T.B Agar.io · <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
   </footer>
 
   <script>
-    const menuButton = document.getElementById('menu-button');
+    const menuBtn = document.getElementById('menu-btn');
     const sideMenu = document.getElementById('side-menu');
-    const menuOverlay = document.getElementById('menu-overlay');
+    const overlay = document.getElementById('overlay');
     const menuClose = document.getElementById('menu-close');
 
     function openMenu() {
       sideMenu.classList.add('open');
-      menuOverlay.classList.add('show');
+      overlay.classList.add('show');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      menuBtn.setAttribute('aria-label', 'Close menu');
       sideMenu.setAttribute('aria-hidden', 'false');
-      menuOverlay.setAttribute('aria-hidden', 'false');
-      menuButton.setAttribute('aria-expanded', 'true');
-      menuButton.setAttribute('aria-label', 'Close menu');
+      overlay.setAttribute('aria-hidden', 'false');
       document.body.classList.add('menu-open');
       menuClose.focus();
     }
 
     function closeMenu() {
       sideMenu.classList.remove('open');
-      menuOverlay.classList.remove('show');
+      overlay.classList.remove('show');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Open menu');
       sideMenu.setAttribute('aria-hidden', 'true');
-      menuOverlay.setAttribute('aria-hidden', 'true');
-      menuButton.setAttribute('aria-expanded', 'false');
-      menuButton.setAttribute('aria-label', 'Open menu');
+      overlay.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('menu-open');
-      menuButton.focus();
+      menuBtn.focus();
     }
 
-    menuButton.addEventListener('click', () => {
+    menuBtn.addEventListener('click', () => {
       if (sideMenu.classList.contains('open')) closeMenu();
       else openMenu();
     });
 
+    overlay.addEventListener('click', closeMenu);
     menuClose.addEventListener('click', closeMenu);
-    menuOverlay.addEventListener('click', closeMenu);
 
     document.querySelectorAll('.menu-link').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    document.addEventListener('keydown', event => {
+    document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && sideMenu.classList.contains('open')) {
         closeMenu();
       }
