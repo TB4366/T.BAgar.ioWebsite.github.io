@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Agar.io Custom Skins</title>
+  <style>
+    body { font-family: sans-serif; margin:0; background:#111; color:white; }
+    header { padding:20px; background:#222; text-align:center; }
+    h1 { margin:0; }
+    .gallery { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:20px; padding:20px; }
+    .skin { background:#1c1c1c; border-radius:10px; padding:10px; text-align:center; }
+    .skin img { max-width:100%; border-radius:50%; }
+    .skin-name { margin-top:8px; font-size:0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Agar.io Custom Skins</h1>
+    <p>Voeg nieuwe skins toe door ze in de <code>/skins</code> map te zetten.</p>
+  </header>
+  <div class="gallery" id="gallery"></div>
+
+  <script>
+    // Voeg hier je skin-bestanden toe
+    const skins = [
+      { file: 'skin1.png', name: 'Skin 1' },
+      { file: 'skin2.png', name: 'Skin 2' },
+      { file: 'skin3.png', name: 'Skin 3' }
+    ];
+
+    const gallery = document.getElementById('gallery');
+
+    skins.forEach(skin => {
+      const div = document.createElement('div');
+      div.className = 'skin';
+      div.innerHTML = `
+        <img src="skins/${skin.file}" alt="${skin.name}" />
+        <div class="skin-name">${skin.name}</div>
+      `;
+      gallery.appendChild(div);
+    });
+  </script>
+</body>
+</html>
