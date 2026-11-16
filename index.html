@@ -11,20 +11,21 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #07111f;
       --surface: #0c1a2c;
       --surface-light: #10233a;
       --text: #f4f8ff;
       --muted: #aab9ca;
       --ice: #a9e3ff;
       --blue: #58b9ed;
-      --discord: #5865f2;
       --border: rgba(169, 227, 255, .18);
     }
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 85px;
+    }
 
     body {
       margin: 0;
@@ -41,7 +42,6 @@
     a { color: inherit; }
     button { font: inherit; }
 
-    /* Winter snowfall */
     .snow {
       position: fixed;
       inset: 0;
@@ -102,7 +102,7 @@
       gap: 10px;
     }
 
-    /* Social and action buttons */
+    /* Buttons */
     .button {
       position: relative;
       display: inline-flex;
@@ -164,7 +164,7 @@
       flex: 0 0 auto;
     }
 
-    /* Polished hamburger button */
+    /* Hamburger */
     .menu-button {
       display: inline-flex;
       width: 50px;
@@ -297,7 +297,7 @@
       box-shadow: 0 0 14px rgba(88, 185, 237, .16);
     }
 
-    /* Shared glowing SVG diagonal arrow */
+    /* Glowing diagonal SVG arrow, shared by cards and menu */
     .arrow-icon {
       width: 21px;
       height: 21px;
@@ -445,23 +445,53 @@
       line-height: 1.6;
     }
 
-    /* Video slider */
+    /* Video carousels */
+    .video-section + .video-section { margin-top: 20px; }
+
     .video-slider {
-      display: grid;
-      grid-auto-columns: minmax(270px, 1fr);
-      grid-auto-flow: column;
-      gap: 16px;
+      display: flex;
+      gap: 18px;
       overflow-x: auto;
-      padding: 4px 2px 16px;
+      padding: 8px 4px 20px;
       scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-color: #58b9ed #0c1a2c;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+    }
+
+    .video-slider::-webkit-scrollbar { height: 8px; }
+    .video-slider::-webkit-scrollbar-track {
+      background: #0c1a2c;
+      border-radius: 99px;
+    }
+    .video-slider::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #58b9ed, #a9e3ff);
+      border-radius: 99px;
     }
 
     .video-card {
+      flex: 0 0 min(82vw, 430px);
       overflow: hidden;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
+      padding: 4px;
+      background: linear-gradient(135deg, #a9e3ff, #328fc1 48%, #d7f4ff);
+      border: 1px solid rgba(220, 246, 255, .75);
+      border-radius: 20px;
+      box-shadow:
+        0 0 0 1px rgba(88, 185, 237, .2),
+        0 0 22px rgba(88, 185, 237, .2),
+        0 14px 34px rgba(0, 0, 0, .35);
       scroll-snap-align: start;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 0 0 1px rgba(220, 246, 255, .55),
+        0 0 30px rgba(88, 185, 237, .38),
+        0 18px 38px rgba(0, 0, 0, .4);
     }
 
     .video-card iframe {
@@ -469,9 +499,17 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border: 0;
+      border-radius: 15px;
+      background: #050d19;
     }
 
-    /* Explore cards: visible border and glowing SVG arrows */
+    .carousel-note {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Explore cards */
     .link-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -506,7 +544,7 @@
       letter-spacing: -.02em;
     }
 
-    /* T.B Clan banner */
+    /* Community banner */
     .clan-banner {
       display: flex;
       align-items: center;
@@ -563,6 +601,7 @@
       .link-grid { grid-template-columns: 1fr; }
       .clan-banner { padding: 23px; }
       .menu-button { width: 46px; height: 46px; }
+      .video-card { flex-basis: min(86vw, 360px); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -578,7 +617,7 @@
 
 <body>
   <!-- Reusable SVG icons -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg-definitions" aria-hidden="true">
     <symbol id="icon-discord" viewBox="0 0 24 24">
       <path fill="currentColor" d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
     </symbol>
@@ -671,7 +710,7 @@
         <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
       </a>
       <a class="menu-link" href="#videos">
-        <span>T.B Videos</span>
+        <span>Videos</span>
         <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
       </a>
     </nav>
@@ -734,42 +773,86 @@
       </aside>
     </section>
 
-    <section id="videos">
+    <section id="videos" class="video-section">
       <div class="section-heading">
-        <h2>T.B Videos</h2>
-        <p>Watch the latest Agar.io videos from the channel.</p>
+        <h2>Latest Videos</h2>
+        <p>Watch the newest videos from the T.B Agar.io channel.</p>
       </div>
 
-      <div class="video-slider">
+      <div class="video-slider" aria-label="Latest T.B Agar.io videos">
         <div class="video-card">
-          <iframe loading="lazy" src="https://www.youtube.com/embed/TsBdhigLEeSByVOE"
-                  title="T.B Agar.io video 1" allowfullscreen></iframe>
+          <iframe loading="lazy" src="https://www.youtube.com/embed/bUJDH7-TZYg"
+                  title="Latest T.B Agar.io video 1" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/f_uySRxcQUY"
+                  title="Latest T.B Agar.io video 2" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/Q8_z5UcSQMs"
+                  title="Latest T.B Agar.io video 3" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/cEB1j9eai0U"
+                  title="Latest T.B Agar.io video 4" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/d9PIccj_eu0"
+                  title="Latest T.B Agar.io video 5" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/M0E1QTHBJXM"
+                  title="Latest T.B Agar.io video 6" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/9MLapZIX16Y"
+                  title="Latest T.B Agar.io video 7" allowfullscreen></iframe>
+        </div>
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/1DtICBB-bJ4"
+                  title="Latest T.B Agar.io video 8" allowfullscreen></iframe>
+        </div>
+      </div>
+      <p class="carousel-note">Swipe or scroll to browse. The videos also advance automatically.</p>
+    </section>
+
+    <section class="video-section">
+      <div class="section-heading">
+        <h2>Popular Videos</h2>
+        <p>More popular videos from the T.B Agar.io channel.</p>
+      </div>
+
+      <div class="video-slider" aria-label="Popular T.B Agar.io videos">
+        <div class="video-card">
+          <iframe loading="lazy" src="https://www.youtube.com/embed/02x2YFHWh2o"
+                  title="Popular T.B Agar.io video 1" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/d8DluzJAd2w"
-                  title="T.B Agar.io video 2" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 2" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/c234keB_q3c"
-                  title="T.B Agar.io video 3" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 3" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/MVl6S3JvxC0"
-                  title="T.B Agar.io video 4" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 4" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/Zg3-FACfyHE"
-                  title="T.B Agar.io video 5" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 5" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/TdoL76Jt22A"
-                  title="T.B Agar.io video 6" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 6" allowfullscreen></iframe>
         </div>
         <div class="video-card">
           <iframe loading="lazy" src="https://www.youtube.com/embed/0Tk29twxcJ8"
-                  title="T.B Agar.io video 7" allowfullscreen></iframe>
+                  title="Popular T.B Agar.io video 7" allowfullscreen></iframe>
         </div>
       </div>
+      <p class="carousel-note">Swipe or scroll to browse. The videos also advance automatically.</p>
     </section>
 
     <section id="explore">
@@ -828,6 +911,7 @@
   </footer>
 
   <script>
+    /* Hamburger menu */
     const menuButton = document.getElementById('menu-button');
     const sideMenu = document.getElementById('side-menu');
     const menuOverlay = document.getElementById('menu-overlay');
@@ -874,6 +958,80 @@
       if (event.key === 'Escape' && sideMenu.classList.contains('open')) {
         closeMenu();
       }
+    });
+
+    /* Video carousels: auto-advance and remain swipeable */
+    document.querySelectorAll('.video-slider').forEach(slider => {
+      const autoAdvanceDelay = 4500;
+      const resumeDelay = 7000;
+      let autoTimer;
+      let resumeTimer;
+      let isAutoScrolling = false;
+
+      function getCards() {
+        return Array.from(slider.querySelectorAll('.video-card'));
+      }
+
+      function getCurrentIndex() {
+        const cards = getCards();
+        if (!cards.length) return 0;
+
+        const sliderLeft = slider.getBoundingClientRect().left;
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        cards.forEach((card, index) => {
+          const distance = Math.abs(card.getBoundingClientRect().left - sliderLeft - 4);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = index;
+          }
+        });
+
+        return closestIndex;
+      }
+
+      function goToNextCard() {
+        const cards = getCards();
+        if (cards.length < 2) return;
+
+        const currentIndex = getCurrentIndex();
+        const nextIndex = (currentIndex + 1) % cards.length;
+        const nextCard = cards[nextIndex];
+
+        isAutoScrolling = true;
+
+        slider.scrollTo({
+          left: nextCard.offsetLeft - slider.offsetLeft - 4,
+          behavior: 'smooth'
+        });
+
+        window.setTimeout(() => {
+          isAutoScrolling = false;
+        }, 900);
+      }
+
+      function startAutoAdvance() {
+        window.clearInterval(autoTimer);
+        autoTimer = window.setInterval(goToNextCard, autoAdvanceDelay);
+      }
+
+      function pauseThenResume() {
+        window.clearInterval(autoTimer);
+        window.clearTimeout(resumeTimer);
+        resumeTimer = window.setTimeout(startAutoAdvance, resumeDelay);
+      }
+
+      slider.addEventListener('pointerdown', pauseThenResume, { passive: true });
+      slider.addEventListener('touchstart', pauseThenResume, { passive: true });
+      slider.addEventListener('wheel', pauseThenResume, { passive: true });
+      slider.addEventListener('keydown', pauseThenResume);
+
+      slider.addEventListener('scroll', () => {
+        if (!isAutoScrolling) pauseThenResume();
+      }, { passive: true });
+
+      startAutoAdvance();
     });
   </script>
 </body>
