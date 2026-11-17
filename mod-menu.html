@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#07111f">
   <meta name="description" content="Explore Agar.io mods, tools, and resources from T.B Agar.io.">
   <title>Mod Menu — T.B Agar.io</title>
 
@@ -13,27 +13,26 @@
   <style>
     :root {
       color-scheme: dark;
-      --background: #020617;
-      --surface: #071226;
-      --surface-light: #0b203d;
+      --background: #07111f;
+      --surface: #0c1a2c;
+      --surface-light: #10233a;
       --text: #f4f8ff;
-      --muted: #94a3b8;
-      --blue: #38bdf8;
-      --blue-dark: #2563eb;
+      --muted: #aab9ca;
       --ice: #a9e3ff;
-      --border: rgba(56, 189, 248, .2);
-      --header-height: 68px;
+      --blue: #58b9ed;
+      --discord: #5865f2;
+      --border: rgba(169, 227, 255, .17);
+      --header-height: 70px;
     }
 
     * {
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
-      font-family: Arial, Helvetica, sans-serif;
     }
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: calc(var(--header-height) + 18px);
+      scroll-padding-top: calc(var(--header-height) + 22px);
     }
 
     body {
@@ -41,10 +40,10 @@
       margin: 0;
       padding-top: calc(var(--header-height) + env(safe-area-inset-top));
       color: var(--text);
+      font-family: Inter, Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at 85% 0%, rgba(14, 165, 233, .16), transparent 34%),
-        radial-gradient(circle at 5% 30%, rgba(37, 99, 235, .09), transparent 28%),
-        linear-gradient(180deg, #020617, #061126 55%, #020617);
+        radial-gradient(ellipse at 50% -20%, rgba(88, 185, 237, .2), transparent 55%),
+        linear-gradient(180deg, #07111f, #091625 55%, #07111f);
       overflow-x: hidden;
     }
 
@@ -53,7 +52,8 @@
       overflow: hidden;
     }
 
-    button, a { font: inherit; }
+    a { color: inherit; }
+    button { font: inherit; }
 
     .icon-definitions {
       position: absolute;
@@ -62,17 +62,22 @@
       overflow: hidden;
     }
 
-    /* Background glow */
-    .background-glow {
+    .snow {
       position: fixed;
-      z-index: 0;
-      top: -260px;
-      right: -210px;
-      width: 600px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(14, 165, 233, .22), transparent 70%);
+      inset: 0;
+      z-index: 1;
       pointer-events: none;
+      opacity: .3;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, #fff 50%, transparent 55%),
+        radial-gradient(2px 2px at 80px 120px, #bceaff 50%, transparent 55%),
+        radial-gradient(3px 3px at 150px 70px, #fff 50%, transparent 55%);
+      background-size: 190px 190px;
+      animation: snowfall 18s linear infinite;
+    }
+
+    @keyframes snowfall {
+      to { background-position: 0 190px, 80px 310px, 150px 260px; }
     }
 
     /* Fixed header */
@@ -86,46 +91,36 @@
       gap: 20px;
       min-height: calc(var(--header-height) + env(safe-area-inset-top));
       padding: calc(10px + env(safe-area-inset-top)) max(18px, calc((100vw - 1180px) / 2)) 10px;
-      background: rgba(2, 6, 23, .93);
-      border-bottom: 1px solid rgba(56, 189, 248, .24);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, .24);
+      background: rgba(7, 17, 31, .92);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .2);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
 
-    .header-brand {
+    .brand {
       display: flex;
       align-items: center;
       gap: 12px;
       min-width: 0;
-      color: var(--text);
       text-decoration: none;
+      font-size: 18px;
+      font-weight: 850;
+      letter-spacing: -.3px;
+      white-space: nowrap;
     }
 
-    .brand-logo {
-      display: block;
-      width: 46px;
-      height: 46px;
+    .brand img {
+      width: 44px;
+      height: 44px;
       flex: 0 0 auto;
       object-fit: cover;
       border: 1px solid var(--border);
       border-radius: 13px;
-      box-shadow: 0 0 18px rgba(14, 165, 233, .2);
-      transition: transform .2s ease;
+      box-shadow: 0 0 18px rgba(88, 185, 237, .2);
     }
 
-    .header-brand:hover .brand-logo { transform: scale(1.05); }
-
-    .brand-title {
-      overflow: hidden;
-      font-size: 19px;
-      font-weight: 900;
-      letter-spacing: -.4px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .brand-title span { color: var(--blue); }
+    .brand-name span { color: var(--ice); }
 
     .header-actions {
       display: flex;
@@ -134,44 +129,47 @@
       gap: 9px;
     }
 
-    .social-button {
+    /* Buttons */
+    .button {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      min-height: 42px;
-      padding: 0 13px;
+      gap: 9px;
+      min-height: 44px;
+      padding: 0 15px;
       color: #fff;
-      border: 1px solid rgba(255,255,255,.28);
-      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 12px;
       font-size: 13px;
       font-weight: 800;
       text-decoration: none;
-      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
       white-space: nowrap;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.04), 0 8px 22px rgba(0,0,0,.2);
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
     }
 
-    .social-button:hover {
+    .button:hover {
       transform: translateY(-2px);
       filter: brightness(1.1);
     }
 
-    .social-button.discord {
-      background: #5865f2;
+    .button-discord {
+      background: var(--discord);
       border-color: #9da5ff;
-      box-shadow: 0 0 15px rgba(88, 101, 242, .3);
+      box-shadow: 0 0 16px rgba(88, 101, 242, .32), 0 8px 22px rgba(0,0,0,.22);
     }
 
-    .social-button.youtube {
+    .button-youtube {
       background: #e62117;
       border-color: #ff746d;
-      box-shadow: 0 0 15px rgba(230, 33, 23, .26);
+      box-shadow: 0 0 16px rgba(230, 33, 23, .28), 0 8px 22px rgba(0,0,0,.22);
     }
 
-    .social-button.instagram {
+    .button-instagram {
       background: linear-gradient(120deg, #7b37c8, #d62976, #f58529);
       border-color: #f3a5cb;
-      box-shadow: 0 0 15px rgba(214, 41, 118, .27);
+      box-shadow: 0 0 16px rgba(214, 41, 118, .28), 0 8px 22px rgba(0,0,0,.22);
     }
 
     .social-icon {
@@ -180,8 +178,8 @@
       flex: 0 0 auto;
     }
 
-    /* Styled hamburger button */
-    .menu-btn {
+    /* Hamburger */
+    .menu-button {
       display: inline-flex;
       width: 46px;
       height: 46px;
@@ -189,18 +187,18 @@
       justify-content: center;
       padding: 0;
       color: var(--text);
-      background: linear-gradient(145deg, #10243d, #071226);
-      border: 1px solid rgba(56, 189, 248, .4);
-      border-radius: 13px;
-      box-shadow: 0 0 17px rgba(56, 189, 248, .16), inset 0 1px rgba(255,255,255,.08);
+      background: linear-gradient(145deg, #142b43, #0b1828);
+      border: 1px solid rgba(169, 227, 255, .42);
+      border-radius: 14px;
+      box-shadow: 0 0 18px rgba(88, 185, 237, .17);
       cursor: pointer;
       transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
     }
 
-    .menu-btn:hover {
+    .menu-button:hover {
       transform: translateY(-1px);
       border-color: var(--ice);
-      box-shadow: 0 0 22px rgba(56, 189, 248, .32);
+      box-shadow: 0 0 24px rgba(88, 185, 237, .32);
     }
 
     .menu-lines { display: grid; gap: 5px; }
@@ -209,30 +207,30 @@
       display: block;
       width: 21px;
       height: 2px;
-      border-radius: 5px;
+      border-radius: 4px;
       background: linear-gradient(90deg, #fff, var(--ice));
-      box-shadow: 0 0 7px rgba(169, 227, 255, .4);
+      box-shadow: 0 0 8px rgba(169, 227, 255, .4);
       transition: transform .2s ease, opacity .2s ease;
     }
 
-    .menu-btn[aria-expanded="true"] .menu-lines span:first-child {
+    .menu-button[aria-expanded="true"] .menu-lines span:first-child {
       transform: translateY(7px) rotate(45deg);
     }
 
-    .menu-btn[aria-expanded="true"] .menu-lines span:nth-child(2) {
+    .menu-button[aria-expanded="true"] .menu-lines span:nth-child(2) {
       opacity: 0;
     }
 
-    .menu-btn[aria-expanded="true"] .menu-lines span:last-child {
+    .menu-button[aria-expanded="true"] .menu-lines span:last-child {
       transform: translateY(-7px) rotate(-45deg);
     }
 
-    /* Menu overlay and drawer */
+    /* Side menu */
     .menu-overlay {
       position: fixed;
       inset: 0;
       z-index: 109;
-      background: rgba(0, 0, 0, .66);
+      background: rgba(0, 0, 0, .65);
       backdrop-filter: blur(3px);
       opacity: 0;
       visibility: hidden;
@@ -244,7 +242,7 @@
       visibility: visible;
     }
 
-    .menu {
+    .side-menu {
       position: fixed;
       top: 0;
       right: 0;
@@ -256,16 +254,16 @@
       height: 100dvh;
       padding: calc(22px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));
       overflow-y: auto;
-      background: linear-gradient(180deg, #071226, #020617);
+      background: linear-gradient(180deg, #0c1a2c, #07111f);
       border-left: 1px solid var(--border);
-      box-shadow: -20px 0 55px rgba(0, 0, 0, .45);
+      box-shadow: -20px 0 55px rgba(0, 0, 0, .4);
       transform: translateX(105%);
       transition: transform .28s ease;
     }
 
-    .menu.open { transform: translateX(0); }
+    .side-menu.open { transform: translateX(0); }
 
-    .menu-close {
+    .menu-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -275,30 +273,28 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .menu-brand {
+    .menu-title {
       font-size: 17px;
       font-weight: 900;
-      letter-spacing: .3px;
     }
 
-    .menu-brand span { color: var(--blue); }
+    .menu-title span { color: var(--ice); }
 
-    .menu-close button {
+    .menu-close {
       display: grid;
       width: 40px;
       height: 40px;
       place-items: center;
       color: #fff;
-      background: #08152a;
+      background: rgba(255,255,255,.05);
       border: 1px solid var(--border);
       border-radius: 11px;
-      font-size: 25px;
+      font-size: 24px;
       cursor: pointer;
     }
 
-    .menu-label,
-    .menu-social-title {
-      margin: 20px 4px 8px;
+    .menu-label {
+      margin: 15px 4px 9px;
       color: #8297ad;
       font-size: 11px;
       font-weight: 800;
@@ -313,11 +309,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      width: 100%;
       padding: 13px;
       color: var(--text);
-      background: rgba(8, 21, 42, .88);
-      border: 1px solid rgba(56, 189, 248, .24);
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(169, 227, 255, .24);
       border-radius: 12px;
       font-weight: 750;
       text-decoration: none;
@@ -326,9 +321,9 @@
 
     .menu-link:hover {
       transform: translateX(-2px);
-      background: #0b203d;
-      border-color: rgba(56, 189, 248, .65);
-      box-shadow: 0 0 14px rgba(56, 189, 248, .13);
+      background: var(--surface-light);
+      border-color: rgba(169, 227, 255, .65);
+      box-shadow: 0 0 14px rgba(88, 185, 237, .14);
     }
 
     .arrow-icon {
@@ -340,12 +335,20 @@
       transition: transform .2s ease, filter .2s ease;
     }
 
-    .menu-link:hover .arrow-icon {
+    .menu-link:hover .arrow-icon,
+    .resource-link:hover .arrow-icon {
       transform: translate(2px, -2px);
       filter: drop-shadow(0 0 9px rgba(121, 214, 255, .95));
     }
 
-    .menu-social-title { margin-top: 22px; }
+    .menu-social-title {
+      margin: 22px 4px 10px;
+      color: #8297ad;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
 
     .menu-socials {
       display: grid;
@@ -353,8 +356,8 @@
       gap: 8px;
     }
 
-    .menu-socials .social-button {
-      min-height: 48px;
+    .menu-socials .button {
+      min-height: 45px;
       padding: 0 7px;
       font-size: 12px;
     }
@@ -367,636 +370,561 @@
       font-size: 12px;
     }
 
-    /* Main content */
+    /* Main layout */
     main {
       position: relative;
       z-index: 2;
-      width: min(1200px, 100%);
+      width: min(1120px, calc(100% - 36px));
       margin: 0 auto;
-      padding: 42px 18px calc(55px + env(safe-area-inset-bottom));
+      padding: 42px 0 calc(60px + env(safe-area-inset-bottom));
     }
 
-    .page-title {
+    .hero {
       position: relative;
-      margin-bottom: 42px;
-      padding: 35px 20px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      align-items: center;
+      gap: 34px;
+      margin-bottom: 40px;
+      padding: 48px 38px;
       overflow: hidden;
-      background: linear-gradient(145deg, rgba(14,165,233,.07), rgba(7,18,38,.75));
-      border: 1px solid rgba(14,165,233,.16);
+      background: linear-gradient(145deg, rgba(20, 53, 78, .68), rgba(12, 26, 44, .88));
+      border: 1px solid var(--border);
       border-radius: 24px;
-      text-align: center;
+      box-shadow: 0 24px 70px rgba(0,0,0,.22);
     }
 
-    .page-title::before {
+    .hero::after {
       position: absolute;
-      top: -120px;
-      left: 50%;
-      width: 220px;
-      height: 220px;
+      top: -110px;
+      right: -40px;
+      color: rgba(169, 227, 255, .06);
+      content: "❄";
+      font-size: 280px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .hero-copy,
+    .hero-panel { position: relative; z-index: 1; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 15px;
+      color: var(--ice);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 22px;
+      height: 2px;
+      background: var(--blue);
       content: "";
-      background: rgba(14,165,233,.12);
-      filter: blur(80px);
-      border-radius: 50%;
-      transform: translateX(-50%);
     }
 
-    .page-title-content { position: relative; z-index: 1; }
-
-    .page-title h1 {
-      margin-bottom: 12px;
-      font-size: clamp(38px, 7vw, 58px);
-      font-weight: 900;
-      letter-spacing: 1px;
+    h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(38px, 6vw, 64px);
+      line-height: 1.05;
+      letter-spacing: -2px;
     }
 
-    .page-title h1 span { color: var(--blue); }
+    h1 span { color: var(--ice); }
 
-    .page-title p {
-      max-width: 650px;
-      margin: 0 auto;
+    .hero-copy p {
+      max-width: 610px;
+      margin: 17px 0 24px;
       color: var(--muted);
       font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+    }
+
+    .hero-panel {
+      padding: 23px;
+      background: rgba(3, 12, 25, .48);
+      border: 1px solid rgba(169, 227, 255, .18);
+      border-radius: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-label {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      color: var(--ice);
+      background: rgba(169, 227, 255, .08);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+
+    .hero-panel h2 {
+      margin: 0 0 9px;
+      font-size: 20px;
+    }
+
+    .hero-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .section { margin-top: 46px; }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 7px;
+      font-size: clamp(24px, 4vw, 32px);
+      letter-spacing: -.7px;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
       line-height: 1.6;
     }
 
-    .section { margin-bottom: 55px; }
-
-    .section-header {
-      margin-bottom: 24px;
-      text-align: center;
+    .section-kicker {
+      color: var(--ice);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
     }
 
-    .section-header h2 {
-      margin-bottom: 7px;
-      font-size: 28px;
-      font-weight: 900;
-    }
-
-    .section-header h2 span { color: var(--blue); }
-
-    .section-header p {
-      color: #64748b;
-      font-size: 14px;
-    }
-
-    .grid {
+    /* Mod and tool cards */
+    .card-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-      width: 100%;
+      gap: 17px;
     }
 
-    .card {
-      position: relative;
+    .mod-card {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      min-width: 0;
       padding: 12px;
       overflow: hidden;
-      background: linear-gradient(145deg, #08152a, #071226);
-      border: 1px solid rgba(14,165,233,.18);
-      border-radius: 18px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.22);
+      background: linear-gradient(155deg, rgba(14, 33, 53, .97), rgba(8, 20, 36, .97));
+      border: 1px solid rgba(169, 227, 255, .17);
+      border-radius: 17px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.2);
       transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
 
-    .card:hover {
+    .mod-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(14,165,233,.4);
-      box-shadow: 0 15px 40px rgba(0,0,0,.32);
+      border-color: rgba(169, 227, 255, .44);
+      box-shadow: 0 17px 36px rgba(0,0,0,.3), 0 0 18px rgba(88,185,237,.1);
     }
 
-    .card > img {
+    .card-image-wrap {
+      position: relative;
+      margin-bottom: 14px;
+      overflow: hidden;
+      background: #061126;
+      border: 1px solid rgba(169, 227, 255, .12);
+      border-radius: 12px;
+    }
+
+    .card-image {
       display: block;
       width: 100%;
       aspect-ratio: 16 / 9;
       object-fit: cover;
-      border-radius: 12px;
     }
 
-    .status-label {
+    .status-badge {
       position: absolute;
-      z-index: 2;
-      top: 20px;
-      left: 20px;
-      display: none;
-      padding: 6px 10px;
+      top: 10px;
+      left: 10px;
+      padding: 6px 9px;
+      color: #fff;
+      background: rgba(34, 197, 94, .92);
+      border: 1px solid rgba(187, 247, 208, .6);
       border-radius: 7px;
-      font-weight: 800;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .5px;
+      text-transform: uppercase;
     }
 
-    .status-label.update { background: #ef4444; }
-    .status-label.soon { background: #2563eb; }
-    .status-label.not { background: #7c3aed; }
-
-    .download,
-    .Site,
-    .Install {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 11px 14px;
-      color: #fff;
-      background: #2563eb;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform .2s ease, background .2s ease;
+    .status-badge.update {
+      background: rgba(239, 68, 68, .94);
+      border-color: rgba(252, 165, 165, .62);
     }
 
-    .download:hover,
-    .Site:hover,
-    .Install:hover {
-      background: #1d4ed8;
-      transform: translateY(-1px);
+    .status-badge.unavailable {
+      background: rgba(100, 116, 139, .95);
+      border-color: rgba(203, 213, 225, .35);
     }
 
-    .download:active,
-    .Site:active,
-    .Install:active { transform: scale(.98); }
-
-    .locked {
-      background: #475569 !important;
-      cursor: not-allowed !important;
+    .card-title {
+      margin: 0 0 7px;
+      font-size: 17px;
+      font-weight: 850;
+      line-height: 1.35;
     }
 
-    .info {
-      color: #94a3b8;
-      font-size: .9rem;
-      line-height: 1.45;
+    .card-description {
+      flex: 1;
+      margin: 0 0 13px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
     }
 
-    .card-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(0,0,0,.76);
-      border-radius: 18px;
-      text-align: center;
-    }
-
-    .verify-box {
-      width: min(300px, 100%);
-      min-width: 0;
-      padding: 20px;
-      background: #0f172a;
-      border: 1px solid #2563eb;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,140,255,.3);
-      text-align: center;
-    }
-
-    .verify-title {
-      margin-bottom: 10px;
-      color: var(--blue);
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .verify-status {
-      margin: 6px 0;
-      font-size: 18px;
-    }
-
-    .verify-unlock {
-      width: 100%;
-      padding: 10px;
-      color: #fff;
-      background: #64748b;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .external-icon {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      fill: currentColor;
-    }
-
-    hr.section-line {
-      height: 1px;
-      margin: 45px 0;
-      background: linear-gradient(90deg, transparent, #2563eb, transparent);
-      border: 0;
-      opacity: .8;
-    }
-
-    /* Help area */
-    .help-section {
-      padding: 5px 10px calc(30px + env(safe-area-inset-bottom));
-      text-align: center;
-    }
-
-    .help-section h2 {
-      margin-bottom: 8px;
-      font-size: 24px;
-    }
-
-    .help-section p {
-      margin-bottom: 20px;
-      color: #64748b;
-      line-height: 1.5;
-    }
-
-    .help-buttons,
-    .help-contact-buttons {
+    .card-meta {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
       flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 13px;
     }
 
-    .help-button,
-    .help-contact-buttons a {
+    .meta-chip {
+      padding: 5px 8px;
+      color: #c1d1e0;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(169, 227, 255, .1);
+      border-radius: 7px;
+      font-size: 11px;
+    }
+
+    .download-button {
       display: inline-flex;
+      width: 100%;
+      min-height: 43px;
       align-items: center;
       justify-content: center;
       gap: 9px;
-      min-height: 44px;
-      padding: 11px 20px;
+      padding: 10px 14px;
       color: #fff;
-      background: #2563eb;
-      border: 1px solid rgba(96,165,250,.5);
+      background: linear-gradient(135deg, #2563eb, #1686d1);
+      border: 1px solid rgba(169, 227, 255, .42);
       border-radius: 10px;
+      box-shadow: 0 0 15px rgba(37, 99, 235, .2);
       font-weight: 800;
       text-decoration: none;
-      cursor: pointer;
-      transition: transform .2s ease, background .2s ease;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
     }
 
-    .help-button:hover,
-    .help-contact-buttons a:hover {
-      background: #1d4ed8;
+    .download-button:hover {
       transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 0 20px rgba(37, 99, 235, .34);
     }
 
-    .help-contact {
-      margin-top: 20px;
-      color: #cbd5e1;
+    .download-button.disabled {
+      color: #d3d9e2;
+      background: #475569;
+      border-color: rgba(203, 213, 225, .25);
+      box-shadow: none;
+      cursor: not-allowed;
     }
 
-    .help-contact p {
-      margin-bottom: 12px;
-      color: #94a3b8;
-      font-size: 14px;
+    .download-button.disabled:hover {
+      transform: none;
+      filter: none;
     }
 
-    .help-contact-buttons a {
-      background: #08152a;
-      border-color: rgba(14,165,233,.24);
+    .download-icon {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 auto;
     }
 
-    .help-contact-buttons a:hover {
-      background: #0b203d;
+    /* Tool links */
+    .resource-card .card-image {
+      aspect-ratio: 16 / 9;
     }
 
-    /* Help modal */
-    .help-modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9500;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(0,0,0,.78);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .help-modal-overlay.show { display: flex; }
-
-    .help-modal {
-      width: 100%;
-      max-width: 800px;
-      max-height: 90vh;
-      overflow-y: auto;
-      padding: 18px;
-      background: linear-gradient(145deg, #061126, #020617);
-      border: 1px solid rgba(14,165,233,.45);
-      border-radius: 20px;
-      box-shadow: 0 25px 80px rgba(0,0,0,.65), 0 0 35px rgba(14,165,233,.12);
-    }
-
-    .help-modal-header {
+    .resource-link {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      width: 100%;
+      min-height: 43px;
+      padding: 10px 13px;
+      color: #fff;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(169, 227, 255, .25);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background .2s ease, border-color .2s ease;
     }
 
-    .help-modal-brand {
+    .resource-link:hover {
+      background: var(--surface-light);
+      border-color: rgba(169, 227, 255, .6);
+    }
+
+    .section-divider {
+      height: 1px;
+      margin: 45px 0;
+      background: linear-gradient(90deg, transparent, #2563eb, #58b9ed, transparent);
+      border: 0;
+      opacity: .8;
+    }
+
+    /* Help panel */
+    .help-panel {
       display: flex;
       align-items: center;
-      gap: 12px;
-      min-width: 0;
+      justify-content: space-between;
+      gap: 25px;
+      padding: 26px;
+      background: linear-gradient(110deg, rgba(32, 83, 117, .45), rgba(12, 26, 44, .92));
+      border: 1px solid var(--border);
+      border-radius: 20px;
     }
 
-    .help-modal-logo {
-      width: 48px;
-      height: 48px;
-      flex: 0 0 auto;
-      overflow: hidden;
-      border-radius: 12px;
-      box-shadow: 0 5px 25px rgba(14,165,233,.2);
+    .help-panel h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
     }
 
-    .help-modal-logo img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .help-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
     }
 
-    .help-modal-title {
-      color: #fff;
-      font-size: 20px;
-      font-weight: 900;
+    .help-contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    .help-modal-close {
+    /* Help modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.76);
+      backdrop-filter: blur(7px);
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: min(720px, 100%);
+      max-height: min(88vh, 760px);
+      overflow-y: auto;
+      padding: 20px;
+      background: linear-gradient(155deg, #0c1a2c, #07111f);
+      border: 1px solid rgba(169, 227, 255, .3);
+      border-radius: 20px;
+      box-shadow: 0 24px 75px rgba(0,0,0,.55), 0 0 25px rgba(88,185,237,.12);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 17px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .modal-close {
       display: grid;
-      width: 42px;
-      height: 42px;
+      width: 40px;
+      height: 40px;
       flex: 0 0 auto;
       place-items: center;
       color: #fff;
-      background: #08152a;
-      border: 1px solid rgba(14,165,233,.2);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      font-size: 26px;
-      line-height: 1;
+      font-size: 24px;
       cursor: pointer;
     }
 
-    .help-modal-close:hover {
-      background: #0b203d;
-      border-color: rgba(14,165,233,.5);
-    }
-
-    .help-modal-line {
-      width: 100%;
-      height: 1px;
-      margin: 16px 0 20px;
-      background: linear-gradient(90deg, transparent, #2563eb, transparent);
-    }
-
-    .help-modal-intro {
-      margin-bottom: 20px;
-      color: #cbd5e1;
-      font-size: 15px;
-      line-height: 1.7;
-      text-align: center;
+    .modal-intro {
+      margin-bottom: 16px;
+      color: var(--muted);
+      line-height: 1.6;
     }
 
     .help-options {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 11px;
     }
 
     .help-option {
-      width: 100%;
-      min-height: 100px;
-      padding: 18px;
-      color: #fff;
-      background: linear-gradient(145deg, #08152a, #071226);
-      border: 1px solid rgba(14,165,233,.22);
-      border-radius: 14px;
+      min-height: 88px;
+      padding: 15px;
+      color: var(--text);
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(169, 227, 255, .2);
+      border-radius: 12px;
       text-align: left;
       cursor: pointer;
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      transition: background .2s ease, border-color .2s ease, transform .2s ease;
     }
 
     .help-option:hover {
       transform: translateY(-2px);
-      background: #0b203d;
-      border-color: rgba(14,165,233,.55);
+      background: var(--surface-light);
+      border-color: rgba(169, 227, 255, .55);
     }
 
-    .help-option-title {
+    .help-option strong {
       display: block;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 900;
+      margin-bottom: 6px;
+      font-size: 14px;
     }
 
-    .help-option-sub {
-      display: block;
-      margin-top: 7px;
-      color: #8297ad;
+    .help-option span {
+      color: var(--muted);
       font-size: 12px;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .help-back {
-      margin-bottom: 16px;
+      margin-bottom: 15px;
       padding: 9px 13px;
-      color: #fff;
-      background: #08152a;
-      border: 1px solid rgba(14,165,233,.24);
-      border-radius: 10px;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 9px;
       cursor: pointer;
     }
 
-    .help-back:hover { background: #0b203d; }
-
-    .private-server-steps {
+    .help-steps {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
+      gap: 11px;
     }
 
-    .private-step {
-      position: relative;
-      min-width: 0;
-      padding: 15px;
-      background: linear-gradient(145deg, #08152a, #071226);
-      border: 1px solid rgba(14,165,233,.2);
-      border-radius: 15px;
+    .help-step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 14px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(169, 227, 255, .16);
+      border-radius: 12px;
     }
-
-    .private-step:hover { border-color: rgba(14,165,233,.45); }
 
     .step-number {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 1;
       display: grid;
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       place-items: center;
       color: #fff;
       background: #2563eb;
       border-radius: 50%;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
     }
 
-    .private-step h3 {
-      margin: 3px 0 14px 43px;
-      color: #fff;
-      font-size: 15px;
-      line-height: 1.4;
+    .help-step h3 {
+      margin: 2px 0 5px;
+      font-size: 14px;
     }
 
-    .step-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .step-image {
-      width: 86px;
-      height: 86px;
-      flex: 0 0 auto;
-      object-fit: cover;
-      background: #020617;
-      border: 1px solid rgba(14,165,233,.25);
-      border-radius: 12px;
-    }
-
-    .step-text {
-      color: #cbd5e1;
+    .help-step p {
+      margin: 0;
+      color: var(--muted);
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.6;
     }
-
-    /* Legacy script popup styles retained for existing help scripts */
-    .script-popup {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(0,0,0,.82);
-      backdrop-filter: blur(6px);
-    }
-
-    .script-popup.show { display: flex; }
-
-    .script-popup-box {
-      position: relative;
-      width: 100%;
-      max-width: 700px;
-      padding: 20px;
-      background: #071226;
-      border: 1px solid rgba(14,165,233,.4);
-      border-radius: 16px;
-    }
-
-    .script-popup-box h3 {
-      margin-bottom: 12px;
-      color: var(--blue);
-    }
-
-    .script-popup-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 38px;
-      height: 38px;
-      color: #fff;
-      background: #08152a;
-      border: 0;
-      border-radius: 9px;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .script-code {
-      width: 100%;
-      min-height: 220px;
-      padding: 12px;
-      color: #cbd5e1;
-      background: #020617;
-      border: 1px solid rgba(14,165,233,.2);
-      border-radius: 10px;
-      font-family: monospace;
-      font-size: 12px;
-      resize: vertical;
-    }
-
-    .copy-script {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      color: #fff;
-      background: #2563eb;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .copy-script:hover { background: #1d4ed8; }
 
     /* Footer */
     footer {
       position: relative;
       z-index: 2;
-      padding: 28px 18px calc(28px + env(safe-area-inset-bottom));
-      color: #64748b;
-      border-top: 1px solid rgba(14,165,233,.14);
+      padding: 26px 18px calc(26px + env(safe-area-inset-bottom));
+      color: #8297ad;
+      border-top: 1px solid var(--border);
       text-align: center;
+      font-size: 14px;
     }
 
     footer p { margin: 5px 0; }
 
     footer a {
-      color: var(--blue);
+      color: var(--ice);
       text-decoration: none;
     }
 
     @media (max-width: 900px) {
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 36px 28px;
+      }
+
+      .hero-panel { max-width: 560px; }
+      .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 700px) {
       .header-social { display: none; }
 
       main {
-        padding: 28px 16px calc(45px + env(safe-area-inset-bottom));
+        width: min(100% - 30px, 1120px);
+        padding-top: 28px;
       }
 
-      .page-title { padding: 30px 18px; }
-      .page-title h1 { font-size: 36px; }
-      .grid { grid-template-columns: 1fr; }
-      .private-server-steps { grid-template-columns: 1fr; }
+      .hero { padding: 30px 22px; }
+      .section-heading { align-items: flex-start; }
+      .help-panel {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
 
     @media (max-width: 520px) {
       .site-header { padding-left: 14px; padding-right: 14px; }
-      .brand-logo { width: 42px; height: 42px; }
-      .brand-title { font-size: 16px; }
-      .menu-btn { width: 44px; height: 44px; }
-      .help-modal { padding: 15px; border-radius: 16px; }
+      .brand { font-size: 15px; }
+      .brand img { width: 40px; height: 40px; }
+      .menu-button { width: 44px; height: 44px; }
+      .card-grid { grid-template-columns: 1fr; }
       .help-options { grid-template-columns: 1fr; }
-      .help-option { min-height: 84px; }
-      .step-content { align-items: flex-start; }
-      .step-image { width: 74px; height: 74px; }
-    }
-
-    @media (max-width: 430px) {
-      .menu { width: min(310px, 90vw); }
+      .hero-copy p { font-size: 15px; }
+      .hero-actions .button { width: 100%; }
       .menu-socials { grid-template-columns: 1fr; }
-      .menu-socials .social-button { min-height: 42px; }
-      .help-buttons { flex-direction: column; }
-      .help-button { width: 100%; max-width: 320px; }
+      .menu-socials .button { min-height: 42px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1024,54 +952,49 @@
       <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
     </symbol>
 
-    <symbol id="icon-diagonal-arrow" viewBox="0 0 24 24">
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
       <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
+
+    <symbol id="icon-download" viewBox="0 0 24 24">
+      <path d="M12 3v12m0 0 5-5m-5 5-5-5M4 17v3h16v-3"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
   </svg>
 
-  <div class="background-glow" aria-hidden="true"></div>
-
-  <div id="loader" role="status" aria-live="polite">
-    <div>Loading Agar.io Mods...</div>
-    <div class="spinner" aria-hidden="true"></div>
-  </div>
-
-  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+  <div class="snow" aria-hidden="true"></div>
 
   <header class="site-header">
-    <a class="header-brand"
-       href="https://www.youtube.com/@T.B6"
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Open T.B Agar.io YouTube channel">
-      <img class="brand-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io logo">
-      <span class="brand-title">T.B <span>AGAR.IO</span></span>
+    <a class="brand" href="/index.html" aria-label="T.B Agar.io home">
+      <img src="/IMG_0561.jpeg" alt="T.B Agar.io logo">
+      <span class="brand-name">T.B <span>AGAR.IO</span></span>
     </a>
 
     <div class="header-actions">
-      <a class="social-button discord header-social"
+      <a class="button button-discord header-social"
          href="https://discord.gg/qhuXPrVzBx"
          target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
         Discord
       </a>
 
-      <a class="social-button youtube header-social"
+      <a class="button button-youtube header-social"
          href="https://www.youtube.com/@T.B6"
          target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
         YouTube
       </a>
 
-      <a class="social-button instagram header-social"
+      <a class="button button-instagram header-social"
          href="https://www.instagram.com/t.bagar.io/"
          target="_blank" rel="noopener noreferrer">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
         Instagram
       </a>
 
-      <button class="menu-btn" id="menu-btn" type="button"
+      <button class="menu-button" id="menu-button" type="button"
               aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
         <span class="menu-lines" aria-hidden="true">
           <span></span><span></span><span></span>
@@ -1080,10 +1003,12 @@
     </div>
   </header>
 
-  <aside class="menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
-    <div class="menu-close">
-      <div class="menu-brand">T.B <span>AGAR.IO</span></div>
-      <button id="menu-close-btn" type="button" aria-label="Close menu">×</button>
+  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+
+  <aside class="side-menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
+    <div class="menu-header">
+      <div class="menu-title">Explore <span>T.B Agar.io</span></div>
+      <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">×</button>
     </div>
 
     <div class="menu-label">Navigation</div>
@@ -1091,54 +1016,48 @@
     <nav class="menu-links" aria-label="Main navigation">
       <a class="menu-link" href="/index.html">
         <span>Home</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/custom-skins.html">
         <span>Custom Skins</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/key-access.html">
         <span>Key Access</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/mod-menu.html" aria-current="page">
         <span>Mod Menu</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/paidskins.html">
         <span>Paid Skins</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/buy-account.html">
         <span>Buy Account</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
       <a class="menu-link" href="/agar.io-skins.html">
         <span>Agar.io Skins</span>
-        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
       </a>
     </nav>
 
-    <!-- External links removed from the menu as requested. -->
     <div class="menu-social-title">Follow T.B Agar.io</div>
 
     <div class="menu-socials">
-      <a class="social-button discord"
-         href="https://discord.gg/qhuXPrVzBx"
+      <a class="button button-discord" href="https://discord.gg/qhuXPrVzBx"
          target="_blank" rel="noopener noreferrer" aria-label="Join Discord">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
         Discord
       </a>
-
-      <a class="social-button youtube"
-         href="https://www.youtube.com/@T.B6"
+      <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
          target="_blank" rel="noopener noreferrer" aria-label="Open YouTube">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
         YouTube
       </a>
-
-      <a class="social-button instagram"
-         href="https://www.instagram.com/t.bagar.io/"
+      <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
          target="_blank" rel="noopener noreferrer" aria-label="Open Instagram">
         <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
         Instagram
@@ -1149,219 +1068,293 @@
   </aside>
 
   <main>
-    <section class="page-title">
-      <div class="page-title-content">
-        <h1>T.B <span>MOD MENU</span></h1>
-        <p>Download and explore available Agar.io mods, tools, and useful resources.</p>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-header">
-        <h2>AVAILABLE <span>MODS</span></h2>
-        <p>Available Agar.io modifications and tools.</p>
-      </div>
-
-      <div class="grid">
-        <article class="card" data-status="active">
-          <img src="/IMG_9406.jpeg" alt="Shark Mod iOS" loading="lazy">
-          <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 18-10-2026</div>
-          <div class="info">
-            Update Shark Mod version 2.0.0 — Private Server, smoother than ever, 120 FPS.
-          </div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="not">
-          <div class="status-label update">UPDATE</div>
-          <img src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg" alt="T.B Mod" loading="lazy">
-          <a href="#">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.3.5</div>
-          <div class="info">New date: 15-01-2026</div>
-          <div class="info">T.B Mod (Kabrah) Unlock Skin</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <div class="status-label update">UPDATE</div>
-          <img src="/IMG_6587.png" alt="Bite Skin Mod" loading="lazy">
-          <a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 05-07-2026</div>
-          <div class="info">Bite Skin Mod</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_6587.png" alt="Kahraba Mod" loading="lazy">
-          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 05-07-2026</div>
-          <div class="info">Kahraba Mod</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_9406.jpeg" alt="Shark Mod Android" loading="lazy">
-          <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0 — Shark Mod 2.0.0 with Private Server, smoother gameplay, and 120 FPS.</div>
-          <div class="info">Date: 18-10-2026</div>
-          <div class="info">Shark Mod — Android</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_6587.png" alt="Kahraba Shark Mod" loading="lazy">
-          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 05-07-2026</div>
-          <div class="info">Kahraba + Shark Mod</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_6587.png" alt="Myu Mod" loading="lazy">
-          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 05-07-2026</div>
-          <div class="info">Myu Mod</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_4318.png" alt="Spotify Premium Mod" loading="lazy">
-          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Version: 9.0.66</div>
-          <div class="info">Date: 03-08-2025</div>
-          <div class="info">Spotify Premium Mod</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_2462.jpeg" alt="DNS Profile" loading="lazy">
-          <a href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
-            <button class="download" type="button">Download</button>
-          </a>
-          <div class="info">Available for iPhone (iOS)</div>
-          <div class="info">Date: 14-09-2026</div>
-          <div class="info">DNS Profile</div>
-          <div class="card-overlay"></div>
-        </article>
-      </div>
-    </section>
-
-    <hr class="section-line">
-
-    <section class="section">
-      <div class="section-header">
-        <h2>AGAR.IO <span>TOOLS</span></h2>
-        <p>Useful Agar.io websites and tools.</p>
-      </div>
-
-      <div class="grid">
-        <article class="card" data-status="active">
-          <img src="/IMG_0321.jpeg" alt="Bite Bots Panel" loading="lazy">
-          <a href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
-            <button class="download" type="button">
-              Bite Bots Panel
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-                <path d="M5 5h5v10h10v-3h2v5H5z"></path>
-              </svg>
-            </button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 19-08-2026</div>
-          <div class="info">Bite Bots Panel</div>
-          <div class="card-overlay"></div>
-        </article>
-
-        <article class="card" data-status="active">
-          <img src="/IMG_0322.jpeg" alt="Kahraba Website" loading="lazy">
-          <a href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
-            <button class="download" type="button">
-              Kahraba Website
-              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
-                <path d="M5 5h5v10h10v-3h2v5H5z"></path>
-              </svg>
-            </button>
-          </a>
-          <div class="info">Version: 26.6.0</div>
-          <div class="info">Date: 21-08-2026</div>
-          <div class="info">Kahraba Website</div>
-          <div class="card-overlay"></div>
-        </article>
-      </div>
-    </section>
-
-    <hr class="section-line">
-
-    <section class="help-section">
-      <h2>Need Help?</h2>
-      <p>Learn how to install and use the available mods.</p>
-
-      <div class="help-buttons">
-        <button class="help-button" type="button" onclick="openHelpModal()">
-          Help Mods
-        </button>
-      </div>
-
-      <div class="help-contact">
-        <p>If you have questions, you can contact us through our social channels.</p>
-        <div class="help-contact-buttons" aria-label="Contact links">
-          <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener noreferrer">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">T.B Agar.io Resources</div>
+        <h1>Explore the <span>Mod Menu</span></h1>
+        <p>
+          Browse the available mods and tools in one place. Check each card for
+          its platform, version details, and download link.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-discord" href="https://discord.gg/qhuXPrVzBx"
+             target="_blank" rel="noopener noreferrer">
             <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
-            Discord
+            Join the Community
           </a>
-          <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">
-            <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
-            YouTube
-          </a>
-          <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">
-            <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
-            Instagram
-          </a>
+          <a class="button button-outline" href="#available-mods">Browse Mods</a>
         </div>
+      </div>
+
+      <aside class="hero-panel">
+        <span class="panel-label">Mod Library</span>
+        <h2>Find the right resource</h2>
+        <p>
+          Review compatibility and download information before using any file.
+          Downloads may be provided by third-party sites.
+        </p>
+      </aside>
+    </section>
+
+    <section class="section" id="available-mods">
+      <div class="section-heading">
+        <div>
+          <div class="section-kicker">Browse the collection</div>
+          <h2>Available Mods</h2>
+          <p>Mod listings and their available download links.</p>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_9406.jpeg" alt="Shark Mod for iOS" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Shark Mod — iOS</h3>
+          <p class="card-description">Shark Mod release for iOS. Check device compatibility before downloading.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 18-10-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg" alt="T.B Mod" loading="lazy">
+            <span class="status-badge unavailable">Unavailable</span>
+          </div>
+          <h3 class="card-title">T.B Mod</h3>
+          <p class="card-description">T.B Mod (Kabrah) with skin unlock feature.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.3.5</span>
+            <span class="meta-chip">Updated 15-01-2026</span>
+          </div>
+          <span class="download-button disabled" aria-disabled="true">Currently unavailable</span>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_6587.png" alt="Bite Skin Mod" loading="lazy">
+            <span class="status-badge update">Updated</span>
+          </div>
+          <h3 class="card-title">Bite Skin Mod</h3>
+          <p class="card-description">Bite Skin Mod release for iOS.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 05-07-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_6587.png" alt="Kahraba Mod" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Kahraba Mod</h3>
+          <p class="card-description">Kahraba Mod release for iOS.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 05-07-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_9406.jpeg" alt="Shark Mod for Android" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Shark Mod — Android</h3>
+          <p class="card-description">Shark Mod Android release. Check that the download is compatible with your device.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 18-10-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_6587.png" alt="Kahraba plus Shark Mod" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Kahraba + Shark Mod</h3>
+          <p class="card-description">Combined Kahraba and Shark mod release for iOS.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 05-07-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_6587.png" alt="Myu Mod" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Myu Mod</h3>
+          <p class="card-description">Myu Mod release for iOS.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 26.6.0</span>
+            <span class="meta-chip">Updated 05-07-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_4318.png" alt="Spotify Premium Mod" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">Spotify Premium Mod</h3>
+          <p class="card-description">Spotify-related download link supplied for this listing.</p>
+          <div class="card-meta">
+            <span class="meta-chip">Version 9.0.66</span>
+            <span class="meta-chip">Updated 03-08-2025</span>
+          </div>
+          <a class="download-button"
+             href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_2462.jpeg" alt="DNS profile" loading="lazy">
+            <span class="status-badge">Available</span>
+          </div>
+          <h3 class="card-title">DNS Profile</h3>
+          <p class="card-description">Profile download listed for iPhone and iOS devices.</p>
+          <div class="card-meta">
+            <span class="meta-chip">iPhone / iOS</span>
+            <span class="meta-chip">Updated 14-09-2026</span>
+          </div>
+          <a class="download-button"
+             href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+            Download Profile
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="section" id="tools">
+      <div class="section-heading">
+        <div>
+          <div class="section-kicker">Useful links</div>
+          <h2>Agar.io Tools</h2>
+          <p>Open the listed tools on their external websites.</p>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_0321.jpeg" alt="Bite Bots Panel" loading="lazy">
+            <span class="status-badge">External site</span>
+          </div>
+          <h3 class="card-title">Bite Bots Panel</h3>
+          <p class="card-description">Open the Bite Bots Panel on its website.</p>
+          <a class="resource-link" href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
+            <span>Visit Bite Bots Panel</span>
+            <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
+          </a>
+        </article>
+
+        <article class="mod-card">
+          <div class="card-image-wrap">
+            <img class="card-image" src="/IMG_0322.jpeg" alt="Kahraba Website" loading="lazy">
+            <span class="status-badge">External site</span>
+          </div>
+          <h3 class="card-title">Kahraba Website</h3>
+          <p class="card-description">Open the Kahraba website in a new tab.</p>
+          <a class="resource-link" href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
+            <span>Visit Kahraba Website</span>
+            <svg class="arrow-icon" aria-hidden="true"><use href="#icon-arrow"></use></svg>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="section" id="help">
+      <div class="help-panel">
+        <div>
+          <div class="section-kicker">Support</div>
+          <h2>Need help?</h2>
+          <p>Browse the help topics or contact the T.B Agar.io community.</p>
+          <div class="help-contact">
+            <a class="button button-discord" href="https://discord.gg/qhuXPrVzBx"
+               target="_blank" rel="noopener noreferrer">
+              <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+              Discord
+            </a>
+            <a class="button button-youtube" href="https://www.youtube.com/@T.B6"
+               target="_blank" rel="noopener noreferrer">
+              <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+              YouTube
+            </a>
+            <a class="button button-instagram" href="https://www.instagram.com/t.bagar.io/"
+               target="_blank" rel="noopener noreferrer">
+              <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+              Instagram
+            </a>
+          </div>
+        </div>
+
+        <button class="button button-outline" id="open-help" type="button">
+          Browse Help Topics
+        </button>
       </div>
     </section>
   </main>
 
-  <!-- Help Mods modal -->
-  <div class="help-modal-overlay" id="help-modal-overlay" aria-hidden="true">
-    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
-      <div class="help-modal-header">
-        <div class="help-modal-brand">
-          <div class="help-modal-logo">
-            <img src="/IMG_0561.jpeg" alt="T.B Agar.io">
-          </div>
-          <div class="help-modal-title" id="help-modal-title">T.B Agar.io</div>
-        </div>
-
-        <button class="help-modal-close" type="button"
-                onclick="closeHelpModal()" aria-label="Close Help Mods">×</button>
+  <div class="modal-overlay" id="help-modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Mod Help</h2>
+        <button class="modal-close" id="modal-close" type="button" aria-label="Close help">×</button>
       </div>
-
-      <div class="help-modal-line"></div>
-      <div id="help-modal-body"></div>
+      <div id="modal-content"></div>
     </div>
   </div>
 
@@ -1371,20 +1364,11 @@
   </footer>
 
   <script>
-    /* Hide the loader when the page loads, with a fallback. */
-    function hideLoader() {
-      const loader = document.getElementById('loader');
-      if (loader) loader.style.display = 'none';
-    }
-
-    window.addEventListener('load', hideLoader);
-    window.setTimeout(hideLoader, 8000);
-
     /* Hamburger menu */
-    const menuButton = document.getElementById('menu-btn');
+    const menuButton = document.getElementById('menu-button');
     const sideMenu = document.getElementById('side-menu');
     const menuOverlay = document.getElementById('menu-overlay');
-    const menuCloseButton = document.getElementById('menu-close-btn');
+    const menuClose = document.getElementById('menu-close');
 
     function openMenu() {
       sideMenu.classList.add('open');
@@ -1394,7 +1378,7 @@
       menuButton.setAttribute('aria-expanded', 'true');
       menuButton.setAttribute('aria-label', 'Close menu');
       document.body.classList.add('menu-open');
-      menuCloseButton.focus();
+      menuClose.focus();
     }
 
     function closeMenu() {
@@ -1408,295 +1392,130 @@
     }
 
     menuButton.addEventListener('click', () => {
-      if (sideMenu.classList.contains('open')) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
+      sideMenu.classList.contains('open') ? closeMenu() : openMenu();
     });
 
-    menuCloseButton.addEventListener('click', closeMenu);
+    menuClose.addEventListener('click', closeMenu);
     menuOverlay.addEventListener('click', closeMenu);
 
     document.querySelectorAll('.menu-link').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    /* Mod download verification */
-    function randomBetween(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+    /* Help modal */
+    const modalOverlay = document.getElementById('help-modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const modalClose = document.getElementById('modal-close');
+    const openHelpButton = document.getElementById('open-help');
 
-    document.querySelectorAll('.card').forEach(card => {
-      const status = card.dataset.status;
-      const button = card.querySelector('.download');
-      const overlay = card.querySelector('.card-overlay');
-      const linkElement = card.querySelector('a');
-      const downloadUrl = linkElement ? linkElement.href : '#';
-      const statusLabel = card.querySelector('.status-label');
-
-      if (statusLabel) statusLabel.style.display = 'none';
-
-      if (status === 'not') {
-        if (statusLabel) statusLabel.style.display = 'block';
-
-        if (button) {
-          button.textContent = 'Unavailable';
-          button.classList.add('locked');
-          button.addEventListener('click', event => {
-            event.preventDefault();
-            alert('This mod is not available.');
-          });
-        }
-
-        card.style.opacity = '.55';
-        if (overlay) {
-          overlay.style.display = 'flex';
-          overlay.textContent = 'Not Available';
-        }
-      }
-
-      if (!button || !overlay || status === 'not') return;
-
-      let youtubeComplete = false;
-      let instagramComplete = false;
-
-      button.addEventListener('click', event => {
-        event.preventDefault();
-
-        if (status === 'not') return;
-
-        overlay.style.display = 'flex';
-        overlay.innerHTML = `
-          <div style="text-align:center;">
-            Preparing ${getModName(card)}...
-            <div class="spinner" style="margin:12px auto;"></div>
-          </div>
-        `;
-
-        window.setTimeout(showVerification, randomBetween(1200, 2200));
-      });
-
-      function showVerification() {
-        overlay.innerHTML = `
-          <div class="verify-box">
-            <div class="verify-title">Verification</div>
-            <hr style="margin:10px 0;border:0;border-top:1px solid rgba(255,255,255,.15);">
-
-            <button type="button" id="ytBtn" class="download">Subscribe on YouTube</button>
-            <div class="verify-status" id="ytStatus" aria-live="polite">○</div>
-
-            <button type="button" id="igBtn" class="download">Follow on Instagram</button>
-            <div class="verify-status" id="igStatus" aria-live="polite">○</div>
-
-            <button type="button" id="unlockBtn" class="verify-unlock">🔒 Locked</button>
-          </div>
-        `;
-
-        const youtubeButton = document.getElementById('ytBtn');
-        const instagramButton = document.getElementById('igBtn');
-        const unlockButton = document.getElementById('unlockBtn');
-
-        youtubeButton.addEventListener('click', () => {
-          window.open('https://www.youtube.com/@T.B6', '_blank', 'noopener');
-          youtubeComplete = true;
-          document.getElementById('ytStatus').textContent = '✔';
-          checkUnlock();
-        });
-
-        instagramButton.addEventListener('click', () => {
-          window.open('https://www.instagram.com/t.bagar.io/', '_blank', 'noopener');
-          instagramComplete = true;
-          document.getElementById('igStatus').textContent = '✔';
-          checkUnlock();
-        });
-
-        unlockButton.addEventListener('click', () => {
-          if (!youtubeComplete || !instagramComplete) {
-            alert('Please open both social links first.');
-          }
-        });
-
-        function checkUnlock() {
-          if (youtubeComplete && instagramComplete) {
-            unlockButton.style.background = '#22c55e';
-            unlockButton.textContent = 'Download';
-            unlockButton.onclick = startDownload;
-          }
-        }
-
-        function startDownload() {
-          overlay.innerHTML = `
-            <div style="text-align:center;">
-              <div id="downloadStatus">Preparing download...</div>
-              <div class="spinner" style="margin:12px auto;"></div>
-            </div>
-          `;
-
-          window.setTimeout(() => {
-            window.location.href = downloadUrl;
-          }, 1200);
-        }
-      }
-
-      function getModName(currentCard) {
-        const infoItems = currentCard.querySelectorAll('.info');
-        return infoItems.length
-          ? infoItems[infoItems.length - 1].textContent.trim()
-          : 'Mod';
-      }
-    });
-
-    /* Help modal content */
-    const helpStepsData = [
+    const helpTopics = [
       {
-        title: 'How to install eSign',
+        title: 'Choosing a download',
+        summary: 'Check the mod card for the platform, version, and download details.',
         steps: [
-          { title: 'Install the eSign app', img: '/IMG_2462.jpeg', text: 'Install the eSign app using the instructions provided by its official source.' },
-          { title: 'Open Settings', img: '/IMG_1119.jpeg', text: 'On your device, open Settings and locate General settings.' },
-          { title: 'Open device management', img: '/IMG_1456.png', text: 'Go to General, then VPN & Device Management. The exact menu name may vary by iOS version.' },
-          { title: 'Follow the app instructions', img: '/singbox-profile.png', text: 'Open eSign and follow the prompts shown by the app.' },
-          { title: 'Install a compatible file', img: '/singbox-edit.png', text: 'Return to the website and choose a compatible mod file.' },
-          { title: 'Trust only profiles you recognize', img: '/IMG_2462.jpeg', text: 'Review profiles carefully before installing. Only trust profiles from sources you know.' }
+          ['Check compatibility', 'Confirm the file is intended for your device and operating system.'],
+          ['Review the download source', 'Downloads may be hosted on third-party websites. Check the source before opening a file.'],
+          ['Follow the provider instructions', 'Use the installation guidance provided by the mod or file publisher.']
         ]
       },
       {
-        title: 'How does eSign work?',
+        title: 'Installing a downloaded file',
+        summary: 'Installation steps can differ depending on your device and file type.',
         steps: [
-          { title: 'What is eSign?', img: '/IMG_0322.jpeg', text: 'eSign is a tool used to manage app signing and profiles on compatible devices.' },
-          { title: 'Sign in or create an account', img: '/IMG_0321.jpeg', text: 'Use the sign-in or account setup process provided by the app.' },
-          { title: 'Manage profiles', img: '/singbox-profile.png', text: 'Review the profiles available in the app before using them.' },
-          { title: 'Follow the app guidance', img: '/agario.png', text: 'Use the app instructions to understand which files and profiles are supported.' },
-          { title: 'Troubleshooting', img: '/settings.png', text: 'Check the app settings and restart the app if you run into an issue.' }
+          ['Read the publisher instructions', 'Use the steps provided by the source of the download.'],
+          ['Review device prompts', 'Read permission and profile prompts before accepting them.'],
+          ['Only install files you trust', 'If you are unsure about a file or profile, do not install it.']
         ]
       },
       {
-        title: 'How to install Agar.io mods',
+        title: 'eSign basics',
+        summary: 'The exact eSign setup process may depend on the app version and your device.',
         steps: [
-          { title: 'Choose a mod', img: '/IMG_9406.jpeg', text: 'Choose the mod you want from the available downloads on this page.' },
-          { title: 'Check compatibility', img: '/IMG_2462.jpeg', text: 'Check that the file is intended for your device and operating system.' },
-          { title: 'Review device settings', img: '/settings.png', text: 'Follow the publisher’s installation guidance and review any profile prompts.' },
-          { title: 'Install the file', img: '/agario.png', text: 'Open the downloaded file and follow the installation instructions shown by your device.' },
-          { title: 'Check the app', img: '/IMG_0561.jpeg', text: 'Launch Agar.io and confirm that the installation completed as expected.' }
+          ['Use the official app guidance', 'Follow the instructions provided by the eSign app or its publisher.'],
+          ['Review profiles carefully', 'Check the profile details and source before installing or trusting it.'],
+          ['Ask the community', 'If you need help with the website, contact the T.B Agar.io community.']
         ]
       },
       {
-        title: 'How to configure Agar.io mods',
+        title: 'Troubleshooting',
+        summary: 'Try these general checks if a download or installation does not work.',
         steps: [
-          { title: 'Open the installed app', img: '/agario.png', text: 'Open the mod app or the game you installed.' },
-          { title: 'Review permissions', img: '/settings.png', text: 'Check the app permissions and settings on your device.' },
-          { title: 'Configure available options', img: '/singbox-edit.png', text: 'Adjust only the options provided by the app, such as supported visual settings.' },
-          { title: 'Test your settings', img: '/IMG_9406.jpeg', text: 'Open Agar.io and check that your settings work as expected.' },
-          { title: 'Need help?', img: '/IMG_0561.jpeg', text: 'Contact the T.B Agar.io community if you need help with the page or its downloads.' }
+          ['Check the link and connection', 'Make sure the download page loads and your internet connection is stable.'],
+          ['Check compatibility', 'Confirm that the file matches your device and operating system.'],
+          ['Contact support', 'Share the mod name and the issue you are seeing in the community server.']
         ]
       }
     ];
 
-    function renderHelpOptions() {
-      const body = document.getElementById('help-modal-body');
-
-      body.innerHTML = `
-        <div class="help-modal-intro">
-          We want to help you. Choose the topic you need help with.
-        </div>
-
+    function renderHelpTopics() {
+      modalContent.innerHTML = `
+        <p class="modal-intro">Choose a topic to view general help information.</p>
         <div class="help-options">
-          <button class="help-option" type="button" data-help-index="0">
-            <span class="help-option-title">How to install eSign</span>
-            <span class="help-option-sub">Installation help for eSign</span>
-          </button>
-
-          <button class="help-option" type="button" data-help-index="1">
-            <span class="help-option-title">How does eSign work?</span>
-            <span class="help-option-sub">Learn about using eSign</span>
-          </button>
-
-          <button class="help-option" type="button" data-help-index="2">
-            <span class="help-option-title">How to install Agar.io mods</span>
-            <span class="help-option-sub">Installation guidance for mods</span>
-          </button>
-
-          <button class="help-option" type="button" data-help-index="3">
-            <span class="help-option-title">How to configure Agar.io mods</span>
-            <span class="help-option-sub">Help with mod settings</span>
-          </button>
+          ${helpTopics.map((topic, index) => `
+            <button class="help-option" type="button" data-topic="${index}">
+              <strong>${topic.title}</strong>
+              <span>${topic.summary}</span>
+            </button>
+          `).join('')}
         </div>
       `;
 
-      body.querySelectorAll('[data-help-index]').forEach(button => {
+      modalContent.querySelectorAll('[data-topic]').forEach(button => {
         button.addEventListener('click', () => {
-          showHelpStepsInModal(Number(button.dataset.helpIndex));
+          renderHelpSteps(Number(button.dataset.topic));
         });
       });
     }
 
+    function renderHelpSteps(index) {
+      const topic = helpTopics[index];
+      if (!topic) return;
+
+      modalContent.innerHTML = `
+        <button class="help-back" type="button">← Back to help topics</button>
+        <p class="modal-intro">${topic.summary}</p>
+        <div class="help-steps">
+          ${topic.steps.map((step, stepIndex) => `
+            <article class="help-step">
+              <div class="step-number">${stepIndex + 1}</div>
+              <div>
+                <h3>${step[0]}</h3>
+                <p>${step[1]}</p>
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      `;
+
+      modalContent.querySelector('.help-back').addEventListener('click', renderHelpTopics);
+    }
+
     function openHelpModal() {
-      const overlay = document.getElementById('help-modal-overlay');
-      renderHelpOptions();
-      overlay.classList.add('show');
-      overlay.setAttribute('aria-hidden', 'false');
+      renderHelpTopics();
+      modalOverlay.classList.add('open');
+      modalOverlay.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
-      overlay.querySelector('.help-modal-close').focus();
+      modalClose.focus();
     }
 
     function closeHelpModal() {
-      const overlay = document.getElementById('help-modal-overlay');
-      overlay.classList.remove('show');
-      overlay.setAttribute('aria-hidden', 'true');
+      modalOverlay.classList.remove('open');
+      modalOverlay.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
+      openHelpButton.focus();
     }
 
-    function showHelpStepsInModal(index) {
-      const body = document.getElementById('help-modal-body');
-      const data = helpStepsData[index] || helpStepsData[0];
+    openHelpButton.addEventListener('click', openHelpModal);
+    modalClose.addEventListener('click', closeHelpModal);
 
-      const stepsHtml = data.steps.map((step, stepIndex) => `
-        <article class="private-step">
-          <div class="step-number">${stepIndex + 1}</div>
-          <h3>${escapeHtml(step.title)}</h3>
-          <div class="step-content">
-            <img class="step-image" src="${escapeHtml(step.img)}"
-                 alt="" loading="lazy">
-            <div class="step-text">${escapeHtml(step.text)}</div>
-          </div>
-        </article>
-      `).join('');
-
-      body.innerHTML = `
-        <button class="help-back" type="button">← Back to help topics</button>
-        <div class="section-header">
-          <h2>${escapeHtml(data.title)}</h2>
-        </div>
-        <div class="private-server-steps">${stepsHtml}</div>
-      `;
-
-      body.querySelector('.help-back').addEventListener('click', renderHelpOptions);
-    }
-
-    function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[character]);
-    }
-
-    const helpModalOverlay = document.getElementById('help-modal-overlay');
-
-    helpModalOverlay.addEventListener('click', event => {
-      if (event.target === helpModalOverlay) closeHelpModal();
+    modalOverlay.addEventListener('click', event => {
+      if (event.target === modalOverlay) closeHelpModal();
     });
 
-    /* Close open panels with Escape. */
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
-        closeMenu();
-        closeHelpModal();
-
-        const scriptPopup = document.getElementById('script-popup');
-        if (scriptPopup) scriptPopup.classList.remove('show');
+        if (sideMenu.classList.contains('open')) closeMenu();
+        if (modalOverlay.classList.contains('open')) closeHelpModal();
       }
     });
   </script>
