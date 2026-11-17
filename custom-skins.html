@@ -1,1608 +1,1292 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<title>T.B AGAR.IO - Custom Skins</title>
-
-<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
-<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
--webkit-tap-highlight-color:transparent;
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-body{
-background:#020617;
-color:#fff;
-min-height:100vh;
-overflow-x:hidden;
-}
-
-button,
-a{
--webkit-tap-highlight-color:transparent;
-}
-
-
-/* =========================
-   BACKGROUND
-========================= */
-
-body::before{
-content:"";
-position:fixed;
-width:600px;
-height:600px;
-
-background:
-radial-gradient(
-circle,
-#0ea5e9,
-transparent 70%
-);
-
-top:-250px;
-right:-200px;
-
-opacity:.18;
-
-z-index:-1;
-
-pointer-events:none;
-}
-
-
-/* =========================
-   LOADER
-========================= */
-
-#loader{
-position:fixed;
-inset:0;
-
-background:#020617;
-
-display:flex;
-flex-direction:column;
-
-justify-content:center;
-align-items:center;
-
-gap:14px;
-
-font-size:20px;
-
-z-index:99999;
-
-text-align:center;
-}
-
-.spinner{
-width:40px;
-height:40px;
-
-border:5px solid rgba(255,255,255,.15);
-
-border-top:5px solid #38bdf8;
-
-border-radius:50%;
-
-animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-
-to{
-transform:rotate(360deg);
-}
-
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-position:sticky;
-top:0;
-
-z-index:3000;
-
-width:100%;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:
-calc(10px + env(safe-area-inset-top))
-18px
-10px
-18px;
-
-background:rgba(2,6,23,.94);
-
-backdrop-filter:blur(15px);
-
--webkit-backdrop-filter:blur(15px);
-
-border-bottom:
-1px solid
-rgba(14,165,233,.25);
-}
-
-.left-header{
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-min-width:0;
-}
-
-
-/* LOGO */
-
-.logo-link{
-display:flex;
-
-align-items:center;
-
-text-decoration:none;
-}
-
-.logo{
-width:48px;
-height:48px;
-
-border-radius:12px;
-
-overflow:hidden;
-
-flex-shrink:0;
-
-box-shadow:
-0 5px 25px
-rgba(14,165,233,.2);
-
-transition:transform .2s ease;
-}
-
-.logo-link:hover .logo{
-transform:scale(1.05);
-}
-
-.logo img{
-width:100%;
-height:100%;
-
-object-fit:cover;
-
-display:block;
-}
-
-
-/* TITLE */
-
-.site-title{
-font-size:20px;
-
-font-weight:800;
-
-color:#fff;
-
-white-space:nowrap;
-
-overflow:hidden;
-
-text-overflow:ellipsis;
-}
-
-
-/* =========================
-   MENU BUTTON
-========================= */
-
-.menu-btn{
-
-width:46px;
-height:46px;
-
-border:
-1px solid
-rgba(14,165,233,.25);
-
-background:#071226;
-
-border-radius:12px;
-
-color:#fff;
-
-font-size:24px;
-
-cursor:pointer;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-transition:.2s ease;
-}
-
-.menu-btn:hover{
-
-background:#0b203d;
-
-border-color:
-rgba(14,165,233,.5);
-
-}
-
-.menu-btn:active{
-
-transform:scale(.96);
-
-}
-
-
-/* =========================
-   SIDE MENU
-========================= */
-
-.menu{
-
-position:fixed;
-
-top:0;
-
-right:-330px;
-
-width:310px;
-
-max-width:88vw;
-
-height:100vh;
-
-background:
-linear-gradient(
-180deg,
-#050d1c 0%,
-#020617 100%
-);
-
-z-index:5000;
-
-padding:
-calc(25px + env(safe-area-inset-top))
-20px
-calc(25px + env(safe-area-inset-bottom));
-
-border-left:
-1px solid
-rgba(14,165,233,.22);
-
-overflow-y:auto;
-
-transition:right .3s ease;
-
-box-shadow:
--20px 0 50px
-rgba(0,0,0,.35);
-}
-
-.menu.open{
-right:0;
-}
-
-
-/* MENU TOP */
-
-.menu-close{
-
-width:100%;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:22px;
-}
-
-.menu-brand{
-
-font-size:17px;
-
-font-weight:800;
-
-letter-spacing:.5px;
-}
-
-.menu-brand span{
-
-color:#38bdf8;
-
-}
-
-.menu-close button{
-
-width:40px;
-height:40px;
-
-border:
-1px solid
-rgba(14,165,233,.18);
-
-background:#08152a;
-
-color:#fff;
-
-border-radius:10px;
-
-font-size:25px;
-
-cursor:pointer;
-}
-
-
-/* MENU LABEL */
-
-.menu-label{
-
-margin:22px 4px 9px;
-
-color:#64748b;
-
-font-size:11px;
-
-font-weight:800;
-
-letter-spacing:1.5px;
-
-text-transform:uppercase;
-}
-
-
-/* MENU LINKS */
-
-.menu a{
-
-display:flex;
-
-align-items:center;
-
-width:100%;
-
-padding:14px;
-
-margin:7px 0;
-
-border-radius:12px;
-
-color:#fff;
-
-text-decoration:none;
-
-background:#08152a;
-
-border:
-1px solid
-rgba(14,165,233,.12);
-
-font-weight:700;
-
-transition:.2s ease;
-}
-
-.menu a:hover{
-
-background:#0b203d;
-
-border-color:
-rgba(14,165,233,.4);
-
-transform:translateX(2px);
-}
-
-
-/* =========================
-   SOCIAL MENU
-========================= */
-
-.menu-social-title{
-
-margin:25px 4px 10px;
-
-color:#64748b;
-
-font-size:11px;
-
-font-weight:800;
-
-letter-spacing:1.5px;
-
-text-transform:uppercase;
-}
-
-.menu-socials{
-
-display:grid;
-
-grid-template-columns:
-repeat(3,1fr);
-
-gap:8px;
-}
-
-.menu-social{
-
-min-height:58px;
-
-display:flex !important;
-
-align-items:center;
-
-justify-content:center;
-
-text-align:center;
-
-border-radius:12px;
-
-color:#fff;
-
-text-decoration:none;
-
-background:#08152a;
-
-border:
-1px solid
-rgba(14,165,233,.15);
-
-font-size:13px;
-
-font-weight:800;
-
-transition:.2s ease;
-}
-
-.menu-social:hover{
-
-background:#0b203d;
-
-border-color:
-rgba(14,165,233,.4);
-
-transform:translateY(-2px);
-
-}
-
-
-/* MENU FOOTER */
-
-.menu-footer{
-
-margin-top:22px;
-
-padding-top:18px;
-
-border-top:
-1px solid
-rgba(14,165,233,.1);
-
-color:#64748b;
-
-font-size:12px;
-
-text-align:center;
-}
-
-
-/* =========================
-   MENU OVERLAY
-========================= */
-
-.menu-overlay{
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,.62);
-
-backdrop-filter:blur(2px);
-
-z-index:4500;
-
-display:none;
-}
-
-.menu-overlay.show{
-
-display:block;
-
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-main{
-
-padding:
-40px 20px
-calc(55px + env(safe-area-inset-bottom));
-
-text-align:center;
-
-}
-
-
-/* =========================
-   HEADINGS
-========================= */
-
-h1,
-h2{
-
-color:#38bdf8;
-
-text-shadow:
-0 0 15px
-#2563eb;
-}
-
-h1{
-
-font-size:clamp(36px,7vw,55px);
-
-font-weight:900;
-
-letter-spacing:1px;
-
-margin-bottom:15px;
-}
-
-h2{
-
-font-size:28px;
-
-font-weight:900;
-}
-
-
-/* =========================
-   DIVIDER
-========================= */
-
-hr{
-
-width:80%;
-
-margin:35px auto;
-
-border:none;
-
-height:1px;
-
-background:
-linear-gradient(
-90deg,
-transparent,
-#2563eb,
-transparent
-);
-
-opacity:.9;
-}
-
-
-/* =========================
-   FEATURED SKINS
-========================= */
-
-.featured-grid{
-
-display:flex;
-
-justify-content:center;
-
-gap:30px;
-
-flex-wrap:wrap;
-
-margin:35px 0;
-}
-
-.featured-skin{
-
-cursor:pointer;
-
-transition:.3s;
-}
-
-.featured-skin:hover{
-
-transform:scale(1.08);
-
-}
-
-.featured-skin img{
-
-width:170px;
-
-height:170px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:5px solid gold;
-
-box-shadow:
-0 0 30px gold;
-}
-
-.featured-name{
-
-margin-top:10px;
-
-font-weight:bold;
-}
-
-
-/* =========================
-   NORMAL SKINS
-========================= */
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(
-auto-fit,
-minmax(180px,1fr)
-);
-
-gap:25px;
-
-max-width:1200px;
-
-margin:30px auto;
-}
-
-.skin{
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-cursor:pointer;
-
-transition:.3s;
-}
-
-.skin:hover{
-
-transform:scale(1.08);
-
-}
-
-.skin img{
-
-width:120px;
-
-height:120px;
-
-border-radius:50%;
-
-object-fit:cover;
-
-border:3px solid #38bdf8;
-
-box-shadow:
-0 0 15px
-#38bdf8;
-}
-
-.skin-name{
-
-margin-top:10px;
-
-font-size:14px;
-
-text-align:center;
-}
-
-
-/* =========================
-   POPUP
-========================= */
-
-#popup{
-
-display:none;
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,.8);
-
-justify-content:center;
-
-align-items:center;
-
-z-index:999;
-}
-
-.popup-box{
-
-background:#020617;
-
-padding:30px;
-
-border-radius:20px;
-
-text-align:center;
-
-border:
-1px solid
-#2563eb;
-
-box-shadow:
-0 15px 50px
-rgba(0,0,0,.5);
-}
-
-.popup-box button{
-
-padding:12px 25px;
-
-margin:10px;
-
-border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-background:#2563eb;
-
-color:white;
-
-font-weight:bold;
-
-transition:.2s;
-}
-
-.popup-box button:hover{
-
-background:#1d4ed8;
-
-transform:translateY(-1px);
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-
-text-align:center;
-
-padding:
-30px 18px
-calc(30px + env(safe-area-inset-bottom));
-
-color:#64748b;
-
-border-top:
-1px solid
-rgba(14,165,233,.1);
-}
-
-footer p{
-
-margin:5px 0;
-
-}
-
-footer a{
-
-color:#38bdf8;
-
-text-decoration:none;
-
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:700px){
-
-main{
-
-padding-top:28px;
-
-}
-
-.grid{
-
-grid-template-columns:1fr;
-
-}
-
-}
-
-@media(max-width:430px){
-
-header{
-
-padding-left:14px;
-
-padding-right:14px;
-
-}
-
-.logo{
-
-width:44px;
-
-height:44px;
-
-}
-
-.site-title{
-
-font-size:17px;
-
-}
-
-.menu{
-
-width:290px;
-
-}
-
-.menu-socials{
-
-grid-template-columns:1fr;
-
-}
-
-}
-
-
-/* =========================
-   DESKTOP
-========================= */
-
-@media(min-width:701px){
-
-.grid{
-
-grid-template-columns:
-repeat(5,minmax(0,1fr));
-
-}
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#020617">
+  <meta name="description" content="Explore and download custom Agar.io skins from T.B Agar.io.">
+  <title>T.B Agar.io — Custom Skins</title>
+
+  <link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+  <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #020617;
+      --surface: #071226;
+      --surface-light: #0b203d;
+      --text: #f4f8ff;
+      --muted: #9aaec4;
+      --ice: #a9e3ff;
+      --blue: #38bdf8;
+      --blue-dark: #2563eb;
+      --border: rgba(56, 189, 248, .2);
+      --header-height: 68px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-height) + 24px);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding-top: calc(var(--header-height) + env(safe-area-inset-top));
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 85% 0%, rgba(14, 165, 233, .16), transparent 34%),
+        radial-gradient(circle at 5% 30%, rgba(37, 99, 235, .09), transparent 28%),
+        linear-gradient(180deg, #020617, #061126 55%, #020617);
+      overflow-x: hidden;
+    }
+
+    body.menu-open,
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button, a { font: inherit; }
+
+    .icon-definitions {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* Background decoration */
+    .background-glow {
+      position: fixed;
+      z-index: 0;
+      top: -260px;
+      right: -210px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14, 165, 233, .22), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Fixed header */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: calc(var(--header-height) + env(safe-area-inset-top));
+      padding: calc(10px + env(safe-area-inset-top)) max(18px, calc((100vw - 1180px) / 2)) 10px;
+      background: rgba(2, 6, 23, .91);
+      border-bottom: 1px solid rgba(56, 189, 248, .22);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .24);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: 0 0 18px rgba(14, 165, 233, .2);
+      transition: transform .2s ease;
+    }
+
+    .header-brand:hover .brand-logo { transform: scale(1.05); }
+
+    .brand-title {
+      overflow: hidden;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -.4px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand-title span { color: var(--blue); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .social-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 13px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    }
+
+    .social-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .social-button.discord {
+      background: #5865f2;
+      border-color: #9da5ff;
+      box-shadow: 0 0 15px rgba(88, 101, 242, .3);
+    }
+
+    .social-button.youtube {
+      background: #e62117;
+      border-color: #ff746d;
+      box-shadow: 0 0 15px rgba(230, 33, 23, .26);
+    }
+
+    .social-button.instagram {
+      background: linear-gradient(120deg, #7b37c8, #d62976, #f58529);
+      border-color: #f3a5cb;
+      box-shadow: 0 0 15px rgba(214, 41, 118, .27);
+    }
+
+    .social-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    /* Hamburger */
+    .menu-button {
+      display: inline-flex;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: var(--text);
+      background: linear-gradient(145deg, #10243d, #071226);
+      border: 1px solid rgba(56, 189, 248, .4);
+      border-radius: 13px;
+      box-shadow: 0 0 17px rgba(56, 189, 248, .16), inset 0 1px rgba(255,255,255,.08);
+      cursor: pointer;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .menu-button:hover {
+      transform: translateY(-1px);
+      border-color: var(--ice);
+      box-shadow: 0 0 22px rgba(56, 189, 248, .32);
+    }
+
+    .menu-lines {
+      display: grid;
+      gap: 5px;
+    }
+
+    .menu-lines span {
+      display: block;
+      width: 21px;
+      height: 2px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #fff, var(--ice));
+      box-shadow: 0 0 7px rgba(169, 227, 255, .4);
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-button[aria-expanded="true"] .menu-lines span:first-child {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-button[aria-expanded="true"] .menu-lines span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-button[aria-expanded="true"] .menu-lines span:last-child {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Menu overlay and drawer */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 109;
+      background: rgba(0, 0, 0, .66);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .menu-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      width: min(350px, 88vw);
+      height: 100vh;
+      height: 100dvh;
+      padding: calc(22px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      background: linear-gradient(180deg, #071226, #020617);
+      border-left: 1px solid var(--border);
+      box-shadow: -20px 0 55px rgba(0, 0, 0, .45);
+      transform: translateX(105%);
+      transition: transform .28s ease;
+    }
+
+    .side-menu.open { transform: translateX(0); }
+
+    .menu-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-brand {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: .3px;
+    }
+
+    .menu-brand span { color: var(--blue); }
+
+    .menu-close {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      color: #fff;
+      background: #08152a;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .menu-label {
+      margin: 20px 4px 8px;
+      color: #8297ad;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .menu-links {
+      display: grid;
+      gap: 8px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 13px;
+      color: var(--text);
+      background: rgba(8, 21, 42, .88);
+      border: 1px solid rgba(56, 189, 248, .24);
+      border-radius: 12px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .menu-link:hover {
+      transform: translateX(-2px);
+      background: #0b203d;
+      border-color: rgba(56, 189, 248, .65);
+      box-shadow: 0 0 14px rgba(56, 189, 248, .13);
+    }
+
+    .arrow-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      color: var(--ice);
+      filter: drop-shadow(0 0 5px rgba(121, 214, 255, .65));
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .menu-link:hover .arrow-icon,
+    .skin-card:hover .arrow-icon {
+      transform: translate(2px, -2px);
+      filter: drop-shadow(0 0 9px rgba(121, 214, 255, .95));
+    }
+
+    .menu-social-title {
+      margin: 22px 4px 10px;
+      color: #8297ad;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .menu-socials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .menu-socials .social-button {
+      min-height: 48px;
+      padding: 0 7px;
+      font-size: 12px;
+    }
+
+    .menu-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      color: #72849a;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    /* Main content */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 42px 22px calc(55px + env(safe-area-inset-bottom));
+    }
+
+    .page-intro {
+      max-width: 760px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 12px;
+      color: var(--ice);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before,
+    .eyebrow::after {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue));
+    }
+
+    .eyebrow::after {
+      transform: rotate(180deg);
+    }
+
+    h1, h2 { color: var(--blue); }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(36px, 7vw, 58px);
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(37, 99, 235, .55);
+    }
+
+    .page-intro p {
+      max-width: 620px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .section-heading {
+      margin: 36px 0 18px;
+      text-align: center;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 8px;
+      color: var(--ice);
+      font-size: clamp(22px, 4vw, 29px);
+      font-weight: 900;
+      text-shadow: 0 0 15px rgba(37, 99, 235, .42);
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: min(80%, 850px);
+      height: 1px;
+      margin: 34px auto;
+      border: 0;
+      background: linear-gradient(90deg, transparent, #2563eb, #38bdf8, transparent);
+      opacity: .8;
+    }
+
+    /* Infinite, swipeable skin carousels */
+    .skin-carousel {
+      display: flex;
+      gap: 22px;
+      overflow-x: auto;
+      padding: 12px 8px 24px;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scrollbar-color: #38bdf8 #071226;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-x;
+      overscroll-behavior-inline: contain;
+    }
+
+    .skin-carousel::-webkit-scrollbar { height: 8px; }
+
+    .skin-carousel::-webkit-scrollbar-track {
+      background: #071226;
+      border-radius: 99px;
+    }
+
+    .skin-carousel::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #2563eb, #38bdf8, #a9e3ff);
+      border-radius: 99px;
+    }
+
+    .skin-card {
+      position: relative;
+      display: flex;
+      flex: 0 0 190px;
+      flex-direction: column;
+      align-items: center;
+      min-height: 230px;
+      padding: 18px 14px;
+      color: var(--text);
+      background: linear-gradient(155deg, rgba(11, 32, 61, .96), rgba(4, 12, 29, .96));
+      border: 2px solid rgba(56, 189, 248, .52);
+      border-radius: 20px;
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, .08),
+        0 0 18px rgba(14, 165, 233, .16),
+        0 14px 30px rgba(0, 0, 0, .3);
+      cursor: pointer;
+      scroll-snap-align: center;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    .skin-card:hover,
+    .skin-card:focus-visible {
+      transform: translateY(-5px);
+      border-color: var(--ice);
+      outline: none;
+      box-shadow:
+        0 0 0 1px rgba(169, 227, 255, .2),
+        0 0 25px rgba(56, 189, 248, .35),
+        0 18px 36px rgba(0, 0, 0, .4);
+    }
+
+    .skin-image-wrap {
+      position: relative;
+      display: grid;
+      width: 142px;
+      height: 142px;
+      place-items: center;
+      margin: 0 auto 13px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, .17), transparent 72%);
+    }
+
+    .skin-card.featured {
+      border-color: rgba(255, 215, 91, .78);
+      box-shadow:
+        0 0 0 1px rgba(255, 215, 91, .12),
+        0 0 22px rgba(255, 190, 50, .17),
+        0 14px 30px rgba(0, 0, 0, .3);
+    }
+
+    .skin-card.featured:hover,
+    .skin-card.featured:focus-visible {
+      border-color: #ffe28a;
+      box-shadow:
+        0 0 0 1px rgba(255, 226, 138, .24),
+        0 0 30px rgba(255, 190, 50, .34),
+        0 18px 36px rgba(0, 0, 0, .4);
+    }
+
+    .skin-image {
+      width: 126px;
+      height: 126px;
+      object-fit: cover;
+      border: 4px solid rgba(56, 189, 248, .9);
+      border-radius: 50%;
+      box-shadow: 0 0 18px rgba(56, 189, 248, .35);
+    }
+
+    .featured .skin-image {
+      border-color: #ffd75b;
+      box-shadow: 0 0 20px rgba(255, 215, 91, .42);
+    }
+
+    .skin-name {
+      max-width: 100%;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.4;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+
+    .skin-action {
+      margin-top: 7px;
+      color: var(--ice);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .carousel-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* Loader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--text);
+      background: #020617;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      transition: opacity .35s ease, visibility .35s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid rgba(255,255,255,.14);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Download popup */
+    .popup {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(5px);
+    }
+
+    .popup.open { display: flex; }
+
+    .popup-box {
+      width: min(420px, 100%);
+      padding: 28px;
+      color: var(--text);
+      background: linear-gradient(160deg, #0b1c34, #020617);
+      border: 1px solid rgba(56, 189, 248, .45);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(14, 165, 233, .2), 0 20px 60px rgba(0,0,0,.5);
+      text-align: center;
+    }
+
+    .popup-box h2 {
+      margin: 0 0 8px;
+      color: var(--ice);
+      font-size: 24px;
+    }
+
+    .popup-box p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .popup-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .popup-button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 0 18px;
+      color: #fff;
+      background: #2563eb;
+      border: 1px solid #60a5fa;
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .popup-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.12);
+    }
+
+    .popup-button.secondary {
+      background: rgba(255,255,255,.06);
+      border-color: var(--border);
+    }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 2;
+      padding: 26px 18px calc(26px + env(safe-area-inset-bottom));
+      color: #8297ad;
+      border-top: 1px solid rgba(56, 189, 248, .14);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    footer p { margin: 5px 0; }
+
+    footer a {
+      color: var(--ice);
+      text-decoration: none;
+    }
+
+    @media (max-width: 760px) {
+      .header-social { display: none; }
+
+      main {
+        padding: 30px 16px calc(45px + env(safe-area-inset-bottom));
+      }
+
+      .skin-carousel { gap: 16px; }
+
+      .skin-card {
+        flex-basis: 170px;
+        min-height: 210px;
+      }
+
+      .skin-image-wrap {
+        width: 130px;
+        height: 130px;
+      }
+
+      .skin-image {
+        width: 116px;
+        height: 116px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .site-header { padding-left: 14px; padding-right: 14px; }
+      .brand-logo { width: 42px; height: 42px; }
+      .brand-title { font-size: 16px; }
+      .side-menu { width: min(310px, 90vw); }
+      .menu-socials { grid-template-columns: 1fr; }
+      .menu-socials .social-button { min-height: 42px; }
+      .skin-card { flex-basis: 158px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 
-
 <body>
-
-
-<!-- LOADER -->
-
-<div id="loader">
-
-Loading Custom Skins...
-
-<div class="spinner"></div>
-
-</div>
-
-
-<!-- MENU OVERLAY -->
-
-<div
-class="menu-overlay"
-id="menu-overlay"
-onclick="closeMenu()">
-</div>
-
-
-<!-- HEADER -->
-
-<header>
-
-
-<div class="left-header">
-
-
-<a
-class="logo-link"
-href="https://www.youtube.com/@T.B6"
-target="_blank"
-rel="noopener"
-aria-label="Open T.B Agar.io YouTube channel">
-
-<div class="logo">
-
-<img
-src="/IMG_0561.jpeg"
-alt="T.B Agar.io">
-
-</div>
-
-</a>
-
-
-<div class="site-title">
-
-T.B Agar.io
-
-</div>
-
-
-</div>
-
-
-<button
-class="menu-btn"
-onclick="toggleMenu()"
-aria-label="Open menu">
-
-☰
-
-</button>
-
-
-</header>
-
-
-<!-- SIDE MENU -->
-
-<div
-class="menu"
-id="menu">
-
-
-<div class="menu-close">
-
-
-<div class="menu-brand">
-
-T.B <span>AGAR.IO</span>
-
-</div>
-
-
-<button
-onclick="closeMenu()"
-aria-label="Close menu">
-
-×
-
-</button>
-
-
-</div>
-
-
-<div class="menu-label">
-
-Navigation
-
-</div>
-
-
-<a href="/index.html">
-
-Home
-
-</a>
-
-
-<a href="/custom-skins.html">
-
-Custom Skins
-
-</a>
-
-
-<a href="/key-access.html">
-
-Key Access
-
-</a>
-
-
-<a href="/mod-menu.html">
-
-Mod Menu
-
-</a>
-
-
-<a href="/paidskins.html">
-
-Paid Skins
-
-</a>
-
-
-<a href="/buy-account.html">
-
-Buy Account
-
-</a>
-
-
-<a href="/agar.io-skins.html">
-
-Agar.io Skins
-
-</a>
-
-
-<div class="menu-label">
-
-External
-
-</div>
-
-
-<a
-href="https://biteyt.com/bots"
-target="_blank"
-rel="noopener">
-
-Bite Bots Panel
-
-</a>
-
-
-<a
-href="https://kahraba.in"
-target="_blank"
-rel="noopener">
-
-Kahraba Website
-
-</a>
-
-
-<div class="menu-social-title">
-
-Follow T.B Agar.io
-
-</div>
-
-
-<div class="menu-socials">
-
-
-<a
-class="menu-social"
-href="https://discord.gg/qhuXPrVzBx"
-target="_blank"
-rel="noopener">
-
-Discord
-
-</a>
-
-
-<a
-class="menu-social"
-href="https://www.youtube.com/@T.B6"
-target="_blank"
-rel="noopener">
-
-YouTube
-
-</a>
-
-
-<a
-class="menu-social"
-href="https://www.instagram.com/t.bagar.io/"
-target="_blank"
-rel="noopener">
-
-Instagram
-
-</a>
-
-
-</div>
-
-
-<div class="menu-footer">
-
-T.B Agar.io © 2026
-
-</div>
-
-
-</div>
-
-
-<!-- MAIN -->
-
-<main>
-
-
-<h1>
-
-CUSTOM SKINS
-
-</h1>
-
-
-<hr>
-
-
-<h2>
-
-FEATURED CUSTOM SKINS
-
-</h2>
-
-
-<div class="featured-grid">
-
-
-<div
-class="featured-skin"
-onclick="openPopup('IMG_9172.png')">
-
-<img
-src="IMG_9342.png"
-alt="Featured Skin 1">
-
-<div class="featured-name">
-
-Featured Skin 1
-
-</div>
-
-</div>
-
-
-<div
-class="featured-skin"
-onclick="openPopup('IMG_9173.png')">
-
-<img
-src="IMG_9354.png"
-alt="Featured Skin 2">
-
-<div class="featured-name">
-
-Featured Skin 2
-
-</div>
-
-</div>
-
-
-<div
-class="featured-skin"
-onclick="openPopup('IMG_9174.png')">
-
-<img
-src="IMG_9355.png"
-alt="Featured Skin 3">
-
-<div class="featured-name">
-
-Featured Skin 3
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<hr>
-
-
-<h2>
-
-ALL CUSTOM SKINS
-
-</h2>
-
-
-<div
-class="grid"
-id="gallery">
-
-</div>
-
-
-</main>
-
-
-<!-- POPUP -->
-
-<div id="popup">
-
-
-<div class="popup-box">
-
-
-<h2>
-
-Custom Skin
-
-</h2>
-
-
-<a
-id="downloadBtn"
-download>
-
-<button>
-
-Download
-
-</button>
-
-</a>
-
-
-<button
-onclick="closePopup()">
-
-Close
-
-</button>
-
-
-</div>
-
-
-</div>
-
-
-<!-- FOOTER -->
-
-<footer>
-
-<p>
-
-© 2026 T.B Agar.io
-
-</p>
-
-<p>
-
-<a href="/index.html">
-
-T.B Agar.io
-
-</a>
-
-</p>
-
-</footer>
-
-
-<script>
-
-
-/* =========================
-   LOADING SYSTEM
-========================= */
-
-setTimeout(
-
-()=>{
-
-const loader =
-document.getElementById("loader");
-
-if(loader){
-
-loader.style.display="none";
-
-}
-
-},
-
-2000 + Math.random()*2000
-
-);
-
-
-/* =========================
-   MENU
-========================= */
-
-function toggleMenu(){
-
-const menu =
-document.getElementById("menu");
-
-const overlay =
-document.getElementById("menu-overlay");
-
-
-if(menu.classList.contains("open")){
-
-closeMenu();
-
-}else{
-
-menu.classList.add("open");
-
-overlay.classList.add("show");
-
-}
-
-}
-
-
-function closeMenu(){
-
-const menu =
-document.getElementById("menu");
-
-const overlay =
-document.getElementById("menu-overlay");
-
-
-menu.classList.remove("open");
-
-overlay.classList.remove("show");
-
-}
-
-
-/* =========================
-   ESC CLOSE MENU
-========================= */
-
-document.addEventListener(
-
-"keydown",
-
-function(event){
-
-if(event.key==="Escape"){
-
-closeMenu();
-
-}
-
-}
-
-);
-
-
-/* =========================
-   SKINS
-========================= */
-
-const skins=[
-
-
-{
-name:"New",
-url:"IMG_9353.png"
-},
-
-
-{
-name:"Winter T Wolf",
-url:"C5AA44C2-3232-4796-99D9-23B58C03F165.jpeg"
-},
-
-
-{
-name:"Magic Mushroom",
-url:"8994DECF-36B1-48B3-AD95-8BBC6D4A0206.jpeg"
-},
-
-
-{
-name:"Bat",
-url:"6DE891A5-0CF7-4520-8052-688CF2BE29C2.jpeg"
-},
-
-
-{
-name:"Evil Halloween Spider",
-url:"A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg"
-},
-
-
-{
-name:"Halloween Man",
-url:"3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg"
-},
-
-
-{
-name:"Evil Halloween Cat",
-url:"610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg"
-},
-
-
-{
-name:"Baby Dragon",
-url:"IMG_4073.png"
-},
-
-
-{
-name:"Thor Hammer",
-url:"IMG_4027.jpeg"
-},
-
-
-{
-name:"Sting Wasp",
-url:"IMG_4028.jpeg"
-},
-
-
-{
-name:"Fire Wolf",
-url:"IMG_4025.jpeg"
-}
-
-
-];
-
-
-const gallery =
-document.getElementById("gallery");
-
-
-function renderGallery(){
-
-
-gallery.innerHTML="";
-
-
-skins.forEach(
-
-skin=>{
-
-
-const card =
-document.createElement("div");
-
-card.className="skin";
-
-
-const img =
-document.createElement("img");
-
-img.src=skin.url;
-
-img.alt=skin.name;
-
-
-const name =
-document.createElement("div");
-
-name.className="skin-name";
-
-name.textContent=skin.name;
-
-
-card.onclick=()=>{
-
-openPopup(skin.url);
-
-};
-
-
-card.appendChild(img);
-
-card.appendChild(name);
-
-
-gallery.appendChild(card);
-
-
-}
-
-);
-
-
-}
-
-
-renderGallery();
-
-
-/* =========================
-   DOWNLOAD POPUP
-========================= */
-
-function openPopup(image){
-
-document
-.getElementById("popup")
-.style.display="flex";
-
-
-document
-.getElementById("downloadBtn")
-.href=image;
-
-}
-
-
-function closePopup(){
-
-document
-.getElementById("popup")
-.style.display="none";
-
-}
-
-
-/* CLOSE POPUP WHEN CLICKING OUTSIDE */
-
-document
-.getElementById("popup")
-.addEventListener(
-"click",
-function(event){
-
-if(event.target===this){
-
-closePopup();
-
-}
-
-});
-
-
-</script>
-
-
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-definitions" aria-hidden="true">
+    <symbol id="icon-discord" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
+    </symbol>
+
+    <symbol id="icon-youtube" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
+    </symbol>
+
+    <symbol id="icon-instagram" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
+    </symbol>
+
+    <symbol id="icon-diagonal-arrow" viewBox="0 0 24 24">
+      <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <div class="background-glow" aria-hidden="true"></div>
+
+  <div id="loader" role="status" aria-live="polite">
+    <div>Loading Custom Skins...</div>
+    <div class="spinner" aria-hidden="true"></div>
+  </div>
+
+  <header class="site-header">
+    <a class="header-brand" href="/index.html" aria-label="T.B Agar.io home">
+      <img class="brand-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io logo">
+      <span class="brand-title">T.B <span>AGAR.IO</span></span>
+    </a>
+
+    <div class="header-actions">
+      <a class="social-button discord header-social"
+         href="https://discord.gg/qhuXPrVzBx"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+        Discord
+      </a>
+
+      <a class="social-button youtube header-social"
+         href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+        YouTube
+      </a>
+
+      <a class="social-button instagram header-social"
+         href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+        Instagram
+      </a>
+
+      <button class="menu-button" id="menu-button" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+        <span class="menu-lines" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+
+  <aside class="side-menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
+    <div class="menu-header">
+      <div class="menu-brand">T.B <span>AGAR.IO</span></div>
+      <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <div class="menu-label">Navigation</div>
+
+    <nav class="menu-links" aria-label="Main navigation">
+      <a class="menu-link" href="/index.html">
+        <span>Home</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/custom-skins.html" aria-current="page">
+        <span>Custom Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/key-access.html">
+        <span>Key Access</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/mod-menu.html">
+        <span>Mod Menu</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/paidskins.html">
+        <span>Paid Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/buy-account.html">
+        <span>Buy Account</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/agar.io-skins.html">
+        <span>Agar.io Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+    </nav>
+
+    <div class="menu-label">External</div>
+    <nav class="menu-links" aria-label="External links">
+      <a class="menu-link" href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
+        <span>Bite Bots Panel</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
+        <span>Kahraba Website</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+    </nav>
+
+    <div class="menu-social-title">Follow T.B Agar.io</div>
+    <div class="menu-socials">
+      <a class="social-button discord"
+         href="https://discord.gg/qhuXPrVzBx"
+         target="_blank" rel="noopener noreferrer" aria-label="Join Discord">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+        Discord
+      </a>
+      <a class="social-button youtube"
+         href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer" aria-label="Open YouTube">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+        YouTube
+      </a>
+      <a class="social-button instagram"
+         href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer" aria-label="Open Instagram">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+        Instagram
+      </a>
+    </div>
+
+    <div class="menu-footer">T.B Agar.io © 2026</div>
+  </aside>
+
+  <main>
+    <div class="page-intro">
+      <div class="eyebrow">T.B Agar.io Collection</div>
+      <h1>Custom Skins</h1>
+      <p>
+        Explore the featured collection or browse all custom skins.
+        Swipe, scroll, or let the carousels move automatically. Select a skin to download it.
+      </p>
+    </div>
+
+    <section aria-labelledby="featured-heading">
+      <div class="section-heading">
+        <h2 id="featured-heading">Featured Custom Skins</h2>
+        <p>A hand-picked selection from the T.B Agar.io collection.</p>
+      </div>
+
+      <div class="skin-carousel" data-carousel aria-label="Featured custom skins">
+        <button class="skin-card featured" type="button"
+                data-image="IMG_9172.png" data-name="Featured Skin 1">
+          <span class="skin-image-wrap">
+            <img class="skin-image" src="IMG_9342.png" alt="Featured Skin 1" loading="lazy">
+          </span>
+          <span class="skin-name">Featured Skin 1</span>
+          <span class="skin-action">Select to download</span>
+        </button>
+
+        <button class="skin-card featured" type="button"
+                data-image="IMG_9173.png" data-name="Featured Skin 2">
+          <span class="skin-image-wrap">
+            <img class="skin-image" src="IMG_9354.png" alt="Featured Skin 2" loading="lazy">
+          </span>
+          <span class="skin-name">Featured Skin 2</span>
+          <span class="skin-action">Select to download</span>
+        </button>
+
+        <button class="skin-card featured" type="button"
+                data-image="IMG_9174.png" data-name="Featured Skin 3">
+          <span class="skin-image-wrap">
+            <img class="skin-image" src="IMG_9355.png" alt="Featured Skin 3" loading="lazy">
+          </span>
+          <span class="skin-name">Featured Skin 3</span>
+          <span class="skin-action">Select to download</span>
+        </button>
+      </div>
+
+      <p class="carousel-note">Swipe left or right, or wait for the skins to advance automatically.</p>
+    </section>
+
+    <hr class="divider">
+
+    <section aria-labelledby="all-skins-heading">
+      <div class="section-heading">
+        <h2 id="all-skins-heading">All Custom Skins</h2>
+        <p>Browse the complete skin collection. Select any skin to download it.</p>
+      </div>
+
+      <div class="skin-carousel" id="gallery" data-carousel aria-label="All custom skins"></div>
+
+      <p class="carousel-note">This collection loops continuously in both directions.</p>
+    </section>
+  </main>
+
+  <div class="popup" id="popup" aria-hidden="true">
+    <div class="popup-box" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+      <h2 id="popup-title">Download Skin</h2>
+      <p id="popup-description">Your selected custom skin is ready to download.</p>
+      <div class="popup-actions">
+        <a class="popup-button" id="download-link" href="#" download>Download Skin</a>
+        <button class="popup-button secondary" id="popup-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 T.B Agar.io</p>
+    <p><a href="/index.html">T.B Agar.io Home</a></p>
+  </footer>
+
+  <script>
+    /* Loader */
+    window.addEventListener('load', () => {
+      window.setTimeout(() => {
+        document.getElementById('loader')?.classList.add('hidden');
+      }, 450);
+    });
+
+    /* Hamburger menu */
+    const menuButton = document.getElementById('menu-button');
+    const sideMenu = document.getElementById('side-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuClose = document.getElementById('menu-close');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('show');
+      sideMenu.setAttribute('aria-hidden', 'false');
+      menuOverlay.setAttribute('aria-hidden', 'false');
+      menuButton.setAttribute('aria-expanded', 'true');
+      menuButton.setAttribute('aria-label', 'Close menu');
+      document.body.classList.add('menu-open');
+      menuClose.focus();
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      menuOverlay.setAttribute('aria-hidden', 'true');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Open menu');
+      document.body.classList.remove('menu-open');
+      menuButton.focus();
+    }
+
+    menuButton.addEventListener('click', () => {
+      sideMenu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    document.querySelectorAll('.menu-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (sideMenu.classList.contains('open')) closeMenu();
+      });
+    });
+
+    /* Skin collection */
+    const skins = [
+      { name: 'New', url: 'IMG_9353.png' },
+      { name: 'Winter T Wolf', url: 'C5AA44C2-3232-4796-99D9-23B58C03F165.jpeg' },
+      { name: 'Magic Mushroom', url: '8994DECF-36B1-48B3-AD95-8BBC6D4A0206.jpeg' },
+      { name: 'Bat', url: '6DE891A5-0CF7-4520-8052-688CF2BE29C2.jpeg' },
+      { name: 'Evil Halloween Spider', url: 'A9F2A2DB-0EC6-4A75-ADBB-D637F27D8761.jpeg' },
+      { name: 'Halloween Man', url: '3AA1ECAC-EEE1-4FCA-9023-57B45AE56968.jpeg' },
+      { name: 'Evil Halloween Cat', url: '610F52D4-2662-4912-B9BE-C90D35B901A9.jpeg' },
+      { name: 'Baby Dragon', url: 'IMG_4073.png' },
+      { name: 'Thor Hammer', url: 'IMG_4027.jpeg' },
+      { name: 'Sting Wasp', url: 'IMG_4028.jpeg' },
+      { name: 'Fire Wolf', url: 'IMG_4025.jpeg' }
+    ];
+
+    const gallery = document.getElementById('gallery');
+
+    function createSkinCard(skin) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'skin-card';
+      card.dataset.image = skin.url;
+      card.dataset.name = skin.name;
+      card.setAttribute('aria-label', `Download ${skin.name}`);
+
+      const imageWrap = document.createElement('span');
+      imageWrap.className = 'skin-image-wrap';
+
+      const image = document.createElement('img');
+      image.className = 'skin-image';
+      image.src = skin.url;
+      image.alt = skin.name;
+      image.loading = 'lazy';
+
+      const name = document.createElement('span');
+      name.className = 'skin-name';
+      name.textContent = skin.name;
+
+      const action = document.createElement('span');
+      action.className = 'skin-action';
+      action.textContent = 'Select to download';
+
+      imageWrap.appendChild(image);
+      card.append(imageWrap, name, action);
+
+      return card;
+    }
+
+    skins.forEach(skin => gallery.appendChild(createSkinCard(skin)));
+
+    /* Download popup */
+    const popup = document.getElementById('popup');
+    const popupTitle = document.getElementById('popup-title');
+    const popupDescription = document.getElementById('popup-description');
+    const downloadLink = document.getElementById('download-link');
+    const popupClose = document.getElementById('popup-close');
+    let lastFocusedElement = null;
+
+    function openPopup(image, name) {
+      lastFocusedElement = document.activeElement;
+      popupTitle.textContent = name || 'Download Skin';
+      popupDescription.textContent = `${name || 'Your selected skin'} is ready to download.`;
+      downloadLink.href = image;
+      downloadLink.setAttribute('download', image.split('/').pop() || 'custom-skin');
+      popup.classList.add('open');
+      popup.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      downloadLink.focus();
+    }
+
+    function closePopup() {
+      popup.classList.remove('open');
+      popup.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
+    }
+
+    document.querySelectorAll('[data-carousel]').forEach(carousel => {
+      carousel.addEventListener('click', event => {
+        const card = event.target.closest('.skin-card');
+        if (!card || !carousel.contains(card)) return;
+        openPopup(card.dataset.image, card.dataset.name);
+      });
+    });
+
+    popupClose.addEventListener('click', closePopup);
+
+    popup.addEventListener('click', event => {
+      if (event.target === popup) closePopup();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (popup.classList.contains('open')) {
+          closePopup();
+        } else if (sideMenu.classList.contains('open')) {
+          closeMenu();
+        }
+      }
+    });
+
+    /* Infinite, swipeable, auto-advancing skin carousels */
+    document.querySelectorAll('[data-carousel]').forEach(carousel => {
+      const originalCards = Array.from(carousel.children);
+      const originalCount = originalCards.length;
+
+      if (originalCount < 2) return;
+
+      /* Add a copy of the collection on both sides for looping. */
+      const leadingClones = originalCards.map(card => card.cloneNode(true));
+      const trailingClones = originalCards.map(card => card.cloneNode(true));
+
+      leadingClones.forEach(card => {
+        card.setAttribute('aria-hidden', 'true');
+      });
+
+      trailingClones.forEach(card => {
+        card.setAttribute('aria-hidden', 'true');
+      });
+
+      const leadingFragment = document.createDocumentFragment();
+      leadingClones.forEach(card => leadingFragment.appendChild(card));
+      carousel.prepend(leadingFragment);
+
+      const trailingFragment = document.createDocumentFragment();
+      trailingClones.forEach(card => trailingFragment.appendChild(card));
+      carousel.appendChild(trailingFragment);
+
+      let cards = Array.from(carousel.children);
+      let autoTimer;
+      let resumeTimer;
+      let settleTimer;
+      let isAutoScrolling = false;
+      let isJumping = false;
+
+      const autoAdvanceDelay = 4200;
+      const resumeDelay = 6500;
+
+      function refreshCards() {
+        cards = Array.from(carousel.children);
+      }
+
+      function getCardLeft(card) {
+        const carouselRect = carousel.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        return carousel.scrollLeft + cardRect.left - carouselRect.left - carousel.clientLeft;
+      }
+
+      function getNearestIndex() {
+        if (!cards.length) return 0;
+
+        const leftEdge = carousel.getBoundingClientRect().left + carousel.clientLeft + 8;
+        let nearestIndex = 0;
+        let nearestDistance = Infinity;
+
+        cards.forEach((card, index) => {
+          const distance = Math.abs(card.getBoundingClientRect().left - leftEdge);
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestIndex = index;
+          }
+        });
+
+        return nearestIndex;
+      }
+
+      function jumpToEquivalentCard(index) {
+        const equivalentIndex = index < originalCount
+          ? index + originalCount
+          : index - originalCount;
+
+        if (!cards[equivalentIndex]) return;
+
+        isJumping = true;
+        carousel.style.scrollSnapType = 'none';
+        carousel.scrollLeft = getCardLeft(cards[equivalentIndex]);
+
+        requestAnimationFrame(() => {
+          carousel.style.scrollSnapType = '';
+          requestAnimationFrame(() => {
+            isJumping = false;
+          });
+        });
+      }
+
+      function normalizeLoopPosition() {
+        if (isJumping) return;
+
+        refreshCards();
+        const index = getNearestIndex();
+        const firstOriginalIndex = originalCount;
+        const firstTrailingCloneIndex = originalCount * 2;
+
+        if (index < firstOriginalIndex || index >= firstTrailingCloneIndex) {
+          jumpToEquivalentCard(index);
+        }
+      }
+
+      function scheduleNormalize() {
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(normalizeLoopPosition, 140);
+      }
+
+      function goToNextCard(direction = 1) {
+        if (isAutoScrolling || isJumping) return;
+
+        refreshCards();
+
+        const currentIndex = getNearestIndex();
+        const nextIndex = currentIndex + direction;
+
+        if (nextIndex < 0 || nextIndex >= cards.length) {
+          normalizeLoopPosition();
+          return;
+        }
+
+        isAutoScrolling = true;
+        carousel.scrollTo({
+          left: getCardLeft(cards[nextIndex]),
+          behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+          isAutoScrolling = false;
+          normalizeLoopPosition();
+        }, 800);
+      }
+
+      function startAutoAdvance() {
+        clearInterval(autoTimer);
+        autoTimer = setInterval(() => goToNextCard(1), autoAdvanceDelay);
+      }
+
+      function pauseThenResume() {
+        clearInterval(autoTimer);
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(startAutoAdvance, resumeDelay);
+      }
+
+      carousel.addEventListener('pointerdown', pauseThenResume, { passive: true });
+      carousel.addEventListener('touchstart', pauseThenResume, { passive: true });
+      carousel.addEventListener('wheel', pauseThenResume, { passive: true });
+      carousel.addEventListener('keydown', pauseThenResume);
+
+      carousel.addEventListener('scroll', () => {
+        scheduleNormalize();
+        if (!isAutoScrolling && !isJumping) pauseThenResume();
+      }, { passive: true });
+
+      /* Position the carousel at the first original skin, not a clone. */
+      requestAnimationFrame(() => {
+        refreshCards();
+        carousel.scrollLeft = getCardLeft(cards[originalCount]);
+        startAutoAdvance();
+      });
+    });
+  </script>
 </body>
 </html>
