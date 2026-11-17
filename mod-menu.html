@@ -1,3750 +1,1704 @@
 <!doctype html>
 <html lang="en">
 <head>
-
-<meta charset="utf-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<title>Mod Menu — T.B Agar.io</title>
-
-<meta name="theme-color" content="#020617">
-
-<link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
-<link rel="apple-touch-icon" href="/IMG_0561.jpeg">
-
-<style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,Helvetica,sans-serif;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-body{
-  background:#020617;
-  color:#fff;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-button,
-a{
-  -webkit-tap-highlight-color:transparent;
-}
-
-
-/* =========================
-   BACKGROUND
-========================= */
-
-body::before{
-  content:"";
-  position:fixed;
-  width:600px;
-  height:600px;
-  background:
-    radial-gradient(
-      circle,
-      #0ea5e9,
-      transparent 70%
-    );
-  top:-250px;
-  right:-200px;
-  opacity:.18;
-  z-index:-1;
-  pointer-events:none;
-}
-
-
-/* =========================
-   LOADER
-========================= */
-
-#loader{
-  position:fixed;
-  inset:0;
-  background:#020617;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:14px;
-  font-size:20px;
-  z-index:99999;
-  text-align:center;
-}
-
-.spinner{
-  width:40px;
-  height:40px;
-  border:5px solid rgba(255,255,255,.15);
-  border-top:5px solid #38bdf8;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-header{
-  position:sticky;
-  top:0;
-  z-index:3000;
-  width:100%;
-
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-
-  padding:
-    calc(10px + env(safe-area-inset-top))
-    18px
-    10px
-    18px;
-
-  background:rgba(2,6,23,.94);
-
-  backdrop-filter:blur(15px);
-  -webkit-backdrop-filter:blur(15px);
-
-  border-bottom:
-    1px solid
-    rgba(14,165,233,.25);
-}
-
-.left-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-
-.logo-link{
-  display:flex;
-  align-items:center;
-  text-decoration:none;
-}
-
-.logo{
-  width:48px;
-  height:48px;
-  border-radius:12px;
-  overflow:hidden;
-  flex-shrink:0;
-
-  box-shadow:
-    0 5px 25px
-    rgba(14,165,233,.2);
-
-  transition:transform .2s ease;
-}
-
-.logo-link:hover .logo{
-  transform:scale(1.05);
-}
-
-.logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.site-title{
-  font-size:20px;
-  font-weight:800;
-  color:#fff;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-
-/* =========================
-   MENU BUTTON
-========================= */
-
-.menu-btn{
-  width:46px;
-  height:46px;
-
-  border:1px solid
-    rgba(14,165,233,.25);
-
-  background:#071226;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  font-size:24px;
-
-  cursor:pointer;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  transition:.2s ease;
-}
-
-.menu-btn:hover{
-  background:#0b203d;
-  border-color:rgba(14,165,233,.5);
-}
-
-.menu-btn:active{
-  transform:scale(.96);
-}
-
-
-/* =========================
-   SIDE MENU
-========================= */
-
-.menu{
-  position:fixed;
-
-  top:0;
-  right:-330px;
-
-  width:310px;
-  max-width:88vw;
-
-  height:100vh;
-
-  background:
-    linear-gradient(
-      180deg,
-      #050d1c 0%,
-      #020617 100%
-    );
-
-  z-index:5000;
-
-  padding:
-    calc(25px + env(safe-area-inset-top))
-    20px
-    calc(25px + env(safe-area-inset-bottom));
-
-  border-left:
-    1px solid
-    rgba(14,165,233,.22);
-
-  overflow-y:auto;
-
-  transition:right .3s ease;
-
-  box-shadow:
-    -20px 0 50px
-    rgba(0,0,0,.35);
-}
-
-.menu.open{
-  right:0;
-}
-
-.menu-close{
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:22px;
-}
-
-.menu-brand{
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:.5px;
-}
-
-.menu-brand span{
-  color:#38bdf8;
-}
-
-.menu-close button{
-  width:40px;
-  height:40px;
-
-  border:1px solid
-    rgba(14,165,233,.18);
-
-  background:#08152a;
-
-  color:#fff;
-
-  border-radius:10px;
-
-  font-size:25px;
-
-  cursor:pointer;
-}
-
-.menu-label{
-  margin:22px 4px 9px;
-
-  color:#64748b;
-
-  font-size:11px;
-
-  font-weight:800;
-
-  letter-spacing:1.5px;
-
-  text-transform:uppercase;
-}
-
-.menu a{
-  display:flex;
-  align-items:center;
-
-  width:100%;
-
-  padding:14px;
-
-  margin:7px 0;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  background:#08152a;
-
-  border:
-    1px solid
-    rgba(14,165,233,.12);
-
-  font-weight:700;
-
-  transition:.2s ease;
-}
-
-.menu a:hover{
-  background:#0b203d;
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  transform:translateX(2px);
-}
-
-
-/* =========================
-   SOCIAL MENU
-========================= */
-
-.menu-social-title{
-  margin:25px 4px 10px;
-
-  color:#64748b;
-
-  font-size:11px;
-
-  font-weight:800;
-
-  letter-spacing:1.5px;
-
-  text-transform:uppercase;
-}
-
-.menu-socials{
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
-  gap:8px;
-}
-
-.menu-social{
-  min-height:58px;
-
-  display:flex !important;
-
-  align-items:center;
-  justify-content:center;
-
-  text-align:center;
-
-  border-radius:12px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  background:#08152a;
-
-  border:
-    1px solid
-    rgba(14,165,233,.15);
-
-  font-size:13px;
-
-  font-weight:800;
-
-  transition:.2s ease;
-}
-
-.menu-social:hover{
-  background:#0b203d;
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  transform:translateY(-2px);
-}
-
-.menu-footer{
-  margin-top:22px;
-
-  padding-top:18px;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.1);
-
-  color:#64748b;
-
-  font-size:12px;
-
-  text-align:center;
-}
-
-
-/* =========================
-   MENU OVERLAY
-========================= */
-
-.menu-overlay{
-  position:fixed;
-  inset:0;
-
-  background:rgba(0,0,0,.62);
-
-  backdrop-filter:blur(2px);
-
-  z-index:4500;
-
-  display:none;
-}
-
-.menu-overlay.show{
-  display:block;
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-main{
-  width:100%;
-
-  max-width:1200px;
-
-  margin:0 auto;
-
-  padding:
-    45px 18px
-    calc(55px + env(safe-area-inset-bottom));
-}
-
-
-/* =========================
-   PAGE HERO
-========================= */
-
-.page-title{
-  position:relative;
-
-  text-align:center;
-
-  margin-bottom:42px;
-
-  padding:
-    35px 20px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.12);
-
-  border-radius:24px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(14,165,233,.07),
-      rgba(7,18,38,.75)
-    );
-
-  overflow:hidden;
-}
-
-.page-title::before{
-  content:"";
-
-  position:absolute;
-
-  width:220px;
-  height:220px;
-
-  background:
-    rgba(14,165,233,.12);
-
-  filter:blur(80px);
-
-  border-radius:50%;
-
-  top:-120px;
-  left:50%;
-
-  transform:translateX(-50%);
-}
-
-.page-title-content{
-  position:relative;
-  z-index:1;
-}
-
-.page-title h1{
-  font-size:
-    clamp(38px,7vw,58px);
-
-  margin-bottom:12px;
-
-  font-weight:900;
-
-  letter-spacing:1px;
-}
-
-.page-title h1 span{
-  color:#38bdf8;
-}
-
-.page-title p{
-  color:#94a3b8;
-
-  font-size:16px;
-
-  line-height:1.6;
-
-  max-width:650px;
-
-  margin:0 auto;
-}
-
-
-/* =========================
-   SECTION
-========================= */
-
-.section{
-  margin-bottom:55px;
-}
-
-.section-header{
-  text-align:center;
-
-  margin-bottom:24px;
-}
-
-.section-header h2{
-  margin-bottom:7px;
-
-  font-size:28px;
-
-  font-weight:900;
-}
-
-.section-header h2 span{
-  color:#38bdf8;
-}
-
-.section-header p{
-  color:#64748b;
-
-  font-size:14px;
-}
-
-
-/* =========================
-   GRID
-========================= */
-
-.grid{
-  display:grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(220px,1fr)
-    );
-
-  gap:20px;
-
-  width:100%;
-}
-
-
-/* =========================
-   CARD
-========================= */
-
-.card{
-  background:
-    linear-gradient(
-      145deg,
-      #08152a,
-      #071226
-    );
-
-  border-radius:18px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.18);
-
-  padding:12px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:10px;
-
-  position:relative;
-
-  box-shadow:
-    0 10px 35px
-    rgba(0,0,0,.22);
-
-  overflow:hidden;
-
-  transition:
-    transform .2s ease,
-    border-color .2s ease,
-    box-shadow .2s ease;
-}
-
-.card:hover{
-  transform:translateY(-4px);
-
-  border-color:
-    rgba(14,165,233,.4);
-
-  box-shadow:
-    0 15px 40px
-    rgba(0,0,0,.32);
-}
-
-.card img{
-  width:100%;
-
-  aspect-ratio:16/9;
-
-  object-fit:cover;
-
-  border-radius:12px;
-
-  display:block;
-}
-
-
-/* =========================
-   STATUS
-========================= */
-
-.status-label{
-  position:absolute;
-
-  top:20px;
-  left:20px;
-
-  padding:6px 10px;
-
-  border-radius:7px;
-
-  font-weight:bold;
-
-  display:none;
-
-  z-index:2;
-}
-
-.update{
-  background:#ef4444;
-}
-
-.soon{
-  background:#2563eb;
-}
-
-.not{
-  background:#7c3aed;
-}
-
-
-/* =========================
-   BUTTONS
-========================= */
-
-.download,
-.Site,
-.Install{
-
-  padding:11px 14px;
-
-  background:#2563eb;
-
-  border:none;
-
-  border-radius:10px;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-
-  display:inline-flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  gap:8px;
-
-  width:100%;
-
-  transition:
-    transform .2s ease,
-    background .2s ease;
-}
-
-.download:hover,
-.Site:hover,
-.Install:hover{
-  background:#1d4ed8;
-
-  transform:translateY(-1px);
-}
-
-.download:active,
-.Site:active,
-.Install:active{
-  transform:scale(.98);
-}
-
-.locked{
-  background:#475569 !important;
-
-  cursor:not-allowed !important;
-}
-
-
-/* =========================
-   INFO
-========================= */
-
-.info{
-  color:#94a3b8;
-
-  font-size:.9rem;
-
-  line-height:1.4;
-}
-
-
-/* =========================
-   CARD OVERLAY
-========================= */
-
-.overlay{
-  position:absolute;
-
-  inset:0;
-
-  display:none;
-
-  justify-content:center;
-
-  align-items:center;
-
-  background:rgba(0,0,0,.72);
-
-  border-radius:18px;
-
-  font-weight:bold;
-
-  z-index:10;
-
-  padding:20px;
-
-  text-align:center;
-}
-
-
-/* =========================
-   VERIFY BOX
-========================= */
-
-.verify-box{
-  background:#0f172a;
-
-  padding:20px;
-
-  border-radius:15px;
-
-  border:
-    1px solid
-    #2563eb;
-
-  box-shadow:
-    0 0 20px
-    rgba(0,140,255,.3);
-
-  text-align:center;
-
-  width:min(300px,90%);
-
-  min-width:260px;
-}
-
-.verify-title{
-  font-size:18px;
-
-  margin-bottom:10px;
-
-  color:#38bdf8;
-
-  font-weight:bold;
-}
-
-.status{
-  font-size:18px;
-
-  margin-top:6px;
-}
-
-
-/* =========================
-   EXTERNAL ICON
-========================= */
-
-.external-icon{
-  width:14px;
-  height:14px;
-
-  display:inline-block;
-
-  fill:white;
-}
-
-
-/* =========================
-   SECTION LINE
-========================= */
-
-hr.section-line{
-  border:none;
-
-  height:1px;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #2563eb,
-      transparent
-    );
-
-  margin:45px 0;
-
-  opacity:.8;
-}
-
-
-/* =========================
-   HELP
-========================= */
-
-.help-section{
-  text-align:center;
-
-  padding:
-    5px 10px
-    calc(30px + env(safe-area-inset-bottom));
-}
-
-.help-section h2{
-  font-size:24px;
-
-  margin-bottom:8px;
-}
-
-.help-section p{
-  color:#64748b;
-
-  margin-bottom:20px;
-
-  line-height:1.5;
-}
-
-.help-buttons{
-  display:flex;
-
-  justify-content:center;
-
-  align-items:center;
-
-  gap:14px;
-
-  flex-wrap:wrap;
-}
-
-.help-button{
-  min-width:170px;
-
-  display:inline-flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  background:#2563eb;
-
-  padding:12px 25px;
-
-  border-radius:10px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  font-weight:bold;
-
-  transition:
-    transform .2s ease,
-    background .2s ease;
-}
-
-.help-button:hover{
-  background:#1d4ed8;
-
-  transform:translateY(-2px);
-}
-
-/* nieuwe help-contact sectie */
-.help-contact{
-  margin-top:18px;
-  text-align:center;
-  color:#cbd5e1;
-}
-
-.help-contact p{
-  margin-bottom:12px;
-  color:#94a3b8;
-  font-size:14px;
-}
-
-.help-contact-buttons{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.help-contact-buttons a{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  background:#08152a;
-  border:1px solid rgba(14,165,233,.18);
-  color:#fff;
-  border-radius:10px;
-  text-decoration:none;
-  font-weight:800;
-  transition:all .18s ease;
-}
-
-.help-contact-buttons a:hover{
-  background:#0b203d;
-  transform:translateY(-2px);
-}
-
-/* =========================
-   PRIVATE SERVER (reused styles for help steps modal)
-========================= */
-
-.private-server-overlay{
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.78);
-
-  backdrop-filter:blur(8px);
-
-  -webkit-backdrop-filter:blur(8px);
-
-  z-index:9000;
-
-  display:none;
-
-  overflow-y:auto;
-
-  padding:
-    25px 15px
-    calc(25px + env(safe-area-inset-bottom));
-}
-
-.private-server-overlay.show{
-  display:flex;
-
-  justify-content:center;
-
-  align-items:flex-start;
-}
-
-.private-server-modal{
-  width:100%;
-
-  max-width:1100px;
-
-  margin:auto;
-
-  background:
-    linear-gradient(
-      145deg,
-      #061126,
-      #020617
-    );
-
-  border:
-    1px solid
-    rgba(14,165,233,.55);
-
-  border-radius:20px;
-
-  box-shadow:
-    0 25px 80px
-    rgba(0,0,0,.65),
-    0 0 35px
-    rgba(14,165,233,.12);
-
-  overflow:hidden;
-
-  position:relative;
-}
-
-.private-server-header{
-  display:flex;
-
-  align-items:center;
-
-  gap:12px;
-
-  padding:16px 18px;
-
-  border-bottom:
-    1px solid
-    rgba(14,165,233,.2);
-}
-
-.private-server-header img{
-  width:42px;
-  height:42px;
-
-  object-fit:cover;
-
-  border-radius:10px;
-}
-
-.private-server-brand{
-  font-size:17px;
-
-  font-weight:900;
-}
-
-.private-server-close{
-  margin-left:auto;
-
-  width:40px;
-  height:40px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  background:#08152a;
-
-  color:#fff;
-
-  border-radius:10px;
-
-  font-size:25px;
-
-  cursor:pointer;
-}
-
-.private-server-close:hover{
-  background:#0b203d;
-}
-
-
-/* =========================
-   PRIVATE SERVER TITLE
-========================= */
-
-.private-server-title{
-  text-align:center;
-
-  padding:
-    25px 20px 20px;
-}
-
-.private-server-title h2{
-  font-size:
-    clamp(28px,5vw,42px);
-
-  font-weight:900;
-}
-
-.private-server-title h2 span{
-  color:#38bdf8;
-}
-
-.private-server-title::after{
-  content:"";
-
-  display:block;
-
-  width:90%;
-
-  max-width:850px;
-
-  height:1px;
-
-  margin:18px auto 0;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #2563eb,
-      transparent
-    );
-}
-
-
-/* =========================
-   PRIVATE SERVER STEPS
-========================= */
-
-.private-server-steps{
-  display:grid;
-
-  grid-template-columns:
-    repeat(3,minmax(0,1fr));
-
-  gap:14px;
-
-  padding:0 18px 20px;
-}
-
-.private-step{
-  background:
-    linear-gradient(
-      145deg,
-      #08152a,
-      #071226
-    );
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:15px;
-
-  padding:15px;
-
-  position:relative;
-
-  min-width:0;
-}
-
-.private-step:hover{
-  border-color:
-    rgba(14,165,233,.45);
-}
-
-.step-number{
-  position:absolute;
-
-  top:12px;
-  left:12px;
-
-  width:32px;
-  height:32px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  border-radius:50%;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-size:14px;
-
-  font-weight:900;
-
-  z-index:2;
-}
-
-.private-step h3{
-  font-size:16px;
-
-  line-height:1.4;
-
-  margin:
-    3px 0 14px 43px;
-
-  color:#fff;
-}
-
-.step-content{
-  display:flex;
-
-  align-items:center;
-
-  gap:14px;
-}
-
-.step-image{
-  width:105px;
-  height:105px;
-
-  flex-shrink:0;
-
-  object-fit:cover;
-
-  border-radius:12px;
-
-  border:
-    1px solid
-    rgba(14,165,233,.25);
-
-  background:#020617;
-}
-
-.step-text{
-  color:#cbd5e1;
-
-  font-size:13px;
-
-  line-height:1.55;
-}
-
-.step-link{
-  display:block;
-
-  margin-top:8px;
-
-  color:#38bdf8;
-
-  font-size:12px;
-
-  word-break:break-all;
-}
-
-.step-link:hover{
-  text-decoration:underline;
-}
-
-
-/* =========================
-   SCRIPT
-========================= */
-
-.script-button{
-  width:100%;
-
-  margin-top:10px;
-
-  padding:11px;
-
-  border:none;
-
-  border-radius:10px;
-
-  background:#2563eb;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-}
-
-.script-button:hover{
-  background:#1d4ed8;
-}
-
-
-/* =========================
-   SCRIPT POPUP
-========================= */
-
-.script-popup{
-  position:fixed;
-
-  inset:0;
-
-  background:rgba(0,0,0,.82);
-
-  backdrop-filter:blur(6px);
-
-  z-index:10000;
-
-  display:none;
-
-  align-items:center;
-
-  justify-content:center;
-
-  padding:20px;
-}
-
-.script-popup.show{
-  display:flex;
-}
-
-.script-popup-box{
-  width:100%;
-
-  max-width:700px;
-
-  background:#071226;
-
-  border:
-    1px solid
-    rgba(14,165,233,.4);
-
-  border-radius:16px;
-
-  padding:20px;
-
-  position:relative;
-}
-
-.script-popup-box h3{
-  color:#38bdf8;
-
-  margin-bottom:12px;
-}
-
-.script-popup-close{
-  position:absolute;
-
-  top:12px;
-  right:12px;
-
-  width:38px;
-  height:38px;
-
-  border:none;
-
-  border-radius:9px;
-
-  background:#08152a;
-
-  color:#fff;
-
-  font-size:22px;
-
-  cursor:pointer;
-}
-
-.script-code{
-  width:100%;
-
-  min-height:260px;
-
-  resize:vertical;
-
-  background:#020617;
-
-  color:#cbd5e1;
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:10px;
-
-  padding:12px;
-
-  font-family:monospace;
-
-  font-size:12px;
-}
-
-.copy-script{
-  width:100%;
-
-  margin-top:10px;
-
-  padding:12px;
-
-  background:#2563eb;
-
-  border:none;
-
-  border-radius:10px;
-
-  color:#fff;
-
-  font-weight:bold;
-
-  cursor:pointer;
-}
-
-.copy-script:hover{
-  background:#1d4ed8;
-}
-
-
-/* =========================
-   CONTACT
-========================= */
-
-.private-contact{
-  margin:
-    0 18px
-    20px;
-
-  padding:
-    25px 15px;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.2);
-
-  text-align:center;
-}
-
-.private-contact h3{
-  font-size:21px;
-
-  margin-bottom:8px;
-}
-
-.private-contact p{
-  color:#94a3b8;
-
-  line-height:1.5;
-
-  margin-bottom:18px;
-}
-
-.private-socials{
-  display:flex;
-
-  justify-content:center;
-
-  gap:10px;
-
-  flex-wrap:wrap;
-}
-
-.private-social{
-  padding:11px 18px;
-
-  background:#08152a;
-
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-
-  border-radius:10px;
-
-  color:#fff;
-
-  text-decoration:none;
-
-  font-weight:bold;
-
-  transition:.2s ease;
-}
-
-.private-social:hover{
-  background:#0b203d;
-
-  transform:translateY(-2px);
-}
-
-
-/* =========================
-   HELP MODS MODAL
-========================= */
-
-.help-modal-overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.78);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  z-index:9500;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.help-modal-overlay.show{
-  display:flex;
-}
-
-.help-modal{
-  width:100%;
-  max-width:720px;
-  max-height:90vh;
-  overflow-y:auto;
-  background:
-    linear-gradient(
-      145deg,
-      #061126,
-      #020617
-    );
-  border:
-    1px solid
-    rgba(14,165,233,.45);
-  border-radius:20px;
-  box-shadow:
-    0 25px 80px
-    rgba(0,0,0,.65),
-    0 0 35px
-    rgba(14,165,233,.12);
-  padding:18px;
-}
-
-.help-modal-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.help-modal-brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-
-.help-modal-logo{
-  width:48px;
-  height:48px;
-  flex-shrink:0;
-  border-radius:12px;
-  overflow:hidden;
-  box-shadow:
-    0 5px 25px
-    rgba(14,165,233,.2);
-}
-
-.help-modal-logo img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.help-modal-title{
-  font-size:20px;
-  font-weight:900;
-  color:#fff;
-}
-
-.help-modal-close{
-  width:42px;
-  height:42px;
-  flex-shrink:0;
-  border:
-    1px solid
-    rgba(14,165,233,.2);
-  background:#08152a;
-  color:#fff;
-  border-radius:10px;
-  font-size:26px;
-  line-height:1;
-  cursor:pointer;
-  transition:.2s ease;
-}
-
-.help-modal-close:hover{
-  background:#0b203d;
-  border-color:
-    rgba(14,165,233,.5);
-}
-
-.help-modal-line{
-  width:100%;
-  height:1px;
-  margin:16px 0 20px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #2563eb,
-      transparent
-    );
-}
-
-.help-modal-intro{
-  text-align:center;
-  color:#cbd5e1;
-  font-size:15px;
-  line-height:1.7;
-  margin-bottom:20px;
-}
-
-.help-options{
-  display:grid;
-  grid-template-columns:
-    repeat(2,minmax(0,1fr));
-  gap:12px;
-}
-
-.help-option{
-  width:100%;
-  min-height:105px;
-  padding:18px;
-  border:
-    1px solid
-    rgba(14,165,233,.18);
-  border-radius:14px;
-  background:
-    linear-gradient(
-      145deg,
-      #08152a,
-      #071226
-    );
-  color:#fff;
-  text-align:left;
-  cursor:pointer;
-  transition:
-    transform .2s ease,
-    border-color .2s ease,
-    background .2s ease;
-}
-
-.help-option:hover{
-  transform:translateY(-2px);
-  border-color:
-    rgba(14,165,233,.5);
-  background:#0b203d;
-}
-
-.help-option-title{
-  display:block;
-  font-size:15px;
-  font-weight:900;
-  color:#fff;
-}
-
-.help-option-sub{
-  display:block;
-  margin-top:7px;
-  color:#64748b;
-  font-size:12px;
-  line-height:1.4;
-}
-
-@media(max-width:600px){
-
-  .help-modal{
-    padding:15px;
-    border-radius:16px;
-  }
-
-  .help-options{
-    grid-template-columns:1fr;
-  }
-
-  .help-option{
-    min-height:90px;
-  }
-
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-  text-align:center;
-
-  padding:
-    30px 18px
-    calc(30px + env(safe-area-inset-bottom));
-
-  color:#64748b;
-
-  border-top:
-    1px solid
-    rgba(14,165,233,.1);
-}
-
-footer p{
-  margin:5px 0;
-}
-
-footer a{
-  color:#38bdf8;
-
-  text-decoration:none;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:800px){
-
-  .private-server-steps{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:700px){
-
-  main{
-    padding-top:28px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .page-title{
-    padding:30px 18px;
-  }
-
-  .page-title h1{
-    font-size:36px;
-  }
-
-}
-
-@media(min-width:701px){
-
-  .grid{
-    grid-template-columns:
-      repeat(3,minmax(0,1fr));
-  }
-
-}
-
-@media(max-width:520px){
-
-  .step-content{
-    align-items:flex-start;
-  }
-
-  .step-image{
-    width:85px;
-    height:85px;
-  }
-
-  .private-server-overlay{
-    padding:10px;
-  }
-
-  .private-server-modal{
-    border-radius:14px;
-  }
-
-}
-
-@media(max-width:430px){
-
-  header{
-    padding-left:14px;
-    padding-right:14px;
-  }
-
-  .logo{
-    width:44px;
-    height:44px;
-  }
-
-  .site-title{
-    font-size:17px;
-  }
-
-  .menu{
-    width:290px;
-  }
-
-  .menu-socials{
-    grid-template-columns:1fr;
-  }
-
-  .help-buttons{
-    flex-direction:column;
-  }
-
-  .help-button,
-  .private-server-button{
-    width:100%;
-    max-width:320px;
-  }
-
-}
-
-</style>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#020617">
+  <meta name="description" content="Explore Agar.io mods, tools, and resources from T.B Agar.io.">
+  <title>Mod Menu — T.B Agar.io</title>
+
+  <link rel="icon" type="image/jpeg" href="/IMG_0561.jpeg">
+  <link rel="apple-touch-icon" href="/IMG_0561.jpeg">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #020617;
+      --surface: #071226;
+      --surface-light: #0b203d;
+      --text: #f4f8ff;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --blue-dark: #2563eb;
+      --ice: #a9e3ff;
+      --border: rgba(56, 189, 248, .2);
+      --header-height: 68px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-height) + 18px);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding-top: calc(var(--header-height) + env(safe-area-inset-top));
+      color: var(--text);
+      background:
+        radial-gradient(circle at 85% 0%, rgba(14, 165, 233, .16), transparent 34%),
+        radial-gradient(circle at 5% 30%, rgba(37, 99, 235, .09), transparent 28%),
+        linear-gradient(180deg, #020617, #061126 55%, #020617);
+      overflow-x: hidden;
+    }
+
+    body.menu-open,
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button, a { font: inherit; }
+
+    .icon-definitions {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+    }
+
+    /* Background glow */
+    .background-glow {
+      position: fixed;
+      z-index: 0;
+      top: -260px;
+      right: -210px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14, 165, 233, .22), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Fixed header */
+    .site-header {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: calc(var(--header-height) + env(safe-area-inset-top));
+      padding: calc(10px + env(safe-area-inset-top)) max(18px, calc((100vw - 1180px) / 2)) 10px;
+      background: rgba(2, 6, 23, .93);
+      border-bottom: 1px solid rgba(56, 189, 248, .24);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .24);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: 0 0 18px rgba(14, 165, 233, .2);
+      transition: transform .2s ease;
+    }
+
+    .header-brand:hover .brand-logo { transform: scale(1.05); }
+
+    .brand-title {
+      overflow: hidden;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -.4px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand-title span { color: var(--blue); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .social-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 13px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 11px;
+      font-size: 13px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+      white-space: nowrap;
+    }
+
+    .social-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .social-button.discord {
+      background: #5865f2;
+      border-color: #9da5ff;
+      box-shadow: 0 0 15px rgba(88, 101, 242, .3);
+    }
+
+    .social-button.youtube {
+      background: #e62117;
+      border-color: #ff746d;
+      box-shadow: 0 0 15px rgba(230, 33, 23, .26);
+    }
+
+    .social-button.instagram {
+      background: linear-gradient(120deg, #7b37c8, #d62976, #f58529);
+      border-color: #f3a5cb;
+      box-shadow: 0 0 15px rgba(214, 41, 118, .27);
+    }
+
+    .social-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    /* Styled hamburger button */
+    .menu-btn {
+      display: inline-flex;
+      width: 46px;
+      height: 46px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      color: var(--text);
+      background: linear-gradient(145deg, #10243d, #071226);
+      border: 1px solid rgba(56, 189, 248, .4);
+      border-radius: 13px;
+      box-shadow: 0 0 17px rgba(56, 189, 248, .16), inset 0 1px rgba(255,255,255,.08);
+      cursor: pointer;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .menu-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--ice);
+      box-shadow: 0 0 22px rgba(56, 189, 248, .32);
+    }
+
+    .menu-lines { display: grid; gap: 5px; }
+
+    .menu-lines span {
+      display: block;
+      width: 21px;
+      height: 2px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #fff, var(--ice));
+      box-shadow: 0 0 7px rgba(169, 227, 255, .4);
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-btn[aria-expanded="true"] .menu-lines span:first-child {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-btn[aria-expanded="true"] .menu-lines span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-btn[aria-expanded="true"] .menu-lines span:last-child {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Menu overlay and drawer */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 109;
+      background: rgba(0, 0, 0, .66);
+      backdrop-filter: blur(3px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+
+    .menu-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      width: min(350px, 88vw);
+      height: 100vh;
+      height: 100dvh;
+      padding: calc(22px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      background: linear-gradient(180deg, #071226, #020617);
+      border-left: 1px solid var(--border);
+      box-shadow: -20px 0 55px rgba(0, 0, 0, .45);
+      transform: translateX(105%);
+      transition: transform .28s ease;
+    }
+
+    .menu.open { transform: translateX(0); }
+
+    .menu-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .menu-brand {
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: .3px;
+    }
+
+    .menu-brand span { color: var(--blue); }
+
+    .menu-close button {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      color: #fff;
+      background: #08152a;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    .menu-label,
+    .menu-social-title {
+      margin: 20px 4px 8px;
+      color: #8297ad;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .menu-links { display: grid; gap: 8px; }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 13px;
+      color: var(--text);
+      background: rgba(8, 21, 42, .88);
+      border: 1px solid rgba(56, 189, 248, .24);
+      border-radius: 12px;
+      font-weight: 750;
+      text-decoration: none;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .menu-link:hover {
+      transform: translateX(-2px);
+      background: #0b203d;
+      border-color: rgba(56, 189, 248, .65);
+      box-shadow: 0 0 14px rgba(56, 189, 248, .13);
+    }
+
+    .arrow-icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      color: var(--ice);
+      filter: drop-shadow(0 0 5px rgba(121, 214, 255, .65));
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .menu-link:hover .arrow-icon {
+      transform: translate(2px, -2px);
+      filter: drop-shadow(0 0 9px rgba(121, 214, 255, .95));
+    }
+
+    .menu-social-title { margin-top: 22px; }
+
+    .menu-socials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .menu-socials .social-button {
+      min-height: 48px;
+      padding: 0 7px;
+      font-size: 12px;
+    }
+
+    .menu-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      color: #72849a;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    /* Main content */
+    main {
+      position: relative;
+      z-index: 2;
+      width: min(1200px, 100%);
+      margin: 0 auto;
+      padding: 42px 18px calc(55px + env(safe-area-inset-bottom));
+    }
+
+    .page-title {
+      position: relative;
+      margin-bottom: 42px;
+      padding: 35px 20px;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(14,165,233,.07), rgba(7,18,38,.75));
+      border: 1px solid rgba(14,165,233,.16);
+      border-radius: 24px;
+      text-align: center;
+    }
+
+    .page-title::before {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      width: 220px;
+      height: 220px;
+      content: "";
+      background: rgba(14,165,233,.12);
+      filter: blur(80px);
+      border-radius: 50%;
+      transform: translateX(-50%);
+    }
+
+    .page-title-content { position: relative; z-index: 1; }
+
+    .page-title h1 {
+      margin-bottom: 12px;
+      font-size: clamp(38px, 7vw, 58px);
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .page-title h1 span { color: var(--blue); }
+
+    .page-title p {
+      max-width: 650px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .section { margin-bottom: 55px; }
+
+    .section-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .section-header h2 {
+      margin-bottom: 7px;
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .section-header h2 span { color: var(--blue); }
+
+    .section-header p {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #08152a, #071226);
+      border: 1px solid rgba(14,165,233,.18);
+      border-radius: 18px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.22);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(14,165,233,.4);
+      box-shadow: 0 15px 40px rgba(0,0,0,.32);
+    }
+
+    .card > img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .status-label {
+      position: absolute;
+      z-index: 2;
+      top: 20px;
+      left: 20px;
+      display: none;
+      padding: 6px 10px;
+      border-radius: 7px;
+      font-weight: 800;
+    }
+
+    .status-label.update { background: #ef4444; }
+    .status-label.soon { background: #2563eb; }
+    .status-label.not { background: #7c3aed; }
+
+    .download,
+    .Site,
+    .Install {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 11px 14px;
+      color: #fff;
+      background: #2563eb;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .download:hover,
+    .Site:hover,
+    .Install:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .download:active,
+    .Site:active,
+    .Install:active { transform: scale(.98); }
+
+    .locked {
+      background: #475569 !important;
+      cursor: not-allowed !important;
+    }
+
+    .info {
+      color: #94a3b8;
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.76);
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .verify-box {
+      width: min(300px, 100%);
+      min-width: 0;
+      padding: 20px;
+      background: #0f172a;
+      border: 1px solid #2563eb;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,140,255,.3);
+      text-align: center;
+    }
+
+    .verify-title {
+      margin-bottom: 10px;
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .verify-status {
+      margin: 6px 0;
+      font-size: 18px;
+    }
+
+    .verify-unlock {
+      width: 100%;
+      padding: 10px;
+      color: #fff;
+      background: #64748b;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .external-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    hr.section-line {
+      height: 1px;
+      margin: 45px 0;
+      background: linear-gradient(90deg, transparent, #2563eb, transparent);
+      border: 0;
+      opacity: .8;
+    }
+
+    /* Help area */
+    .help-section {
+      padding: 5px 10px calc(30px + env(safe-area-inset-bottom));
+      text-align: center;
+    }
+
+    .help-section h2 {
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+
+    .help-section p {
+      margin-bottom: 20px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .help-buttons,
+    .help-contact-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .help-button,
+    .help-contact-buttons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 11px 20px;
+      color: #fff;
+      background: #2563eb;
+      border: 1px solid rgba(96,165,250,.5);
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .2s ease, background .2s ease;
+    }
+
+    .help-button:hover,
+    .help-contact-buttons a:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+    }
+
+    .help-contact {
+      margin-top: 20px;
+      color: #cbd5e1;
+    }
+
+    .help-contact p {
+      margin-bottom: 12px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .help-contact-buttons a {
+      background: #08152a;
+      border-color: rgba(14,165,233,.24);
+    }
+
+    .help-contact-buttons a:hover {
+      background: #0b203d;
+    }
+
+    /* Help modal */
+    .help-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .help-modal-overlay.show { display: flex; }
+
+    .help-modal {
+      width: 100%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 18px;
+      background: linear-gradient(145deg, #061126, #020617);
+      border: 1px solid rgba(14,165,233,.45);
+      border-radius: 20px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.65), 0 0 35px rgba(14,165,233,.12);
+    }
+
+    .help-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .help-modal-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .help-modal-logo {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(14,165,233,.2);
+    }
+
+    .help-modal-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .help-modal-title {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .help-modal-close {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 auto;
+      place-items: center;
+      color: #fff;
+      background: #08152a;
+      border: 1px solid rgba(14,165,233,.2);
+      border-radius: 10px;
+      font-size: 26px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .help-modal-close:hover {
+      background: #0b203d;
+      border-color: rgba(14,165,233,.5);
+    }
+
+    .help-modal-line {
+      width: 100%;
+      height: 1px;
+      margin: 16px 0 20px;
+      background: linear-gradient(90deg, transparent, #2563eb, transparent);
+    }
+
+    .help-modal-intro {
+      margin-bottom: 20px;
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .help-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .help-option {
+      width: 100%;
+      min-height: 100px;
+      padding: 18px;
+      color: #fff;
+      background: linear-gradient(145deg, #08152a, #071226);
+      border: 1px solid rgba(14,165,233,.22);
+      border-radius: 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .help-option:hover {
+      transform: translateY(-2px);
+      background: #0b203d;
+      border-color: rgba(14,165,233,.55);
+    }
+
+    .help-option-title {
+      display: block;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .help-option-sub {
+      display: block;
+      margin-top: 7px;
+      color: #8297ad;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .help-back {
+      margin-bottom: 16px;
+      padding: 9px 13px;
+      color: #fff;
+      background: #08152a;
+      border: 1px solid rgba(14,165,233,.24);
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .help-back:hover { background: #0b203d; }
+
+    .private-server-steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .private-step {
+      position: relative;
+      min-width: 0;
+      padding: 15px;
+      background: linear-gradient(145deg, #08152a, #071226);
+      border: 1px solid rgba(14,165,233,.2);
+      border-radius: 15px;
+    }
+
+    .private-step:hover { border-color: rgba(14,165,233,.45); }
+
+    .step-number {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 1;
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      color: #fff;
+      background: #2563eb;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .private-step h3 {
+      margin: 3px 0 14px 43px;
+      color: #fff;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .step-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-image {
+      width: 86px;
+      height: 86px;
+      flex: 0 0 auto;
+      object-fit: cover;
+      background: #020617;
+      border: 1px solid rgba(14,165,233,.25);
+      border-radius: 12px;
+    }
+
+    .step-text {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* Legacy script popup styles retained for existing help scripts */
+    .script-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(0,0,0,.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .script-popup.show { display: flex; }
+
+    .script-popup-box {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+      background: #071226;
+      border: 1px solid rgba(14,165,233,.4);
+      border-radius: 16px;
+    }
+
+    .script-popup-box h3 {
+      margin-bottom: 12px;
+      color: var(--blue);
+    }
+
+    .script-popup-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      color: #fff;
+      background: #08152a;
+      border: 0;
+      border-radius: 9px;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .script-code {
+      width: 100%;
+      min-height: 220px;
+      padding: 12px;
+      color: #cbd5e1;
+      background: #020617;
+      border: 1px solid rgba(14,165,233,.2);
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+    }
+
+    .copy-script {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      color: #fff;
+      background: #2563eb;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .copy-script:hover { background: #1d4ed8; }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 2;
+      padding: 28px 18px calc(28px + env(safe-area-inset-bottom));
+      color: #64748b;
+      border-top: 1px solid rgba(14,165,233,.14);
+      text-align: center;
+    }
+
+    footer p { margin: 5px 0; }
+
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .header-social { display: none; }
+
+      main {
+        padding: 28px 16px calc(45px + env(safe-area-inset-bottom));
+      }
+
+      .page-title { padding: 30px 18px; }
+      .page-title h1 { font-size: 36px; }
+      .grid { grid-template-columns: 1fr; }
+      .private-server-steps { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .site-header { padding-left: 14px; padding-right: 14px; }
+      .brand-logo { width: 42px; height: 42px; }
+      .brand-title { font-size: 16px; }
+      .menu-btn { width: 44px; height: 44px; }
+      .help-modal { padding: 15px; border-radius: 16px; }
+      .help-options { grid-template-columns: 1fr; }
+      .help-option { min-height: 84px; }
+      .step-content { align-items: flex-start; }
+      .step-image { width: 74px; height: 74px; }
+    }
+
+    @media (max-width: 430px) {
+      .menu { width: min(310px, 90vw); }
+      .menu-socials { grid-template-columns: 1fr; }
+      .menu-socials .social-button { min-height: 42px; }
+      .help-buttons { flex-direction: column; }
+      .help-button { width: 100%; max-width: 320px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 
-
 <body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-definitions" aria-hidden="true">
+    <symbol id="icon-discord" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M19.73 5.1A19.3 19.3 0 0 0 15 3.64l-.58 1.18a17.8 17.8 0 0 0-4.84 0L9 3.64A19.3 19.3 0 0 0 4.27 5.1C1.28 9.53.47 13.85.88 18.1a19.4 19.4 0 0 0 5.82 2.94l1.25-2.03a12.6 12.6 0 0 1-1.97-.95l.48-.37c3.8 1.78 7.93 1.78 11.68 0l.48.37c-.63.37-1.29.69-1.97.95l1.25 2.03a19.4 19.4 0 0 0 5.82-2.94c.48-4.94-.81-9.22-3.99-13ZM8.7 14.96c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.92 2.32-2.08 2.32Zm6.6 0c-1.14 0-2.08-1.04-2.08-2.32s.91-2.32 2.08-2.32 2.1 1.05 2.08 2.32c0 1.28-.91 2.32-2.08 2.32Z"/>
+    </symbol>
 
+    <symbol id="icon-youtube" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.75 15.5v-7l6.5 3.5-6.5 3.5Z"/>
+    </symbol>
 
-<!-- =========================
-     LOADER
-========================= -->
+    <symbol id="icon-instagram" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2Zm5.1-3.2a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/>
+    </symbol>
 
-<div id="loader">
+    <symbol id="icon-diagonal-arrow" viewBox="0 0 24 24">
+      <path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
 
-  Loading Agar.io Mods...
+  <div class="background-glow" aria-hidden="true"></div>
 
-  <div class="spinner"></div>
+  <div id="loader" role="status" aria-live="polite">
+    <div>Loading Agar.io Mods...</div>
+    <div class="spinner" aria-hidden="true"></div>
+  </div>
 
-</div>
+  <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
 
-
-<!-- =========================
-     MENU OVERLAY
-========================= -->
-
-<div
-  class="menu-overlay"
-  id="menu-overlay"
-  onclick="closeMenu()">
-</div>
-
-
-<!-- =========================
-     HEADER
-========================= -->
-
-<header>
-
-  <div class="left-header">
-
-    <a
-      class="logo-link"
-      href="https://www.youtube.com/@T.B6"
-      target="_blank"
-      rel="noopener"
-      aria-label="Open T.B Agar.io YouTube channel">
-
-      <div class="logo">
-
-        <img
-          src="/IMG_0561.jpeg"
-          alt="T.B Agar.io">
-
-      </div>
-
+  <header class="site-header">
+    <a class="header-brand"
+       href="https://www.youtube.com/@T.B6"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Open T.B Agar.io YouTube channel">
+      <img class="brand-logo" src="/IMG_0561.jpeg" alt="T.B Agar.io logo">
+      <span class="brand-title">T.B <span>AGAR.IO</span></span>
     </a>
 
-
-    <div class="site-title">
-      T.B Agar.io
-    </div>
-
-  </div>
-
-
-  <button
-    class="menu-btn"
-    onclick="toggleMenu()"
-    aria-label="Open menu">
-
-    ☰
-
-  </button>
-
-</header>
-
-
-<!-- =========================
-     SIDE MENU
-========================= -->
-
-<div
-  class="menu"
-  id="menu">
-
-
-  <div class="menu-close">
-
-    <div class="menu-brand">
-      T.B <span>AGAR.IO</span>
-    </div>
-
-    <button
-      onclick="closeMenu()"
-      aria-label="Close menu">
-
-      ×
-
-    </button>
-
-  </div>
-
-
-  <div class="menu-label">
-    Navigation
-  </div>
-
-
-  <a href="/index.html">
-    Home
-  </a>
-
-  <a href="/custom-skins.html">
-    Custom Skins
-  </a>
-
-  <a href="/key-access.html">
-    Key Access
-  </a>
-
-  <a href="/mod-menu.html">
-    Mod Menu
-  </a>
-
-  <a href="/paidskins.html">
-    Paid Skins
-  </a>
-
-  <a href="/buy-account.html">
-    Buy Account
-  </a>
-
-  <a href="/agar.io-skins.html">
-    Agar.io Skins
-  </a>
-
-
-  <div class="menu-label">
-    External
-  </div>
-
-
-  <a
-    href="https://biteyt.com/bots"
-    target="_blank"
-    rel="noopener">
-
-    Bite Bots Panel
-
-  </a>
-
-
-  <a
-    href="https://kahraba.in"
-    target="_blank"
-    rel="noopener">
-
-    Kahraba Website
-
-  </a>
-
-
-  <div class="menu-social-title">
-    Follow T.B Agar.io
-  </div>
-
-
-  <div class="menu-socials">
-
-    <a
-      class="menu-social"
-      href="https://discord.gg/qhuXPrVzBx"
-      target="_blank"
-      rel="noopener">
-
-      Discord
-
-    </a>
-
-
-    <a
-      class="menu-social"
-      href="https://www.youtube.com/@T.B6"
-      target="_blank"
-      rel="noopener">
-
-      YouTube
-
-    </a>
-
-
-    <a
-      class="menu-social"
-      href="https://www.instagram.com/t.bagar.io/"
-      target="_blank"
-      rel="noopener">
-
-      Instagram
-
-    </a>
-
-  </div>
-
-
-  <div class="menu-footer">
-    T.B Agar.io © 2026
-  </div>
-
-</div>
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main>
-
-
-<!-- =========================
-     PAGE TITLE
-========================= -->
-
-<div class="page-title">
-
-  <div class="page-title-content">
-
-    <h1>
-      T.B <span>MOD MENU</span>
-    </h1>
-
-    <p>
-      Download and explore available Agar.io mods,
-      tools and useful resources.
-    </p>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     MAIN MODS
-========================= -->
-
-<section class="section">
-
-  <div class="section-header">
-
-    <h2>
-      AVAILABLE <span>MODS</span>
-    </h2>
-
-    <p>
-      Available Agar.io modifications and tools.
-    </p>
-
-  </div>
-
-
-  <div class="grid">
-
-
-    <!-- SHARK MOD -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_9406.jpeg"
-        alt="Shark Mod IOS">
-
-      <a
-        href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
+    <div class="header-actions">
+      <a class="social-button discord header-social"
+         href="https://discord.gg/qhuXPrVzBx"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+        Discord
       </a>
 
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 18-10-2026
-      </div>
-
-      <div class="info">
-        Update Shark Mod version 2.0.0
-        - Private Server
-        - Smoother than ever
-        - 120 FPS
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- T.B MOD -->
-
-    <div
-      class="card"
-      data-status="not">
-
-      <div class="status-label update">
-        UPDATE
-      </div>
-
-      <img
-        src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg"
-        alt="T.B Mod">
-
-      <a href="#">
-
-        <button class="download">
-          Download
-        </button>
-
+      <a class="social-button youtube header-social"
+         href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+        YouTube
       </a>
 
-      <div class="info">
-        Version: 26.3.5
-      </div>
-
-      <div class="info">
-        NEW Date: 15-01-2026
-      </div>
-
-      <div class="info">
-        T.B Mod (Kabrah) Unlock Skin
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- BITE MOD -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <div class="status-label update">
-        UPDATE
-      </div>
-
-      <img
-        src="/IMG_6587.png"
-        alt="Bite Skin Mod">
-
-      <a
-        href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
+      <a class="social-button instagram header-social"
+         href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+        Instagram
       </a>
 
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 05-07-2026
-      </div>
-
-      <div class="info">
-        Bite Skin Mod
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- KAHRABA -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_6587.png"
-        alt="Kahraba Mod">
-
-      <a
-        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 05-07-2026
-      </div>
-
-      <div class="info">
-        Kahraba Mod
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- SHARK ANDROID -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_9406.jpeg"
-        alt="Shark Mod Android">
-
-      <a
-        href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-          Update Shark Mod version 2.0.0
-        - Private Server
-        - Smoother than ever
-        - 120 FPS
-      </div>
-
-      <div class="info">
-        Date: 18-10-2026
-      </div>
-
-      <div class="info">
-        Shark Mod NEW Android
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- KAHRABA + SHARK -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_6587.png"
-        alt="Kahraba Shark Mod">
-
-      <a
-        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 05-07-2026
-      </div>
-
-      <div class="info">
-        Kahraba + Shark Mod
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- MYU -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_6587.png"
-        alt="Myu Mod">
-
-      <a
-        href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 05-07-2026
-      </div>
-
-      <div class="info">
-        Myu Mod
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- SPOTIFY -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_4318.png"
-        alt="Spotify Premium Mod">
-
-      <a
-        href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 9.0.66
-      </div>
-
-      <div class="info">
-        Date: 03-08-2025
-      </div>
-
-      <div class="info">
-        Spotify Premium Mod
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- DNS -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_2462.jpeg"
-        alt="DNS Profile">
-
-      <a
-        href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
-
-        <button class="download">
-          Download
-        </button>
-
-      </a>
-
-      <div class="info">
-        Available for iPhone (iOS)
-      </div>
-
-      <div class="info">
-        Date: 14-09-2026
-      </div>
-
-      <div class="info">
-        DNS Profile
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     AGAR.IO TOOLS
-======================== -->
-
-<hr class="section-line">
-
-
-<section class="section">
-
-  <div class="section-header">
-
-    <h2>
-      AGAR.IO <span>TOOLS</span>
-    </h2>
-
-    <p>
-      Useful Agar.io websites and tools.
-    </p>
-
-  </div>
-
-
-  <div class="grid">
-
-
-    <!-- BITE BOTS -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_0321.jpeg"
-        alt="Bite Bots Panel">
-
-      <a
-        href="https://biteyt.com/bots"
-        target="_blank"
-        rel="noopener">
-
-        <button class="download">
-
-          Bite Bots Panel
-
-          <svg
-            class="external-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true">
-
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
-            </path>
-
-            <path d="M5 5h5v10h10v-3h2v5H5z">
-            </path>
-
-          </svg>
-
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 19-08-2026
-      </div>
-
-      <div class="info">
-        Bite Bots Panel
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-    <!-- KAHRABA -->
-
-    <div
-      class="card"
-      data-status="active">
-
-      <img
-        src="/IMG_0322.jpeg"
-        alt="Kahraba Website">
-
-      <a
-        href="https://kahraba.in"
-        target="_blank"
-        rel="noopener">
-
-        <button class="download">
-
-          Kahraba Website
-
-          <svg
-            class="external-icon"
-            viewBox="0 0 24 24"
-            aria-hidden="true">
-
-            <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z">
-            </path>
-
-            <path d="M5 5h5v10h10v-3h2v5H5z">
-            </path>
-
-          </svg>
-
-        </button>
-
-      </a>
-
-      <div class="info">
-        Version: 26.6.0
-      </div>
-
-      <div class="info">
-        Date: 21-08-2026
-      </div>
-
-      <div class="info">
-        Kahraba Website
-      </div>
-
-      <div class="overlay"></div>
-
-    </div>
-
-
-  </div>
-
-</section>
-
-
-<!-- =========================
-     HELP
-========================= -->
-
-<hr class="section-line">
-
-
-<div class="help-section">
-
-  <h2>
-    Need Help?
-  </h2>
-
-  <p>
-    Learn how to install and use the available mods.
-  </p>
-
-  <div class="help-buttons">
-
-    <button
-      class="help-button"
-      type="button"
-      onclick="openHelpModal()">
-
-      Help Mods
-
-    </button>
-
-  </div>
-
-  <!-- Nieuwe contact sectie op de plek van de oude © regel -->
-  <div class="help-contact" aria-live="polite">
-    <p>If you have questions, you can always contact us. 💬</p>
-
-    <div class="help-contact-buttons" role="navigation" aria-label="Contact links">
-      <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener" aria-label="Open Discord">
-        💬 Discord
-      </a>
-
-      <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener" aria-label="Open YouTube">
-        ▶ YouTube
-      </a>
-
-      <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener" aria-label="Open Instagram">
-        ◎ Instagram
-      </a>
-    </div>
-  </div>
-
-</div>
-
-
-<!-- =========================
-     HELP MODS MODAL (één modaal — opties -> stappen)
-========================= -->
-
-<div
-  class="help-modal-overlay"
-  id="help-modal-overlay">
-
-  <div
-    class="help-modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="help-modal-title">
-
-    <div class="help-modal-header">
-
-      <div class="help-modal-brand">
-
-        <div class="help-modal-logo">
-
-          <img
-            src="/IMG_0561.jpeg"
-            alt="T.B Agar.io">
-
-        </div>
-
-        <div
-          class="help-modal-title"
-          id="help-modal-title">
-
-          T.B Agar.io
-
-        </div>
-
-      </div>
-
-      <button
-        class="help-modal-close"
-        type="button"
-        onclick="closeHelpModal()"
-        aria-label="Close Help Mods">
-
-        ×
-
+      <button class="menu-btn" id="menu-btn" type="button"
+              aria-label="Open menu" aria-expanded="false" aria-controls="side-menu">
+        <span class="menu-lines" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
       </button>
+    </div>
+  </header>
 
+  <aside class="menu" id="side-menu" aria-label="Site menu" aria-hidden="true">
+    <div class="menu-close">
+      <div class="menu-brand">T.B <span>AGAR.IO</span></div>
+      <button id="menu-close-btn" type="button" aria-label="Close menu">×</button>
     </div>
 
-    <div class="help-modal-line"></div>
+    <div class="menu-label">Navigation</div>
 
-    <!-- body area: we wisselen hier tussen opties en stappen -->
-    <div id="help-modal-body">
+    <nav class="menu-links" aria-label="Main navigation">
+      <a class="menu-link" href="/index.html">
+        <span>Home</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/custom-skins.html">
+        <span>Custom Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/key-access.html">
+        <span>Key Access</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/mod-menu.html" aria-current="page">
+        <span>Mod Menu</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/paidskins.html">
+        <span>Paid Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/buy-account.html">
+        <span>Buy Account</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+      <a class="menu-link" href="/agar.io-skins.html">
+        <span>Agar.io Skins</span>
+        <svg class="arrow-icon" aria-hidden="true"><use href="#icon-diagonal-arrow"></use></svg>
+      </a>
+    </nav>
 
-      <div class="help-modal-intro">
+    <!-- External links removed from the menu as requested. -->
+    <div class="menu-social-title">Follow T.B Agar.io</div>
 
-        We willen jou zo goed mogelijk helpen.
-        <br>
-        Kies jouw optie.
+    <div class="menu-socials">
+      <a class="social-button discord"
+         href="https://discord.gg/qhuXPrVzBx"
+         target="_blank" rel="noopener noreferrer" aria-label="Join Discord">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+        Discord
+      </a>
 
+      <a class="social-button youtube"
+         href="https://www.youtube.com/@T.B6"
+         target="_blank" rel="noopener noreferrer" aria-label="Open YouTube">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+        YouTube
+      </a>
+
+      <a class="social-button instagram"
+         href="https://www.instagram.com/t.bagar.io/"
+         target="_blank" rel="noopener noreferrer" aria-label="Open Instagram">
+        <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+        Instagram
+      </a>
+    </div>
+
+    <div class="menu-footer">T.B Agar.io © 2026</div>
+  </aside>
+
+  <main>
+    <section class="page-title">
+      <div class="page-title-content">
+        <h1>T.B <span>MOD MENU</span></h1>
+        <p>Download and explore available Agar.io mods, tools, and useful resources.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2>AVAILABLE <span>MODS</span></h2>
+        <p>Available Agar.io modifications and tools.</p>
       </div>
 
-      <div class="help-options" id="help-options-list">
+      <div class="grid">
+        <article class="card" data-status="active">
+          <img src="/IMG_9406.jpeg" alt="Shark Mod iOS" loading="lazy">
+          <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 18-10-2026</div>
+          <div class="info">
+            Update Shark Mod version 2.0.0 — Private Server, smoother than ever, 120 FPS.
+          </div>
+          <div class="card-overlay"></div>
+        </article>
 
-        <button
-          class="help-option"
-          type="button"
-          data-index="0"
-          onclick="showHelpStepsInModal(0)">
+        <article class="card" data-status="not">
+          <div class="status-label update">UPDATE</div>
+          <img src="/4164B364-CC06-47A6-9FB8-1BF5F50BF4D0.jpeg" alt="T.B Mod" loading="lazy">
+          <a href="#">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.3.5</div>
+          <div class="info">New date: 15-01-2026</div>
+          <div class="info">T.B Mod (Kabrah) Unlock Skin</div>
+          <div class="card-overlay"></div>
+        </article>
 
-          <span class="help-option-title">
-            How install eSign
-          </span>
+        <article class="card" data-status="active">
+          <div class="status-label update">UPDATE</div>
+          <img src="/IMG_6587.png" alt="Bite Skin Mod" loading="lazy">
+          <a href="https://download2288.mediafire.com/ko50iorvl24gIeplw3mSY4I6COXiyycTyd2yeJR4AJ8rJi2MUqVVTkOvwjjr9k6o1Q4AFqznQJS30lfBpfNIWbtffkIWuIV1u98kunRRepZJUdYwblyeEy4I43WvSDmxlT6KZFxhmLDFY33dRmAcknczPvwKPwtJ-8GJ6wacSks/fazxi90nvadvw84/Agar.io-26.6.0-BiteYt-1.1.0.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 05-07-2026</div>
+          <div class="info">Bite Skin Mod</div>
+          <div class="card-overlay"></div>
+        </article>
 
-          <span class="help-option-sub">
-            Installatie hulp voor eSign
-          </span>
+        <article class="card" data-status="active">
+          <img src="/IMG_6587.png" alt="Kahraba Mod" loading="lazy">
+          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 05-07-2026</div>
+          <div class="info">Kahraba Mod</div>
+          <div class="card-overlay"></div>
+        </article>
 
-        </button>
+        <article class="card" data-status="active">
+          <img src="/IMG_9406.jpeg" alt="Shark Mod Android" loading="lazy">
+          <a href="https://github.com/frenchsharkfish/frenchsharkfish.github.io/releases/download/2.0.0/SharkMod_2.0.0.apk">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0 — Shark Mod 2.0.0 with Private Server, smoother gameplay, and 120 FPS.</div>
+          <div class="info">Date: 18-10-2026</div>
+          <div class="info">Shark Mod — Android</div>
+          <div class="card-overlay"></div>
+        </article>
 
-        <button
-          class="help-option"
-          type="button"
-          data-index="1"
-          onclick="showHelpStepsInModal(1)">
+        <article class="card" data-status="active">
+          <img src="/IMG_6587.png" alt="Kahraba Shark Mod" loading="lazy">
+          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.kahraba+shark.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 05-07-2026</div>
+          <div class="info">Kahraba + Shark Mod</div>
+          <div class="card-overlay"></div>
+        </article>
 
-          <span class="help-option-title">
-            Hoe werkt eSign?
-          </span>
+        <article class="card" data-status="active">
+          <img src="/IMG_6587.png" alt="Myu Mod" loading="lazy">
+          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/2/26.6.0.myu.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 05-07-2026</div>
+          <div class="info">Myu Mod</div>
+          <div class="card-overlay"></div>
+        </article>
 
-          <span class="help-option-sub">
-            Uitleg over het gebruik van eSign
-          </span>
+        <article class="card" data-status="active">
+          <img src="/IMG_4318.png" alt="Spotify Premium Mod" loading="lazy">
+          <a href="https://github.com/QxAngel/qxangel.github.io/releases/download/1/EeveeSpotify.ipa">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Version: 9.0.66</div>
+          <div class="info">Date: 03-08-2025</div>
+          <div class="info">Spotify Premium Mod</div>
+          <div class="card-overlay"></div>
+        </article>
 
-        </button>
+        <article class="card" data-status="active">
+          <img src="/IMG_2462.jpeg" alt="DNS Profile" loading="lazy">
+          <a href="https://applejr.ipadownloads.com/signed/panel/AppleJr_AntiRevoke.mobileconfig">
+            <button class="download" type="button">Download</button>
+          </a>
+          <div class="info">Available for iPhone (iOS)</div>
+          <div class="info">Date: 14-09-2026</div>
+          <div class="info">DNS Profile</div>
+          <div class="card-overlay"></div>
+        </article>
+      </div>
+    </section>
 
-        <button
-          class="help-option"
-          type="button"
-          data-index="2"
-          onclick="showHelpStepsInModal(2)">
+    <hr class="section-line">
 
-          <span class="help-option-title">
-            How install Agar.io mods
-          </span>
-
-          <span class="help-option-sub">
-            Leer hoe je Agar.io mods installeert
-          </span>
-
-        </button>
-
-        <button
-          class="help-option"
-          type="button"
-          data-index="3"
-          onclick="showHelpStepsInModal(3)">
-
-          <span class="help-option-title">
-            Hoe stel je Agar.io mods in
-          </span>
-
-          <span class="help-option-sub">
-            Hulp bij het instellen van Agar.io mods
-          </span>
-
-        </button>
-
+    <section class="section">
+      <div class="section-header">
+        <h2>AGAR.IO <span>TOOLS</span></h2>
+        <p>Useful Agar.io websites and tools.</p>
       </div>
 
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- =========================
-     SCRIPT POPUP
-========================= -->
-
-<div
-  class="script-popup"
-  id="script-popup">
-
-  <div class="script-popup-box">
-
-    <button
-      class="script-popup-close"
-      onclick="closeScriptPopup()"
-      aria-label="Close">
-
-      ×
-
-    </button>
-
-    <h3>
-      Agar.io Private Server Script
-    </h3>
-
-    <textarea
-      class="script-code"
-      id="private-server-script"
-      readonly
-      placeholder="Paste your private server script here...">PASTE YOUR AGAR.IO PRIVATE SERVER SCRIPT HERE</textarea>
-
-    <button
-      class="copy-script"
-      onclick="copyPrivateServerScript()">
-
-      📋 Copy Script
-
-    </button>
-
-  </div>
-
-</div>
-
-
-</main>
-
-
-<!-- =========================
-     FOOTER
-========================= -->
-
-<footer>
-
-  <p>
-    © 2026 T.B Agar.io
-  </p>
-
-  <p>
-
-    <a href="/index.html">
-      T.B Agar.io
-    </a>
-
-  </p>
-
-</footer>
-
-
-<script>
-
-/* =========================
-   LOADER (robuuste versie)
-   - verberg bij window.load
-   - fallback na 8s om te voorkomen dat de loader eeuwig blijft staan
-========================= */
-
-function hideLoader() {
-  const loader = document.getElementById("loader");
-  if (loader) {
-    loader.style.display = "none";
-  }
-  // herstel eventueel overflow als die gewijzigd is
-  try {
-    document.body.style.overflow = "";
-  } catch (e) {
-    // silent
-  }
-}
-
-window.addEventListener("load", hideLoader);
-// Fallback: forceer verbergen na 8 seconden
-setTimeout(hideLoader, 8000);
-
-
-/* =========================
-   MENU
-========================= */
-
-function toggleMenu(){
-
-  const menu =
-    document.getElementById("menu");
-
-  const overlay =
-    document.getElementById("menu-overlay");
-
-
-  if(menu.classList.contains("open")){
-
-    closeMenu();
-
-  }else{
-
-    menu.classList.add("open");
-
-    overlay.classList.add("show");
-
-  }
-
-}
-
-
-function closeMenu(){
-
-  const menu =
-    document.getElementById("menu");
-
-  const overlay =
-    document.getElementById("menu-overlay");
-
-
-  menu.classList.remove("open");
-
-  overlay.classList.remove("show");
-
-}
-
-
-/* =========================
-   ESC CLOSE MENU
-========================= */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Escape"){
-
-      closeMenu();
-
-    }
-
-  }
-);
-
-
-/* =========================
-   STATUS SYSTEM
-========================= */
-
-document
-  .querySelectorAll(".card")
-  .forEach(card => {
-
-    const status =
-      card.dataset.status;
-
-    const btn =
-      card.querySelector("button");
-
-    const label =
-      card.querySelector(
-        ".status-label"
-      );
-
-    const overlay =
-      card.querySelector(".overlay");
-
-
-    if(label){
-
-      label.style.display =
-        "none";
-
-    }
-
-
-    if(status === "not"){
-
-      if(label){
-
-        label.style.display =
-          "block";
-
-      }
-
-
-      if(btn){
-
-        btn.textContent =
-          "Unavailable";
-
-        btn.classList.add(
-          "locked"
-        );
-
-        btn.onclick =
-          function(event){
-
-            event.preventDefault();
-
-            alert(
-              "This mod is not available."
-            );
-
-          };
-
-      }
-
-
-      card.style.opacity =
-        "0.45";
-
-
-      if(overlay){
-
-        overlay.style.display =
-          "flex";
-
-        overlay.textContent =
-          "Not Available";
-
-      }
-
-    }
-
-  });
-
-
-/* =========================
-   DOWNLOAD VERIFICATION
-========================= */
-
-document
-  .querySelectorAll(".card")
-  .forEach(card => {
-
-    const btn =
-      card.querySelector(
-        ".download"
-      );
-
-    const overlay =
-      card.querySelector(
-        ".overlay"
-      );
-
-    const linkElement =
-      card.querySelector("a");
-
-    const link =
-      linkElement
-        ? linkElement.href
-        : "#";
-
-
-    if(!btn || !overlay){
-
-      return;
-
-    }
-
-
-    let ytDone = false;
-
-    let igDone = false;
-
-
-    btn.addEventListener(
-      "click",
-      function(event){
-
-        event.preventDefault();
-
-
-        if(
-          card.dataset.status === "not"
-        ){
-
-          return;
-
-        }
-
-
-        overlay.style.display =
-          "flex";
-
-
-        overlay.innerHTML = `
-
-          <div style="text-align:center;">
-
-            Download
-            ${getModName(card)}
-            ...
-
-            <div
-              class="spinner"
-              style="margin:12px auto;">
-            </div>
-
-          </div>
-
-        `;
-
-
-        setTimeout(
-          showVerify,
-          random(3000,6000)
-        );
-
-      }
-    );
-
-
-    function showVerify(){
-
-      overlay.innerHTML = `
-
-        <div class="verify-box">
-
-          <div class="verify-title">
-            Verification
-          </div>
-
-          <hr
-            style="
-              margin:10px 0;
-              border:0;
-              border-top:
-                1px solid
-                rgba(255,255,255,.15);
-            "
-          >
-
-
-          <button
-            id="ytBtn"
-            class="download">
-
-            Subscribe on YouTube
-
-          </button>
-
-
-          <div
-            class="status"
-            id="ytStatus">
-
-            ⏳
-
-          </div>
-
-
-          <br>
-
-
-          <button
-            id="igBtn"
-            class="download">
-
-            Follow on Instagram
-
-          </button>
-
-
-          <div
-            class="status"
-            id="igStatus">
-
-            ⏳
-
-          </div>
-
-
-          <br>
-
-
-          <button
-            id="unlockBtn"
-            style="
-              background:gray;
-              padding:10px;
-              width:100%;
-              border-radius:10px;
-              border:none;
-              color:white;
-              font-weight:bold;
-              cursor:pointer;
-            ">
-
-            🔒 Locked
-
-          </button>
-
-        </div>
-
-      `;
-
-
-      document
-        .getElementById("ytBtn")
-        .onclick = function(){
-
-          window.open(
-            "https://www.youtube.com/@T.B6",
-            "_blank"
-          );
-
-
-          setTimeout(
-            function(){
-
-              ytDone = true;
-
-
-              document
-                .getElementById(
-                  "ytStatus"
-                )
-                .innerHTML =
-                  "✔";
-
-
-              checkUnlock();
-
-            },
-            random(5000,12000)
-          );
-
-        };
-
-
-      document
-        .getElementById("igBtn")
-        .onclick = function(){
-
-          window.open(
-            "https://www.instagram.com/t.bagar.io/",
-            "_blank"
-          );
-
-
-          setTimeout(
-            function(){
-
-              igDone = true;
-
-
-              document
-                .getElementById(
-                  "igStatus"
-                )
-                .innerHTML =
-                  "✔";
-
-
-              checkUnlock();
-
-            },
-            random(5000,12000)
-          );
-
-        };
-
-
-      const unlockBtn =
-        document.getElementById(
-          "unlockBtn"
-        );
-
-
-      unlockBtn.onclick =
-        function(){
-
-          alert(
-            "Complete YouTube and Instagram verification first."
-          );
-
-        };
-
-
-      function checkUnlock(){
-
-        if(ytDone && igDone){
-
-          unlockBtn.style.background =
-            "#22c55e";
-
-          unlockBtn.innerHTML =
-            "🔓 Unlock";
-
-
-          unlockBtn.onclick =
-            startDownload;
-
-        }
-
-      }
-
-
-      function startDownload(){
-
-        const texts = [
-
-          "Downloading...",
-          "Please wait...",
-          "Preparing file..."
-
-        ];
-
-
-        let i = 0;
-
-
-        overlay.innerHTML = `
-
-          <div style="text-align:center;">
-
-            <div id="dlText">
-              ${texts[0]}
-            </div>
-
-            <div
-              class="spinner"
-              style="margin:12px auto;">
-            </div>
-
-          </div>
-
-        `;
-
-
-        const interval =
-          setInterval(
-            function(){
-
-              i =
-                (i + 1) %
-                texts.length;
-
-
-              const dlText =
-                document.getElementById(
-                  "dlText"
-                );
-
-
-              if(dlText){
-
-                dlText.innerText =
-                  texts[i];
-
-              }
-
-            },
-            2000
-          );
-
-
-        setTimeout(
-          function(){
-
-            clearInterval(interval);
-
-
-            overlay.innerHTML = `
-
-              <div
-                style="
-                  text-align:center;
-                  color:#4ade80;
-                  font-weight:bold;
-                ">
-
-                ✔ Download complete
-
-              </div>
-
-            `;
-
-
-            setTimeout(
-              function(){
-
-                window.location.href =
-                  link;
-
-              },
-              1500
-            );
-
-          },
-          random(10000,20000)
-        );
-
-      }
-
-    }
-
-
-    function getModName(card){
-
-      const infos =
-        card.querySelectorAll(
-          ".info"
-        );
-
-
-      return infos.length
-        ? infos[
-            infos.length - 1
-          ].innerText
-        : "Mod";
-
-    }
-
-
-    function random(min,max){
-
-      return Math.random() *
-        (max - min) +
-        min;
-
-    }
-
-  });
-
-
-/* =========================
-   HELP MODAL (open/close)
-========================= */
-
-function openHelpModal(){
-
-  const overlay =
-    document.getElementById(
-      "help-modal-overlay"
-    );
-
-  if(overlay){
-
-    overlay.classList.add("show");
-
-    document.body.style.overflow =
-      "hidden";
-
-    // zorg dat de body-area terug naar de opties staat
-    resetHelpModalBody();
-
-  }
-
-}
-
-function closeHelpModal(){
-
-  const overlay =
-    document.getElementById(
-      "help-modal-overlay"
-    );
-
-  if(overlay){
-
-    overlay.classList.remove("show");
-
-    document.body.style.overflow =
-      "";
-
-  }
-
-}
-
-const helpOverlay =
-  document.getElementById(
-    "help-modal-overlay"
-  );
-
-if(helpOverlay){
-
-  helpOverlay.addEventListener(
-    "click",
-    function(event){
-
-      if(event.target === this){
-
-        closeHelpModal();
-
-      }
-
-    }
-  );
-
-}
-
-/* =========================
-   HELP OPTIONS -> STAPPEN IN DEZELFDE MODAL
-========================= */
-
-/* Data voor de 4 help-opties en hun stappen.
-   Pas hier tekst/afbeeldingen aan indien nodig.
-*/
-const helpStepsData = [
-  {
-    title: "How install eSign",
-    steps: [
-      { title: "Install the DNS profile", img: "/IMG_2462.jpeg", text: "Open the App Store and install the eSign app." },
-      { title: "Open Settings", img: "/IMG_1119.jpeg", text: "Go to Settings → General → VPN & Device Management." },
-      { title: "Go to General --> VPN & Device Management", img: "/IMG_1456.png", text: "Open eSign and create an account or sign in." },
-      { title: "Install the profile", img: "/singbox-profile.png", text: "Create any required profiles inside the eSign app following prompts." },
-      { title: "Go back to the T.B. website --> install an e-sign mod that has a checkmark next to it", img: "/singbox-edit.png", text: "Follow the verification steps the app asks for (email/pincode)." },
-      {
-        title: "Install the mod --> go to Settings --> General --> VPN & Device Management --> tap on eSign and select 'Trust'; once you have confirmed the 'Trust' action, restart your device.",
-        img: "/IMG_2462.jpeg",
-        text: "Close the instructions and open the app to check everything works."
-      }
-    ]
-  },
-  {
-    title: "Hoe werkt eSign?",
-    steps: [
-      { title: "Wat is eSign?", img: "/IMG_0322.jpeg", text: "eSign is een digitale handtekening en profielmanager voor apparaten." },
-      { title: "Account aanmaken", img: "/IMG_0321.jpeg", text: "Maak een account aan in de app of log in met je bestaande gegevens." },
-      { title: "Profielen beheren", img: "/singbox-profile.png", text: "Maak en beheer profielen via het dashboard in de app." },
-      { title: "Gebruik in apps", img: "/agario.png", text: "Activeer het profiel en open de app waarvoor je het nodig hebt." },
-      { title: "Problemen oplossen", img: "/settings.png", text: "Controleer instellingen en herstart de app bij fouten." }
-    ]
-  },
-  {
-    title: "How install Agar.io mods",
-    steps: [
-      { title: "Download mod", img: "/IMG_9406.jpeg", text: "Download de gewenste mod via de download-knop op deze pagina." },
-      { title: "Installeer profiel", img: "/IMG_2462.jpeg", text: "Installeer eventueel benodigde .mobileconfig profielen (indien aangegeven)." },
-      { title: "Open Settings", img: "/settings.png", text: "Ga naar Settings → General → VPN & Device Management en installeer certificaten/profielen." },
-      { title: "Installeer mod", img: "/agario.png", text: "Open het gedownloade bestand en volg de installatie-stappen." },
-      { title: "Controleer in game", img: "/IMG_0561.jpeg", text: "Start Agar.io en controleer of de mod werkt." }
-    ]
-  },
-  {
-    title: "Hoe stel je Agar.io mods in",
-    steps: [
-      { title: "Open de mod", img: "/agario.png", text: "Open de mod-applicatie of het profiel dat je hebt geïnstalleerd." },
-      { title: "Toegang verlenen", img: "/settings.png", text: "Geef de benodigde toestemmingen in Instellingen, zoals netwerk/profiel toegang." },
-      { title: "Configureren", img: "/singbox-edit.png", text: "Pas instellingen aan zoals skins, framerate of private servers (indien aanwezig)." },
-      { title: "Testen", img: "/IMG_9406.jpeg", text: "Start Agar.io en test of de instellingen het gewenste effect hebben." },
-      { title: "Hulp nodig?", img: "/IMG_0561.jpeg", text: "Neem contact met ons op via Discord/YouTube/Instagram als iets niet werkt." }
-    ]
-  }
-];
-
-function resetHelpModalBody(){
-  const body = document.getElementById("help-modal-body");
-  if(!body) return;
-
-  body.innerHTML = `
-    <div class="help-modal-intro">
-      We willen jou zo goed mogelijk helpen.
-      <br>
-      Kies jouw optie.
-    </div>
-
-    <div class="help-options" id="help-options-list">
-
-      <button class="help-option" type="button" data-index="0" onclick="showHelpStepsInModal(0)">
-        <span class="help-option-title">How install eSign</span>
-        <span class="help-option-sub">Installatie hulp voor eSign</span>
-      </button>
-
-      <button class="help-option" type="button" data-index="1" onclick="showHelpStepsInModal(1)">
-        <span class="help-option-title">Hoe werkt eSign?</span>
-        <span class="help-option-sub">Uitleg over het gebruik van eSign</span>
-      </button>
-
-      <button class="help-option" type="button" data-index="2" onclick="showHelpStepsInModal(2)">
-        <span class="help-option-title">How install Agar.io mods</span>
-        <span class="help-option-sub">Leer hoe je Agar.io mods installeert</span>
-      </button>
-
-      <button class="help-option" type="button" data-index="3" onclick="showHelpStepsInModal(3)">
-        <span class="help-option-title">Hoe stel je Agar.io mods in</span>
-        <span class="help-option-sub">Hulp bij het instellen van Agar.io mods</span>
-      </button>
-
-    </div>
-  `;
-}
-
-/* Wanneer een optie gekozen wordt wordt binnen dezelfde modal de opties vervangen door het stappenplan.
-   Er verschijnt een Back-knop bovenin de body zodat gebruiker terug kan.
-*/
-function showHelpStepsInModal(index){
-  const body = document.getElementById("help-modal-body");
-  if(!body) return;
-
-  const data = helpStepsData[index] || helpStepsData[0];
-
-  // bouw header met back-knop
-  let html = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-      <button onclick="resetHelpModalBody()" style="background:#08152a;border:1px solid rgba(14,165,233,.18);color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;">← Back</button>
-      <div style="font-weight:900;font-size:18px;color:#fff;">${data.title}</div>
-    </div>
-  `;
-
-  html += `<div class="private-server-steps">`;
-
-  data.steps.forEach((s, i) => {
-    html += `
-      <div class="private-step">
-        <div class="step-number">${i+1}</div>
-        <h3>${s.title}</h3>
-        <div class="step-content">
-          <img class="step-image" src="${s.img}" alt="${s.title}">
-          <div class="step-text">${s.text}</div>
+      <div class="grid">
+        <article class="card" data-status="active">
+          <img src="/IMG_0321.jpeg" alt="Bite Bots Panel" loading="lazy">
+          <a href="https://biteyt.com/bots" target="_blank" rel="noopener noreferrer">
+            <button class="download" type="button">
+              Bite Bots Panel
+              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+                <path d="M5 5h5v10h10v-3h2v5H5z"></path>
+              </svg>
+            </button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 19-08-2026</div>
+          <div class="info">Bite Bots Panel</div>
+          <div class="card-overlay"></div>
+        </article>
+
+        <article class="card" data-status="active">
+          <img src="/IMG_0322.jpeg" alt="Kahraba Website" loading="lazy">
+          <a href="https://kahraba.in" target="_blank" rel="noopener noreferrer">
+            <button class="download" type="button">
+              Kahraba Website
+              <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3z"></path>
+                <path d="M5 5h5v10h10v-3h2v5H5z"></path>
+              </svg>
+            </button>
+          </a>
+          <div class="info">Version: 26.6.0</div>
+          <div class="info">Date: 21-08-2026</div>
+          <div class="info">Kahraba Website</div>
+          <div class="card-overlay"></div>
+        </article>
+      </div>
+    </section>
+
+    <hr class="section-line">
+
+    <section class="help-section">
+      <h2>Need Help?</h2>
+      <p>Learn how to install and use the available mods.</p>
+
+      <div class="help-buttons">
+        <button class="help-button" type="button" onclick="openHelpModal()">
+          Help Mods
+        </button>
+      </div>
+
+      <div class="help-contact">
+        <p>If you have questions, you can contact us through our social channels.</p>
+        <div class="help-contact-buttons" aria-label="Contact links">
+          <a href="https://discord.gg/qhuXPrVzBx" target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-discord"></use></svg>
+            Discord
+          </a>
+          <a href="https://www.youtube.com/@T.B6" target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-youtube"></use></svg>
+            YouTube
+          </a>
+          <a href="https://www.instagram.com/t.bagar.io/" target="_blank" rel="noopener noreferrer">
+            <svg class="social-icon" aria-hidden="true"><use href="#icon-instagram"></use></svg>
+            Instagram
+          </a>
         </div>
       </div>
-    `;
-  });
+    </section>
+  </main>
 
-  html += `</div>`;
+  <!-- Help Mods modal -->
+  <div class="help-modal-overlay" id="help-modal-overlay" aria-hidden="true">
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
+      <div class="help-modal-header">
+        <div class="help-modal-brand">
+          <div class="help-modal-logo">
+            <img src="/IMG_0561.jpeg" alt="T.B Agar.io">
+          </div>
+          <div class="help-modal-title" id="help-modal-title">T.B Agar.io</div>
+        </div>
 
-  body.innerHTML = html;
-}
+        <button class="help-modal-close" type="button"
+                onclick="closeHelpModal()" aria-label="Close Help Mods">×</button>
+      </div>
 
-/* =========================
-   SCRIPT POPUP
-========================= */
+      <div class="help-modal-line"></div>
+      <div id="help-modal-body"></div>
+    </div>
+  </div>
 
-function openScriptPopup(){
+  <footer>
+    <p>© 2026 T.B Agar.io</p>
+    <p><a href="/index.html">T.B Agar.io Home</a></p>
+  </footer>
 
-  const popup =
-    document.getElementById(
-      "script-popup"
-    );
+  <script>
+    /* Hide the loader when the page loads, with a fallback. */
+    function hideLoader() {
+      const loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
+    }
 
-  if(popup){
+    window.addEventListener('load', hideLoader);
+    window.setTimeout(hideLoader, 8000);
 
-    popup.classList.add("show");
+    /* Hamburger menu */
+    const menuButton = document.getElementById('menu-btn');
+    const sideMenu = document.getElementById('side-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const menuCloseButton = document.getElementById('menu-close-btn');
 
-  }
+    function openMenu() {
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('show');
+      sideMenu.setAttribute('aria-hidden', 'false');
+      menuOverlay.setAttribute('aria-hidden', 'false');
+      menuButton.setAttribute('aria-expanded', 'true');
+      menuButton.setAttribute('aria-label', 'Close menu');
+      document.body.classList.add('menu-open');
+      menuCloseButton.focus();
+    }
 
-}
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('show');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      menuOverlay.setAttribute('aria-hidden', 'true');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.setAttribute('aria-label', 'Open menu');
+      document.body.classList.remove('menu-open');
+    }
 
-
-function closeScriptPopup(){
-
-  const popup =
-    document.getElementById(
-      "script-popup"
-    );
-
-  if(popup){
-
-    popup.classList.remove("show");
-
-  }
-
-}
-
-
-/* =========================
-   COPY SCRIPT
-========================= */
-
-function copyPrivateServerScript(){
-
-  const script =
-    document.getElementById(
-      "private-server-script"
-    );
-
-  if(!script){
-
-    return;
-
-  }
-
-
-  if(
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ){
-
-    navigator.clipboard.writeText(
-      script.value
-    ).then(function(){
-
-      showCopied();
-
-    }).catch(function(){
-
-      fallbackCopy(script);
-
+    menuButton.addEventListener('click', () => {
+      if (sideMenu.classList.contains('open')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
     });
 
-  }else{
+    menuCloseButton.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
 
-    fallbackCopy(script);
+    document.querySelectorAll('.menu-link').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
 
-  }
-
-}
-
-
-function fallbackCopy(script){
-
-  script.removeAttribute("readonly");
-
-  script.select();
-
-  script.setSelectionRange(
-    0,
-    script.value.length
-  );
-
-  document.execCommand("copy");
-
-  script.setAttribute(
-    "readonly",
-    "readonly"
-  );
-
-  showCopied();
-
-}
-
-
-function showCopied(){
-
-  const button =
-    document.querySelector(
-      ".copy-script"
-    );
-
-  if(button){
-
-    const oldText =
-      button.innerText;
-
-    button.innerText =
-      "✔ Script Copied";
-
-    setTimeout(
-      function(){
-
-        button.innerText =
-          oldText;
-
-      },
-      2000
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ESC CLOSE (globaal)
-========================= */
-
-document.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Escape"){
-
-      closeScriptPopup();
-
-      closeHelpModal();
-
-      // reset modal body zodra gesloten
-      resetHelpModalBody();
-
+    /* Mod download verification */
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
     }
 
-  }
-);
+    document.querySelectorAll('.card').forEach(card => {
+      const status = card.dataset.status;
+      const button = card.querySelector('.download');
+      const overlay = card.querySelector('.card-overlay');
+      const linkElement = card.querySelector('a');
+      const downloadUrl = linkElement ? linkElement.href : '#';
+      const statusLabel = card.querySelector('.status-label');
 
-</script>
+      if (statusLabel) statusLabel.style.display = 'none';
 
+      if (status === 'not') {
+        if (statusLabel) statusLabel.style.display = 'block';
 
+        if (button) {
+          button.textContent = 'Unavailable';
+          button.classList.add('locked');
+          button.addEventListener('click', event => {
+            event.preventDefault();
+            alert('This mod is not available.');
+          });
+        }
+
+        card.style.opacity = '.55';
+        if (overlay) {
+          overlay.style.display = 'flex';
+          overlay.textContent = 'Not Available';
+        }
+      }
+
+      if (!button || !overlay || status === 'not') return;
+
+      let youtubeComplete = false;
+      let instagramComplete = false;
+
+      button.addEventListener('click', event => {
+        event.preventDefault();
+
+        if (status === 'not') return;
+
+        overlay.style.display = 'flex';
+        overlay.innerHTML = `
+          <div style="text-align:center;">
+            Preparing ${getModName(card)}...
+            <div class="spinner" style="margin:12px auto;"></div>
+          </div>
+        `;
+
+        window.setTimeout(showVerification, randomBetween(1200, 2200));
+      });
+
+      function showVerification() {
+        overlay.innerHTML = `
+          <div class="verify-box">
+            <div class="verify-title">Verification</div>
+            <hr style="margin:10px 0;border:0;border-top:1px solid rgba(255,255,255,.15);">
+
+            <button type="button" id="ytBtn" class="download">Subscribe on YouTube</button>
+            <div class="verify-status" id="ytStatus" aria-live="polite">○</div>
+
+            <button type="button" id="igBtn" class="download">Follow on Instagram</button>
+            <div class="verify-status" id="igStatus" aria-live="polite">○</div>
+
+            <button type="button" id="unlockBtn" class="verify-unlock">🔒 Locked</button>
+          </div>
+        `;
+
+        const youtubeButton = document.getElementById('ytBtn');
+        const instagramButton = document.getElementById('igBtn');
+        const unlockButton = document.getElementById('unlockBtn');
+
+        youtubeButton.addEventListener('click', () => {
+          window.open('https://www.youtube.com/@T.B6', '_blank', 'noopener');
+          youtubeComplete = true;
+          document.getElementById('ytStatus').textContent = '✔';
+          checkUnlock();
+        });
+
+        instagramButton.addEventListener('click', () => {
+          window.open('https://www.instagram.com/t.bagar.io/', '_blank', 'noopener');
+          instagramComplete = true;
+          document.getElementById('igStatus').textContent = '✔';
+          checkUnlock();
+        });
+
+        unlockButton.addEventListener('click', () => {
+          if (!youtubeComplete || !instagramComplete) {
+            alert('Please open both social links first.');
+          }
+        });
+
+        function checkUnlock() {
+          if (youtubeComplete && instagramComplete) {
+            unlockButton.style.background = '#22c55e';
+            unlockButton.textContent = 'Download';
+            unlockButton.onclick = startDownload;
+          }
+        }
+
+        function startDownload() {
+          overlay.innerHTML = `
+            <div style="text-align:center;">
+              <div id="downloadStatus">Preparing download...</div>
+              <div class="spinner" style="margin:12px auto;"></div>
+            </div>
+          `;
+
+          window.setTimeout(() => {
+            window.location.href = downloadUrl;
+          }, 1200);
+        }
+      }
+
+      function getModName(currentCard) {
+        const infoItems = currentCard.querySelectorAll('.info');
+        return infoItems.length
+          ? infoItems[infoItems.length - 1].textContent.trim()
+          : 'Mod';
+      }
+    });
+
+    /* Help modal content */
+    const helpStepsData = [
+      {
+        title: 'How to install eSign',
+        steps: [
+          { title: 'Install the eSign app', img: '/IMG_2462.jpeg', text: 'Install the eSign app using the instructions provided by its official source.' },
+          { title: 'Open Settings', img: '/IMG_1119.jpeg', text: 'On your device, open Settings and locate General settings.' },
+          { title: 'Open device management', img: '/IMG_1456.png', text: 'Go to General, then VPN & Device Management. The exact menu name may vary by iOS version.' },
+          { title: 'Follow the app instructions', img: '/singbox-profile.png', text: 'Open eSign and follow the prompts shown by the app.' },
+          { title: 'Install a compatible file', img: '/singbox-edit.png', text: 'Return to the website and choose a compatible mod file.' },
+          { title: 'Trust only profiles you recognize', img: '/IMG_2462.jpeg', text: 'Review profiles carefully before installing. Only trust profiles from sources you know.' }
+        ]
+      },
+      {
+        title: 'How does eSign work?',
+        steps: [
+          { title: 'What is eSign?', img: '/IMG_0322.jpeg', text: 'eSign is a tool used to manage app signing and profiles on compatible devices.' },
+          { title: 'Sign in or create an account', img: '/IMG_0321.jpeg', text: 'Use the sign-in or account setup process provided by the app.' },
+          { title: 'Manage profiles', img: '/singbox-profile.png', text: 'Review the profiles available in the app before using them.' },
+          { title: 'Follow the app guidance', img: '/agario.png', text: 'Use the app instructions to understand which files and profiles are supported.' },
+          { title: 'Troubleshooting', img: '/settings.png', text: 'Check the app settings and restart the app if you run into an issue.' }
+        ]
+      },
+      {
+        title: 'How to install Agar.io mods',
+        steps: [
+          { title: 'Choose a mod', img: '/IMG_9406.jpeg', text: 'Choose the mod you want from the available downloads on this page.' },
+          { title: 'Check compatibility', img: '/IMG_2462.jpeg', text: 'Check that the file is intended for your device and operating system.' },
+          { title: 'Review device settings', img: '/settings.png', text: 'Follow the publisher’s installation guidance and review any profile prompts.' },
+          { title: 'Install the file', img: '/agario.png', text: 'Open the downloaded file and follow the installation instructions shown by your device.' },
+          { title: 'Check the app', img: '/IMG_0561.jpeg', text: 'Launch Agar.io and confirm that the installation completed as expected.' }
+        ]
+      },
+      {
+        title: 'How to configure Agar.io mods',
+        steps: [
+          { title: 'Open the installed app', img: '/agario.png', text: 'Open the mod app or the game you installed.' },
+          { title: 'Review permissions', img: '/settings.png', text: 'Check the app permissions and settings on your device.' },
+          { title: 'Configure available options', img: '/singbox-edit.png', text: 'Adjust only the options provided by the app, such as supported visual settings.' },
+          { title: 'Test your settings', img: '/IMG_9406.jpeg', text: 'Open Agar.io and check that your settings work as expected.' },
+          { title: 'Need help?', img: '/IMG_0561.jpeg', text: 'Contact the T.B Agar.io community if you need help with the page or its downloads.' }
+        ]
+      }
+    ];
+
+    function renderHelpOptions() {
+      const body = document.getElementById('help-modal-body');
+
+      body.innerHTML = `
+        <div class="help-modal-intro">
+          We want to help you. Choose the topic you need help with.
+        </div>
+
+        <div class="help-options">
+          <button class="help-option" type="button" data-help-index="0">
+            <span class="help-option-title">How to install eSign</span>
+            <span class="help-option-sub">Installation help for eSign</span>
+          </button>
+
+          <button class="help-option" type="button" data-help-index="1">
+            <span class="help-option-title">How does eSign work?</span>
+            <span class="help-option-sub">Learn about using eSign</span>
+          </button>
+
+          <button class="help-option" type="button" data-help-index="2">
+            <span class="help-option-title">How to install Agar.io mods</span>
+            <span class="help-option-sub">Installation guidance for mods</span>
+          </button>
+
+          <button class="help-option" type="button" data-help-index="3">
+            <span class="help-option-title">How to configure Agar.io mods</span>
+            <span class="help-option-sub">Help with mod settings</span>
+          </button>
+        </div>
+      `;
+
+      body.querySelectorAll('[data-help-index]').forEach(button => {
+        button.addEventListener('click', () => {
+          showHelpStepsInModal(Number(button.dataset.helpIndex));
+        });
+      });
+    }
+
+    function openHelpModal() {
+      const overlay = document.getElementById('help-modal-overlay');
+      renderHelpOptions();
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      overlay.querySelector('.help-modal-close').focus();
+    }
+
+    function closeHelpModal() {
+      const overlay = document.getElementById('help-modal-overlay');
+      overlay.classList.remove('show');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    function showHelpStepsInModal(index) {
+      const body = document.getElementById('help-modal-body');
+      const data = helpStepsData[index] || helpStepsData[0];
+
+      const stepsHtml = data.steps.map((step, stepIndex) => `
+        <article class="private-step">
+          <div class="step-number">${stepIndex + 1}</div>
+          <h3>${escapeHtml(step.title)}</h3>
+          <div class="step-content">
+            <img class="step-image" src="${escapeHtml(step.img)}"
+                 alt="" loading="lazy">
+            <div class="step-text">${escapeHtml(step.text)}</div>
+          </div>
+        </article>
+      `).join('');
+
+      body.innerHTML = `
+        <button class="help-back" type="button">← Back to help topics</button>
+        <div class="section-header">
+          <h2>${escapeHtml(data.title)}</h2>
+        </div>
+        <div class="private-server-steps">${stepsHtml}</div>
+      `;
+
+      body.querySelector('.help-back').addEventListener('click', renderHelpOptions);
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
+    const helpModalOverlay = document.getElementById('help-modal-overlay');
+
+    helpModalOverlay.addEventListener('click', event => {
+      if (event.target === helpModalOverlay) closeHelpModal();
+    });
+
+    /* Close open panels with Escape. */
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeMenu();
+        closeHelpModal();
+
+        const scriptPopup = document.getElementById('script-popup');
+        if (scriptPopup) scriptPopup.classList.remove('show');
+      }
+    });
+  </script>
 </body>
 </html>
